@@ -1,0 +1,14 @@
+
+OS:Version,
+  {e31b51ee-5e09-472a-aefe-05521f7b824f}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {0baa47ac-f4d4-4428-bfab-d9de49a636a0}, !- Handle
+  ICFConcrete,                            !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.2205135596,                           !- Conductivity {W/m-K}
+  2111.30784,                             !- Density {kg/m3}
+  844.353764720165;                       !- Specific Heat {J/kg-K}
+

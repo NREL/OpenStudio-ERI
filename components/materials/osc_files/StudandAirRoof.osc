@@ -1,0 +1,23 @@
+
+OS:Version,
+  {89a81bf1-3219-4bc8-a9ae-eeff8b1c96f0}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {4d4a435f-3b8d-4c19-8e45-a58353491b5d}, !- Handle
+  StudandAirRoof,                         !- Name
+  Rough,                                  !- Roughness
+  0.0889,                                 !- Thickness {m}
+  3.2214781383103,                        !- Conductivity {W/m-K}
+  57.4503560478975,                       !- Density {kg/m3}
+  1210.36750350924;                       !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {7e627701-ad17-47b9-8ee4-6c11b57c31d6}, !- Handle
+  Component Data 1,                       !- Name
+  {f7ce4740-c522-4628-b3cf-80f60f379433}, !- UUID
+  {f3a73614-2da9-4745-a375-12e100e0bcc7}, !- Version UUID
+  1406054948,                             !- Creation Timestamp
+  1406054948,                             !- Version Timestamp
+  {4d4a435f-3b8d-4c19-8e45-a58353491b5d}; !- Name of Object 1
+

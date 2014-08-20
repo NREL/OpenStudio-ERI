@@ -1,0 +1,14 @@
+
+OS:Version,
+  {85d63b5d-0817-4199-9019-3c344e943c29}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {5e1343db-77a2-4b17-8871-f4d80bccfdc6}, !- Handle
+  CMU,                                    !- Name
+  Rough,                                  !- Roughness
+  0.2032,                                 !- Thickness {m}
+  0.512375883917753,                      !- Conductivity {W/m-K}
+  705.07224,                              !- Density {kg/m3}
+  858.222742888303;                       !- Specific Heat {J/kg-K}
+

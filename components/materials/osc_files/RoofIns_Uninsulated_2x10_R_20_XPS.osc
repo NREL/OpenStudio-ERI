@@ -1,0 +1,23 @@
+
+OS:Version,
+  {dbfad6c4-5e70-4ec3-bf70-7b017137aab7}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {a650af95-af43-4c86-94ac-9abf304508ff}, !- Handle
+  RoofIns,                                !- Name
+  Rough,                                  !- Roughness
+  0.23495,                                !- Thickness {m}
+  0.874315159551819,                      !- Conductivity {W/m-K}
+  78.34581,                               !- Density {kg/m3}
+  1123.46101114405;                       !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {51736ba1-dfe8-4942-a1eb-df9384fa1ba3}, !- Handle
+  Component Data 1,                       !- Name
+  {181f35c9-aac4-4c95-ae34-19819548b047}, !- UUID
+  {145401dd-ab5a-444b-b860-09f6bd3917d6}, !- Version UUID
+  1406054951,                             !- Creation Timestamp
+  1406054951,                             !- Version Timestamp
+  {a650af95-af43-4c86-94ac-9abf304508ff}; !- Name of Object 1
+

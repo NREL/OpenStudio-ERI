@@ -1,0 +1,11 @@
+
+OS:Version,
+  {6ebdde13-16db-4eff-b21a-59f735e2f077}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {f02d0af0-0667-4251-9ec6-33d7f9ce0974}, !- Handle
+  FBaseWall_FicR_Half_Wall_R_10_XPS,      !- Name
+  Rough,                                  !- Roughness
+  0.719095790007814;                      !- Thermal Resistance {m2-K/W}
+

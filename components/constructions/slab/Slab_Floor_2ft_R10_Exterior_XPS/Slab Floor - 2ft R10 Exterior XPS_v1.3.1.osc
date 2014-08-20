@@ -1,0 +1,63 @@
+
+OS:Version,
+  {e2656e94-a6f7-48fb-955f-d4ef9645bd10}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {942754aa-a892-4ed9-9fd1-ade799a3ce62}, !- Handle
+  Slab,                                   !- Name
+  ,                                       !- Surface Rendering Name
+  {54e315b1-5384-49a1-bf21-8f2e36dde44e}, !- Layer 1
+  {f155db69-dd2b-4166-87bb-195e6b9fa756}, !- Layer 2
+  {8d7abec6-ee2d-4bf6-8fda-71f5b2941fec}, !- Layer 3
+  {57b702d4-2dbb-4dbb-ba16-0b1c9bf2803a}; !- Layer 4
+
+OS:Material,
+  {54e315b1-5384-49a1-bf21-8f2e36dde44e}, !- Handle
+  Mat-Fic-Slab,                           !- Name
+  Rough,                                  !- Roughness
+  0.0254,                                 !- Thickness {m}
+  0.0110386398603933,                     !- Conductivity {W/m-K}
+  40.05,                                  !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {f155db69-dd2b-4166-87bb-195e6b9fa756}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {8d7abec6-ee2d-4bf6-8fda-71f5b2941fec}, !- Handle
+  SlabMass,                               !- Name
+  Rough,                                  !- Roughness
+  0.1016,                                 !- Thickness {m}
+  1.312675,                               !- Conductivity {W/m-K}
+  2242.79999999999,                       !- Density {kg/m3}
+  837.4;                                  !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {57b702d4-2dbb-4dbb-ba16-0b1c9bf2803a}, !- Handle
+  SlabCarpetBareEquivalentMaterial,       !- Name
+  Rough,                                  !- Roughness
+  0.0254,                                 !- Thickness {m}
+  0.0866804263311929,                     !- Conductivity {W/m-K}
+  40.05,                                  !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {d9228fdd-50a2-4d4a-9a9b-b890cbf4ce64}, !- Handle
+  Component Data 1,                       !- Name
+  {0bb0cdda-92c5-4efc-a744-36169e4900ab}, !- UUID
+  {69292ce7-5405-46ca-881c-bc79be69fe41}, !- Version UUID
+  1406055556,                             !- Creation Timestamp
+  1406055556,                             !- Version Timestamp
+  {942754aa-a892-4ed9-9fd1-ade799a3ce62}, !- Name of Object 1
+  {54e315b1-5384-49a1-bf21-8f2e36dde44e}, !- Name of Object 2
+  {f155db69-dd2b-4166-87bb-195e6b9fa756}, !- Name of Object 3
+  {8d7abec6-ee2d-4bf6-8fda-71f5b2941fec}, !- Name of Object 4
+  {57b702d4-2dbb-4dbb-ba16-0b1c9bf2803a}; !- Name of Object 5
+

@@ -1,0 +1,11 @@
+
+OS:Version,
+  {27ebe416-bdd1-42ca-b586-01188e242bdb}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {36b3c28b-16df-45e7-b776-ac867b2f1fc4}, !- Handle
+  UFBaseWall_FicR_Half_Wall_R_12_Polyiso, !- Name
+  Rough,                                  !- Roughness
+  0.830993997802214;                      !- Thermal Resistance {m2-K/W}
+

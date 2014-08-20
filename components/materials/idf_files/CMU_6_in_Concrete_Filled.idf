@@ -1,0 +1,15 @@
+
+Version,
+  8.0;                                    !- Version Identifier
+
+Material,
+  CMU,                                    !- Name
+  Rough,                                  !- Roughness
+  0.1524,                                 !- Thickness {m}
+  0.649933814019447,                      !- Conductivity {W/m-K}
+  1800.45576,                             !- Density {kg/m3}
+  845.554345303769,                       !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
+

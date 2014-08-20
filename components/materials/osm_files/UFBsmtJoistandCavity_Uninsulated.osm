@@ -1,0 +1,14 @@
+
+OS:Version,
+  {afd1b705-3583-487f-b3cb-329d74ca33a5}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {fcd8f2cf-cbd3-4bf6-b1ea-55481db6250d}, !- Handle
+  UFBsmtJoistandCavity,                   !- Name
+  Rough,                                  !- Roughness
+  0.23495,                                !- Thickness {m}
+  0.584197590381047,                      !- Conductivity {W/m-K}
+  41.0839868271477,                       !- Density {kg/m3}
+  1208.63462554837;                       !- Specific Heat {J/kg-K}
+

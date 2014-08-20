@@ -1,0 +1,20 @@
+
+OS:Version,
+  {adfff6fe-f712-4c62-a72d-98389e8ef4a2}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {61884311-7a27-4c8d-bc15-e8972834829c}, !- Handle
+  LivingDoors,                            !- Name
+  ,                                       !- Surface Rendering Name
+  {4299ff7a-d757-4b5d-8ebb-a432c3343394}; !- Layer 1
+
+OS:Material,
+  {4299ff7a-d757-4b5d-8ebb-a432c3343394}, !- Handle
+  DoorMaterial,                           !- Name
+  Rough,                                  !- Roughness
+  0.0633984,                              !- Thickness {m}
+  0.0873267038564152,                     !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+

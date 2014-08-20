@@ -1,0 +1,14 @@
+
+OS:Version,
+  {51e6a765-e171-42e2-8d4c-04e905c54969}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {95886f6f-4383-453f-9659-8654878be098}, !- Handle
+  CrawlCeilingIns,                        !- Name
+  Rough,                                  !- Roughness
+  0.23495,                                !- Thickness {m}
+  0.0754732191870427,                     !- Conductivity {W/m-K}
+  106.36479,                              !- Density {kg/m3}
+  1151.68513065742;                       !- Specific Heat {J/kg-K}
+

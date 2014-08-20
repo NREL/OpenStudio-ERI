@@ -1,0 +1,14 @@
+
+OS:Version,
+  {0b870e43-7720-4992-a81f-3dffcc4f8095}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {215c7b33-59ba-4d70-a40e-2fe210360256}, !- Handle
+  RoofIns,                                !- Name
+  Rough,                                  !- Roughness
+  0.33655,                                !- Thickness {m}
+  0.053350678483712,                      !- Conductivity {W/m-K}
+  78.34581,                               !- Density {kg/m3}
+  1123.46101114405;                       !- Specific Heat {J/kg-K}
+

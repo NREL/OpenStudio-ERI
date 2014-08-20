@@ -1,0 +1,11 @@
+
+OS:Version,
+  {4ebc4a26-4c23-40c5-b5ae-e58d2ac19160}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {cb71e7f9-160a-47ec-b0d0-4c811511b080}, !- Handle
+  FBaseFloor_FicR_Whole_Wall_R_15_XPS,    !- Name
+  Rough,                                  !- Roughness
+  8.90794360004395;                       !- Thermal Resistance {m2-K/W}
+

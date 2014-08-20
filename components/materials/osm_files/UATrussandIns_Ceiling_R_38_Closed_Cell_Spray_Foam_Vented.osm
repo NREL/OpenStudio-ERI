@@ -1,0 +1,14 @@
+
+OS:Version,
+  {bfec437b-2b90-44fb-93e5-4c4ae14a49bd}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {3b8c53ef-f52b-47c7-9486-5fe331bafe8f}, !- Handle
+  UATrussandIns,                          !- Name
+  Rough,                                  !- Roughness
+  0.0889,                                 !- Thickness {m}
+  0.0246384969577364,                     !- Conductivity {W/m-K}
+  50.7834,                                !- Density {kg/m3}
+  1165.09548895899;                       !- Specific Heat {J/kg-K}
+

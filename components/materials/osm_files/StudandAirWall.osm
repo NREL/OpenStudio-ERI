@@ -1,0 +1,14 @@
+
+OS:Version,
+  {81bab005-5101-4e88-8a15-9bbda0db5d95}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {1c2b78a1-e6bf-4535-96e8-4355685d94de}, !- Handle
+  StudandAirWall,                         !- Name
+  Rough,                                  !- Roughness
+  0.0889,                                 !- Thickness {m}
+  0.442568232,                            !- Conductivity {W/m-K}
+  49.1393091779855,                       !- Density {kg/m3}
+  1209.63177954897;                       !- Specific Heat {J/kg-K}
+

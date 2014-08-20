@@ -1,0 +1,23 @@
+
+OS:Version,
+  {133f69db-0f8a-436e-9f36-598f8a12ce14}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {21535377-104e-427d-840c-b4a77f7008f6}, !- Handle
+  UATrussandIns,                          !- Name
+  Rough,                                  !- Roughness
+  0.0889,                                 !- Thickness {m}
+  0.0582481197547514,                     !- Conductivity {W/m-K}
+  50.7834,                                !- Density {kg/m3}
+  1165.09548895899;                       !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {9e91d85a-1808-4408-9bd3-7c01f63a6d1a}, !- Handle
+  Component Data 1,                       !- Name
+  {8e741942-990c-44c0-ad0e-a7230e39632f}, !- UUID
+  {3201b7e3-440d-4292-8e34-648ce174ead3}, !- Version UUID
+  1406054950,                             !- Creation Timestamp
+  1406054950,                             !- Version Timestamp
+  {21535377-104e-427d-840c-b4a77f7008f6}; !- Name of Object 1
+

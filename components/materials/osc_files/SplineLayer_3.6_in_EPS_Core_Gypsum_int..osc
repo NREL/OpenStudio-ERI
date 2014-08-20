@@ -1,0 +1,23 @@
+
+OS:Version,
+  {c99521f5-c173-4765-8a80-db5121b236c9}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {283e7480-e4d9-42e1-9c72-2d322ed3c955}, !- Handle
+  SplineLayer,                            !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.0345205263589113,                     !- Conductivity {W/m-K}
+  147.0636,                               !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {6e9c0f61-e760-4b9f-9938-f3acb62cc214}, !- Handle
+  Component Data 1,                       !- Name
+  {75e6d88a-0272-43ee-8abc-bdbdfa758461}, !- UUID
+  {44e00605-1b96-4528-88df-0084e0d9614e}, !- Version UUID
+  1406054949,                             !- Creation Timestamp
+  1406054949,                             !- Version Timestamp
+  {283e7480-e4d9-42e1-9c72-2d322ed3c955}; !- Name of Object 1
+

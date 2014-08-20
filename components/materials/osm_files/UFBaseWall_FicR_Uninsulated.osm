@@ -1,0 +1,11 @@
+
+OS:Version,
+  {047b15c1-8868-4565-b582-4772f88b8673}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {d0ffea3e-4c89-41ab-aa92-3f7394f37047}, !- Handle
+  UFBaseWall_FicR_Uninsulated,            !- Name
+  Rough,                                  !- Roughness
+  0.511257279809397;                      !- Thermal Resistance {m2-K/W}
+

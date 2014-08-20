@@ -1,0 +1,38 @@
+
+OS:Version,
+  {efd19b30-97ee-4b78-934b-b8010e7ff9c1}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {58c22b2b-5159-4c57-9e37-dab5da2aa7a2}, !- Handle
+  GrndUninsUnfinCSFloor,                  !- Name
+  ,                                       !- Surface Rendering Name
+  {888e86ee-9289-4e1e-944d-23694a71c660}, !- Layer 1
+  {00c78fdc-9c50-4c22-89c5-1341582e5049}; !- Layer 2
+
+OS:Material:NoMass,
+  {888e86ee-9289-4e1e-944d-23694a71c660}, !- Handle
+  CFloor_FicR_Ceiling_R_38_Closed_Cell_Spray_Foam, !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+
+OS:Material,
+  {00c78fdc-9c50-4c22-89c5-1341582e5049}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {b4af162a-4bc3-49f5-8901-fba4bf5b5c47}, !- Handle
+  Component Data 1,                       !- Name
+  {be9c2a3e-36b2-49cb-b75b-10dc9be8b484}, !- UUID
+  {06792401-63d9-4d90-b08f-4cdeb73130f1}, !- Version UUID
+  1406055559,                             !- Creation Timestamp
+  1406055559,                             !- Version Timestamp
+  {58c22b2b-5159-4c57-9e37-dab5da2aa7a2}, !- Name of Object 1
+  {888e86ee-9289-4e1e-944d-23694a71c660}, !- Name of Object 2
+  {00c78fdc-9c50-4c22-89c5-1341582e5049}; !- Name of Object 3
+

@@ -1,0 +1,14 @@
+
+OS:Version,
+  {7d96481a-821e-47cf-8f39-ba794235a4ba}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {f748b9ec-8892-4999-9ef6-a782ae0a2038}, !- Handle
+  Layer3,                                 !- Name
+  Rough,                                  !- Roughness
+  0.0889,                                 !- Thickness {m}
+  0.13371975,                             !- Conductivity {W/m-K}
+  833.5206,                               !- Density {kg/m3}
+  1046.75;                                !- Specific Heat {J/kg-K}
+

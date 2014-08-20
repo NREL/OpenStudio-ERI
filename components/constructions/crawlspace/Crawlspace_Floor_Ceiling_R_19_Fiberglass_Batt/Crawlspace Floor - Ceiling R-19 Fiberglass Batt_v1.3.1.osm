@@ -1,0 +1,27 @@
+
+OS:Version,
+  {2eec94fc-b7ac-449c-9d95-bd91ebfab053}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {6d5d5259-9cf9-4444-8c74-3fd6490482d0}, !- Handle
+  GrndUninsUnfinCSFloor,                  !- Name
+  ,                                       !- Surface Rendering Name
+  {eac24970-3a81-44de-93d7-5e42a3210c6c}, !- Layer 1
+  {06625732-8a56-4924-96bc-2c5a1638980a}; !- Layer 2
+
+OS:Material,
+  {06625732-8a56-4924-96bc-2c5a1638980a}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:Material:NoMass,
+  {eac24970-3a81-44de-93d7-5e42a3210c6c}, !- Handle
+  CFloor_FicR_Ceiling_R_19_Fiberglass_Batt, !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+

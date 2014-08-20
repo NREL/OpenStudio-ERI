@@ -1,0 +1,23 @@
+
+OS:Version,
+  {191286b2-fc71-4645-b6c8-ed2771b9455c}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {eec400a5-ce44-428b-bd2e-0b048e9ff1e7}, !- Handle
+  Plywood_3_2in,                          !- Name
+  Rough,                                  !- Roughness
+  0.0381,                                 !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {ad02f498-6ef9-4e34-a83f-f7aa107157f7}, !- Handle
+  Component Data 1,                       !- Name
+  {09f6d665-e7f7-4254-9460-8a67c983953d}, !- UUID
+  {5f1fc2f4-a985-4aee-8154-72f81a178cff}, !- Version UUID
+  1406054948,                             !- Creation Timestamp
+  1406054948,                             !- Version Timestamp
+  {eec400a5-ce44-428b-bd2e-0b048e9ff1e7}; !- Name of Object 1
+

@@ -1,0 +1,14 @@
+
+OS:Version,
+  {396800e5-428e-4117-9c6c-7fb54fabb0ed}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {5bc4bbbc-6c0d-4f65-a9ce-fd0851bc9579}, !- Handle
+  GypsumBoard_1_2in,                      !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.1602906,                              !- Conductivity {W/m-K}
+  801,                                    !- Density {kg/m3}
+  837.4;                                  !- Specific Heat {J/kg-K}
+

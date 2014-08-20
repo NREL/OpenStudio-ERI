@@ -1,0 +1,15 @@
+
+Version,
+  8.0;                                    !- Version Identifier
+
+Material,
+  CSJoistandCavity,                       !- Name
+  Rough,                                  !- Roughness
+  0.23495,                                !- Thickness {m}
+  0.102814149707233,                      !- Conductivity {W/m-K}
+  108.738954,                             !- Density {kg/m3}
+  1149.39401785582,                       !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
+

@@ -1,0 +1,23 @@
+
+OS:Version,
+  {ce40aa53-1bb1-4252-a2f6-82a5947c0155}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {ee620cd3-b9e6-42f1-82c1-1373f50dd812}, !- Handle
+  IntWallIns,                             !- Name
+  Rough,                                  !- Roughness
+  0.1397,                                 !- Thickness {m}
+  0.057050988197587,                      !- Conductivity {W/m-K}
+  148.39326,                              !- Density {kg/m3}
+  1174.03696966425;                       !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {9c5fa176-4cfc-4349-83cc-9af6b0066c8f}, !- Handle
+  Component Data 1,                       !- Name
+  {5a82ec42-d88d-4eb7-ac9c-94b725574bfe}, !- UUID
+  {c32e2525-cfb6-406d-ab5f-d80fcf72e8c3}, !- Version UUID
+  1406054950,                             !- Creation Timestamp
+  1406054950,                             !- Version Timestamp
+  {ee620cd3-b9e6-42f1-82c1-1373f50dd812}; !- Name of Object 1
+

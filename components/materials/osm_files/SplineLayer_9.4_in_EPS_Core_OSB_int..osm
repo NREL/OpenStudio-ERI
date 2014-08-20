@@ -1,0 +1,14 @@
+
+OS:Version,
+  {20919c8f-3ee8-4c84-802d-991fddcda877}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {7113af13-bc67-45fe-bde8-76472ff07a56}, !- Handle
+  SplineLayer,                            !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.0304648617446528,                     !- Conductivity {W/m-K}
+  147.0636,                               !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+

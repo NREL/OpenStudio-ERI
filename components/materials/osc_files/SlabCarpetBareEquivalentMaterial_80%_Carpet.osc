@@ -1,0 +1,23 @@
+
+OS:Version,
+  {68c4fa6e-cbf0-4523-9d76-7f6ab3ff1e7a}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {44eef0f6-a288-4f28-b0c3-e4daa7c0f011}, !- Handle
+  SlabCarpetBareEquivalentMaterial,       !- Name
+  Rough,                                  !- Roughness
+  0.0254,                                 !- Thickness {m}
+  0.0866804263311929,                     !- Conductivity {W/m-K}
+  40.05,                                  !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {5237646d-ec68-47ac-84b6-ae37134d4627}, !- Handle
+  Component Data 1,                       !- Name
+  {aad609d2-2056-4bfb-a2a2-7eb393448e86}, !- UUID
+  {852b9696-a828-40e4-9f50-5fe52e645088}, !- Version UUID
+  1406054952,                             !- Creation Timestamp
+  1406054952,                             !- Version Timestamp
+  {44eef0f6-a288-4f28-b0c3-e4daa7c0f011}; !- Name of Object 1
+

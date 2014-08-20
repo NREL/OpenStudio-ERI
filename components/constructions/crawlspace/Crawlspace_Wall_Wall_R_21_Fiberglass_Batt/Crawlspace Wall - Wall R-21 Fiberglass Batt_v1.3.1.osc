@@ -1,0 +1,52 @@
+
+OS:Version,
+  {e56f139a-c556-444a-91ec-36c0fc39877b}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {878157f6-d943-42ac-98d0-e8f9580640b6}, !- Handle
+  GrndInsUnfinCSWall,                     !- Name
+  ,                                       !- Surface Rendering Name
+  {7c457391-bada-40e7-91c8-94b5a72bcdc5}, !- Layer 1
+  {d54c78c8-617a-44c7-a9f4-a8687775e2fe}, !- Layer 2
+  {04ffd1b4-f15f-4b73-bb3c-7538c488dee3}; !- Layer 3
+
+OS:Material,
+  {7c457391-bada-40e7-91c8-94b5a72bcdc5}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {d54c78c8-617a-44c7-a9f4-a8687775e2fe}, !- Handle
+  Concrete_8in,                           !- Name
+  Rough,                                  !- Roughness
+  0.2032,                                 !- Thickness {m}
+  1.3114056,                              !- Conductivity {W/m-K}
+  2242.79999999999,                       !- Density {kg/m3}
+  837.4;                                  !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {04ffd1b4-f15f-4b73-bb3c-7538c488dee3}, !- Handle
+  CWallIns,                               !- Name
+  Rough,                                  !- Roughness
+  0.10668,                                !- Thickness {m}
+  0.02885,                                !- Conductivity {W/m-K}
+  32.04,                                  !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {e048b36e-d3dd-458f-8017-93749f1d939d}, !- Handle
+  Component Data 1,                       !- Name
+  {ebeca3e5-24e6-4865-b7ee-bc90b872c118}, !- UUID
+  {c39eaa86-be52-49ed-930f-7c34cd4cc5ed}, !- Version UUID
+  1406055557,                             !- Creation Timestamp
+  1406055557,                             !- Version Timestamp
+  {878157f6-d943-42ac-98d0-e8f9580640b6}, !- Name of Object 1
+  {7c457391-bada-40e7-91c8-94b5a72bcdc5}, !- Name of Object 2
+  {d54c78c8-617a-44c7-a9f4-a8687775e2fe}, !- Name of Object 3
+  {04ffd1b4-f15f-4b73-bb3c-7538c488dee3}; !- Name of Object 4
+

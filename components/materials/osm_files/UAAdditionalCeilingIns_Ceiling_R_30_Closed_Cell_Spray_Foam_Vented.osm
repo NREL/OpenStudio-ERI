@@ -1,0 +1,14 @@
+
+OS:Version,
+  {7b5592f4-8b8a-4e8e-80b6-9902ed33b0bb}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {a8851dda-b317-42ff-a03a-6572215c8587}, !- Handle
+  UAAdditionalCeilingIns,                 !- Name
+  Rough,                                  !- Roughness
+  0.0284479996619145,                     !- Thickness {m}
+  0.0222145,                              !- Conductivity {W/m-K}
+  16.02,                                  !- Density {kg/m3}
+  1046.75;                                !- Specific Heat {J/kg-K}
+

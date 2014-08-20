@@ -1,0 +1,52 @@
+
+OS:Version,
+  {1b93af67-05fb-4624-872e-aa604dcae95e}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {051230bb-cde3-4e23-90bc-f29551f057ed}, !- Handle
+  UnfinCSInsFinFloor,                     !- Name
+  ,                                       !- Surface Rendering Name
+  {e3829b74-570e-460c-b235-331ce5e46cd6}, !- Layer 1
+  {b1fd0383-9ac1-4961-b267-e254ed09c15c}, !- Layer 2
+  {bf0f84ac-ce38-42ed-bfa2-9cc1bb1c9dfb}, !- Layer 3
+  {c617313b-63b7-41da-9318-7461928510fa}; !- Layer 4
+
+OS:Material,
+  {b1fd0383-9ac1-4961-b267-e254ed09c15c}, !- Handle
+  Plywood_3_4in,                          !- Name
+  Rough,                                  !- Roughness
+  0.01905,                                !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {bf0f84ac-ce38-42ed-bfa2-9cc1bb1c9dfb}, !- Handle
+  Floor_Mass_Wood_Surface,                !- Name
+  Rough,                                  !- Roughness
+  0.015875,                               !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  544.68,                                 !- Density {kg/m3}
+  1214.23,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.6;                                    !- Solar Absorptance
+
+OS:Material,
+  {c617313b-63b7-41da-9318-7461928510fa}, !- Handle
+  CarpetBareLayer,                        !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.0433443509615385,                     !- Conductivity {W/m-K}
+  54.4679999999999,                       !- Density {kg/m3}
+  1339.84;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {e3829b74-570e-460c-b235-331ce5e46cd6}, !- Handle
+  CrawlCeilingIns,                        !- Name
+  Rough,                                  !- Roughness
+  0.23495,                                !- Thickness {m}
+  0.104255480780976,                      !- Conductivity {W/m-K}
+  106.36479,                              !- Density {kg/m3}
+  1151.68513065742;                       !- Specific Heat {J/kg-K}
+

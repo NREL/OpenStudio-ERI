@@ -1,0 +1,12 @@
+
+Version,
+  8.0;                                    !- Version Identifier
+
+Material:NoMass,
+  UFBaseWall_FicR_Whole_Wall_R_13_Fiberglass_Batt_Gr_2_2x4_16_in_o.c._R_5_XPS, !- Name
+  Rough,                                  !- Roughness
+  0.97756870171938,                       !- Thermal Resistance {m2-K/W}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
+

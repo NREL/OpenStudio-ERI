@@ -1,0 +1,33 @@
+
+OS:Version,
+  {af63c0ae-d5de-4f02-bee9-8046d7cdad2f}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {e609264c-09e2-4fbd-926e-72e107e54967}, !- Handle
+  Double-Pane Low-Gain Low-E Non-metal Frame Argon Fill, !- Name
+  ,                                       !- Surface Rendering Name
+  {16173073-572e-493d-9e05-979020a692ef}; !- Layer 1
+
+OS:WindowMaterial:SimpleGlazingSystem,
+  {16173073-572e-493d-9e05-979020a692ef}, !- Handle
+  Double-Pane Glass,                      !- Name
+  1.92349251746999,                       !- U-Factor {W/m2-K}
+  0.301029381116135;                      !- Solar Heat Gain Coefficient
+
+OS:StandardsInformation:Construction,
+  {a6a6b1a5-8b62-48ea-932d-c0514f71c3f2}, !- Handle
+  {e609264c-09e2-4fbd-926e-72e107e54967}, !- Construction Name
+  ExteriorWindow;                         !- Intended Surface Type
+
+OS:ComponentData,
+  {4b1560d6-7dfc-4116-8622-57dc09b7834e}, !- Handle
+  Component Data 1,                       !- Name
+  {47211d3a-4c9d-4e77-bb73-299e141587fa}, !- UUID
+  {aa4176e4-58c5-463f-b475-256abf02287d}, !- Version UUID
+  1406055300,                             !- Creation Timestamp
+  1406055300,                             !- Version Timestamp
+  {e609264c-09e2-4fbd-926e-72e107e54967}, !- Name of Object 1
+  {16173073-572e-493d-9e05-979020a692ef}, !- Name of Object 2
+  {a6a6b1a5-8b62-48ea-932d-c0514f71c3f2}; !- Name of Object 3
+

@@ -1,0 +1,40 @@
+
+OS:Version,
+  {41882860-d55f-41d4-91fb-3e8a58c274a2}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {c4174017-e3d6-4ffb-ac6f-60ab8f024b94}, !- Handle
+  GrndInsUnfinCSWall,                     !- Name
+  ,                                       !- Surface Rendering Name
+  {bf0f9bdc-5c40-4ab2-aa43-487ab24870a9}, !- Layer 1
+  {82bddf36-d599-40ea-ba88-bbf19bfd57fb}, !- Layer 2
+  {dbc7a4a4-e152-4e24-8327-d3f7522c3f79}; !- Layer 3
+
+OS:Material,
+  {bf0f9bdc-5c40-4ab2-aa43-487ab24870a9}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {82bddf36-d599-40ea-ba88-bbf19bfd57fb}, !- Handle
+  Concrete_8in,                           !- Name
+  Rough,                                  !- Roughness
+  0.2032,                                 !- Thickness {m}
+  1.3114056,                              !- Conductivity {W/m-K}
+  2242.79999999999,                       !- Density {kg/m3}
+  837.4;                                  !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {dbc7a4a4-e152-4e24-8327-d3f7522c3f79}, !- Handle
+  CWallIns,                               !- Name
+  Rough,                                  !- Roughness
+  0.06604,                                !- Thickness {m}
+  0.02885,                                !- Conductivity {W/m-K}
+  32.04,                                  !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+

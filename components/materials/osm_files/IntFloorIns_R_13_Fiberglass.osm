@@ -1,0 +1,14 @@
+
+OS:Version,
+  {348e63f8-a9aa-4307-912b-9319adab809e}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {b64ab104-77f0-4895-8d6a-b7a45c190c57}, !- Handle
+  IntFloorIns,                            !- Name
+  Rough,                                  !- Roughness
+  0.1397,                                 !- Thickness {m}
+  0.0668174663130742,                     !- Conductivity {W/m-K}
+  106.36479,                              !- Density {kg/m3}
+  1151.68513065742;                       !- Specific Heat {J/kg-K}
+

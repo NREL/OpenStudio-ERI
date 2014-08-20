@@ -1,0 +1,14 @@
+
+OS:Version,
+  {0f64bb07-16f9-4d6f-abb4-7f9cdedddb8d}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {4e90eebb-7761-4c4e-8c7d-83ae45b3a0c5}, !- Handle
+  UFBsmtCeilingIns,                       !- Name
+  Rough,                                  !- Roughness
+  0.23495,                                !- Thickness {m}
+  2.59817370406863,                       !- Conductivity {W/m-K}
+  106.36479,                              !- Density {kg/m3}
+  1151.68513065742;                       !- Specific Heat {J/kg-K}
+

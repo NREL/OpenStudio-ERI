@@ -1,0 +1,23 @@
+
+OS:Version,
+  {b7e55b40-fa9d-4016-b932-616ea8f8aa1f}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {bb7f42a0-f303-483d-8d3d-7a6735a8e881}, !- Handle
+  WoodFlooring,                           !- Name
+  Rough,                                  !- Roughness
+  0.01905,                                !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {89530f9d-1c81-4ca7-9f18-ab2fb8d94335}, !- Handle
+  Component Data 1,                       !- Name
+  {43aa9eec-efec-41a7-992f-357eb395d652}, !- UUID
+  {ed4359b5-fe70-43cc-b781-b94304cfd686}, !- Version UUID
+  1406054948,                             !- Creation Timestamp
+  1406054948,                             !- Version Timestamp
+  {bb7f42a0-f303-483d-8d3d-7a6735a8e881}; !- Name of Object 1
+

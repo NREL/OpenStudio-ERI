@@ -1,0 +1,15 @@
+
+Version,
+  8.0;                                    !- Version Identifier
+
+Material,
+  CWallIns,                               !- Name
+  Rough,                                  !- Roughness
+  0.09144,                                !- Thickness {m}
+  0.02885,                                !- Conductivity {W/m-K}
+  32.04,                                  !- Density {kg/m3}
+  1214.23,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
+

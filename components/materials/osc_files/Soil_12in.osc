@@ -1,0 +1,23 @@
+
+OS:Version,
+  {e84a378b-5f66-4a1c-823b-0cecad346bb3}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {4ed0ae55-c1ea-44f0-b41c-da58d383a1cd}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {0c864b28-3621-47c1-b65f-d0d30e0aa275}, !- Handle
+  Component Data 1,                       !- Name
+  {72bae3cf-9e02-4d21-83cd-d2eb51a2f97b}, !- UUID
+  {79a85783-1d68-4d52-867f-02e4afbb3739}, !- Version UUID
+  1406054948,                             !- Creation Timestamp
+  1406054948,                             !- Version Timestamp
+  {4ed0ae55-c1ea-44f0-b41c-da58d383a1cd}; !- Name of Object 1
+

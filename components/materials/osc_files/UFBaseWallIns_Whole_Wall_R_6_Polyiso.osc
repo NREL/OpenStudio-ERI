@@ -1,0 +1,23 @@
+
+OS:Version,
+  {74951136-0bbc-475f-bef0-61ec3a459e2e}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {ccb5bdba-0d7e-4487-805c-c99ad01e4df3}, !- Handle
+  UFBaseWallIns,                          !- Name
+  Rough,                                  !- Roughness
+  0.0310896,                              !- Thickness {m}
+  0.029427,                               !- Conductivity {W/m-K}
+  32.04,                                  !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {c680330f-090c-4e4e-b4e3-7927137c9d0a}, !- Handle
+  Component Data 1,                       !- Name
+  {803887e7-f641-409d-a7dd-5f8659588f94}, !- UUID
+  {a1daeefb-fbde-4dee-8bed-957766c10abb}, !- Version UUID
+  1406054953,                             !- Creation Timestamp
+  1406054953,                             !- Version Timestamp
+  {ccb5bdba-0d7e-4487-805c-c99ad01e4df3}; !- Name of Object 1
+

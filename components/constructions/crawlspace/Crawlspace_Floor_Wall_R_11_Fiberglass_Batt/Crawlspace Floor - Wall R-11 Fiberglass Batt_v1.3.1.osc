@@ -1,0 +1,38 @@
+
+OS:Version,
+  {2f5c5380-2fe6-4334-a668-12d2dbbd8f53}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {4bf284c2-cdb1-4b1f-987b-c8a3c66fcd8b}, !- Handle
+  GrndUninsUnfinCSFloor,                  !- Name
+  ,                                       !- Surface Rendering Name
+  {3a8fcfd9-bdbe-4725-ba3e-6a97dfb3fd6d}, !- Layer 1
+  {ced02273-2e0f-49d7-98b2-0dcb0d2bd225}; !- Layer 2
+
+OS:Material:NoMass,
+  {3a8fcfd9-bdbe-4725-ba3e-6a97dfb3fd6d}, !- Handle
+  CFloor_FicR_Wall_R_11_Fiberglass_Batt,  !- Name
+  Rough,                                  !- Roughness
+  5.08138058423134;                       !- Thermal Resistance {m2-K/W}
+
+OS:Material,
+  {ced02273-2e0f-49d7-98b2-0dcb0d2bd225}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {ecc7c457-6114-45f0-9eee-10f82f9b0153}, !- Handle
+  Component Data 1,                       !- Name
+  {b039268d-0315-4812-9add-28ef3e8a8dec}, !- UUID
+  {5e949a12-4085-4693-87b3-10466e09937b}, !- Version UUID
+  1406055558,                             !- Creation Timestamp
+  1406055558,                             !- Version Timestamp
+  {4bf284c2-cdb1-4b1f-987b-c8a3c66fcd8b}, !- Name of Object 1
+  {3a8fcfd9-bdbe-4725-ba3e-6a97dfb3fd6d}, !- Name of Object 2
+  {ced02273-2e0f-49d7-98b2-0dcb0d2bd225}; !- Name of Object 3
+

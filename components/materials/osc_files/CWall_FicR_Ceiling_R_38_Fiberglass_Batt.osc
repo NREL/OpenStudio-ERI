@@ -1,0 +1,20 @@
+
+OS:Version,
+  {bad8b063-512a-46bb-a438-66b52fa78ebc}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {a1f21828-b409-4209-9853-22713a3eaf9e}, !- Handle
+  CWall_FicR_Ceiling_R_38_Fiberglass_Batt, !- Name
+  Rough,                                  !- Roughness
+  0.0995182101488837;                     !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {e7cf551d-c954-4b1e-92fc-f9eae6dc8a93}, !- Handle
+  Component Data 1,                       !- Name
+  {b063e519-f5c1-460f-8c22-46cd6720dbd4}, !- UUID
+  {dc459a17-8774-4bd1-a821-83791de9a25b}, !- Version UUID
+  1406054952,                             !- Creation Timestamp
+  1406054952,                             !- Version Timestamp
+  {a1f21828-b409-4209-9853-22713a3eaf9e}; !- Name of Object 1
+

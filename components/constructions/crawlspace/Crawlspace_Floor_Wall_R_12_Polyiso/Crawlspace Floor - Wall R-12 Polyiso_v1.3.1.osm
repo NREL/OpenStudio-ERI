@@ -1,0 +1,27 @@
+
+OS:Version,
+  {1180c0af-1343-4483-90bc-94f1177bfdb8}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {56ba23e6-ccdb-4ebb-9cf9-f13b6cbb43ae}, !- Handle
+  GrndUninsUnfinCSFloor,                  !- Name
+  ,                                       !- Surface Rendering Name
+  {cad9898b-140e-463f-b5d4-e14744194eac}, !- Layer 1
+  {88303a75-ac94-4500-a30c-541019e63290}; !- Layer 2
+
+OS:Material,
+  {88303a75-ac94-4500-a30c-541019e63290}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:Material:NoMass,
+  {cad9898b-140e-463f-b5d4-e14744194eac}, !- Handle
+  CFloor_FicR_Wall_R_12_Polyiso,          !- Name
+  Rough,                                  !- Roughness
+  4.94793517616174;                       !- Thermal Resistance {m2-K/W}
+

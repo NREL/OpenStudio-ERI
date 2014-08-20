@@ -1,0 +1,22 @@
+
+OS:Version,
+  {9795858b-3805-499a-98e5-b4d49004b958}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:WindowMaterial:SimpleGlazingSystem,
+  {236346cf-bac9-4731-bb42-c6313e46506b}, !- Handle
+  Double-Pane Glass,                      !- Name
+  2.09528552369434,                       !- U-Factor {W/m2-K}
+  0.301029381116135;                      !- Solar Heat Gain Coefficient
+
+OS:Construction,
+  {6c4b817c-93d0-4bac-bd78-e8f771e19711}, !- Handle
+  Double-Pane Low-Gain Low-E Non-metal Frame Air Fill, !- Name
+  ,                                       !- Surface Rendering Name
+  {236346cf-bac9-4731-bb42-c6313e46506b}; !- Layer 1
+
+OS:StandardsInformation:Construction,
+  {d2493e56-4a66-445a-a9f7-0371932eb771}, !- Handle
+  {6c4b817c-93d0-4bac-bd78-e8f771e19711}, !- Construction Name
+  ExteriorWindow;                         !- Intended Surface Type
+

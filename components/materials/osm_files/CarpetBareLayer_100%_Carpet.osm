@@ -1,0 +1,14 @@
+
+OS:Version,
+  {0f823542-fa50-4e69-9c34-e3336cbf8000}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {537304dc-abd4-4b58-b0b9-a5058247b214}, !- Handle
+  CarpetBareLayer,                        !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.0346754807692308,                     !- Conductivity {W/m-K}
+  54.4679999999999,                       !- Density {kg/m3}
+  1339.84;                                !- Specific Heat {J/kg-K}
+

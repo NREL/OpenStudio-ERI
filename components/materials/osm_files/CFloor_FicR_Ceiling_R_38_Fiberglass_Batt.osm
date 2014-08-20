@@ -1,0 +1,11 @@
+
+OS:Version,
+  {26111bb5-292b-4df3-85c4-d5534298baa5}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {6ddb97fa-133a-4ca8-a052-8b19809f3dab}, !- Handle
+  CFloor_FicR_Ceiling_R_38_Fiberglass_Batt, !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+

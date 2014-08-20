@@ -1,0 +1,20 @@
+
+OS:Version,
+  {931a12d8-cb44-47ae-a8fa-ebc7a452bd10}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {20de77e1-ba2d-45c1-99aa-256d3bbad9ac}, !- Handle
+  FBaseWall_FicR_Uninsulated,             !- Name
+  Rough,                                  !- Roughness
+  0.327589046151161;                      !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {bf852343-a933-4472-a049-6d7080437fba}, !- Handle
+  Component Data 1,                       !- Name
+  {699ca722-bdc2-46f9-87d9-5ab603e52ca2}, !- UUID
+  {ab202011-74fb-48d6-b9eb-83ddd75ab7c3}, !- Version UUID
+  1406054951,                             !- Creation Timestamp
+  1406054951,                             !- Version Timestamp
+  {20de77e1-ba2d-45c1-99aa-256d3bbad9ac}; !- Name of Object 1
+

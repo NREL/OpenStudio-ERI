@@ -1,0 +1,20 @@
+
+OS:Version,
+  {ab17f3d0-cd14-4ce5-bbe4-51e445ae51c6}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {bc355155-7390-4890-987d-3c219b5ade45}, !- Handle
+  CFloor_FicR_Ceiling_R_19_Closed_Cell_Spray_Foam, !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {ea6a0b27-8990-4acc-ba76-f35955a678c3}, !- Handle
+  Component Data 1,                       !- Name
+  {a1f42b69-ad4e-4ffe-b2af-f64498f89402}, !- UUID
+  {aca843db-c99b-49d3-ab30-ca270c2ed2e4}, !- Version UUID
+  1406054952,                             !- Creation Timestamp
+  1406054952,                             !- Version Timestamp
+  {bc355155-7390-4890-987d-3c219b5ade45}; !- Name of Object 1
+

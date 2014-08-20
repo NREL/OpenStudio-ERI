@@ -1,0 +1,88 @@
+
+OS:Version,
+  {112d0a79-5d23-4bad-99b9-3f22b0829325}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {b383967b-4591-4f26-9384-6fb8d6212e09}, !- Handle
+  ExtInsFinWall,                          !- Name
+  ,                                       !- Surface Rendering Name
+  {b5476a7b-14c3-4b05-8ea8-126072a634d7}, !- Layer 1
+  {60b17b54-87e3-4038-b0b7-40b93a1dea10}, !- Layer 2
+  {90ed8cc6-08ed-4df4-a461-83283d30a298}, !- Layer 3
+  {1250bba2-700f-4b88-8c04-94e0b9590026}, !- Layer 4
+  {dbc09c2f-62a2-4e54-9dc3-899d958106cc}, !- Layer 5
+  {8779e623-d5e2-408a-99d1-94183742882f}; !- Layer 6
+
+OS:Material,
+  {b5476a7b-14c3-4b05-8ea8-126072a634d7}, !- Handle
+  Exterior_Finish_Vinyl_Light,            !- Name
+  Rough,                                  !- Roughness
+  0.009525,                               !- Thickness {m}
+  0.089435,                               !- Conductivity {W/m-K}
+  177.822,                                !- Density {kg/m3}
+  1046.75,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.3,                                    !- Solar Absorptance
+  0.3;                                    !- Visible Absorptance
+
+OS:Material,
+  {60b17b54-87e3-4038-b0b7-40b93a1dea10}, !- Handle
+  SplineLayer,                            !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.0304648617446528,                     !- Conductivity {W/m-K}
+  147.0636,                               !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {90ed8cc6-08ed-4df4-a461-83283d30a298}, !- Handle
+  WallIns,                                !- Name
+  Rough,                                  !- Roughness
+  0.212725,                               !- Thickness {m}
+  0.0420404143578947,                     !- Conductivity {W/m-K}
+  107.0136,                               !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {1250bba2-700f-4b88-8c04-94e0b9590026}, !- Handle
+  SplineLayer 1,                          !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.0304648617446528,                     !- Conductivity {W/m-K}
+  147.0636,                               !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {dbc09c2f-62a2-4e54-9dc3-899d958106cc}, !- Handle
+  IntSheathing,                           !- Name
+  Rough,                                  !- Roughness
+  0.011176,                               !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {8779e623-d5e2-408a-99d1-94183742882f}, !- Handle
+  GypsumBoard_1_2in,                      !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.1602906,                              !- Conductivity {W/m-K}
+  801,                                    !- Density {kg/m3}
+  837.4;                                  !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {67c3e17d-99b9-4d15-8906-448976c47e9b}, !- Handle
+  Component Data 1,                       !- Name
+  {1658af3d-422e-4318-b458-cd58ef35f159}, !- UUID
+  {304e26ea-ac8a-4926-8af2-54ea48b80845}, !- Version UUID
+  1406055554,                             !- Creation Timestamp
+  1406055554,                             !- Version Timestamp
+  {b383967b-4591-4f26-9384-6fb8d6212e09}, !- Name of Object 1
+  {b5476a7b-14c3-4b05-8ea8-126072a634d7}, !- Name of Object 2
+  {60b17b54-87e3-4038-b0b7-40b93a1dea10}, !- Name of Object 3
+  {90ed8cc6-08ed-4df4-a461-83283d30a298}, !- Name of Object 4
+  {1250bba2-700f-4b88-8c04-94e0b9590026}, !- Name of Object 5
+  {dbc09c2f-62a2-4e54-9dc3-899d958106cc}, !- Name of Object 6
+  {8779e623-d5e2-408a-99d1-94183742882f}; !- Name of Object 7
+

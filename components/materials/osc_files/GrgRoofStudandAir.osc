@@ -1,0 +1,23 @@
+
+OS:Version,
+  {7d2c51f8-0aa7-404f-a887-67ffe6555995}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {6597bc49-90ba-4da2-9177-6f6996b1a0b7}, !- Handle
+  GrgRoofStudandAir,                      !- Name
+  Rough,                                  !- Roughness
+  0.0889,                                 !- Thickness {m}
+  3.2214781383103,                        !- Conductivity {W/m-K}
+  57.4503560478975,                       !- Density {kg/m3}
+  1210.36750350924;                       !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {ad76534e-f26e-4da0-adae-9a126bfa5b09}, !- Handle
+  Component Data 1,                       !- Name
+  {c1959b6a-7603-4597-84e4-b167b24e0b1d}, !- UUID
+  {11f9b42c-26fc-47aa-92b2-578a43f76e76}, !- Version UUID
+  1406054948,                             !- Creation Timestamp
+  1406054948,                             !- Version Timestamp
+  {6597bc49-90ba-4da2-9177-6f6996b1a0b7}; !- Name of Object 1
+

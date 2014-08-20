@@ -1,0 +1,23 @@
+
+OS:Version,
+  {1a119b39-e805-408d-8a03-28c7999414c1}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {1765b4cd-a039-479b-b279-c44bc02780b5}, !- Handle
+  Mat-Fic-Slab,                           !- Name
+  Rough,                                  !- Roughness
+  0.0254,                                 !- Thickness {m}
+  0.0066922314981722,                     !- Conductivity {W/m-K}
+  40.05,                                  !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {1e24521d-7343-4d2a-b8e7-638fd4288fa7}, !- Handle
+  Component Data 1,                       !- Name
+  {a457ab1a-8353-479e-944a-ce5c7f72ef4c}, !- UUID
+  {90a23248-cbaf-4633-b9df-ca41b6b6f87f}, !- Version UUID
+  1406054953,                             !- Creation Timestamp
+  1406054953,                             !- Version Timestamp
+  {1765b4cd-a039-479b-b279-c44bc02780b5}; !- Name of Object 1
+

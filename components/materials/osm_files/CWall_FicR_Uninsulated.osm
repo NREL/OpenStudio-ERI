@@ -1,0 +1,11 @@
+
+OS:Version,
+  {4899cb3f-6aef-49a6-8540-9684a1219e12}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {2c85df55-b351-42d1-af0e-8c8dee1973b7}, !- Handle
+  CWall_FicR_Uninsulated,                 !- Name
+  Rough,                                  !- Roughness
+  0.0995182101488837;                     !- Thermal Resistance {m2-K/W}
+

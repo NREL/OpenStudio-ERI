@@ -1,0 +1,45 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 32', attached to Space 'attic_above garage' of Space Type 'attic' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 18', attached to Space 'first floor garage' of Space Type 'garage' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 19', attached to Space 'first floor garage' of Space Type 'garage' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 21', attached to Space 'first floor garage' of Space Type 'garage' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 14', attached to Space 'attic_above second floor living' of Space Type 'attic' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 15', attached to Space 'attic_above second floor living' of Space Type 'attic' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{fb776963-81c4-4662-bd34-b26e1963b688}</UUID>
+      <VersionUUID>{a0c22fcc-b41c-4195-b08f-5c25dddee29d}</VersionUUID>
+      <Name>selectedattic</Name>
+      <ValueType>String</ValueType>
+      <Value>{b4026b46-7720-4070-9652-2fc19b12d0e7}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{fbb91d89-ef1e-4571-b9ef-f4908ae2e0e1}</UUID>
+      <VersionUUID>{a2a5662a-324d-4b13-86b9-30ba3bb12bea}</VersionUUID>
+      <Name>selectedgarage</Name>
+      <ValueType>String</ValueType>
+      <Value>{eab99f83-1de2-4018-977e-9fa439e98977}</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

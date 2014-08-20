@@ -1,0 +1,14 @@
+
+OS:Version,
+  {7ac9caa0-a13e-4d2c-9920-8acab5f811bb}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {ee1f94ec-9bb1-4035-87f6-300e40f2f11f}, !- Handle
+  StudandCavity,                          !- Name
+  Rough,                                  !- Roughness
+  0.1397,                                 !- Thickness {m}
+  0.0597826838505769,                     !- Conductivity {W/m-K}
+  147.699589804884,                       !- Density {kg/m3}
+  1174.62950532575;                       !- Specific Heat {J/kg-K}
+

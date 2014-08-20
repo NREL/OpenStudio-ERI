@@ -1,0 +1,22 @@
+
+OS:Version,
+  {f3b67413-9dd0-4298-b90a-d41b5898bf98}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:WindowMaterial:SimpleGlazingSystem,
+  {db9fc5c1-37be-4af3-85a5-846fd0ab3180}, !- Handle
+  Triple-Pane Glass,                      !- Name
+  0.962683417102722,                      !- U-Factor {W/m2-K}
+  0.270721380248395;                      !- Solar Heat Gain Coefficient
+
+OS:Construction,
+  {bf3d2824-fded-48bb-ace9-3ed05d0d3377}, !- Handle
+  Triple-Pane Low-Gain Low-E Insulated Frame Argon Fill, !- Name
+  ,                                       !- Surface Rendering Name
+  {db9fc5c1-37be-4af3-85a5-846fd0ab3180}; !- Layer 1
+
+OS:StandardsInformation:Construction,
+  {e21ad18b-eaf8-4859-ae71-ed0aaae75ada}, !- Handle
+  {bf3d2824-fded-48bb-ace9-3ed05d0d3377}, !- Construction Name
+  ExteriorWindow;                         !- Intended Surface Type
+

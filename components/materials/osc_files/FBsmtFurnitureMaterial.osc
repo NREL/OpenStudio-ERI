@@ -1,0 +1,23 @@
+
+OS:Version,
+  {35ab72ea-efdf-46a9-ace3-2a05d39394dd}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {a1a76e1b-0582-4186-8e0f-66f5a00b6a4d}, !- Handle
+  FBsmtFurnitureMaterial,                 !- Name
+  Rough,                                  !- Roughness
+  0.1524,                                 !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  640.8,                                  !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {3c825062-87e8-4888-9b46-e0290ee78d55}, !- Handle
+  Component Data 1,                       !- Name
+  {17756116-ad0f-4a3c-851d-c112ee1f3854}, !- UUID
+  {7da3c55b-e9a9-401e-b874-dae70132c00e}, !- Version UUID
+  1406054951,                             !- Creation Timestamp
+  1406054951,                             !- Version Timestamp
+  {a1a76e1b-0582-4186-8e0f-66f5a00b6a4d}; !- Name of Object 1
+

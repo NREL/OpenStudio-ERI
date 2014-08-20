@@ -1,0 +1,20 @@
+
+OS:Version,
+  {401c904a-ebba-4f1e-95bc-949b3b7a6eb8}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {43381aea-cd54-4a07-a1b3-d2aa45e85e95}, !- Handle
+  CFloor_FicR_Wall_R_21_Fiberglass_Batt,  !- Name
+  Rough,                                  !- Roughness
+  4.50026955457134;                       !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {ff7f4b43-ad48-4937-ac1a-83daad2c49df}, !- Handle
+  Component Data 1,                       !- Name
+  {0b92e97e-cdf5-46e2-b88a-e381dcc0a18a}, !- UUID
+  {ba48650d-9d4b-44b2-8d6a-dfbde3efe2d6}, !- Version UUID
+  1406054952,                             !- Creation Timestamp
+  1406054952,                             !- Version Timestamp
+  {43381aea-cd54-4a07-a1b3-d2aa45e85e95}; !- Name of Object 1
+

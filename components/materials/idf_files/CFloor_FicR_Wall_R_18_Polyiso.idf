@@ -1,0 +1,12 @@
+
+Version,
+  8.0;                                    !- Version Identifier
+
+Material:NoMass,
+  CFloor_FicR_Wall_R_18_Polyiso,          !- Name
+  Rough,                                  !- Roughness
+  4.5675552826089,                        !- Thermal Resistance {m2-K/W}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
+

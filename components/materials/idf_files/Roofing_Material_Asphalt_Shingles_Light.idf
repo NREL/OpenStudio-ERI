@@ -1,0 +1,15 @@
+
+Version,
+  8.0;                                    !- Version Identifier
+
+Material,
+  Roofing_Material_Asphalt_Shingles_Light, !- Name
+  Rough,                                  !- Roughness
+  0.0094488,                              !- Thickness {m}
+  0.162714,                               !- Conductivity {W/m-K}
+  1121.39999999999,                       !- Density {kg/m3}
+  1465.44999999999,                       !- Specific Heat {J/kg-K}
+  0.91,                                   !- Thermal Absorptance
+  0.8,                                    !- Solar Absorptance
+  0.8;                                    !- Visible Absorptance
+

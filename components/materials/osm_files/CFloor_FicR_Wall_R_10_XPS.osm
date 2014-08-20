@@ -1,0 +1,11 @@
+
+OS:Version,
+  {1699ae02-1a5d-4fc6-b54c-9d3d07b9d581}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {41e86206-ba9d-43e8-b47e-c9faa7a9d6fc}, !- Handle
+  CFloor_FicR_Wall_R_10_XPS,              !- Name
+  Rough,                                  !- Roughness
+  5.25591965431866;                       !- Thermal Resistance {m2-K/W}
+

@@ -1,0 +1,66 @@
+
+OS:Version,
+  {cb82fbc3-c539-4a75-b22c-c079044d89c0}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {e7f93b95-d8af-4e7c-a948-59b087587587}, !- Handle
+  ExtInsFinWall,                          !- Name
+  ,                                       !- Surface Rendering Name
+  {ec9358a6-5312-4348-976e-30a7be49f0b5}, !- Layer 1
+  {fc68456a-e3fd-4188-a974-07d697ed799a}, !- Layer 2
+  {9b2cb2e3-6219-451a-b6d1-1f640f612d47}, !- Layer 3
+  {d9cb6b67-a52e-47a2-a053-95045b072f61}; !- Layer 4
+
+OS:Material,
+  {ec9358a6-5312-4348-976e-30a7be49f0b5}, !- Handle
+  Exterior_Finish_Vinyl_Light,            !- Name
+  Rough,                                  !- Roughness
+  0.009525,                               !- Thickness {m}
+  0.089435,                               !- Conductivity {W/m-K}
+  177.822,                                !- Density {kg/m3}
+  1046.75,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.3,                                    !- Solar Absorptance
+  0.3;                                    !- Visible Absorptance
+
+OS:Material,
+  {fc68456a-e3fd-4188-a974-07d697ed799a}, !- Handle
+  Plywood_1_2in,                          !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {9b2cb2e3-6219-451a-b6d1-1f640f612d47}, !- Handle
+  StudandCavity,                          !- Name
+  Rough,                                  !- Roughness
+  0.0889,                                 !- Thickness {m}
+  0.0396662015881187,                     !- Conductivity {W/m-K}
+  162.40275,                              !- Density {kg/m3}
+  1178.91670776818;                       !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {d9cb6b67-a52e-47a2-a053-95045b072f61}, !- Handle
+  GypsumBoard_1_2in,                      !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.1602906,                              !- Conductivity {W/m-K}
+  801,                                    !- Density {kg/m3}
+  837.4;                                  !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {0859e311-78c2-4ece-884c-13b314b7b637}, !- Handle
+  Component Data 1,                       !- Name
+  {95af00ce-ccdf-4620-9bf3-427046ba3e14}, !- UUID
+  {e100209c-56e5-44d5-a8c1-65bd3a64caee}, !- Version UUID
+  1406055549,                             !- Creation Timestamp
+  1406055549,                             !- Version Timestamp
+  {e7f93b95-d8af-4e7c-a948-59b087587587}, !- Name of Object 1
+  {ec9358a6-5312-4348-976e-30a7be49f0b5}, !- Name of Object 2
+  {fc68456a-e3fd-4188-a974-07d697ed799a}, !- Name of Object 3
+  {9b2cb2e3-6219-451a-b6d1-1f640f612d47}, !- Name of Object 4
+  {d9cb6b67-a52e-47a2-a053-95045b072f61}; !- Name of Object 5
+

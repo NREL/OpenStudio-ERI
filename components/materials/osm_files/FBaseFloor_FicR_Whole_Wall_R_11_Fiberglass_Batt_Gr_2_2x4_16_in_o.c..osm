@@ -1,0 +1,11 @@
+
+OS:Version,
+  {8d75820f-e3ff-47a0-baa5-71bded9a6996}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {0fbaff20-ac9a-4a4e-8b51-db84072a51f8}, !- Handle
+  FBaseFloor_FicR_Whole_Wall_R_11_Fiberglass_Batt_Gr_2_2x4_16_in_o.c., !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+

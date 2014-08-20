@@ -1,0 +1,11 @@
+
+OS:Version,
+  {1b3624e6-5f7a-4096-9603-a3f9aac7aa33}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {4325f12f-df8b-4d96-b692-0eff624d0072}, !- Handle
+  Adiabatic,                              !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+

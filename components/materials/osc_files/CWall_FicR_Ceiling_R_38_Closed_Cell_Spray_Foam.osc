@@ -1,0 +1,20 @@
+
+OS:Version,
+  {d4a0b6f5-0eba-4b05-97b2-f2201003600c}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {516e37ea-f839-4c17-adce-b140b5c06d02}, !- Handle
+  CWall_FicR_Ceiling_R_38_Closed_Cell_Spray_Foam, !- Name
+  Rough,                                  !- Roughness
+  0.0995182101488837;                     !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {b82596ae-fa0c-40a6-882a-dea383b29c83}, !- Handle
+  Component Data 1,                       !- Name
+  {82606355-06af-4b94-b286-d6194d7f2d22}, !- UUID
+  {205723e4-3de6-4faa-b696-7346b0872e13}, !- Version UUID
+  1406054953,                             !- Creation Timestamp
+  1406054953,                             !- Version Timestamp
+  {516e37ea-f839-4c17-adce-b140b5c06d02}; !- Name of Object 1
+

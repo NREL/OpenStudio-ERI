@@ -1,0 +1,22 @@
+
+OS:Version,
+  {8f726011-7aa6-4a71-9b34-958f8d2d8b20}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:WindowMaterial:SimpleGlazingSystem,
+  {eaa8e0c2-2eb3-450e-910d-fd239e8ce8fe}, !- Handle
+  Double-Pane Glass,                      !- Name
+  3.56831621807409,                       !- U-Factor {W/m2-K}
+  0.621473327456468;                      !- Solar Heat Gain Coefficient
+
+OS:Construction,
+  {ca89e5ff-0cf1-413c-b7e9-7cd2ac008901}, !- Handle
+  Double-Pane Clear Metal w Thermal Break Frame Air Fill, !- Name
+  ,                                       !- Surface Rendering Name
+  {eaa8e0c2-2eb3-450e-910d-fd239e8ce8fe}; !- Layer 1
+
+OS:StandardsInformation:Construction,
+  {eecdff65-27c1-47c1-84d2-923a1eec439d}, !- Handle
+  {ca89e5ff-0cf1-413c-b7e9-7cd2ac008901}, !- Construction Name
+  ExteriorWindow;                         !- Intended Surface Type
+

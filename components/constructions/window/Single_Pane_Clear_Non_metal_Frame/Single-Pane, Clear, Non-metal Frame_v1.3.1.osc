@@ -1,0 +1,33 @@
+
+OS:Version,
+  {0cffcabc-420e-4cfc-bb2a-0f0555da021a}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {955ab7fe-c0d6-43c4-b3ee-163d8e9d8724}, !- Handle
+  Single-Pane Clear Non-metal Frame,      !- Name
+  ,                                       !- Surface Rendering Name
+  {55aefb79-64e5-4297-bd4d-4132743e75a5}; !- Layer 1
+
+OS:WindowMaterial:SimpleGlazingSystem,
+  {55aefb79-64e5-4297-bd4d-4132743e75a5}, !- Handle
+  Single-Pane Glass,                      !- Name
+  4.79824139969225,                       !- U-Factor {W/m2-K}
+  0.632410258223146;                      !- Solar Heat Gain Coefficient
+
+OS:StandardsInformation:Construction,
+  {9b57258a-cfaa-421b-ac88-674bab89fa7b}, !- Handle
+  {955ab7fe-c0d6-43c4-b3ee-163d8e9d8724}, !- Construction Name
+  ExteriorWindow;                         !- Intended Surface Type
+
+OS:ComponentData,
+  {1bf5ef67-75c3-4f83-853e-8a50db020dcb}, !- Handle
+  Component Data 1,                       !- Name
+  {ebad152c-5f5e-4c31-9b3d-a161962c1ec5}, !- UUID
+  {d918cc9d-c623-4f02-b29a-0fa92cd59518}, !- Version UUID
+  1406055301,                             !- Creation Timestamp
+  1406055301,                             !- Version Timestamp
+  {955ab7fe-c0d6-43c4-b3ee-163d8e9d8724}, !- Name of Object 1
+  {55aefb79-64e5-4297-bd4d-4132743e75a5}, !- Name of Object 2
+  {9b57258a-cfaa-421b-ac88-674bab89fa7b}; !- Name of Object 3
+

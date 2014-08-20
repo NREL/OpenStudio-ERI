@@ -1,0 +1,11 @@
+
+OS:Version,
+  {37d2e17d-a19b-439c-8959-a2acd292a58a}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {0d9ad0e4-5509-498f-893b-b6bf7c71b8e3}, !- Handle
+  UFBaseWall_FicR_Ceiling_R_13_Fiberglass_Batt, !- Name
+  Rough,                                  !- Roughness
+  0.511257279809397;                      !- Thermal Resistance {m2-K/W}
+

@@ -1,0 +1,25 @@
+
+OS:Version,
+  {01ff239a-68a7-441e-8c36-b9fea6640134}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:ElectricEquipment:Definition,
+  {b36ecaa1-7d1a-4bcd-837e-ac33bf1e411a}, !- Handle
+  25 cu ft. EF = 20.6 side freezer,       !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  82.036052280541,                        !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ,                                       !- Watts per Person {W/person}
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0;                                      !- Fraction Lost
+
+OS:ComponentData,
+  {97653f3c-faaa-46ba-b05c-3cdd7da90206}, !- Handle
+  Component Data 1,                       !- Name
+  {fdfae9ac-6fec-419f-acb7-531e1b4d6f2e}, !- UUID
+  {f40f9bdc-2fa1-4fdc-bf45-975a355ea026}, !- Version UUID
+  1407864175,                             !- Creation Timestamp
+  1407864175,                             !- Version Timestamp
+  {b36ecaa1-7d1a-4bcd-837e-ac33bf1e411a}; !- Name of Object 1
+

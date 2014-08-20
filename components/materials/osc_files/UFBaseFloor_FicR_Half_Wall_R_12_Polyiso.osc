@@ -1,0 +1,20 @@
+
+OS:Version,
+  {5d80f35f-e14d-4496-90a8-a3fe959eda86}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {71a11421-a869-497b-8e1f-2b96acad8c39}, !- Handle
+  UFBaseFloor_FicR_Half_Wall_R_12_Polyiso, !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {9a5b2e94-53f4-4a46-bbe0-861fd1b4a58a}, !- Handle
+  Component Data 1,                       !- Name
+  {5c0a2dfa-6805-4113-845a-ca70deb52516}, !- UUID
+  {45905102-8134-435a-9bfc-989304bb586a}, !- Version UUID
+  1406054953,                             !- Creation Timestamp
+  1406054953,                             !- Version Timestamp
+  {71a11421-a869-497b-8e1f-2b96acad8c39}; !- Name of Object 1
+

@@ -1,0 +1,27 @@
+
+OS:Version,
+  {310ee735-9bdb-4807-b84a-6ce8ed54f09a}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {6e22abb5-3c72-4afe-b58c-3975850959ae}, !- Handle
+  GrndUninsUnfinCSFloor,                  !- Name
+  ,                                       !- Surface Rendering Name
+  {c870129d-3a85-414c-92c9-a324e090e070}, !- Layer 1
+  {621dca99-7330-4618-8b6c-e9137e4ca945}; !- Layer 2
+
+OS:Material,
+  {621dca99-7330-4618-8b6c-e9137e4ca945}, !- Handle
+  Soil_12in,                              !- Name
+  Rough,                                  !- Roughness
+  0.3048,                                 !- Thickness {m}
+  1.731,                                  !- Conductivity {W/m-K}
+  1842.3,                                 !- Density {kg/m3}
+  418.7;                                  !- Specific Heat {J/kg-K}
+
+OS:Material:NoMass,
+  {c870129d-3a85-414c-92c9-a324e090e070}, !- Handle
+  CFloor_FicR_Ceiling_R_13_Closed_Cell_Spray_Foam, !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+

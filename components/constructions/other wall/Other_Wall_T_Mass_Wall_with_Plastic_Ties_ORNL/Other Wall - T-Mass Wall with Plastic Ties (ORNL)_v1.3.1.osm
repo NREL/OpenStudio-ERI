@@ -1,0 +1,63 @@
+
+OS:Version,
+  {9454d1b7-bc5b-40c2-a4d3-6af12147587c}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {9fcb6b57-a6eb-4616-8506-c082d6b0a4f7}, !- Handle
+  ExtInsFinWall,                          !- Name
+  ,                                       !- Surface Rendering Name
+  {7f9125e9-b0c0-4bf9-9c47-3c871faef2d5}, !- Layer 1
+  {51cc4882-a9a4-498c-ba4f-8f3663f6a149}, !- Layer 2
+  {8b569146-cfb5-47b8-bd48-329db1a45ca8}, !- Layer 3
+  {4d919e67-48fb-43c9-8de5-5bf8c812f1dd}, !- Layer 4
+  {19013555-a801-4389-8fd7-d92e0bb54f31}; !- Layer 5
+
+OS:Material,
+  {7f9125e9-b0c0-4bf9-9c47-3c871faef2d5}, !- Handle
+  Exterior_Finish_Vinyl_Light,            !- Name
+  Rough,                                  !- Roughness
+  0.009525,                               !- Thickness {m}
+  0.089435,                               !- Conductivity {W/m-K}
+  177.822,                                !- Density {kg/m3}
+  1046.75,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.3,                                    !- Solar Absorptance
+  0.3;                                    !- Visible Absorptance
+
+OS:Material,
+  {19013555-a801-4389-8fd7-d92e0bb54f31}, !- Handle
+  GypsumBoard_1_2in,                      !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.1602906,                              !- Conductivity {W/m-K}
+  801,                                    !- Density {kg/m3}
+  837.4;                                  !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {51cc4882-a9a4-498c-ba4f-8f3663f6a149}, !- Handle
+  Layer1,                                 !- Name
+  Rough,                                  !- Roughness
+  0.06985,                                !- Thickness {m}
+  1.20116975,                             !- Conductivity {W/m-K}
+  2242.79999999999,                       !- Density {kg/m3}
+  900.205;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {8b569146-cfb5-47b8-bd48-329db1a45ca8}, !- Handle
+  Layer2,                                 !- Name
+  Rough,                                  !- Roughness
+  0.0635,                                 !- Thickness {m}
+  0.03620675,                             !- Conductivity {W/m-K}
+  43.254,                                 !- Density {kg/m3}
+  1172.36;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {4d919e67-48fb-43c9-8de5-5bf8c812f1dd}, !- Handle
+  Layer3,                                 !- Name
+  Rough,                                  !- Roughness
+  0.06985,                                !- Thickness {m}
+  1.36085449999999,                       !- Conductivity {W/m-K}
+  2156.1318,                              !- Density {kg/m3}
+  1046.75;                                !- Specific Heat {J/kg-K}
+

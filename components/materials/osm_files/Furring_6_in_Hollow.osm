@@ -1,0 +1,14 @@
+
+OS:Version,
+  {ac06ba7e-1ea8-446b-9c42-f86c87c6f83d}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {e5caebc4-4593-4f75-bd9a-d96cd5df3768}, !- Handle
+  Furring,                                !- Name
+  Rough,                                  !- Roughness
+  0.0254,                                 !- Thickness {m}
+  0.14026226645,                          !- Conductivity {W/m-K}
+  110.3341455,                            !- Density {kg/m3}
+  1154.52431712832;                       !- Specific Heat {J/kg-K}
+

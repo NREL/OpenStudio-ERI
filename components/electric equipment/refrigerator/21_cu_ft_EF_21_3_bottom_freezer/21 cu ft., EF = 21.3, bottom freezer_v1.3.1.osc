@@ -1,0 +1,25 @@
+
+OS:Version,
+  {4e4a57b0-7d62-4d53-8dda-2f2fd18945dc}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:ElectricEquipment:Definition,
+  {20bf7a06-68c6-40a1-b903-df1078b45bde}, !- Handle
+  21 cu ft. EF = 21.3 bottom freezer,     !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  64.0391121093072,                       !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ,                                       !- Watts per Person {W/person}
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0;                                      !- Fraction Lost
+
+OS:ComponentData,
+  {38d3c71c-fa9d-4224-8579-d15cdc02fab4}, !- Handle
+  Component Data 1,                       !- Name
+  {6a0e2c6c-9b71-43b5-a9c0-9f3c651ea5f1}, !- UUID
+  {06197ff9-1409-4172-9702-9b218e82287c}, !- Version UUID
+  1407864177,                             !- Creation Timestamp
+  1407864177,                             !- Version Timestamp
+  {20bf7a06-68c6-40a1-b903-df1078b45bde}; !- Name of Object 1
+

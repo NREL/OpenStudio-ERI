@@ -1,0 +1,14 @@
+
+OS:Version,
+  {1b756296-3afb-4f15-b523-5f2828d3f114}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {63f51b7d-3dfc-4bfd-8ec4-cfe5c9a7c009}, !- Handle
+  IntSheathing,                           !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.1602906,                              !- Conductivity {W/m-K}
+  801,                                    !- Density {kg/m3}
+  837.4;                                  !- Specific Heat {J/kg-K}
+

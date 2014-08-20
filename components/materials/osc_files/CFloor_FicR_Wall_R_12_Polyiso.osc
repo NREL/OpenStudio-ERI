@@ -1,0 +1,20 @@
+
+OS:Version,
+  {d9911182-5d08-4c47-b74b-d2da207257ae}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {5b958459-4d83-4864-8839-b53b3ff89412}, !- Handle
+  CFloor_FicR_Wall_R_12_Polyiso,          !- Name
+  Rough,                                  !- Roughness
+  4.94793517616174;                       !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {06cce051-29d8-4b76-979f-9e61922590ec}, !- Handle
+  Component Data 1,                       !- Name
+  {6586ca6e-454e-4c55-9220-d7508ffc3654}, !- UUID
+  {7ed2311a-3a37-4973-820a-ebc32f1889b9}, !- Version UUID
+  1406054952,                             !- Creation Timestamp
+  1406054952,                             !- Version Timestamp
+  {5b958459-4d83-4864-8839-b53b3ff89412}; !- Name of Object 1
+

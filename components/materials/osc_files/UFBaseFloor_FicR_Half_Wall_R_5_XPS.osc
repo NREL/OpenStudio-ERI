@@ -1,0 +1,20 @@
+
+OS:Version,
+  {d7288b20-75fb-4fa7-896b-3bfae3563f63}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {a54422d6-146d-4aad-812e-15da6cef1b9a}, !- Handle
+  UFBaseFloor_FicR_Half_Wall_R_5_XPS,     !- Name
+  Rough,                                  !- Roughness
+  176.1;                                  !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {31b96bb9-6ec6-4797-af5f-ec93fb00e50d}, !- Handle
+  Component Data 1,                       !- Name
+  {16733de2-e960-4099-9bb4-2d6eff28fc83}, !- UUID
+  {7cac973f-8468-4d01-9a76-3eacaa6850b9}, !- Version UUID
+  1406054953,                             !- Creation Timestamp
+  1406054953,                             !- Version Timestamp
+  {a54422d6-146d-4aad-812e-15da6cef1b9a}; !- Name of Object 1
+

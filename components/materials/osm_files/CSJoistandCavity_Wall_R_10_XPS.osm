@@ -1,0 +1,14 @@
+
+OS:Version,
+  {0c170412-e68e-4355-abbd-ae807c9d93c6}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material,
+  {da1f6e23-100e-45a5-a6c6-7403e9b50687}, !- Handle
+  CSJoistandCavity,                       !- Name
+  Rough,                                  !- Roughness
+  0.23495,                                !- Thickness {m}
+  0.119955868932051,                      !- Conductivity {W/m-K}
+  108.738954,                             !- Density {kg/m3}
+  1149.39401785582;                       !- Specific Heat {J/kg-K}
+

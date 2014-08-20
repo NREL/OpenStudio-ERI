@@ -1,0 +1,55 @@
+
+OS:Version,
+  {362e05ca-c4cb-4860-9ae7-fac8cbee898c}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Construction,
+  {0da2f6ec-6ce1-4d07-be7f-62c694752b79}, !- Handle
+  UnfinUninsExtGrgRoof,                   !- Name
+  ,                                       !- Surface Rendering Name
+  {d48e243b-2135-4f9a-a26f-554d8b14975a}, !- Layer 1
+  {10b37518-a902-41bf-a5d9-89ae0d65c467}, !- Layer 2
+  {2e194fce-cc72-4ea6-aea8-844b51238ea2}; !- Layer 3
+
+OS:Material,
+  {d48e243b-2135-4f9a-a26f-554d8b14975a}, !- Handle
+  Roofing_Material_Asphalt_Shingles_Medium, !- Name
+  Rough,                                  !- Roughness
+  0.0094488,                              !- Thickness {m}
+  0.162714,                               !- Conductivity {W/m-K}
+  1121.39999999999,                       !- Density {kg/m3}
+  1465.44999999999,                       !- Specific Heat {J/kg-K}
+  0.91,                                   !- Thermal Absorptance
+  0.85,                                   !- Solar Absorptance
+  0.85;                                   !- Visible Absorptance
+
+OS:Material,
+  {10b37518-a902-41bf-a5d9-89ae0d65c467}, !- Handle
+  Plywood_3_4in,                          !- Name
+  Rough,                                  !- Roughness
+  0.01905,                                !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23;                                !- Specific Heat {J/kg-K}
+
+OS:Material,
+  {2e194fce-cc72-4ea6-aea8-844b51238ea2}, !- Handle
+  GrgRoofStudandAir,                      !- Name
+  Rough,                                  !- Roughness
+  0.0889,                                 !- Thickness {m}
+  3.2214781383103,                        !- Conductivity {W/m-K}
+  57.4503560478975,                       !- Density {kg/m3}
+  1210.36750350924;                       !- Specific Heat {J/kg-K}
+
+OS:ComponentData,
+  {1dbe5ca0-f042-46ec-ad8a-9a2f759ca554}, !- Handle
+  Component Data 1,                       !- Name
+  {b82da226-6779-4b77-9f35-8e5e8e3facc7}, !- UUID
+  {9a01f023-2153-44dd-a927-2e8070a9eb0b}, !- Version UUID
+  1406055561,                             !- Creation Timestamp
+  1406055561,                             !- Version Timestamp
+  {0da2f6ec-6ce1-4d07-be7f-62c694752b79}, !- Name of Object 1
+  {d48e243b-2135-4f9a-a26f-554d8b14975a}, !- Name of Object 2
+  {10b37518-a902-41bf-a5d9-89ae0d65c467}, !- Name of Object 3
+  {2e194fce-cc72-4ea6-aea8-844b51238ea2}; !- Name of Object 4
+

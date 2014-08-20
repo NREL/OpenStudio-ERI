@@ -1,0 +1,41 @@
+<measure>
+  <name>Process Constructions Insulated Roof</name>
+  <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
+  <version_id>2564bc2d-a0b4-4dae-9663-df97cee13580</version_id>
+  <description>This measure creates finished constructions for the roof of the living space.</description>
+  <modeler_description>Calculates material layer properties of finished constructions for the roof of the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Opaque</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ProcessConstructionsInsulatedRoof_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CBF582D5</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B994E18D</checksum>
+    </file>
+  </files>
+</measure>

@@ -1,0 +1,20 @@
+
+OS:Version,
+  {2313ed35-a0b2-4d59-bb95-77067041bdfb}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {58e927e6-7b71-4330-9961-e23313fb5792}, !- Handle
+  FBaseWall_FicR_Whole_Wall_R_19_Fiberglass_Batt_Gr_2_2x6_24_in_o.c., !- Name
+  Rough,                                  !- Roughness
+  1.63552626406453;                       !- Thermal Resistance {m2-K/W}
+
+OS:ComponentData,
+  {4e41ac62-01c9-46d7-ac5f-b6e7ad4dcb0b}, !- Handle
+  Component Data 1,                       !- Name
+  {e6c1a468-e7da-40dd-9937-1e3deb7b5dcf}, !- UUID
+  {d7f2a219-8103-4a7f-8e02-139c8d6e1e9e}, !- Version UUID
+  1406054951,                             !- Creation Timestamp
+  1406054951,                             !- Version Timestamp
+  {58e927e6-7b71-4330-9961-e23313fb5792}; !- Name of Object 1
+

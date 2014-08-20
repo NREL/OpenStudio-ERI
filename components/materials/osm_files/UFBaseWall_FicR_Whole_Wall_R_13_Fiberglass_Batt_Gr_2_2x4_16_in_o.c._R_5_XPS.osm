@@ -1,0 +1,11 @@
+
+OS:Version,
+  {beaeb23f-c5ca-49b3-81a5-35b5c0d259b7}, !- Handle
+  1.3.1;                                  !- Version Identifier
+
+OS:Material:NoMass,
+  {4e121415-89bc-4a91-94d8-ee3a4107de2e}, !- Handle
+  UFBaseWall_FicR_Whole_Wall_R_13_Fiberglass_Batt_Gr_2_2x4_16_in_o.c._R_5_XPS, !- Name
+  Rough,                                  !- Roughness
+  0.97756870171938;                       !- Thermal Resistance {m2-K/W}
+
