@@ -143,7 +143,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
       spacetype_display_names << key
     end
 
-    #make a choice argument for crawlspace
+    #make a choice argument for living space
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
     selected_living.setDisplayName("Of what space type is the living space?")
     args << selected_living

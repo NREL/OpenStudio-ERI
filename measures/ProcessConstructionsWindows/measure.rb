@@ -136,36 +136,6 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     # Process the windows
     window_shade_cooling_season, window_shade_multiplier = sim._processInteriorShadingSchedule(ish)
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      surfaces = space.surfaces
-      surfaces.each do |surface|
-        subSurfaces = surface.subSurfaces
-        subSurfaces.each do |subSurface|
-          if subSurface.subSurfaceType.include? "Window"
-            name = subSurface.name
-            glazingName = "#{name}-Win"
-            constName = "#{name}-Glass"
-            sg = OpenStudio::Model::SimpleGlazing.new(model)
-            sg.setName(glazingName)
-            sg.setUFactor(ufactor)
-            sg.setSolarHeatGainCoefficient(shgc * intshadeheatingmult)
-            c = OpenStudio::Model::Construction.new(model)
-            c.setName(constName)
-            c.insertLayer(0,sg)
-            subSurface.resetConstruction
-            subSurface.setConstruction(c)
-            constructions_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,constName]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Sub Surface '#{key}' of Sub Surface Type '#{value[0]}', attached to Surface '#{value[1]}' which is attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}', was assigned Construction '#{value[2]}'")
-      end
-    end
-
     # Shades
 
     # EnergyPlus doesn't like shades that absorb no heat, transmit no heat or reflect no heat.
@@ -280,6 +250,42 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     winDesSch.setName("WindowShadesWinter")
     ish_ruleset.setSummerDesignDaySchedule(sumDesSch)
     ish_ruleset.setWinterDesignDaySchedule(winDesSch)
+
+    # loop thru all the spaces
+    spaces = model.getSpaces
+    spaces.each do |space|
+      constructions_hash = {}
+      shadingcontrol_hash = {}
+      surfaces = space.surfaces
+      surfaces.each do |surface|
+        subSurfaces = surface.subSurfaces
+        subSurfaces.each do |subSurface|
+          if subSurface.subSurfaceType.include? "Window"
+            name = subSurface.name
+            glazingName = "#{name}-Win"
+            constName = "#{name}-Glass"
+            sg = OpenStudio::Model::SimpleGlazing.new(model)
+            sg.setName(glazingName)
+            sg.setUFactor(ufactor)
+            sg.setSolarHeatGainCoefficient(shgc * intshadeheatingmult)
+            c = OpenStudio::Model::Construction.new(model)
+            c.setName(constName)
+            c.insertLayer(0,sg)
+            subSurface.resetConstruction
+            subSurface.setConstruction(c)
+            subSurface.setShadingControl(sc)
+            constructions_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,constName]
+            shadingcontrol_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,sc.name]
+          end
+        end
+      end
+      constructions_hash.map do |key,value|
+        runner.registerInfo("Sub Surface '#{key}' of Sub Surface Type '#{value[0]}', attached to Surface '#{value[1]}' which is attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}', was assigned Construction '#{value[2]}'")
+      end
+      shadingcontrol_hash.map do |key,value|
+        runner.registerInfo("Sub Surface '#{key}' of Sub Surface Type '#{value[0]}', attached to Surface '#{value[1]}' which is attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}', was assigned Shading Control '#{value[2]}'")
+      end
+    end
 
     # TODO: Need to add schedule types (Fractional for WindowShadingSchedule and Multiplier for WindowShades)
 

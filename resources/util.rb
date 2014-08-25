@@ -78,6 +78,8 @@ class Constants
     @materialPartitionWallMass = "PartitionWallMass"
     @monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     @scheduleTypeFraction = "FRACTION"
+    @furnTypeLight = "LIGHT"
+    @furnTypeHeavy = "HEAVY"
   end
 
   def DefaultSolarAbsCeiling
@@ -230,5 +232,13 @@ class Constants
 
   def ScheduleTypeFraction
     return @scheduleTypeFraction
+  end
+
+  def FurnTypeLight
+    return @furnTypeLight
+  end
+
+  def FurnTypeHeavy
+    return @furnTypeHeavy
   end
 end

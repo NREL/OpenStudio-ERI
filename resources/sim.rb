@@ -1,6 +1,44 @@
 
 require "#{File.dirname(__FILE__)}/util"
 
+class Furniture
+  def initialize(type=nil, density=nil, conductivity=nil, spec_heat=nil, area_frac=nil, total_mass=nil, solar_abs=nil)
+    @type = type
+    @density = density
+    @conductivity = conductivity
+    @spec_heat = spec_heat
+    @area_frac = area_frac
+    @total_mass = total_mass
+    @solar_abs = solar_abs
+  end
+
+  def area_frac
+    return @area_frac
+  end
+
+  def total_mass
+    return @total_mass
+  end
+
+  def density
+    return @density
+  end
+
+  def conductivity
+    return @conductivity
+  end
+
+  def spec_heat
+    return @spec_heat
+  end
+
+  def solar_abs
+    return @solar_abs
+  end
+
+  attr_accessor(:thickness)
+end
+
 class Construction
 
 	def initialize(path_widths, name=nil, type=nil)
@@ -1590,6 +1628,94 @@ class Sim
 		
 		return wallsh
 		
+  end
+
+  def _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass)
+
+    # Handle Exception for user entry of zero (avoids EPlus complaining about zero value)
+    if partitionWallMassFractionOfFloorArea <= 0.0
+      partitionWallMassFractionOfFloorArea = 0.0001 # Set approximately to zero
+    end
+
+    # Calculate the total partition wall mass areas for conditioned spaces
+    partition_wall_mass.living_space_area = partitionWallMassFractionOfFloorArea * 1200 # ft^2 # TODO: replace the 1200 with living space area
+    partition_wall_mass.finished_basement_area = partitionWallMassFractionOfFloorArea * 1200 # ft^2 # TODO: replace the 1200 with finished basement area
+
+    return partition_wall_mass
+
+  end
+
+  def _processThermalMassFurniture(hasFinishedBasement, hasUnfinishedBasement, hasGarage)
+    constants = Constants.new
+
+    has_furniture = true
+    furnitureWeight = 8.0
+    furnitureAreaFraction = 0.4
+    furnitureDensity = 40.0
+    furnitureConductivity = 0.8004
+    furnitureSpecHeat = 0.29
+    furnitureSolarAbsorptance = 0.6
+
+    if furnitureDensity < 60.0
+      living_space_furn_type = constants.FurnTypeLight
+      finished_basement_furn_type = constants.FurnTypeLight
+    else
+      living_space_furn_type = constants.FurnTypeHeavy
+      finished_basement_furn_type = constants.FurnTypeHeavy
+    end
+
+    # Living Space Furniture
+    living_space_furn = Furniture.new(living_space_furn_type, furnitureDensity, furnitureConductivity, furnitureSpecHeat, furnitureAreaFraction, furnitureWeight, furnitureSolarAbsorptance)
+
+    if has_furniture
+      living_space_furn.thickness = living_space_furn.total_mass / (living_space_furn.density * living_space_furn.area_frac) # ft
+    else
+      living_space_furn.thickness = 0.00001 # ft. Set greater than EnergyPlus lower limit of zero.
+    end
+
+    # Finished Basement Furniture
+    if hasFinishedBasement
+
+      finished_basement_furn = Furniture.new(finished_basement_furn_type, furnitureDensity, furnitureConductivity, furnitureSpecHeat, furnitureAreaFraction, furnitureWeight, furnitureSolarAbsorptance)
+
+      if has_furniture
+        finished_basement_furn.thickness = finished_basement_furn.total_mass / (finished_basement_furn.density * finished_basement_furn.area_frac) # ft
+      else
+        finished_basement_furn.thickness = 0.00001 # ft, Set greater than the EnergyPlus lower limit of zero.
+      end
+
+    end
+
+    # Unfinished Basement Furniture with hard-coded variables
+    if hasUnfinishedBasement
+
+      furn_type_ubsmt = constants.FurnTypeLight
+      if furn_type_ubsmt == constants.FurnTypeLight
+        ubsmt_furn = Furniture.new(furn_type_ubsmt, 40.0, 0.0667, get_mat_wood.Cp, 0.4, 8.0, nil)
+      elsif furn_type_ubsmt == constants.FurnTypeHeavy
+        ubsmt_furn = Furniture.new(furn_type_ubsmt, 80.0, 0.0939, 0.35, 0.4, 8.0, nil)
+      end
+
+      ubsmt_furn.thickness = ubsmt_furn.total_mass / (ubsmt_furn.density * ubsmt_furn.area_frac)
+
+    end
+
+    # Garage Furniture with hard-coded variables
+    if hasGarage
+
+      furn_type_grg = constants.FurnTypeLight
+      if furn_type_grg == constants.FurnTypeLight
+        garage_furn = Furniture.new(furn_type_grg, 40.0, 0.0667, get_mat_wood.Cp, 0.1, 2.0, nil)
+      elsif furn_type_grg == constants.FurnTypeHeavy
+        garage_furn = Furniture.new(furn_type_grg, 80.0, 0.0939, 0.35, 0.1, 2.0, nil)
+      end
+
+      garage_furn.thickness = garage_furn.total_mass / (garage_furn.density * garage_furn.area_frac)
+
+    end
+
+    return living_space_furn, finished_basement_furn, ubsmt_furn, garage_furn, has_furniture
+
   end
 
   def _processFilmResistances
