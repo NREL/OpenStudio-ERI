@@ -1,17 +1,17 @@
 <measure>
-  <name>Process Constructions Interior Uninsulated Walls</name>
-  <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>85a4664a-38ff-40d4-a01f-db7c179914bb</version_id>
+  <name>Process Infiltration</name>
+  <uid>05207495-67eb-4ce6-8792-bc3b219510b8</uid>
+  <version_id>c3fa75a5-c05b-4000-8650-26f4eff58c8f</version_id>
   <description>Replace this text with an explanation of what the measure does in terms that can be understood by a general building professional audience (building owners, architects, engineers, contractors, etc.).  This description will be used to create reports aimed at convincing the owner and/or design team to implement the measure in the actual building design.  For this reason, the description may include details about how the measure would be implemented, along with explanations of qualitative benefits associated with the measure.  It is good practice to include citations in the measure if the description is taken from a known source or if specific benefits are listed.</description>
   <modeler_description>Replace this text with an explanation for the energy modeler specifically.  It should explain how the measure is modeled, including any requirements about how the baseline model must be set up, major assumptions, citations of references to applicable modeling resources, etc.  The energy modeler should be able to read this description and understand what changes the measure is making to the model and why these changes are being made.  Because the Modeler Description is written for an expert audience, using common abbreviations for brevity is good practice.</modeler_description>
   <provenances/>
   <tags>
-    <tag>Envelope.Opaque</tag>
+    <tag>Whole Building.Whole Building Schedules</tag>
   </tags>
   <attributes>
     <attribute>
       <name>Measure Type</name>
-      <value>ModelMeasure</value>
+      <value>EnergyPlusMeasure</value>
       <datatype>string</datatype>
     </attribute>
     <attribute>
@@ -22,10 +22,22 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsInteriorUninsulatedWalls_Test.rb</filename>
+      <filename>ProcessInfiltration_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>4557825D</checksum>
+      <checksum>92AB36BB</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AD530084</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>74B4F759</checksum>
     </file>
     <file>
       <version>
@@ -35,7 +47,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EB414912</checksum>
+      <checksum>3075D6C3</checksum>
     </file>
   </files>
 </measure>

@@ -1,7 +1,7 @@
 <measure>
   <name>Process Constructions Exterior Insulated Walls Wood Stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>237fa79a-a2af-45e6-baf6-26f7e2df6aa1</version_id>
+  <version_id>1b4d8a2b-1a3d-4926-af30-97c5082ccd1d</version_id>
   <description>This measure creates wood stud constructions for the exterior walls adjacent to the living space.</description>
   <modeler_description>Calculates material layer properties of wood stud constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
   <provenances/>
@@ -35,19 +35,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>92057936</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0094E368</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FE79DCE4</checksum>
+      <checksum>E20BBAB8</checksum>
     </file>
   </files>
 </measure>

@@ -1,6 +1,5 @@
 
 require "#{File.dirname(__FILE__)}/util"
-require "#{File.dirname(__FILE__)}/weather"
 
 class Furniture
   def initialize(type=nil, density=nil, conductivity=nil, spec_heat=nil, area_frac=nil, total_mass=nil, solar_abs=nil)
@@ -251,7 +250,7 @@ def get_wood_stud_wall_r_assembly(category, prefix, gypsumThickness, gypsumNumLa
 	
     # For foundation walls, only add OSB if there is wall insulation.
     # This is consistent with the NREMDB costs.
-    if wallCavityInsRvalueInstalled == 0 and rigidInsRvalue == 0
+    if wallCavityInsRvalueInstalled == 0 and rigidInsRvalue == 0:
         hasOSB = false
 	end
 	
@@ -690,11 +689,8 @@ end
 
 class Sim
 
-	def initialize(model=nil)
-		if not model.nil?
-      @model = model
-    end
-    @weather = WeatherProcess.new("#{File.expand_path('.')}/in.epw")
+	def initialize(model)
+		@model = model
 	end
 
   def _processInteriorShadingSchedule(ish)
@@ -807,118 +803,50 @@ class Sim
 	
 	# _processLocationInfo
 	def local_pressure
-    # Location Info
-    local_pressure = 2.7128 ** (-0.0000368 * @weather.header.Altitude) # atm
-
+		weather = @model.getWeatherFile
+		local_pressure = 2.7128 ** (-0.0000368 * OpenStudio::convert(weather.elevation,"m","ft").get) # atm
 		return local_pressure
   end
 
-  def self._processWindSpeedCorrection(wind_speed, site, constants, infiltration, neighbors)
-    # Wind speed correction
-    wind_speed.height = 32.8 # ft (Standard weather station height)
+  def _processInfiltration_r2(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_living, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic)
+    outside_air_density = OpenStudio::convert(local_pressure,"atm","Btu/ft^3").get / (get_mat_air.Rvalue * (72.0 + 460)) # tk get AnnualAvgDrybulb
+    inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
+    delta_pref = 0.016 # inH2O
 
-    # Open, Unrestricted at Weather Station
-    wind_speed.terrain_multiplier = 1.0 # Used for DOE-2's correlation
-    wind_speed.terrain_exponent = 0.15 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-    wind_speed.boundary_layer_thickness = 885.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
+    # Assume an average inside temperature
+    si.assumed_inside_temp = 73.5 # deg F, used other places. Make available.
 
-    if site.TerrainType == constants.TerrainOcean
-      wind_speed.site_terrain_multiplier = 1.30 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.10 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 333.9 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == constants.TerrainPlains
-      wind_speed.site_terrain_multiplier = 1.00 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.15 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 885.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == constants.TerrainRural
-      wind_speed.site_terrain_multiplier = 0.85 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.20 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 875.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == constants.TerrainSuburban
-      wind_speed.site_terrain_multiplier = 0.67 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.25 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 1176 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == constants.TerrainCity
-      wind_speed.site_terrain_multiplier = 0.47 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.3499 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 1165.0 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    end
+    # spaces = geometry.spaces.space
+    # for space in spaces:
+    #   space.inf_method = None
+    #   space.SLA = None
+    #   space.ACH = None
+    #   space.inf_flow = None
+    #   space.hor_leak_frac = None
+    #   space.neutral_level = None
 
-    wind_speed.ref_wind_speed = 10.0 # mph
-
-    # Local Shielding
-    if infiltration.InfiltrationShelterCoefficient == constants.Auto
-      if neighbors.NeighborOffset.nil?
-        # Typical shelter for isolated rural house
-        wind_speed.S_wo = 0.90
-      elsif neighbors.NeighborOffset > 16.0 # tk need to get geometry.building_height
-        # Typical shelter caused by other building across the street
-        wind_speed.S_wo = 0.70
-      elsif neighbors.NeighborOffset <= 16.0 # tk need to get geometry.building_height
-        # Typical shelter for urban buildings where sheltering obstacles
-        # are less than one building height away.
-        # Recommended by C.Christensen.
-        wind_speed.S_wo = 0.50
-      end
-    else
-      wind_speed.S_wo = infiltration.InfiltrationShelterCoefficient.to_f
-    end
-
-    # S-G Shielding Coefficients are roughly 1/3 of AIM2 Shelter Coefficients
-    wind_speed.shielding_coef = wind_speed.S_wo / 3.0
-
-    return wind_speed
-
-  end
-
-  def _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site)
-    # Infiltration calculations.
+    constants = Constants.new
 
     # loop thru all the spaces
-    spaces = []
-    spaces << living_space
     hasGarage = false
     hasFinishedBasement = false
     hasUnfinishedBasement = false
     hasCrawl = false
     hasUnfinAttic = false
-    if not selected_garage.nil?
+    if not selected_garage.empty?
       hasGarage = true
-      spaces << garage
     end
-    if not selected_fbsmt.nil?
+    if not selected_fbsmt.empty?
       hasFinishedBasement = true
-      spaces << finished_basement
     end
-    if not selected_ufbsmt.nil?
+    if not selected_ufbsmt.empty?
       hasUnfinishedBasement = true
-      spaces << space_unfinished_basement
     end
-    if not selected_crawl.nil?
+    if not selected_crawl.empty?
       hasCrawl = true
-      spaces << crawlspace
     end
-    if not selected_unfinattic.nil?
+    if not selected_unfinattic.empty?
       hasUnfinAttic = true
-      spaces << unfinished_attic
-    end
-
-    constants = Constants.new
-
-    outside_air_density = 2.719 * local_pressure / (get_mat_air.R_air_gap * (@weather.data.AnnualAvgDrybulb + 460.0))
-    inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
-    delta_pref = 0.016 # inH2O
-
-    # Assume an average inside temperature
-    si.assumed_inside_temp = assumed_inside_temp # deg F, used other places. Make available.
-
-    spaces.each do |space|
-      space.inf_method = nil
-      space.SLA = nil
-      space.ACH = nil
-      space.inf_flow = nil
-      space.hor_leak_frac = nil
-      space.neutral_level = nil
     end
 
     if not si.InfiltrationLivingSpaceACH50.nil?
@@ -931,7 +859,7 @@ class Sim
 
       # Pressure Exponent
       si.n_i = 0.67
-      living_space.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationLivingSpaceACH50, si.n_i, 1200.0, living_space.volume) # tk replace with ffa
+      living_space.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationLivingSpaceACH50, si.n_i, 1200.0, 1200.0 * 8) # tk replace with ffa and volume
       # Effective Leakage Area (ft^2)
       si.A_o = living_space.SLA * 1200.0 # tk replace with ffa
       # Flow Coefficient (cfm/inH2O^n) (based on ASHRAE HoF)
@@ -979,10 +907,10 @@ class Sim
 
       si.f_s = ((1.0 + si.n_i * si.R_i) / (si.n_i + 1.0)) * (0.5 - 0.5 * si.M_i ** (1.2)) ** (si.n_i + 1.0) + si.F_i
 
-      si.stack_coef = si.f_s * (0.005974 * outside_air_density * constants.g * 8.0 / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n # tk replace with living space height
+      si.stack_coef = si.f_s * (OpenStudio::convert(outside_air_density * constants.g * 8.0,"lbm/ft*s^2","inH2O").get / (assumed_inside_temp + 460.0)) ** si.ni_i # inH2O^n/R^n # tk replace with living space height
 
       # Calculate wind coefficient
-      if hasCrawl and crawlspace.CrawlACH > 0 # tk need to get CrawlACH
+      if hasCrawlspace and crawlspace.CrawlACH > 0 # tk need to get CrawlACH
 
         if si.X_i > 1.0 - 2.0 * si.Y_i
           # Critical floor to ceiling difference above which f_w does not change (eq. 25)
@@ -1003,16 +931,16 @@ class Sim
       else
 
         si.J_i = (si.X_i + si.R_i + 2.0 * si.Y_i) / 2.0
-        si.f_w = 0.19 * (2.0 - si.n_i) * (1.0 - ((si.X_i + si.R_i) / 2.0) ** (1.5 - si.Y_i)) - si.Y_i / 4.0 * (si.J_i - 2.0 * si.Y_i * si.J_i ** 4.0)
+        si.f_w = 0.19 * (2.0 - si.n_i) * (1.0 - ((si.X_i + si.R_i) / 2.0) ** (1.5 - si.Y_i)) - si.Y_i / 4.0 * (si.J_i - 2.0 * si.y_i * si.J_i ** 4.0)
 
       end
 
-      si.wind_coef = si.f_w * ( 0.01285 * outside_air_density / 2.0 ) ** si.n_i # inH2O^n/mph^2n
+      si.wind_coef = si.f_w * OpenStudio::convert(outside_air_density / 2.0,"lbm/ft^3","inH2O/mph^2").get ** si.n_i # inH2O^n/mph^2n
 
-      living_space.ACH = get_infiltration_ACH_from_SLA(living_space.SLA, 2.0, @weather) # tk need to get stories
+      living_space.ACH = get_infiltration_ACH_from_SLA(living_space.SLA, 2.0, weather) # tk need to get stories and weather
 
       # Convert living space ACH to cfm:
-      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * living_space.volume # cfm
+      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * 1200.0 * 8 # cfm # tk replace with living space volume
 
     elsif not si.InfiltrationLivingSpaceConstantACH.nil?
 
@@ -1022,7 +950,7 @@ class Sim
       living_space.ACH = si.InfiltrationLivingSpaceConstantACH
 
       # Convert living space ACH to cfm
-      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * living_space.volume # cfm
+      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * 1200.0 * 8.0 # cfm # tk need to replace with living space volume
 
     end
 
@@ -1031,466 +959,86 @@ class Sim
       garage.inf_method = constants.InfMethodSG
       garage.hor_leak_frac = 0.4 # DOE-2 Default
       garage.neutral_level = 0.5 # DOE-2 Default
-      garage.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationGarageACH50, 0.67, garage.area, garage.volume)
-      garage.ACH = get_infiltration_ACH_from_SLA(garage.SLA, 1.0, @weather)
+      garage.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationGaraceACH50, 0.67, 300.0, 300.0 * 8.0) # tk need to replace with garage area, volume
+      garage.ACH = get_infiltration_ACH_from_SLA(garage.SLA, 1.0, weather)
       # Convert ACH to cfm:
-      garage.inf_flow = garage.ACH / OpenStudio::convert(1.0,"hr","min").get * garage.volume # cfm
+      garage.inf_flow = garage.ACH / OpenStudio::convert(1.0,"hr","min") * 300.0 * 8.0 # cfm # tk replace with garage volume
 
-    end
-
-    if hasFinishedBasement
+    elsif hasFinishedBasement
 
       finished_basement.inf_method = constants.InfMethodRes # Used for constant ACH
       finished_basement.ACH = finished_basement.FBsmtACH
       # Convert ACH to cfm
-      finished_basement.inf_flow = finished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * finished_basement.volume
+      finished_basement.inf_flow = finished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * 1200.0 * 8.0 # tk need to replace with finished basement volume
 
-    end
-
-    if hasUnfinishedBasement
+    elsif hasUnfinishedBasement
 
       space_unfinished_basement.inf_method = constants.InfMethodRes # Used for constant ACH
-      space_unfinished_basement.ACH = space_unfinished_basement.UFBsmtACH
+      space_unfinished_basement.ACH = unfinished_basement.UFBsmtACH
       # Convert ACH to cfm
-      space_unfinished_basement.inf_flow = space_unfinished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * space_unfinished_basement.volume
+      space_unfinished_basement.inf_flow = space_unfinished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * 1200.0 * 8.0 # tk need to replace with unfinished basement volume
 
-    end
-
-    if hasCrawl
+    elsif hasCrawl
 
       crawlspace.inf_method = constants.InfMethodRes
 
       crawlspace.ACH = crawlspace.CrawlACH
       # Convert ACH to cfm
-      crawlspace.inf_flow = crawlspace.ACH / OpenStudio::convert(1.0,"hr","min").get * crawlspace.volume
+      crawlspace.inf_flow = crawlspace.ACH / OpenStudio::convert(1.0,"hr","min").get * 1200.0 * 4.0 # tk need to replace with crawlspace volume
 
-    end
-
-    if hasUnfinAttic
+    elsif hasUnfinAttic
 
       unfinished_attic.inf_method = constants.InfMethodSG
       unfinished_attic.hor_leak_frac = 0.75 # Same as Energy Gauge USA Attic Model
       unfinished_attic.neutral_level = 0.5 # DOE-2 Default
       unfinished_attic.SLA = unfinished_attic.UASLA
 
-      unfinished_attic.ACH = get_infiltration_ACH_from_SLA(unfinished_attic.SLA, 1.0, @weather)
+      unfinished_attic.ACH = get_infiltration_ACH_from_SLA(unfinished_attic.SLA, 1.0, weather)
 
       # Convert ACH to cfm
-      unfinished_attic.inf_flow = unfinished_attic.ACH / OpenStudio::convert(1.0,"hr","min").get * unfinished_attic.volume
+      unfinished_attic.inf_flow = unfinished_attic.ACH / OpenStudio::convert(1.0) * 1200.0 * 8.0 * 0.25 # tk need to replace with unfinished attic volume
 
     end
 
-    ws = Sim._processWindSpeedCorrection(wind_speed, site, constants, si, neighbors)
+    # ws = self.wind_speed
 
-
-    spaces.each do |space|
-
-      space.f_t_SG = ws.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** ws.site_terrain_exponent / (ws.terrain_multiplier * (ws.height / 32.8) ** ws.terrain_exponent)
-      space.f_s_SG = nil
-      space.f_w_SG = nil
-      space.C_s_SG = nil
-      space.C_w_SG = nil
-      space.ELA = nil
-
-      if space.inf_method == constants.InfMethodSG
-
-        space.f_s_SG = 2 / 3 * (1 + space.hor_leak_frac / 2) * (2 * space.neutral_level * (1 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1 - space.neutral_level) ** 0.5)
-        space.f_w_SG = ws.shielding_coef * (1 - space.hor_leak_frac) ** (1 / 3) * space.f_t_SG
-        space.C_s_SG = space.f_s_SG ** 2 * constants.g * space.height / (si.assumed_inside_temp + 460.0)
-        space.C_w_SG = space.f_w_SG ** 2
-        space.ELA = space.SLA * space.area # ft^2
-
-      elsif space.inf_method == constants.InfMethodASHRAE
-
-        space.ELA = space.SLA * space.area # ft^2
-
-      else
-
-        space.ELA = 0 # ft^2
-        space.hor_leak_frac = 0
-
-      end
-
-    end
-
-    return si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, ws
+    # for space in spaces:
+    #
+    #   space.f_t_SG = ws.site_terrain_multiplier * \
+    #                     ((space.height + space.coord.z) / 32.8) ** ws.site_terrain_exponent / \
+    #                     (ws.terrain_multiplier * (ws.height / 32.8) ** ws.terrain_exponent)
+    #   space.f_s_SG = None
+    #   space.f_w_SG = None
+    #   space.C_s_SG = None
+    #   space.C_w_SG = None
+    #   space.ELA = None
+    #
+    #   if space.inf_method == Constants.InfMethodSG:
+    #
+    #       space.f_s_SG = 2 / 3 * (1 + space.hor_leak_frac / 2) * \
+    #                         (2 * space.neutral_level * (1 - space.neutral_level)) ** 0.5 / \
+    #                         (space.neutral_level ** 0.5 + (1 - space.neutral_level) ** 0.5)
+    #   space.f_w_SG = ws.shielding_coef * (1 - space.hor_leak_frac) ** (1 / 3) * \
+    #                         space.f_t_SG
+    #   space.C_s_SG = space.f_s_SG ** 2 * Constants.g * space.height / \
+    #                         (si.assumed_inside_temp + 460)
+    #   space.C_w_SG = space.f_w_SG ** 2
+    #   space.ELA = space.SLA * space.area # ft^2
+    #
+    #   elif space.inf_method == Constants.InfMethodASHRAE:
+    #
+    #       space.ELA = space.SLA * space.area # ft^2
+    #
+    #   else:
+    #
+    #       space.ELA = 0 # ft^2
+    #   space.hor_leak_frac = 0
+    #
+    # return dummy
 
   end
 
-  def _processMechanicalVentilation(infil, vent, misc, clothes_dryer, geometry, living_space, schedules)
-    # Mechanical Ventilation
-
-    constants = Constants.new
-    psychrometrics = Psychrometrics.new
-
-    # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2);
-    # only applies to existing buildings
-
-    if vent.MechVentInfilCreditForExistingHomes and misc.AgeOfHome > 0
-
-      # (2 cfm per 100ft^2 of occupiable floor area per ASHRAE 62.2)
-      infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm # tk need to replace with ffa
-
-      # Half the excess infiltration rate above the default rate is credited toward mech vent:
-      infil.rate_credit = [(living_space.inf_flow - infil.default_rate) / 2.0, 0.0].max
-
-    else
-
-      infil.rate_credit = 0.0 # default to no credit
-
-    end
-
-    # Whole House and Spot Ventilation
-    if misc.SimTestSuiteBuilding != constants.TestBldgMinimal
-      vent.MechVentBathroomExhaust = 50.0 # cfm, per HSP
-      vent.MechVentRangeHoodExhaust = 100.0 # cfm, per HSP
-      vent.MechVentSpotFanPower = 0.3 # W/cfm/fan, per HSP
-    else
-      vent.MechVentBathroomExhaust = 0.0 # cfm
-      vent.MechVentRangeHoodExhaust = 0.0 # cfm
-      vent.MechVentSpotFanPower = 0.0 # W/cfm/fan
-    end
-
-    vent.bath_exhaust_operation = 60.0 # min/day, per HSP
-    vent.range_hood_exhaust_operation = 60.0 # min/day, per HSP
-    vent.clothes_dryer_exhaust_operation = 60.0 # min/day, per HSP
-    # Based on ASHRAE 62.2 (the maximum allowable ventilation based on the
-    # 2010 BA Benchmark), including any infiltration credit
-    ashrae_mv = get_mech_vent_whole_house_cfm(1.0, geometry.num_bedrooms, geometry.finished_floor_area)
-    vent.ashrae_vent_rate = [ashrae_mv - infil.rate_credit, 0.0].max # cfm
-
-    if vent.MechVentType == constants.VentTypeExhaust
-      vent.num_vent_fans = 1.0 # One fan for unbalanced airflow
-      vent.percent_fan_heat_to_space = 0.0 # Fan heat does not enter space
-    elsif vent.MechVentType == constants.VentTypeSupply
-      vent.num_vent_fans = 1.0 # One fan for unbalanced airflow
-      vent.percent_fan_heat_to_space = 1.0 # Fan heat does enter space
-    elsif vent.MechVentType == constants.VentTypeBalanced
-      vent.num_vent_fans = 2.0 # Two fan for balanced airflow
-      vent.percent_fan_heat_to_space = 0.5 # Assumes supply fan heat enters space
-    else
-      vent.num_vent_fans = 1.0 # Default to one fan
-      vent.percent_fan_heat_to_space = 0.0
-    end
-
-    vent.whole_house_vent_rate = vent.MechVentFractionOfASHRAE * vent.ashrae_vent_rate # cfm
-
-    vent.bathroom_hour_avg_exhaust = vent.MechVentBathroomExhaust * geometry.num_bathrooms * vent.bath_exhaust_operation / 60.0 # cfm
-    vent.range_hood_hour_avg_exhaust = vent.MechVentRangeHoodExhaust * vent.range_hood_exhaust_operation / 60.0 # cfm
-    vent.clothes_dryer_hour_avg_exhaust = clothes_dryer.DryerExhaust * vent.clothes_dryer_exhaust_operation / 60.0 # cfm
-
-    vent.max_power = [vent.bathroom_hour_avg_exhaust * vent.MechVentSpotFanPower + vent.whole_house_vent_rate * vent.MechVentHouseFanPower * vent.num_vent_fans, vent.range_hood_hour_avg_exhaust * vent.MechVentSpotFanPower + vent.whole_house_vent_rate * vent.MechVentHouseFanPower * vent.num_vent_fans].max / OpenStudio::convert(1.0,"kW","W").get # kW
-
-    # Fan energy schedule (as fraction of maximum power). Bathroom
-    # exhaust at 7:00am and range hood exhaust at 6:00pm. Clothes
-    # dryer exhaust not included in mech vent power.
-    if vent.max_power > 0
-      vent.hourly_energy_schedule = Array.new(24, vent.whole_house_vent_rate * vent.MechVentHouseFanPower * vent.num_vent_fans / OpenStudio::convert(1.0,"kW","W").get / vent.max_power)
-      vent.hourly_energy_schedule[6] = ((vent.bathroom_hour_avg_exhaust * vent.MechVentSpotFanPower + vent.whole_house_vent_rate * vent.MechVentHouseFanPower * vent.num_vent_fans) / OpenStudio::convert(1.0,"kW","W").get / vent.max_power)
-      vent.hourly_energy_schedule[17] = ((vent.range_hood_hour_avg_exhaust * vent.MechVentSpotFanPower + vent.whole_house_vent_rate * vent.MechVentHouseFanPower * vent.num_vent_fans) / OpenStudio::convert(1.0,"kW","W").get / vent.max_power)
-      vent.average_vent_fan_eff = ((vent.whole_house_vent_rate * 24.0 * vent.MechVentHouseFanPower * vent.num_vent_fans + (vent.bathroom_hour_avg_exhaust + vent.range_hood_hour_avg_exhaust) * vent.MechVentSpotFanPower) / (vent.whole_house_vent_rate * 24.0 + vent.bathroom_hour_avg_exhaust + vent.range_hood_hour_avg_exhaust))
-    else
-      vent.hourly_energy_schedule = Array.new(24, 0.0)
-    end
-
-    sch_year = "
-    Schedule:Year,
-      MechanicalVentilationEnergy,                        !- Name
-      FRACTION,                                           !- Schedule Type
-      MechanicalVentilationEnergyWk,                      !- Week Schedule Name
-      1,                                                  !- Start Month
-      1,                                                  !- Start Day
-      12,                                                 !- End Month
-      31;                                                 !- End Day"
-
-    sch_hourly = "
-    Schedule:Day:Hourly,
-      MechanicalVentilationEnergyDay,                     !- Name
-      FRACTION,                                           !- Schedule Type
-      "
-    vent.hourly_energy_schedule[0..23].each do |hour|
-      sch_hourly += "#{hour},\n"
-    end
-    sch_hourly += "#{vent.hourly_energy_schedule[23]};"
-
-    sch_week = "
-    Schedule:Week:Compact,
-      MechanicalVentilationEnergyWk,                      !- Name
-      For: Weekdays,
-      MechanicalVentilationEnergyDay,
-      For: CustomDay1,
-      MechanicalVentilationEnergyDay,
-      For: CustomDay2,
-      MechanicalVentilationEnergyDay,
-      For: AllOtherDays,
-      MechanicalVentilationEnergyDay;"
-
-    schedules.MechanicalVentilationEnergy = [sch_hourly, sch_week, sch_year]
-
-    vent.base_vent_rate = vent.whole_house_vent_rate * (1.0 - vent.MechVentTotalEfficiency)
-    vent.max_vent_rate = [vent.bathroom_hour_avg_exhaust, vent.range_hood_hour_avg_exhaust, vent.clothes_dryer_hour_avg_exhaust].max + vent.base_vent_rate
-
-    # Ventilation schedule (as fraction of maximum flow). Assume bathroom
-    # exhaust at 7:00am, range hood exhaust at 6:00pm, and clothes dryer
-    # exhaust at 11am.
-    if vent.max_vent_rate > 0
-      vent.hourly_schedule = Array.new(24, vent.base_vent_rate / vent.max_vent_rate)
-      vent.hourly_schedule[6] = (vent.bathroom_hour_avg_exhaust + vent.base_vent_rate) / vent.max_vent_rate
-      vent.hourly_schedule[10] = (vent.clothes_dryer_hour_avg_exhaust + vent.base_vent_rate) / vent.max_vent_rate
-      vent.hourly_schedule[17] = (vent.range_hood_hour_avg_exhaust + vent.base_vent_rate) / vent.max_vent_rate
-    else
-      vent.hourly_schedule = Array.new(24, 0.0)
-    end
-
-    sch_year = "
-    Schedule:Year,
-      MechanicalVentilation,                              !- Name
-      FRACTION,                                           !- Schedule Type
-      MechanicalVentilationWk,                            !- Week Schedule Name
-      1,                                                  !- Start Month
-      1,                                                  !- Start Day
-      12,                                                 !- End Month
-      31;                                                 !- End Day"
-
-    sch_hourly = "
-    Schedule:Day:Hourly,
-      MechanicalVentilationDay,                           !- Name
-      FRACTION,                                           !- Schedule Type
-      "
-    vent.hourly_schedule[0..23].each do |hour|
-      sch_hourly += "#{hour},\n"
-    end
-    sch_hourly += "#{vent.hourly_schedule[23]};"
-
-    sch_week = "
-    Schedule:Week:Compact,
-      MechanicalVentilationWk,                      !- Name
-      For: Weekdays,
-      MechanicalVentilationDay,
-      For: CustomDay1,
-      MechanicalVentilationDay,
-      For: CustomDay2,
-      MechanicalVentilationDay,
-      For: AllOtherDays,
-      MechanicalVentilationDay;"
-
-    schedules.MechanicalVentilation = [sch_hourly, sch_week, sch_year]
-
-    bath_exhaust_hourly = Array.new(24, 0.0)
-    bath_exhaust_hourly[6] = 1.0
-
-    sch_year = "
-    Schedule:Year,
-      BathExhaust,                                        !- Name
-      FRACTION,                                           !- Schedule Type
-      BathExhaustWk,                                      !- Week Schedule Name
-      1,                                                  !- Start Month
-      1,                                                  !- Start Day
-      12,                                                 !- End Month
-      31;                                                 !- End Day"
-
-    sch_hourly = "
-    Schedule:Day:Hourly,
-      BathExhaustDay,                                     !- Name
-      FRACTION,                                           !- Schedule Type
-      "
-    bath_exhaust_hourly[0..23].each do |hour|
-      sch_hourly += "#{hour}\n,"
-    end
-    sch_hourly += "#{bath_exhaust_hourly[23]};"
-
-    sch_week = "
-    Schedule:Week:Compact,
-      BathExhaustWk,                                      !- Name
-      For: Weekdays,
-      BathExhaustDay,
-      For: CustomDay1,
-      BathExhaustDay,
-      For: CustomDay2,
-      BathExhaustDay,
-      For: AllOtherDays,
-      BathExhaustDay;"
-
-    schedules.BathExhaust = [sch_hourly, sch_week, sch_year]
-
-    clothes_dryer_exhaust_hourly = Array.new(24, 0.0)
-    clothes_dryer_exhaust_hourly[10] = 1.0
-
-    sch_year = "
-    Schedule:Year,
-      ClothesDryerExhaust,                                !- Name
-      FRACTION,                                           !- Schedule Type
-      ClothesDryerExhaustWk,                              !- Week Schedule Name
-      1,                                                  !- Start Month
-      1,                                                  !- Start Day
-      12,                                                 !- End Month
-      31;                                                 !- End Day"
-
-    sch_hourly = "
-    Schedule:Day:Hourly,
-      ClothesDryerExhaustDay,                             !- Name
-      FRACTION,                                           !- Schedule Type
-      "
-    clothes_dryer_exhaust_hourly[0..23].each do |hour|
-      sch_hourly += "#{hour},\n"
-    end
-    sch_hourly += "#{clothes_dryer_exhaust_hourly[23]};"
-
-    sch_week = "
-    Schedule:Week:Compact,
-      ClothesDryerExhaustWk,                              !- Name
-      For: Weekdays,
-      ClothesDryerExhaustDay,
-      For: CustomDay1,
-      ClothesDryerExhaustDay,
-      For: CustomDay2,
-      ClothesDryerExhaustDay,
-      For: AllOtherDays,
-      ClothesDryerExhaustDay;"
-
-    schedules.ClothesDryerExhaust = [sch_hourly, sch_week, sch_year]
-
-    range_hood_hourly = Array.new(24, 0.0)
-    range_hood_hourly[17] = 1.0
-
-    sch_year = "
-    Schedule:Year,
-      RangeHood,                                          !- Name
-      FRACTION,                                           !- Schedule Type
-      RangeHoodWk,                                        !- Week Schedule Name
-      1,                                                  !- Start Month
-      1,                                                  !- Start Day
-      12,                                                 !- End Month
-      31;                                                 !- End Day"
-
-    sch_hourly = "
-    Schedule:Day:Hourly,
-      RangeHoodDay,                                       !- Name
-      FRACTION,                                           !- Schedule Type
-      "
-    range_hood_hourly[0..23].each do |hour|
-      sch_hourly += "#{hour},\n"
-    end
-    sch_hourly += "#{range_hood_hourly[23]};"
-
-    sch_week = "
-    Schedule:Week:Compact,
-      RangeHoodWk,                                        !- Name
-      For: Weekdays,
-      RangeHoodDay,
-      For: CustomDay1,
-      RangeHoodDay,
-      For: CustomDay2,
-      RangeHoodDay,
-      For: AllOtherDays,
-      RangeHoodDay;"
-
-    schedules.RangeHood = [sch_hourly, sch_week, sch_year]
-
-    #--- Calculate HRV/ERV effectiveness values. Calculated here for use in sizing routines.
-
-    vent.MechVentApparentSensibleEffectiveness = 0.0
-    vent.MechVentHXCoreSensibleEffectiveness = 0.0
-    vent.MechVentLatentEffectiveness = 0.0
-
-    if vent.MechVentType == constants.VentTypeBalanced and vent.MechVentSensibleEfficiency > 0 and vent.whole_house_vent_rate > 0
-      # Must assume an operating condition (HVI seems to use CSA 439)
-      t_sup_in = 0
-      w_sup_in = 0.0028
-      t_exh_in = 22
-      w_exh_in = 0.0065
-      cp_a = 1006
-      p_fan = vent.whole_house_vent_rate * vent.MechVentHouseFanPower                                         # Watts
-
-      m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * OpenStudio::convert(psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7),"lbm/ft^3","kg/m^3").get # kg/s
-
-      # The following is derived from (taken from CSA 439):
-      #    E_SHR = (m_sup,fan * Cp * (Tsup,out - Tsup,in) - P_sup,fan) / (m_exh,fan * Cp * (Texh,in - Tsup,in) + P_exh,fan)
-      t_sup_out = t_sup_in + (vent.MechVentSensibleEfficiency * (m_fan * cp_a * (t_exh_in - t_sup_in) + p_fan) + p_fan) / (m_fan * cp_a)
-
-      # Calculate the apparent sensible effectiveness
-      vent.MechVentApparentSensibleEffectiveness = (t_sup_out - t_sup_in) / (t_exh_in - t_sup_in)
-
-      # Calculate the supply temperature before the fan
-      t_sup_out_gross = t_sup_out - p_fan / (m_fan * cp_a)
-
-      # Sensible effectiveness of the HX only
-      vent.MechVentHXCoreSensibleEffectiveness = (t_sup_out_gross - t_sup_in) / (t_exh_in - t_sup_in)
-
-      if (vent.MechVentHXCoreSensibleEffectiveness < 0.0) or (vent.MechVentHXCoreSensibleEffectiveness > 1.0)
-        return
-      end
-
-      # Use summer test condition to determine the latent effectivess since TRE is generally specified under the summer condition
-      if vent.MechVentTotalEfficiency > 0
-
-        t_sup_in = 35.0
-        w_sup_in = 0.0178
-        t_exh_in = 24.0
-        w_exh_in = 0.0092
-
-        m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * OpenStudio::convert(psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7),"lbm/ft^3","kg/m^3").get # kg/s
-
-        t_sup_out_gross = t_sup_in - vent.MechVentHXCoreSensibleEffectiveness * (t_sup_in - t_exh_in)
-        t_sup_out = t_sup_out_gross + p_fan / (m_fan * cp_a)
-
-        h_sup_in = psychrometrics.h_fT_w_SI(t_sup_in, w_sup_in)
-        h_exh_in = psychrometrics.h_fT_w_SI(t_exh_in, w_exh_in)
-        h_sup_out = h_sup_in - (vent.MechVentTotalEfficiency * (m_fan * (h_sup_in - h_exh_in) + p_fan) + p_fan) / m_fan
-
-        w_sup_out = psychrometrics.w_fT_h_SI(t_sup_out, h_sup_out)
-        vent.MechVentLatentEffectiveness = [0.0, (w_sup_out - w_sup_in) / (w_exh_in - w_sup_in)].max
-
-        if (vent.MechVentLatentEffectiveness < 0.0) or (vent.MechVentLatentEffectiveness > 1.0)
-          return
-        end
-
-      else
-        vent.MechVentLatentEffectiveness = 0.0
-      end
-    else
-      if vent.MechVentTotalEfficiency > 0
-        vent.MechVentApparentSensibleEffectiveness = vent.MechVentTotalEfficiency
-        vent.MechVentHXCoreSensibleEffectiveness = vent.MechVentTotalEfficiency
-        vent.MechVentLatentEffectiveness = vent.MechVentTotalEfficiency
-      end
-    end
-
-    return vent, schedules
-
-  end
-
-  def _processNaturalVentilation(nv, living_space, wind_speed, infiltration)
-    # Natural Ventilation
-
-    constants = Constants.new
-
-    # Specify an array of hourly lower-temperature-limits for natural ventilation
-    nv.htg_ssn_hourly_temp
-
-    # schedules
-    # tk here
-
-    # Explanation for FRAC-VENT-AREA equation:
-    # From DOE22 Vol2-Dictionary: For VENT-METHOD=S-G, this is 0.6 times
-    # the open window area divided by the floor area.
-    # According to 2010 BA Benchmark, 33% of the windows on any facade will
-    # be open at any given time and can only be opened to 20% of their area.
-
-    nv.area = 0.6 * 1000.0 * nv.NatVentFractionWindowsOpen * nv.NatVentFractionWindowAreaOpen # ft^2 (For S-G, this is 0.6*(open window area))
-    nv.max_rate = 20.0 # Air Changes per hour
-    nv.max_flow_rate = nv.max_rate * living_space.volume / OpenStudio::convert(1.0,"hr","min").get
-    nv_neutral_level = 0.5
-    nv.hor_vent_frac = 0.0
-    f_s_nv = 2.0 / 3.0 * (1.0 + nv.hor_vent_frac / 2.0) * (2.0 * nv_neutral_level * (1 - nv_neutral_level)) ** 0.5 / (nv_neutral_level ** 0.5 + (1 - nv_neutral_level) ** 0.5)
-    f_w_nv = wind_speed.shielding_coef * (1 - nv.hor_vent_frac) ** (1.0 / 3.0) * living_space.f_t_SG
-    nv.C_s = f_s_nv ** 2.0 * constants.g * living_space.height / (infiltration.assumed_inside_temp + 460.0)
-    nv.C_w = f_w_nv ** 2.0
-
-    return nv
-
-  end
-
+	# _processInfiltration
 	def assumed_inside_temp
 		assumed_inside_temp = 73.5
 		return assumed_inside_temp
@@ -1499,7 +1047,7 @@ class Sim
 	# _processMiscMatProps
 	def self.stud_spacing_default
 		# Nominal Lumber
-		return 16.0 # in
+		return 16 # in
 	end
 
 	def self.interior_framing_factor
@@ -3068,12 +2616,6 @@ def get_infiltration_SLA_from_ACH50(ach50, n_i, livingSpaceFloorArea, livingSpac
 
   return ((ach50 * 0.2835 * 4.0 ** n_i * livingSpaceVolume) / (livingSpaceFloorArea * OpenStudio::convert(1.0,"ft^2","in^2").get * pressure_difference ** n_i * 60.0))
 
-end
-
-def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa)
-  # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
-
-  return frac622 * ((num_beds + 1.0) * 7.5 + ffa / 100.0)
 end
 
 class Process_refrigerator
