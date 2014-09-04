@@ -6,13 +6,13 @@ require "#{File.dirname(__FILE__)}/../measure.rb"
 
 require 'test/unit'
 
-class ProcessInfiltration_Test < Test::Unit::TestCase
+class ProcessAirflow_Test < Test::Unit::TestCase
 
   
-  def test_ProcessInfiltration
+  def test_ProcessAirflow
      
     # create an instance of the measure
-    measure = ProcessInfiltration.new
+    measure = ProcessAirflow.new
     
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

@@ -871,7 +871,7 @@ class Sim
 
   end
 
-  def _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site)
+  def _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site, geometry)
     # Infiltration calculations.
 
     # loop thru all the spaces
@@ -882,23 +882,23 @@ class Sim
     hasUnfinishedBasement = false
     hasCrawl = false
     hasUnfinAttic = false
-    if not selected_garage.nil?
+    if not selected_garage == "NA"
       hasGarage = true
       spaces << garage
     end
-    if not selected_fbsmt.nil?
+    if not selected_fbsmt == "NA"
       hasFinishedBasement = true
       spaces << finished_basement
     end
-    if not selected_ufbsmt.nil?
+    if not selected_ufbsmt == "NA"
       hasUnfinishedBasement = true
       spaces << space_unfinished_basement
     end
-    if not selected_crawl.nil?
+    if not selected_crawl == "NA"
       hasCrawl = true
       spaces << crawlspace
     end
-    if not selected_unfinattic.nil?
+    if not selected_unfinattic == "NA"
       hasUnfinAttic = true
       spaces << unfinished_attic
     end
@@ -931,7 +931,7 @@ class Sim
 
       # Pressure Exponent
       si.n_i = 0.67
-      living_space.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationLivingSpaceACH50, si.n_i, 1200.0, living_space.volume) # tk replace with ffa
+      living_space.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationLivingSpaceACH50, si.n_i, geometry.finished_floor_area, living_space.volume)
       # Effective Leakage Area (ft^2)
       si.A_o = living_space.SLA * 1200.0 # tk replace with ffa
       # Flow Coefficient (cfm/inH2O^n) (based on ASHRAE HoF)
@@ -1113,7 +1113,7 @@ class Sim
 
     end
 
-    return si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, ws
+    return si, living_space, ws
 
   end
 
@@ -1402,7 +1402,7 @@ class Sim
       cp_a = 1006
       p_fan = vent.whole_house_vent_rate * vent.MechVentHouseFanPower                                         # Watts
 
-      m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * OpenStudio::convert(psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7),"lbm/ft^3","kg/m^3").get # kg/s
+      m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
 
       # The following is derived from (taken from CSA 439):
       #    E_SHR = (m_sup,fan * Cp * (Tsup,out - Tsup,in) - P_sup,fan) / (m_exh,fan * Cp * (Texh,in - Tsup,in) + P_exh,fan)
@@ -1429,7 +1429,7 @@ class Sim
         t_exh_in = 24.0
         w_exh_in = 0.0092
 
-        m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * OpenStudio::convert(psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7),"lbm/ft^3","kg/m^3").get # kg/s
+        m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
 
         t_sup_out_gross = t_sup_in - vent.MechVentHXCoreSensibleEffectiveness * (t_sup_in - t_exh_in)
         t_sup_out = t_sup_out_gross + p_fan / (m_fan * cp_a)
@@ -1460,16 +1460,295 @@ class Sim
 
   end
 
-  def _processNaturalVentilation(nv, living_space, wind_speed, infiltration)
+  def _processNaturalVentilation(nv, living_space, wind_speed, infiltration, schedules)
     # Natural Ventilation
 
     constants = Constants.new
 
     # Specify an array of hourly lower-temperature-limits for natural ventilation
-    nv.htg_ssn_hourly_temp
+    nv.htg_ssn_hourly_temp = Array.new(24, 23.88888888888889)
+    nv.htg_ssn_hourly_weekend_temp = Array.new(24, 23.88888888888889)
 
-    # schedules
-    # tk here
+    nv.clg_ssn_hourly_temp = Array.new(24, 22.22222222222222)
+    nv.clg_ssn_hourly_weekend_temp = Array.new(24, 22.22222222222222)
+
+    nv.ovlp_ssn_hourly_temp = Array.new(24, 22.22222222222222)
+    nv.ovlp_ssn_hourly_weekend_temp = Array.new(24, 22.22222222222222)
+
+    # Natural Ventilation Probability Schedule (DOE2, not E+)
+    sch_year = "
+    Schedule:Constant,
+      NatVentProbability,                                 !- Name
+      FRACTION,                                           !- Schedule Type
+      1,                                                  !- Hourly Value"
+
+    schedules.NatVentProbability = [sch_year]
+
+    nat_vent_clg_ssn_temp = "
+    Schedule:Week:Compact,
+      NatVentClgSsnTempWeek,                              !- Name
+      For: Weekdays,
+      NatVentClgSsnTempWkDay,
+      For: CustomDay1,
+      NatVentClgSsnTempWkDay,
+      For: CustomDay2,
+      NatVentClgSsnTempWkEnd,
+      For: AllOtherDays,
+      NatVentClgSsnTempWkEnd;"
+
+    nat_vent_htg_ssn_temp = "
+    Schedule:Week:Compact,
+      NatVentHtgSsnTempWeek,                              !- Name
+      For: Weekdays,
+      NatVentHtgSsnTempWkDay,
+      For: CustomDay1,
+      NatVentHtgSsnTempWkDay,
+      For: CustomDay2,
+      NatVentHtgSsnTempWkEnd,
+      For: AllOtherDays,
+      NatVentHtgSsnTempWkEnd;"
+
+    nat_vent_ovlp_ssn_temp = "
+    Schedule:Week:Compact,
+      NatVentOvlpSsnTempWeek,                             !- Name
+      For: Weekdays,
+      NatVentOvlpSsnTempWkDay,
+      For: CustomDay1,
+      NatVentOvlpSsnTempWkDay,
+      For: CustomDay2,
+      NatVentOvlpSsnTempWkEnd,
+      For: AllOtherDays,
+      NatVentOvlpSsnTempWkEnd;"
+
+    natVentHtgSsnTempWkDay_hourly = "
+    Schedule:Day:Hourly,
+      NatVentHtgSsnTempWkDay,                             !- Name
+      TEMPERATURE,                                        !- Schedule Type
+      "
+    nv.htg_ssn_hourly_temp[0..23].each do |hour|
+      natVentHtgSsnTempWkDay_hourly += "#{hour}\n,"
+    end
+    natVentHtgSsnTempWkDay_hourly += "#{nv.htg_ssn_hourly_temp[23]};"
+
+    natVentHtgSsnTempWkEnd_hourly = "
+    Schedule:Day:Hourly,
+      NatVentHtgSsnTempWkEnd,                             !- Name
+      TEMPERATURE,                                        !- Schedule Type
+      "
+    nv.htg_ssn_hourly_weekend_temp[0..23].each do |hour|
+      natVentHtgSsnTempWkEnd_hourly += "#{hour}\n,"
+    end
+    natVentHtgSsnTempWkEnd_hourly += "#{nv.htg_ssn_hourly_weekend_temp[23]};"
+
+    natVentClgSsnTempWkDay_hourly = "
+    Schedule:Day:Hourly,
+      NatVentClgSsnTempWkDay,                             !- Name
+      TEMPERATURE,                                        !- Schedule Type
+      "
+    nv.clg_ssn_hourly_temp[0..23].each do |hour|
+      natVentClgSsnTempWkDay_hourly += "#{hour}\n,"
+    end
+    natVentClgSsnTempWkDay_hourly += "#{nv.clg_ssn_hourly_temp[23]};"
+
+    natVentClgSsnTempWkEnd_hourly = "
+    Schedule:Day:Hourly,
+      NatVentClgSsnTempWkEnd,                             !- Name
+      TEMPERATURE,                                        !- Schedule Type
+      "
+    nv.clg_ssn_hourly_weekend_temp[0..23].each do |hour|
+      natVentClgSsnTempWkEnd_hourly += "#{hour}\n,"
+    end
+    natVentClgSsnTempWkEnd_hourly += "#{nv.clg_ssn_hourly_weekend_temp[23]};"
+
+    natVentOvlpSsnTempWkDay_hourly = "
+    Schedule:Day:Hourly,
+      NatVentOvlpSsnTempWkDay,                            !- Name
+      TEMPERATURE,                                        !- Schedule Type
+      "
+    nv.ovlp_ssn_hourly_temp[0..23].each do |hour|
+      natVentOvlpSsnTempWkDay_hourly += "#{hour}\n,"
+    end
+    natVentOvlpSsnTempWkDay_hourly += "#{nv.ovlp_ssn_hourly_temp[23]};"
+
+    natVentOvlpSsnTempWkEnd_hourly = "
+    Schedule:Day:Hourly,
+      NatVentOvlpSsnTempWkEnd,                            !- Name
+      TEMPERATURE,                                        !- Schedule Type
+      "
+    nv.ovlp_ssn_hourly_weekend_temp[0..23].each do |hour|
+      natVentOvlpSsnTempWkEnd_hourly += "#{hour}\n,"
+    end
+    natVentOvlpSsnTempWkEnd_hourly += "#{nv.ovlp_ssn_hourly_weekend_temp[23]};"
+
+    sch_year = "
+    Schedule:Year,
+      NatVentTemp,              !- Name
+      TEMPERATURE,              !- Schedule Type
+      NatVentHtgSsnTempWeek,    !- Week Schedule Name
+      1,                        !- Start Month
+      1,                        !- Start Day
+      1,                        !- End Month
+      31,                       !- End Day
+      NatVentHtgSsnTempWeek,    !- Week Schedule Name
+      2,                        !- Start Month
+      1,                        !- Start Day
+      2,                        !- End Month
+      28,                       !- End Day
+      NatVentHtgSsnTempWeek,    !- Week Schedule Name
+      3,                        !- Start Month
+      1,                        !- Start Day
+      3,                        !- End Month
+      31,                       !- End Day
+      NatVentOvlpSsnTempWeek,   !- Week Schedule Name
+      4,                        !- Start Month
+      1,                        !- Start Day
+      4,                        !- End Month
+      30,                       !- End Day
+      NatVentOvlpSsnTempWeek,   !- Week Schedule Name
+      5,                        !- Start Month
+      1,                        !- Start Day
+      5,                        !- End Month
+      31,                       !- End Day
+      NatVentClgSsnTempWeek,    !- Week Schedule Name
+      6,                        !- Start Month
+      1,                        !- Start Day
+      6,                        !- End Month
+      30,                       !- End Day
+      NatVentClgSsnTempWeek,    !- Week Schedule Name
+      7,                        !- Start Month
+      1,                        !- Start Day
+      7,                        !- End Month
+      31,                       !- End Day
+      NatVentClgSsnTempWeek,    !- Week Schedule Name
+      8,                        !- Start Month
+      1,                        !- Start Day
+      8,                        !- End Month
+      31,                       !- End Day
+      NatVentClgSsnTempWeek,    !- Week Schedule Name
+      9,                        !- Start Month
+      1,                        !- Start Day
+      9,                        !- End Month
+      30,                       !- End Day
+      NatVentOvlpSsnTempWeek,   !- Week Schedule Name
+      10,                       !- Start Month
+      1,                        !- Start Day
+      10,                       !- End Month
+      31,                       !- End Day
+      NatVentHtgSsnTempWeek,    !- Week Schedule Name
+      11,                       !- Start Month
+      1,                        !- Start Day
+      11,                       !- End Month
+      30,                       !- End Day
+      NatVentHtgSsnTempWeek,    !- Week Schedule Name
+      12,                       !- Start Month
+      1,                        !- Start Day
+      12,                       !- End Month
+      31;                       !- End Day"
+
+    schedules.NatVentTemp = [natVentHtgSsnTempWkDay_hourly, natVentHtgSsnTempWkEnd_hourly, natVentClgSsnTempWkDay_hourly, natVentClgSsnTempWkEnd_hourly, natVentOvlpSsnTempWkDay_hourly, natVentOvlpSsnTempWkEnd_hourly, nat_vent_clg_ssn_temp, nat_vent_htg_ssn_temp, nat_vent_ovlp_ssn_temp, sch_year]
+
+    natventon_day_hourly = Array.new(24, 1)
+
+    on_day = "
+    Schedule:Day:Hourly,
+      NatVentOn-Day,                                   !- Name
+      FRACTION,                                        !- Schedule Type
+      "
+    natventon_day_hourly[0..23].each do |hour|
+      on_day += "#{hour}\n,"
+    end
+    on_day += "#{natventon_day_hourly[23]};"
+
+    natventoff_day_hourly = Array.new(24, 0)
+
+    off_day = "
+    Schedule:Day:Hourly,
+      NatVentOff-Day,                                  !- Name
+      FRACTION,                                        !- Schedule Type
+      "
+    natventoff_day_hourly[0..23].each do |hour|
+      off_day += "#{hour}\n,"
+    end
+    off_day += "#{natventoff_day_hourly[23]};"
+
+    on_week = "
+    Schedule:Week:Compact,
+      NatVent-Week,                                    !- Name
+      For: Weekdays,
+      NatVentOn-Day,
+      For: CustomDay1,
+      NatVentOn-Day,
+      For: CustomDay2,
+      NatVentOn-Day,
+      For: AllOtherDays,
+      NatVentOff-Day;"
+
+    sch_year = "
+    Schedule:Year,
+      NatVent,                  !- Name
+      FRACTION,                 !- Schedule Type
+      NatVent-Week,             !- Week Schedule Name
+      1,                        !- Start Month
+      1,                        !- Start Day
+      1,                        !- End Month
+      31,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      2,                        !- Start Month
+      1,                        !- Start Day
+      2,                        !- End Month
+      28,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      3,                        !- Start Month
+      1,                        !- Start Day
+      3,                        !- End Month
+      31,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      4,                        !- Start Month
+      1,                        !- Start Day
+      4,                        !- End Month
+      30,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      5,                        !- Start Month
+      1,                        !- Start Day
+      5,                        !- End Month
+      31,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      6,                        !- Start Month
+      1,                        !- Start Day
+      6,                        !- End Month
+      30,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      7,                        !- Start Month
+      1,                        !- Start Day
+      7,                        !- End Month
+      31,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      8,                        !- Start Month
+      1,                        !- Start Day
+      8,                        !- End Month
+      31,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      9,                        !- Start Month
+      1,                        !- Start Day
+      9,                        !- End Month
+      30,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      10,                       !- Start Month
+      1,                        !- Start Day
+      10,                       !- End Month
+      31,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      11,                       !- Start Month
+      1,                        !- Start Day
+      11,                       !- End Month
+      30,                       !- End Day
+      NatVent-Week,             !- Week Schedule Name
+      12,                       !- Start Month
+      1,                        !- Start Day
+      12,                       !- End Month
+      31;                       !- End Day"
+
+    schedules.NatVentAvailability = [on_day, off_day, on_week, sch_year]
 
     # Explanation for FRAC-VENT-AREA equation:
     # From DOE22 Vol2-Dictionary: For VENT-METHOD=S-G, this is 0.6 times
@@ -1487,7 +1766,7 @@ class Sim
     nv.C_s = f_s_nv ** 2.0 * constants.g * living_space.height / (infiltration.assumed_inside_temp + 460.0)
     nv.C_w = f_w_nv ** 2.0
 
-    return nv
+    return nv, schedules
 
   end
 

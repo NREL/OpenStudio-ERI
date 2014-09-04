@@ -417,7 +417,7 @@ class Properties
     # From wolframalpha.com
     @wood = Mat_solid.new(630,2500,0.14)
 
-    @psychMassRat = @h2O_v.M / Air.M
+    @psychMassRat = @h2O_v.M / @air.M
   end
 
   def Air
