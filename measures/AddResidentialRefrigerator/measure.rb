@@ -125,17 +125,19 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 		fridge_ann = 434 * bab_mult
 	end
 
-	#pull schedule values and gain fractions from sim
-	fridge_lat = Process_refrigerator::Fridge_lat
-	fridge_conv = Process_refrigerator::Fridge_conv
-	fridge_rad = Process_refrigerator::Fridge_rad
-	fridge_lost = Process_refrigerator::Fridge_lost
+	refrigeratorval = Process_refrigerator.new
 	
-	monthly_mult = Process_refrigerator::Monthly_mult_fridge
-	weekday_hourly = Process_refrigerator::Weekday_hourly_fridge
-	weekend_hourly = Process_refrigerator::Weekend_hourly_fridge
-	maxval = Process_refrigerator::Maxval_fridge
-	sum_wkdy = Process_refrigerator::Sum_wkdy
+	#pull schedule values and gain fractions from sim
+	fridge_lat = refrigeratorval.Fridge_lat
+	fridge_conv = refrigeratorval.Fridge_conv
+	fridge_rad = refrigeratorval.Fridge_rad
+	fridge_lost = refrigeratorval.Fridge_lost
+	
+	monthly_mult = refrigeratorval.Monthly_mult_fridge
+	weekday_hourly = refrigeratorval.Weekday_hourly_fridge
+	weekend_hourly = refrigeratorval.Weekend_hourly_fridge
+	maxval = refrigeratorval.Maxval_fridge
+	sum_wkdy = refrigeratorval.Sum_wkdy
 	sch_adjust = 1/sum_wkdy
 	
 	#get fridge max power
