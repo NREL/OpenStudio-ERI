@@ -1,0 +1,40 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessThermalMassFurniture</Channel>
+      <Message>Assigned internal mass object 'LivingSpaceFurniture' to space type 'living spacetype'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessThermalMassFurniture</Channel>
+      <Message>Assigned internal mass object 'FBsmtSpaceFurniture' to space type 'base spacetype'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessThermalMassFurniture</Channel>
+      <Message>Assigned internal mass object 'GarageSpaceFurniture' to space type 'garage spacetype'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{ad9aac23-563f-4757-ae48-271254e84759}</UUID>
+      <VersionUUID>{faa9cd84-80f8-4439-8723-69a0ac914ccb}</VersionUUID>
+      <Name>selectedliving</Name>
+      <ValueType>String</ValueType>
+      <Value>{8b94a914-1935-40aa-8088-83552c41418c}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{7ff8507a-8437-40c7-8330-99f671c3f2d0}</UUID>
+      <VersionUUID>{a4811010-9d2b-4bbe-959a-bff04d41fc46}</VersionUUID>
+      <Name>selectedfbsmt</Name>
+      <ValueType>String</ValueType>
+      <Value>{fe24123d-4fd1-4ecf-b365-1a86be8ef6e5}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{17c9c663-8788-4c23-8305-76480eb802d0}</UUID>
+      <VersionUUID>{d762e95b-8b22-45ff-ba9f-978f6d5b10b8}</VersionUUID>
+      <Name>selectedgarage</Name>
+      <ValueType>String</ValueType>
+      <Value>{eab99f83-1de2-4018-977e-9fa439e98977}</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

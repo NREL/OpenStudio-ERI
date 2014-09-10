@@ -1,0 +1,142 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 1', attached to Space 'first floor living' of Space Type 'living spacetype' and with Surface Type 'Floor' and Outside Boundary Condition 'Surface', was assigned Construction 'UnfinCSInsFinFloor'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 37', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'CSRimJoist'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 38', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'CSRimJoist'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 39', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'RoofCeiling' and Outside Boundary Condition 'Surface', was assigned Construction 'RevUnfinCSInsFinFloor'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 40', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Ground', was assigned Construction 'GrndInsUnfinCSWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 41', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Ground', was assigned Construction 'GrndInsUnfinCSWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 42', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Ground', was assigned Construction 'GrndInsUnfinCSWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 10', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Floor' and Outside Boundary Condition 'Ground', was assigned Construction 'GrndUninsUnfinCSFloor'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 43', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Ground', was assigned Construction 'GrndInsUnfinCSWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 33', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'CSRimJoist'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsCrawlspace</Channel>
+      <Message>Surface 'Surface 35', attached to Space 'crawlspace' of Space Type 'crawl spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'CSRimJoist'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{83a8e8b8-7b32-42b8-9965-2b05ab503278}</UUID>
+      <VersionUUID>{d96a78d6-92f6-46b9-8141-8cb4d72ca006}</VersionUUID>
+      <Name>selectedliving</Name>
+      <ValueType>String</ValueType>
+      <Value>{8b94a914-1935-40aa-8088-83552c41418c}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{f8e274ec-4d0a-4236-91d9-f2ba1413fe92}</UUID>
+      <VersionUUID>{56ddf0eb-a7de-4a5c-958e-2878567a1c81}</VersionUUID>
+      <Name>selectedcrawlspace</Name>
+      <ValueType>String</ValueType>
+      <Value>{9d7710ba-5069-4936-bc03-3d4fcf40bd18}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{b91a230e-3df4-4fb5-8a12-30cb50199079}</UUID>
+      <VersionUUID>{e7d35871-d292-41c0-a487-edaf7aa6f683}</VersionUUID>
+      <Name>selectedcsins</Name>
+      <ValueType>String</ValueType>
+      <Value>Uninsulated</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{f8c78041-39d3-4953-bc0f-c9ddb25d6c4e}</UUID>
+      <VersionUUID>{feb9522d-cd90-46f0-8fb9-07b41068eeb4}</VersionUUID>
+      <Name>userdefinedcswallceilr</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{3b2dc07f-9ff7-477e-bafc-f3192bd02a81}</UUID>
+      <VersionUUID>{b5180975-219f-40c3-86ad-7fd15d1d1a2a}</VersionUUID>
+      <Name>selectedcsceiljoistheight</Name>
+      <ValueType>String</ValueType>
+      <Value>9.25</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{c6a8e789-8d68-4e47-9adf-15b243ec5a15}</UUID>
+      <VersionUUID>{25dcbf25-4dc2-4657-b433-69637d136f02}</VersionUUID>
+      <Name>selectedcsceilff</Name>
+      <ValueType>String</ValueType>
+      <Value>0.13</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{8a058e1a-f9e1-4d1e-a15d-bbd019497754}</UUID>
+      <VersionUUID>{6f8da65e-0e86-45d1-9ce1-ab9265eeaaa1}</VersionUUID>
+      <Name>userdefinedcsrimjoistr</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{aab2e5cc-f611-468e-93d6-39ae07827540}</UUID>
+      <VersionUUID>{bf26afd6-8c12-4c2f-98f5-3b9f9014069e}</VersionUUID>
+      <Name>userdefinedfloormassth</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.625</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{321e70bf-9708-49a5-b5fd-94307e5a911c}</UUID>
+      <VersionUUID>{ac3bb186-2db5-4a98-9dbd-0d89a45cf7f9}</VersionUUID>
+      <Name>userdefinedfloormasscond</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.8004</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{5171fcb2-74c9-4e55-9d6e-122b3c0deade}</UUID>
+      <VersionUUID>{65e88ca3-b060-453c-b200-3530268f2c36}</VersionUUID>
+      <Name>userdefinedfloormassdens</Name>
+      <ValueType>Double</ValueType>
+      <Value>34</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{cdf1a8d1-ee3d-494c-9783-ab34e97fe97a}</UUID>
+      <VersionUUID>{d1481cf4-3c02-410c-9e67-adbda9187b01}</VersionUUID>
+      <Name>userdefinedfloormasssh</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.29</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{22cf1fdc-d8dd-498f-9334-6fb7236995c0}</UUID>
+      <VersionUUID>{9e8bf52e-2f72-4437-8496-4c31ab830cc5}</VersionUUID>
+      <Name>userdefinedcarpetr</Name>
+      <ValueType>Double</ValueType>
+      <Value>2.08</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{3ba064b4-3e6e-4405-a88c-20ebfb4dcee3}</UUID>
+      <VersionUUID>{d4a1ab82-e176-4d82-80b0-70faceb79942}</VersionUUID>
+      <Name>userdefinedcarpetfrac</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.8</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

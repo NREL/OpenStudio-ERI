@@ -1,0 +1,29 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessThermalMassFurniture</Channel>
+      <Message>Assigned internal mass object 'LivingSpaceFurniture' to space type 'living spacetype'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessThermalMassFurniture</Channel>
+      <Message>Assigned internal mass object 'GarageSpaceFurniture' to space type 'garage spacetype'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{966efaae-141d-4118-82db-93562bc2633d}</UUID>
+      <VersionUUID>{8f7a84a8-a238-4224-aa70-7ad57a54e1d7}</VersionUUID>
+      <Name>selectedliving</Name>
+      <ValueType>String</ValueType>
+      <Value>{8b94a914-1935-40aa-8088-83552c41418c}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{12684fa8-b4d8-4483-91ad-cb8c2b9cd90f}</UUID>
+      <VersionUUID>{7d5dc863-f5cb-4c05-8e7b-76c8913853f5}</VersionUUID>
+      <Name>selectedgarage</Name>
+      <ValueType>String</ValueType>
+      <Value>{eab99f83-1de2-4018-977e-9fa439e98977}</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

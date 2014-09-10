@@ -1,0 +1,41 @@
+<measure>
+  <name>Process Airflow</name>
+  <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
+  <version_id>22065435-6947-493e-9e3d-88e0fcf5a3dd</version_id>
+  <description>This measure processes infiltration for the living space, garage, finished basement, unfinished basement, crawlspace, and unfinished attic. It also processes mechanical ventilation and natural ventilation for the living space.</description>
+  <modeler_description>Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation).</modeler_description>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Infiltration</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>EnergyPlusMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ProcessAirflow_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6EEE80CB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>151DA71E</checksum>
+    </file>
+  </files>
+</measure>

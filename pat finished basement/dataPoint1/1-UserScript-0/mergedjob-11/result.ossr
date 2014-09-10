@@ -1,0 +1,18 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsGarageSlab</Channel>
+      <Message>Surface 'Surface 17', attached to Space 'first floor garage' of Space Type 'garage spacetype' and with Surface Type 'Floor' and Outside Boundary Condition 'Ground', was assigned Construction 'GrndUninsUnfinGrgFloor'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{cff3ac84-b094-4e13-876f-663598cd89d0}</UUID>
+      <VersionUUID>{0929a1ad-9393-44de-adec-8af9b9147fa5}</VersionUUID>
+      <Name>selectedgarage</Name>
+      <ValueType>String</ValueType>
+      <Value>{eab99f83-1de2-4018-977e-9fa439e98977}</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

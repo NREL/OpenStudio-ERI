@@ -1,0 +1,280 @@
+
+ Meters for 11,LIVING RESIDENTIAL_ELECTRIC_DW:Electric Equipment Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:LIVING [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:LIVING [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 72,LIVING RESIDENTIAL_ELECTRIC_MEL:Electric Equipment Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:LIVING [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:LIVING [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 73,LIVING RESIDENTIAL_ELECTRIC_RANGE:Electric Equipment Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:LIVING [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:LIVING [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 74,LIVING RESIDENTIAL_REFRIGERATOR:Electric Equipment Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:LIVING [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:LIVING [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 77,LIVING:Zone Ventilation Fan Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:LIVING [J]
+  OnMeter=Fans:Electricity [J]
+  OnMeter=Fans:Electricity:Zone:LIVING [J]
+  OnMeter=Ventilation (simple):Fans:Electricity [J]
+
+ Meters for 115,ATTIC:Zone Air System Sensible Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:ATTIC [J]
+  OnMeter=Heating:EnergyTransfer [J]
+  OnMeter=Heating:EnergyTransfer:Zone:ATTIC [J]
+
+ Meters for 166,ATTIC:Zone Air System Sensible Cooling Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:ATTIC [J]
+  OnMeter=Cooling:EnergyTransfer [J]
+  OnMeter=Cooling:EnergyTransfer:Zone:ATTIC [J]
+
+ Meters for 187,BASEMENT:Zone Air System Sensible Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:BASEMENT [J]
+  OnMeter=Heating:EnergyTransfer [J]
+  OnMeter=Heating:EnergyTransfer:Zone:BASEMENT [J]
+
+ Meters for 208,BASEMENT:Zone Air System Sensible Cooling Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:BASEMENT [J]
+  OnMeter=Cooling:EnergyTransfer [J]
+  OnMeter=Cooling:EnergyTransfer:Zone:BASEMENT [J]
+
+ Meters for 219,GARAGE:Zone Air System Sensible Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:GARAGE [J]
+  OnMeter=Heating:EnergyTransfer [J]
+  OnMeter=Heating:EnergyTransfer:Zone:GARAGE [J]
+
+ Meters for 240,GARAGE:Zone Air System Sensible Cooling Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:GARAGE [J]
+  OnMeter=Cooling:EnergyTransfer [J]
+  OnMeter=Cooling:EnergyTransfer:Zone:GARAGE [J]
+
+ Meters for 251,LIVING:Zone Air System Sensible Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:LIVING [J]
+  OnMeter=Heating:EnergyTransfer [J]
+  OnMeter=Heating:EnergyTransfer:Zone:LIVING [J]
+
+ Meters for 272,LIVING:Zone Air System Sensible Cooling Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:LIVING [J]
+  OnMeter=Cooling:EnergyTransfer [J]
+  OnMeter=Cooling:EnergyTransfer:Zone:LIVING [J]
+
+ Meters for 283,Whole Building:Facility Total Purchased Electric Energy [J]
+  OnMeter=ElectricityPurchased:Facility [J]
+  OnMeter=ElectricityPurchased:Plant [J]
+  OnMeter=Cogeneration:ElectricityPurchased [J]
+
+ Meters for 314,Whole Building:Facility Total Surplus Electric Energy [J]
+  OnMeter=ElectricitySurplusSold:Facility [J]
+  OnMeter=ElectricitySurplusSold:Plant [J]
+  OnMeter=Cogeneration:ElectricitySurplusSold [J]
+
+ Meters for 345,Whole Building:Facility Net Purchased Electric Energy [J]
+  OnMeter=ElectricityNet:Facility [J]
+  OnMeter=ElectricityNet:Plant [J]
+  OnMeter=Cogeneration:ElectricityNet [J]
+
+ Meters for 382,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
+  OnMeter=Carbon Equivalent:Facility [kg]
+  OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
+
+ Meters for 403,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
+  OnMeter=Carbon Equivalent:Facility [kg]
+  OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
+
+ Meters for 404,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
+  OnMeter=Carbon Equivalent:Facility [kg]
+  OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
+
+ For Meter=Electricity:Facility [J], ResourceType=Electricity, contents are:
+  LIVING RESIDENTIAL_ELECTRIC_DW:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_MEL:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_RANGE:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_REFRIGERATOR:Electric Equipment Electric Energy
+  LIVING:Zone Ventilation Fan Electric Energy
+
+ For Meter=Electricity:Building [J], ResourceType=Electricity, Group=Building, contents are:
+  LIVING RESIDENTIAL_ELECTRIC_DW:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_MEL:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_RANGE:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_REFRIGERATOR:Electric Equipment Electric Energy
+  LIVING:Zone Ventilation Fan Electric Energy
+
+ For Meter=Electricity:Zone:LIVING [J], ResourceType=Electricity, Group=Zone, contents are:
+  LIVING RESIDENTIAL_ELECTRIC_DW:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_MEL:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_RANGE:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_REFRIGERATOR:Electric Equipment Electric Energy
+  LIVING:Zone Ventilation Fan Electric Energy
+
+ For Meter=InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
+  LIVING RESIDENTIAL_ELECTRIC_DW:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_MEL:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_RANGE:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_REFRIGERATOR:Electric Equipment Electric Energy
+
+ For Meter=InteriorEquipment:Electricity:Zone:LIVING [J], ResourceType=Electricity, EndUse=InteriorEquipment, Group=Zone, contents are:
+  LIVING RESIDENTIAL_ELECTRIC_DW:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_MEL:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_RANGE:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_REFRIGERATOR:Electric Equipment Electric Energy
+
+ For Meter=General:InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
+  LIVING RESIDENTIAL_ELECTRIC_DW:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_MEL:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_ELECTRIC_RANGE:Electric Equipment Electric Energy
+  LIVING RESIDENTIAL_REFRIGERATOR:Electric Equipment Electric Energy
+
+ For Meter=Fans:Electricity [J], ResourceType=Electricity, EndUse=Fans, contents are:
+  LIVING:Zone Ventilation Fan Electric Energy
+
+ For Meter=Fans:Electricity:Zone:LIVING [J], ResourceType=Electricity, EndUse=Fans, Group=Zone, contents are:
+  LIVING:Zone Ventilation Fan Electric Energy
+
+ For Meter=Ventilation (simple):Fans:Electricity [J], ResourceType=Electricity, EndUse=Fans, contents are:
+  LIVING:Zone Ventilation Fan Electric Energy
+
+ For Meter=EnergyTransfer:Facility [J], ResourceType=EnergyTransfer, contents are:
+  ATTIC:Zone Air System Sensible Heating Energy
+  ATTIC:Zone Air System Sensible Cooling Energy
+  BASEMENT:Zone Air System Sensible Heating Energy
+  BASEMENT:Zone Air System Sensible Cooling Energy
+  GARAGE:Zone Air System Sensible Heating Energy
+  GARAGE:Zone Air System Sensible Cooling Energy
+  LIVING:Zone Air System Sensible Heating Energy
+  LIVING:Zone Air System Sensible Cooling Energy
+
+ For Meter=EnergyTransfer:Building [J], ResourceType=EnergyTransfer, Group=Building, contents are:
+  ATTIC:Zone Air System Sensible Heating Energy
+  ATTIC:Zone Air System Sensible Cooling Energy
+  BASEMENT:Zone Air System Sensible Heating Energy
+  BASEMENT:Zone Air System Sensible Cooling Energy
+  GARAGE:Zone Air System Sensible Heating Energy
+  GARAGE:Zone Air System Sensible Cooling Energy
+  LIVING:Zone Air System Sensible Heating Energy
+  LIVING:Zone Air System Sensible Cooling Energy
+
+ For Meter=EnergyTransfer:Zone:ATTIC [J], ResourceType=EnergyTransfer, Group=Zone, contents are:
+  ATTIC:Zone Air System Sensible Heating Energy
+  ATTIC:Zone Air System Sensible Cooling Energy
+
+ For Meter=Heating:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=Heating, contents are:
+  ATTIC:Zone Air System Sensible Heating Energy
+  BASEMENT:Zone Air System Sensible Heating Energy
+  GARAGE:Zone Air System Sensible Heating Energy
+  LIVING:Zone Air System Sensible Heating Energy
+
+ For Meter=Heating:EnergyTransfer:Zone:ATTIC [J], ResourceType=EnergyTransfer, EndUse=Heating, Group=Zone, contents are:
+  ATTIC:Zone Air System Sensible Heating Energy
+
+ For Meter=Cooling:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=Cooling, contents are:
+  ATTIC:Zone Air System Sensible Cooling Energy
+  BASEMENT:Zone Air System Sensible Cooling Energy
+  GARAGE:Zone Air System Sensible Cooling Energy
+  LIVING:Zone Air System Sensible Cooling Energy
+
+ For Meter=Cooling:EnergyTransfer:Zone:ATTIC [J], ResourceType=EnergyTransfer, EndUse=Cooling, Group=Zone, contents are:
+  ATTIC:Zone Air System Sensible Cooling Energy
+
+ For Meter=EnergyTransfer:Zone:BASEMENT [J], ResourceType=EnergyTransfer, Group=Zone, contents are:
+  BASEMENT:Zone Air System Sensible Heating Energy
+  BASEMENT:Zone Air System Sensible Cooling Energy
+
+ For Meter=Heating:EnergyTransfer:Zone:BASEMENT [J], ResourceType=EnergyTransfer, EndUse=Heating, Group=Zone, contents are:
+  BASEMENT:Zone Air System Sensible Heating Energy
+
+ For Meter=Cooling:EnergyTransfer:Zone:BASEMENT [J], ResourceType=EnergyTransfer, EndUse=Cooling, Group=Zone, contents are:
+  BASEMENT:Zone Air System Sensible Cooling Energy
+
+ For Meter=EnergyTransfer:Zone:GARAGE [J], ResourceType=EnergyTransfer, Group=Zone, contents are:
+  GARAGE:Zone Air System Sensible Heating Energy
+  GARAGE:Zone Air System Sensible Cooling Energy
+
+ For Meter=Heating:EnergyTransfer:Zone:GARAGE [J], ResourceType=EnergyTransfer, EndUse=Heating, Group=Zone, contents are:
+  GARAGE:Zone Air System Sensible Heating Energy
+
+ For Meter=Cooling:EnergyTransfer:Zone:GARAGE [J], ResourceType=EnergyTransfer, EndUse=Cooling, Group=Zone, contents are:
+  GARAGE:Zone Air System Sensible Cooling Energy
+
+ For Meter=EnergyTransfer:Zone:LIVING [J], ResourceType=EnergyTransfer, Group=Zone, contents are:
+  LIVING:Zone Air System Sensible Heating Energy
+  LIVING:Zone Air System Sensible Cooling Energy
+
+ For Meter=Heating:EnergyTransfer:Zone:LIVING [J], ResourceType=EnergyTransfer, EndUse=Heating, Group=Zone, contents are:
+  LIVING:Zone Air System Sensible Heating Energy
+
+ For Meter=Cooling:EnergyTransfer:Zone:LIVING [J], ResourceType=EnergyTransfer, EndUse=Cooling, Group=Zone, contents are:
+  LIVING:Zone Air System Sensible Cooling Energy
+
+ For Meter=ElectricityPurchased:Facility [J], ResourceType=ElectricityPurchased, contents are:
+  Whole Building:Facility Total Purchased Electric Energy
+
+ For Meter=ElectricityPurchased:Plant [J], ResourceType=ElectricityPurchased, Group=Plant, contents are:
+  Whole Building:Facility Total Purchased Electric Energy
+
+ For Meter=Cogeneration:ElectricityPurchased [J], ResourceType=ElectricityPurchased, EndUse=Cogeneration, contents are:
+  Whole Building:Facility Total Purchased Electric Energy
+
+ For Meter=ElectricitySurplusSold:Facility [J], ResourceType=ElectricitySurplusSold, contents are:
+  Whole Building:Facility Total Surplus Electric Energy
+
+ For Meter=ElectricitySurplusSold:Plant [J], ResourceType=ElectricitySurplusSold, Group=Plant, contents are:
+  Whole Building:Facility Total Surplus Electric Energy
+
+ For Meter=Cogeneration:ElectricitySurplusSold [J], ResourceType=ElectricitySurplusSold, EndUse=Cogeneration, contents are:
+  Whole Building:Facility Total Surplus Electric Energy
+
+ For Meter=ElectricityNet:Facility [J], ResourceType=ElectricityNet, contents are:
+  Whole Building:Facility Net Purchased Electric Energy
+
+ For Meter=ElectricityNet:Plant [J], ResourceType=ElectricityNet, Group=Plant, contents are:
+  Whole Building:Facility Net Purchased Electric Energy
+
+ For Meter=Cogeneration:ElectricityNet [J], ResourceType=ElectricityNet, EndUse=Cogeneration, contents are:
+  Whole Building:Facility Net Purchased Electric Energy
+
+ For Meter=Carbon Equivalent:Facility [kg], ResourceType=Carbon Equivalent, contents are:
+  Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass
+  Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass
+  Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass
+
+ For Meter=CarbonEquivalentEmissions:Carbon Equivalent [kg], ResourceType=Carbon Equivalent, EndUse=CarbonEquivalentEmissions, contents are:
+  Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass
+  Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass
+  Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass
