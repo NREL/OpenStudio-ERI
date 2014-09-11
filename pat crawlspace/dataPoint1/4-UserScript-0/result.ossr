@@ -1,0 +1,510 @@
+<OSResult>
+  <Value>Success</Value>
+  <Warnings>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>There is no clothes dryer but the clothes dryer exhaust specified is nonzero. Assuming clothes dryer exhaust is 0 cfm.</Message>
+    </LogMessage>
+  </Warnings>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    ScheduleTypeLimits -       Fraction'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    ScheduleTypeLimits -       Temperature'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Constant -       AlwaysOff'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Constant -       AlwaysOn'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       MechanicalVentilationEnergyDay'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       MechanicalVentilationEnergyWk'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Year -       MechanicalVentilationEnergy'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       MechanicalVentilationDay'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       MechanicalVentilationWk'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Year -       MechanicalVentilation'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       BathExhaustDay'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       BathExhaustWk'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Year -       BathExhaust'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       ClothesDryerExhaustDay'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       ClothesDryerExhaustWk'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Year -       ClothesDryerExhaust'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       RangeHoodDay'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       RangeHoodWk'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Year -       RangeHood'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Constant -       NatVentProbability'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       NatVentOn-Day'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       NatVentOff-Day'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       NatVentOffSeason-Week'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       NatVent-Week'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Year -       NatVent'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       NatVentHtgSsnTempWkDay'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       NatVentHtgSsnTempWkEnd'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       NatVentClgSsnTempWkDay'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       NatVentClgSsnTempWkEnd'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       NatVentOvlpSsnTempWkDay'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Day:Hourly -       NatVentOvlpSsnTempWkEnd'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       NatVentClgSsnTempWeek'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       NatVentHtgSsnTempWeek'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Week:Compact -       NatVentOvlpSsnTempWeek'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    Schedule:Year -       NatVentTemp'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    ZoneInfiltration:FlowCoefficient -       Living Infiltration'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    ZoneVentilation:DesignFlowRate -       Natural Ventilation'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Tout'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Hout'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Pbar'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Tin'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       TWin'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Wout'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Vwind'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       WH_sch'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Range_sch'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Bath_sch'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       Clothes_dryer_sch'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       NVAvail'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Sensor -       NVSP'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Actuator -       NatVentFlow'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Actuator -       InfilFlow'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Program -       InfiltrationProgram'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:OutputVariable -       Zone Infil/MechVent Flow Rate'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:OutputVariable -       Whole House Fan Vent Flow Rate'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:OutputVariable -       Range Hood Fan Vent Flow Rate'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:OutputVariable -       Bath Exhaust Fan Vent Flow Rate'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:OutputVariable -       Clothes Dryer Exhaust Fan Vent Flow Rate'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:OutputVariable -       Local Wind Speed'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Program -       LocalWindSpeedProgram'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:Program -       NaturalVentilationProgram'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:OutputVariable -       Zone Natural Ventilation Flow Rate'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessAirflow</Channel>
+      <Message>Set object '    EnergyManagementSystem:ProgramCallingManager -       AirflowCalculator'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{c116ec8a-0dcb-4482-a4d5-5d2d3c9dcba2}</UUID>
+      <VersionUUID>{4fed7e1e-9a90-4469-9664-16ffea5681c7}</VersionUUID>
+      <Name>selectedliving</Name>
+      <ValueType>String</ValueType>
+      <Value>living</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{527e6b86-e99c-486d-ac20-3aa00f9a12f0}</UUID>
+      <VersionUUID>{a101f40f-424d-4f3e-b490-1963889d3fe8}</VersionUUID>
+      <Name>userdefinedinflivingspace</Name>
+      <ValueType>Double</ValueType>
+      <Value>7</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{f95ee0f9-ef3d-4906-9a14-a51e988a98bd}</UUID>
+      <VersionUUID>{daee76c9-40e8-446b-a22f-c4ab927b1bd4}</VersionUUID>
+      <Name>userdefinedconstinflivingspace</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{f4dbcc80-3fcc-4c44-a325-d8cb7feb979d}</UUID>
+      <VersionUUID>{6d28218a-8245-4b9a-a9e8-9df1baa0fd91}</VersionUUID>
+      <Name>userdefinedinfsheltercoef</Name>
+      <ValueType>String</ValueType>
+      <Value>auto</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{6faae4c7-4e3e-422f-98c0-0644557c7d90}</UUID>
+      <VersionUUID>{1e43179d-cfe8-4558-8598-10d2be95864a}</VersionUUID>
+      <Name>selectedgarage</Name>
+      <ValueType>String</ValueType>
+      <Value>garage</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{c76ed71d-6cdf-497a-b9bd-0fed256c85eb}</UUID>
+      <VersionUUID>{b05e136f-5f97-4c31-a3f5-c25bcc75d727}</VersionUUID>
+      <Name>selectedfbsmt</Name>
+      <ValueType>String</ValueType>
+      <Value>NA</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{de915521-c52e-42f7-8110-7cd9516793e5}</UUID>
+      <VersionUUID>{67597d63-04c3-4b3e-9de8-e6f42c3ca4cf}</VersionUUID>
+      <Name>userdefinedinffbsmt</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{3edfd6c0-5725-46a6-a32b-ccec4d9e9399}</UUID>
+      <VersionUUID>{c68d9f20-610f-4918-b2d4-197e73d153ab}</VersionUUID>
+      <Name>selectedufbsmt</Name>
+      <ValueType>String</ValueType>
+      <Value>NA</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{18ac94fc-af8b-43e7-85a6-5033db2124b4}</UUID>
+      <VersionUUID>{39e21aaf-adcd-4778-b5ab-3528092d3edc}</VersionUUID>
+      <Name>userdefinedinfufbsmt</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{91f3ff58-a38e-4248-9a3c-9ec22e9fa1dc}</UUID>
+      <VersionUUID>{76e509bb-7eff-4a64-a6e5-ba8edeea0771}</VersionUUID>
+      <Name>selectedcrawl</Name>
+      <ValueType>String</ValueType>
+      <Value>crawl</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{fe59420c-d03c-4473-9c6b-4c8f9eeccd6a}</UUID>
+      <VersionUUID>{835d4c80-22d0-4e84-97ca-e597a8f2dcbd}</VersionUUID>
+      <Name>userdefinedinfcrawl</Name>
+      <ValueType>Double</ValueType>
+      <Value>2</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{7664b177-6cf6-4911-93b6-30dc8184e7e4}</UUID>
+      <VersionUUID>{558a95f5-bb56-4950-8e60-ddebb1501a21}</VersionUUID>
+      <Name>selectedunfinattic</Name>
+      <ValueType>String</ValueType>
+      <Value>attic</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{269c2d2e-ab4c-4950-8ea4-e13cd0fa62d3}</UUID>
+      <VersionUUID>{599f7678-23cc-4777-a1f0-2b8aee6ec0f4}</VersionUUID>
+      <Name>userdefinedinfunfinattic</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.00333</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{9fcd6f3c-1676-492e-8ac1-328a71b7e49b}</UUID>
+      <VersionUUID>{201d9f77-3375-4c91-b507-f430899315d2}</VersionUUID>
+      <Name>userdefinedneighboroffset</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{6fe192dd-96ce-40fc-9390-d686f87c6767}</UUID>
+      <VersionUUID>{50b35f01-28a8-4182-9011-c69f9d902b06}</VersionUUID>
+      <Name>userdefinedhomeage</Name>
+      <ValueType>Double</ValueType>
+      <Value>10</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{45bb2642-41bc-412c-aa68-344295f45ee9}</UUID>
+      <VersionUUID>{586251ba-00d7-47f2-b2b5-37177184ae95}</VersionUUID>
+      <Name>selectedterraintype</Name>
+      <ValueType>String</ValueType>
+      <Value>suburban</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{d9143c96-98ed-4cd3-84f1-b35861178a0f}</UUID>
+      <VersionUUID>{245cebdc-9e92-46d6-a47d-835eeab9a1d3}</VersionUUID>
+      <Name>selectedventtype</Name>
+      <ValueType>String</ValueType>
+      <Value>exhaust</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{8d37f87f-6e9d-4b32-b3b2-c79076f13ea2}</UUID>
+      <VersionUUID>{90407ee2-be9f-4cab-b036-fc38a7346f3e}</VersionUUID>
+      <Name>selectedinfilcredit</Name>
+      <ValueType>Boolean</ValueType>
+      <Value>true</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{786aac86-10c1-4185-8df8-03c7ede0a711}</UUID>
+      <VersionUUID>{244745c7-442a-4815-8909-7bafea4f51ef}</VersionUUID>
+      <Name>userdefinedtotaleff</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{8cc72502-911a-4204-a7ae-22270b18bc94}</UUID>
+      <VersionUUID>{c609088b-5e69-46e9-9564-b1c48d8215f3}</VersionUUID>
+      <Name>userdefinedsenseff</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{7d39e3c3-8233-4785-bd6b-d92b433608c9}</UUID>
+      <VersionUUID>{4f7b3cf3-0305-4ef5-b0cd-e2573c14c777}</VersionUUID>
+      <Name>userdefinedfanpower</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.3</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{54ef57ae-73e0-4e0e-9f99-1abbf0f029b2}</UUID>
+      <VersionUUID>{ce4aa3fb-0d26-46b8-b33e-33bfbc080355}</VersionUUID>
+      <Name>userdefinedfracofashrae</Name>
+      <ValueType>Double</ValueType>
+      <Value>1</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{cddae197-d736-48ae-aa04-53bd238b9fe7}</UUID>
+      <VersionUUID>{8c87253d-0c31-4aaf-b932-0317dbdfb542}</VersionUUID>
+      <Name>userdefineddryerexhaust</Name>
+      <ValueType>Double</ValueType>
+      <Value>100</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{501fa89b-9b74-45ee-aefe-a8a520117b25}</UUID>
+      <VersionUUID>{a836af5f-cd1b-4de7-8d0e-875e1d82fef8}</VersionUUID>
+      <Name>userdefinedhtgoffset</Name>
+      <ValueType>Double</ValueType>
+      <Value>1</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{bbcff730-192e-4338-9c03-6ccb4513d0ec}</UUID>
+      <VersionUUID>{e132e3bf-40c2-41c3-915d-8eb2d48547b2}</VersionUUID>
+      <Name>userdefinedclgoffset</Name>
+      <ValueType>Double</ValueType>
+      <Value>1</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{9925f563-216a-425f-84e4-174700c38c13}</UUID>
+      <VersionUUID>{de5ed414-b0cb-423a-aa1b-d45e58af0939}</VersionUUID>
+      <Name>userdefinedovlpoffset</Name>
+      <ValueType>Double</ValueType>
+      <Value>1</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{9e361cdd-6402-4cf8-b136-99d75206b394}</UUID>
+      <VersionUUID>{842ec12b-400a-408f-a266-053384901ad4}</VersionUUID>
+      <Name>selectedheatingssn</Name>
+      <ValueType>Boolean</ValueType>
+      <Value>true</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{74da9d35-ca61-4bb2-8f80-05ec407598ca}</UUID>
+      <VersionUUID>{d6b47458-6431-47f5-9b88-4064bcf3f135}</VersionUUID>
+      <Name>selectedcoolingssn</Name>
+      <ValueType>Boolean</ValueType>
+      <Value>true</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{359f6cde-3c7e-4e7a-94bd-008246b54bd8}</UUID>
+      <VersionUUID>{8a123855-fd1e-4021-aeac-30cf0db2f183}</VersionUUID>
+      <Name>selectedoverlapssn</Name>
+      <ValueType>Boolean</ValueType>
+      <Value>true</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{bf63ec96-0b16-43e5-af08-501af78835a3}</UUID>
+      <VersionUUID>{53362da7-7f22-4b15-b932-8f5a3355e6dd}</VersionUUID>
+      <Name>userdefinedventweekdays</Name>
+      <ValueType>Double</ValueType>
+      <Value>3</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{3370ab46-ab85-43c7-bba0-67f9b02b5647}</UUID>
+      <VersionUUID>{5fa40ed7-5682-4b0e-88a2-b3959a22814a}</VersionUUID>
+      <Name>userdefinedventweekenddays</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{ad16c4c3-d03b-47a9-a55d-9d21735e3676}</UUID>
+      <VersionUUID>{0cb47ec4-9406-41b9-bb80-406cde343ce9}</VersionUUID>
+      <Name>userdefinedfracwinopen</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.33</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{a81c35e2-943e-4ce4-b568-42bd5a477262}</UUID>
+      <VersionUUID>{25f0acd5-45bc-4eac-ad20-8ac0bf0e2c94}</VersionUUID>
+      <Name>userdefinedfracwinareaopen</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.2</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{10502012-1547-41b4-ac87-df270faa71a0}</UUID>
+      <VersionUUID>{6d960d57-79ee-4a17-85d7-cdaf511f88c6}</VersionUUID>
+      <Name>userdefinedhumratio</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.0115</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{e8a36343-c518-4ddd-9346-c06c38eb9361}</UUID>
+      <VersionUUID>{8f2c9f86-6080-4004-9fbd-7d4348fda78a}</VersionUUID>
+      <Name>userdefinedrelhumratio</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.7</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

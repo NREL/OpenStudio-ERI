@@ -8,15 +8,19 @@ end
 class WeatherData
   def initialize
   end
-  attr_accessor(:AnnualAvgDrybulb, :AnnualMinDrybulb, :AnnualMaxDrybulb, :CDD50F, :CDD65F, :HDD50F, :HDD64F, :HDD65F, :HDD66F, :DailyAvgDrybulbs, :DailyMaxDrybulbs, :DailyMinDrybulbs, :AnnualAvgWindspeed)
+  attr_accessor(:AnnualAvgDrybulb, :AnnualMinDrybulb, :AnnualMaxDrybulb, :CDD50F, :CDD65F, :HDD50F, :HDD64F, :HDD65F, :HDD66F, :DailyAvgDrybulbs, :DailyMaxDrybulbs, :DailyMinDrybulbs, :AnnualAvgWindspeed, :MonthlyAvgDrybulbs)
+end
+
+class WeatherDesign
+  def initialize
+  end
+  attr_accessor(:HeatingDrybulb, :HeatingWindspeed, :CoolingDrybulb, :CoolingWetbulb, :CoolingHumidityRatio, :CoolingWindspeed, :DailyTemperatureRange, :DehumidDrybulb, :DehumidHumidityRatio)
 end
 
 class WeatherProcess
 
   def initialize(epwfile)
-
-    @header, @data = WeatherProcess._process_epw_text(epwfile)
-
+    @header, @data, @design = WeatherProcess._process_epw_text(epwfile)
   end
 
   def header
@@ -25,6 +29,10 @@ class WeatherProcess
 
   def data
     return @data
+  end
+
+  def design
+    return @design
   end
 
   def self._process_epw_text(epwfile)
@@ -51,6 +59,35 @@ class WeatherProcess
     header.Longitude = WeatherProcess._fmt(headerline[7],3)
     header.Timezone = headerline[8].to_f
     header.Altitude = WeatherProcess._fmt(OpenStudio::convert(headerline[9].to_f,"m","ft").get,4)
+
+    # Design data line:
+
+    design = WeatherDesign.new
+    designData = epwlines.delete_at(0).split(',')
+    epwHasDesignData = false
+    if designData.length > 5
+      begin
+        psychrometrics = Psychrometrics.new
+        design.HeatingDrybulb = WeatherProcess._fmt(OpenStudio::convert(designData[7].to_f,"C","F").get, 2)
+        design.HeatingWindspeed = designData[16].to_f
+
+        design.CoolingDrybulb = WeatherProcess._fmt(OpenStudio::convert(designData[25].to_f,"C","F").get, 2)
+        design.CoolingWetbulb = WeatherProcess._fmt(OpenStudio::convert(designData[26].to_f,"C","F").get, 2)
+        std_press = psychrometrics.Pstd_fZ(header.Altitude)
+        design.CoolingHumidityRatio = WeatherProcess._fmt(psychrometrics.w_fT_Twb_P(design.CoolingDrybulb, design.CoolingWetbulb, std_press), 4)
+        design.CoolingWindspeed = designData[35].to_f
+
+        design.DailyTemperatureRange = WeatherProcess._fmt(OpenStudio::convert(designData[22].to_f,"C","F").get, 2)
+
+        dehum02per_dp = WeatherProcess._fmt(OpenStudio::convert(designData[43].to_f,"C","F").get, 2)
+        design.DehumidDrybulb = WeatherProcess._fmt(OpenStudio::convert(designData[45].to_f,"C","F").get, 2)
+        design.DehumidHumidityRatio = WeatherProcess._fmt(psychrometrics.w_fT_Twb_P(dehum02per_dp, dehum02per_dp, std_press), 4)
+
+        epwHasDesignData = true
+      rescue
+        epwHasDesignData = false
+      end
+    end
 
     epwlines = WeatherProcess._remove_non_hourly_lines(epwlines)
 
@@ -103,10 +140,11 @@ class WeatherProcess
 
     data = WeatherData.new
     data = WeatherProcess._calc_annual_drybulbs(data, hourdata)
+    data = WeatherProcess._calc_monthly_drybulbs(data, hourdata)
     data = WeatherProcess._calc_heat_cool_degree_days(data, hourdata, dailydbs)
     data = WeatherProcess._calc_avg_windspeed(data, hourdata)
 
-    return header, data
+    return header, data, design
 
   end
 
@@ -159,8 +197,22 @@ class WeatherProcess
 
   end
 
-  def _calc_monthly_drybulbs
+  def self._calc_monthly_drybulbs(data, hd)
+    # Calculates and stores monthly average drybulbs
+    data.MonthlyAvgDrybulbs = []
+    (1...13).to_a.each do |month|
+      y = []
+      hd.each do |x|
+        if x['month'] == month.to_s
+          y << x['db']
+        end
+      end
+      month_dbtotal = y.inject{ |sum, n| sum + n }
+      month_hours = y.length
+      data.MonthlyAvgDrybulbs << WeatherProcess._fmt(OpenStudio::convert(month_dbtotal / month_hours,"C","F").get, 2)
+    end
 
+    return data
   end
 
   def self._calc_avg_windspeed(data, hd)

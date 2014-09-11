@@ -1,0 +1,39 @@
+<OSResult>
+  <Value>Success</Value>
+  <FinalCondition>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ResidentialRefrigerator</Channel>
+      <Message>The existing fridge has been replaced by one with 434.0 kWh annual energy consumption.</Message>
+    </LogMessage>
+  </FinalCondition>
+  <Attributes>
+    <Attribute>
+      <UUID>{8de49dae-2625-4be2-873c-6d2128b36432}</UUID>
+      <VersionUUID>{8597ad4d-bad5-42cc-b887-4ecc9340c7ea}</VersionUUID>
+      <Name>selected_fridge</Name>
+      <ValueType>String</ValueType>
+      <Value>Benchmark</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{74343284-cbf5-470f-ad71-e07cd0010527}</UUID>
+      <VersionUUID>{06dcd318-b0d3-4f07-9ddb-e5bf7b0cf704}</VersionUUID>
+      <Name>fridge_E</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{1513f92a-1c14-490d-bd84-04a025443085}</UUID>
+      <VersionUUID>{1ed9bc98-e3a4-4e1b-9482-e40b1ff2d1b6}</VersionUUID>
+      <Name>BAB_mult</Name>
+      <ValueType>Double</ValueType>
+      <Value>1</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{b97163d7-8cad-495f-a27b-cc0a80c444d7}</UUID>
+      <VersionUUID>{d6ba8ff7-3cce-47f0-92d3-f116716bf89a}</VersionUUID>
+      <Name>space_type</Name>
+      <ValueType>String</ValueType>
+      <Value>{8b94a914-1935-40aa-8088-83552c41418c}</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

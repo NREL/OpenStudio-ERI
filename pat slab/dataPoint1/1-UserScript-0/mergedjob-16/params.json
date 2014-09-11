@@ -1,0 +1,201 @@
+{
+ "job_params" : [
+  {
+   "param" :    {
+    "value" : "ruby_scriptparameters"
+   },
+   "param_index" : 0
+  },
+  {
+   "param" :    {
+    "children" : [
+     {
+      "param" :       {
+       "children" : [
+        {
+         "param" :          {
+          "children" : [
+           {
+            "param" :             {
+             "children" : [
+              {
+               "param" :                {
+                "value" : "in.osm"
+               },
+               "param_index" : 0
+              }
+             ],
+             "value" : ".*\\.osm"
+            },
+            "param_index" : 0
+           }
+          ],
+          "value" : "All"
+         },
+         "param_index" : 0
+        }
+       ],
+       "value" : "Last"
+      },
+      "param_index" : 0
+     }
+    ],
+    "value" : "ruby_inputfiles"
+   },
+   "param_index" : 1
+  },
+  {
+   "param" :    {
+    "children" : [
+     {
+      "param" :       {
+       "value" : "-I"
+      },
+      "param_index" : 0
+     },
+     {
+      "param" :       {
+       "value" : "C:/Program Files (x86)/OpenStudio 1.4.0/Ruby"
+      },
+      "param_index" : 1
+     }
+    ],
+    "value" : "ruby_toolparameters"
+   },
+   "param_index" : 2
+  },
+  {
+   "param" :    {
+    "children" : [
+     {
+      "param" :       {
+       "children" : [
+        {
+         "param" :          {
+          "children" : [
+           {
+            "param" :             {
+             "value" : ""
+            },
+            "param_index" : 0
+           }
+          ],
+          "value" : "osm"
+         },
+         "param_index" : 0
+        }
+       ],
+       "value" : "osm"
+      },
+      "param_index" : 0
+     }
+    ],
+    "value" : "ruby_copyrequired"
+   },
+   "param_index" : 3
+  },
+  {
+   "param" :    {
+    "children" : [
+     {
+      "param" :       {
+       "children" : [
+        {
+         "param" :          {
+          "value" : "user_script.rb"
+         },
+         "param_index" : 0
+        }
+       ],
+       "value" : "C:/OS-BEopt/OpenStudio-Beopt/pat slab/scripts/ProcessHeatingandCoolingSeasons/measure.rb"
+      },
+      "param_index" : 0
+     },
+     {
+      "param" :       {
+       "children" : [
+        {
+         "param" :          {
+          "value" : "measure.rb"
+         },
+         "param_index" : 0
+        }
+       ],
+       "value" : "C:/OS-BEopt/OpenStudio-Beopt/pat slab/scripts/ProcessHeatingandCoolingSeasons/measure.rb"
+      },
+      "param_index" : 1
+     }
+    ],
+    "value" : "ruby_requiredfiles"
+   },
+   "param_index" : 4
+  },
+  {
+   "param" :    {
+    "children" : [
+     {
+      "param" :       {
+       "value" : "{6649060d-fabe-4a4c-8d11-62fcd17da3e9}"
+      },
+      "param_index" : 0
+     }
+    ],
+    "value" : "original_job_uuid"
+   },
+   "param_index" : 5
+  },
+  {
+   "param" :    {
+    "children" : [
+     {
+      "param" :       {
+       "value" : "true"
+      },
+      "param_index" : 0
+     }
+    ],
+    "value" : "ruby_isuserscriptjob"
+   },
+   "param_index" : 6
+  },
+  {
+   "param" :    {
+    "children" : [
+     {
+      "param" :       {
+       "value" : "C:/Program Files (x86)/OpenStudio 1.4.0/Ruby/openstudio/runmanager/rubyscripts/UserScriptAdapter.rb"
+      },
+      "param_index" : 0
+     }
+    ],
+    "value" : "ruby_scriptfile"
+   },
+   "param_index" : 7
+  },
+  {
+   "param" :    {
+    "children" : [
+     {
+      "param" :       {
+       "children" : [
+        {
+         "param" :          {
+          "value" : "{5103ca65-8462-4633-a65f-02954f4c929f}"
+         },
+         "param_index" : 0
+        }
+       ],
+       "value" : "bcl_measure_uuid"
+      },
+      "param_index" : 0
+     }
+    ],
+    "value" : "ruby_bclmeasureparameters"
+   },
+   "param_index" : 8
+  }
+ ],
+ "metadata" :  {
+  "openstudio_version" : "1.4.0"
+ }
+}

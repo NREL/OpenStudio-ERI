@@ -1,0 +1,265 @@
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'GrndInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'GrndInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'GrndInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'GrndInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'GrndInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'GrndInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'GrndInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'GrndUninsFinBFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'GrndUninsFinBFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'GrndUninsFinBFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'GrndUninsFinBFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'GrndUninsFinBFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'FBsmtRimJoist', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'FBsmtRimJoist', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'FBsmtRimJoist', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'FBsmtRimJoist', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'FBsmtRimJoist', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'FBsmtRimJoist', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'FBsmtRimJoist', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'ExtInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'ExtInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'ExtInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'ExtInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'ExtInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'ExtInsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'ExtInsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'ExtInsUnfinWall', as there is no Material object referenced by the corresponding field.
+Script executing from: C:/OS-BEopt/OpenStudio-Beopt/pat finished basement/dataPoint1/1-UserScript-0
+Found argument 'selected_range' with value 'Benchmark'.
+Found argument 'range_fuel' with value 'Gas'.
+Found argument 'range_E' with value '0'.
+Found argument 'BAB_mult' with value '1'.
+Found argument 'Num_Br' with value '3'.
+Found argument 'O_ef' with value '0'.
+Found argument 'C_ef' with value '0'.
+Found argument 'Glo_Bar' with value 'false'.
+Found argument 'space_type' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found UserScript 'ResidentialCookingRange'.
+Found merged UserScript 'ResidentialMiscellaneousElectricLoads'.
+Found argument 'selected_mel' with value 'Benchmark'.
+Found argument 'mel_E' with value '0'.
+Found argument 'CondFA' with value '2700'.
+Found argument 'BAB_mult' with value '1'.
+Found argument 'Num_Br' with value '3'.
+Found argument 'space_type' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found merged UserScript 'ResidentialRefrigerator'.
+Found argument 'selected_fridge' with value 'Benchmark'.
+Found argument 'fridge_E' with value '0'.
+Found argument 'BAB_mult' with value '1'.
+Found argument 'space_type' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found merged UserScript 'ResidentialDishwasher'.
+Found argument 'selected_dw' with value 'Benchmark'.
+Found argument 'dw_E' with value '0'.
+Found argument 'BAB_mult' with value '1'.
+Found argument 'Num_Br' with value '3'.
+Found argument 'space_type' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found merged UserScript 'ProcessConstructionsUnfinishedBasement'.
+Found argument 'selectedfbsmt' with value '{fe24123d-4fd1-4ecf-b365-1a86be8ef6e5}'.
+Found argument 'selectedfbsmtins' with value 'Uninsulated'.
+Found argument 'selectedstudsize' with value '2x4'.
+Found argument 'selectedspacing' with value '16 in o.c.'.
+Found argument 'userdefinedfbsmtwallcavr' with value '0'.
+Found argument 'selectedinstallgrade' with value 'I'.
+Found argument 'selectedinsfills' with value 'true'.
+Found argument 'userdefinedfbsmtwallcontth' with value '0'.
+Found argument 'userdefinedfbsmtwallcontr' with value '0'.
+Found argument 'selectedfbsmtceiljoistheight' with value '9.25'.
+Found argument 'selectedfbsmtceilff' with value '0.13'.
+Found argument 'userdefinedfbsmtrimjoistr' with value '0'.
+Found argument 'userdefinedgypthickness' with value '1'.
+Found argument 'userdefinedgyplayers' with value '0.5'.
+Found argument 'userdefinedfloormassth' with value '0.625'.
+Found argument 'userdefinedfloormasscond' with value '0.8004'.
+Found argument 'userdefinedfloormassdens' with value '34'.
+Found argument 'userdefinedfloormasssh' with value '0.29'.
+Found argument 'userdefinedcarpetr' with value '2.08'.
+Found argument 'userdefinedcarpetfrac' with value '0.8'.
+Found merged UserScript 'ProcessConstructionsExteriorInsulatedWallsWoodStud'.
+Found argument 'selectedliving' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found argument 'userdefinedgypthickness' with value '1'.
+Found argument 'userdefinedgyplayers' with value '0.5'.
+Found argument 'selectedstudsize' with value '2x4'.
+Found argument 'selectedspacing' with value '16 in o.c.'.
+Found argument 'userdefinedinstcavr' with value '0'.
+Found argument 'selectedinstallgrade' with value 'I'.
+Found argument 'selectedinsfills' with value 'true'.
+Found argument 'userdefinedrigidinsthickness' with value '0'.
+Found argument 'userdefinedrigidinsr' with value '0'.
+Found argument 'userdefinedhasosb' with value 'false'.
+Found argument 'userdefinedextfinthickness' with value '0.375'.
+Found argument 'userdefinedextfinr' with value '0.6'.
+Found argument 'userdefinedextfindensity' with value '11.1'.
+Found argument 'userdefinedextfinspecheat' with value '0.25'.
+Found argument 'userdefinedextfinthermalabs' with value '0.9'.
+Found argument 'userdefinedextfinabs' with value '0.3'.
+Found merged UserScript 'ProcessConstructionsUnfinishedAttic'.
+Found argument 'selectedliving' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found argument 'selectedattic' with value '{b4026b46-7720-4070-9652-2fc19b12d0e7}'.
+Found argument 'selectedua[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'FinInsUnfinUAFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'FinInsUnfinUAFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'FinInsUnfinUAFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'RevFinInsUnfinUAFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevFinInsUnfinUAFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevFinInsUnfinUAFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'UnfinInsExtRoof', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinInsExtRoof', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinInsExtRoof', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'UnfinInsExtRoof', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'UnfinInsExtRoof', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'UnfinInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'UnfinInsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'RevUnfinInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevUnfinInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevUnfinInsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'RevUnfinInsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 4 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 4 in Object of type 'OS:Construction' and named 'FinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 4 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 4 in Object of type 'OS:Construction' and named 'RevFinUninsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'UnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 4 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 4 in Object of type 'OS:Construction' and named 'RevUnfinUninsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'UnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'UnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'UnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'UnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'UnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'UnfinInsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinInsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'UnfinInsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'RevUnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevUnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevUnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'RevUnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'RevUnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'RevUnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 3 in Object of type 'OS:Construction' and named 'RevUnfinInsFinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'RevUnfinInsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevUnfinInsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'RevUnfinInsUnfinFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'ExtUninsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'ExtUninsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'ExtUninsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'ExtUninsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'ExtUninsUnfinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'GrndUninsUnfinGrgFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'GrndUninsUnfinGrgFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'GrndUninsUnfinGrgFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'GrndUninsUnfinGrgFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'GrndUninsUnfinGrgFloor', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'Sub Surface 1-Glass', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'LivingDoors', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'GarageDoors', as there is no Material object referenced by the corresponding field.
+ins' with value 'Uninsulated'.
+Found argument 'userdefinedceilroofinsthickness' with value '0'.
+Found argument 'userdefineduaceilroofr' with value '0'.
+Found argument 'selecteduaceiljoistthickness' with value '3.5'.
+Found argument 'selecteduaceilff' with value '0.07'.
+Found argument 'selecteduaroofframethickness' with value '7.25'.
+Found argument 'selecteduaroofff' with value '0.07'.
+Found argument 'userdefinedrigidinsthickness' with value '0'.
+Found argument 'userdefinedrigidinsr' with value '0'.
+Found argument 'userdefinedhasradiantbarrier' with value 'false'.
+Found argument 'userdefinedgypthickness' with value '1'.
+Found argument 'userdefinedgyplayers' with value '0.5'.
+Found argument 'userdefinedroofmatthermalabs' with value '0.91'.
+Found argument 'userdefinedroofmatabs' with value '0.85'.
+Found merged UserScript 'ProcessConstructionsInteriorInsulatedWalls'.
+Found argument 'selectedliving' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found argument 'selectedgarage' with value '{eab99f83-1de2-4018-977e-9fa439e98977}'.
+Found argument 'userdefinedpartitionwallmassth' with value '0.5'.
+Found argument 'userdefinedpartitionwallmasscond' with value '1.1112'.
+Found argument 'userdefinedpartitionwallmassdens' with value '50'.
+Found argument 'userdefinedpartitionwallmasssh' with value '0.2'.
+Found argument 'selectedstudsize' with value '2x4'.
+Found argument 'selectedspacing' with value '16 in o.c.'.
+Found argument 'userdefinedinstcavr' with value '0'.
+Found argument 'selectedinstallgrade' with value 'I'.
+Found argument 'selectedinsfills' with value 'true'.
+Found argument 'userdefinedrigidinsthickness' with value '0'.
+Found argument 'userdefinedrigidinsr' with value '0'.
+Found merged UserScript 'ProcessConstructionsInteriorUninsulatedFloors'.
+Found argument 'selectedliving' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found argument 'selectedfbsmt' with value '{fe24123d-4fd1-4ecf-b365-1a86be8ef6e5}'.
+Found argument 'userdefinedgypthickness' with value '1'.
+Found argument 'userdefinedgyplayers' with value '0.5'.
+Found argument 'userdefinedfloormassth' with value '0.625'.
+Found argument 'userdefinedfloormasscond' with value '0.8004'.
+Found argument 'userdefinedfloormassdens' with value '34'.
+Found argument 'userdefinedfloormasssh' with value '0.29'.
+Found argument 'userdefinedcarpetr' with value '2.08'.
+Found argument 'userdefinedcarpetfrac' with value '0.8'.
+Found merged UserScript 'ProcessConstructionsInteriorInsulatedFloors'.
+Found argument 'selectedliving' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found argument 'selectedgarage' with value '{eab99f83-1de2-4018-977e-9fa439e98977}'.
+Found argument 'userdefinedinstcavr' with value '0'.
+Found argument 'selectedfloorff' with value '0.13'.
+Found argument 'userdefinedfloormassth' with value '0.625'.
+Found argument 'userdefinedfloormasscond' with value '0.8004'.
+Found argument 'userdefinedfloormassdens' with value '34'.
+Found argument 'userdefinedfloormasssh' with value '0.29'.
+Found argument 'userdefinedcarpetr' with value '2.08'.
+Found argument 'userdefinedcarpetfrac' with value '0.8'.
+Found merged UserScript 'ProcessConstructionsExteriorUninsulatedWalls'.
+Found argument 'selectedattic' with value '{b4026b46-7720-4070-9652-2fc19b12d0e7}'.
+Found argument 'selectedgarage' with value '{eab99f83-1de2-4018-977e-9fa439e98977}'.
+Found merged UserScript 'ProcessConstructionsGarageSlab'.
+Found argument 'selectedgarage' with value '{eab99f83-1de2-4018-977e-9fa439e98977}'.
+Found merged UserScript 'ProcessConstructionsWindows'.
+Found argument 'ufactor' with value '0.38'.
+Found argument 'shgc' with value '0.44'.
+Found argument 'userdefinedintshadeheatingmult' with value '0.7'.
+Found argument 'userdefinedintshadecoolingmult' with value '0.7'.
+Found merged UserScript 'ProcessConstructionsDoors'.
+Found argument 'selectedliving' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found argument 'selectedgarage' with value '{eab99f83-1de2-4018-977e-9fa439e98977}'.
+Found merged UserScript 'ProcessThermalMassPartitionWall'.
+Found argument 'selectedliving' with value '{8b94a[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'FinUninsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'FinUninsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 1 in Object of type 'OS:Construction' and named 'FinUninsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'FinUninsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 2 in Object of type 'OS:Construction' and named 'FinUninsFinWall', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'LivingFurniture', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'FBsmtFurniture', as there is no Material object referenced by the corresponding field.
+[openstudio.model.LayeredConstruction] <0> Skipping layer 0 in Object of type 'OS:Construction' and named 'GarageFurniture', as there is no Material object referenced by the corresponding field.
+914-1935-40aa-8088-83552c41418c}'.
+Found argument 'selectedfbsmt' with value '{fe24123d-4fd1-4ecf-b365-1a86be8ef6e5}'.
+Found argument 'userdefinedpartwallarea' with value '2400'.
+Found argument 'userdefinedpartitionwallmassth' with value '0.5'.
+Found argument 'userdefinedpartitionwallmasscond' with value '1.1112'.
+Found argument 'userdefinedpartitionwallmassdens' with value '50'.
+Found argument 'userdefinedpartitionwallmasssh' with value '0.2'.
+Found merged UserScript 'ProcessThermalMassFurniture'.
+Found argument 'selectedliving' with value '{8b94a914-1935-40aa-8088-83552c41418c}'.
+Found argument 'selectedfbsmt' with value '{fe24123d-4fd1-4ecf-b365-1a86be8ef6e5}'.
+Found argument 'selectedgarage' with value '{eab99f83-1de2-4018-977e-9fa439e98977}'.
+Found merged UserScript 'ProcessHeatingandCoolingSeasons'.
+Processed 1 base script and 16 merged scripts

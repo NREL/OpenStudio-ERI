@@ -1,0 +1,79 @@
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+0.311814812754373
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+0.311814812754373
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+0.0
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+0.0
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+0.0
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+1
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+0
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+23.8888888888889
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+23.8888888888889
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+22.2222222222222
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+22.2222222222222
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+22.2222222222222
+
+[utilities.idf.IdfObject] <1> IdfObject of type 'Schedule:Day:Hourly' cannot have field index of 26. Cutting off IdfObject field parsing here, with the following text remaining: 
+22.2222222222222
+
+Script executing from: C:/OS-BEopt/OpenStudio-Beopt/pat slab/dataPoint1/4-UserScript-0
+Found argument 'selectedliving' with value 'living'.
+Found argument 'userdefinedinflivingspace' with value '7'.
+Found argument 'userdefinedconstinflivingspace' with value '0'.
+Found argument 'userdefinedinfsheltercoef' with value 'auto'.
+Found argument 'selectedgarage' with value 'garage'.
+Found argument 'selectedfbsmt' with value 'NA'.
+Found argument 'userdefinedinffbsmt' with value '0'.
+Found argument 'selectedufbsmt' with value 'NA'.
+Found argument 'userdefinedinfufbsmt' with value '0'.
+Found argument 'selectedcrawl' with value 'NA'.
+Found argument 'userdefinedinfcrawl' with value '2'.
+Found argument 'selectedunfinattic' with value 'attic'.
+Found argument 'userdefinedinfunfinattic' with value '0.00333'.
+Found argument 'userdefinedneighboroffset' with value '0'.
+Found argument 'userdefinedhomeage' with value '10'.
+Found argument 'selectedterraintype' with value 'suburban'.
+Found argument 'selectedventtype' with value 'exhaust'.
+Found argument 'selectedinfilcredit' with value 'true'.
+Found argument 'userdefinedtotaleff' with value '0'.
+Found argument 'userdefinedsenseff' with value '0'.
+Found argument 'userdefinedfanpower' with value '0.3'.
+Found argument 'userdefinedfracofashrae' with value '1'.
+Found argument 'userdefineddryerexhaust' with value '100'.
+Found argument 'userdefinedhtgoffset' with value '1'.
+Found argument 'userdefinedclgoffset' with value '1'.
+Found argument 'userdefinedovlpoffset' with value '1'.
+Found argument 'selectedheatingssn' with value 'true'.
+Found argument 'selectedcoolingssn' with value 'true'.
+Found argument 'selectedoverlapssn' with value 'true'.
+Found argument 'userdefinedventweekdays' with value '3'.
+Found argument 'userdefinedventweekenddays' with value '0'.
+Found argument 'userdefinedfracwinopen' with value '0.33'.
+Found argument 'userdefinedfracwinareaopen' with value '0.2'.
+Found argument 'userdefinedhumratio' with value '0.0115'.
+Found argument 'userdefinedrelhumratio' with value '0.7'.
+Found UserScript 'ProcessAirflow'.
+ws
+0.9
+Processed 1 base script and 0 merged scripts

@@ -694,8 +694,98 @@ class Sim
 		if not model.nil?
       @model = model
     end
-    @weather = WeatherProcess.new("#{File.expand_path('.')}/in.epw")
+    begin
+      @weather = WeatherProcess.new("#{File.expand_path('.')}/in.epw")
+    rescue
+      @weather = WeatherProcess.new("#{File.expand_path('.')}/../in.epw")
+    end
 	end
+
+  def _processHeatingCoolingSeasons(misc, schedules)
+    # Assigns monthly heating and cooling seasons.
+
+    constants = Constants.new
+
+    monthly_temps = @weather.data.MonthlyAvgDrybulbs
+    heat_design_db = @weather.design.HeatingDrybulb
+
+    # create basis lists with zero for every month
+    cooling_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+    heating_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+
+    monthly_temps.each_with_index do |temp, i|
+      if temp < 66.0
+        heating_season_temp_basis[i] = 1.0
+      elsif temp >= 66.0
+        cooling_season_temp_basis[i] = 1.0
+      end
+
+      if (i == 0 or i == 11) and heat_design_db < 59.0
+        heating_season_temp_basis[i] = 1.0
+      elsif i == 6 or i == 7
+        cooling_season_temp_basis[i] = 1.0
+      end
+    end
+
+    cooling_season = Array.new(monthly_temps.length, 0.0)
+    heating_season = Array.new(monthly_temps.length, 0.0)
+
+    monthly_temps.each_with_index do |temp, i|
+      # Heating overlaps with cooling at beginning of summer
+      if i == 0 # January
+        prevmonth = 11 # December
+      else
+        prevmonth = i - 1
+      end
+
+      if (heating_season_temp_basis[i] == 1.0 or (cooling_season_temp_basis[prevmonth] == 0.0 and cooling_season_temp_basis[i] == 1.0))
+        heating_season[i] = 1.0
+      else
+        heating_season[i] = 0.0
+      end
+
+      if (cooling_season_temp_basis[i] == 1.0 or (heating_season_temp_basis[prevmonth] == 0.0 and heating_season_temp_basis[i] == 1.0))
+        cooling_season[i] = 1.0
+      else
+        cooling_season[i] = 0.0
+      end
+    end
+
+    # Find the first month of cooling and add one month
+    (1...12).to_a.each do |i|
+      if cooling_season[i] == 1.0
+        cooling_season[i - 1] = 1.0
+        break
+      end
+    end
+
+    season_type = []
+    (0...12).to_a.each do |month|
+      if heating_season[month] == 1.0 and cooling_season[month] == 0.0
+        season_type << constants.SeasonHeating
+      elsif heating_season[month] == 0.0 and cooling_season[month] == 1.0
+        season_type << constants.SeasonCooling
+      elsif heating_season[month] == 1.0 and cooling_season[month] == 1.0
+        season_type << constants.SeasonOverlap
+      else
+        season_type << constants.SeasonNone
+      end
+    end
+
+    # Avoid issues in the minimal building test suite by eliminating
+    # cooling and heating seasons
+    if misc.SimTestSuiteBuilding == constants.TestBldgMinimal
+      cooling_season = Array.new(12, 1.0)
+      heating_season = Array.new(12, 1.0)
+    end
+
+    # Heating and Cooling Season Schedules
+    schedules.heating_season = heating_season
+    schedules.cooling_season = cooling_season
+
+    return schedules
+
+  end
 
   def _processInteriorShadingSchedule(ish)
     # Assigns window shade multiplier and shading cooling season for each month.
@@ -724,7 +814,255 @@ class Sim
 
   end
 
-	def _processConstructionsExteriorInsulatedWallsWoodStud(wsw, extwallmass, exteriorfinish, wallsh, sc)		
+  def _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site, geometry)
+    # Infiltration calculations.
+
+    # loop thru all the spaces
+    spaces = []
+    spaces << living_space
+    hasGarage = false
+    hasFinishedBasement = false
+    hasUnfinishedBasement = false
+    hasCrawl = false
+    hasUnfinAttic = false
+    if not selected_garage == "NA"
+      hasGarage = true
+      spaces << garage
+    end
+    if not selected_fbsmt == "NA"
+      hasFinishedBasement = true
+      spaces << finished_basement
+    end
+    if not selected_ufbsmt == "NA"
+      hasUnfinishedBasement = true
+      spaces << space_unfinished_basement
+    end
+    if not selected_crawl == "NA"
+      hasCrawl = true
+      spaces << crawlspace
+    end
+    if not selected_unfinattic == "NA"
+      hasUnfinAttic = true
+      spaces << unfinished_attic
+    end
+
+    constants = Constants.new
+    properties = Properties.new
+
+    outside_air_density = (2.719 * local_pressure) / (properties.Air.R * (@weather.data.AnnualAvgDrybulb + 460.0))
+    inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
+    delta_pref = 0.016 # inH2O
+
+    # Assume an average inside temperature
+    si.assumed_inside_temp = assumed_inside_temp # deg F, used other places. Make available.
+
+    spaces.each do |space|
+      space.inf_method = nil
+      space.SLA = nil
+      space.ACH = nil
+      space.inf_flow = nil
+      space.hor_leak_frac = nil
+      space.neutral_level = nil
+    end
+
+    if not si.InfiltrationLivingSpaceACH50.nil?
+
+      # Living Space Infiltration
+      living_space.inf_method = constants.InfMethodASHRAE
+
+      # Based on "Field Validation of Algebraic Equations for Stack and
+      # Wind Driven Air Infiltration Calculations" by Walker and Wilson (1998)
+
+      # Pressure Exponent
+      si.n_i = 0.67
+      living_space.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationLivingSpaceACH50, si.n_i, geometry.above_grade_finished_floor_area, living_space.volume)
+
+      # Effective Leakage Area (ft^2)
+      si.A_o = living_space.SLA * geometry.above_grade_finished_floor_area
+
+      # Flow Coefficient (cfm/inH2O^n) (based on ASHRAE HoF)
+      si.C_i = si.A_o * (2.0 / outside_air_density) ** 0.5 * delta_pref ** (0.5 - si.n_i) * inf_conv_factor
+      has_flue = false
+
+      if has_flue
+        # for future use
+        flue_diameter = 0.5 # after() do
+        si.Y_i = flue_diameter ** 2.0 / 4.0 / si.A_o # Fraction of leakage through the flu
+        si.flue_height = geometry.building_height + 2.0 # ft
+        si.S_wflue = 1.0 # Flue Shelter Coefficient
+      else
+        si.Y_i = 0.0 # Fraction of leakage through the flu
+        si.flue_height = 0.0 # ft
+        si.S_wflue = 0.0 # Flue Shelter Coefficient
+      end
+
+      si.R_i = 0.5 * (1.0 - si.Y_i)
+      living_space.hor_leak_frac = si.R_i
+      si.X_i = 0.0
+      si.Z_f = si.flue_height / (living_space.height + living_space.coord_z)
+
+      # Calculate Stack Coefficient
+      si.M_o = (si.X_i + (2.0 * si.n_i + 1.0) * si.Y_i) ** 2.0 / (2 - si.R_i)
+
+      if si.M_o <= 1.0
+        si.M_i = si.M_o # eq. 10
+      else
+        si.M_i = 1.0 # eq. 11
+      end
+
+      if has_flue
+        # Eq. 13
+        si.X_c = si.R_i + (2.0 * (1.0 - si.R_i - si.Y_i)) / (si.n_i + 1.0) - 2.0 * si.Y_i * (si.Z_f - 1.0) ** si.n_i
+        # Additive flue function, Eq. 12
+        si.F_i = si.n_i * si.Y_y * (si.Z_f - 1.0) ** ((3.0 * si.n_i - 1.0) / 3.0) * (1.0 - (3.0 * (si.X_c - si.X_i) ** 2.0 * si.R_i ** (1 - si.n_i)) / (2.0 * (si.Z_f + 1.0)))
+      else
+        # Critical value of ceiling-floor leakage difference where the
+        # neutral level is located at the ceiling (eq. 13)
+        si.X_c = si.R_i + (2.0 * (1.0 - si.R_i - si.Y_i)) / (si.n_i + 1.0)
+        # Additive flue function (eq. 12)
+        si.F_i = 0.0
+      end
+
+      si.f_s = ((1.0 + si.n_i * si.R_i) / (si.n_i + 1.0)) * (0.5 - 0.5 * si.M_i ** (1.2)) ** (si.n_i + 1.0) + si.F_i
+
+      si.stack_coef = si.f_s * (0.005974 * outside_air_density * constants.g * living_space.height / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
+
+      # Calculate wind coefficient
+      if hasCrawl and crawlspace.CrawlACH > 0 # tk need to get CrawlACH
+
+        if si.X_i > 1.0 - 2.0 * si.Y_i
+          # Critical floor to ceiling difference above which f_w does not change (eq. 25)
+          si.X_i = 1.0 - 2.0 * si.Y_i
+        end
+
+        # Redefined R for wind calculations for houses with crawlspaces (eq. 21)
+        si.R_x = 1.0 - si.R_i * (si.n_i / 2.0 + 0.2)
+        # Redefined Y for wind calculations for houses with crawlspaces (eq. 22)
+        si.Y_x = 1.0 - si.Y_i / 4.0
+        # Used to calculate X_x (eq.24)
+        si.X_s = (1.0 - si.R_i) / 5.0 - 1.5 * si.Y_i
+        # Redefined X for wind calculations for houses with crawlspaces (eq. 23)
+        si.X_x = 1.0 - (((si.X_i - si.X_s) / (2.0 - si.R_i)) ** 2.0) ** 0.75
+        # Wind factor (eq. 20)
+        si.f_w = 0.19 * (2.0 - si.n_i) * si.X_x * si.R_x * si.Y_x
+
+      else
+
+        si.J_i = (si.X_i + si.R_i + 2.0 * si.Y_i) / 2.0
+        si.f_w = 0.19 * (2.0 - si.n_i) * (1.0 - ((si.X_i + si.R_i) / 2.0) ** (1.5 - si.Y_i)) - si.Y_i / 4.0 * (si.J_i - 2.0 * si.Y_i * si.J_i ** 4.0)
+
+      end
+
+      si.wind_coef = si.f_w * ( 0.01285 * outside_air_density / 2.0 ) ** si.n_i # inH2O^n/mph^2n
+
+      living_space.ACH = get_infiltration_ACH_from_SLA(living_space.SLA, geometry.stories, @weather)
+
+      # Convert living space ACH to cfm:
+      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * living_space.volume # cfm
+
+    elsif not si.InfiltrationLivingSpaceConstantACH.nil?
+
+      # Used for constant ACH
+      living_space.inf_method = constants.InfMethodRes
+      # ACH; Air exchange rate of above-grade conditioned spaces, due to natural ventilation
+      living_space.ACH = si.InfiltrationLivingSpaceConstantACH
+
+      # Convert living space ACH to cfm
+      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * living_space.volume # cfm
+
+    end
+
+    if hasGarage
+
+      garage.inf_method = constants.InfMethodSG
+      garage.hor_leak_frac = 0.4 # DOE-2 Default
+      garage.neutral_level = 0.5 # DOE-2 Default
+      garage.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationGarageACH50, 0.67, garage.area, garage.volume)
+      garage.ACH = get_infiltration_ACH_from_SLA(garage.SLA, 1.0, @weather)
+      # Convert ACH to cfm:
+      garage.inf_flow = garage.ACH / OpenStudio::convert(1.0,"hr","min").get * garage.volume # cfm
+
+    end
+
+    if hasFinishedBasement
+
+      finished_basement.inf_method = constants.InfMethodRes # Used for constant ACH
+      finished_basement.ACH = finished_basement.FBsmtACH
+      # Convert ACH to cfm
+      finished_basement.inf_flow = finished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * finished_basement.volume
+
+    end
+
+    if hasUnfinishedBasement
+
+      space_unfinished_basement.inf_method = constants.InfMethodRes # Used for constant ACH
+      space_unfinished_basement.ACH = space_unfinished_basement.UFBsmtACH
+      # Convert ACH to cfm
+      space_unfinished_basement.inf_flow = space_unfinished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * space_unfinished_basement.volume
+
+    end
+
+    if hasCrawl
+
+      crawlspace.inf_method = constants.InfMethodRes
+
+      crawlspace.ACH = crawlspace.CrawlACH
+      # Convert ACH to cfm
+      crawlspace.inf_flow = crawlspace.ACH / OpenStudio::convert(1.0,"hr","min").get * crawlspace.volume
+
+    end
+
+    if hasUnfinAttic
+
+      unfinished_attic.inf_method = constants.InfMethodSG
+      unfinished_attic.hor_leak_frac = 0.75 # Same as Energy Gauge USA Attic Model
+      unfinished_attic.neutral_level = 0.5 # DOE-2 Default
+      unfinished_attic.SLA = unfinished_attic.UASLA
+
+      unfinished_attic.ACH = get_infiltration_ACH_from_SLA(unfinished_attic.SLA, 1.0, @weather)
+
+      # Convert ACH to cfm
+      unfinished_attic.inf_flow = unfinished_attic.ACH / OpenStudio::convert(1.0,"hr","min").get * unfinished_attic.volume
+
+    end
+
+    ws = Sim._processWindSpeedCorrection(wind_speed, site, constants, si, neighbors)
+
+    spaces.each do |space|
+
+      space.f_t_SG = ws.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** ws.site_terrain_exponent / (ws.terrain_multiplier * (ws.height / 32.8) ** ws.terrain_exponent)
+      space.f_s_SG = nil
+      space.f_w_SG = nil
+      space.C_s_SG = nil
+      space.C_w_SG = nil
+      space.ELA = nil
+
+      if space.inf_method == constants.InfMethodSG
+
+        space.f_s_SG = 2 / 3 * (1 + space.hor_leak_frac / 2) * (2 * space.neutral_level * (1 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1 - space.neutral_level) ** 0.5)
+        space.f_w_SG = ws.shielding_coef * (1 - space.hor_leak_frac) ** (1 / 3) * space.f_t_SG
+        space.C_s_SG = space.f_s_SG ** 2 * constants.g * space.height / (si.assumed_inside_temp + 460.0)
+        space.C_w_SG = space.f_w_SG ** 2
+        space.ELA = space.SLA * space.area # ft^2
+
+      elsif space.inf_method == constants.InfMethodASHRAE
+
+        space.ELA = space.SLA * space.area # ft^2
+
+      else
+
+        space.ELA = 0 # ft^2
+        space.hor_leak_frac = 0
+
+      end
+
+    end
+
+    return si, living_space, ws
+
+  end
+
+	def _processConstructionsExteriorInsulatedWallsWoodStud(wsw, extwallmass, exteriorfinish, wallsh, sc)
 		# Set Furring insulation/air properties	
 		if wsw.WSWallCavityInsRvalueInstalled == 0
 			cavityInsDens = inside_air_dens # lb/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity tk why would you ever use "self."?
@@ -868,252 +1206,6 @@ class Sim
     wind_speed.shielding_coef = wind_speed.S_wo / 3.0
 
     return wind_speed
-
-  end
-
-  def _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site, geometry)
-    # Infiltration calculations.
-
-    # loop thru all the spaces
-    spaces = []
-    spaces << living_space
-    hasGarage = false
-    hasFinishedBasement = false
-    hasUnfinishedBasement = false
-    hasCrawl = false
-    hasUnfinAttic = false
-    if not selected_garage == "NA"
-      hasGarage = true
-      spaces << garage
-    end
-    if not selected_fbsmt == "NA"
-      hasFinishedBasement = true
-      spaces << finished_basement
-    end
-    if not selected_ufbsmt == "NA"
-      hasUnfinishedBasement = true
-      spaces << space_unfinished_basement
-    end
-    if not selected_crawl == "NA"
-      hasCrawl = true
-      spaces << crawlspace
-    end
-    if not selected_unfinattic == "NA"
-      hasUnfinAttic = true
-      spaces << unfinished_attic
-    end
-
-    constants = Constants.new
-
-    outside_air_density = 2.719 * local_pressure / (get_mat_air.R_air_gap * (@weather.data.AnnualAvgDrybulb + 460.0))
-    inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
-    delta_pref = 0.016 # inH2O
-
-    # Assume an average inside temperature
-    si.assumed_inside_temp = assumed_inside_temp # deg F, used other places. Make available.
-
-    spaces.each do |space|
-      space.inf_method = nil
-      space.SLA = nil
-      space.ACH = nil
-      space.inf_flow = nil
-      space.hor_leak_frac = nil
-      space.neutral_level = nil
-    end
-
-    if not si.InfiltrationLivingSpaceACH50.nil?
-
-      # Living Space Infiltration
-      living_space.inf_method = constants.InfMethodASHRAE
-
-      # Based on "Field Validation of Algebraic Equations for Stack and
-      # Wind Driven Air Infiltration Calculations" by Walker and Wilson (1998)
-
-      # Pressure Exponent
-      si.n_i = 0.67
-      living_space.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationLivingSpaceACH50, si.n_i, geometry.finished_floor_area, living_space.volume)
-      # Effective Leakage Area (ft^2)
-      si.A_o = living_space.SLA * 1200.0 # tk replace with ffa
-      # Flow Coefficient (cfm/inH2O^n) (based on ASHRAE HoF)
-      si.C_i = si.A_o * (2 / outside_air_density) ** 0.5 * delta_pref ** (0.5 - si.n_i) * inf_conv_factor
-      has_flue = false
-
-      if has_flue
-        # for future use
-        flue_diameter = 0.5 # after() do
-        si.Y_i = flue_diameter ** 2.0 / 4.0 / si.A_o # Fraction of leakage through the flu
-        si.flue_height = 12.0 + 2.0 # ft # tk replace with building height
-        si.S_wflue = 1.0 # Flue Shelter Coefficient
-      else
-        si.Y_i = 1.0 # Fraction of leakage through the flu
-        si.flue_height = 0.0 # ft
-        si.S_wflue = 0.0 # Flue Shelter Coefficient
-      end
-
-      si.R_i = 0.5 * (1.0 - si.Y_i)
-      living_space.hor_leak_frac = si.R_i
-      si.X_i = 0.0
-      si.Z_f = si.flue_height / (8.0 + 0.0) # tk replace with living space height and coord z
-
-      # Calculate Stack Coefficient
-      si.M_o = (si.X_i + (2.0 * si.n_i + 1.0) * si.Y_i) ** 2.0 / (2 - si.R_i)
-
-      if si.M_o <= 1.0
-        si.M_i = si.M_o # eq. 10
-      else
-        si.M_i = 1.0 # eq. 11
-      end
-
-      if has_flue
-        # Eq. 13
-        si.X_c = si.R_i + (2.0 * (1.0 - si.R_i - si.Y_i)) / (si.n_i + 1.0) - 2.0 * si.Y_i * (si.Z_f - 1.0) ** si.n_i
-        # Additive flue function, Eq. 12
-        si.F_i = si.n_i * si.Y_y * (si.Z_f - 1.0) ** ((3.0 * si.n_i - 1.0) / 3.0) * (1.0 - (3.0 * (si.X_c - si.X_i) ** 2.0 * si.R_i ** (1 - si.n_i)) / (2.0 * (si.Z_f + 1.0)))
-      else
-        # Critical value of ceiling-floor leakage difference where the
-        # neutral level is located at the ceiling (eq. 13)
-        si.X_c = si.R_i + (2.0 * (1.0 - si.R_i - si.Y_i)) / (si.n_i + 1.0)
-        # Additive flue function (eq. 12)
-        si.F_i = 0.0
-      end
-
-      si.f_s = ((1.0 + si.n_i * si.R_i) / (si.n_i + 1.0)) * (0.5 - 0.5 * si.M_i ** (1.2)) ** (si.n_i + 1.0) + si.F_i
-
-      si.stack_coef = si.f_s * (0.005974 * outside_air_density * constants.g * 8.0 / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n # tk replace with living space height
-
-      # Calculate wind coefficient
-      if hasCrawl and crawlspace.CrawlACH > 0 # tk need to get CrawlACH
-
-        if si.X_i > 1.0 - 2.0 * si.Y_i
-          # Critical floor to ceiling difference above which f_w does not change (eq. 25)
-          si.X_i = 1.0 - 2.0 * si.Y_i
-        end
-
-        # Redefined R for wind calculations for houses with crawlspaces (eq. 21)
-        si.R_x = 1.0 - si.R_i * (si.n_i / 2.0 + 0.2)
-        # Redefined Y for wind calculations for houses with crawlspaces (eq. 22)
-        si.Y_x = 1.0 - si.Y_i / 4.0
-        # Used to calculate X_x (eq.24)
-        si.X_s = (1.0 - si.R_i) / 5.0 - 1.5 * si.Y_i
-        # Redefined X for wind calculations for houses with crawlspaces (eq. 23)
-        si.X_x = 1.0 - (((si.X_i - si.X_s) / (2.0 - si.R_i)) ** 2.0) ** 0.75
-        # Wind factor (eq. 20)
-        si.f_w = 0.19 * (2.0 - si.n_i) * si.X_x * si.R_x * si.Y_x
-
-      else
-
-        si.J_i = (si.X_i + si.R_i + 2.0 * si.Y_i) / 2.0
-        si.f_w = 0.19 * (2.0 - si.n_i) * (1.0 - ((si.X_i + si.R_i) / 2.0) ** (1.5 - si.Y_i)) - si.Y_i / 4.0 * (si.J_i - 2.0 * si.Y_i * si.J_i ** 4.0)
-
-      end
-
-      si.wind_coef = si.f_w * ( 0.01285 * outside_air_density / 2.0 ) ** si.n_i # inH2O^n/mph^2n
-
-      living_space.ACH = get_infiltration_ACH_from_SLA(living_space.SLA, 2.0, @weather) # tk need to get stories
-
-      # Convert living space ACH to cfm:
-      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * living_space.volume # cfm
-
-    elsif not si.InfiltrationLivingSpaceConstantACH.nil?
-
-      # Used for constant ACH
-      living_space.inf_method = constants.InfMethodRes
-      # ACH; Air exchange rate of above-grade conditioned spaces, due to natural ventilation
-      living_space.ACH = si.InfiltrationLivingSpaceConstantACH
-
-      # Convert living space ACH to cfm
-      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * living_space.volume # cfm
-
-    end
-
-    if hasGarage
-
-      garage.inf_method = constants.InfMethodSG
-      garage.hor_leak_frac = 0.4 # DOE-2 Default
-      garage.neutral_level = 0.5 # DOE-2 Default
-      garage.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationGarageACH50, 0.67, garage.area, garage.volume)
-      garage.ACH = get_infiltration_ACH_from_SLA(garage.SLA, 1.0, @weather)
-      # Convert ACH to cfm:
-      garage.inf_flow = garage.ACH / OpenStudio::convert(1.0,"hr","min").get * garage.volume # cfm
-
-    end
-
-    if hasFinishedBasement
-
-      finished_basement.inf_method = constants.InfMethodRes # Used for constant ACH
-      finished_basement.ACH = finished_basement.FBsmtACH
-      # Convert ACH to cfm
-      finished_basement.inf_flow = finished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * finished_basement.volume
-
-    end
-
-    if hasUnfinishedBasement
-
-      space_unfinished_basement.inf_method = constants.InfMethodRes # Used for constant ACH
-      space_unfinished_basement.ACH = space_unfinished_basement.UFBsmtACH
-      # Convert ACH to cfm
-      space_unfinished_basement.inf_flow = space_unfinished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * space_unfinished_basement.volume
-
-    end
-
-    if hasCrawl
-
-      crawlspace.inf_method = constants.InfMethodRes
-
-      crawlspace.ACH = crawlspace.CrawlACH
-      # Convert ACH to cfm
-      crawlspace.inf_flow = crawlspace.ACH / OpenStudio::convert(1.0,"hr","min").get * crawlspace.volume
-
-    end
-
-    if hasUnfinAttic
-
-      unfinished_attic.inf_method = constants.InfMethodSG
-      unfinished_attic.hor_leak_frac = 0.75 # Same as Energy Gauge USA Attic Model
-      unfinished_attic.neutral_level = 0.5 # DOE-2 Default
-      unfinished_attic.SLA = unfinished_attic.UASLA
-
-      unfinished_attic.ACH = get_infiltration_ACH_from_SLA(unfinished_attic.SLA, 1.0, @weather)
-
-      # Convert ACH to cfm
-      unfinished_attic.inf_flow = unfinished_attic.ACH / OpenStudio::convert(1.0,"hr","min").get * unfinished_attic.volume
-
-    end
-
-    ws = Sim._processWindSpeedCorrection(wind_speed, site, constants, si, neighbors)
-
-
-    spaces.each do |space|
-
-      space.f_t_SG = ws.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** ws.site_terrain_exponent / (ws.terrain_multiplier * (ws.height / 32.8) ** ws.terrain_exponent)
-      space.f_s_SG = nil
-      space.f_w_SG = nil
-      space.C_s_SG = nil
-      space.C_w_SG = nil
-      space.ELA = nil
-
-      if space.inf_method == constants.InfMethodSG
-
-        space.f_s_SG = 2 / 3 * (1 + space.hor_leak_frac / 2) * (2 * space.neutral_level * (1 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1 - space.neutral_level) ** 0.5)
-        space.f_w_SG = ws.shielding_coef * (1 - space.hor_leak_frac) ** (1 / 3) * space.f_t_SG
-        space.C_s_SG = space.f_s_SG ** 2 * constants.g * space.height / (si.assumed_inside_temp + 460.0)
-        space.C_w_SG = space.f_w_SG ** 2
-        space.ELA = space.SLA * space.area # ft^2
-
-      elsif space.inf_method == constants.InfMethodASHRAE
-
-        space.ELA = space.SLA * space.area # ft^2
-
-      else
-
-        space.ELA = 0 # ft^2
-        space.hor_leak_frac = 0
-
-      end
-
-    end
-
-    return si, living_space, ws
 
   end
 
@@ -1460,7 +1552,7 @@ class Sim
 
   end
 
-  def _processNaturalVentilation(nv, living_space, wind_speed, infiltration, schedules)
+  def _processNaturalVentilation(nv, living_space, wind_speed, infiltration, schedules, geometry)
     # Natural Ventilation
 
     constants = Constants.new
@@ -1580,70 +1672,145 @@ class Sim
     end
     natVentOvlpSsnTempWkEnd_hourly += "#{nv.ovlp_ssn_hourly_weekend_temp[23]};"
 
+    # Parse the idf for season_type array
+    heating_season_names = []
+    heating_season = []
+    cooling_season_names = []
+    cooling_season = []
+    sch_args = @model.getObjectsByType("Schedule:Day:Interval".to_IddObjectType)
+    (1..12).to_a.each do |i|
+      heating_season_names << "HeatingSeasonSchedule%02dd" % i.to_s
+      cooling_season_names << "CoolingSeasonSchedule%02dd" % i.to_s
+    end
+
+    heating_season_names.each do |sch_name|
+      sch_args.each do |sch_arg|
+        sch_arg_name = sch_arg.getString(0).to_s # Name
+        if sch_arg_name == sch_name
+          heating_season << sch_arg.getString(4).get.to_f
+        end
+      end
+    end
+    cooling_season_names.each do |sch_name|
+      sch_args.each do |sch_arg|
+        sch_arg_name = sch_arg.getString(0).to_s # Name
+        if sch_arg_name == sch_name
+          cooling_season << sch_arg.getString(4).get.to_f
+        end
+      end
+    end
+
+    nv.season_type = []
+    (0...12).to_a.each do |month|
+      if heating_season[month] == 1.0 and cooling_season[month] == 0.0
+        nv.season_type << constants.SeasonHeating
+      elsif heating_season[month] == 0.0 and cooling_season[month] == 1.0
+        nv.season_type << constants.SeasonCooling
+      elsif heating_season[month] == 1.0 and cooling_season[month] == 1.0
+        nv.season_type << constants.SeasonOverlap
+      else
+        nv.season_type << constants.SeasonNone
+      end
+    end
+
     sch_year = "
     Schedule:Year,
-      NatVentTemp,              !- Name
-      TEMPERATURE,              !- Schedule Type
-      NatVentHtgSsnTempWeek,    !- Week Schedule Name
-      1,                        !- Start Month
-      1,                        !- Start Day
-      1,                        !- End Month
-      31,                       !- End Day
-      NatVentHtgSsnTempWeek,    !- Week Schedule Name
-      2,                        !- Start Month
-      1,                        !- Start Day
-      2,                        !- End Month
-      28,                       !- End Day
-      NatVentHtgSsnTempWeek,    !- Week Schedule Name
-      3,                        !- Start Month
-      1,                        !- Start Day
-      3,                        !- End Month
-      31,                       !- End Day
-      NatVentOvlpSsnTempWeek,   !- Week Schedule Name
-      4,                        !- Start Month
-      1,                        !- Start Day
-      4,                        !- End Month
-      30,                       !- End Day
-      NatVentOvlpSsnTempWeek,   !- Week Schedule Name
-      5,                        !- Start Month
-      1,                        !- Start Day
-      5,                        !- End Month
-      31,                       !- End Day
-      NatVentClgSsnTempWeek,    !- Week Schedule Name
-      6,                        !- Start Month
-      1,                        !- Start Day
-      6,                        !- End Month
-      30,                       !- End Day
-      NatVentClgSsnTempWeek,    !- Week Schedule Name
-      7,                        !- Start Month
-      1,                        !- Start Day
-      7,                        !- End Month
-      31,                       !- End Day
-      NatVentClgSsnTempWeek,    !- Week Schedule Name
-      8,                        !- Start Month
-      1,                        !- Start Day
-      8,                        !- End Month
-      31,                       !- End Day
-      NatVentClgSsnTempWeek,    !- Week Schedule Name
-      9,                        !- Start Month
-      1,                        !- Start Day
-      9,                        !- End Month
-      30,                       !- End Day
-      NatVentOvlpSsnTempWeek,   !- Week Schedule Name
-      10,                       !- Start Month
-      1,                        !- Start Day
-      10,                       !- End Month
-      31,                       !- End Day
-      NatVentHtgSsnTempWeek,    !- Week Schedule Name
-      11,                       !- Start Month
-      1,                        !- Start Day
-      11,                       !- End Month
-      30,                       !- End Day
-      NatVentHtgSsnTempWeek,    !- Week Schedule Name
-      12,                       !- Start Month
-      1,                        !- Start Day
-      12,                       !- End Month
-      31;                       !- End Day"
+      NatVentTemp,                 !- Name
+      TEMPERATURE,                 !- Schedule Type"
+    nv.season_type.each_with_index do |ssn_type, month|
+      if ssn_type == constants.SeasonHeating
+        week_schedule_name = "NatVentHtgSsnTempWeek"
+      elsif ssn_type == constants.SeasonCooling
+        week_schedule_name = "NatVentClgSsnTempWeek"
+      else
+        week_schedule_name = "NatVentOvlpSsnTempWeek"
+      end
+      if month == 0
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        1,                        !- Start Month
+        1,                        !- Start Day
+        1,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 1
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        2,                        !- Start Month
+        1,                        !- Start Day
+        2,                        !- End Month
+        28,                       !- End Day"
+      elsif month == 2
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        3,                        !- Start Month
+        1,                        !- Start Day
+        3,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 3
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        4,                        !- Start Month
+        1,                        !- Start Day
+        4,                        !- End Month
+        30,                       !- End Day"
+      elsif month == 4
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        5,                        !- Start Month
+        1,                        !- Start Day
+        5,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 5
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        6,                        !- Start Month
+        1,                        !- Start Day
+        6,                        !- End Month
+        30,                       !- End Day"
+      elsif month == 6
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        7,                        !- Start Month
+        1,                        !- Start Day
+        7,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 7
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        8,                        !- Start Month
+        1,                        !- Start Day
+        8,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 8
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        9,                        !- Start Month
+        1,                        !- Start Day
+        9,                        !- End Month
+        30,                       !- End Day"
+      elsif month == 9
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        10,                       !- Start Month
+        1,                        !- Start Day
+        10,                       !- End Month
+        31,                       !- End Day"
+      elsif month == 10
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        11,                       !- Start Month
+        1,                        !- Start Day
+        11,                       !- End Month
+        30,                       !- End Day"
+      elsif month == 11
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        12,                       !- Start Month
+        1,                        !- Start Day
+        12,                       !- End Month
+        31,                       !- End Day"
+      end
+    end
 
     schedules.NatVentTemp = [natVentHtgSsnTempWkDay_hourly, natVentHtgSsnTempWkEnd_hourly, natVentClgSsnTempWkDay_hourly, natVentClgSsnTempWkEnd_hourly, natVentOvlpSsnTempWkDay_hourly, natVentOvlpSsnTempWkEnd_hourly, nat_vent_clg_ssn_temp, nat_vent_htg_ssn_temp, nat_vent_ovlp_ssn_temp, sch_year]
 
@@ -1671,6 +1838,18 @@ class Sim
     end
     off_day += "#{natventoff_day_hourly[23]};"
 
+    off_week = "
+    Schedule:Week:Compact,
+      NatVentOffSeason-Week,                           !- Name
+      For: Weekdays,
+      NatVentOff-Day,
+      For: CustomDay1,
+      NatVentOff-Day,
+      For: CustomDay2,
+      NatVentOff-Day,
+      For: AllOtherDays,
+      NatVentOff-Day;"
+
     on_week = "
     Schedule:Week:Compact,
       NatVent-Week,                                    !- Name
@@ -1683,72 +1862,113 @@ class Sim
       For: AllOtherDays,
       NatVentOff-Day;"
 
+    # # Apply the on schedule to the correct number of days
+    # wkday_order = ('monday','wednesday','friday','tuesday','thursday')
+    # for dayname,_i in zip(wkday_order,range(1,nv.NatVentNumberWeekdays+1)):
+    #   getattr(on_week,'set_%s' % dayname)(on_day)
+    #   wkend_order = ('saturday','sunday')
+    #   for dayname,_i in zip(wkend_order,range(1,nv.NatVentNumberWeekendDays+1)):
+    #     getattr(on_week,'set_%s' % dayname)(on_day)
+    #     on_week.set_other_days(off_day)
+
     sch_year = "
     Schedule:Year,
       NatVent,                  !- Name
-      FRACTION,                 !- Schedule Type
-      NatVent-Week,             !- Week Schedule Name
-      1,                        !- Start Month
-      1,                        !- Start Day
-      1,                        !- End Month
-      31,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      2,                        !- Start Month
-      1,                        !- Start Day
-      2,                        !- End Month
-      28,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      3,                        !- Start Month
-      1,                        !- Start Day
-      3,                        !- End Month
-      31,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      4,                        !- Start Month
-      1,                        !- Start Day
-      4,                        !- End Month
-      30,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      5,                        !- Start Month
-      1,                        !- Start Day
-      5,                        !- End Month
-      31,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      6,                        !- Start Month
-      1,                        !- Start Day
-      6,                        !- End Month
-      30,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      7,                        !- Start Month
-      1,                        !- Start Day
-      7,                        !- End Month
-      31,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      8,                        !- Start Month
-      1,                        !- Start Day
-      8,                        !- End Month
-      31,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      9,                        !- Start Month
-      1,                        !- Start Day
-      9,                        !- End Month
-      30,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      10,                       !- Start Month
-      1,                        !- Start Day
-      10,                       !- End Month
-      31,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      11,                       !- Start Month
-      1,                        !- Start Day
-      11,                       !- End Month
-      30,                       !- End Day
-      NatVent-Week,             !- Week Schedule Name
-      12,                       !- Start Month
-      1,                        !- Start Day
-      12,                       !- End Month
-      31;                       !- End Day"
+      FRACTION,                 !- Schedule Type"
+    (0...12).to_a.each do |month|
+      if (nv.season_type[month] == constants.SeasonHeating and nv.NatVentHeatingSeason) or (nv.season_type[month] == constants.SeasonCooling and nv.NatVentCoolingSeason) or (nv.season_type[month] == constants.SeasonOverlap and nv.NatVentOverlapSeason) # tk how to get season_type array from idf?
+        week_schedule_name = "NatVent-Week"
+      else
+        week_schedule_name = "NatVentOffSeason-Week"
+      end
+      if month == 0
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        1,                        !- Start Month
+        1,                        !- Start Day
+        1,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 1
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        2,                        !- Start Month
+        1,                        !- Start Day
+        2,                        !- End Month
+        28,                       !- End Day"
+      elsif month == 2
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        3,                        !- Start Month
+        1,                        !- Start Day
+        3,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 3
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        4,                        !- Start Month
+        1,                        !- Start Day
+        4,                        !- End Month
+        30,                       !- End Day"
+      elsif month == 4
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        5,                        !- Start Month
+        1,                        !- Start Day
+        5,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 5
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        6,                        !- Start Month
+        1,                        !- Start Day
+        6,                        !- End Month
+        30,                       !- End Day"
+      elsif month == 6
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        7,                        !- Start Month
+        1,                        !- Start Day
+        7,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 7
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        8,                        !- Start Month
+        1,                        !- Start Day
+        8,                        !- End Month
+        31,                       !- End Day"
+      elsif month == 8
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        9,                        !- Start Month
+        1,                        !- Start Day
+        9,                        !- End Month
+        30,                       !- End Day"
+      elsif month == 9
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        10,                       !- Start Month
+        1,                        !- Start Day
+        10,                       !- End Month
+        31,                       !- End Day"
+      elsif month == 10
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        11,                       !- Start Month
+        1,                        !- Start Day
+        11,                       !- End Month
+        30,                       !- End Day"
+      elsif month == 11
+        sch_year += "
+        #{week_schedule_name},    !- Week Schedule Name
+        12,                       !- Start Month
+        1,                        !- Start Day
+        12,                       !- End Month
+        31,                       !- End Day"
+      end
+    end
 
-    schedules.NatVentAvailability = [on_day, off_day, on_week, sch_year]
+    schedules.NatVentAvailability = [on_day, off_day, off_week, on_week, sch_year]
 
     # Explanation for FRAC-VENT-AREA equation:
     # From DOE22 Vol2-Dictionary: For VENT-METHOD=S-G, this is 0.6 times
@@ -1756,7 +1976,7 @@ class Sim
     # According to 2010 BA Benchmark, 33% of the windows on any facade will
     # be open at any given time and can only be opened to 20% of their area.
 
-    nv.area = 0.6 * 1000.0 * nv.NatVentFractionWindowsOpen * nv.NatVentFractionWindowAreaOpen # ft^2 (For S-G, this is 0.6*(open window area))
+    nv.area = 0.6 * geometry.window_area * nv.NatVentFractionWindowsOpen * nv.NatVentFractionWindowAreaOpen # ft^2 (For S-G, this is 0.6*(open window area))
     nv.max_rate = 20.0 # Air Changes per hour
     nv.max_flow_rate = nv.max_rate * living_space.volume / OpenStudio::convert(1.0,"hr","min").get
     nv_neutral_level = 0.5
@@ -1796,7 +2016,8 @@ class Sim
 	def inside_air_dens
 		# Air properties
 		mat_air = get_mat_air
-		mat_air.inside_air_dens = 2.719 * local_pressure / (get_mat_air.R_air_gap * (assumed_inside_temp + 460)) # lb/ft^3
+    properties = Properties.new
+		mat_air.inside_air_dens = 2.719 * local_pressure / (properties.Air.R * (assumed_inside_temp + 460)) # lb/ft^3
 		# tk OpenStudio::convert(local_pressure,"atm","Btu/ft^3").get doesn't work to get the 2.719
 		return mat_air.inside_air_dens
 	end
@@ -2683,12 +2904,8 @@ class Sim
     # Film Resistances
     # The following film resistance are used only in sim.py and DOE2
 
-    # cdd = weather.data.CDD65F
-    # hdd = weather.data.HDD65F
-    # temp
-    cdd = 2729.0
-    hdd = 1349.0
-    #
+    cdd = @weather.data.CDD65F
+    hdd = @weather.data.HDD65F
 
     # Air Film Resistances
     film = Get_films_constant.new

@@ -1,0 +1,39 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsSlab</Channel>
+      <Message>Surface 'Surface 1', attached to Space 'first floor living' of Space Type 'living spacetype' and with Surface Type 'Floor' and Outside Boundary Condition 'Ground', was assigned Construction 'Slab'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{c2341e75-cd65-4ba0-9ecf-035e7b801035}</UUID>
+      <VersionUUID>{c27a1384-7af0-4037-a5c1-c27e4b8d393a}</VersionUUID>
+      <Name>selectedliving</Name>
+      <ValueType>String</ValueType>
+      <Value>{8b94a914-1935-40aa-8088-83552c41418c}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{c05fd60e-3d0b-4fa9-b40a-318d1f744aa9}</UUID>
+      <VersionUUID>{33fa5072-cc5e-43d5-baee-1d82db74ab1f}</VersionUUID>
+      <Name>selectedslabins</Name>
+      <ValueType>String</ValueType>
+      <Value>Uninsulated</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{58aa8de7-3c75-4046-b874-1f1c05bdc65d}</UUID>
+      <VersionUUID>{8f8422f2-a25c-4fa0-b3bc-7836331186b3}</VersionUUID>
+      <Name>userdefinedcarpetr</Name>
+      <ValueType>Double</ValueType>
+      <Value>2.08</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{b42da2d8-61e1-4073-8229-13db0c93cfb3}</UUID>
+      <VersionUUID>{591a6f3a-a9b6-4fcf-bb2c-f875bffe58ba}</VersionUUID>
+      <Name>userdefinedcarpetfrac</Name>
+      <ValueType>Double</ValueType>
+      <Value>0.8</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

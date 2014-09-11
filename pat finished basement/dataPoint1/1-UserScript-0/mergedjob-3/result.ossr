@@ -1,0 +1,46 @@
+<OSResult>
+  <Value>Success</Value>
+  <FinalCondition>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ResidentialDishwasher</Channel>
+      <Message>A dishwasher has been added with 175.2 kWh annual energy consumption.</Message>
+    </LogMessage>
+  </FinalCondition>
+  <Attributes>
+    <Attribute>
+      <UUID>{b8da1416-1df8-480d-8a3a-fdfa250b6414}</UUID>
+      <VersionUUID>{d44572be-7e4c-4625-a99d-22f1ccca0d84}</VersionUUID>
+      <Name>selected_dw</Name>
+      <ValueType>String</ValueType>
+      <Value>Benchmark</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{31d1d81c-5318-440a-a392-cc9f3a00d0e2}</UUID>
+      <VersionUUID>{0c1870f5-11da-4786-b2d5-3ef363b95180}</VersionUUID>
+      <Name>dw_E</Name>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{d276f783-cd7c-4911-977a-27d94a775ea8}</UUID>
+      <VersionUUID>{00ba6d5f-a13c-4086-92f0-1d29e850656c}</VersionUUID>
+      <Name>BAB_mult</Name>
+      <ValueType>Double</ValueType>
+      <Value>1</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{ed82f091-bd74-40c0-927c-30c6c87e1934}</UUID>
+      <VersionUUID>{3c5c32fe-1681-4a77-a608-dfb5dc47276f}</VersionUUID>
+      <Name>Num_Br</Name>
+      <ValueType>Integer</ValueType>
+      <Value>3</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{f3a324e6-eae1-4a21-883b-75e5463fb239}</UUID>
+      <VersionUUID>{7a337e06-36d9-48be-b986-feee97153fba}</VersionUUID>
+      <Name>space_type</Name>
+      <ValueType>String</ValueType>
+      <Value>{8b94a914-1935-40aa-8088-83552c41418c}</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>
