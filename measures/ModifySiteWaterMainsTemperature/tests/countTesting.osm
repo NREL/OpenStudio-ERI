@@ -1,0 +1,134 @@
+
+OS:Version,
+  {615d9556-1b7d-4714-b096-72a9b750e1de}, !- Handle
+  1.4.0;                                  !- Version Identifier
+
+OS:ClimateZones,
+  {6b4bf5c0-bc4a-4e88-8659-e7731e73ff7a}, !- Handle
+  ,                                       !- Active Institution
+  ,                                       !- Active Year
+  ASHRAE,                                 !- Climate Zone Institution Name 1
+  ANSI/ASHRAE Standard 169,               !- Climate Zone Document Name 1
+  2006,                                   !- Climate Zone Document Year 1
+  ,                                       !- Climate Zone Value 1
+  CEC,                                    !- Climate Zone Institution Name 2
+  California Climate Zone Descriptions,   !- Climate Zone Document Name 2
+  1995,                                   !- Climate Zone Document Year 2
+  ;                                       !- Climate Zone Value 2
+
+OS:LifeCycleCost:Parameters,
+  {04a8a3f0-bd26-4d9a-9cdc-48ca93091cfd}, !- Handle
+  FEMP,                                   !- Analysis Type
+  ,                                       !- Discounting Convention
+  ,                                       !- Inflation Approach
+  ,                                       !- Real Discount Rate
+  ,                                       !- Nominal Discount Rate
+  ,                                       !- Inflation
+  ,                                       !- Base Date Month
+  ,                                       !- Base Date Year
+  ,                                       !- Service Date Month
+  ,                                       !- Service Date Year
+  ,                                       !- Length of Study Period in Years
+  ,                                       !- Tax Rate
+  ,                                       !- Depreciation Method
+  Yes;                                    !- Use NIST Fuel Escalation Rates
+
+OS:YearDescription,
+  {75656f00-7a43-40be-8e8f-2920f27e9a3f}; !- Handle
+
+OS:RadianceParameters,
+  {97b1133a-1299-426e-8cf8-074db938cfc8}, !- Handle
+  1,                                      !- Accumulated Rays per Record
+  0,                                      !- Direct Threshold
+  1,                                      !- Direct Certainty
+  1,                                      !- Direct Jitter
+  1,                                      !- Direct Pretest
+  6,                                      !- Ambient Bounces VMX
+  2,                                      !- Ambient Bounces DMX
+  4050,                                   !- Ambient Divisions VMX
+  512,                                    !- Ambient Divisions DMX
+  256,                                    !- Ambient Supersamples
+  0.001,                                  !- Limit Weight VMX
+  0.001,                                  !- Limit Weight DMX
+  500,                                    !- Klems Sampling Density
+  146;                                    !- Sky Discretization Resolution
+
+OS:SimulationControl,
+  {4e1c3929-6487-4bca-b928-881d883590a5}; !- Handle
+
+OS:Sizing:Parameters,
+  {9522bc7b-53c1-4df5-9584-65ca9e5a8972}, !- Handle
+  1.25,                                   !- Heating Sizing Factor
+  1.15;                                   !- Cooling Sizing Factor
+
+OS:ProgramControl,
+  {36ef9eda-7811-449e-a621-d58dbe790edd}; !- Handle
+
+OS:Timestep,
+  {829ebb18-bffe-451c-9cc0-5f330413f99b}, !- Handle
+  6;                                      !- Number of Timesteps per Hour
+
+OS:OutputControl:ReportingTolerances,
+  {4e142c73-0472-465a-8ee9-5bc74a4acbc6}; !- Handle
+
+OS:ConvergenceLimits,
+  {a15315e5-cb31-496a-8ea3-c5c164966cf7}; !- Handle
+
+OS:ShadowCalculation,
+  {98f633eb-2c1d-4f2d-9638-bcbeabff8710}, !- Handle
+  7,                                      !- Calculation Frequency
+  15000;                                  !- Maximum Figures in Shadow Overlap Calculations
+
+OS:SurfaceConvectionAlgorithm:Inside,
+  {1d569896-35ce-4e3f-8e4f-2580eff705c5}, !- Handle
+  TARP;                                   !- Algorithm
+
+OS:SurfaceConvectionAlgorithm:Outside,
+  {2c237f9c-c8fe-4722-91f3-d668fd019203}, !- Handle
+  DOE-2;                                  !- Algorithm
+
+OS:HeatBalanceAlgorithm,
+  {7136c36e-cf30-4ee5-86a4-651752f3d5fa}, !- Handle
+  ConductionTransferFunction,             !- Algorithm
+  200;                                    !- Surface Temperature Upper Limit {F}
+
+OS:ZoneAirHeatBalanceAlgorithm,
+  {42ad2349-819f-458e-8c6d-643954435da9}, !- Handle
+  AnalyticalSolution;                     !- Algorithm
+
+OS:ZoneAirContaminantBalance,
+  {cec22fb5-0e96-4ea3-bd1e-12539857782f}; !- Handle
+
+OS:ZoneCapacitanceMultiplier:ResearchSpecial,
+  {9c4bef01-633e-41c1-b6c9-54374349a3ec}, !- Handle
+  ,                                       !- Temperature Capacity Multiplier
+  ,                                       !- Humidity Capacity Multiplier
+  ;                                       !- Carbon Dioxide Capacity Multiplier
+
+OS:RunPeriod,
+  {e84ea49a-3269-4889-9267-afdca62fa114}, !- Handle
+  Run Period 1,                           !- Name
+  1,                                      !- Begin Month
+  1,                                      !- Begin Day of Month
+  12,                                     !- End Month
+  31,                                     !- End Day of Month
+  ,                                       !- Use Weather File Holidays and Special Days
+  ,                                       !- Use Weather File Daylight Saving Period
+  ,                                       !- Apply Weekend Holiday Rule
+  ,                                       !- Use Weather File Rain Indicators
+  ,                                       !- Use Weather File Snow Indicators
+  ;                                       !- Number of Times Runperiod to be Repeated
+
+OS:Building,
+  {c8da3cc5-c67a-4cca-9db4-4a5fa92f989a}, !- Handle
+  Building 1,                             !- Name
+  ,                                       !- Building Sector Type
+  ,                                       !- North Axis {deg}
+  ,                                       !- Nominal Floor to Floor Height {m}
+  ,                                       !- Space Type Name
+  ,                                       !- Default Construction Set Name
+  ;                                       !- Default Schedule Set Name
+
+OS:Facility,
+  {eebd8b1c-d9d8-4459-89a3-93861b7f3423}; !- Handle
+
