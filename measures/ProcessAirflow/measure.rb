@@ -272,6 +272,18 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     attr_accessor(:MechanicalVentilationEnergy, :MechanicalVentilation, :BathExhaust, :ClothesDryerExhaust, :RangeHood, :NatVentProbability, :NatVentAvailability, :NatVentTemp)
   end
 
+  class HeatingSetpoint
+    def initialize
+    end
+    attr_accessor(:HeatingSetpointWeekday, :HeatingSetpointWeekend)
+  end
+
+  class CoolingSetpoint
+    def initialize
+    end
+    attr_accessor(:CoolingSetpointWeekday, :CoolingSetpointWeekend)
+  end
+
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -303,7 +315,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     #make a double argument for infiltration of living space
     userdefined_inflivingspace = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinflivingspace", false)
     userdefined_inflivingspace.setDisplayName("Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for above-grade living space (including finished attic).")
-    userdefined_inflivingspace.setDefaultValue(0)
+    userdefined_inflivingspace.setDefaultValue(7)
     args << userdefined_inflivingspace
 
     #make a double argument for constant infiltration of living space
@@ -345,7 +357,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     #make a double argument for infiltration of unfinished basement
     userdefined_infufbsmt = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinfufbsmt", false)
     userdefined_infufbsmt.setDisplayName("Constant air exchange rate, in Air Changes per Hour (ACH), for the unfinished basement. A value of 0.10 ACH or greater is recommended for modeling Heat Pump Water Heaters in unfinished basements.")
-    userdefined_infufbsmt.setDefaultValue(0.0)
+    userdefined_infufbsmt.setDefaultValue(0.1)
     args << userdefined_infufbsmt
 
     #make a choice argument for crawl
@@ -385,7 +397,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     #make a double argument for existing or new construction
     userdefined_homeage = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedhomeage", true)
     userdefined_homeage.setDisplayName("Age of home [yrs]. Enter 0 for new construction.")
-    userdefined_homeage.setDefaultValue(10.0)
+    userdefined_homeage.setDefaultValue(0)
     args << userdefined_homeage
 
     # Terrain
@@ -455,19 +467,19 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
     #make a double argument for heating season setpoint offset
     userdefined_htgoffset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedhtgoffset",false)
-    userdefined_htgoffset.setDisplayName("The temperature offset below the hourly cooling setpoint, to which the living space is allowed to cool during months that are only in the heating season.")
+    userdefined_htgoffset.setDisplayName("The temperature offset below the hourly cooling setpoint, to which the living space is allowed to cool during months that are only in the heating season [F].")
     userdefined_htgoffset.setDefaultValue(1.0)
     args << userdefined_htgoffset
 
     #make a double argument for cooling season setpoint offset
     userdefined_clgoffset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedclgoffset",false)
-    userdefined_clgoffset.setDisplayName("The temperature offset above the hourly heating setpoint, to which the living space is allowed to cool during months that are only in the cooling season.")
+    userdefined_clgoffset.setDisplayName("The temperature offset above the hourly heating setpoint, to which the living space is allowed to cool during months that are only in the cooling season [F].")
     userdefined_clgoffset.setDefaultValue(1.0)
     args << userdefined_clgoffset
 
     #make a double argument for overlap season setpoint offset
     userdefined_ovlpoffset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedovlpoffset",false)
-    userdefined_ovlpoffset.setDisplayName("The temperature offset above the maximum heating setpoint, to which the living space is allowed to cool during months that are in both the heating season and cooling season.")
+    userdefined_ovlpoffset.setDisplayName("The temperature offset above the maximum heating setpoint, to which the living space is allowed to cool during months that are in both the heating season and cooling season [F].")
     userdefined_ovlpoffset.setDefaultValue(1.0)
     args << userdefined_ovlpoffset
 
@@ -564,7 +576,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     mechVentHouseFanPower = runner.getDoubleArgumentValue("userdefinedfanpower",user_arguments)
     mechVentFractionOfASHRAE = runner.getDoubleArgumentValue("userdefinedfracofashrae",user_arguments)
     dryerExhaust = runner.getDoubleArgumentValue("userdefineddryerexhaust",user_arguments)
-    has_cd = false
+    # tk temp below, has_cd should initially be set to false
+    has_cd = true
     electricEquipments = workspace.getObjectsByType("ElectricEquipment".to_IddObjectType)
     electricEquipments.each do |electricEquipment|
       electricEquipment_name = electricEquipment.getString(0).to_s # Name
@@ -627,6 +640,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     geometry = Geometry.new
     nv = NaturalVentilation.new(natVentHtgSsnSetpointOffset, natVentClgSsnSetpointOffset, natVentOvlpSsnSetpointOffset, natVentHeatingSeason, natVentCoolingSeason, natVentOverlapSeason, natVentNumberWeekdays, natVentNumberWeekendDays, natVentFractionWindowsOpen, natVentFractionWindowAreaOpen, natVentMaxOAHumidityRatio, natVentMaxOARelativeHumidity)
     schedules = Schedules.new
+    cooling_set_point = CoolingSetpoint.new
+    heating_set_point = HeatingSetpoint.new
 
     zones = workspace.getObjectsByType("Zone".to_IddObjectType)
     zones.each do |zone|
@@ -664,14 +679,44 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       end
     end
 
+    heating_set_point.HeatingSetpointWeekday = Array.new
+    heating_set_point.HeatingSetpointWeekend = Array.new
+    cooling_set_point.CoolingSetpointWeekday = Array.new
+    cooling_set_point.CoolingSetpointWeekend = Array.new
+    schedule_days = workspace.getObjectsByType("Schedule:Day:Interval".to_IddObjectType)
+    schedule_days.each do |schedule_day|
+      schedule_day_name = schedule_day.getString(0).to_s # Name
+      if schedule_day_name == "HeatingSetPointWeekday"
+        (4..50).step(2) do |x|
+          deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
+          heating_set_point.HeatingSetpointWeekday << deg
+        end
+      elsif schedule_day_name == "HeatingSetPointWeekend"
+        (4..50).step(2) do |x|
+          deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
+          heating_set_point.HeatingSetpointWeekend << deg
+        end
+      elsif schedule_day_name == "CoolingSetPointWeekday"
+        (4..50).step(2) do |x|
+          deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
+          cooling_set_point.CoolingSetpointWeekday << deg
+        end
+      elsif schedule_day_name == "CoolingSetPointWeekend"
+        (4..50).step(2) do |x|
+          deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
+          cooling_set_point.CoolingSetpointWeekend << deg
+        end
+      end
+    end
+
     # temp code for testing
     geometry.num_bedrooms = 3.0 # tk get this
-    geometry.finished_floor_area = 3600.0 # tk get this
-    geometry.above_grade_finished_floor_area = 2400.0 # tk get this
+    geometry.finished_floor_area = 2700.0 # tk get this
+    geometry.above_grade_finished_floor_area = 2700.0 # tk get this
     geometry.num_bathrooms = 2.0 # tk get this
     geometry.building_height = 24.5 # tk get this
     geometry.stories = 2.0 # tk get this
-    geometry.window_area = 301.5 # tk get this
+    geometry.window_area = 348.0 # tk get this
     living_space.volume = 21600.0 # tk get this
     living_space.height = 16.0 # tk get this
     living_space.area = 2700.0 # tk get this
@@ -700,7 +745,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     # Process the mechanical ventilation
     vent, schedules = sim._processMechanicalVentilation(si, vent, misc, clothes_dryer, geometry, living_space, schedules)
     # Process the natural ventilation
-    nv, schedules = sim._processNaturalVentilation(nv, living_space, wind_speed, si, schedules, geometry)
+    nv, schedules = sim._processNaturalVentilation(nv, living_space, wind_speed, si, schedules, geometry, cooling_set_point, heating_set_point)
 
     ems = []
 
@@ -760,20 +805,18 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       ems << sch
     end
 
-    # tk continue testing against BEopt idf here
-
     # Infiltration (Overridden by EMS. Values here are arbitrary)
     # Living Infiltration
     ems << "
     ZoneInfiltration:FlowCoefficient,
       Living Infiltration,                                        !- Name
-      living,                                                     !- Zone Name
+      #{selected_living},                                         !- Zone Name
       AlwaysOn,                                                   !- Schedule Name
       1,                                                          !- Flow Coefficient {m/s-Pa^n}
       1,                                                          !- Stack Coefficient {Pa^n/K^n}
       1,                                                          !- Pressure Exponent
       1,                                                          !- Wind Coefficient {Pa^n-s^n/m^n}
-      1;                                                          !- Shelter Factor (From Walker and Wilson (1998) (eq. 16))" # tk living should be selected_living
+      1;                                                          !- Shelter Factor (From Walker and Wilson (1998) (eq. 16))"
 
     # The ventilation flow rate from this object is overriden by EMS language
     # Natural Ventilation
@@ -1133,6 +1176,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         ,                                                                             !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
         VentFans;                                                                     !- End-Use Subcategory"
 
+      # tk Fan-EIR-fPLR has not been added so does not show up in IDF (does it need to?)
+
       ems << "
       Fan:OnOff,
         ERV Exhaust Fan,                                                              !- Name
@@ -1147,6 +1192,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         Fan-EIR-fPLR,                                                                 !- Fan Power Ratio Function of Speed Ratio Curve Name
         ,                                                                             !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
         VentFans;                                                                     !- End-Use Subcategory"
+
+      # tk Fan-EIR-fPLR has not been added so does not show up in IDF (does it need to?)
 
       ems << "
       ZoneHVAC:EnergyRecoveryVentilator:Controller,

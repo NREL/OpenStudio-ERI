@@ -1,7 +1,7 @@
 <measure>
   <name>Residential Refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>a0714f50-9192-4046-9206-e4421f615ab2</version_id>
+  <version_id>31d53879-c7a3-4ee4-a0b2-8847a7ead2a9</version_id>
   <description>This measure adds a residential refrigerator to the building, with a schedule based on the Building America House Simulation Protocols (add reference). TODO: add the capability to do user defined schedules (monthly multiplier and weekday/weekend schedule)</description>
   <modeler_description>To add a residential refrigerator, select the appropriate refrigerator option from the drop down list. A user defined refrigerator can be defined based on it's rated energy use (kWh/yr)</modeler_description>
   <provenances/>
@@ -35,7 +35,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2E834B4F</checksum>
+      <checksum>7980F915</checksum>
     </file>
   </files>
 </measure>

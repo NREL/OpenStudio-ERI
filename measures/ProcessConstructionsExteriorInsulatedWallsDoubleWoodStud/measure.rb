@@ -351,7 +351,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
       gypsumThermalAbs = get_mat_gypsum_extwall(mat_gyp).TAbs
       gypsumSolarAbs = get_mat_gypsum_extwall(mat_gyp).SAbs
       gypsumVisibleAbs = get_mat_gypsum_extwall(mat_gyp).VAbs
-      gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * userdefined_gyplayers / mat_gyp.k)
+      gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
     end
 
     # Rigid

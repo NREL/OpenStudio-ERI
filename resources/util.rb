@@ -99,6 +99,7 @@ class Constants
     @seasonCooling = "Cooling"
     @seasonOverlap = "Overlap"
     @seasonNone = "None"
+    @fuelTypeElectric = "electric"
   end
 
   def DefaultSolarAbsCeiling
@@ -335,6 +336,10 @@ class Constants
 
   def SeasonNone
     return @seasonNone
+  end
+
+  def FuelTypeElectric
+    return @fuelTypeElectric
   end
 
 end

@@ -13,22 +13,7 @@ require "C:/OS-BEopt/OpenStudio-Beopt/resources/sim"
 
 #start the measure
 class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelUserScript
-  
-	class ExteriorFinish
-		def initialize(finishThickness, finishConductivity)
-			@finishThickness = finishThickness
-			@finishConductivity = finishConductivity
-		end
-		
-		def FinishThickness
-			return @finishThickness
-		end
-		
-		def FinishConductivity
-			return @finishConductivity
-		end
-	end	  
-  
+
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -78,14 +63,18 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
       return false
     end
 
-	finishThickness = 0.375
-	finishConductivity = 0.62
-	finishDensity = 11.1
-	finishSpecHeat = 0.25
-	finishThermalAbs = 0.9
-	finishSolarAbs = 0.3
-	finishVisibleAbs = 0.3
-	exterior_finish = ExteriorFinish.new(finishThickness, finishConductivity)
+    # Exterior Finish
+    extfin = nil
+    constructions = model.getConstructions
+    constructions.each do |construction|
+      if construction.name.to_s == "ExtInsFinWall"
+        construction.layers.each do |layer|
+          if layer.name.to_s == "ExteriorFinish"
+            extfin = layer
+          end
+        end
+      end
+    end
 
     # Space Type
     selected_attic = runner.getOptionalWorkspaceObjectChoiceValue("selectedattic",user_arguments,model)
@@ -93,18 +82,7 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 	
 	mat_wood = get_mat_wood
 	
-	# Exterior Finish
-	extfin = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-	extfin.setName("ExteriorFinish")
-	extfin.setRoughness("Rough")
-	extfin.setThickness(OpenStudio::convert(finishThickness,"in","m").get)
-	extfin.setConductivity(OpenStudio::convert(finishConductivity,"Btu*in/hr*ft^2*R","W/m*K").get)
-	extfin.setDensity(OpenStudio::convert(finishDensity,"lb/ft^3","kg/m^3").get)
-	extfin.setSpecificHeat(OpenStudio::convert(finishSpecHeat,"Btu/lb*R","J/kg*K").get)
-	extfin.setThermalAbsorptance(finishThermalAbs)
-	extfin.setSolarAbsorptance(finishSolarAbs)
-	extfin.setVisibleAbsorptance(finishVisibleAbs)	
-	
+
 	# Plywood-1_2in
 	ply1_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	ply1_2.setName("Plywood-1_2in")

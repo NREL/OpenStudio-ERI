@@ -261,7 +261,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	
     #reporting final condition of model
 	if has_fridge == 1
-		if replace_fridge = 1
+		if replace_fridge == 1
 			runner.registerFinalCondition("The existing fridge has been replaced by one with #{fridge_ann} kWh annual energy consumption.")
 		else
 			runner.registerFinalCondition("A fridge has been added with #{fridge_ann} kWh annual energy consumption.")

@@ -1,7 +1,7 @@
 <measure>
   <name>Process Constructions Exterior Uninsulated Walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>4345cbc7-773e-4ebb-9488-08e4a99d2a0e</version_id>
+  <version_id>99158c53-fe09-4ebf-b67a-518a494c8b61</version_id>
   <description>This measure creates uninsulated, unfinished, stud and air constructions for the exterior walls of the attic and garage.</description>
   <modeler_description>Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the exterior walls of the attic and garage. Finds surfaces adjacent to the attic and garage and sets applicable constructions.</modeler_description>
   <provenances/>
@@ -35,7 +35,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CD8C01F9</checksum>
+      <checksum>A0743D29</checksum>
     </file>
   </files>
 </measure>

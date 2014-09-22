@@ -273,29 +273,15 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 
 	#make a choice argument for model objects
 	studsize_display_names = OpenStudio::StringVector.new
-	studsize_display_names << "2x4"
-	studsize_display_names << "2x6"
-	studsize_display_names << "2x8"
-	studsize_display_names << "2x10"
-	studsize_display_names << "2x12"
-	studsize_display_names << "2x14"
+  studsize_display_names << "None"
+	studsize_display_names << "2x4, 16 in o.c."
+	studsize_display_names << "2x6, 24 in o.c."
 
     #make a string argument for wood stud size of wall cavity
     selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, false)
     selected_studsize.setDisplayName("Wood stud size of wall cavity.")
-    selected_studsize.setDefaultValue("2x4")
+    selected_studsize.setDefaultValue("None")
     args << selected_studsize
-	
-	#make a choice argument for model objects
-	spacing_display_names = OpenStudio::StringVector.new
-	spacing_display_names << "16 in o.c."
-	spacing_display_names << "24 in o.c."
-	
-	#make a choice argument for wood stud spacing
-	selected_spacing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedspacing", spacing_display_names, false)
-	selected_spacing.setDisplayName("Wood stud spacing of wall cavity.")
-	selected_spacing.setDefaultValue("16 in o.c.")
-	args << selected_spacing
 
 	# Whole Wall / Ceiling Cavity Insulation
 	#make a choice argument for wall / ceiling cavity insulation
@@ -377,22 +363,6 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	userdefined_ufbsmtrimjoistr.setDefaultValue(0)
 	args << userdefined_ufbsmtrimjoistr	
 
-	#make a choice argument for interior finish of wall cavity
-	selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
-	selected_gypsum.setDisplayName("Interior finish (gypsum) of wall cavity. For manually entering interior finish properties of wall cavity, leave blank.")
-	args << selected_gypsum
-	
-	# Exterior Wall Mass
-	#make a double argument for thickness of gypsum
-	userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
-	userdefined_gypthickness.setDisplayName("Thickness of drywall layers [in].")
-	args << userdefined_gypthickness
-	
-	#make a double argument for number of gypsum layers
-	userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
-	userdefined_gyplayers.setDisplayName("Number of drywall layers.")
-	args << userdefined_gyplayers	
-	
 	# Floor Mass
 	#make a choice argument for floor mass
 	selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
@@ -469,7 +439,6 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	
 	# Wall Cavity
 	selected_studsize = runner.getStringArgumentValue("selectedstudsize",user_arguments)
-	selected_spacing = runner.getStringArgumentValue("selectedspacing",user_arguments)
 	userdefined_ufbsmtwallceilcavr = runner.getDoubleArgumentValue("userdefinedufbsmtwallceilcavr",user_arguments)
 	selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)
 	selected_insfills = runner.getBoolArgumentValue("selectedinsfills",user_arguments)	
@@ -509,13 +478,22 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 			userdefined_ufbsmtrimjoistr = runner.getDoubleArgumentValue("userdefinedufbsmtrimjoistr",user_arguments)
 		end
 	end
-	
-	# Gypsum
-	selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
-	if selected_gypsum.empty?
-		userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
-		userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-	end	
+
+    # Gypsum
+    userdefined_gypthickness = 0
+    userdefined_gyplayers = 0
+    constructions = model.getConstructions
+    constructions.each do |construction|
+      if construction.name.to_s == "ExtInsFinWall"
+        userdefined_gyplayers = 0
+        construction.layers.each do |layer|
+          if layer.name.to_s == "GypsumBoard-ExtWall"
+            userdefined_gypthickness = OpenStudio::convert(layer.thickness,"m","in").get
+            userdefined_gyplayers += 1
+          end
+        end
+      end
+    end
 	
 	# Floor Mass
 	selected_slabfloormass = runner.getOptionalWorkspaceObjectChoiceValue("selectedfloormass",user_arguments,model)
@@ -574,10 +552,10 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	# Wall Cavity
 	ufbsmtWallInstallGrade_dict = {"I"=>1, "II"=>2, "III"=>3}
 	ufbsmtWallInstallGrade = ufbsmtWallInstallGrade_dict[selected_installgrade]	
-	ufbsmtWallCavityDepth_dict = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.5, "2x10"=>9.5, "2x12"=>11.5, "2x14"=>13.5}
-	ufbsmtWallCavityDepth = ufbsmtWallCavityDepth_dict[selected_studsize]	
-	ufbsmtWallFramingFactor_dict = {"16 in o.c."=>0.25, "24 in o.c."=>0.22}
-	ufbsmtWallFramingFactor = ufbsmtWallFramingFactor_dict[selected_spacing]	
+	ufbsmtWallCavityDepth_dict = {"None"=>0, "2x4, 16 in o.c."=>3.5, "2x6, 24 in o.c."=>5.5}
+	ufbsmtWallCavityDepth = ufbsmtWallCavityDepth_dict[selected_studsize]
+	ufbsmtWallFramingFactor_dict = {"None"=>0, "2x4, 16 in o.c."=>0.25, "2x6, 24 in o.c."=>0.22}
+	ufbsmtWallFramingFactor = ufbsmtWallFramingFactor_dict[selected_studsize]
 	ufbsmtWallCavityInsFillsCavity = selected_insfills
 	
 	# Ceiling Joist Height
@@ -600,31 +578,18 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	end
 	
 	# Gypsum	
-	if userdefined_gypthickness.nil?
-		gypsumRoughness = selected_gypsum.get.to_StandardOpaqueMaterial.get.roughness
-		gypsumThickness = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-    gypsumNumLayers = 1.0
-		gypsumConductivity = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-		gypsumDensity = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-		gypsumSpecificHeat = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-		gypsumThermalAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getThermalAbsorptance.value
-		gypsumSolarAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getSolarAbsorptance.value
-		gypsumVisibleAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getVisibleAbsorptance.value
-		gypsumRvalue = OpenStudio::convert(gypsumThickness,"in","ft").get / gypsumConductivity
-	else
-		gypsumRoughness = "Rough"
-		gypsumThickness = userdefined_gypthickness
-		gypsumNumLayers = userdefined_gyplayers
-		gypsumConductivity = mat_gyp.k
-		gypsumDensity = mat_gyp.rho
-		gypsumSpecificHeat = mat_gyp.Cp
-		gypsumThermalAbs = get_mat_gypsum1_2in(mat_gyp).TAbs
-		gypsumSolarAbs = get_mat_gypsum1_2in(mat_gyp).SAbs
-		gypsumVisibleAbs = get_mat_gypsum1_2in(mat_gyp).VAbs
-		gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * userdefined_gyplayers / mat_gyp.k)	
-	end	
-	
-	# Floor Mass
+    gypsumRoughness = "Rough"
+    gypsumThickness = userdefined_gypthickness
+    gypsumNumLayers = userdefined_gyplayers
+    gypsumConductivity = mat_gyp.k
+    gypsumDensity = mat_gyp.rho
+    gypsumSpecificHeat = mat_gyp.Cp
+    gypsumThermalAbs = get_mat_gypsum1_2in(mat_gyp).TAbs
+    gypsumSolarAbs = get_mat_gypsum1_2in(mat_gyp).SAbs
+    gypsumVisibleAbs = get_mat_gypsum1_2in(mat_gyp).VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
+
+    # Floor Mass
 	if userdefined_floormassth.nil?
 		floorMassThickness = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
 		floorMassConductivity = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
@@ -645,7 +610,39 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	else
 		carpetPadRValue = userdefined_carpetr
 	end
-	carpetFloorFraction = userdefined_carpetfrac	
+	carpetFloorFraction = userdefined_carpetfrac
+
+    # Exterior Finish
+    finishThickness = 0
+    finishConductivity = 0
+    extfin = nil
+    constructions = model.getConstructions
+    constructions.each do |construction|
+      if construction.name.to_s == "ExtInsFinWall"
+        construction.layers.each do |layer|
+          if layer.name.to_s == "ExteriorFinish"
+            extfin = layer
+            finishThickness = OpenStudio::convert(layer.thickness,"m","in").get
+            finishConductivity = OpenStudio::convert(layer.to_StandardOpaqueMaterial.get.conductivity,"W/m*K","Btu*in/hr*ft^2*R").get
+          end
+        end
+      end
+    end
+
+    # Rigid
+    wallSheathingContInsThickness = 0
+    wallSheathingContInsRvalue = 0
+    constructions = model.getConstructions
+    constructions.each do |construction|
+      if construction.name.to_s == "ExtInsFinWall"
+        construction.layers.each do |layer|
+          if layer.name.to_s == "WallRigidIns"
+            wallSheathingContInsThickness = OpenStudio::convert(layer.thickness,"m","in").get
+            wallSheathingContInsThickness = OpenStudio::convert(layer.to_StandardOpaqueMaterial.get.conductivity,"W/m*K","Btu*in/hr*ft^2*R").get
+          end
+        end
+      end
+    end
 
 	# Create the material class instances
 	ub = UnfinishedBasement.new(ufbsmtWallContInsRvalue, ufbsmtWallCavityInsRvalueInstalled, ufbsmtCeilingCavityInsRvalueNominal, ufbsmtWallContInsThickness, ufbsmtWallInsHeight, ufbsmtCeilingJoistHeight, ufbsmtCeilingFramingFactor, ufbsmtWallCavityInsFillsCavity, ufbsmtWallInstallGrade, ufbsmtWallCavityDepth, ufbsmtWallFramingFactor)
@@ -657,18 +654,6 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	uwfr = UFBaseWallFicR.new
 	uffr = UFBaseFloorFicR.new
 	ujc = UFBsmtJoistandCavity.new
-
-	# temp code until figuring out the following TODO:
-	# TODO: Some of these options like exterior_finish are shared with exterior walls; how do you avoid entering potentially conflicting input?
-	wallSheathingContInsThickness = 0
-	wallSheathingContInsRvalue = 0
-	finishThickness = 0.375
-	finishConductivity = 0.62
-	finishDensity = 11.1
-	finishSpecHeat = 0.25
-	finishThermalAbs = 0.9
-	finishSolarAbs = 0.3
-	finishVisibleAbs = 0.3	
 	wallsh = WallSheathing.new(wallSheathingContInsThickness, wallSheathingContInsRvalue)
 	exterior_finish = ExteriorFinish.new(finishThickness, finishConductivity)	
 	
@@ -843,18 +828,6 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     layercount += 1
   end
 
-	# Exterior Finish
-	extfin = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-	extfin.setName("ExteriorFinish")
-	extfin.setRoughness("Rough")
-	extfin.setThickness(OpenStudio::convert(finishThickness,"in","m").get)
-	extfin.setConductivity(OpenStudio::convert(finishConductivity,"Btu*in/hr*ft^2*R","W/m*K").get)
-	extfin.setDensity(OpenStudio::convert(finishDensity,"lb/ft^3","kg/m^3").get)
-	extfin.setSpecificHeat(OpenStudio::convert(finishSpecHeat,"Btu/lb*R","J/kg*K").get)
-	extfin.setThermalAbsorptance(finishThermalAbs)
-	extfin.setSolarAbsorptance(finishSolarAbs)
-	extfin.setVisibleAbsorptance(finishVisibleAbs)	
-	
 	# Rigid
 	if wallSheathingContInsRvalue > 0
 		rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)

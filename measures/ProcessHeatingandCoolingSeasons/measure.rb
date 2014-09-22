@@ -105,7 +105,7 @@ class ProcessHeatingandCoolingSeasons < OpenStudio::Ruleset::ModelUserScript
     end
 
     htgssn_sumDesSch = htgssn_rule_days[6]
-    htgssn_winDesSch = htgssn_rule_days[0]
+    htgssn_winDesSch = htgssn_rule_days[1]
     htgssn_ruleset.setSummerDesignDaySchedule(htgssn_sumDesSch)
     htgssn_summer = htgssn_ruleset.summerDesignDaySchedule
     htgssn_summer.setName("HeatingSeasonScheduleSummer")
@@ -145,7 +145,7 @@ class ProcessHeatingandCoolingSeasons < OpenStudio::Ruleset::ModelUserScript
     end
 
     clgssn_sumDesSch = clgssn_rule_days[6]
-    clgssn_winDesSch = clgssn_rule_days[0]
+    clgssn_winDesSch = clgssn_rule_days[1]
     clgssn_ruleset.setSummerDesignDaySchedule(clgssn_sumDesSch)
     clgssn_summer = clgssn_ruleset.summerDesignDaySchedule
     clgssn_summer.setName("CoolingSeasonScheduleSummer")

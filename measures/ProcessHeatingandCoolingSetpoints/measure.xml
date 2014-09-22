@@ -1,12 +1,12 @@
 <measure>
-  <name>Process Heating and Cooling Seasons</name>
-  <uid>5103ca65-8462-4633-a65f-02954f4c929f</uid>
-  <version_id>e39bfd20-0108-4c3e-8102-5d47d03f59e5</version_id>
+  <name>Process Heating and Cooling Setpoints</name>
+  <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
+  <version_id>5958e942-5702-4bc1-849b-ca2882728dda</version_id>
   <description>Replace this text with an explanation of what the measure does in terms that can be understood by a general building professional audience (building owners, architects, engineers, contractors, etc.).  This description will be used to create reports aimed at convincing the owner and/or design team to implement the measure in the actual building design.  For this reason, the description may include details about how the measure would be implemented, along with explanations of qualitative benefits associated with the measure.  It is good practice to include citations in the measure if the description is taken from a known source or if specific benefits are listed.</description>
   <modeler_description>Replace this text with an explanation for the energy modeler specifically.  It should explain how the measure is modeled, including any requirements about how the baseline model must be set up, major assumptions, citations of references to applicable modeling resources, etc.  The energy modeler should be able to read this description and understand what changes the measure is making to the model and why these changes are being made.  Because the Modeler Description is written for an expert audience, using common abbreviations for brevity is good practice.</modeler_description>
   <provenances/>
   <tags>
-    <tag>Envelope.Infiltration</tag>
+    <tag>HVAC.HVAC Controls</tag>
   </tags>
   <attributes>
     <attribute>
@@ -22,10 +22,10 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessHeatingandCoolingSeasons_Test.rb</filename>
+      <filename>ProcessHeatingandCoolingSetpoints_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>4B4BF8C9</checksum>
+      <checksum>7C73784F</checksum>
     </file>
     <file>
       <version>
@@ -35,7 +35,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D5BDF54E</checksum>
+      <checksum>BA6DC1D2</checksum>
     </file>
   </files>
 </measure>

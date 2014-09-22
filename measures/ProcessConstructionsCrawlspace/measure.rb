@@ -428,10 +428,40 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	else
 		carpetPadRValue = userdefined_carpetr
 	end
-	carpetFloorFraction = userdefined_carpetfrac	
-	
-	# TODO: Some of these options like exterior_finish are shared with exterior walls; how do you avoid entering potentially conflicting input?
-	
+	carpetFloorFraction = userdefined_carpetfrac
+
+    # Exterior Finish
+    finishThickness = 0
+    finishConductivity = 0
+    extfin = nil
+    constructions = model.getConstructions
+    constructions.each do |construction|
+      if construction.name.to_s == "ExtInsFinWall"
+        construction.layers.each do |layer|
+          if layer.name.to_s == "ExteriorFinish"
+            extfin = layer
+            finishThickness = OpenStudio::convert(layer.thickness,"m","in").get
+            finishConductivity = OpenStudio::convert(layer.to_StandardOpaqueMaterial.get.conductivity,"W/m*K","Btu*in/hr*ft^2*R").get
+          end
+        end
+      end
+    end
+
+    # Rigid
+    wallSheathingContInsThickness = 0
+    wallSheathingContInsRvalue = 0
+    constructions = model.getConstructions
+    constructions.each do |construction|
+      if construction.name.to_s == "ExtInsFinWall"
+        construction.layers.each do |layer|
+          if layer.name.to_s == "WallRigidIns"
+            wallSheathingContInsThickness = OpenStudio::convert(layer.thickness,"m","in").get
+            wallSheathingContInsThickness = OpenStudio::convert(layer.to_StandardOpaqueMaterial.get.conductivity,"W/m*K","Btu*in/hr*ft^2*R").get
+          end
+        end
+      end
+    end
+
 	# Create the material class instances
 	cs = Crawlspace.new(crawlWallContInsRvalueNominal, crawlCeilingCavityInsRvalueNominal, crawlCeilingJoistHeight, crawlCeilingFramingFactor)
 	carpet = Carpet.new(carpetFloorFraction, carpetPadRValue)
@@ -441,25 +471,13 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	cwi = CWallIns.new
 	cffr = CFloorFicR.new
 	cjc = CSJoistandCavity.new
-	
+  wallsh = WallSheathing.new(wallSheathingContInsThickness, wallSheathingContInsRvalue)
+  exterior_finish = ExteriorFinish.new(finishThickness, finishConductivity)
+
 	if crawlWallContInsRvalueNominal > 0
 		cs.CrawlRimJoistInsRvalue = crawlRimJoistInsRvalue
 	end
-	
-	# temp code until figuring out the following TODO:
-	# TODO: Some of these options like exterior_finish are shared with exterior walls; how do you avoid entering potentially conflicting input?
-	wallSheathingContInsThickness = 0
-	wallSheathingContInsRvalue = 0
-	finishThickness = 0.375
-	finishConductivity = 0.62
-	finishDensity = 11.1
-	finishSpecHeat = 0.25
-	finishThermalAbs = 0.9
-	finishSolarAbs = 0.3
-	finishVisibleAbs = 0.3
-	wallsh = WallSheathing.new(wallSheathingContInsThickness, wallSheathingContInsRvalue)
-	exterior_finish = ExteriorFinish.new(finishThickness, finishConductivity)
-	
+
 	# Create the sim object
 	sim = Sim.new(model)
 	
@@ -573,19 +591,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	cjc.setConductivity(OpenStudio::convert(cjcConductivity,"Btu/hr*ft*R","W/m*K").get)
 	cjc.setDensity(OpenStudio::convert(cjcDensity,"lb/ft^3","kg/m^3").get)
 	cjc.setSpecificHeat(OpenStudio::convert(cjcSpecificHeat,"Btu/lb*R","J/kg*K").get)
-	
-	# Exterior Finish
-	extfin = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-	extfin.setName("ExteriorFinish")
-	extfin.setRoughness("Rough")
-	extfin.setThickness(OpenStudio::convert(finishThickness,"in","m").get)
-	extfin.setConductivity(OpenStudio::convert(finishConductivity,"Btu*in/hr*ft^2*R","W/m*K").get)
-	extfin.setDensity(OpenStudio::convert(finishDensity,"lb/ft^3","kg/m^3").get)
-	extfin.setSpecificHeat(OpenStudio::convert(finishSpecHeat,"Btu/lb*R","J/kg*K").get)
-	extfin.setThermalAbsorptance(finishThermalAbs)
-	extfin.setSolarAbsorptance(finishSolarAbs)
-	extfin.setVisibleAbsorptance(finishVisibleAbs)
-	
+
 	# Rigid
 	if wallSheathingContInsRvalue > 0
 		rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)

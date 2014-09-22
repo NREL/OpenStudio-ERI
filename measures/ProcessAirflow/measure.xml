@@ -1,7 +1,7 @@
 <measure>
   <name>Process Airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>1369a98f-2285-4249-8fe0-73199cef64b2</version_id>
+  <version_id>9948dec1-25b6-4429-b8da-a9e38cab2747</version_id>
   <description>This measure processes infiltration for the living space, garage, finished basement, unfinished basement, crawlspace, and unfinished attic. It also processes mechanical ventilation and natural ventilation for the living space.</description>
   <modeler_description>Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation).</modeler_description>
   <provenances/>
@@ -35,7 +35,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>95778DAC</checksum>
+      <checksum>0F94CCB6</checksum>
     </file>
   </files>
 </measure>
