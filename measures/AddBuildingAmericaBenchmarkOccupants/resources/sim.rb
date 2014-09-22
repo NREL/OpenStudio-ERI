@@ -272,7 +272,7 @@ def get_wood_stud_wall_r_assembly(category, prefix, gypsumThickness, gypsumNumLa
 	wood_stud_wall = Construction.new(path_fracs)
 	
 	# Interior Film
-	wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / films.vertical])
+	wood_stud_wall.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / films.vertical])
 	
 	# Interior Finish (GWB) - Currently only include if cavity depth > 0
 	if wallCavityDepth > 0
@@ -303,7 +303,7 @@ def get_wood_stud_wall_r_assembly(category, prefix, gypsumThickness, gypsumNumLa
 		wood_stud_wall.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(finishConductivty,"in","ft").get])
 		
 		# Exterior Film - Assume below-grade wall if FinishThickness = 0
-		wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / films.outside])
+		wood_stud_wall.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / films.outside])
 	end
 	
 	# Get overall wall R-value using parallel paths:
@@ -787,47 +787,6 @@ class Sim
 
   end
 
-  def _processHeatingCoolingSetpoints(hsp, csp, selectedheating, selectedcooling)
-    # Heating/Cooling Setpoints
-
-    # Adjust cooling setpoints according to the offset the user has selected in conjunction with the user of ceiling fans.
-
-    hsp = set_variable_list_heating_set_point(hsp)
-    csp = set_variable_list_cooling_set_point(csp)
-
-    csp.CoolingSetpointWeekday = csp.CoolingSetpointSchedule[0...24]
-    if csp.CoolingSetpointSchedule.length > 24
-      csp.CoolingSetpointWeekend = csp.CoolingSetpointSchedule[24...48]
-    else
-      csp.CoolingSetpointWeekend = csp.CoolingSetpointWeekday
-    end
-    hsp.HeatingSetpointWeekday = hsp.HeatingSetpointSchedule[0...24]
-    if hsp.HeatingSetpointSchedule.length > 24
-      hsp.HeatingSetpointWeekend = hsp.HeatingSetpointSchedule[0...24]
-    else
-      hsp.HeatingSetpointWeekend = hsp.HeatingSetpointWeekday
-    end
-
-    # self.cooling_set_point.weekday_hourly_schedule_with_offset = \
-    #             [x + self.ceiling_fans.CeilingFanCoolingSetptOffset for x in csp.CoolingSetpointWeekday]
-    # self.cooling_set_point.weekend_hourly_schedule_with_offset = \
-    #             [x + self.ceiling_fans.CeilingFanCoolingSetptOffset for x in csp.CoolingSetpointWeekend]
-
-    # Thermostatic Control type schedule
-    if selectedheating and selectedcooling
-      controlType = 4 # Dual Setpoint (Heating and Cooling) with deadband
-    elsif selectedcooling
-      controlType = 2 # Single Cooling Setpoint
-    elsif selectedheating
-      controlType = 1 # Single Heating Setpoint
-    else
-      controlType = 0 # Uncontrolled
-    end
-
-    return hsp, csp, controlType
-
-  end
-
   def _processInteriorShadingSchedule(ish)
     # Assigns window shade multiplier and shading cooling season for each month.
 
@@ -841,7 +800,7 @@ class Sim
 
     window_shade_multiplier = []
     window_shade_cooling_season = cooling_season
-    (0...constants.MonthNames.length).to_a.each do |i|
+    (0..constants.MonthNames.length).to_a.each do |i|
       if cooling_season[i] == 1.0
         window_shade_multiplier << ish.IntShadeCoolingMultiplier
       else
@@ -969,7 +928,7 @@ class Sim
       si.stack_coef = si.f_s * (0.005974 * outside_air_density * constants.g * living_space.height / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
 
       # Calculate wind coefficient
-      if hasCrawl and crawlspace.CrawlACH > 0
+      if hasCrawl and crawlspace.CrawlACH > 0 # tk need to get CrawlACH
 
         if si.X_i > 1.0 - 2.0 * si.Y_i
           # Critical floor to ceiling difference above which f_w does not change (eq. 25)
@@ -1067,7 +1026,7 @@ class Sim
 
     end
 
-    ws = Sim._processWindSpeedCorrection(wind_speed, site, constants, si, neighbors, geometry)
+    ws = Sim._processWindSpeedCorrection(wind_speed, site, constants, si, neighbors)
 
     spaces.each do |space|
 
@@ -1106,7 +1065,7 @@ class Sim
 	def _processConstructionsExteriorInsulatedWallsWoodStud(wsw, extwallmass, exteriorfinish, wallsh, sc)
 		# Set Furring insulation/air properties	
 		if wsw.WSWallCavityInsRvalueInstalled == 0
-			cavityInsDens = inside_air_dens # lb/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
+			cavityInsDens = inside_air_dens # lb/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity tk why would you ever use "self."?
 			cavityInsSH = get_mat_air.inside_air_sh
 		else
 			cavityInsDens = get_mat_densepack_generic.rho
@@ -1192,7 +1151,7 @@ class Sim
 		return local_pressure
   end
 
-  def self._processWindSpeedCorrection(wind_speed, site, constants, infiltration, neighbors, geometry)
+  def self._processWindSpeedCorrection(wind_speed, site, constants, infiltration, neighbors)
     # Wind speed correction
     wind_speed.height = 32.8 # ft (Standard weather station height)
 
@@ -1230,10 +1189,10 @@ class Sim
       if neighbors.NeighborOffset.nil?
         # Typical shelter for isolated rural house
         wind_speed.S_wo = 0.90
-      elsif neighbors.NeighborOffset > geometry.building_height
+      elsif neighbors.NeighborOffset > 16.0 # tk need to get geometry.building_height
         # Typical shelter caused by other building across the street
         wind_speed.S_wo = 0.70
-      elsif neighbors.NeighborOffset <= geometry.building_height
+      elsif neighbors.NeighborOffset <= 16.0 # tk need to get geometry.building_height
         # Typical shelter for urban buildings where sheltering obstacles
         # are less than one building height away.
         # Recommended by C.Christensen.
@@ -1262,7 +1221,7 @@ class Sim
     if vent.MechVentInfilCreditForExistingHomes and misc.AgeOfHome > 0
 
       # (2 cfm per 100ft^2 of occupiable floor area per ASHRAE 62.2)
-      infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
+      infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm # tk need to replace with ffa
 
       # Half the excess infiltration rate above the default rate is credited toward mech vent:
       infil.rate_credit = [(living_space.inf_flow - infil.default_rate) / 2.0, 0.0].max
@@ -1290,7 +1249,6 @@ class Sim
     # Based on ASHRAE 62.2 (the maximum allowable ventilation based on the
     # 2010 BA Benchmark), including any infiltration credit
     ashrae_mv = get_mech_vent_whole_house_cfm(1.0, geometry.num_bedrooms, geometry.finished_floor_area)
-
     vent.ashrae_vent_rate = [ashrae_mv - infil.rate_credit, 0.0].max # cfm
 
     if vent.MechVentType == constants.VentTypeExhaust
@@ -1594,32 +1552,20 @@ class Sim
 
   end
 
-  def _processNaturalVentilation(nv, living_space, wind_speed, infiltration, schedules, geometry, cooling_set_point, heating_set_point)
+  def _processNaturalVentilation(nv, living_space, wind_speed, infiltration, schedules, geometry)
     # Natural Ventilation
 
     constants = Constants.new
 
     # Specify an array of hourly lower-temperature-limits for natural ventilation
-    nv.htg_ssn_hourly_temp = Array.new
-    cooling_set_point.CoolingSetpointWeekday.each do |x|
-      nv.htg_ssn_hourly_temp << OpenStudio::convert(x - nv.NatVentHtgSsnSetpointOffset,"F","C").get
-    end
-    nv.htg_ssn_hourly_weekend_temp = Array.new
-    cooling_set_point.CoolingSetpointWeekend.each do |x|
-      nv.htg_ssn_hourly_weekend_temp << OpenStudio::convert(x - nv.NatVentHtgSsnSetpointOffset,"F","C").get
-    end
+    nv.htg_ssn_hourly_temp = Array.new(24, 23.88888888888889)
+    nv.htg_ssn_hourly_weekend_temp = Array.new(24, 23.88888888888889)
 
-    nv.clg_ssn_hourly_temp = Array.new
-    heating_set_point.HeatingSetpointWeekday.each do |x|
-      nv.clg_ssn_hourly_temp << OpenStudio::convert(x + nv.NatVentClgSsnSetpointOffset,"F","C").get
-    end
-    nv.clg_ssn_hourly_weekend_temp = Array.new
-    heating_set_point.HeatingSetpointWeekend.each do |x|
-      nv.clg_ssn_hourly_weekend_temp << OpenStudio::convert(x + nv.NatVentClgSsnSetpointOffset,"F","C").get
-    end
+    nv.clg_ssn_hourly_temp = Array.new(24, 22.22222222222222)
+    nv.clg_ssn_hourly_weekend_temp = Array.new(24, 22.22222222222222)
 
-    nv.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio::convert([heating_set_point.HeatingSetpointWeekday.max, heating_set_point.HeatingSetpointWeekend.max].max + nv.NatVentOvlpSsnSetpointOffset,"F","C").get)
-    nv.ovlp_ssn_hourly_weekend_temp = nv.ovlp_ssn_hourly_temp
+    nv.ovlp_ssn_hourly_temp = Array.new(24, 22.22222222222222)
+    nv.ovlp_ssn_hourly_weekend_temp = Array.new(24, 22.22222222222222)
 
     # Natural Ventilation Probability Schedule (DOE2, not E+)
     sch_year = "
@@ -1930,7 +1876,7 @@ class Sim
       NatVent,                  !- Name
       FRACTION,                 !- Schedule Type"
     (0...12).to_a.each do |month|
-      if (nv.season_type[month] == constants.SeasonHeating and nv.NatVentHeatingSeason) or (nv.season_type[month] == constants.SeasonCooling and nv.NatVentCoolingSeason) or (nv.season_type[month] == constants.SeasonOverlap and nv.NatVentOverlapSeason)
+      if (nv.season_type[month] == constants.SeasonHeating and nv.NatVentHeatingSeason) or (nv.season_type[month] == constants.SeasonCooling and nv.NatVentCoolingSeason) or (nv.season_type[month] == constants.SeasonOverlap and nv.NatVentOverlapSeason) # tk how to get season_type array from idf?
         week_schedule_name = "NatVent-Week"
       else
         week_schedule_name = "NatVentOffSeason-Week"
@@ -2318,6 +2264,10 @@ class Sim
 			crawlspace_floor_Rvalue = 1000 # hr*ft^2*F/Btu
 		end
 
+		#crawlspace.WallUA = crawlspace_wall_UA # tk need to make crawlspace object (how is this object used?)
+		#crawlspace.FloorUA = crawlspace.area / crawlspace_floor_Rvalue
+		#crawlspace.CeilingUA = crawlspace.area / crawl_ceiling_Rvalue
+		
 		# Fictitious layer below crawlspace floor to achieve equivalent R-value. See Winklemann article.
 		cffr.crawlspace_floor_Rvalue = crawlspace_floor_Rvalue
 		
@@ -2376,7 +2326,7 @@ class Sim
 		overall_wall_Rvalue = get_wood_stud_wall_r_assembly(ub, "UFBsmt", extwallmass.ExtWallMassGypsumThickness, extwallmass.ExtWallMassGypsumNumLayers, 0, nil, ub.UFBsmtWallContInsThickness, ub.UFBsmtWallContInsRvalue)
 
 		ub_conduction_factor = calc_basement_conduction_factor(ub.UFBsmtWallInsHeight, overall_wall_Rvalue)
-
+		
 		uci.ub_ceiling_Rvalue = get_unfinished_basement_ceiling_r_assembly(ub, carpet, floor_mass)
 		
 		ub_ceiling_studlayer_Rvalue = uci.ub_ceiling_Rvalue - floor_nonstud_layer_Rvalue(floor_mass, carpet)
@@ -2990,104 +2940,6 @@ class Sim
     film.floor_above_unconditioned = film.flat_reduced * hdd_frac + film.flat_enhanced * cdd_frac
 
     return film
-
-  end
-
-  def _processAirSystem(supply, f=nil, air_conditioner=nil, hasFurnace=false, hasCoolingEquipment=false, hasAirConditioner=false, hasHeatPump=false, hasMiniSplitHP=false, hasRoomAirConditioner=false, hasGroundSourceHP=false)
-    # Air System
-
-    if air_conditioner.ACCoolingInstalledSEER == 999
-      air_conditioner.IsIdealAC = true
-    else
-      air_conditioner.IsIdealAC = false
-    end
-
-    supply.static = 249.1 * 0.5 # Pascal
-
-    # Flow rate through AC units - hardcoded assumption of 400 cfm/ton
-    supply.cfm_ton = 400 # cfm / ton
-
-    supply.HPCoolingOversizingFactor = 1 # Default to a value of 1 (currently only used for MSHPs)
-    supply.SpaceConditionedMult = 1 # Default used for central equipment
-
-    if hasFurnace
-
-      # Before we allowed systems with no cooling equipment, the system
-      # fan was defined by the cooling equipment option. For systems
-      # with only a furnace, the system fan is (for the time being) hard
-      # coded here.
-
-      if not hasAirConditioner or not hasHeatPump or not hasGroundSourceHP or not hasMiniSplitHP or not hasRoomAirConditioner
-
-        supply.fan_power = 0.500 # Based on 2010 BA Benchmark
-        supply.eff = OpenStudio::convert(supply.static / supply.fan_power,"cfm","m^3/s").get # Overall Efficiency of the Supply Fan, Motor and Drive
-        # self.supply.delta_t = 0.00055000 / units.Btu2kWh(1.0) / (self.mat.air.inside_air_dens * self.mat.air.inside_air_sh * units.hr2min(1.0))
-        supply.min_flow_ratio = 1.00000000
-        supply.FAN_EIR_FPLR_SPEC_coefficients = [0.00000000, 1.00000000, 0.00000000, 0.00000000]
-
-      end
-
-      supply.max_temp = f.FurnaceMaxSupplyTemp
-
-      f.hir = get_furnace_hir(f.FurnaceInstalledAFUE)
-
-      # Parasitic Electricity (Source: DOE. (2007). Technical Support Document: Energy Efficiency Program for Consumer Products: "Energy Conservation Standards for Residential Furnaces and Boilers". www.eere.energy.gov/buildings/appliance_standards/residential/furnaces_boilers.html)
-      #             FurnaceParasiticElecDict = {Constants.FuelTypeGas     :  76, # W during operation
-      #                                         Constants.FuelTypeOil     : 220}
-      #             f.aux_elec = FurnaceParasiticElecDict[f.FurnaceFuelType]
-      f.aux_elec = 0.0 # set to zero until we figure out a way to distribute to the correct end uses (DOE-2 limitation?)
-
-      return f, air_conditioner, supply
-
-    end
-
-    if hasCoolingEquipment
-
-      if hasAirConditioner
-
-      end
-
-      if hasHeatPump
-
-      end
-
-      if hasMiniSplitHP
-
-      end
-
-      if hasRoomAirConditioner
-
-      end
-
-      if hasGroundSourceHP
-
-      end
-
-    else
-      supply.compressor_speeds = nil
-    end
-
-    scheduleRulesets = @model.getScheduleRulesets
-
-
-
-
-
-
-    if not hasAirConditioner and not hasHeatPump and not hasFurnace and not hasGroundSourceHP and not hasMiniSplitHP and not hasRoomAirConditioner
-      # Turn off Fan for no forced air equipment
-      supply.fan_power = 0.00000000
-      supply.eff = 0.0 # Overall Efficiency of the Supply Fan, Motor and Drive
-      # self.supply.delta_t = 0.00000000
-      supply.min_flow_ratio = 1.0
-      supply.FAN_EIR_FPLR_SPEC_coefficients = Array.new(4, 0.0)
-    end
-
-    # Dehumidifier coefficients
-    # Generic model coefficients from Winkler, Christensen, and Tomerlin (2011)
-    supply.Zone_Water_Remove_Cap_Ft_DB_RH_Coefficients = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843]
-    supply.Zone_Energy_Factor_Ft_DB_RH_Coefficients = [-1.902154518, 0.063466565, -0.000622839, 0.039540407, -0.000125637, -0.000176722]
-    supply.Zone_DXDH_PLF_F_PLR_Coeffcients = [0.90, 0.10, 0.0]
 
   end
 	
@@ -3718,34 +3570,6 @@ def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa)
   # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
 
   return frac622 * ((num_beds + 1.0) * 7.5 + ffa / 100.0)
-end
-
-def set_variable_list_heating_set_point(category)
-  # Convert to Weekday/Weekend 24-hour lists
-  if not category.HeatingSetpointConstantSetpoint.nil?
-    category.HeatingSetpointSchedule = Array.new(48, category.HeatingSetpointConstantSetpoint)
-  end
-  return category
-end
-
-def set_variable_list_cooling_set_point(category)
-  # Convert to Weekday/Weekend 24-hour lists
-  if not category.CoolingSetpointConstantSetpoint.nil?
-    category.CoolingSetpointSchedule = Array.new(48, category.CoolingSetpointConstantSetpoint)
-  end
-  return category
-end
-
-def get_furnace_hir(furnaceInstalledAFUE)
-  # Based on DOE2 Volume 5 Compliance Analysis manual.
-  # This is not used until we have a better way of disaggregating AFUE
-  # if FurnaceInstalledAFUE <= 0.835:
-  #     hir = 1 / (0.2907 * FurnaceInstalledAFUE + 0.5787)
-  # else:
-  #     hir = 1 / (1.1116 * FurnaceInstalledAFUE - 0.098185)
-
-  hir = 1.0 / furnaceInstalledAFUE
-  return hir
 end
 
 class Process_refrigerator
