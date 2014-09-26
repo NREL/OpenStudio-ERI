@@ -100,6 +100,8 @@ class Constants
     @seasonOverlap = "Overlap"
     @seasonNone = "None"
     @fuelTypeElectric = "electric"
+    @num_Speeds_MSHP = 10.0
+    @condenserTypeAir = "aircooled"
   end
 
   def DefaultSolarAbsCeiling
@@ -340,6 +342,14 @@ class Constants
 
   def FuelTypeElectric
     return @fuelTypeElectric
+  end
+
+  def Num_Speeds_MSHP
+    return @num_Speeds_MSHP
+  end
+
+  def CondenserTypeAir
+    return @condenserTypeAir
   end
 
 end

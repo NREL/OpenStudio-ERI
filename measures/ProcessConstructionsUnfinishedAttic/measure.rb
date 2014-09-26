@@ -486,7 +486,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       gypsumThermalAbs = get_mat_gypsum_ceiling(mat_gyp).TAbs
       gypsumSolarAbs = get_mat_gypsum_ceiling(mat_gyp).SAbs
       gypsumVisibleAbs = get_mat_gypsum_ceiling(mat_gyp).VAbs
-      gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * userdefined_gyplayers / mat_gyp.k)
+      gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
     end
 
     # Roofing Material
