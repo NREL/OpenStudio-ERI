@@ -680,34 +680,35 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     end
 
     heating_set_point.HeatingSetpointWeekday = Array.new
-    heating_set_point.HeatingSetpointWeekend = Array.new
     cooling_set_point.CoolingSetpointWeekday = Array.new
-    cooling_set_point.CoolingSetpointWeekend = Array.new
     schedule_days = workspace.getObjectsByType("Schedule:Day:Interval".to_IddObjectType)
-    schedule_days.each do |schedule_day|
-      schedule_day_name = schedule_day.getString(0).to_s # Name
-      if schedule_day_name == "HeatingSetPointWeekday"
-        (4..50).step(2) do |x|
-          deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
-          heating_set_point.HeatingSetpointWeekday << deg
+    (1..12).to_a.each do |m|
+      schedule_days.each do |schedule_day|
+        schedule_day_name = schedule_day.getString(0).to_s # Name
+        if schedule_day_name == "HeatingSetPointSchedule%01dd" % m.to_s
+          if not schedule_day.getString(4).get.to_f == -1000
+            if heating_set_point.HeatingSetpointWeekday.empty?
+              (4..50).step(2) do |x|
+                deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
+                heating_set_point.HeatingSetpointWeekday << deg
+              end
+            end
+          end
         end
-      elsif schedule_day_name == "HeatingSetPointWeekend"
-        (4..50).step(2) do |x|
-          deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
-          heating_set_point.HeatingSetpointWeekend << deg
-        end
-      elsif schedule_day_name == "CoolingSetPointWeekday"
-        (4..50).step(2) do |x|
-          deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
-          cooling_set_point.CoolingSetpointWeekday << deg
-        end
-      elsif schedule_day_name == "CoolingSetPointWeekend"
-        (4..50).step(2) do |x|
-          deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
-          cooling_set_point.CoolingSetpointWeekend << deg
+        if schedule_day_name == "CoolingSetPointSchedule%01dd" % m.to_s
+          if not schedule_day.getString(4).get.to_f == 1000
+            if cooling_set_point.CoolingSetpointWeekday.empty?
+              (4..50).step(2) do |x|
+                deg = OpenStudio::convert(schedule_day.getString(x).get.to_f,"C","F").get
+                cooling_set_point.CoolingSetpointWeekday << deg
+              end
+            end
+          end
         end
       end
     end
+    heating_set_point.HeatingSetpointWeekend = heating_set_point.HeatingSetpointWeekday
+    cooling_set_point.CoolingSetpointWeekend = cooling_set_point.CoolingSetpointWeekday
 
     # temp code for testing
     geometry.num_bedrooms = 3.0 # tk get this

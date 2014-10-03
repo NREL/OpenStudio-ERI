@@ -117,6 +117,37 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     selectedheating = runner.getBoolArgumentValue("selectedheating",user_arguments)
     selectedcooling = runner.getBoolArgumentValue("selectedcooling",user_arguments)
 
+    if not selectedheating
+      heatingSetpointConstantSetpoint = -1000
+      runner.registerWarning("House has no heating equipment; heating setpoint set to -1000 so there's no heating")
+    end
+    if not selectedcooling
+      coolingSetpointConstantSetpoint = 1000
+      runner.registerWarning("House has no cooling equipment; cooling setpoint set to 1000 so there's no cooling")
+    end
+
+    # get the heating and cooling season schedules
+    heating_season = {}
+    cooling_season = {}
+    scheduleRulesets = model.getScheduleRulesets
+    scheduleRulesets.each do |scheduleRuleset|
+      if scheduleRuleset.name.to_s == "HeatingSeasonSchedule"
+        scheduleRules = scheduleRuleset.scheduleRules
+        scheduleRules.each do |scheduleRule|
+          daySchedule = scheduleRule.daySchedule
+          values = daySchedule.values
+          heating_season[scheduleRule.name.to_s] = values[0]
+        end
+      elsif scheduleRuleset.name.to_s == "CoolingSeasonSchedule"
+        scheduleRules = scheduleRuleset.scheduleRules
+        scheduleRules.each do |scheduleRule|
+          daySchedule = scheduleRule.daySchedule
+          values = daySchedule.values
+          cooling_season[scheduleRule.name.to_s] = values[0]
+        end
+      end
+    end
+
     # Create the material class instances
     hsp = HeatingSetpoint.new(heatingSetpointConstantSetpoint)
     csp = CoolingSetpoint.new(coolingSetpointConstantSetpoint)
@@ -133,180 +164,155 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         thermostatsetpointdualsetpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
         thermostatsetpointdualsetpoint.setName("Living Zone Temperature SP")
 
-        time = Array.new(24, 0)
-        date_s = OpenStudio::Date::fromDayOfYear(1)
-        date_e = OpenStudio::Date::fromDayOfYear(365)
+        day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
+        day_startm = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
 
         heatingsetpoint = OpenStudio::Model::ScheduleRuleset.new(model)
         heatingsetpoint.setName("HeatingSetPoint")
 
-        for w in 1..2
-          if w == 1
-            htgsp_wkdy_rule = OpenStudio::Model::ScheduleRule.new(heatingsetpoint)
-            htgsp_wkdy_rule.setName("HeatingSetPointWeekdayRule")
-            htgsp_wkdy = htgsp_wkdy_rule.daySchedule
-            htgsp_wkdy.setName("HeatingSetPointWeekday")
-            for h in 1..24
-              time[h] = OpenStudio::Time.new(0,h,0,0)
+        htgssn_rule_days = []
+        for m in 1..12
+          date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
+          date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
+          htgssn_rule = OpenStudio::Model::ScheduleRule.new(heatingsetpoint)
+          htgssn_rule.setName("HeatingSetPointSchedule%02d" % m.to_s)
+          htgssn_rule_day = htgssn_rule.daySchedule
+          htgssn_rule_day.setName("HeatingSetPointSchedule%02dd" % m.to_s)
+          for h in 1..24
+            time = OpenStudio::Time.new(0,h,0,0)
+            if heating_season["HeatingSeasonSchedule%02d" % m.to_s] == 1.0
               val = OpenStudio::convert(hsp.HeatingSetpointWeekday[h - 1],"F","C").get
-              htgsp_wkdy.addValue(time[h],val)
+            else
+              val = -1000
             end
-            htgsp_wkdy_rule.setApplySunday(false)
-            htgsp_wkdy_rule.setApplyMonday(true)
-            htgsp_wkdy_rule.setApplyTuesday(true)
-            htgsp_wkdy_rule.setApplyWednesday(true)
-            htgsp_wkdy_rule.setApplyThursday(true)
-            htgsp_wkdy_rule.setApplyFriday(true)
-            htgsp_wkdy_rule.setApplySaturday(false)
-            htgsp_wkdy_rule.setStartDate(date_s)
-            htgsp_wkdy_rule.setEndDate(date_e)
-          elsif w == 2
-            htgsp_wknd_rule = OpenStudio::Model::ScheduleRule.new(heatingsetpoint)
-            htgsp_wknd_rule.setName("HeatingSetPointWeekendRule")
-            htgsp_wknd = htgsp_wknd_rule.daySchedule
-            htgsp_wknd.setName("HeatingSetPointWeekend")
-            for h in 1..24
-              time[h] = OpenStudio::Time.new(0,h,0,0)
-              val = OpenStudio::convert(hsp.HeatingSetpointWeekend[h - 1],"F","C").get
-              htgsp_wknd.addValue(time[h],val)
-            end
-            htgsp_wknd_rule.setApplySunday(true)
-            htgsp_wknd_rule.setApplyMonday(false)
-            htgsp_wknd_rule.setApplyTuesday(false)
-            htgsp_wknd_rule.setApplyWednesday(false)
-            htgsp_wknd_rule.setApplyThursday(false)
-            htgsp_wknd_rule.setApplyFriday(false)
-            htgsp_wknd_rule.setApplySaturday(true)
-            htgsp_wknd_rule.setStartDate(date_s)
-            htgsp_wknd_rule.setEndDate(date_e)
+            htgssn_rule_day.addValue(time,val)
           end
+          htgssn_rule_days << htgssn_rule_day
+          htgssn_rule.setApplySunday(true)
+          htgssn_rule.setApplyMonday(true)
+          htgssn_rule.setApplyTuesday(true)
+          htgssn_rule.setApplyWednesday(true)
+          htgssn_rule.setApplyThursday(true)
+          htgssn_rule.setApplyFriday(true)
+          htgssn_rule.setApplySaturday(true)
+          htgssn_rule.setStartDate(date_s)
+          htgssn_rule.setEndDate(date_e)
         end
 
-        htgsp_DesSch = htgsp_wkdy
-        heatingsetpoint.setSummerDesignDaySchedule(htgsp_DesSch)
-        heatingsetpoint.setWinterDesignDaySchedule(htgsp_DesSch)
-        htgsp_winter = heatingsetpoint.winterDesignDaySchedule
-        htgsp_summer = heatingsetpoint.summerDesignDaySchedule
-        htgsp_winter.setName("HeatingSetPointWinterDesignDay")
-        htgsp_summer.setName("HeatingSetPointSummerDesignDay")
-        htgsp_winter.clearValues
-        htgsp_summer.clearValues
+        htgssn_sumDesSch = htgssn_rule_days[6]
+        htgssn_winDesSch = htgssn_rule_days[1]
+        heatingsetpoint.setSummerDesignDaySchedule(htgssn_sumDesSch)
+        htgssn_summer = heatingsetpoint.summerDesignDaySchedule
+        htgssn_summer.setName("HeatingSetPointScheduleSummer")
+        htgssn_summer.clearValues
         for h in 1..24
-          time[h] = OpenStudio::Time.new(0,h,0,0)
-          val = OpenStudio::convert(70,"F","C").get
-          htgsp_winter.addValue(time[h],val)
+          time = OpenStudio::Time.new(0,h,0,0)
+          val = OpenStudio::convert(hsp.HeatingSetpointWeekday[h - 1],"F","C").get
+          htgssn_summer.addValue(time,val)
         end
+        heatingsetpoint.setWinterDesignDaySchedule(htgssn_winDesSch)
+        htgssn_winter = heatingsetpoint.winterDesignDaySchedule
+        htgssn_winter.setName("HeatingSetPointScheduleWinter")
+        htgssn_winter.clearValues
         for h in 1..24
-          time[h] = OpenStudio::Time.new(0,h,0,0)
-          val = OpenStudio::convert(70,"F","C").get
-          htgsp_summer.addValue(time[h],val)
+          time = OpenStudio::Time.new(0,h,0,0)
+          val = OpenStudio::convert(hsp.HeatingSetpointWeekday[h - 1],"F","C").get
+          htgssn_winter.addValue(time,val)
         end
 
         coolingsetpoint = OpenStudio::Model::ScheduleRuleset.new(model)
         coolingsetpoint.setName("CoolingSetPoint")
 
-        for w in 1..2
-          if w == 1
-            clgsp_wkdy_rule = OpenStudio::Model::ScheduleRule.new(coolingsetpoint)
-            clgsp_wkdy_rule.setName("CoolingSetPointWeekdayRule")
-            clgsp_wkdy = clgsp_wkdy_rule.daySchedule
-            clgsp_wkdy.setName("CoolingSetPointWeekday")
-            for h in 1..24
-              time[h] = OpenStudio::Time.new(0,h,0,0)
+        clgssn_rule_days = []
+        for m in 1..12
+          date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
+          date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
+          clgssn_rule = OpenStudio::Model::ScheduleRule.new(coolingsetpoint)
+          clgssn_rule.setName("CoolingSetPointSchedule%02d" % m.to_s)
+          clgssn_rule_day = clgssn_rule.daySchedule
+          clgssn_rule_day.setName("CoolingSetPointSchedule%02dd" % m.to_s)
+          for h in 1..24
+            time = OpenStudio::Time.new(0,h,0,0)
+            if cooling_season["CoolingSeasonSchedule%02d" % m.to_s] == 1.0
               val = OpenStudio::convert(csp.CoolingSetpointWeekday[h - 1],"F","C").get
-              clgsp_wkdy.addValue(time[h],val)
+            else
+              val = 1000
             end
-            clgsp_wkdy_rule.setApplySunday(false)
-            clgsp_wkdy_rule.setApplyMonday(true)
-            clgsp_wkdy_rule.setApplyTuesday(true)
-            clgsp_wkdy_rule.setApplyWednesday(true)
-            clgsp_wkdy_rule.setApplyThursday(true)
-            clgsp_wkdy_rule.setApplyFriday(true)
-            clgsp_wkdy_rule.setApplySaturday(false)
-            clgsp_wkdy_rule.setStartDate(date_s)
-            clgsp_wkdy_rule.setEndDate(date_e)
-          elsif w == 2
-            clgsp_wknd_rule = OpenStudio::Model::ScheduleRule.new(coolingsetpoint)
-            clgsp_wknd_rule.setName("CoolingSetPointWeekendRule")
-            clgsp_wknd = clgsp_wknd_rule.daySchedule
-            clgsp_wknd.setName("CoolingSetPointWeekend")
-            for h in 1..24
-              time[h] = OpenStudio::Time.new(0,h,0,0)
-              val = OpenStudio::convert(csp.CoolingSetpointWeekend[h - 1],"F","C").get
-              clgsp_wknd.addValue(time[h],val)
-            end
-            clgsp_wknd_rule.setApplySunday(true)
-            clgsp_wknd_rule.setApplyMonday(false)
-            clgsp_wknd_rule.setApplyTuesday(false)
-            clgsp_wknd_rule.setApplyWednesday(false)
-            clgsp_wknd_rule.setApplyThursday(false)
-            clgsp_wknd_rule.setApplyFriday(false)
-            clgsp_wknd_rule.setApplySaturday(true)
-            clgsp_wknd_rule.setStartDate(date_s)
-            clgsp_wknd_rule.setEndDate(date_e)
+            clgssn_rule_day.addValue(time,val)
           end
+          clgssn_rule_days << clgssn_rule_day
+          clgssn_rule.setApplySunday(true)
+          clgssn_rule.setApplyMonday(true)
+          clgssn_rule.setApplyTuesday(true)
+          clgssn_rule.setApplyWednesday(true)
+          clgssn_rule.setApplyThursday(true)
+          clgssn_rule.setApplyFriday(true)
+          clgssn_rule.setApplySaturday(true)
+          clgssn_rule.setStartDate(date_s)
+          clgssn_rule.setEndDate(date_e)
         end
 
-        clgsp_DesSch = clgsp_wkdy
-        coolingsetpoint.setSummerDesignDaySchedule(clgsp_DesSch)
-        coolingsetpoint.setWinterDesignDaySchedule(clgsp_DesSch)
-        clgsp_summer = coolingsetpoint.summerDesignDaySchedule
-        clgsp_winter = coolingsetpoint.winterDesignDaySchedule
-        clgsp_summer.setName("CoolingSetPointSummerDesignDay")
-        clgsp_winter.setName("CoolingSetPointWinterDesignDay")
-        clgsp_summer.clearValues
-        clgsp_winter.clearValues
+        clgssn_sumDesSch = clgssn_rule_days[6]
+        clgssn_winDesSch = clgssn_rule_days[1]
+        coolingsetpoint.setSummerDesignDaySchedule(clgssn_sumDesSch)
+        clgssn_summer = coolingsetpoint.summerDesignDaySchedule
+        clgssn_summer.setName("CoolingSetPointScheduleSummer")
+        clgssn_summer.clearValues
         for h in 1..24
-          time[h] = OpenStudio::Time.new(0,h,0,0)
-          val = OpenStudio::convert(75,"F","C").get
-          clgsp_summer.addValue(time[h],val)
+          time = OpenStudio::Time.new(0,h,0,0)
+          val = OpenStudio::convert(csp.CoolingSetpointWeekday[h - 1],"F","C").get
+          clgssn_summer.addValue(time,val)
         end
+        coolingsetpoint.setWinterDesignDaySchedule(clgssn_winDesSch)
+        clgssn_winter = coolingsetpoint.winterDesignDaySchedule
+        clgssn_winter.setName("CoolingSetPointScheduleWinter")
+        clgssn_winter.clearValues
         for h in 1..24
-          time[h] = OpenStudio::Time.new(0,h,0,0)
-          val = OpenStudio::convert(75,"F","C").get
-          clgsp_winter.addValue(time[h],val)
+          time = OpenStudio::Time.new(0,h,0,0)
+          val = OpenStudio::convert(csp.CoolingSetpointWeekday[h - 1],"F","C").get
+          clgssn_winter.addValue(time,val)
         end
 
-        if controlType == 4
+        if controlType == 4 or controlType == 2 or controlType == 1
 
           thermostatsetpointdualsetpoint.setHeatingSetpointTemperatureSchedule(heatingsetpoint)
           thermostatsetpointdualsetpoint.setCoolingSetpointTemperatureSchedule(coolingsetpoint)
 
-          # sched_type = heatingsetpoint.scheduleTypeLimits.get
-          # sched_type.setName("TEMPERATURE")
-          # sched_type.setLowerLimitValue(-60)
-          # sched_type.setUpperLimitValue(200)
-          # sched_type.setNumericType("Continuous")
-          # sched_type.resetUnitType
-          #
-          # sched_type = coolingsetpoint.scheduleTypeLimits.get
-          # sched_type.setName("TEMPERATURE")
-          # sched_type.setLowerLimitValue(-60)
-          # sched_type.setUpperLimitValue(200)
-          # sched_type.setNumericType("Continuous")
-          # sched_type.resetUnitType
-
-        elsif controlType == 2
-
-          thermostatsetpointdualsetpoint.setCoolingSetpointTemperatureSchedule(coolingsetpoint)
-
-          # sched_type = coolingsetpoint.scheduleTypeLimits.get
-          # sched_type.setName("TEMPERATURE")
-          # sched_type.setLowerLimitValue(-60)
-          # sched_type.setUpperLimitValue(200)
-          # sched_type.setNumericType("Continuous")
-          # sched_type.resetUnitType
-
-        elsif controlType == 1
-
-          thermostatsetpointdualsetpoint.setHeatingSetpointTemperatureSchedule(heatingsetpoint)
-
-          # sched_type = heatingsetpoint.scheduleTypeLimits.get
-          # sched_type.setName("TEMPERATURE")
-          # sched_type.setLowerLimitValue(-60)
-          # sched_type.setUpperLimitValue(200)
-          # sched_type.setNumericType("Continuous")
-          # sched_type.resetUnitType
+        #   sched_type = heatingsetpoint.scheduleTypeLimits.get
+        #   sched_type.setName("TEMPERATURE")
+        #   sched_type.setLowerLimitValue(-60)
+        #   sched_type.setUpperLimitValue(200)
+        #   sched_type.setNumericType("Continuous")
+        #   sched_type.resetUnitType
+        #
+        #   sched_type = coolingsetpoint.scheduleTypeLimits.get
+        #   sched_type.setName("TEMPERATURE")
+        #   sched_type.setLowerLimitValue(-60)
+        #   sched_type.setUpperLimitValue(200)
+        #   sched_type.setNumericType("Continuous")
+        #   sched_type.resetUnitType
+        #
+        # elsif controlType == 2
+        #
+        #   thermostatsetpointdualsetpoint.setCoolingSetpointTemperatureSchedule(coolingsetpoint)
+        #
+        #   sched_type = coolingsetpoint.scheduleTypeLimits.get
+        #   sched_type.setName("TEMPERATURE")
+        #   sched_type.setLowerLimitValue(-60)
+        #   sched_type.setUpperLimitValue(200)
+        #   sched_type.setNumericType("Continuous")
+        #   sched_type.resetUnitType
+        #
+        # elsif controlType == 1
+        #
+        #   thermostatsetpointdualsetpoint.setHeatingSetpointTemperatureSchedule(heatingsetpoint)
+        #
+        #   sched_type = heatingsetpoint.scheduleTypeLimits.get
+        #   sched_type.setName("TEMPERATURE")
+        #   sched_type.setLowerLimitValue(-60)
+        #   sched_type.setUpperLimitValue(200)
+        #   sched_type.setNumericType("Continuous")
+        #   sched_type.resetUnitType
 
         end
 
