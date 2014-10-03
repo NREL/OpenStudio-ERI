@@ -1,0 +1,41 @@
+<measure>
+  <name>Add OS:ZoneHVAC:Dehumidifier:DX</name>
+  <uid>3b675fc9-9e54-444b-a89b-faa97c24c38d</uid>
+  <version_id>173c27fa-8856-4429-b7da-2cae17f3763d</version_id>
+  <description>This measure allows the user to add an OS:ZoneHVAC:Dehumidifier:DX object to their model. Users will select the thermal zone where the dehumidifier will be added. By default, the dehumidifier will be configured to be available to operate year round. If, at the time of measure execution, the selected zone contains additional conditioning equipment (Other OS:ZoneEquipment objects or is served by an existing OS:AirLoop object) the new dehumidifier will be placed at the position of lowest cooling priority for equipment staging. In accordance with the published 2014 Building America House Simulation Protocols document, the measure will remove any existing dehumidifying setpoint schedule associated with the zone and add a new one configured to the Relative Humidity level set by the user.  Users will provide the following input describing humidifier performance: 1) Location (Thermal Zone) 2) Rated Water Removal Rate (pints/day) 3) Rated Energy Factor  4) Rated Airflow Rate 5) Relative Humidity Setpoint. Default curves for water removal, energy factor and part load fraction correlations will be used.</description>
+  <modeler_description>This measure will add and configure a OS:ZoneHVAC:Dehumidifier:DX object to the model. Users will select a thermal zone for attaching the OS:ZoneHVAC:Dehumidifier:DX object to. The measure will check to see if an existing ZoneControl:Humidistat object is already assigned to the thermal zone.  If so, the measure will remove the existing ZoneControl:Humidistat object, then create and assign a new object having a setpoint of 60%RH (year round). Attributes of the Humidifier which are not user arguments will be set to EnergyPlus defaults.</modeler_description>
+  <provenances/>
+  <tags>
+    <tag>HVAC.Cooling</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>AddResidentialDehumidifer_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>92A74878</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A9F851DE</checksum>
+    </file>
+  </files>
+</measure>

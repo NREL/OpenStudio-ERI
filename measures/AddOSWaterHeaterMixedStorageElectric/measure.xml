@@ -1,0 +1,59 @@
+<measure>
+  <name>Add OS:WaterHeater:Mixed-Storage-Electric</name>
+  <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
+  <version_id>29c4821d-11b3-4a25-9101-ad8dbb25ff70</version_id>
+  <description>This measure adds an OS:WaterHeater:Mixed object representing an Electric Storage Water Heater. Users will be asked to provide &#xd;&#xd;&#xd;&#xd;
+1) Plant Loop Assignment&#xd;&#xd;&#xd;&#xd;
+2) Tank Volume&#xd;&#xd;&#xd;&#xd;
+3) Energy Factor&#xd;&#xd;&#xd;&#xd;
+4) Tank Location&#xd;&#xd;&#xd;&#xd;
+5) SHW Setpoint&#xd;&#xd;&#xd;&#xd;
+6) Deadband Temperature</description>
+  <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object. The object will either create a new plant loop, or be assigned to an existing plant loop. The object will be configured be to use the user arguments. The EIO file reports the industry standard ratings of Recovery Efficiency and Energy Factor for water heater objects.</modeler_description>
+  <provenances/>
+  <tags>
+    <tag>Service Water Heating.Water Heating</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ba_protocol_table_8_page_13.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>25F3B82F</checksum>
+    </file>
+    <file>
+      <filename>runtests.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>89B17DCC</checksum>
+    </file>
+    <file>
+      <filename>AddOSWaterHeaterMixedStorageElectric_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F3E18832</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>1FB62824</checksum>
+    </file>
+  </files>
+</measure>
