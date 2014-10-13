@@ -1,0 +1,59 @@
+<measure>
+  <name>Residential MiscellaneousGasLoads</name>
+  <uid>0ba8d5d6-6fc1-4822-b9dd-42410a5b9017</uid>
+  <version_id>80404290-1c03-4c50-b7f8-fdc649aac387</version_id>
+  <description>This measure adds miscellaneous gas loads (representing a pool heater, spa heater, fireplace, grill, and/or lighting) to the living space. Users can specify the annual gas consumption (in therms) of their MGL or a faction of the benchmark MGLs to add to the space.</description>
+  <modeler_description>This measure creates a new gas equipment object and adds it to the user selected space. If MGLs are already present in the model, this measure will replace them with the user specified MGL.</modeler_description>
+  <provenances/>
+  <tags>
+    <tag>Equipment.Gas Equipment</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ResidentialMiscellaneousGasLoads_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>69F55623</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A3BEDF2B</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EA4777E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>3E809587</checksum>
+    </file>
+  </files>
+</measure>
