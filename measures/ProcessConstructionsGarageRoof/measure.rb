@@ -99,10 +99,10 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     userdefined_hasradiantbarrier.setDisplayName("Roof has radiant barrier?")
     args << userdefined_hasradiantbarrier
 
-    #make a choice argument for roofing material of unfinished attic
-    selected_roofmat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedroofmat", material_handles, material_display_names, false)
-    selected_roofmat.setDisplayName("Roofing material for unfinished attic. For manually entering roofing material properties of unfinished attic, leave blank.")
-    args << selected_roofmat
+    # #make a choice argument for roofing material of unfinished attic
+    # selected_roofmat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedroofmat", material_handles, material_display_names, false)
+    # selected_roofmat.setDisplayName("Roofing material for unfinished attic. For manually entering roofing material properties of unfinished attic, leave blank.")
+    # args << selected_roofmat
 
     #make a double argument for roofing material thermal absorptance of unfinished attic
     userdefined_roofmatthermalabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatthermalabs", false)

@@ -2120,8 +2120,8 @@ class Sim
 		slab = SlabPerimeterConductancesByType(slab)
 		
 		# Calculate Slab exterior perimeter and slab area
-		slab.ext_perimeter = 0 # ft
-		slab.area = 0 # ft
+		# slab.ext_perimeter = 0 # ft
+		# slab.area = 0 # ft
 		
         # for floor in geometry.floors.floor:
             # if self._getSpace(floor.space_above).finished and \
@@ -2130,8 +2130,8 @@ class Sim
                 # self.slab.area += floor.area
 		
 		# temp tk
-		slab.ext_perimeter = 154.0
-		slab.area = 1482.0
+		# slab.ext_perimeter = 154.0
+		# slab.area = 1482.0
 		#
 
 		slab.slab_carp_ext_perimeter = slab.ext_perimeter * carpet.CarpetFloorFraction
@@ -2227,7 +2227,7 @@ class Sim
 		
 		# crawlspace_conduction = calc_crawlspace_wall_conductance(cs.CrawlWallContInsRvalueNominal, _getSpace(Constants::SpaceCrawl).height) # tk _getSpace
 		# temp tk
-		crawlspace_conduction = calc_crawlspace_wall_conductance(cs.CrawlWallContInsRvalueNominal, 4)
+		crawlspace_conduction = calc_crawlspace_wall_conductance(cs.CrawlWallContInsRvalueNominal, cs.height)
 		#
 		
 		cci.crawl_ceiling_Rvalue = get_crawlspace_ceiling_r_assembly(cs, carpet, floor_mass)
@@ -2249,8 +2249,8 @@ class Sim
 		end
 		
 		# Calculate Exterior Crawlspace Wall Area and PerimeterSlabInsulation
-		crawlspace_wall_area = 0 # ft^2
-		cs.ext_perimeter = 0 # ft^2
+		# crawlspace_wall_area = 0 # ft^2
+		# cs.ext_perimeter = 0 # ft^2
 
     # spaces = @model.getSpaces
     # selected_crawlspace.each do |selected_spacetype|
@@ -2281,8 +2281,8 @@ class Sim
                 # cs.ext_perimeter += wall.foundation_ext_perimeter
 		
 		# temp
-		crawlspace_wall_area = 624.0
-		cs.ext_perimeter = 156.0
+		crawlspace_wall_area = cs.crawlspace_wall_area
+		# cs.ext_perimeter = 156.0
 		#
 		
 		if cs.ext_perimeter > 0
@@ -2862,7 +2862,7 @@ class Sim
 		
   end
 
-  def _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass)
+  def _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
 
     # Handle Exception for user entry of zero (avoids EPlus complaining about zero value)
     if partitionWallMassFractionOfFloorArea <= 0.0
@@ -2870,8 +2870,8 @@ class Sim
     end
 
     # Calculate the total partition wall mass areas for conditioned spaces
-    partition_wall_mass.living_space_area = partitionWallMassFractionOfFloorArea * 1200 # ft^2 # TODO: replace the 1200 with living space area
-    partition_wall_mass.finished_basement_area = partitionWallMassFractionOfFloorArea * 1200 # ft^2 # TODO: replace the 1200 with finished basement area
+    partition_wall_mass.living_space_area = partitionWallMassFractionOfFloorArea * living_space.area # ft^2
+    partition_wall_mass.finished_basement_area = partitionWallMassFractionOfFloorArea * finished_basement.area # ft^2
 
     return partition_wall_mass
 

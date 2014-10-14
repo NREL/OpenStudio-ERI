@@ -174,19 +174,21 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
       material_display_names << key
     end
 
-    #make a choice argument for interior finish of wall cavity
-    selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
-    selected_gypsum.setDisplayName("Interior finish (gypsum) of wall cavity. For manually entering interior finish properties of wall cavity, leave blank.")
-    args << selected_gypsum
+    # #make a choice argument for interior finish of wall cavity
+    # selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
+    # selected_gypsum.setDisplayName("Interior finish (gypsum) of wall cavity. For manually entering interior finish properties of wall cavity, leave blank.")
+    # args << selected_gypsum
 
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
     userdefined_gypthickness.setDisplayName("Thickness of drywall layers [in].")
+    userdefined_gypthickness.setDefaultValue(0.5)
     args << userdefined_gypthickness
 
     #make a double argument for number of gypsum layers
     userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
     userdefined_gyplayers.setDisplayName("Number of drywall layers.")
+    userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
 
     #make a double argument for depth of wall cavity
@@ -215,10 +217,10 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     userdefined_instcavr.setDisplayName("The R-value of cavity insulation [hr-ft^2-R/Btu].")
     args << userdefined_instcavr
 
-    #make a choice argument for rigid insulation of wall cavity
-    selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
-    selected_rigidins.setDisplayName("Rigid insulation of wall cavity. For manually entering rigid insulation properties of wall cavity, leave blank.")
-    args << selected_rigidins
+    # #make a choice argument for rigid insulation of wall cavity
+    # selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
+    # selected_rigidins.setDisplayName("Rigid insulation of wall cavity. For manually entering rigid insulation properties of wall cavity, leave blank.")
+    # args << selected_rigidins
 
     #make a double argument for rigid insulation thickness of wall cavity
     userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)
@@ -237,10 +239,10 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     userdefined_hasosb.setDisplayName("Double wood stud wall has OSB sheathing?")
     args << userdefined_hasosb
 
-    #make a choice argument for exterior finish of wall cavity
-    selected_extfin = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedextfin", material_handles, material_display_names, false)
-    selected_extfin.setDisplayName("Exterior finish of wall cavity. For manually entering exterior finish properties of wall cavity, leave blank.")
-    args << selected_extfin
+    # #make a choice argument for exterior finish of wall cavity
+    # selected_extfin = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedextfin", material_handles, material_display_names, false)
+    # selected_extfin.setDisplayName("Exterior finish of wall cavity. For manually entering exterior finish properties of wall cavity, leave blank.")
+    # args << selected_extfin
 
     #make a double argument for exterior finish thickness of wall cavity
     userdefined_extfinthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedextfinthickness", false)

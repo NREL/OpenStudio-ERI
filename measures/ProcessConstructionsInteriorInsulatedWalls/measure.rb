@@ -146,10 +146,10 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       material_display_names << key
     end
 
-    #make a choice argument for partition wall mass
-    selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
-    selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
-    args << selected_partitionwallmass
+    # #make a choice argument for partition wall mass
+    # selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
+    # selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
+    # args << selected_partitionwallmass
 
     #make a double argument for partition wall mass thickness
     userdefined_partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassth", false)
@@ -220,10 +220,10 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     selected_insfills.setDisplayName("Cavity insulation fills the cavity?")
     args << selected_insfills
 
-    #make a choice argument for rigid insulation of wall cavity
-    selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
-    selected_rigidins.setDisplayName("Rigid insulation of wall cavity. For manually entering rigid insulation properties of wall cavity, leave blank.")
-    args << selected_rigidins
+    # #make a choice argument for rigid insulation of wall cavity
+    # selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
+    # selected_rigidins.setDisplayName("Rigid insulation of wall cavity. For manually entering rigid insulation properties of wall cavity, leave blank.")
+    # args << selected_rigidins
 
     #make a double argument for rigid insulation thickness of wall cavity
     userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)

@@ -1,9 +1,15 @@
 <measure>
-  <name>Process Constructions Garage Roof</name>
+  <schema_version>3.0</schema_version>
+  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
+  <name>process_constructions_garage_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>50a8181d-0534-49e2-bf81-e19fecc067f2</version_id>
+  <version_id>624340a8-96d1-4ca8-9cc7-ed890f8b55dd</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsGarageRoof</class_name>
+  <display_name>ProcessConstructionsGarageRoof</display_name>
   <description>This measure creates uninsulated, unfinished, stud and air constructions for the garage roof.</description>
   <modeler_description>Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the garage roof. Finds surfaces adjacent to the garage and sets applicable constructions.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -28,26 +34,15 @@
       <checksum>250FD039</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0094E368</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7D6E8FA2</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FE79DCE4</checksum>
+      <checksum>D644618B</checksum>
     </file>
   </files>
 </measure>

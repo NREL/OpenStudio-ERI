@@ -138,20 +138,17 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     userdefined_instcavr.setDisplayName("R-value of cavity insulation [hr-ft^2-R/Btu].")
     args << userdefined_instcavr
 
-    #make a choice argument for model objects
-    floorff_display_names = OpenStudio::StringVector.new
-    floorff_display_names << "0.13"
-
     #make a choice argument for unfinished attic ceiling framing factor
-    selected_floorff = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloorff", floorff_display_names, true)
-    selected_floorff.setDisplayName("Interzonal floor framing factor [frac].")
-    args << selected_floorff
+    userdefined_floorff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloorff", false)
+    userdefined_floorff.setDisplayName("Interzonal floor framing factor [frac].")
+    userdefined_floorff.setDefaultValue(0.13)
+    args << userdefined_floorff
 
     # Floor Mass
-    #make a choice argument for floor mass
-    selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
-    selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
-    args << selected_floormass
+    # #make a choice argument for floor mass
+    # selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
+    # selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
+    # args << selected_floormass
 
     #make a double argument for floor mass thickness
     userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
@@ -178,10 +175,10 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     args << userdefined_floormasssh
 
     # Carpet
-    #make a choice argument for carpet pad R-value
-    selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-    selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-    args << selected_carpet
+    # #make a choice argument for carpet pad R-value
+    # selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
+    # selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
+    # args << selected_carpet
 
     #make a double argument for carpet pad R-value
     userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
@@ -207,8 +204,6 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
       return false
     end
 
-    intFloorCavityInsRvalueNominal = 0
-
     # Space Type
     selected_garage = runner.getOptionalWorkspaceObjectChoiceValue("selectedgarage",user_arguments,model)
     selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
@@ -217,7 +212,11 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     userdefined_instcavr = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
 
     # Floor Framing Factor
-    selected_floorff = runner.getStringArgumentValue("selectedfloorff",user_arguments)
+    userdefined_floorff = runner.getDoubleArgumentValue("userdefinedfloorff",user_arguments)
+    if not ( userdefined_floorff > 0.0 and userdefined_floorff < 1.0 )
+      runner.registerError("Invalid interzonal floor framing factor")
+      return false
+    end
 
     # Floor Mass
     selected_slabfloormass = runner.getOptionalWorkspaceObjectChoiceValue("selectedfloormass",user_arguments,model)
@@ -239,8 +238,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     intFloorCavityInsRvalueNominal = userdefined_instcavr
 
     # Floor Framing Factor
-    intFloorFramingFactor_dict = {"0.13"=>0.13}
-    intFloorFramingFactor = intFloorFramingFactor_dict[selected_floorff]
+    intFloorFramingFactor = userdefined_floorff
 
     # Floor Mass
     if userdefined_floormassth.nil?

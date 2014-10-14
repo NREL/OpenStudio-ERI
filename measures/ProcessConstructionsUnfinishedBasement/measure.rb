@@ -284,10 +284,10 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     args << selected_studsize
 
 	# Whole Wall / Ceiling Cavity Insulation
-	#make a choice argument for wall / ceiling cavity insulation
-	selected_ufbsmtwallceilcav = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmtwallceilcav", material_handles, material_display_names, false)
-	selected_ufbsmtwallceilcav.setDisplayName("Unfinished basement whole wall or ceiling cavity insulation. For manually entering unfinished basement whole wall or ceiling cavity insulation properties, leave blank.")
-	args << selected_ufbsmtwallceilcav		
+	# #make a choice argument for wall / ceiling cavity insulation
+	# selected_ufbsmtwallceilcav = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmtwallceilcav", material_handles, material_display_names, false)
+	# selected_ufbsmtwallceilcav.setDisplayName("Unfinished basement whole wall or ceiling cavity insulation. For manually entering unfinished basement whole wall or ceiling cavity insulation properties, leave blank.")
+	# args << selected_ufbsmtwallceilcav
 	
 	#make a double argument for unfinished basement ceiling / whole wall cavity insulation R-value
 	userdefined_ufbsmtwallceilcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedufbsmtwallceilcavr", false)
@@ -314,10 +314,10 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	args << selected_insfills	
 	
 	# Wall Continuous Insulation
-	#make a choice argument for wall continuous insulation
-	selected_ufbsmtwallcont = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmtwallcont", material_handles, material_display_names, false)
-	selected_ufbsmtwallcont.setDisplayName("Unfinished basement wall continuous insulation. For manually entering unfinished basement wall continuous insulation properties, leave blank.")
-	args << selected_ufbsmtwallcont	
+	# #make a choice argument for wall continuous insulation
+	# selected_ufbsmtwallcont = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmtwallcont", material_handles, material_display_names, false)
+	# selected_ufbsmtwallcont.setDisplayName("Unfinished basement wall continuous insulation. For manually entering unfinished basement wall continuous insulation properties, leave blank.")
+	# args << selected_ufbsmtwallcont
 
 	#make a double argument for unfinished basement wall continuous R-value
 	userdefined_ufbsmtwallcontth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedufbsmtwallcontth", false)
@@ -334,7 +334,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	# Ceiling Joist Height
 	#make a choice argument for model objects
 	joistheight_display_names = OpenStudio::StringVector.new
-	joistheight_display_names << "9.25"	
+	joistheight_display_names << "9.25"
 	
 	#make a choice argument for crawlspace ceiling joist height
 	selected_ufbsmtceiljoistheight = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmtceiljoistheight", joistheight_display_names, true)
@@ -342,20 +342,17 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	args << selected_ufbsmtceiljoistheight	
 	
 	# Ceiling Framing Factor
-	#make a choice argument for model objects
-	ceilff_display_names = OpenStudio::StringVector.new
-	ceilff_display_names << "0.13"		
-	
 	#make a choice argument for crawlspace ceiling framing factor
-	selected_ufbsmtceilff = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmtceilff", ceilff_display_names, true)
-	selected_ufbsmtceilff.setDisplayName("Unfinished basement ceiling framing factor [frac].")
-	args << selected_ufbsmtceilff
+	userdefined_ufbsmtceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedufbsmtceilff", false)
+  userdefined_ufbsmtceilff.setDisplayName("Unfinished basement ceiling framing factor [frac].")
+  userdefined_ufbsmtceilff.setDefaultValue(0.13)
+	args << userdefined_ufbsmtceilff
 
 	# Rim Joist
-	#make a choice argument for rim joist insulation
-	selected_ufbsmtrimjoist = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmtrimjoist", material_handles, material_display_names, false)
-	selected_ufbsmtrimjoist.setDisplayName("Unfinished basement rim joist insulation. For manually entering unfinished basement rim joist insulation properties, leave blank.")
-	args << selected_ufbsmtrimjoist		
+	# #make a choice argument for rim joist insulation
+	# selected_ufbsmtrimjoist = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmtrimjoist", material_handles, material_display_names, false)
+	# selected_ufbsmtrimjoist.setDisplayName("Unfinished basement rim joist insulation. For manually entering unfinished basement rim joist insulation properties, leave blank.")
+	# args << selected_ufbsmtrimjoist
 	
 	#make a double argument for rim joist insulation R-value
 	userdefined_ufbsmtrimjoistr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedufbsmtrimjoistr", false)
@@ -364,10 +361,10 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	args << userdefined_ufbsmtrimjoistr	
 
 	# Floor Mass
-	#make a choice argument for floor mass
-	selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
-	selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
-	args << selected_floormass	
+	# #make a choice argument for floor mass
+	# selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
+	# selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
+	# args << selected_floormass
 	
 	#make a double argument for floor mass thickness
 	userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
@@ -394,10 +391,10 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	args << userdefined_floormasssh		
 	
 	# Carpet
-	#make a choice argument for carpet pad R-value
-	selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-	selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-	args << selected_carpet
+	# #make a choice argument for carpet pad R-value
+	# selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
+	# selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
+	# args << selected_carpet
 	
 	#make a double argument for carpet pad R-value
 	userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
@@ -469,7 +466,11 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	selected_ufbsmtceiljoistheight = runner.getStringArgumentValue("selectedufbsmtceiljoistheight",user_arguments)
 	
 	# Ceiling Framing Factor
-	selected_ufbsmtceilff = runner.getStringArgumentValue("selectedufbsmtceilff",user_arguments)	
+	userdefined_ufbsmtceilff = runner.getDoubleArgumentValue("userdefinedufbsmtceilff",user_arguments)
+  if not ( userdefined_ufbsmtceilff > 0.0 and userdefined_ufbsmtceilff < 1.0 )
+    runner.registerError("Invalid unfinished basement ceiling framing factor")
+    return false
+  end
 	
 	# Rim Joist
 	if ["Half Wall", "Whole Wall"].include? selected_ufbsmtins.to_s
@@ -563,8 +564,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	ufbsmtCeilingJoistHeight = ufbsmtCeilingJoistHeight_dict[selected_ufbsmtceiljoistheight]	
 		
 	# Ceiling Framing Factor
-	ufbsmtCeilingFramingFactor_dict = {"0.13"=>0.13}
-	ufbsmtCeilingFramingFactor = ufbsmtCeilingFramingFactor_dict[selected_ufbsmtceilff]
+	ufbsmtCeilingFramingFactor = userdefined_ufbsmtceilff
 	
 	# Rim Joist
 	if ["Half Wall", "Whole Wall"].include? selected_ufbsmtins.to_s

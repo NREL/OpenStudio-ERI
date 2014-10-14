@@ -90,13 +90,11 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
 	conc.setThermalAbsorptance(get_mat_concrete4in(mat_concrete).TAbs)	
 	
 	# GrndUninsUnfinGrgFloor
-	#if hasGarage # tk how do you find this out from osm?
-		grnduninsunfingrgfloor = OpenStudio::Model::Construction.new(model)
-		grnduninsunfingrgfloor.setName("GrndUninsUnfinGrgFloor")
-		grnduninsunfingrgfloor.insertLayer(0,adi)
-		grnduninsunfingrgfloor.insertLayer(1,soil)
-		grnduninsunfingrgfloor.insertLayer(2,conc)
-	#end
+  grnduninsunfingrgfloor = OpenStudio::Model::Construction.new(model)
+  grnduninsunfingrgfloor.setName("GrndUninsUnfinGrgFloor")
+  grnduninsunfingrgfloor.insertLayer(0,adi)
+  grnduninsunfingrgfloor.insertLayer(1,soil)
+  grnduninsunfingrgfloor.insertLayer(2,conc)
 
   # loop thru all the spaces
     spaces = model.getSpaces

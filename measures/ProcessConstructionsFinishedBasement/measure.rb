@@ -262,10 +262,10 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     args << selected_studsize
 
     # Whole Wall Cavity Insulation
-    #make a choice argument for wall / ceiling cavity insulation
-    selected_fbsmtwallcav = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtwallcav", material_handles, material_display_names, false)
-    selected_fbsmtwallcav.setDisplayName("Finished basement whole wall cavity insulation. For manually entering finished basement whole wall cavity insulation properties, leave blank.")
-    args << selected_fbsmtwallcav
+    # #make a choice argument for wall / ceiling cavity insulation
+    # selected_fbsmtwallcav = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtwallcav", material_handles, material_display_names, false)
+    # selected_fbsmtwallcav.setDisplayName("Finished basement whole wall cavity insulation. For manually entering finished basement whole wall cavity insulation properties, leave blank.")
+    # args << selected_fbsmtwallcav
 
     #make a double argument for unfinished basement whole wall cavity insulation R-value
     userdefined_fbsmtwallcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtwallcavr", false)
@@ -292,10 +292,10 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     args << selected_insfills
 
     # Wall Continuous Insulation
-    #make a choice argument for wall continuous insulation
-    selected_fbsmtwallcont = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtwallcont", material_handles, material_display_names, false)
-    selected_fbsmtwallcont.setDisplayName("Finished basement wall continuous insulation. For manually entering finished basement wall continuous insulation properties, leave blank.")
-    args << selected_fbsmtwallcont
+    # #make a choice argument for wall continuous insulation
+    # selected_fbsmtwallcont = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtwallcont", material_handles, material_display_names, false)
+    # selected_fbsmtwallcont.setDisplayName("Finished basement wall continuous insulation. For manually entering finished basement wall continuous insulation properties, leave blank.")
+    # args << selected_fbsmtwallcont
 
     #make a double argument for finished basement wall continuous R-value
     userdefined_fbsmtwallcontth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtwallcontth", false)
@@ -320,20 +320,17 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     args << selected_fbsmtceiljoistheight
 
     # Ceiling Framing Factor
-    #make a choice argument for model objects
-    ceilff_display_names = OpenStudio::StringVector.new
-    ceilff_display_names << "0.13"
-
     #make a choice argument for crawlspace ceiling framing factor
-    selected_fbsmtceilff = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtceilff", ceilff_display_names, true)
-    selected_fbsmtceilff.setDisplayName("Finished basement ceiling framing factor [frac].")
-    args << selected_fbsmtceilff
+    userdefined_fbsmtceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtceilff", false)
+    userdefined_fbsmtceilff.setDisplayName("Finished basement ceiling framing factor [frac].")
+    userdefined_fbsmtceilff.setDefaultValue(0.13)
+    args << userdefined_fbsmtceilff
 
     # Rim Joist
-    #make a choice argument for rim joist insulation
-    selected_fbsmtrimjoist = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtrimjoist", material_handles, material_display_names, false)
-    selected_fbsmtrimjoist.setDisplayName("Finished basement rim joist insulation. For manually entering finished basement rim joist insulation properties, leave blank.")
-    args << selected_fbsmtrimjoist
+    # #make a choice argument for rim joist insulation
+    # selected_fbsmtrimjoist = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtrimjoist", material_handles, material_display_names, false)
+    # selected_fbsmtrimjoist.setDisplayName("Finished basement rim joist insulation. For manually entering finished basement rim joist insulation properties, leave blank.")
+    # args << selected_fbsmtrimjoist
 
     #make a double argument for rim joist insulation R-value
     userdefined_fbsmtrimjoistr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtrimjoistr", false)
@@ -342,10 +339,10 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     args << userdefined_fbsmtrimjoistr
 
     # Floor Mass
-    #make a choice argument for floor mass
-    selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
-    selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
-    args << selected_floormass
+    # #make a choice argument for floor mass
+    # selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
+    # selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
+    # args << selected_floormass
 
     #make a double argument for floor mass thickness
     userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
@@ -372,10 +369,10 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     args << userdefined_floormasssh
 
     # Carpet
-    #make a choice argument for carpet pad R-value
-    selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-    selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-    args << selected_carpet
+    # #make a choice argument for carpet pad R-value
+    # selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
+    # selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
+    # args << selected_carpet
 
     #make a double argument for carpet pad R-value
     userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
@@ -445,7 +442,11 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     selected_fbsmtceiljoistheight = runner.getStringArgumentValue("selectedfbsmtceiljoistheight",user_arguments)
 
     # Ceiling Framing Factor
-    selected_fbsmtceilff = runner.getStringArgumentValue("selectedfbsmtceilff",user_arguments)
+    userdefined_fbsmtceilff = runner.getDoubleArgumentValue("userdefinedfbsmtceilff",user_arguments)
+    if not ( userdefined_fbsmtceilff > 0.0 and userdefined_fbsmtceilff < 1.0 )
+      runner.registerError("Invalid finished basement ceiling framing factor")
+      return false
+    end
 
     # Rim Joist
     if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
@@ -531,8 +532,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     fbsmtCeilingJoistHeight = fbsmtCeilingJoistHeight_dict[selected_fbsmtceiljoistheight]
 
     # Ceiling Framing Factor
-    fbsmtCeilingFramingFactor_dict = {"0.13"=>0.13}
-    fbsmtCeilingFramingFactor = fbsmtCeilingFramingFactor_dict[selected_fbsmtceilff]
+    fbsmtCeilingFramingFactor = userdefined_fbsmtceilff
 
     # Rim Joist
     if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s

@@ -1,9 +1,15 @@
 <measure>
-  <name>Process Constructions Unfinished Attic</name>
+  <schema_version>3.0</schema_version>
+  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
+  <name>process_constructions_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>1e17bac1-b57d-4713-9e29-650b1d1805d3</version_id>
+  <version_id>7a925040-bf80-42fa-bf80-3de7f11ea8c7</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsUnfinishedAttic</class_name>
+  <display_name>ProcessConstructionsUnfinishedAttic</display_name>
   <description>This measure creates constructions for the unfinished attic floor and ceiling.</description>
   <modeler_description>Calculates material layer properties of constructions for the unfinished attic floor and ceiling. Finds surfaces adjacent to the unfinished attic and sets applicable constructions.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -31,11 +37,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
+        <min_compatible>1.3.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EFE7896F</checksum>
+      <checksum>BCAFAC79</checksum>
     </file>
   </files>
 </measure>

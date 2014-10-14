@@ -1,9 +1,15 @@
 <measure>
-  <name>Process Constructions Interior Insulated Walls</name>
+  <schema_version>3.0</schema_version>
+  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
+  <name>process_constructions_interior_insulated_walls</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>a8cd36e1-9a22-4cc2-ad01-2c6cac3b0762</version_id>
+  <version_id>17190835-7b84-48de-aa83-391d1acdd8c3</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsInteriorInsulatedWalls</class_name>
+  <display_name>ProcessConstructionsInteriorInsulatedWalls</display_name>
   <description>This measure creates insulated constructions for the interzonal walls between the living space and the garage.</description>
   <modeler_description>Calculates material layer properties of insulated constructions for the interzonal walls between the living space and the garage. Finds surfaces adjacent to the living space and garage and sets applicable constructions.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -31,11 +37,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0F073AF8</checksum>
+      <checksum>2BB7E60B</checksum>
     </file>
   </files>
 </measure>
