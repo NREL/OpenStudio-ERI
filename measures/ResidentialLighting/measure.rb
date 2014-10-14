@@ -8,8 +8,7 @@
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
 #load sim.rb
-#require "#{File.dirname(__FILE__)}/resources/sim"
-require "C:/OS-BEopt/OpenStudio-Beopt/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/sim"
 
 #start the measure
 class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
@@ -39,15 +38,45 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a double argument for user defined ltg options
 	ltg_E = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ltg_E",true)
-	ltg_E.setDisplayName("Simple Lighting Annual Energy Consumption (kWh/yr)")
+	ltg_E.setDisplayName("Simple Interior Lighting Annual Energy Consumption (kWh/yr)")
 	ltg_E.setDefaultValue(0)
 	args << ltg_E
 	
+	#make a boolean argument for has outside lighting
+	outside_ltg = OpenStudio::Ruleset::OSArgument::makeBoolArgument("outside_ltg",true)
+	outside_ltg.setDisplayName("Building has exterior lighting")
+	outside_ltg.setDefaultValue(true)
+	args << outside_ltg
+	
+	#make a boolean argument for has garage
+	garage_ltg = OpenStudio::Ruleset::OSArgument::makeBoolArgument("garage_ltg",true)
+	garage_ltg.setDisplayName("Building has a garage?")
+	garage_ltg.setDefaultValue(true)
+	args << garage_ltg
+	
+	#make a boolean argument for has finished basement
+	fb_ltg = OpenStudio::Ruleset::OSArgument::makeBoolArgument("fb_ltg",true)
+	fb_ltg.setDisplayName("Building has a finished basement?")
+	fb_ltg.setDefaultValue(true)
+	args << fb_ltg
+	
 	#make a double argument for finished floor area
 	cfa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cfa",true)
-	cfa.setDisplayName("Conditioned Floor Area (ft^2)")
+	cfa.setDisplayName("Conditioned Floor Area (including basement if finished) (ft^2)")
 	cfa.setDefaultValue(1800)
 	args << cfa
+	
+	#make a double argument for garage floor area
+	gfa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gfa",true)
+	gfa.setDisplayName("Garage Floor Area (ft^2)")
+	gfa.setDefaultValue(240)
+	args << gfa
+	
+	#make a double argument for basement floor area
+	fbfa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fbfa",true)
+	fbfa.setDisplayName("Finished Basement Floor Area (ft^2)")
+	fbfa.setDefaultValue(900)
+	args << fbfa
 	
 	#make a double argument for hardwired CFL fraction
 	hw_cfl = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("hw_cfl",true)
@@ -134,6 +163,18 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     space_type.setDisplayName("Select the space where the interior lighting is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
+	
+	#make a choice argument for space type
+    grg_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("grg_space_type", space_type_handles, space_type_display_names, false)
+    grg_space_type.setDisplayName("Select the garage space")
+    grg_space_type.setDefaultValue("*None*") #if none is chosen this will error out
+    args << grg_space_type
+	
+	#make a choice argument for space type
+    fb_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fb_space_type", space_type_handles, space_type_display_names, false)
+    fb_space_type.setDisplayName("Select the finished basement space")
+    fb_space_type.setDefaultValue("*None*") #if none is chosen this will error out
+    args << fb_space_type
     
     return args
   end #end the arguments method
@@ -148,8 +189,23 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     end
 
     #assign the user inputs to variables
-    selected_ltg = runner.getStringArgumentValue("selected_ltg",user_arguments)
+    fb_ltg = runner.getBoolArgumentValue("fb_ltg",user_arguments)
+	outside_ltg = runner.getBoolArgumentValue("outside_ltg",user_arguments)
+	garage_ltg = runner.getBoolArgumentValue("garage_ltg",user_arguments)
+	selected_ltg = runner.getStringArgumentValue("selected_ltg",user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+	
+	if fb_ltg
+		space_type_fb = runner.getStringArgumentValue("fb_space_type",user_arguments)
+	else
+		space_type_fb = "none"
+	end
+	if garage_ltg
+		space_type_grg = runner.getStringArgumentValue("grg_space_type",user_arguments)
+	else
+		space_type_grg = "none"
+	end
+	
     ltg_E = runner.getDoubleArgumentValue("ltg_E",user_arguments)
 	hw_cfl = runner.getDoubleArgumentValue("hw_cfl",user_arguments)
 	hw_led = runner.getDoubleArgumentValue("hw_led",user_arguments)
@@ -162,7 +218,21 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	led_eff = runner.getDoubleArgumentValue("led_eff",user_arguments)
 	lfl_eff = runner.getDoubleArgumentValue("lfl_eff",user_arguments)
 	cfa = runner.getDoubleArgumentValue("cfa",user_arguments)
+	gfa = runner.getDoubleArgumentValue("gfa",user_arguments)
+	fbfa = runner.getDoubleArgumentValue("fbfa",user_arguments)
+	fb_ltg = runner.getBoolArgumentValue("fb_ltg",user_arguments)
+	outside_ltg = runner.getBoolArgumentValue("outside_ltg",user_arguments)
+	garage_ltg = runner.getBoolArgumentValue("garage_ltg",user_arguments)
 	
+	#Error if fb but no area
+	if fb_ltg and fbfa <= 0
+		runner.registerError("Finished basement is selected but floor area is <= 0. Double check inputs")
+	end
+	
+	#error if garage but no area
+	if garage_ltg and gfa <= 0
+		runner.registerError("Garage is selected but floor area is <= 0. Double check inputs")
+	end
 	
 	#warning if things are specified that will not be used (ie. BAB mult when detailed lighting is modeled)
 	#Benchmark and other values specified
@@ -206,12 +276,12 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	if selected_ltg == "Simple" 
 		if ltg_E < 0
 			runner.registerError("Electric lighting energy consumption must be greater than 0")
-		elsif ltg_E > 4000
+		elsif ltg_E > 10000
 			runner.registerError("Electric lighting energy consumption seems high, double check inputs") 
 		end
 	end
 	
-	#Calculate electric dw daily energy use
+	#Calculate electric lighting daily energy use
 	lightval = Process_lighting.new
 	
 	bab_er_cfl = lightval.Bab_er_cfl
@@ -223,7 +293,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	bab_frac_lfl = lightval.Bab_frac_lfl
 	
 	frac_hw = 0.8
-    frac_plugin = 0.2
+    frac_pg = 0.2
 
     bab_frac_inc = 0.66
     bab_frac_cfl = 0.21
@@ -233,33 +303,54 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	
 	if selected_ltg == "Simple"
 		ltg_ann = ltg_E
+	end
+	if selected_ltg == "Benchmark"
+		hw_cfl = 0.21
+		hw_led = 0.00
+		hw_lfl = 0.13
+		pg_cfl = 0.21
+		pg_led = 0.00
+		pg_lfl = 0.13
+		in_eff = 15.0
+		cfl_eff = 55.0
+		led_eff = 50.0
+		lfl_eff = 88.0
+	end
+		
+	hw_inc = 1 - hw_cfl - hw_led - hw_lfl
+	pg_inc = 1 - pg_cfl - pg_led - pg_lfl
+	bm_hw_e = frac_hw * (cfa * 0.542 + 334)
+	bm_pg_e = frac_pg * (cfa * 0.542 + 334)
+	smrt_replce_f = (1.29 * hw_inc ** 4 - 2.23 * hw_inc ** 3 + 1.76 * hw_inc ** 2 - 0.82 * hw_inc + 1.170886)
+	er_cfl = in_eff / cfl_eff
+	er_led = in_eff / led_eff
+	er_lfl = in_eff / lfl_eff
+	int_hw_e = (bm_hw_e * (((hw_inc + (1 - bab_frac_inc)) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
+	int_pg_e = (bm_pg_e * (((pg_inc + (1 - bab_frac_inc)) + (pg_cfl* er_cfl - bab_frac_cfl * bab_er_cfl) + (pg_led * er_led - bab_frac_led * bab_er_led) + (pg_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
+	if selected_ltg != "Simple"
+		ltg_ann = int_hw_e + int_pg_e
+	end
+	if garage_ltg
+		bm_garage_e =  0.08 * gfa + 8
+		garage_ann = (bm_garage_e * (((hw_inc + (1 - bab_frac_inc)) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
+		garage_daily = garage_ann / 365.0
 	else
-		if selected_ltg == "Benchmark"
-			hw_cfl = 0.21
-			hw_led = 0.00
-			hw_lfl = 0.13
-			pg_cfl = 0.21
-			pg_led = 0.00
-			pg_lfl = 0.13
-			in_eff = 15.0
-			cfl_eff = 55.0
-			led_eff = 50.0
-			lfl_eff = 88.0
-		end
-		hw_inc = 1 - hw_cfl - hw_led - hw_lfl
-		pg_inc = 1 - pg_cfl - pg_led - pg_lfl
-		bm_hw_e = frac_hw * (cfa * 0.542 + 334)
-		bm_pg_e = frac_pg * (cfa * 0.542 + 334)
-		smrt_replce_f = (1.29 * hw_inc ** 4 - 2.23 * hw_inc ** 3 + 1.76 * hw_inc ** 2 - 0.82 * hw_inc + 1.170886)
-		er_cfl = eff_inc / eff_cfl
-		er_led = eff_inc / eff_led
-		er_lfl = eff_inc / eff_lfl
-		int_hw_E = (bm_hw_E * (((hw_inc + (1 - bab_frac_inc)) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
-		int_pg_E = (bm_pg_e * (((pg_inc + (1 - bab_frac_inc)) + (pg_cfl* er_cfl - bab_frac_cfl * bab_er_cfl) + (pg_led * er_led - bab_frac_led * bab_er_led) + (pg_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
-		ltg_ann = int_hw_e + int_pg_E
+		garage_ann = 0.0 
+		garage_daily = 0.0
+	end
+		
+	if outside_ltg
+		bm_outside_e = 0.145 * cfa
+		outside_ann = (bm_outside_e * (((hw_inc + (1 - bab_frac_inc)) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
+		outside_daily = outside_ann / 365.0
+	else
+		outside_ann = 0.0 
+		outside_daily = 0.0
 	end
 
 	ltg_daily = ltg_ann / 365.0
+	
+	ltg_total = ltg_ann + garage_ann + outside_ann
 	
 	#add ltg schedule
 	#Calculate the lighting schedule
@@ -281,7 +372,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		if lat < 51.49
 			m_num = month+1
 			jul_day = m_num*30-15
-			if m_num < 4 or m_num > 10
+			if not (m_num < 4 or m_num > 10)
 				offset = 1
 			else
 				offset = 0
@@ -300,7 +391,6 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		end
 	end
 				
-				
 	dec_kws = lightval.Dec_kws
 	june_kws = lightval.June_kws
 						
@@ -318,26 +408,26 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		monthNum = m
 		monthHalfHourKWHs = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0']
 		# Calculate hour 12.5 first; others depend on it
-		monthHalfHourKWHs[24] = june_kws[24] + (dec_kws[24] - june_kws[24]) / 2 / 0.266 * (1 / 1.5 / ((2*pi)**0.5)) * Math.exp(-0.5 * (((6 - monthNum).abs - 6) / 1.5)**2) + (dec_kws[24] - june_kws[24]) / 2 / 0.399 * (1 / 1 / ((2 * pi)**0.5)) * Math.exp(-0.5 * (((4.847 - sunrise_hour[month]).abs - 3.2) / 1)**2)
+		monthHalfHourKWHs[24] = june_kws[24] + ((dec_kws[24] - june_kws[24]) / 2.0 / 0.266 * (1.0 / 1.5 / ((2.0*pi)**0.5)) * Math.exp(-0.5 * (((6 - monthNum).abs - 6) / 1.5)**2)) + ((dec_kws[24] - june_kws[24]) / 2 / 0.399 * (1 / 1 / ((2 * pi)**0.5)) * Math.exp(-0.5 * (((4.847 - sunrise_hour[month]).abs - 3.2) / 1.0)**2))
 		for hourNum in 0..10
 			monthHalfHourKWHs[hourNum] = june_kws[hourNum]
 		end
 		for hourNum in 11..16
-			hour = (hourNum + 1) * 0.5
-			monthHalfHourKWHs[hourNum] = june_kws[11] + 0.005 * (sunrise_hour[month] - 3)**2.4 * Math.exp(-1 * ((hour - 8)**2) / (2 * 0.8**2)) / (0.8 * (2 * pi)**0.5)
+			hour = (hourNum + 1.0) * 0.5
+			monthHalfHourKWHs[hourNum] = june_kws[11] + 0.005 * (sunrise_hour[month] - 3.0)**2.4 * Math.exp(-1.0 * ((hour - 8.0)**2) / (2.0 * 0.8**2)) / (0.8 * (2.0 * pi)**0.5)
 		end
 		for hourNum in 16..24
-			hour = (hourNum + 1) * 0.5
-			monthHalfHourKWHs[hourNum] = monthHalfHourKWHs[24] + 0.005 * (sunrise_hour[month] - 3)**2.4 * Math.exp(-1 * ((hour - 8)**2) / (2 * 0.8**2)) / (0.8 * (2 * pi)**0.5)
+			hour = (hourNum + 1.0) * 0.5
+			monthHalfHourKWHs[hourNum] = monthHalfHourKWHs[24] + 0.005 * (sunrise_hour[month] - 3.0)**2.4 * Math.exp(-1.0 * ((hour - 8.0)**2) / (2.0 * 0.8**2.0)) / (0.8 * (2.0 * pi)**0.5)
 		end
 		for hourNum in 25..38
-			hour = (hourNum + 1) * 0.5
-			monthHalfHourKWHs[hourNum] = (monthHalfHourKWHs[24] + amplConst1 * Math.exp((-1 * (hour - (sunset_hour[month] + sunsetLag1))**2) / (2 * ((25.5 / ((6.5 - monthNum).abs + 20)) * stdDevCons1)**2)) / ((25.5 / ((6.5 - monthNum).abs + 20)) * stdDevCons1 * (2*pi)**0.5))
+			hour = (hourNum + 1.0) * 0.5
+			monthHalfHourKWHs[hourNum] = (monthHalfHourKWHs[24] + amplConst1 * Math.exp((-1.0 * (hour - (sunset_hour[month] + sunsetLag1))**2) / (2.0 * ((25.5 / ((6.5 - monthNum).abs + 20.0)) * stdDevCons1)**2)) / ((25.5 / ((6.5 - monthNum).abs + 20.0)) * stdDevCons1 * (2.0*pi)**0.5))
 		end
 		for hourNum in 38..44
-			hour = (hourNum + 1) * 0.5
-			temp1 = (monthHalfHourKWHs[24] + amplConst1 * Math.exp((-1 * (hour - (sunset_hour[month] + sunsetLag1))**2) / (2 * ((25.5 / ((6.5 - monthNum).abs + 20)) * stdDevCons1)**2)) / ((25.5 / ((6.5 - monthNum).abs + 20)) * stdDevCons1 * (2*pi)**0.5))
-			temp2 = (0.04 + amplConst2 * Math.exp((-1 * (hour - (sunsetLag2))**2) / (2 * (stdDevCons2)**2)) / (stdDevCons2 * (2*pi)**0.5))
+			hour = (hourNum + 1.0) * 0.5
+			temp1 = (monthHalfHourKWHs[24] + amplConst1 * Math.exp((-1.0 * (hour - (sunset_hour[month] + sunsetLag1))**2) / (2.0 * ((25.5 / ((6.5 - monthNum).abs + 20.0)) * stdDevCons1)**2)) / ((25.5 / ((6.5 - monthNum).abs + 20.0)) * stdDevCons1 * (2.0*pi)**0.5))
+			temp2 = (0.04 + amplConst2 * Math.exp((-1.0 * (hour - (sunsetLag2))**2) / (2.0 * (stdDevCons2)**2)) / (stdDevCons2 * (2.0*pi)**0.5))
 			if sunsetLag2 < sunset_hour[month] + sunsetLag1
 				monthHalfHourKWHs[hourNum] = [temp1, temp2].min
 			else
@@ -349,18 +439,16 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 			monthHalfHourKWHs[hourNum] = (0.04 + amplConst2 * Math.exp((-1 * (hour - (sunsetLag2))**2) / (2 * (stdDevCons2)**2)) / (stdDevCons2 * (2*pi)**0.5))
 		end
 		sum_kWh = 0.0
-		monthHalfHourKWHs.each do |v|
-			sum_kWh = sum_kWh + v
+		for timenum in 0..47
+			sum_kWh = sum_kWh + monthHalfHourKWHs[timenum]
 		end
 		for hour in 0..23
 			ltg_hour = (monthHalfHourKWHs[hour*2] + monthHalfHourKWHs[hour*2+1]).to_f
 			normalized_hourly_lighting[month][hour] = ltg_hour/sum_kWh
 			monthly_kwh_per_day[month] = sum_kWh/2.0 
-			wtd_avg_monthly_kwh_per_day = wtd_avg_monthly_kwh_per_day + monthly_kwh_per_day[month] * days_m[month]/365.0
 	   end
-	   runner.registerWarning("Monthly kwh_per_day#{monthly_kwh_per_day[month]}")
 	   
-	   #runner.registerWarning("#{}")
+	   wtd_avg_monthly_kwh_per_day = wtd_avg_monthly_kwh_per_day + monthly_kwh_per_day[month] * days_m[month]/365.0
 	end
 	
 	# Calculate normalized monthly lighting fractions
@@ -371,6 +459,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		seasonal_multiplier[month] = (monthly_kwh_per_day[month]/wtd_avg_monthly_kwh_per_day)
 		sumproduct_seasonal_multiplier += seasonal_multiplier[month] * days_m[month]
 	end
+	
 	for month in 0..11
 		normalized_monthly_lighting[month] = seasonal_multiplier[month] * days_m[month] / sumproduct_seasonal_multiplier
 	end
@@ -384,11 +473,24 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 			light_val = lighting_sch[month][hour].to_f
 			if light_val > ltg_max
 				ltg_max = light_val
-				runner.registerWarning("normalized_monthly_lighting #{normalized_monthly_lighting[month]}")
-				runner.registerWarning("normalized_hourly_lighting #{normalized_hourly_lighting[month][hour]}")
-				runner.registerWarning("ltg_max#{ltg_max }")
+				if garage_ltg
+					grg_max = normalized_monthly_lighting[month]*normalized_hourly_lighting[month][hour]*garage_ann/days_m[month]
+				end
+				if outside_ltg 
+					outside_max = normalized_monthly_lighting[month]*normalized_hourly_lighting[month][hour]*outside_ann/days_m[month]
+				end
 			end
 		end
+	end
+	
+	
+	if fb_ltg
+		ltg_tot = ltg_max
+		fb_max = ltg_max * (fbfa/cfa)
+		ltg_max = ltg_tot-fb_max
+	else
+		fb_max = 0.0
+		ltg_tot = ltg_max
 	end
 	
 	#pull schedule values and gain fractions from sim
@@ -400,111 +502,180 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	#get ltg max power
 	#ltg_max = ltg_daily * maxval * 1000 * sch_adjust
 	
-	#add dw to the selected space
+	#add lighting to the selected space(s)
 	has_ltg = 0
 	replace_ltg = 0
+	has_grg_ltg = 0
+	replace_grg_ltg = 0
+	has_outside_ltg = 0
+	replace_outside_ltg = 0
+	has_basement_ltg = 0
+	replace_basement_ltg = 0
+	created = 0
 	model.getSpaceTypes.each do |spaceType|
 		spacename = spaceType.name.to_s
 		spacehandle = spaceType.handle.to_s
-		if spacehandle == space_type_r #add ltg
+		if spacehandle == space_type_r or spacehandle == space_type_fb or spacehandle == space_type_grg #add ltg
 			space_lights = spaceType.lights
 			space_lights.each do |light|
 				if light.lightsDefinition.name.get.to_s == "residential_int_lighting"
 					has_ltg = 1
 					replace_ltg = 1
-					runner.registerWarning("This space already has lighting, the existing lighting will be replaced with the the currently selected option")
+					runner.registerWarning("This space already has interior lighting, the existing lighting will be replaced with the the currently selected option")
 					space_equipment.lightsDefinition.setDesignLevel(ltg_max)
 				end
+				if light.lightsDefinition.name.get.to_s == "residential_ext_lighting"
+					has_outside_ltg = 1
+					replace_outside_ltg = 1
+					runner.registerWarning("This space already has exterior lighting, the existing lighting will be replaced with the the currently selected option")
+					space_equipment.lightsDefinition.setDesignLevel(outside_max)
+				end
+				if light.lightsDefinition.name.get.to_s == "residential_garage_lighting"
+					has_grg_ltg = 1
+					replace_grg_ltg = 1
+					runner.registerWarning("This space already has garage lighting, the existing lighting will be replaced with the the currently selected option")
+					space_equipment.lightsDefinition.setDesignLevel(garage_max)
+				end
+				if light.lightsDefinition.name.get.to_s == "residential_int_fb_lighting"
+					has_basement_ltg = 1
+					replace_basement_ltg = 1
+					runner.registerWarning("This space already has lighting in the finished basement, the existing lighting will be replaced with the the currently selected option")
+					space_equipment.lightsDefinition.setDesignLevel(fb_max)
+					
+				end
 			end
-			if has_ltg == 0 
+			
+			ltg_add = has_ltg + has_outside_ltg + has_grg_ltg + has_basement_ltg
 
-				
-				#Add the OS object for the lighting schedule
+			if garage_ann > 0 and spacehandle == space_type_grg
+				has_grg_ltg = 1
+			end
+			if outside_ann > 0 and spacehandle == space_type_r
+				has_outside_ltg = 1
+			end
+			if ltg_ann > 0 and spacehandle == space_type_r
 				has_ltg = 1
-				ltg_wkdy = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				ltg_wknd = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				ltg_wk = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				time = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0']
-				wkdy_ltg_rule = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				wknd_ltg_rule = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
-				day_startm = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
+			end
+			if fb_max > 0 and spacehandle == space_type_fb
+				has_basement_ltg = 1
+			end
 				
-				ltg_ruleset = OpenStudio::Model::ScheduleRuleset.new(model)
-				ltg_ruleset.setName("Int_lighting_annual_schedule")
+			#Add the OS object for the lighting schedule
+			ltg_wkdy = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
+			ltg_wknd = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
+			ltg_wk = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
+			time = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0']
+			wkdy_ltg_rule = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
+			wknd_ltg_rule = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
+			day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
+			day_startm = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
 				
-				for m in 1..12
-					date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
-					date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
-					for w in 1..2
-						if w == 1
-							wkdy_ltg_rule[m] = OpenStudio::Model::ScheduleRule.new(ltg_ruleset)
-							wkdy_ltg_rule[m].setName("int_ltg_weekday_ruleset#{m}")
-							wkdy_ltg_rule
-							ltg_wkdy[m] = wkdy_ltg_rule[m].daySchedule
-							ltg_wkdy[m].setName("IntLightingWeekday#{m}")
-							for h in 1..24
-								time[h] = OpenStudio::Time.new(0,h,0,0)
-								val = (lighting_sch[m-1][h-1].to_f)
-								
-								ltg_wkdy[m].addValue(time[h],val)
-							end
-							wkdy_ltg_rule[m].setApplySunday(false)
-							wkdy_ltg_rule[m].setApplyMonday(true)
-							wkdy_ltg_rule[m].setApplyTuesday(true)
-							wkdy_ltg_rule[m].setApplyWednesday(true)
-							wkdy_ltg_rule[m].setApplyThursday(true)
-							wkdy_ltg_rule[m].setApplyFriday(true)
-							wkdy_ltg_rule[m].setApplySaturday(false)
-							wkdy_ltg_rule[m].setStartDate(date_s)
-							wkdy_ltg_rule[m].setEndDate(date_e)
-							
-						elsif w == 2
-							wknd_ltg_rule[m] = OpenStudio::Model::ScheduleRule.new(ltg_ruleset)
-							wknd_ltg_rule[m].setName("int_ltg_weekend_ruleset#{m}")
-							ltg_wknd[m] = wknd_ltg_rule[m].daySchedule
-							ltg_wknd[m].setName("IntLightingWeekend#{m}")
-							for h in 1..24
-								time[h] = OpenStudio::Time.new(0,h,0,0)
-								val = (lighting_sch[m-1][h-1].to_f)
-								ltg_wknd[m].addValue(time[h],val)
-							end
-							wknd_ltg_rule[m].setApplySunday(true)
-							wknd_ltg_rule[m].setApplyMonday(false)
-							wknd_ltg_rule[m].setApplyTuesday(false)
-							wknd_ltg_rule[m].setApplyWednesday(false)
-							wknd_ltg_rule[m].setApplyThursday(false)
-							wknd_ltg_rule[m].setApplyFriday(false)
-							wknd_ltg_rule[m].setApplySaturday(true)
-							wknd_ltg_rule[m].setStartDate(date_s)
-							wknd_ltg_rule[m].setEndDate(date_e)
+			ltg_ruleset = OpenStudio::Model::ScheduleRuleset.new(model)
+			ltg_ruleset.setName("Int_lighting_annual_schedule")
+				
+			for m in 1..12
+				date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
+				date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
+				for w in 1..2
+					if w == 1
+						wkdy_ltg_rule[m] = OpenStudio::Model::ScheduleRule.new(ltg_ruleset)
+						wkdy_ltg_rule[m].setName("ltg_weekday_ruleset#{m}")
+						wkdy_ltg_rule
+						ltg_wkdy[m] = wkdy_ltg_rule[m].daySchedule
+						ltg_wkdy[m].setName("LightingWeekday#{m}")
+						for h in 1..24
+							time[h] = OpenStudio::Time.new(0,h,0,0)
+							val = (lighting_sch[m-1][h-1].to_f)/ltg_tot
+							ltg_wkdy[m].addValue(time[h],val)
 						end
+						wkdy_ltg_rule[m].setApplySunday(false)
+						wkdy_ltg_rule[m].setApplyMonday(true)
+						wkdy_ltg_rule[m].setApplyTuesday(true)
+						wkdy_ltg_rule[m].setApplyWednesday(true)
+						wkdy_ltg_rule[m].setApplyThursday(true)
+						wkdy_ltg_rule[m].setApplyFriday(true)
+						wkdy_ltg_rule[m].setApplySaturday(false)
+						wkdy_ltg_rule[m].setStartDate(date_s)
+						wkdy_ltg_rule[m].setEndDate(date_e)
+								
+					elsif w == 2
+						wknd_ltg_rule[m] = OpenStudio::Model::ScheduleRule.new(ltg_ruleset)
+						wknd_ltg_rule[m].setName("ltg_weekend_ruleset#{m}")
+						ltg_wknd[m] = wknd_ltg_rule[m].daySchedule
+						ltg_wknd[m].setName("LightingWeekend#{m}")
+						for h in 1..24
+							time[h] = OpenStudio::Time.new(0,h,0,0)
+							val = (lighting_sch[m-1][h-1].to_f)/ltg_tot
+							ltg_wknd[m].addValue(time[h],val)
+						end
+						wknd_ltg_rule[m].setApplySunday(true)
+						wknd_ltg_rule[m].setApplyMonday(false)
+						wknd_ltg_rule[m].setApplyTuesday(false)
+						wknd_ltg_rule[m].setApplyWednesday(false)
+						wknd_ltg_rule[m].setApplyThursday(false)
+						wknd_ltg_rule[m].setApplyFriday(false)
+						wknd_ltg_rule[m].setApplySaturday(true)
+						wknd_ltg_rule[m].setStartDate(date_s)
+						wknd_ltg_rule[m].setEndDate(date_e)
 					end
 				end
-				
-				sumDesSch = ltg_wkdy[6]
-				sumDesSch.setName("IntLightingSummer")
-				winDesSch = ltg_wkdy[1]
-				winDesSch.setName("IntLightingWinter")
-				ltg_ruleset.setSummerDesignDaySchedule(sumDesSch)
-				ltg_ruleset.setWinterDesignDaySchedule(winDesSch)
+			end
 					
-				#Add electric equipment for the ltg
+			sumDesSch = ltg_wkdy[6]
+			sumDesSch.setName("LightingSummer")
+			winDesSch = ltg_wkdy[1]
+			winDesSch.setName("LightingWinter")
+			ltg_ruleset.setSummerDesignDaySchedule(sumDesSch)
+			ltg_ruleset.setWinterDesignDaySchedule(winDesSch)
+			#Add electric equipment for the ltg
+			
+			if has_ltg and spacehandle == space_type_r
 				ltg_def = OpenStudio::Model::LightsDefinition.new(model)
 				ltg = OpenStudio::Model::Lights.new(ltg_def)
 				ltg.setName("residential_interior_lighting")
 				ltg.setSpaceType(spaceType)
 				ltg_def.setName("residential_interior_lighting")
-				#ltg_def.setDesignLevelCalculationMethod("LightingLevel")
 				ltg_def.setLightingLevel(ltg_max*1000)
-				#ltg_def.setLightingLevel(ltg_ann)
 				ltg_def.setFractionRadiant(ltg_rad)
 				ltg_def.setFractionVisible(ltg_vis)
-				#ltg_def.setFractionReplaceable(ltg_rep)
 				ltg_def.setReturnAirFraction(ltg_raf)
-				
 				ltg.setSchedule(ltg_ruleset)
+			end
 				
+			if has_grg_ltg and spacehandle == space_type_grg
+				grg_ltg_def = OpenStudio::Model::LightsDefinition.new(model)
+				grg_ltg = OpenStudio::Model::Lights.new(grg_ltg_def)
+				grg_ltg.setName("residential_garage_lighting")
+				grg_ltg.setSpaceType(spaceType)
+				grg_ltg_def.setName("residential_garage_lighting")
+				grg_ltg_def.setLightingLevel(grg_max*1000)
+				grg_ltg_def.setFractionRadiant(ltg_rad)
+				grg_ltg_def.setFractionVisible(ltg_vis)
+				grg_ltg_def.setReturnAirFraction(ltg_raf)
+				grg_ltg.setSchedule(ltg_ruleset)
+			end
+				
+			if has_basement_ltg and spacehandle == space_type_fb
+				fb_ltg_def = OpenStudio::Model::LightsDefinition.new(model)
+				fb_ltg = OpenStudio::Model::Lights.new(fb_ltg_def)
+				fb_ltg.setName("residential_basement_lighting")
+				fb_ltg.setSpaceType(spaceType)
+				fb_ltg_def.setName("residential_basement_lighting")
+				fb_ltg_def.setLightingLevel(fb_max*1000)
+				fb_ltg_def.setFractionRadiant(ltg_rad)
+				fb_ltg_def.setFractionVisible(ltg_vis)
+				fb_ltg_def.setReturnAirFraction(ltg_raf)
+				fb_ltg.setSchedule(ltg_ruleset)
+			end
+				
+			if has_outside_ltg and spacehandle == space_type_r
+				ext_ltg_def = OpenStudio::Model::ExteriorLightsDefinition.new(model)
+				ext_ltg = OpenStudio::Model::ExteriorLights.new(ext_ltg_def)
+				ext_ltg.setName("residential_exterior_lighting")
+				#ext_ltg.setSpaceType(spaceType)
+				ext_ltg_def.setName("residential_exterior_lighting")
+				ext_ltg_def.setDesignLevel(outside_max*1000)
+				ext_ltg.setSchedule(ltg_ruleset)
 			end
 		end
 	end
@@ -512,9 +683,9 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
 	if has_ltg == 1
 		if replace_ltg == 1
-			runner.registerFinalCondition("The existing lighting has been replaced by one with #{ltg_ann} kWh annual energy consumption.")
+			runner.registerFinalCondition("The existing lighting has been replaced by one with #{ltg_total} kWh annual energy consumption.")
 		else
-			runner.registerFinalCondition("Lighting has been added with #{ltg_ann} kWh annual energy consumption.")
+			runner.registerFinalCondition("Lighting has been added with #{ltg_total} kWh annual energy consumption.")
 		end
 	else
 		runner.registerFinalCondition("Lighting was not added to #{space_type_r}.")

@@ -93,11 +93,11 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	bab_mult = runner.getDoubleArgumentValue("BAB_mult",user_arguments)
 	
 	#warning if fridge E is selected and BAB multiplier is specified or vice versa
-	if selected_fridge == "Annual Energy Consumption" and bab_mult != 1:
+	if selected_fridge == "Annual Energy Consumption" and bab_mult != 1
 		runner.registerWarning("Annual energy consumption is selected with a user specified benchmark multiplier. The multiplier will not be used.")
 	end
 	
-	if selected_fridge == "Benchmark" and fridge_E != 0:
+	if selected_fridge == "Benchmark" and fridge_E != 0
 		runner.registerWarning("Benchmark is selected with a user specified annual energy consumption. The annual energy consumption will not be used.")
 	end
 	
