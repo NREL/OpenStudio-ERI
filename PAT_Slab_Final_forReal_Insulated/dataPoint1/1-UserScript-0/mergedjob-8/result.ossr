@@ -1,0 +1,47 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 1' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 5' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 1-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 1' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 5' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{81dd1b1c-a3e3-4743-8e77-9f998b6b95a5}</UUID>
+      <VersionUUID>{31fbdd36-7921-4a79-968a-5f1c9dc1fbf9}</VersionUUID>
+      <Name>ufactor</Name>
+      <Source>ProcessConstructionsWindows</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.38</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{1816f25b-3fe0-49f9-b73d-281ece7929c5}</UUID>
+      <VersionUUID>{9b9b8aa7-eb74-4aa9-9eed-e4bda4669577}</VersionUUID>
+      <Name>shgc</Name>
+      <Source>ProcessConstructionsWindows</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.44</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{e00760ec-9df9-4459-afc4-45a76f51051f}</UUID>
+      <VersionUUID>{9cd9aa4f-c3c2-488f-8f8f-2ff9bcfb7241}</VersionUUID>
+      <Name>userdefinedintshadeheatingmult</Name>
+      <Source>ProcessConstructionsWindows</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.7</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{7a426e7b-2569-477d-8d08-f0cbcf533552}</UUID>
+      <VersionUUID>{b62fc59f-45d6-4029-af0c-102f275be06a}</VersionUUID>
+      <Name>userdefinedintshadecoolingmult</Name>
+      <Source>ProcessConstructionsWindows</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.7</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

@@ -1,0 +1,63 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessCentralAirConditioner</Channel>
+      <Message>Removed 'Node 34' from air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessCentralAirConditioner</Channel>
+      <Message>Removed 'Forced Air System' from air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessCentralAirConditioner</Channel>
+      <Message>Removed 'Node 35' from air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessCentralAirConditioner</Channel>
+      <Message>Removed air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessCentralAirConditioner</Channel>
+      <Message>Added heating coil 'Furnace Heating Coil 1' to branch 'Forced Air System' of air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessCentralAirConditioner</Channel>
+      <Message>Added on/off fan 'Supply Fan' to branch 'Forced Air System' of air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessCentralAirConditioner</Channel>
+      <Message>Added cooling coil 'DX Cooling Coil' to branch 'Forced Air System' of air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessCentralAirConditioner</Channel>
+      <Message>Added air loop 'Central Air System' to thermal zone 'living'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{9334eee9-b780-42f9-ba04-73a81e3b6996}</UUID>
+      <VersionUUID>{e09594cf-d4dc-4cc7-8dfe-dc998ca6c4b2}</VersionUUID>
+      <Name>selectedliving</Name>
+      <Source>ProcessCentralAirConditioner</Source>
+      <ValueType>String</ValueType>
+      <Value>{0d608b96-ffd4-46de-9129-cd315ba55b12}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{93e037ed-fc05-4124-a389-356483f5b936}</UUID>
+      <VersionUUID>{1062ac0f-9026-4fd7-96e9-027846d3b5b3}</VersionUUID>
+      <Name>selectedac</Name>
+      <Source>ProcessCentralAirConditioner</Source>
+      <ValueType>String</ValueType>
+      <Value>SEER 13</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{0ee35335-d941-4a12-a6e4-2dc8f52a3aee}</UUID>
+      <VersionUUID>{654d35b5-7491-4b8d-8234-7abc477ec47d}</VersionUUID>
+      <Name>selectedaccap</Name>
+      <Source>ProcessCentralAirConditioner</Source>
+      <ValueType>String</ValueType>
+      <Value>1.5 tons</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

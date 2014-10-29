@@ -1,0 +1,293 @@
+{
+    "job_params": [
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "--argumentName=selected_fridge"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=Benchmark"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=fridge_E"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=BAB_mult"
+                        },
+                        "param_index": 4
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=1"
+                        },
+                        "param_index": 5
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=space_type"
+                        },
+                        "param_index": 6
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue={8b94a914-1935-40aa-8088-83552c41418c}"
+                        },
+                        "param_index": 7
+                    }
+                ],
+                "value": "ruby_scriptparameters"
+            },
+            "param_index": 0
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "children": [
+                                                        {
+                                                            "param": {
+                                                                "value": "in.osm"
+                                                            },
+                                                            "param_index": 0
+                                                        }
+                                                    ],
+                                                    "value": ".*\\.osm"
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "All"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "Last"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_inputfiles"
+            },
+            "param_index": 1
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "-I"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "C:/Program Files (x86)/OpenStudio 1.5.0/Ruby"
+                        },
+                        "param_index": 1
+                    }
+                ],
+                "value": "ruby_toolparameters"
+            },
+            "param_index": 2
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "value": ""
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "osm"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "osm"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_copyrequired"
+            },
+            "param_index": 3
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "user_script.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal/scripts/AddResidentialRefrigerator/measure.rb"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "measure.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal/scripts/AddResidentialRefrigerator/measure.rb"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/sim.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal/scripts/AddResidentialRefrigerator/resources/sim.rb"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/util.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal/scripts/AddResidentialRefrigerator/resources/util.rb"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/weather.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal/scripts/AddResidentialRefrigerator/resources/weather.rb"
+                        },
+                        "param_index": 4
+                    }
+                ],
+                "value": "ruby_requiredfiles"
+            },
+            "param_index": 4
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "{eca8910f-e51b-4ae3-8a6e-d55a01710400}"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "original_job_uuid"
+            },
+            "param_index": 5
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "true"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_isuserscriptjob"
+            },
+            "param_index": 6
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "C:/Program Files (x86)/OpenStudio 1.5.0/Ruby/openstudio/runmanager/rubyscripts/UserScriptAdapter.rb"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_scriptfile"
+            },
+            "param_index": 7
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "{96f1e9ca-41b9-4fb8-a219-57850e351500}"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "bcl_measure_uuid"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_bclmeasureparameters"
+            },
+            "param_index": 8
+        }
+    ],
+    "metadata": {
+        "openstudio_version": "1.5.0"
+    }
+}

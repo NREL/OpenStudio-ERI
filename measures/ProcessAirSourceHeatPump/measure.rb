@@ -8,8 +8,7 @@
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
 #load sim.rb
-#require "#{File.dirname(__FILE__)}/resources/sim"
-require "C:/OS-BEopt/OpenStudio-Beopt/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/sim"
 
 #start the measure
 class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript

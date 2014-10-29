@@ -1,0 +1,591 @@
+Program Version,EnergyPlus-Windows-64 8.1.0.009, YMD=2014.10.29 14:42
+! <Version>, Version ID
+ Version, 8.1
+! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
+ Timesteps per Hour,  1, 60
+! <System Convergence Limits>, Minimum System TimeStep {minutes}, Max HVAC Iterations,  Minimum Plant Iterations, Maximum Plant Iterations
+ System Convergence Limits, 1, 20, 2, 8
+! <Simulation Control>, Do Zone Sizing, Do System Sizing, Do Plant Sizing, Do Design Days, Do Weather Simulation
+ Simulation Control, Yes, Yes, Yes, Yes, Yes
+! <Output Reporting Tolerances>, Tolerance for Time Heating Setpoint Not Met, Tolerance for Zone Cooling Setpoint Not Met Time
+ Output Reporting Tolerances, 0.200, 0.200, 
+! <Site:GroundTemperature:BuildingSurface>, Months From Jan to Dec {C}
+ Site:GroundTemperature:BuildingSurface,  18.00,  18.00,  18.00,  18.00,  18.00,  18.00,  18.00,  18.00,  18.00,  18.00,  18.00,  18.00
+! <Site:GroundTemperature:FCfactorMethod>, Months From Jan to Dec {C}
+ Site:GroundTemperature:FCfactorMethod,  10.83,   7.34,   6.39,   7.21,  11.92,  17.20,  22.17,  25.77,  26.82,  25.13,  21.06,  15.93
+! <Site:GroundTemperature:Shallow>, Months From Jan to Dec {C}
+ Site:GroundTemperature:Shallow,  13.00,  13.00,  13.00,  13.00,  13.00,  13.00,  13.00,  13.00,  13.00,  13.00,  13.00,  13.00
+! <Site:GroundTemperature:Deep>, Months From Jan to Dec {C}
+ Site:GroundTemperature:Deep,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00
+! <Site:GroundReflectance>, Months From Jan to Dec {dimensionless}
+ Site:GroundReflectance,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20
+! <Site:GroundReflectance:SnowModifier>, Normal, Daylighting {dimensionless}
+ Site:GroundReflectance:SnowModifier,   1.000,   1.000
+! <Site:GroundReflectance:Snow>, Months From Jan to Dec {dimensionless}
+ Site:GroundReflectance:Snow,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20
+! <Site:GroundReflectance:Snow:Daylighting>, Months From Jan to Dec {dimensionless}
+ Site:GroundReflectance:Snow:Daylighting,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20
+! <Environment:Weather Station>,Wind Sensor Height Above Ground {m},Wind Speed Profile Exponent {},Wind Speed Profile Boundary Layer Thickness {m},Air Temperature Sensor Height Above Ground {m},Wind Speed Modifier Coefficient [Internal],Temperature Modifier Coefficient [Internal]
+Environment:Weather Station,10.000,0.140,270.000,1.500,1.586,9.750E-003
+! <Site:Location>, Location Name, Latitude {N+/S- Deg}, Longitude {E+/W- Deg},  Time Zone Number {GMT+/-}, Elevation {m},  Standard Pressure at Elevation {Pa}, Standard RhoAir at Elevation
+Site:Location,Atlanta Hartsfield Intl Ap GA USA TMY3 WMO#=722190,33.63,-84.43,-5.00,308.00,97679,1.1610
+! <Building Information>, Building Name,North Axis {deg},Terrain,  Loads Convergence Tolerance Value,Temperature Convergence Tolerance Value,  Solar Distribution,Maximum Number of Warmup Days,Minimum Number of Warmup Days
+ Building Information,simple residential geometry,0.000,Suburbs,4.00000E-002,0.40000,FullExterior,25,6
+! <Inside Convection Algorithm>, Algorithm {Simple | TARP | CeilingDiffuser | AdaptiveConvectionAlgorithm}
+Inside Convection Algorithm,TARP
+! <Outside Convection Algorithm>, Algorithm {SimpleCombined | TARP | MoWitt | DOE-2 | AdaptiveConvectionAlgorithm}
+Outside Convection Algorithm,DOE-2
+! <Sky Radiance Distribution>, Value {Anisotropic}
+Sky Radiance Distribution,Anisotropic
+! <Zone Air Solution Algorithm>, Value {ThirdOrderBackwardDifference | AnalyticalSolution | EulerMethod}
+ Zone Air Solution Algorithm, AnalyticalSolution
+! <Zone Air Contaminant Balance Simulation>, Simulation {Yes/No}, Carbon Dioxide Concentration
+ Zone Air Carbon Dioxide Balance Simulation, No,N/A
+! <Zone Air Contaminant Balance Simulation>, Simulation {Yes/No}, Generic Contaminant Concentration
+ Zone Air Generic Contaminant Balance Simulation, No,N/A
+! <Environment:Site Atmospheric Variation>,Wind Speed Profile Exponent {},Wind Speed Profile Boundary Layer Thickness {m},Air Temperature Gradient Coefficient {K/m}
+Environment:Site Atmospheric Variation,0.220,370.000,6.500000E-003
+! <Material Details>,Material Name,ThermalResistance {m2-K/w},Roughness,Thickness {m},Conductivity {w/m-K},Density {kg/m3},Specific Heat {J/kg-K},Absorptance:Thermal,Absorptance:Solar,Absorptance:Visible
+! <Material:Air>,Material Name,ThermalResistance {m2-K/w}
+ Material Details,CARPETBARELAYER,0.2930,Rough,1.2700E-002,4.334E-002,54.463,1339.776,0.9000,0.9000,0.7000
+ Material Details,CARPETBARELAYER 1,0.2930,Rough,1.2700E-002,4.334E-002,54.463,1339.776,0.9000,0.9000,0.7000
+ Material Details,CONCRETE-4IN,7.7486E-002,Rough,0.1016,1.311,2242.585,837.360,0.9000,0.7000,0.7000
+ Material Details,DOORMATERIAL,0.7261,Smooth,6.3398E-002,8.731E-002,512.591,1214.172,0.9000,0.7000,0.7000
+ Material Details,EXTERIORFINISH,0.1057,Rough,9.5250E-003,9.014E-002,177.805,1046.700,0.9000,0.3000,0.3000
+ Material Details,FLOORMASS,0.1375,Rough,1.5875E-002,0.115,544.628,1214.172,0.9000,0.6000,0.7000
+ Material Details,FLOORMASS 1,0.1375,Rough,1.5875E-002,0.115,544.628,1214.172,0.9000,0.6000,0.7000
+ Material Details,GARAGEDOORMATERIAL,0.7261,Smooth,6.3398E-002,8.731E-002,512.591,1214.172,0.9000,0.7000,0.7000
+ Material Details,GARAGEFURNITUREMATERIAL,1.3202,Rough,0.1524,0.115,640.739,1214.172,0.9000,0.7000,0.7000
+ Material Details,GYPSUMBOARD-CEILING,7.9243E-002,Rough,1.2700E-002,0.160,800.923,837.360,0.9000,0.3000,0.1000
+ Material Details,GYPSUMBOARD-CEILING 1,7.9243E-002,Rough,1.2700E-002,0.160,800.923,837.360,0.9000,0.3000,0.1000
+ Material Details,GYPSUMBOARD-EXTWALL,7.9243E-002,Rough,1.2700E-002,0.160,800.923,837.360,0.9000,0.5000,0.1000
+ Material Details,INTFLOORINS,2.0911,Rough,0.1397,6.681E-002,106.355,1151.630,0.9000,0.7000,0.7000
+ Material Details,INTWALLINS,1.6149,Rough,8.8900E-002,5.505E-002,162.387,1178.860,0.9000,0.7000,0.7000
+ Material Details,LIVINGFURNITUREMATERIAL,1.3202,Rough,0.1524,0.115,640.739,1214.172,0.9000,0.6000,0.1000
+ Material Details,MAT-FIC-SLAB,2.2108,Rough,2.5400E-002,1.149E-002,40.046,1214.172,0.9000,0.7000,0.7000
+ Material Details,PARTITIONWALLMASS,7.9243E-002,Rough,1.2700E-002,0.160,800.923,837.360,0.9000,0.5000,0.1000
+ Material Details,PARTITIONWALLMASS 1,7.9243E-002,Rough,1.2700E-002,0.160,800.923,837.360,0.9000,0.5000,0.1000
+ Material Details,PLYWOOD-1_2IN,0.1100,Rough,1.2700E-002,0.115,512.591,1214.172,0.9000,0.7000,0.7000
+ Material Details,PLYWOOD-1_2IN 1,0.1100,Rough,1.2700E-002,0.115,512.591,1214.172,0.9000,0.7000,0.7000
+ Material Details,PLYWOOD-3_4IN,0.1650,Rough,1.9050E-002,0.115,512.591,1214.172,0.9000,0.7000,0.7000
+ Material Details,PLYWOOD-3_4IN 1,0.1650,Rough,1.9050E-002,0.115,512.591,1214.172,0.9000,0.7000,0.7000
+ Material Details,PLYWOOD-3_4IN 2,0.1650,Rough,1.9050E-002,0.115,512.591,1214.172,0.9000,0.7000,0.7000
+ Material Details,RADIANTBARRIER,9.0778E-007,Rough,2.1336E-004,235.034,2700.713,921.096,5.0000E-002,5.0000E-002,5.0000E-002
+ Material Details,ROOFINGMATERIAL,5.8079E-002,Rough,9.4488E-003,0.163,1121.292,1465.380,0.9100,0.8500,0.8500
+ Material Details,SLABCARPETBAREEQUIVALENTMATERIAL,0.2930,Rough,2.5400E-002,8.668E-002,40.046,1214.172,0.9000,0.6000,0.7000
+ Material Details,SLABMASS,7.7411E-002,Rough,0.1016,1.312,2242.585,837.360,0.9000,0.6000,0.7000
+ Material Details,SLABSOIL-12IN,0.1761,Rough,0.3048,1.731,1842.123,418.680,0.9000,0.7000,0.7000
+ Material Details,SOIL-12IN,0.1761,Rough,0.3048,1.731,1842.123,418.680,0.9000,0.7000,0.7000
+ Material Details,STUDANDAIRFLOOR,0.1981,Rough,8.8900E-002,0.449,67.468,1211.593,0.9000,0.7000,0.7000
+ Material Details,STUDANDAIRWALL,0.2009,Rough,8.8900E-002,0.443,48.921,1210.467,0.9000,0.7000,0.7000
+ Material Details,STUDANDAIRWALL 1,0.2009,Rough,8.8900E-002,0.443,48.921,1210.467,0.9000,0.7000,0.7000
+ Material Details,STUDANDCAVITY,1.6390,Rough,8.8900E-002,5.424E-002,162.387,1178.860,0.9000,0.7000,0.7000
+ Material Details,UAADDITIONALCEILINGINS,3.5034,Rough,0.1891,5.399E-002,16.018,1046.700,0.9000,0.7000,0.7000
+ Material Details,UAROOFINS,1.9333E-002,Rough,0.1842,9.525,36.770,1209.113,0.9000,0.7000,0.7000
+ Material Details,UATRUSSANDINS,1.5747,Rough,8.8900E-002,5.645E-002,50.779,1165.040,0.9000,0.7000,0.7000
+ Material Details,ADIABATIC,176.1102,Rough,0.0000,0.000,0.000,0.000,0.9000,0.7000,0.7000
+ Material Details,COOLINGSHADE,0.0000,MediumRough,1.0000E-004,10000.000,0.000,0.000,1.0000E-005,10.0000E-006,0.0000
+ Material Details,SUB SURFACE 1-WIN,2.4458,VerySmooth,5.6221E-002,2.299E-002,0.000,0.000,0.8400,0.0000,0.0000
+! <SurfaceGeometry>,Starting Corner,Vertex Input Direction,Coordinate System,Daylight Reference Point Coordinate System,Rectangular (Simple) Surface Coordinate System
+ Surface Geometry,UpperLeftCorner,Counterclockwise,RelativeCoordinateSystem,RelativeCoordinateSystem,RelativeToZoneOrigin
+! <Surface Heat Transfer Algorithm>, Value {CTF - ConductionTransferFunction | EMPD - MoisturePenetrationDepthConductionTransferFunction | CondFD - ConductionFiniteDifference | HAMT - CombinedHeatAndMoistureFiniteElement} - Description,Inside Surface Max Temperature Limit{C}, Surface Convection Coefficient Lower Limit {W/m2-K}, Surface Convection Coefficient Upper Limit {W/m2-K}
+Surface Heat Transfer Algorithm, CTF - ConductionTransferFunction,200,0.10,1000.0
+! <Shading Summary>, Number of Fixed Detached Shades, Number of Building Detached Shades, Number of Attached Shades
+ Shading Summary,0,0,0
+! <Zone Summary>, Number of Zones, Number of Zone Surfaces, Number of SubSurfaces
+ Zone Summary,3,38,2
+! <Zone Information>,Zone Name,North Axis {deg},Origin X-Coordinate {m},Origin Y-Coordinate {m},Origin Z-Coordinate {m},Centroid X-Coordinate {m},Centroid Y-Coordinate {m},Centroid Z-Coordinate {m},Type,Zone Multiplier,Zone List Multiplier,Minimum X {m},Maximum X {m},Minimum Y {m},Maximum Y {m},Minimum Z {m},Maximum Z {m},Ceiling Height {m},Volume {m3},Zone Inside Convection Algorithm {Simple-Detailed-CeilingDiffuser-TrombeWall},Zone Outside Convection Algorithm {Simple-Detailed-Tarp-MoWitt-DOE-2-BLAST}, Floor Area {m2},Exterior Gross Wall Area {m2},Exterior Net Wall Area {m2},Exterior Window Area {m2}, Number of Surfaces, Number of SubSurfaces, Number of Shading SubSurfaces,  Part of Total Building Area
+ Zone Information, ATTIC,0.0,0.00,3.05,4.88,7.73,4.86,5.45,1,1,1,0.00,16.76,0.00,9.14,4.88,7.16,1.07,148.66,TARP,DOE-2,139.35,20.90,20.90,0.00,9,0,0,Yes
+ Zone Information, GARAGE,0.0,16.76,9.14,0.00,14.48,6.10,1.22,1,1,1,12.19,16.76,3.05,9.14,0.00,2.44,2.44,67.96,TARP,DOE-2,27.87,37.16,29.24,0.00,6,1,0,Yes
+ Zone Information, LIVING,0.0,0.00,0.00,0.00,7.08,4.73,2.57,1,1,1,0.00,16.76,0.00,9.14,0.00,4.88,2.44,611.64,TARP,DOE-2,250.84,215.54,213.34,2.19,18,1,0,Yes
+! <Zone Internal Gains/Equipment Information - Nominal>,Zone Name, Floor Area {m2},# Occupants,Area per Occupant {m2/person},Occupant per Area {person/m2},Interior Lighting {W/m2},Electric Load {W/m2},Gas Load {W/m2},Other Load {W/m2},Hot Water Eq {W/m2},Steam Equipment {W/m2},Sum Loads per Area {W/m2},Outdoor Controlled Baseboard Heat
+ Zone Internal Gains, ATTIC,139.35,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
+ Zone Internal Gains, GARAGE,27.87,0.0,N/A,0.000,0.535,0.000,0.000,0.000,0.000,0.000,0.535,No
+ Zone Internal Gains, LIVING,250.84,2.6,95.014,1.052E-002,3.339,4.820,0.223,0.746,0.000,0.000,9.127,No
+! <People Internal Gains - Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Number of People {},People/Floor Area {person/m2},Floor Area per person {m2/person},Fraction Radiant,Fraction Convected,Sensible Fraction Calculation,Activity level,ASHRAE 55 Warnings,Carbon Dioxide Generation Rate,Nominal Minimum Number of People,Nominal Maximum Number of People 
+ People Internal Gains, LIVING RESIDENTIAL_OCCUPANTS,OCCUPANTS_RULESET,LIVING,250.84,2.6,2.6,1.052E-002,95.014,0.320,0.680,0.573,OCCUPANT_ACTIVITY,No,0.0000,0,3
+! <Lights Internal Gains - Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Lighting Level {W},Lights/Floor Area {W/m2},Lights per person {W/person},Fraction Return Air,Fraction Radiant,Fraction Short Wave,Fraction Convected,Fraction Replaceable,End-Use Category,Nominal Minimum Lighting Level {W},Nominal Maximum Lighting Level {W}
+ Lights Internal Gains, GARAGE RESIDENTIAL_GARAGE_LIGHTING,INT_LIGHTING_ANNUAL_SCHEDULE 1,GARAGE,27.87,0.0,14.912,0.535,N/A,0.000,0.600,0.200,0.200,1.000,General,0.000,14.912
+ Lights Internal Gains, LIVING RESIDENTIAL_INTERIOR_LIGHTING,INT_LIGHTING_ANNUAL_SCHEDULE,LIVING,250.84,2.6,837.612,3.339,317.277,0.000,0.600,0.200,0.200,1.000,General,0.000,837.612
+! <ElectricEquipment Internal Gains - Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,End-Use SubCategory,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
+ ElectricEquipment Internal Gains, LIVING RESIDENTIAL_CLOTHES_WASHER,CLOTHES_WASHER_ANNUAL_SCHEDULE,LIVING,250.84,2.6,21.863,8.716E-002,8.281,0.000,0.480,0.200,0.320,General,0.000,21.863
+ ElectricEquipment Internal Gains, LIVING RESIDENTIAL_ELECTRIC_CLOTHES_DRYER,CLOTHES_DRYER_ANNUAL_SCHEDULE,LIVING,250.84,2.6,284.178,1.133,107.643,5.000E-002,9.000E-002,0.800,6.000E-002,General,0.000,284.178
+ ElectricEquipment Internal Gains, LIVING RESIDENTIAL_ELECTRIC_DW,ELCETRIC_DW_ANNUAL_SCHEDULE,LIVING,250.84,2.6,55.304,0.220,20.949,0.150,0.360,0.270,0.220,General,0.000,55.304
+ ElectricEquipment Internal Gains, LIVING RESIDENTIAL_ELECTRIC_MEL,ELCETRIC_MEL_ANNUAL_SCHEDULE,LIVING,250.84,2.6,558.191,2.225,211.436,2.200E-002,0.555,5.300E-002,0.370,General,0.000,558.191
+ ElectricEquipment Internal Gains, LIVING RESIDENTIAL_ELECTRIC_RANGE,RANGE_ANNUAL_SCHEDULE,LIVING,250.84,2.6,224.287,0.894,84.957,0.300,0.240,0.300,0.160,General,0.000,224.287
+ ElectricEquipment Internal Gains, LIVING RESIDENTIAL_REFRIGERATOR,REFRIGERATOR_RULESET,LIVING,250.84,2.6,65.094,0.260,24.657,0.000,0.000,0.000,1.000,General,0.000,65.094
+! <GasEquipment Internal Gains - Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,End-Use SubCategory,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
+ GasEquipment Internal Gains, LIVING RESIDENTIAL_MGL,ELCETRIC_MGL_ANNUAL_SCHEDULE,LIVING,250.84,2.6,55.896,0.223,21.173,2.100E-002,0.558,4.900E-002,0.372,General,0.000,55.896
+! <OtherEquipment Internal Gains - Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
+ OtherEquipment Internal Gains, BATHS INTERNAL GAINS,BATHS INTERNAL GAINS,LIVING,250.84,2.6,15.555,6.201E-002,5.892,0.000,0.000,0.000,1.000,0.000,15.555
+ OtherEquipment Internal Gains, PUMP INTERNAL GAINS,PUMP FLAT LOAD SCHEDULE,LIVING,250.84,2.6,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains, SHOWERS INTERNAL GAINS,SHOWERS INTERNAL GAINS,LIVING,250.84,2.6,142.983,0.570,54.160,0.487,0.000,0.000,0.513,0.000,142.983
+ OtherEquipment Internal Gains, SINKS INTERNAL GAINS,SINKS INTERNAL GAINS,LIVING,250.84,2.6,28.522,0.114,10.804,0.312,0.000,0.000,0.688,0.000,28.522
+! <Construction CTF>,Construction Name,Index,#Layers,#CTFs,Time Step {hours},ThermalConductance {w/m2-K},OuterThermalAbsorptance,InnerThermalAbsorptance,OuterSolarAbsorptance,InnerSolarAbsorptance,Roughness
+! <Material CTF Summary>,Material Name,Thickness {m},Conductivity {w/m-K},Density {kg/m3},Specific Heat {J/kg-K},ThermalResistance {m2-K/w}
+! <Material:Air>,Material Name,ThermalResistance {m2-K/w}
+! <CTF>,Time,Outside,Cross,Inside,Flux (except final one)
+ Construction CTF,EXTINSFINWALL,   1,   4,   6,   1.000,     0.5171    ,   0.900,   0.900,   0.300,   0.500,Rough
+ Material CTF Summary,EXTERIORFINISH,  0.0095,         0.090,    177.805,     1046.700,  0.1057    
+ Material CTF Summary,PLYWOOD-1_2IN,  0.0127,         0.115,    512.591,     1214.172,  0.1100    
+ Material CTF Summary,STUDANDCAVITY,  0.0889,         0.054,    162.387,     1178.860,   1.639    
+ Material CTF Summary,GYPSUMBOARD-EXTWALL,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ CTF,   6,      0.58886680E-13,      0.46127921E-14,      0.15766688E-12,     -0.51301756E-15
+ CTF,   5,     -0.90064654E-08,      0.15497800E-08,     -0.51462871E-07,      0.18152439E-12
+ CTF,   4,      0.59946700E-04,      0.14984495E-04,      0.37863999E-03,     -0.34134927E-07
+ CTF,   3,     -0.21752116E-01,      0.48465628E-02,     -0.75049131E-01,      0.19033868E-03
+ CTF,   2,      0.87977568    ,      0.94624790E-01,       1.4524188    ,     -0.31804884E-01
+ CTF,   1,      -3.8568441    ,      0.16067863    ,      -5.0057812    ,      0.49835547    
+ CTF,   0,       3.2745049    ,      0.15579240E-01,       3.9037772    
+ Construction CTF,EXTINSUNFINWALL,   2,   2,   5,   1.000,     0.5732    ,   0.900,   0.900,   0.300,   0.700,Rough
+ Material CTF Summary,EXTERIORFINISH,  0.0095,         0.090,    177.805,     1046.700,  0.1057    
+ Material CTF Summary,STUDANDCAVITY,  0.0889,         0.054,    162.387,     1178.860,   1.639    
+ CTF,   5,     -0.10233055E-10,      0.10281052E-12,     -0.28365718E-13,     -0.33472177E-16
+ CTF,   4,      0.25390916E-05,      0.87956307E-07,      0.54987299E-07,     -0.21340309E-10
+ CTF,   3,     -0.56698650E-02,      0.52335905E-03,     -0.72961043E-03,      0.46853380E-05
+ CTF,   2,      0.34950337    ,      0.53946273E-01,      0.16035483    ,     -0.85761758E-02
+ CTF,   1,      -2.0867391    ,      0.24920969    ,      -1.5322907    ,      0.36948538    
+ CTF,   0,       2.1092185    ,      0.62636006E-01,       1.7389808    
+ Construction CTF,EXTUNINSUNFINWALL,   3,   3,   4,   1.000,      2.400    ,   0.900,   0.900,   0.300,   0.700,Rough
+ Material CTF Summary,EXTERIORFINISH,  0.0095,         0.090,    177.805,     1046.700,  0.1057    
+ Material CTF Summary,PLYWOOD-1_2IN 1,  0.0127,         0.115,    512.591,     1214.172,  0.1100    
+ Material CTF Summary,STUDANDAIRWALL,  0.0889,         0.443,     48.921,     1210.467,  0.2009    
+ CTF,   4,      0.17985655E-14,     -0.10640479E-14,      0.16452094E-14,       0.0000000    
+ CTF,   3,     -0.88960589E-13,      0.17079234E-13,     -0.93054923E-13,      0.14281368E-14
+ CTF,   2,      0.34312936E-02,      0.11793806E-02,      0.57207935E-02,     -0.43684280E-12
+ CTF,   1,      -1.3531515    ,      0.76331173    ,      -1.2309055    ,      0.12832139E-01
+ CTF,   0,       3.7193946    ,       1.6051834    ,       3.5948591    
+ Construction CTF,FININSUNFINUAFLOOR,   4,   3,   5,   1.000,     0.1939    ,   0.900,   0.900,   0.300,   0.700,Rough
+ Material CTF Summary,GYPSUMBOARD-CEILING,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ Material CTF Summary,UATRUSSANDINS,  0.0889,         0.056,     50.779,     1165.040,   1.575    
+ Material CTF Summary,UAADDITIONALCEILINGINS,  0.1891,         0.054,     16.018,     1046.700,   3.503    
+ CTF,   5,     -0.40852444E-09,      0.14575572E-10,     -0.53965206E-11,      0.21041202E-15
+ CTF,   4,      0.24460512E-04,      0.77850418E-06,      0.60485004E-06,     -0.30637486E-09
+ CTF,   3,     -0.38508467E-01,      0.87626818E-03,     -0.13681915E-02,      0.13302508E-04
+ CTF,   2,       1.1776677    ,      0.31147320E-01,      0.98820476E-01,     -0.16853635E-01
+ CTF,   1,      -4.3002975    ,      0.69924688E-01,     -0.53376672    ,      0.44962347    
+ CTF,   0,       3.2710966    ,      0.80336665E-02,      0.54629655    
+ Construction CTF,FINUNINSFINFLOOR,   5,   5,   4,   1.000,      1.146    ,   0.900,   0.900,   0.300,   0.900,Rough
+ Material CTF Summary,GYPSUMBOARD-CEILING 1,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ Material CTF Summary,STUDANDAIRFLOOR,  0.0889,         0.449,     67.468,     1211.593,  0.1981    
+ Material CTF Summary,PLYWOOD-3_4IN 2,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ Material CTF Summary,FLOORMASS 1,  0.0159,         0.115,    544.628,     1214.172,  0.1375    
+ Material CTF Summary,CARPETBARELAYER 1,  0.0127,         0.043,     54.463,     1339.776,  0.2930    
+ CTF,   4,      0.58609596E-07,      0.23636785E-08,      0.71232569E-08,     -0.19706489E-15
+ CTF,   3,     -0.50843301E-02,      0.25933659E-03,     -0.38750911E-03,      0.72680805E-07
+ CTF,   2,       1.0312572    ,      0.76024656E-01,      0.10125110    ,     -0.33516632E-02
+ CTF,   1,      -5.4259569    ,      0.45245791    ,      -1.7437338    ,      0.43829417    
+ CTF,   0,       5.0470834    ,      0.11855745    ,       2.2901695    
+ Construction CTF,FINUNINSFINWALL,   6,   3,   4,   1.000,      2.782    ,   0.900,   0.900,   0.500,   0.500,Rough
+ Material CTF Summary,PARTITIONWALLMASS 1,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ Material CTF Summary,STUDANDAIRWALL 1,  0.0889,         0.443,     48.921,     1210.467,  0.2009    
+ Material CTF Summary,PARTITIONWALLMASS 1,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ CTF,   4,     -0.24595508E-13,      0.28490818E-13,     -0.24595508E-13,       0.0000000    
+ CTF,   3,     -0.18051931E-10,      0.43065218E-11,     -0.18051931E-10,      0.25459592E-14
+ CTF,   2,      0.87781002E-03,      0.37370820E-03,      0.87781002E-03,     -0.35682423E-10
+ CTF,   1,      -2.3159804    ,      0.77961060    ,      -2.3159804    ,      0.81771490E-03
+ CTF,   0,       5.0953178    ,       2.0002309    ,       5.0953178    
+ Construction CTF,GARAGEDOORS,   7,   1,   5,   1.000,      1.377    ,   0.900,   0.900,   0.700,   0.700,Smooth
+ Material CTF Summary,GARAGEDOORMATERIAL,  0.0634,         0.087,    512.591,     1214.172,  0.7261    
+ CTF,   5,     -0.34895888E-12,      0.29271477E-12,     -0.34895899E-12,      0.94045848E-17
+ CTF,   4,      0.34146386E-06,      0.24137834E-06,      0.34146386E-06,     -0.98539740E-10
+ CTF,   3,     -0.23043343E-02,      0.12435544E-02,     -0.23043343E-02,      0.10009046E-04
+ CTF,   2,      0.36039481    ,      0.12427915    ,      0.36039481    ,     -0.98082367E-02
+ CTF,   1,      -3.4289563    ,      0.60456711    ,      -3.4289563    ,      0.35800964    
+ CTF,   0,       3.9685195    ,      0.16756388    ,       3.9685195    
+ Construction CTF,GARAGEFURNITURE,   8,   1,   5,   1.000,     0.7575    ,   0.900,   0.900,   0.700,   0.700,Rough
+ Material CTF Summary,GARAGEFURNITUREMATERIAL,  0.1524,         0.115,    640.739,     1214.172,   1.320    
+ CTF,   5,     -0.49974877E-02,      0.25063297E-05,     -0.49974877E-02,      0.76472061E-03
+ CTF,   4,      0.16037015    ,      0.47534676E-03,      0.16037015    ,     -0.26104801E-01
+ CTF,   3,      -1.5134387    ,      0.77295412E-02,      -1.5134387    ,      0.27136772    
+ CTF,   2,       5.3635400    ,      0.21173746E-01,       5.3635400    ,      -1.0944151    
+ CTF,   1,      -7.5904797    ,      0.99739574E-02,      -7.5904797    ,       1.7958796    
+ CTF,   0,       3.6247795    ,      0.41864466E-03,       3.6247795    
+ Construction CTF,GRNDUNINSUNFINGRGFLOOR,   9,   3,   7,   1.000,     0.5670E-02,   0.900,   0.900,   0.700,   0.700,Rough
+ Material CTF Summary,ADIABATIC,  0.0000,         0.000,      0.000,        0.000,   176.1    
+ Material CTF Summary,SOIL-12IN,  0.3048,         1.731,   1842.123,      418.680,  0.1761    
+ Material CTF Summary,CONCRETE-4IN,  0.1016,         1.311,   2242.585,      837.360,  0.7749E-01
+ CTF,   7,     -0.11827310E-11,      0.75148054E-13,     -0.40458705E-08,      0.12140595E-12
+ CTF,   6,      0.29683966E-08,      0.30157344E-09,      0.15075205E-04,     -0.25136534E-08
+ CTF,   5,     -0.85103028E-06,      0.13414556E-06,     -0.78507088E-02,      0.62794198E-05
+ CTF,   4,      0.48035903E-04,      0.78529531E-05,      0.62766967    ,     -0.17274702E-02
+ CTF,   3,     -0.80813292E-03,      0.73273131E-04,      -9.2706141    ,      0.79544271E-01
+ CTF,   2,      0.49034358E-02,      0.12029444E-03,       39.909049    ,     -0.67815545    
+ CTF,   1,     -0.10059270E-01,      0.28847065E-04,      -59.287070    ,       1.5596486    
+ CTF,   0,      0.61474600E-02,      0.27867083E-06,       28.029032    
+ Construction CTF,LIVINGDOORS,  10,   1,   5,   1.000,      1.377    ,   0.900,   0.900,   0.700,   0.700,Smooth
+ Material CTF Summary,DOORMATERIAL,  0.0634,         0.087,    512.591,     1214.172,  0.7261    
+ CTF,   5,     -0.34895888E-12,      0.29271477E-12,     -0.34895899E-12,      0.94045848E-17
+ CTF,   4,      0.34146386E-06,      0.24137834E-06,      0.34146386E-06,     -0.98539740E-10
+ CTF,   3,     -0.23043343E-02,      0.12435544E-02,     -0.23043343E-02,      0.10009046E-04
+ CTF,   2,      0.36039481    ,      0.12427915    ,      0.36039481    ,     -0.98082367E-02
+ CTF,   1,      -3.4289563    ,      0.60456711    ,      -3.4289563    ,      0.35800964    
+ CTF,   0,       3.9685195    ,      0.16756388    ,       3.9685195    
+ Construction CTF,LIVINGFURNITURE,  11,   1,   5,   1.000,     0.7575    ,   0.900,   0.900,   0.600,   0.600,Rough
+ Material CTF Summary,LIVINGFURNITUREMATERIAL,  0.1524,         0.115,    640.739,     1214.172,   1.320    
+ CTF,   5,     -0.49974877E-02,      0.25063297E-05,     -0.49974877E-02,      0.76472061E-03
+ CTF,   4,      0.16037015    ,      0.47534676E-03,      0.16037015    ,     -0.26104801E-01
+ CTF,   3,      -1.5134387    ,      0.77295412E-02,      -1.5134387    ,      0.27136772    
+ CTF,   2,       5.3635400    ,      0.21173746E-01,       5.3635400    ,      -1.0944151    
+ CTF,   1,      -7.5904797    ,      0.99739574E-02,      -7.5904797    ,       1.7958796    
+ CTF,   0,       3.6247795    ,      0.41864466E-03,       3.6247795    
+ Construction CTF,REVFININSUNFINUAFLOOR,  12,   3,   5,   1.000,     0.1939    ,   0.900,   0.900,   0.700,   0.300,Rough
+ Material CTF Summary,UAADDITIONALCEILINGINS,  0.1891,         0.054,     16.018,     1046.700,   3.503    
+ Material CTF Summary,UATRUSSANDINS,  0.0889,         0.056,     50.779,     1165.040,   1.575    
+ Material CTF Summary,GYPSUMBOARD-CEILING,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ CTF,   5,     -0.53965206E-11,      0.14575572E-10,     -0.40852444E-09,      0.21041202E-15
+ CTF,   4,      0.60485004E-06,      0.77850418E-06,      0.24460512E-04,     -0.30637486E-09
+ CTF,   3,     -0.13681915E-02,      0.87626818E-03,     -0.38508467E-01,      0.13302508E-04
+ CTF,   2,      0.98820476E-01,      0.31147320E-01,       1.1776677    ,     -0.16853635E-01
+ CTF,   1,     -0.53376672    ,      0.69924688E-01,      -4.3002975    ,      0.44962347    
+ CTF,   0,      0.54629655    ,      0.80336665E-02,       3.2710966    
+ Construction CTF,REVFINUNINSFINFLOOR,  13,   5,   4,   1.000,      1.146    ,   0.900,   0.900,   0.900,   0.300,Rough
+ Material CTF Summary,CARPETBARELAYER 1,  0.0127,         0.043,     54.463,     1339.776,  0.2930    
+ Material CTF Summary,FLOORMASS 1,  0.0159,         0.115,    544.628,     1214.172,  0.1375    
+ Material CTF Summary,PLYWOOD-3_4IN 2,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ Material CTF Summary,STUDANDAIRFLOOR,  0.0889,         0.449,     67.468,     1211.593,  0.1981    
+ Material CTF Summary,GYPSUMBOARD-CEILING 1,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ CTF,   4,      0.71232569E-08,      0.23636785E-08,      0.58609596E-07,     -0.19706489E-15
+ CTF,   3,     -0.38750911E-03,      0.25933659E-03,     -0.50843301E-02,      0.72680805E-07
+ CTF,   2,      0.10125110    ,      0.76024656E-01,       1.0312572    ,     -0.33516632E-02
+ CTF,   1,      -1.7437338    ,      0.45245791    ,      -5.4259569    ,      0.43829417    
+ CTF,   0,       2.2901695    ,      0.11855745    ,       5.0470834    
+ Construction CTF,REVUNFININSFINFLOOR,  14,   4,   7,   1.000,     0.3722    ,   0.900,   0.900,   0.900,   0.700,Rough
+ Material CTF Summary,CARPETBARELAYER,  0.0127,         0.043,     54.463,     1339.776,  0.2930    
+ Material CTF Summary,FLOORMASS,  0.0159,         0.115,    544.628,     1214.172,  0.1375    
+ Material CTF Summary,PLYWOOD-3_4IN 1,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ Material CTF Summary,INTFLOORINS,  0.1397,         0.067,    106.355,     1151.630,   2.091    
+ CTF,   7,     -0.19318147E-12,      0.26245984E-14,     -0.30634393E-14,      0.58445442E-15
+ CTF,   6,      0.49862820E-08,      0.11836738E-09,      0.41561104E-09,     -0.16924862E-11
+ CTF,   5,     -0.89821466E-05,      0.67225357E-06,     -0.25625328E-05,      0.47429510E-07
+ CTF,   4,      0.25963099E-02,      0.24560437E-03,      0.14646412E-02,     -0.65396607E-04
+ CTF,   3,     -0.10652164    ,      0.85641855E-02,     -0.11645996    ,      0.12989706E-01
+ CTF,   2,       1.1987040    ,      0.37543531E-01,       1.0713715    ,     -0.29348816    
+ CTF,   1,      -3.3120431    ,      0.21351221E-01,      -2.3903787    ,       1.0968470    
+ CTF,   0,       2.2856541    ,      0.67548487E-03,       1.5023857    
+ Construction CTF,REVUNFININSFINWALL,  15,   2,   5,   1.000,     0.5903    ,   0.900,   0.900,   0.500,   0.700,Rough
+ Material CTF Summary,PARTITIONWALLMASS,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ Material CTF Summary,INTWALLINS,  0.0889,         0.055,    162.387,     1178.860,   1.615    
+ CTF,   5,     -0.50157473E-10,      0.12729030E-11,     -0.19503674E-12,      0.66938237E-16
+ CTF,   4,      0.76053868E-05,      0.24408805E-06,      0.70731937E-07,     -0.51737522E-10
+ CTF,   3,     -0.16383374E-01,      0.79098690E-03,     -0.67994517E-03,      0.45804769E-05
+ CTF,   2,      0.93418297    ,      0.64389108E-01,      0.15180179    ,     -0.77184440E-02
+ CTF,   1,      -4.4458519    ,      0.26227655    ,      -1.5201013    ,      0.35469818    
+ CTF,   0,       3.9134999    ,      0.57998279E-01,       1.7544345    
+ Construction CTF,REVUNFININSUNFINFLOOR,  16,   2,   6,   1.000,     0.4432    ,   0.900,   0.900,   0.700,   0.700,Rough
+ Material CTF Summary,PLYWOOD-3_4IN 1,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ Material CTF Summary,INTFLOORINS,  0.1397,         0.067,    106.355,     1151.630,   2.091    
+ CTF,   6,      0.63988639E-11,      0.17405834E-13,      0.14604317E-13,     -0.15981713E-15
+ CTF,   5,     -0.21324445E-06,      0.43441742E-08,     -0.29644500E-08,      0.11667142E-10
+ CTF,   4,      0.37876094E-03,      0.20366623E-04,      0.18298726E-04,     -0.34813291E-06
+ CTF,   3,     -0.76325888E-01,      0.44812029E-02,     -0.64905185E-02,      0.38422605E-03
+ CTF,   2,       1.6256427    ,      0.76813263E-01,      0.27443678    ,     -0.38962897E-01
+ CTF,   1,      -5.4595563    ,      0.12803518    ,      -1.5475717    ,      0.53596492    
+ CTF,   0,       4.1326399    ,      0.13428858E-01,       1.5023860    
+ Construction CTF,REVUNFININSUNFINWALL,  17,   1,   5,   1.000,     0.6192    ,   0.900,   0.900,   0.700,   0.700,Rough
+ Material CTF Summary,INTWALLINS,  0.0889,         0.055,    162.387,     1178.860,   1.615    
+ CTF,   5,     -0.55629139E-13,      0.48159276E-13,     -0.55629033E-13,      0.17833443E-17
+ CTF,   4,      0.89226138E-07,      0.64497525E-07,      0.89226138E-07,     -0.36951509E-10
+ CTF,   3,     -0.79941486E-03,      0.44843735E-03,     -0.79941486E-03,      0.61243899E-05
+ CTF,   2,      0.14584166    ,      0.52797682E-01,      0.14584166    ,     -0.80022210E-02
+ CTF,   1,      -1.4853151    ,      0.27936870    ,      -1.4853151    ,      0.33854903    
+ CTF,   0,       1.7548171    ,      0.81929482E-01,       1.7548171    
+ Construction CTF,REVUNFINUNINSUNFINFLOOR,  18,   5,   4,   1.000,      1.146    ,   0.900,   0.900,   0.900,   0.300,Rough
+ Material CTF Summary,CARPETBARELAYER 1,  0.0127,         0.043,     54.463,     1339.776,  0.2930    
+ Material CTF Summary,FLOORMASS 1,  0.0159,         0.115,    544.628,     1214.172,  0.1375    
+ Material CTF Summary,PLYWOOD-3_4IN 2,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ Material CTF Summary,STUDANDAIRFLOOR,  0.0889,         0.449,     67.468,     1211.593,  0.1981    
+ Material CTF Summary,GYPSUMBOARD-CEILING 1,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ CTF,   4,      0.71232569E-08,      0.23636785E-08,      0.58609596E-07,     -0.19706489E-15
+ CTF,   3,     -0.38750911E-03,      0.25933659E-03,     -0.50843301E-02,      0.72680805E-07
+ CTF,   2,      0.10125110    ,      0.76024656E-01,       1.0312572    ,     -0.33516632E-02
+ CTF,   1,      -1.7437338    ,      0.45245791    ,      -5.4259569    ,      0.43829417    
+ CTF,   0,       2.2901695    ,      0.11855745    ,       5.0470834    
+ Construction CTF,SLAB,  19,   4,   8,   1.000,     0.3627    ,   0.900,   0.900,   0.700,   0.600,Rough
+ Material CTF Summary,MAT-FIC-SLAB,  0.0254,         0.011,     40.046,     1214.172,   2.211    
+ Material CTF Summary,SLABSOIL-12IN,  0.3048,         1.731,   1842.123,      418.680,  0.1761    
+ Material CTF Summary,SLABMASS,  0.1016,         1.312,   2242.585,      837.360,  0.7741E-01
+ Material CTF Summary,SLABCARPETBAREEQUIVALENTMATERIAL,  0.0254,         0.087,     40.046,     1214.172,  0.2930    
+ CTF,   8,      0.85740413E-12,      0.43002247E-14,      0.97384801E-12,     -0.52762781E-15
+ CTF,   7,     -0.74624233E-08,      0.37737044E-10,     -0.82338300E-08,      0.85201184E-11
+ CTF,   6,      0.97678400E-05,      0.46729206E-07,      0.11107285E-04,     -0.71014937E-07
+ CTF,   5,     -0.13179077E-02,      0.76561123E-05,     -0.18119227E-02,      0.91178002E-04
+ CTF,   4,      0.32447583E-01,      0.19591399E-03,      0.75863276E-01,     -0.11765470E-01
+ CTF,   3,     -0.26619231    ,      0.93795488E-03,      -1.0245895    ,      0.23797983    
+ CTF,   2,      0.89578143    ,      0.87405747E-03,       4.4689622    ,      -1.2113831    
+ CTF,   1,      -1.2135064    ,      0.11911620E-03,      -6.7508540    ,       1.9791902    
+ CTF,   0,      0.55491300    ,      0.45289386E-06,       3.2345541    
+ Construction CTF,UNFININSEXTROOF,  21,   3,   4,   1.000,      4.125    ,   0.910,   0.900,   0.850,   0.700,Rough
+ Material CTF Summary,ROOFINGMATERIAL,  0.0094,         0.163,   1121.292,     1465.380,  0.5808E-01
+ Material CTF Summary,PLYWOOD-3_4IN,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ Material CTF Summary,UAROOFINS,  0.1842,         9.525,     36.770,     1209.113,  0.1933E-01
+ CTF,   4,     -0.23497712E-13,     -0.87872126E-14,      0.48085175E-14,       0.0000000    
+ CTF,   3,     -0.68543219E-11,      0.17995030E-11,     -0.15443395E-10,      0.14119561E-14
+ CTF,   2,      0.23137282E-02,      0.80572039E-03,      0.38936535E-02,     -0.92640101E-11
+ CTF,   1,      -4.0600899    ,       1.1926264    ,      -3.4276917    ,      0.16590504E-02
+ CTF,   0,       8.1757905    ,       2.9245822    ,       7.5418123    
+ Construction CTF,UNFININSFINFLOOR,  22,   4,   7,   1.000,     0.3722    ,   0.900,   0.900,   0.700,   0.900,Rough
+ Material CTF Summary,INTFLOORINS,  0.1397,         0.067,    106.355,     1151.630,   2.091    
+ Material CTF Summary,PLYWOOD-3_4IN 1,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ Material CTF Summary,FLOORMASS,  0.0159,         0.115,    544.628,     1214.172,  0.1375    
+ Material CTF Summary,CARPETBARELAYER,  0.0127,         0.043,     54.463,     1339.776,  0.2930    
+ CTF,   7,     -0.30634393E-14,      0.26245984E-14,     -0.19318147E-12,      0.58445442E-15
+ CTF,   6,      0.41561104E-09,      0.11836738E-09,      0.49862820E-08,     -0.16924862E-11
+ CTF,   5,     -0.25625328E-05,      0.67225357E-06,     -0.89821466E-05,      0.47429510E-07
+ CTF,   4,      0.14646412E-02,      0.24560437E-03,      0.25963099E-02,     -0.65396607E-04
+ CTF,   3,     -0.11645996    ,      0.85641855E-02,     -0.10652164    ,      0.12989706E-01
+ CTF,   2,       1.0713715    ,      0.37543531E-01,       1.1987040    ,     -0.29348816    
+ CTF,   1,      -2.3903787    ,      0.21351221E-01,      -3.3120431    ,       1.0968470    
+ CTF,   0,       1.5023857    ,      0.67548487E-03,       2.2856541    
+ Construction CTF,UNFININSFINWALL,  23,   2,   5,   1.000,     0.5903    ,   0.900,   0.900,   0.700,   0.500,Rough
+ Material CTF Summary,INTWALLINS,  0.0889,         0.055,    162.387,     1178.860,   1.615    
+ Material CTF Summary,PARTITIONWALLMASS,  0.0127,         0.160,    800.923,      837.360,  0.7924E-01
+ CTF,   5,     -0.19503674E-12,      0.12729030E-11,     -0.50157473E-10,      0.66938237E-16
+ CTF,   4,      0.70731937E-07,      0.24408805E-06,      0.76053868E-05,     -0.51737522E-10
+ CTF,   3,     -0.67994517E-03,      0.79098690E-03,     -0.16383374E-01,      0.45804769E-05
+ CTF,   2,      0.15180179    ,      0.64389108E-01,      0.93418297    ,     -0.77184440E-02
+ CTF,   1,      -1.5201013    ,      0.26227655    ,      -4.4458519    ,      0.35469818    
+ CTF,   0,       1.7544345    ,      0.57998279E-01,       3.9134999    
+ Construction CTF,UNFININSUNFINFLOOR,  24,   2,   6,   1.000,     0.4432    ,   0.900,   0.900,   0.700,   0.700,Rough
+ Material CTF Summary,INTFLOORINS,  0.1397,         0.067,    106.355,     1151.630,   2.091    
+ Material CTF Summary,PLYWOOD-3_4IN 1,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ CTF,   6,      0.14604317E-13,      0.17405834E-13,      0.63988639E-11,     -0.15981713E-15
+ CTF,   5,     -0.29644500E-08,      0.43441742E-08,     -0.21324445E-06,      0.11667142E-10
+ CTF,   4,      0.18298726E-04,      0.20366623E-04,      0.37876094E-03,     -0.34813291E-06
+ CTF,   3,     -0.64905185E-02,      0.44812029E-02,     -0.76325888E-01,      0.38422605E-03
+ CTF,   2,      0.27443678    ,      0.76813263E-01,       1.6256427    ,     -0.38962897E-01
+ CTF,   1,      -1.5475717    ,      0.12803518    ,      -5.4595563    ,      0.53596492    
+ CTF,   0,       1.5023860    ,      0.13428858E-01,       4.1326399    
+ Construction CTF,UNFININSUNFINWALL,  25,   1,   5,   1.000,     0.6192    ,   0.900,   0.900,   0.700,   0.700,Rough
+ Material CTF Summary,INTWALLINS,  0.0889,         0.055,    162.387,     1178.860,   1.615    
+ CTF,   5,     -0.55629033E-13,      0.48159276E-13,     -0.55629139E-13,      0.17833443E-17
+ CTF,   4,      0.89226138E-07,      0.64497525E-07,      0.89226138E-07,     -0.36951509E-10
+ CTF,   3,     -0.79941486E-03,      0.44843735E-03,     -0.79941486E-03,      0.61243899E-05
+ CTF,   2,      0.14584166    ,      0.52797682E-01,      0.14584166    ,     -0.80022210E-02
+ CTF,   1,      -1.4853151    ,      0.27936870    ,      -1.4853151    ,      0.33854903    
+ CTF,   0,       1.7548171    ,      0.81929482E-01,       1.7548171    
+ Construction CTF,UNFINUNINSUNFINFLOOR,  26,   2,   3,   1.000,      2.754    ,   0.900,   0.900,   0.700,   0.700,Rough
+ Material CTF Summary,STUDANDAIRFLOOR,  0.0889,         0.449,     67.468,     1211.593,  0.1981    
+ Material CTF Summary,PLYWOOD-3_4IN 2,  0.0191,         0.115,    512.591,     1214.172,  0.1650    
+ CTF,   3,     -0.29636688E-11,      0.12055932E-11,     -0.38618457E-11,     -0.28977810E-15
+ CTF,   2,      0.34773110E-02,      0.12894526E-02,      0.41880863E-02,     -0.11739268E-10
+ CTF,   1,      -1.3387901    ,      0.87302210    ,      -2.2030859    ,      0.64500756E-02
+ CTF,   0,       4.0713238    ,       1.8616994    ,       4.9349089    
+! <WindowConstruction>,Construction Name,Index,#Layers,Roughness,Conductance {W/m2-K},SHGC,Solar Transmittance at Normal Incidence,Visible Transmittance at Normal Incidence
+! <WindowMaterial:Glazing>, Material Name, Optical Data Type, Spectral Data Set Name, Thickness {m}, Solar Transmittance,Front Solar Reflectance, Back Solar Reflectance, Visible Transmittance, Front Visible Reflectance,Back Visible Reflectance,Infrared Transmittance, Front Thermal Emissivity, Back Thermal Emissivity,Conductivity {W/m-K},Dirt Factor,Solar Diffusing
+! <WindowMaterial:Shade>,Material Name,Thickness {m},Conductivity {W/m-K},Thermal Absorptance,Transmittance,Visible Transmittance,Shade Reflectance
+ WindowConstruction,SUB SURFACE 1-GLASS,20,1,VerySmooth,0.380,0.311,0.221,0.221
+ WindowMaterial:Glazing,SUB SURFACE 1-WIN,SpectralAverage,,5.62208E-002,0.22008,0.59865,0.59865,0.22008,0.59865,0.59865,0.00000,0.84000,0.84000,2.29863E-002,1.00000,No
+ WindowConstruction,SUB SURFACE 1-GLASS:COOLINGSHADE:INT,27,2,VerySmooth,0.380,0.311,0.221,0.221
+ WindowMaterial:Glazing,SUB SURFACE 1-WIN,SpectralAverage,,5.62208E-002,0.22008,0.59865,0.59865,0.22008,0.59865,0.59865,0.00000,0.84000,0.84000,2.29863E-002,1.00000,No
+ WindowMaterial:Shade,,COOLINGSHADE,1.000E-004,10000.000,1.000E-005,0.999,0.999,9.900E-004
+! <Shadowing/Sun Position Calculations> [Annual Simulations], Calculation Method,Value {days}, Allowable Number Figures in Shadow Overlap {}, Polygon Clipping Algorithm, Sky Diffuse Modeling Algorithm
+Shadowing/Sun Position Calculations,AverageOverDaysInFrequency,7,15000,SutherlandHodgman,SimpleSkyDiffuseModeling
+! <Water Heater Information>,Type,Name,Volume {m3},Maximum Capacity {W},Standard Rated Recovery Efficiency, Standard Rated Energy Factor
+! <Surface Convection Parameters>, Surface Name, Outside Model Assignment, Outside Area [m2], Outside Perimeter [m], Outside Height [m], Inside Model Assignment, Inside Height [cm], Inside Perimeter Envelope [m], Inside Hydraulic Diameter [m], Window Wall Ratio [ ], Window Location [ ], Near Radiant [Yes/No], Has Active HVAC [Yes/No]
+Surface Convection Parameters,SURFACE 14,0,55.05,52.52,7.16,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 15,0,55.05,32.61,7.16,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 32,0,55.05,52.52,7.16,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 16,0,0.00,0.00,0.00,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 31,0,0.00,0.00,0.00,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 12,0,155.80,58.50,2.29,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 13,0,155.80,58.50,2.29,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 29,0,155.80,58.50,2.29,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 30,0,155.80,58.50,2.29,0,1.07,18.29,10.76,0.00,0,No,No
+Surface Convection Parameters,SURFACE 18,0,55.05,52.52,7.16,0,2.44,15.24,5.23,0.00,0,No,No
+Surface Convection Parameters,SURFACE 19,0,81.75,43.83,4.88,0,2.44,15.24,5.23,0.00,0,No,No
+Surface Convection Parameters,SUB SURFACE 2,0,81.75,43.83,4.88,0,2.44,15.24,5.23,0.00,0,No,No
+Surface Convection Parameters,SURFACE 20,0,0.00,0.00,0.00,0,2.44,15.24,5.23,0.00,0,No,No
+Surface Convection Parameters,SURFACE 21,0,81.75,47.94,4.88,0,2.44,15.24,5.23,0.00,0,No,No
+Surface Convection Parameters,SURFACE 17,0,0.00,0.00,0.00,0,2.44,15.24,5.23,0.00,0,No,No
+Surface Convection Parameters,SURFACE 22,0,0.00,0.00,0.00,0,2.44,15.24,5.23,0.00,0,No,No
+Surface Convection Parameters,FIRST FLOOR GARAGE GARAGESPACEFURNITURE,0,0.00,0.00,0.00,0,2.44,15.24,5.23,0.00,0,No,No
+Surface Convection Parameters,SURFACE 11,0,81.75,47.94,4.88,0,2.44,88.39,19.36,1.02E-002,4,No,No
+Surface Convection Parameters,SURFACE 2,0,55.05,32.61,7.16,0,2.44,88.39,19.36,1.02E-002,3,No,No
+Surface Convection Parameters,SURFACE 24,0,55.05,52.52,7.16,0,2.44,88.39,19.36,1.02E-002,4,No,No
+Surface Convection Parameters,SURFACE 27,0,81.75,47.94,4.88,0,2.44,88.39,19.36,1.02E-002,4,No,No
+Surface Convection Parameters,SURFACE 28,0,81.75,43.83,4.88,0,2.44,88.39,19.36,1.02E-002,4,No,No
+Surface Convection Parameters,SURFACE 3,0,81.75,47.94,4.88,0,2.44,88.39,19.36,1.02E-002,3,No,No
+Surface Convection Parameters,SURFACE 34,0,55.05,52.52,7.16,0,2.44,88.39,19.36,1.02E-002,4,No,No
+Surface Convection Parameters,SURFACE 36,0,55.05,52.52,7.16,0,2.44,88.39,19.36,1.02E-002,3,No,No
+Surface Convection Parameters,SURFACE 4,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+Surface Convection Parameters,SURFACE 5,0,81.75,43.83,4.88,0,2.44,88.39,19.36,1.02E-002,4,No,No
+Surface Convection Parameters,SUB SURFACE 1,0,81.75,43.83,4.88,0,2.44,88.39,19.36,1.02E-002,1,No,No
+Surface Convection Parameters,SURFACE 8,0,55.05,32.61,7.16,0,2.44,88.39,19.36,1.02E-002,4,No,No
+Surface Convection Parameters,SURFACE 9,0,81.75,43.83,4.88,0,2.44,88.39,19.36,1.02E-002,4,No,No
+Surface Convection Parameters,SURFACE 1,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+Surface Convection Parameters,SURFACE 23,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+Surface Convection Parameters,SURFACE 25,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+Surface Convection Parameters,SURFACE 26,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+Surface Convection Parameters,SURFACE 6,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+Surface Convection Parameters,SURFACE 7,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+Surface Convection Parameters,SPACE 1 LIVINGPARTITION,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+Surface Convection Parameters,SPACE 1 LIVINGSPACEFURNITURE,0,0.00,0.00,0.00,0,2.44,88.39,19.36,1.02E-002,0,No,No
+! <RoomAir Model>, Zone Name, Mixing/Mundt/UCSDDV/UCSDCV/UCSDUFI/UCSDUFE/User Defined
+RoomAir Model,ATTIC,Mixing/Well-Stirred
+RoomAir Model,GARAGE,Mixing/Well-Stirred
+RoomAir Model,LIVING,Mixing/Well-Stirred
+! <AirflowNetwork Model:Control>, No Multizone or Distribution/Multizone with Distribution/Multizone without Distribution/Multizone with Distribution only during Fan Operation
+AirflowNetwork Model:Control,NoMultizoneOrDistribution
+! <Zone Volume Capacitance Multiplier>, Sensible Heat Capacity Multiplier, Moisture Capacity Multiplier, Carbon Dioxide Capacity Multiplier, Generic Contaminant Capacity Multiplier
+Zone Volume Capacitance Multiplier,   1.000 ,   1.000,   1.000,   1.000
+! <Load Timesteps in Zone Design Calculation Averaging Window>, Value
+ Load Timesteps in Zone Design Calculation Averaging Window,    1
+! <Heating Sizing Factor Information>, Sizing Factor ID, Value
+ Heating Sizing Factor Information, Global,   1.2500    
+ Heating Sizing Factor Information, Zone LIVING,   1.2500    
+! <Cooling Sizing Factor Information>, Sizing Factor ID, Value
+ Cooling Sizing Factor Information, Global,   1.1500    
+ Cooling Sizing Factor Information, Zone LIVING,   1.1500    
+! <Zone Sizing Information>, Zone Name, Load Type, Calc Des Load {W}, User Des Load {W}, Calc Des Air Flow Rate {m3/s}, User Des Air Flow Rate {m3/s}, Design Day Name, Date/Time of Peak, Temperature at Peak {C}, Humidity Ratio at Peak {kgWater/kgDryAir}, Floor Area {m2}, # Occupants, Calc Outdoor Air Flow Rate {m3/s}
+ Zone Sizing Information, LIVING, Cooling, 1901.66070, 2186.90981, 0.15366, 0.17671, DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DB=>MWB, 7/21 19:00:00, 27.07200, 4.49112E-003, 250.83821, 2.64000, 0.00000
+ Zone Sizing Information, LIVING, Heating, 4736.28954, 5920.36192, 0.21823, 0.27279, DENVER CENTENNIAL  GOLDEN   N ANN HTG 99.6% CONDNS DB, 12/21 13:00:00, -18.80000, 7.38245E-004, 250.83821, 2.64000, 0.00000
+! <System Sizing Information>, System Name, Field Description, Value
+ System Sizing Information, CENTRAL AIR SYSTEM, Calculated Cooling Design Air Flow Rate [m3/s], 0.17671
+ System Sizing Information, CENTRAL AIR SYSTEM, User Cooling Design Air Flow Rate [m3/s], 0.17671
+ System Sizing Information, CENTRAL AIR SYSTEM, Calculated Heating Design Air Flow Rate [m3/s], 0.27279
+ System Sizing Information, CENTRAL AIR SYSTEM, User Heating Design Air Flow Rate [m3/s], 0.27279
+! <Component Sizing Information>, Component Type, Component Name, Input Field Description, Value
+ Component Sizing Information, AirTerminal:SingleDuct:Uncontrolled, LIVING ZONE DIRECT AIR 1, Design Size Maximum Air Flow Rate [m3/s], 0.27279
+ Component Sizing Information, Branch, CENTRAL AIR SYSTEM SUPPLY BRANCH, Maximum Flow Rate [m3/s], 0.27279
+ Component Sizing Information, AirLoopHVAC, CENTRAL AIR SYSTEM, Design Supply Air Flow Rate [m3/s], 0.27279
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FORCED AIR SYSTEM, Supply Air Flow Rate [m3/s], 0.27279
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FORCED AIR SYSTEM, Supply Air Flow Rate During Heating Operation [m3/s], 0.27279
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FORCED AIR SYSTEM, Supply Air Flow Rate During Cooling Operation [m3/s], 0.27279
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, DX COOLING COIL, Design Size Rated Air Flow Rate [m3/s], 0.27279
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, DX COOLING COIL, User-Specified Rated Air Flow Rate [m3/s], 0.27333
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, DX COOLING COIL, User-Specified Rated Total Cooling Capacity (gross) [W], 5275.27926
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, DX COOLING COIL, Design Size Rated Sensible Heat Ratio, 0.74633
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, DX COOLING COIL, User-Specified Rated Sensible Heat Ratio, 0.74040
+! <DX Cooling Coil Standard Rating Information>, Component Type, Component Name, Standard Rating (Net) Cooling Capacity {W}, Standard Rated Net COP {W/W}, EER {Btu/W-h}, SEER {Btu/W-h}, IEER {Btu/W-h}
+ DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, DX COOLING COIL, 4952.9, 3.04, 10.37, 12.21, 10.89
+ Component Sizing Information, Coil:Heating:Gas, FURNACE HEATING COIL 1, Design Size Nominal Capacity [W], 14653.55351
+ Component Sizing Information, Coil:Heating:Gas, FURNACE HEATING COIL 1, User-Specified Nominal Capacity [W], 14653.55351
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FORCED AIR SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
+ Component Sizing Information, Fan:OnOff, SUPPLY FAN, Design Size Maximum Flow Rate [m3/s], 0.27279
+ Component Sizing Information, PlantLoop, SERVICE HOT WATER LOOP, Maximum Loop Flow Rate [m3/s], 6.82533E-006
+ Component Sizing Information, PlantLoop, SERVICE HOT WATER LOOP, Plant Loop Volume [m3], 3.07140E-002
+ Component Sizing Information, PlantLoop, SERVICE HOT WATER LOOP 1, Maximum Loop Flow Rate [m3/s], 0.00000
+ Component Sizing Information, PlantLoop, SERVICE HOT WATER LOOP 1, Plant Loop Volume [m3], 0.00000
+ Component Sizing Information, WaterHeater:Mixed, MIXED WATER HEATER, Use Side Design Flow Rate [m3/s], 6.82533E-006
+Water Heater Information,WaterHeater:Mixed,MIXED WATER HEATER,0.3785,845000.0,1.842,0.5728
+ Component Sizing Information, WaterHeater:Mixed, WATER HEATER MIXED 1, Use Side Design Flow Rate [m3/s], 0.00000
+Water Heater Information,WaterHeater:Mixed,WATER HEATER MIXED 1,0.1514,11722.8,3.598,0.5804
+ Component Sizing Information, Pump:ConstantSpeed, PUMP CONSTANT SPEED 1, Rated Flow Rate [m3/s], 6.82533E-006
+ Component Sizing Information, Pump:ConstantSpeed, PUMP CONSTANT SPEED 2, Rated Flow Rate [m3/s], 0.00000
+! <Zone/Shading Surfaces>,<Zone Name>/#Shading Surfaces,# Surfaces
+! <HeatTransfer/Shading/Frame/Divider_Surface>,Surface Name,Surface Class,Base Surface,Heat Transfer Algorithm,Construction/Transmittance Schedule,Nominal U (w/o film coefs)/Min Schedule Value,Nominal U (with film coefs)/Max Schedule Value,Solar Diffusing,Area (Net),Area (Gross),Area (Sunlit Calc),Azimuth,Tilt,~Width,~Height,Reveal,<ExtBoundCondition>,<ExtConvCoeffCalc>,<IntConvCoeffCalc>,<SunExposure>,<WindExposure>,ViewFactorToGround,ViewFactorToSky,ViewFactorToGround-IR,ViewFactorToSky-IR,#Sides
+! <Units>,,,,,{W/m2-K}/{},{W/m2-K}/{},{},{m2},{m2},{m2},{deg},{deg},{m},{m},{m},,,,,,,,,,
+Zone_Surfaces,ATTIC,    9
+HeatTransfer_Surface,SURFACE 14,Wall,,CTF - ConductionTransferFunction,EXTUNINSUNFINWALL,2.400,1.766,,5.81,5.81,5.81,90.00,90.00,3.05,5.11,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.52,0.48,4
+HeatTransfer_Surface,SURFACE 15,Wall,,CTF - ConductionTransferFunction,EXTUNINSUNFINWALL,2.400,1.766,,10.45,10.45,10.45,270.00,90.00,9.14,5.11,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,3
+HeatTransfer_Surface,SURFACE 32,Wall,,CTF - ConductionTransferFunction,EXTUNINSUNFINWALL,2.400,1.766,,4.65,4.65,4.65,90.00,90.00,6.10,3.41,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,3
+HeatTransfer_Surface,SURFACE 16,Floor,,CTF - ConductionTransferFunction,FININSUNFINUAFLOOR,0.194,0.184,,111.48,111.48,111.48,0.00,180.00,12.19,9.14,0.00,SURFACE 7,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,1.00,0.00,1.00,0.00,4
+HeatTransfer_Surface,SURFACE 31,Floor,,CTF - ConductionTransferFunction,FININSUNFINUAFLOOR,0.194,0.184,,27.87,27.87,27.87,0.00,180.00,4.57,6.10,0.00,SURFACE 26,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,1.00,0.00,1.00,0.00,4
+HeatTransfer_Surface,SURFACE 12,Roof,,CTF - ConductionTransferFunction,UNFININSEXTROOF,4.125,2.633,,62.32,62.32,62.32,0.00,26.57,12.19,5.11,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,5.28E-002,0.95,5.28E-002,0.95,4
+HeatTransfer_Surface,SURFACE 13,Roof,,CTF - ConductionTransferFunction,UNFININSEXTROOF,4.125,2.633,,62.32,62.32,62.32,180.00,26.57,12.19,5.11,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,5.28E-002,0.95,5.28E-002,0.95,4
+HeatTransfer_Surface,SURFACE 29,Roof,,CTF - ConductionTransferFunction,UNFININSEXTROOF,4.125,2.633,,15.58,15.58,15.58,0.00,26.57,4.57,3.41,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,5.28E-002,0.95,5.28E-002,0.95,4
+HeatTransfer_Surface,SURFACE 30,Roof,,CTF - ConductionTransferFunction,UNFININSEXTROOF,4.125,2.633,,15.58,15.58,15.58,180.00,26.57,4.57,3.41,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,5.28E-002,0.95,0.14,0.86,4
+Zone_Surfaces,GARAGE,    8
+HeatTransfer_Surface,SURFACE 18,Wall,,CTF - ConductionTransferFunction,EXTUNINSUNFINWALL,2.400,1.766,,14.86,14.86,14.86,90.00,90.00,6.10,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 19,Wall,,CTF - ConductionTransferFunction,EXTUNINSUNFINWALL,2.400,1.766,,3.23,11.15,3.23,180.00,90.00,4.57,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.61,0.39,4
+HeatTransfer_Surface,SUB SURFACE 2,Door,SURFACE 19,CTF - ConductionTransferFunction,GARAGEDOORS,1.377,1.142,,7.92,7.92,7.92,180.00,90.00,3.96,2.00,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.60,0.40,4
+HeatTransfer_Surface,SURFACE 20,Wall,,CTF - ConductionTransferFunction,REVUNFININSFINWALL,0.590,0.517,,14.86,14.86,14.86,270.00,90.00,6.10,2.44,0.00,SURFACE 4,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 21,Wall,,CTF - ConductionTransferFunction,EXTUNINSUNFINWALL,2.400,1.766,,11.15,11.15,11.15,0.00,90.00,4.57,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 17,Floor,,CTF - ConductionTransferFunction,GRNDUNINSUNFINGRGFLOOR,5.670E-003,5.665E-003,,27.87,27.87,27.87,0.00,180.00,4.57,6.10,0.00,Ground,N/A-Ground,ASHRAETARP,NoSun,NoWind,1.00,0.00,1.00,0.00,4
+HeatTransfer_Surface,SURFACE 22,Roof,,CTF - ConductionTransferFunction,REVUNFININSFINFLOOR,0.372,0.338,,27.87,27.87,27.87,0.00,0.00,4.57,6.10,0.00,SURFACE 23,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.00,1.00,0.00,1.00,4
+HeatTransfer_Surface,FIRST FLOOR GARAGE GARAGESPACEFURNITURE,Internal Mass,,CTF - ConductionTransferFunction,GARAGEFURNITURE,0.757,0.757,,2.79,2.79,2.79,0.00,90.00,2.79,1.00,0.00,FIRST FLOOR GARAGE GARAGESPACEFURNITURE,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.00,0.50,1.00,0.00,0
+Zone_Surfaces,LIVING,   21
+HeatTransfer_Surface,SURFACE 11,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,29.73,29.73,29.73,0.00,90.00,12.19,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 2,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,22.30,22.30,22.30,270.00,90.00,9.14,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 24,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,14.86,14.86,14.86,90.00,90.00,6.10,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 27,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,11.15,11.15,11.15,0.00,90.00,4.57,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 28,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,11.15,11.15,11.15,180.00,90.00,4.57,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.58,0.42,4
+HeatTransfer_Surface,SURFACE 3,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,29.73,29.73,29.73,0.00,90.00,12.19,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 34,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,7.43,7.43,7.43,90.00,90.00,3.05,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.60,0.40,4
+HeatTransfer_Surface,SURFACE 36,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,7.43,7.43,7.43,90.00,90.00,3.05,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.66,0.34,4
+HeatTransfer_Surface,SURFACE 4,Wall,,CTF - ConductionTransferFunction,UNFININSFINWALL,0.590,0.517,,14.86,14.86,14.86,90.00,90.00,6.10,2.44,0.00,SURFACE 20,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 5,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,27.54,29.73,27.54,180.00,90.00,12.19,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SUB SURFACE 1,Window,SURFACE 5,Window5 Detailed Fenestration,SUB SURFACE 1-GLASS,N/A,0.380,No,2.19,2.19,2.19,180.00,90.00,2.07,1.06,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 8,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,22.30,22.30,22.30,270.00,90.00,9.14,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 9,Wall,,CTF - ConductionTransferFunction,EXTINSFINWALL,0.517,0.480,,29.73,29.73,29.73,180.00,90.00,12.19,2.44,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer_Surface,SURFACE 1,Floor,,CTF - ConductionTransferFunction,SLAB,0.363,0.343,,111.48,111.48,111.48,0.00,180.00,12.19,9.14,0.00,Ground,N/A-Ground,ASHRAETARP,NoSun,NoWind,1.00,0.00,1.00,0.00,4
+HeatTransfer_Surface,SURFACE 23,Floor,,CTF - ConductionTransferFunction,UNFININSFINFLOOR,0.372,0.338,,27.87,27.87,27.87,0.00,180.00,4.57,6.10,0.00,SURFACE 22,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,1.00,0.00,1.00,0.00,4
+HeatTransfer_Surface,SURFACE 25,Floor,,CTF - ConductionTransferFunction,FINUNINSFINFLOOR,1.146,0.835,,111.48,111.48,111.48,0.00,180.00,12.19,9.14,0.00,SURFACE 25,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,1.00,0.00,1.00,0.00,4
+HeatTransfer_Surface,SURFACE 26,Roof,,CTF - ConductionTransferFunction,REVFININSUNFINUAFLOOR,0.194,0.184,,27.87,27.87,27.87,0.00,0.00,4.57,6.10,0.00,SURFACE 31,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.00,1.00,0.00,1.00,4
+HeatTransfer_Surface,SURFACE 6,Roof,,CTF - ConductionTransferFunction,REVFINUNINSFINFLOOR,1.146,0.919,,111.48,111.48,111.48,0.00,0.00,12.19,9.14,0.00,SURFACE 6,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.00,1.00,0.00,1.00,4
+HeatTransfer_Surface,SURFACE 7,Roof,,CTF - ConductionTransferFunction,REVFININSUNFINUAFLOOR,0.194,0.184,,111.48,111.48,111.48,0.00,0.00,12.19,9.14,0.00,SURFACE 16,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.00,1.00,0.00,1.00,4
+HeatTransfer_Surface,SPACE 1 LIVINGPARTITION,Internal Mass,,CTF - ConductionTransferFunction,FINUNINSFINWALL,2.782,2.782,,111.48,111.48,111.48,0.00,90.00,111.48,1.00,0.00,SPACE 1 LIVINGPARTITION,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.00,0.50,1.00,0.00,0
+HeatTransfer_Surface,SPACE 1 LIVINGSPACEFURNITURE,Internal Mass,,CTF - ConductionTransferFunction,LIVINGFURNITURE,0.757,0.757,,44.59,44.59,44.59,0.00,90.00,44.59,1.00,0.00,SPACE 1 LIVINGSPACEFURNITURE,Other/Same Surface Int Conv,ASHRAETARP,NoSun,NoWind,0.00,0.50,1.00,0.00,0
+! <Environment>,Environment Name,Environment Type, Start Date, End Date, Start DayOfWeek, Duration {#days}, Source:Start DayOfWeek,  Use Daylight Saving, Use Holidays, Apply Weekend Holiday Rule,  Use Rain Values, Use Snow Values
+! <Environment:Special Days>, Special Day Name, Special Day Type, Source, Start Date, Duration {#days}
+! <Environment:Daylight Saving>, Daylight Saving Indicator, Source, Start Date, End Date
+! <Environment:WarmupDays>, NumberofWarmupDays
+Environment,DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DB=>MWB,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A
+Environment:Daylight Saving,No,SizingPeriod:DesignDay
+! <Environment:Design Day Data>, Max Dry-Bulb Temp {C}, Temp Range {dC}, Temp Range Ind Type, Hum Ind Value at Max Temp, Hum Ind Type,Pressure {Pa}, Wind Direction {deg CW from N}, Wind Speed {m/s}, Clearness, Rain, Snow
+! <Environment:Design_Day_Misc>,DayOfYear,ASHRAE A Coeff,ASHRAE B Coeff,ASHRAE C Coeff,Solar Constant-Annual Variation,Eq of Time {minutes}, Solar Declination Angle {deg}, Solar Model
+Environment:Design Day Data,33.00,15.20,DefaultMultipliers,97679,0,4.9,0.00,No ,No 
+Environment:Design_Day_Misc,202,1084.4,0.2082,0.1365,1.0,-6.23,20.6,ASHRAETau
+Environment:WarmupDays,  6
+! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
+ Warmup Convergence Information,ATTIC,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DB=>MWB,3.5218033013,2.3422915859,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,GARAGE,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DB=>MWB,0.3888991578,0.2134277469,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DB=>MWB,1.7621783859E-004,2.5266235256E-004,Pass,Pass,0.3126936584,0.2197104164,Pass,Pass
+Environment,DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DP=>MDB,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A
+Environment:Daylight Saving,No,SizingPeriod:DesignDay
+Environment:Design Day Data,20.20,15.20,DefaultMultipliers,97679,0,4.9,0.00,No ,No 
+Environment:Design_Day_Misc,202,1084.4,0.2082,0.1365,1.0,-6.23,20.6,ASHRAETau
+Environment:WarmupDays,  7
+ Warmup Convergence Information,ATTIC,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DP=>MDB,3.6172636221,2.3781601972,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,GARAGE,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DP=>MDB,0.4027845493,0.2244592247,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS DP=>MDB,0.1472385034,0.1299204992,Pass,Pass,0.2262093686,0.7042496192,Pass,Pass
+Environment,DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS ENTH=>MDB,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A
+Environment:Daylight Saving,No,SizingPeriod:DesignDay
+Environment:Design Day Data,27.30,15.20,DefaultMultipliers,97679,0,4.9,0.00,No ,No 
+Environment:Design_Day_Misc,202,1084.4,0.2082,0.1365,1.0,-6.23,20.6,ASHRAETau
+Environment:WarmupDays,  6
+ Warmup Convergence Information,ATTIC,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS ENTH=>MDB,3.5920938246,2.3561097234,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,GARAGE,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS ENTH=>MDB,0.3992754862,0.2261484219,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS ENTH=>MDB,9.0033660469E-002,9.9154572156E-002,Pass,Pass,0.1876882111,0.3987758514,Pass,Pass
+Environment,DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS WB=>MDB,SizingPeriod:DesignDay,07/21,07/21,SummerDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A
+Environment:Daylight Saving,No,SizingPeriod:DesignDay
+Environment:Design Day Data,27.30,15.20,DefaultMultipliers,97679,0,4.9,0.00,No ,No 
+Environment:Design_Day_Misc,202,1084.4,0.2082,0.1365,1.0,-6.23,20.6,ASHRAETau
+Environment:WarmupDays,  6
+ Warmup Convergence Information,ATTIC,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS WB=>MDB,3.5521493020,2.3350879006,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,GARAGE,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS WB=>MDB,0.3934682218,0.2242472064,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN CLG .4% CONDNS WB=>MDB,9.1663083318E-002,0.1001625039,Pass,Pass,0.2070659327,0.4825521274,Pass,Pass
+Environment,DENVER CENTENNIAL  GOLDEN   N ANN HTG 99.6% CONDNS DB,SizingPeriod:DesignDay,12/21,12/21,WinterDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A
+Environment:Daylight Saving,No,SizingPeriod:DesignDay
+Environment:Design Day Data,-18.80,0.00,DefaultMultipliers,97679,340,3.0,0.00,No ,No 
+Environment:Design_Day_Misc,355,1232.8,0.1424,5.7719E-002,1.0,2.45,-23.5,ASHRAEClearSky
+Environment:WarmupDays, 11
+ Warmup Convergence Information,ATTIC,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HTG 99.6% CONDNS DB,9.3113770942E-004,7.0575762783E-004,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,GARAGE,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HTG 99.6% CONDNS DB,8.9923552422E-003,4.2773499749E-003,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HTG 99.6% CONDNS DB,1.8503717077E-013,3.0530938495E-013,Pass,Pass,1.9779294043E-002,1.9302688019E-002,Pass,Pass
+Environment,DENVER CENTENNIAL  GOLDEN   N ANN HTG WIND 99.6% CONDNS WS=>MCDB,SizingPeriod:DesignDay,12/21,12/21,WinterDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A
+Environment:Daylight Saving,No,SizingPeriod:DesignDay
+Environment:Design Day Data,3.90,0.00,DefaultMultipliers,97679,340,12.2,0.00,No ,No 
+Environment:Design_Day_Misc,355,1232.8,0.1424,5.7719E-002,1.0,2.45,-23.5,ASHRAEClearSky
+Environment:WarmupDays,  8
+ Warmup Convergence Information,ATTIC,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HTG WIND 99.6% CONDNS WS=>MCDB,1.0745138223E-003,8.2260023510E-004,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,GARAGE,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HTG WIND 99.6% CONDNS WS=>MCDB,9.7902673420E-003,4.6539696875E-003,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HTG WIND 99.6% CONDNS WS=>MCDB,3.2566542056E-015,3.2296275623E-015,Pass,Pass,6.3511090036E-002,7.1460723570E-002,Pass,Pass
+Environment,DENVER CENTENNIAL  GOLDEN   N ANN HUM_N 99.6% CONDNS DP=>MCDB,SizingPeriod:DesignDay,12/21,12/21,WinterDesignDay,1,N/A,N/A,N/A,N/A,N/A,N/A
+Environment:Daylight Saving,No,SizingPeriod:DesignDay
+Environment:Design Day Data,-10.90,0.00,DefaultMultipliers,97679,340,3.0,0.00,No ,No 
+Environment:Design_Day_Misc,355,1232.8,0.1424,5.7719E-002,1.0,2.45,-23.5,ASHRAEClearSky
+Environment:WarmupDays, 10
+ Warmup Convergence Information,ATTIC,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HUM_N 99.6% CONDNS DP=>MCDB,9.6924810125E-004,7.4157565525E-004,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,GARAGE,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HUM_N 99.6% CONDNS DP=>MCDB,9.7665092716E-003,4.5723034681E-003,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,SizingPeriod: DENVER CENTENNIAL  GOLDEN   N ANN HUM_N 99.6% CONDNS DP=>MCDB,1.1131836194E-013,2.3918600685E-013,Pass,Pass,2.5201385686E-002,2.5003899412E-002,Pass,Pass
+Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01,12/31,Sunday,365,Use RunPeriod Specified Day,No ,No ,No ,Yes,Yes
+Environment:Daylight Saving,No,RunPeriod Object
+Environment:WarmupDays,  8
+ Warmup Convergence Information,ATTIC,RunPeriod: RUN PERIOD 1,1.1339408993,0.7916570009,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,GARAGE,RunPeriod: RUN PERIOD 1,0.2204753174,0.1587191641,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.3347163846E-002,3.0439301570E-002,Pass,Pass,0.1804146395,0.1599965665,Pass,Pass
+! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
+Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, 1
+End of Data

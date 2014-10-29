@@ -1,0 +1,182 @@
+<OSResult>
+  <Value>Success</Value>
+  <Warnings>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>The water heater will be applied to a new OS:PlantLoop object. The plant loop object will be created using default values. Please review the values for appropriateness.</Message>
+    </LogMessage>
+  </Warnings>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>A schedule named SHW Set Temp was created and applied to Water Heater Mixed 1, using a constant temperature of 125 F for generating service hot water.</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>A new water heater 'Water Heater Mixed 1' was created</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a deadband temperature difference of 2 K</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a maximum temperature limit of 212 F</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a tank volume of 40 gal</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a heater minimum capacity of 0 kBtu/h</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a heater maximum capacity of 40 kBtu/h</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a heater fuel type of 'NaturalGas'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a heater thermal efficiency of 0.76</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has an ambient temperature indicator of 'ThermalZone'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has an on-cycle loss fraction to thermal zone of 1.0</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has an off-cycle loss fraction to thermal zone of 1.0</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a use side effectiveness of 1.0</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has a source side effectiveness of 1.0</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has an ambient temperature thermal zone of 'living'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has an on-cycle loss coefficient to ambient temperature of 4.15506 W/K</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Water Heater Mixed 1' has an off-cycle loss coefficient to ambient temperature of 4.15506 W/K</Message>
+    </LogMessage>
+  </Info>
+  <InitialCondition>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Mixed Water Heater' on plant loop 'Service Hot Water Loop', with capacity 2883.26 kBtu/h and tank volume 99.9891 gal</Message>
+    </LogMessage>
+  </InitialCondition>
+  <FinalCondition>
+    <LogMessage>
+      <Channel>openstudio.ruleset.AddOSWaterHeaterMixedStorageGas</Channel>
+      <Message>Water heater 'Mixed Water Heater' on plant loop 'Service Hot Water Loop', with capacity 2883.26 kBtu/h and tank volume 99.9891 gal
+Water heater 'Water Heater Mixed 1' on plant loop 'Service Hot Water Loop 1', with capacity 40 kBtu/h and tank volume 40 gal</Message>
+    </LogMessage>
+  </FinalCondition>
+  <Attributes>
+    <Attribute>
+      <UUID>{ed574e0b-f956-4d4b-8d34-e7c9e4d55168}</UUID>
+      <VersionUUID>{336a5b96-91c2-45b4-8dca-8ee610006b06}</VersionUUID>
+      <Name>use_case</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>String</ValueType>
+      <Value>General</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{b3c9641a-5ae4-4832-8108-2bd615ec68cd}</UUID>
+      <VersionUUID>{bea4ac56-a21b-4ba5-85c9-37258cb91c37}</VersionUUID>
+      <Name>number_of_bedrooms</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>String</ValueType>
+      <Value>3</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{e86e9637-179e-4e2b-8c32-cee810ade676}</UUID>
+      <VersionUUID>{5cad39ac-7cfa-4181-b19e-b83f9987dd3d}</VersionUUID>
+      <Name>number_of_bathrooms</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>String</ValueType>
+      <Value>2</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{c6861c58-4bc4-41d4-9d26-30e62c050e10}</UUID>
+      <VersionUUID>{108a3460-3106-474b-888a-debe5fc18684}</VersionUUID>
+      <Name>existing_plant_loop_name</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>String</ValueType>
+      <Value>New Plant Loop</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{63505ecc-4242-4799-88d7-ec280a42b3c3}</UUID>
+      <VersionUUID>{bc5d6d4c-8502-4732-a544-c40f9def166a}</VersionUUID>
+      <Name>storage_tank_volume</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>Double</ValueType>
+      <Value>40</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{b1ddf90f-471f-460e-a2a1-45697a445085}</UUID>
+      <VersionUUID>{aaa0a3f6-fd84-4f36-b32d-9f88aad9f793}</VersionUUID>
+      <Name>shw_setpoint_temperature</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>Double</ValueType>
+      <Value>125</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{7b7e766a-89ff-47ec-9436-8524a778a015}</UUID>
+      <VersionUUID>{a0b1822e-6872-4e36-8229-5ffebc1ba485}</VersionUUID>
+      <Name>water_heater_location</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>String</ValueType>
+      <Value>living</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{b92e1d16-d77f-4232-8da5-22c4aedc2bd3}</UUID>
+      <VersionUUID>{9340e264-6b8b-4b04-8b72-338094695324}</VersionUUID>
+      <Name>water_heater_capacity</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>Double</ValueType>
+      <Value>40</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{27f0604d-f7a1-4a17-832a-4f9600c9c56f}</UUID>
+      <VersionUUID>{bcb19321-6cfd-4978-ac36-9849f96d5f5b}</VersionUUID>
+      <Name>rated_energy_factor</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.59</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{850d1990-ce65-480b-a982-56845c9813f2}</UUID>
+      <VersionUUID>{d4ae4112-615a-45b1-9123-3724e8403d3b}</VersionUUID>
+      <Name>water_heater_recovery_efficiency</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.76</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{99af70bc-0d9a-46f3-acea-52d646229b9d}</UUID>
+      <VersionUUID>{560eeac6-8b9f-4ddb-8687-ba46b3ec4a48}</VersionUUID>
+      <Name>water_heater_fuel_type</Name>
+      <Source>AddOSWaterHeaterMixedStorageGas</Source>
+      <ValueType>String</ValueType>
+      <Value>Natural Gas</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

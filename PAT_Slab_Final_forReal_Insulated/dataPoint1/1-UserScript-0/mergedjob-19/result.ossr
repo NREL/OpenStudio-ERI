@@ -1,0 +1,244 @@
+<OSResult>
+  <Value>Success</Value>
+  <Warnings>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>The water heater for the selected loop has no setpoint temperature schedule. A target temperature schedule of 110F has been created and assigned to added clothes washers and dishwashers.</Message>
+    </LogMessage>
+  </Warnings>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>Created new loop Service Hot Water Loop.</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>Created new constant speed pump.</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>Created setpoint manager with schedule schedule SHW Temp.</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>Created new water heater Mixed Water Heater.</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>An OS:WaterUseConnections object named Water Use Connections 1 was created with an OS:WaterUseEquipmentDefinition object named dishwasher definition with the following properties:
+Peak Flow Rate: 0.0083435 gpm
+Target Temperature Schedule: Constant 110F Temperature</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>An OS:WaterUseConnections object named Water Use Connections 2 was created with an OS:WaterUseEquipmentDefinition object named clothes_washer definition with the following properties:
+Peak Flow Rate: 0.006722333333333332 gpm
+Target Temperature Schedule: Constant 110F Temperature</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>An OS:WaterUseConnections object named Water Use Connections 3 was created with an OS:WaterUseEquipmentDefinition object named showers definition with the following properties:
+Peak Flow Rate: 0.04984048514018124 gpm
+Target Temperature Schedule: Constant 110F Temperature
+Internal Gains Schedule: showers internal gains
+Latent Fraction: 0.487197
+The OS:WaterUseConnections object named Water Use Connections 3 was added to the hot water plant loop named Service Hot Water Loop.</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>An OS:WaterUseConnections object named Water Use Connections 4 was created with an OS:WaterUseEquipmentDefinition object named baths definition with the following properties:
+Peak Flow Rate: 0.015022393435961864 gpm
+Target Temperature Schedule: Constant 110F Temperature
+Internal Gains Schedule: baths internal gains
+Latent Fraction: 0.0
+The OS:WaterUseConnections object named Water Use Connections 4 was added to the hot water plant loop named Service Hot Water Loop.</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>An OS:WaterUseConnections object named Water Use Connections 5 was created with an OS:WaterUseEquipmentDefinition object named sinks definition with the following properties:
+Peak Flow Rate: 0.02825489758599163 gpm
+Target Temperature Schedule: Constant 110F Temperature
+Internal Gains Schedule: sinks internal gains
+Latent Fraction: 0.31222
+The OS:WaterUseConnections object named Water Use Connections 5 was added to the hot water plant loop named Service Hot Water Loop.</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>An OS::OtherEquipment pump internal gains was added to first floor living with load schedule Pump flat load schedule</Message>
+    </LogMessage>
+  </Info>
+  <InitialCondition>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>Model started with 0 OS:WaterUseConnection objects, 0 OS:WaterUseEquipmentDefinition objects, 0 OS:WaterUseEquipment objects.</Message>
+    </LogMessage>
+  </InitialCondition>
+  <FinalCondition>
+    <LogMessage>
+      <Channel>openstudio.ruleset.Add Hot Water Draw and Distribution</Channel>
+      <Message>Model ended with 5 OS:WaterUseConnection objects, 5 OS:WaterUseEquipmentDefinition objects, 5 OS:WaterUseEquipment objects.</Message>
+    </LogMessage>
+  </FinalCondition>
+  <Attributes>
+    <Attribute>
+      <UUID>{182bbb2f-e336-44ea-ae7f-3adb52602b54}</UUID>
+      <VersionUUID>{a04d3454-680d-444e-baa2-def572d5cfa9}</VersionUUID>
+      <Name>existing_plant_loop_name</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>New Plant Loop</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{3fde35b8-4ffa-4852-92fb-66936bb07ea6}</UUID>
+      <VersionUUID>{670fcdf2-3012-4829-8775-c18b97cd91d1}</VersionUUID>
+      <Name>using_standard_dhw_event_schedules</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Boolean</ValueType>
+      <Value>true</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{b2273978-154e-4482-8f4f-db7050e62d2c}</UUID>
+      <VersionUUID>{0342254c-3d65-4d41-810d-4f2bfe029e06}</VersionUUID>
+      <Name>number_of_bedrooms</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>3</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{bda5923f-704b-43d5-ac35-82c1bc2aeafa}</UUID>
+      <VersionUUID>{0bbd138c-1823-473c-95b6-4ea91b2e5cbf}</VersionUUID>
+      <Name>shower_gpd</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>10</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{e9a9f30c-89f0-4ffc-b39a-416597c3a7f4}</UUID>
+      <VersionUUID>{280b48f2-4f53-41e8-9aa8-cc5158cf7648}</VersionUUID>
+      <Name>bath_gpd</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>5</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{700f4a22-68a1-4e15-b52a-54fd748636e5}</UUID>
+      <VersionUUID>{607b158c-dc1b-42c5-b642-18f180f4bebd}</VersionUUID>
+      <Name>sinks_gpd</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>5</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{fae11398-0470-4555-a2a6-0820229ecab0}</UUID>
+      <VersionUUID>{a8b71250-248a-477f-9e6c-7943c8d247bb}</VersionUUID>
+      <Name>shower_sinks_bath_space_name</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>first floor living</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{56d8bf64-b084-4498-ac23-426ed2b89380}</UUID>
+      <VersionUUID>{507855ca-d265-45e8-8b51-75e8d6b38397}</VersionUUID>
+      <Name>clothes_washer_gpd</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>5</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{c07b7557-cc47-46c0-96fa-8dd773a5945f}</UUID>
+      <VersionUUID>{622415d5-e77a-4f6d-95a8-192ab67c60a7}</VersionUUID>
+      <Name>clothes_washer_space_name</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>first floor living</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{04b38350-0fe6-4954-9239-69e1aefa3e46}</UUID>
+      <VersionUUID>{b30f24b2-a094-4523-8972-89e4ff210823}</VersionUUID>
+      <Name>dishwasher_gpd</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>5</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{a9a3a242-91a4-4b35-9dfa-9b5b8f57633c}</UUID>
+      <VersionUUID>{2b9091cd-5ff1-4a64-99d6-3b05e0076a70}</VersionUUID>
+      <Name>dishwasher_space_name</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>first floor living</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{5d7aa7e3-e61f-4558-a4e6-8c2868d096da}</UUID>
+      <VersionUUID>{9e9937c5-7608-4364-b18f-4a78b28bb7b8}</VersionUUID>
+      <Name>avg_annual_temp</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>49.57</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{4e809d44-1962-4e51-8ade-7b850cd47502}</UUID>
+      <VersionUUID>{1839ff1e-946e-4152-b9ff-2a493523fbcc}</VersionUUID>
+      <Name>min_monthly_avg_temp</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>29.6726</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{7b44fc1e-d9ea-4a44-91fe-07102df368d8}</UUID>
+      <VersionUUID>{2e163a90-1f6d-4333-a887-ca76878fee71}</VersionUUID>
+      <Name>max_monthly_avg_temp</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>70.733</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{100e3d07-2d7b-4ac8-b79f-a66fc13ade4c}</UUID>
+      <VersionUUID>{d25d770b-2af4-4be8-bf1f-4f01659f5f83}</VersionUUID>
+      <Name>using_distribution</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Boolean</ValueType>
+      <Value>true</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{a46909ea-0f70-489c-b7c1-37670250b48f}</UUID>
+      <VersionUUID>{141df549-86d3-4c56-84b6-ad1ef993cf7a}</VersionUUID>
+      <Name>distribution_location</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>Basement or Interior Space</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{b363e9e8-fdb7-4f3c-add6-aecfa2d239b8}</UUID>
+      <VersionUUID>{a0971d1b-ac4c-4698-baaf-bbd7531043ed}</VersionUUID>
+      <Name>distribution_type</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>Trunk and Branch</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{ef7e0c19-9b28-4335-9674-a41473748300}</UUID>
+      <VersionUUID>{2250dc7b-ab55-458d-a075-424432352d02}</VersionUUID>
+      <Name>pipe_material</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>Copper</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{65302722-98af-473f-bc4d-2f91489315d9}</UUID>
+      <VersionUUID>{a990a871-d617-4e4f-9be6-f723cd988a76}</VersionUUID>
+      <Name>recirculation_type</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>String</ValueType>
+      <Value>None</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{19326c4a-c2a1-42c6-bc8d-81433ac0faf1}</UUID>
+      <VersionUUID>{1950faec-cc07-4dc9-8663-1bf98edd533e}</VersionUUID>
+      <Name>insulation_nominal_r_value</Name>
+      <Source>Add Hot Water Draw and Distribution</Source>
+      <ValueType>Double</ValueType>
+      <Value>0</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

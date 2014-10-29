@@ -1,0 +1,653 @@
+{
+    "job_params": [
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "--argumentName=existing_plant_loop_name"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=New Plant Loop"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=using_standard_dhw_event_schedules"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=true"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=number_of_bedrooms"
+                        },
+                        "param_index": 4
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=3"
+                        },
+                        "param_index": 5
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=shower_gpd"
+                        },
+                        "param_index": 6
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=10"
+                        },
+                        "param_index": 7
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=bath_gpd"
+                        },
+                        "param_index": 8
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=5"
+                        },
+                        "param_index": 9
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=sinks_gpd"
+                        },
+                        "param_index": 10
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=5"
+                        },
+                        "param_index": 11
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=shower_sinks_bath_space_name"
+                        },
+                        "param_index": 12
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=first floor living"
+                        },
+                        "param_index": 13
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=clothes_washer_gpd"
+                        },
+                        "param_index": 14
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=5"
+                        },
+                        "param_index": 15
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=clothes_washer_space_name"
+                        },
+                        "param_index": 16
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=first floor living"
+                        },
+                        "param_index": 17
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=dishwasher_gpd"
+                        },
+                        "param_index": 18
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=5"
+                        },
+                        "param_index": 19
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=dishwasher_space_name"
+                        },
+                        "param_index": 20
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=first floor living"
+                        },
+                        "param_index": 21
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=avg_annual_temp"
+                        },
+                        "param_index": 22
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=49.57"
+                        },
+                        "param_index": 23
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=min_monthly_avg_temp"
+                        },
+                        "param_index": 24
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=29.6726"
+                        },
+                        "param_index": 25
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=max_monthly_avg_temp"
+                        },
+                        "param_index": 26
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=70.733"
+                        },
+                        "param_index": 27
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=using_distribution"
+                        },
+                        "param_index": 28
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=true"
+                        },
+                        "param_index": 29
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=distribution_location"
+                        },
+                        "param_index": 30
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=Basement or Interior Space"
+                        },
+                        "param_index": 31
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=distribution_type"
+                        },
+                        "param_index": 32
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=Trunk and Branch"
+                        },
+                        "param_index": 33
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=pipe_material"
+                        },
+                        "param_index": 34
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=Copper"
+                        },
+                        "param_index": 35
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=recirculation_type"
+                        },
+                        "param_index": 36
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=None"
+                        },
+                        "param_index": 37
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=insulation_nominal_r_value"
+                        },
+                        "param_index": 38
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0"
+                        },
+                        "param_index": 39
+                    }
+                ],
+                "value": "ruby_scriptparameters"
+            },
+            "param_index": 0
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "children": [
+                                                        {
+                                                            "param": {
+                                                                "value": "in.osm"
+                                                            },
+                                                            "param_index": 0
+                                                        }
+                                                    ],
+                                                    "value": ".*\\.osm"
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "All"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "Last"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_inputfiles"
+            },
+            "param_index": 1
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "-I"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "C:/Program Files (x86)/OpenStudio 1.5.0/Ruby"
+                        },
+                        "param_index": 1
+                    }
+                ],
+                "value": "ruby_toolparameters"
+            },
+            "param_index": 2
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "value": ""
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "osm"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "osm"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_copyrequired"
+            },
+            "param_index": 3
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "user_script.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/measure.rb"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.flowPortionByHour.clothes_washer.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.flowPortionByHour.clothes_washer.txt"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.flowPortionByHour.dishwasher.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.flowPortionByHour.dishwasher.txt"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.flowPortionByHour.showers.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.flowPortionByHour.showers.txt"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.flowPortionByHour.sinks.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.flowPortionByHour.sinks.txt"
+                        },
+                        "param_index": 4
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.flowPortionByHour.baths.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.flowPortionByHour.baths.txt"
+                        },
+                        "param_index": 5
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.gainPortionByHour.baths.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.gainPortionByHour.baths.txt"
+                        },
+                        "param_index": 6
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.gainPortionByHour.showers.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.gainPortionByHour.showers.txt"
+                        },
+                        "param_index": 7
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.gainPortionByHour.sinks.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.gainPortionByHour.sinks.txt"
+                        },
+                        "param_index": 8
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/TABLE.recirculationGPDCoefficients.txt"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/resources/TABLE.recirculationGPDCoefficients.txt"
+                        },
+                        "param_index": 9
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "dhw.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/dhw.rb"
+                        },
+                        "param_index": 10
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "internalgains.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/internalgains.rb"
+                        },
+                        "param_index": 11
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "scheduledraws.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/scheduledraws.rb"
+                        },
+                        "param_index": 12
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "recirculation.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/recirculation.rb"
+                        },
+                        "param_index": 13
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "dailyusage.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/dailyusage.rb"
+                        },
+                        "param_index": 14
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "sitewatermainstemperature.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/sitewatermainstemperature.rb"
+                        },
+                        "param_index": 15
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "measure.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_forReal_Insulated/scripts/AddDistributionTimerAndRecirc/measure.rb"
+                        },
+                        "param_index": 16
+                    }
+                ],
+                "value": "ruby_requiredfiles"
+            },
+            "param_index": 4
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "{54f457a7-1764-4ddb-8968-d6fcbd86f1a4}"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "original_job_uuid"
+            },
+            "param_index": 5
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "true"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_isuserscriptjob"
+            },
+            "param_index": 6
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "C:/Program Files (x86)/OpenStudio 1.5.0/Ruby/openstudio/runmanager/rubyscripts/UserScriptAdapter.rb"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_scriptfile"
+            },
+            "param_index": 7
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "{3b675fc9-9e54-444b-a89b-faa97c24c38c}"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "bcl_measure_uuid"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_bclmeasureparameters"
+            },
+            "param_index": 8
+        }
+    ],
+    "metadata": {
+        "openstudio_version": "1.5.0"
+    }
+}

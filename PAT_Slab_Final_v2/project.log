@@ -1,0 +1,588 @@
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.idf
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/ReportRequest/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/ReportRequest/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 1
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 0
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.idf
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.osm
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Program Files (x86)/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Program Files (x86)/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/resources/report.html.in to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 2
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 1
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[utilities.bcl.BCLMeasure] <-2> Loading measures in path: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/CalibrationReports
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/CalibrationReports
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/ReplaceModel
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/ReplaceModel
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/ReportRequest
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/ReportRequest
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/StandardReports
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.5.0/share/openstudio-1.5.0/pat/Measures/StandardReports
+[utilities.bcl.BCLMeasure] <-2> Loading measures in path: C:/Users/jmaguire/OpenStudio/Measures
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/.idea
+[utilities.bcl.BCLXML] <2> 'C:/Users/jmaguire/OpenStudio/Measures/.idea/measure.xml' does not exist
+[utilities.bcl.BCLMeasure] <2> 'C:/Users/jmaguire/OpenStudio/Measures/.idea' is not a measure
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddBuildingAmericaBenchmarkOccupants
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddBuildingAmericaBenchmarkOccupants
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddDistributionTimerAndRecirc
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddDistributionTimerAndRecirc
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedStorageElectric
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedStorageElectric
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedStorageGas
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedStorageGas
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedStorageOil
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedStorageOil
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedTanklessElectric
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedTanklessElectric
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedTanklessGas
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddOSWaterHeaterMixedTanklessGas
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddResidentialDehumidifier
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddResidentialDehumidifier
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/AddResidentialRefrigerator
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/AddResidentialRefrigerator
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ChangeAirCooledEvapFanMotortoECMSingleSpeedDX
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ChangeAirCooledEvapFanMotortoECMSingleSpeedDX
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ExportTimeSeriesDatatoCSV
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ExportTimeSeriesDatatoCSV
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ModifySiteWaterMainsTemperature
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ModifySiteWaterMainsTemperature
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ModifySiteWaterTemperature
+[utilities.bcl.BCLXML] <2> 'C:/Users/jmaguire/OpenStudio/Measures/ModifySiteWaterTemperature/measure.xml' is not a correct BCL XML
+[utilities.bcl.BCLMeasure] <2> 'C:/Users/jmaguire/OpenStudio/Measures/ModifySiteWaterTemperature' is not a measure
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/NewMeasure
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/NewMeasure
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessAirflow
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessAirflow
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessAirSourceHeatPump
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessAirSourceHeatPump
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessCentralAirConditioner
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessCentralAirConditioner
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsCrawlspace
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsCrawlspace
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsDoors
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsDoors
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsExteriorInsulatedWallsWoodStud
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsExteriorInsulatedWallsWoodStud
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsExteriorUninsulatedWalls
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsExteriorUninsulatedWalls
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsFinishedBasement
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsFinishedBasement
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsGarageRoof
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsGarageRoof
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsGarageSlab
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsGarageSlab
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInsulatedRoof
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInsulatedRoof
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInteriorInsulatedFloors
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInteriorInsulatedFloors
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInteriorInsulatedWalls
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInteriorInsulatedWalls
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInteriorUninsulatedFloors
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInteriorUninsulatedFloors
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInteriorUninsulatedWalls
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsInteriorUninsulatedWalls
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsSlab
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsSlab
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsUnfinishedAttic
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsUnfinishedAttic
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsUnfinishedBasement
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsUnfinishedBasement
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsWindows
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessConstructionsWindows
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessElectricBaseboard
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessElectricBaseboard
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessFurnace
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessFurnace
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessHeatingandCoolingSeasons
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessHeatingandCoolingSeasons
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessHeatingandCoolingSetpoints
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessHeatingandCoolingSetpoints
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessSystemCrankcaseHeater
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessSystemCrankcaseHeater
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessThermalMassFurniture
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessThermalMassFurniture
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessThermalMassPartitionWall
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ProcessThermalMassPartitionWall
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ReplaceallAirLoopHVACwithASHRAEAppendixGSystem5
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ReplaceallAirLoopHVACwithASHRAEAppendixGSystem5
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialClothesWasherandDryer
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialClothesWasherandDryer
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialCookingRange
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialCookingRange
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialDishwasher
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialDishwasher
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialLighting
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialLighting
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialMiscellaneousElectricLoads
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialMiscellaneousElectricLoads
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialMiscellaneousGasLoads
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Users/jmaguire/OpenStudio/Measures/ResidentialMiscellaneousGasLoads
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Users/jmaguire/OpenStudio/Measures/resources
+[utilities.bcl.BCLXML] <2> 'C:/Users/jmaguire/OpenStudio/Measures/resources/measure.xml' does not exist
+[utilities.bcl.BCLMeasure] <2> 'C:/Users/jmaguire/OpenStudio/Measures/resources' is not a measure
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/e6642d40-7366-4647-8724-53a37991d579/662dc30c-678c-467d-a6be-15e075a3885b' conflicts with other measure, other measure will be used instead
+[openstudio.MeasureManager] <1> UUID of user measure at 'C:/Users/jmaguire/BCL/fc337100-8634-404e-8966-01243d292a79/c418b65d-aa8d-41c2-98b3-7ae3af82a788' conflicts with other measure, other measure will be used instead
+[openstudio.osversion.VersionTranslator] <-2> Starting translation from Version 1.5.0.
+[openstudio.osversion.VersionTranslator] <-2> Initial model has 193 objects.
+[openstudio.osversion.VersionTranslator] <-2> Final model has 193 objects in IDF form.
+[utilities.idf.Workspace] <-2> Workspace::isValid called.
+[openstudio.osversion.VersionTranslator] <-2> Final model has 193 objects in Model form.
+[openstudio.energyplus.ForwardTranslator] <1> No construction for either surface 'Surface 26', and 'Surface 31'
+[openstudio.energyplus.ForwardTranslator] <1> No construction for either surface 'Surface 23', and 'Surface 22'
+[openstudio.energyplus.ForwardTranslator] <1> No construction for either surface 'Surface 4', and 'Surface 20'
+[openstudio.energyplus.ForwardTranslator] <1> No construction for either surface 'Surface 7', and 'Surface 16'
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 20 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 20 fields.  Size of vertices is 3.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 20 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 20 fields.  Size of vertices is 3.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.model.PlanarSurface] <-2> Before setVertices have 23 fields.
+[openstudio.model.PlanarSurface] <-2> After clearExtensibleGroups in setVertices have 11 fields.
+[openstudio.model.PlanarSurface] <-2> After setVertices have 23 fields.  Size of vertices is 4.
+[openstudio.energyplus.ForwardTranslator] <0> Unknown IddObjectType: 'OS:ClimateZones'
+[openstudio.energyplus.ForwardTranslator] <0> Unknown IddObjectType: 'OS:ClimateZones'
+[openstudio.energyplus.ForwardTranslator] <-1> SpaceType attic spacetype has no children, it will not be translated
+[openstudio.energyplus.ForwardTranslator] <-1> SpaceType garage spacetype has no children, it will not be translated
+[openstudio.energyplus.ForwardTranslator] <-1> SpaceType living spacetype has no children, it will not be translated
+[utilities.idd.IddField] <-1> Field 'Column Separator' of object 'OutputControl:Table:Style' is both required and has default value, setting required = false.
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 20 arguments for measure ProcessConstructionsExteriorInsulatedWallsWoodStud({76193c5c-d1a6-4a57-864a-c8a32e67adcb} version: {7213c32e-cb29-435a-b894-c9b01d6d6a2b})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsExteriorInsulatedWallsWoodStud({76193c5c-d1a6-4a57-864a-c8a32e67adcb} version: {7213c32e-cb29-435a-b894-c9b01d6d6a2b})
+[openstudio.project.ProjectDatabase] <-1> DB Message: cannot start a transaction within a transaction Unable to begin transaction
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.idf
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/ReportRequest/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/ReportRequest/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 1
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 0
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.idf
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.osm
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Program Files (x86)/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Program Files (x86)/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/resources/report.html.in to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 2
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 1
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {2b434b53-a086-4109-99ae-1257b08b82f8} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.idf
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/ReportRequest/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/ReportRequest/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 1
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {e0567b35-6c91-4ffb-8bc9-c16c6f643164} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {56638f5b-d99c-4afb-9290-c1395f30f329} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {68a9665b-906e-428f-bd7a-2d042b8daf97} 0
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 0
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.idf
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/.osm
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Program Files (x86)/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/Program Files (x86)/OpenStudio 1.5.0/Ruby
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/resources/report.html.in to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Fixed up path from: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final/scripts/StandardReports/measure.rb to C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 2
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-2> Looking at path: C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {f958f731-2a7a-4def-8632-8263a6b34a9c} 1
+[openstudio.runmanager.RunManager] <-1> Time to load for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse tools for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse params for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-1> Time to parse files for uuid: {8a7d8989-20c9-4924-bd68-4edc74a657c2} 0
+[openstudio.runmanager.RunManager] <-2> WorkflowFound {5c13054e-5003-4116-b40d-608a950a5d48} with uuid {e71e027c-9bd5-4a97-9d4a-06d3e5918eba} deleting
+[openstudio.runmanager.Workflow] <-2> creating workflow
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/run.db) Persisting job status for {33252c00-d8f0-4831-a133-09f49a96a4e6}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {33252c00-d8f0-4831-a133-09f49a96a4e6}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {33252c00-d8f0-4831-a133-09f49a96a4e6}
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/run.db) Persisting job status for {0f386492-c810-4195-905c-bd6093123eba}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {0f386492-c810-4195-905c-bd6093123eba}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {0f386492-c810-4195-905c-bd6093123eba}
+[openstudio.runmanager.RunManager] <-2> Persisting JobFile C:/Program Files (x86)/OpenStudio 1.5.0/Ruby/openstudio/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Persisting RequiredFile file:///C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/ReportRequest/measure.rb to user_script.rb
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/run.db) Persisting job status for {50d33cbe-5c4e-4b1e-8922-c53e26e79436}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {50d33cbe-5c4e-4b1e-8922-c53e26e79436}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {50d33cbe-5c4e-4b1e-8922-c53e26e79436}
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/run.db) Persisting job status for {6ad9447a-0f2d-441d-83f9-6c0244c9c5c9}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {6ad9447a-0f2d-441d-83f9-6c0244c9c5c9}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {6ad9447a-0f2d-441d-83f9-6c0244c9c5c9}
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/run.db) Persisting job status for {4bba1a9f-8f92-4b35-9352-faabcc84eaf1}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {4bba1a9f-8f92-4b35-9352-faabcc84eaf1}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {4bba1a9f-8f92-4b35-9352-faabcc84eaf1}
+[openstudio.runmanager.RunManager] <-2> Persisting JobFile C:/Program Files (x86)/OpenStudio 1.5.0/Ruby/openstudio/runmanager/rubyscripts/UserScriptAdapter.rb
+[openstudio.runmanager.RunManager] <-2> Persisting RequiredFile file:///C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/measure.rb to user_script.rb
+[openstudio.runmanager.RunManager] <-2> Persisting RequiredFile file:///C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/scripts/StandardReports/resources/report.html.in to resources/report.html.in
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/run.db) Persisting job status for {8b485524-5320-4c02-8f6d-e91ec24ac378}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {8b485524-5320-4c02-8f6d-e91ec24ac378}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {8b485524-5320-4c02-8f6d-e91ec24ac378}
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/OS_BEopt_GitHub/OpenStudio-Beopt/PAT_Slab_Final_v2/run.db) Persisting job status for {a17ec71c-7d13-4476-9c35-bd1820b69434}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {a17ec71c-7d13-4476-9c35-bd1820b69434}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {a17ec71c-7d13-4476-9c35-bd1820b69434}
+[openstudio.project.ProjectDatabase] <-1> DB Message: cannot start a transaction within a transaction Unable to begin transaction
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsExteriorInsulatedWallsWoodStud({76193c5c-d1a6-4a57-864a-c8a32e67adcb} version: {7213c32e-cb29-435a-b894-c9b01d6d6a2b})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 20 arguments for measure ProcessConstructionsUnfinishedAttic({235ba3ce-dd83-4287-aa0e-435dc1cbf1a7} version: {647a76d3-3466-4fc9-a488-c586de9b6bfa})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsUnfinishedAttic({235ba3ce-dd83-4287-aa0e-435dc1cbf1a7} version: {647a76d3-3466-4fc9-a488-c586de9b6bfa})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 15 arguments for measure ProcessConstructionsInteriorInsulatedWalls({944105aa-3789-447c-bf4b-ace7eadee2db} version: {329f6af0-b4ad-448b-9b06-92d3a92e3baf})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsInteriorInsulatedWalls({944105aa-3789-447c-bf4b-ace7eadee2db} version: {329f6af0-b4ad-448b-9b06-92d3a92e3baf})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 12 arguments for measure ProcessConstructionsInteriorInsulatedFloors({65e577ab-327e-4afa-af30-0f6b4e6b1ebf} version: {9ed36f96-7889-4467-a9e3-3e6cef963d00})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsInteriorInsulatedFloors({65e577ab-327e-4afa-af30-0f6b4e6b1ebf} version: {9ed36f96-7889-4467-a9e3-3e6cef963d00})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 13 arguments for measure ProcessConstructionsInteriorUninsulatedFloors({477cfef1-0c37-4b16-9cfd-82d617472e43} version: {4742a543-93d8-4770-861e-612089f9ce41})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsInteriorUninsulatedFloors({477cfef1-0c37-4b16-9cfd-82d617472e43} version: {4742a543-93d8-4770-861e-612089f9ce41})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 11 arguments for measure ProcessConstructionsSlab({4fd36916-5b69-43d2-a7bb-e7fad34508db} version: {0cc01891-4092-49db-9f98-6fc00a758a97})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsSlab({4fd36916-5b69-43d2-a7bb-e7fad34508db} version: {0cc01891-4092-49db-9f98-6fc00a758a97})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 1 arguments for measure ProcessConstructionsGarageSlab({3da62049-50f9-4ed0-b05a-6b89a202482d} version: {3464cae3-5d4b-4872-8cf5-3145dcab1ad8})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsGarageSlab({3da62049-50f9-4ed0-b05a-6b89a202482d} version: {3464cae3-5d4b-4872-8cf5-3145dcab1ad8})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 5 arguments for measure ProcessConstructionsWindows({648dc42f-f079-4d97-913e-6dc3e19560b1} version: {fb02a693-b486-4083-a90e-b742cb782fc0})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsWindows({648dc42f-f079-4d97-913e-6dc3e19560b1} version: {fb02a693-b486-4083-a90e-b742cb782fc0})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 2 arguments for measure ProcessConstructionsDoors({b78f10fa-b38d-4de2-86e9-344a78e68847} version: {221dbe63-c334-4334-8b16-0b7b1cdaf9de})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsDoors({b78f10fa-b38d-4de2-86e9-344a78e68847} version: {221dbe63-c334-4334-8b16-0b7b1cdaf9de})
+[openstudio.MeasureManager] <-1> User chose to replace existing instances with new version of measure
+[openstudio.MeasureManager] <-1> Loaded 8 arguments for measure ProcessThermalMassPartitionWall({7bf22221-1930-4c89-baf9-02a6878c9ad4} version: {b281484d-d2c1-4894-a801-e0efa732f55a})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessThermalMassPartitionWall({7bf22221-1930-4c89-baf9-02a6878c9ad4} version: {b281484d-d2c1-4894-a801-e0efa732f55a})
+[openstudio.MeasureManager] <-1> returning stored arguments for measure ProcessConstructionsExteriorInsulatedWallsWoodStud({76193c5c-d1a6-4a57-864a-c8a32e67adcb} version: {7213c32e-cb29-435a-b894-c9b01d6d6a2b})

@@ -2993,7 +2993,7 @@ class Sim
 
   end
 
-  def _processAirSystem(supply, f=nil, air_conditioner=nil, hasFurnace=false, hasCoolingEquipment=false, hasAirConditioner=false, hasHeatPump=false, hasMiniSplitHP=false, hasRoomAirConditioner=false, hasGroundSourceHP=false, test_suite=nil)
+  def _processAirSystem(supply, f=nil, air_conditioner=nil, heat_pump=nil, hasFurnace=false, hasCoolingEquipment=false, hasAirConditioner=false, hasHeatPump=false, hasMiniSplitHP=false, hasRoomAirConditioner=false, hasGroundSourceHP=false, test_suite=nil)
     # Air System
 
     if air_conditioner.ACCoolingInstalledSEER == 999
@@ -3060,6 +3060,18 @@ class Sim
       end
 
       if hasHeatPump
+
+        hp = heat_pump
+
+        # Cooling Coil
+        supply = get_cooling_coefficients(hp.HPNumberSpeeds, false, true, supply)
+        supply.CFM_TON_Rated = calc_cfm_ton_rated(hp.HPRatedAirFlowRateCooling, hp.HPFanspeedRatioCooling, hp.HPCapacityRatio)
+        supply = Sim._processAirSystemCoolingCoil(hp.HPNumberSpeeds, hp.HPCoolingEER, hp.HPCoolingInstalledSEER, hp.HPSupplyFanPowerInstalled, hp.HPSupplyFanPowerRated, hp.HPSHRRated, hp.HPCapacityRatio, hp.HPFanspeedRatioCooling, hp.HPCondenserType, hp.HPCrankcase, hp.HPCrankcaseMaxT, hp.HPEERCapacityDerateFactor, test_suite, air_conditioner, supply, hasHeatPump)
+
+        # Heating Coil
+        supply = get_heating_coefficients(supply.Number_Speeds, false, supply)
+        supply.CFM_TON_Rated_Heat = calc_cfm_ton_rated(hp.HPRatedAirFlowRateHeating, hp.HPFanspeedRatioHeating, hp.HPCapacityRatio)
+        supply = Sim._processAirSystemHeatingCoil(hp.HPHeatingCOP, hp.HPHeatingInstalledHSPF, hp.HPSupplyFanPowerRated, hp.HPCapacityRatio, hp.HPFanspeedRatioHeating, hp.HPMinT, hp.HPCOPCapacityDerateFactor, test_suite, supply)
 
       end
 
@@ -3187,7 +3199,51 @@ class Sim
     return supply
 
   end
-	
+
+  def self._processAirSystemHeatingCoil(heatingCOP, heatingHSPF, supplyFanPower_Rated, capacity_Ratio, fanspeed_Ratio_Heating, min_T, cop_CapacityDerateFactor, test_suite, supply)
+
+    # if len(Capacity_Ratio) > len(set(Capacity_Ratio)):
+    #     SimError("Capacity Ratio values must be unique ({})".format(Capacity_Ratio))
+
+    if test_suite.min_test_ideal_loads
+      get_heating_coeffcients(supply.Number_Speeds, true, supply)
+    end
+
+    supply.HeatingEIR = Array.new
+    (0...supply.Number_Speeds).to_a.each do |speed|
+      eir = calc_EIR_from_COP(heatingCOP[speed], supplyFanPower_Rated)
+      supply.HeatingEIR << eir
+    end
+
+    if supply.Number_Speeds == 1.0
+      c_d = calc_Cd_from_HSPF_COP_SingleSpeed(heatingHSPF, heatingCOP[0], supplyFanPower_Rated)
+    elsif supply.Number_Speeds == 2.0
+      c_d = calc_Cd_from_HSPF_COP_TwoSpeed(heatingHSPF, heatingCOP, capacity_Ratio, fanspeed_Ratio_Heating, supplyFanPower_Rated)
+    elsif supply.Number_Speeds == 4.0
+      c_d = calc_Cd_from_HSPF_COP_FourSpeed(heatingHSPF, heatingCOP, capacity_Ratio, fanspeed_Ratio_Heating, supplyFanPower_Rated)
+    else
+      runner.registerError("HP number of speeds must equal 1, 2, or 4.")
+    end
+
+    supply.HEAT_CLOSS_FPLR_SPEC_coefficients = [(1 - c_d), c_d, 0] # Linear part load model
+
+    if test_suite.min_test_ideal_loads
+      supply.HEAT_CLOSS_FPLR_SPEC_coefficients = [1, 0, 0]
+    end
+
+    supply.Capacity_Ratio_Heating = capacity_Ratio
+    supply.fanspeed_ratio_heating = fanspeed_Ratio_Heating
+    supply.max_temp = 105               # Hardcoded due to all heat pumps options having this value. Also effects the sizing so it shouldn't be a user variable
+    supply.min_hp_temp = min_T          # Minimum temperature for Heat Pump operation
+    supply.max_supp_heating_temp = 40   # Moved from DOE-2. DOE-2 Default
+    supply.max_defrost_temp = 40        # Moved from DOE-2. DOE-2 Default
+
+    supply.COP_CapacityDerateFactor = cop_CapacityDerateFactor
+
+    return supply
+
+  end
+
 end
 
 def get_rimjoist_r_assembly(category, prefix, wallsh, drywallThickness, drywallNumLayers, rimjoist_framingfactor, finishThickness, finishConductivity)
@@ -3701,7 +3757,7 @@ def get_unfinished_attic_perimeter_insulation_derating(uatc, geometry, eaves_dep
     spaceArea_UAtc_Perim += 4 * rfEdgeW_UAtc ** 2
 
     if spaceArea_UAtc_Perim != 0 and rfEdgeMinH_UAtc < OpenStudio::convert(uatc.UACeilingInsThickness,"in","ft").get
-      spaceArea_UAtc = spaceArea_UAtc - spaceArea_UAtc_Perim + Math::log((rfEdgeW_UAtc * Math::tan(rfTilt / 180 * Math::PI) + rfEdgeMinH_UAtc) / rfEdgeMinH_UAtc) / Math::tan(rfTilt / 180 * Math::PI) * rfPerimeter_UAtc * OpenStudio::convert(uatc.UACeilingInsThicknes,"in","ft").get
+      spaceArea_UAtc = spaceArea_UAtc - spaceArea_UAtc_Perim + Math::log((rfEdgeW_UAtc * Math::tan(rfTilt / 180 * Math::PI) + rfEdgeMinH_UAtc) / rfEdgeMinH_UAtc) / Math::tan(rfTilt / 180 * Math::PI) * rfPerimeter_UAtc * OpenStudio::convert(uatc.UACeilingInsThickness,"in","ft").get
     end
 
     spaceArea_Rev_UAtc += spaceArea_UAtc
@@ -3876,7 +3932,36 @@ def get_cooling_coefficients(num_speeds, is_ideal_system, isHeatPump, supply)
 
   else
     if isHeatPump
-      # stuff
+      if num_speeds == 1.0
+        supply.COOL_CAP_FT_SPEC_coefficients = [3.68637657, -0.098352478, 0.000956357, 0.005838141, -0.0000127, -0.000131702]
+        supply.COOL_EIR_FT_SPEC_coefficients = [-3.437356399, 0.136656369, -0.001049231, -0.0079378, 0.000185435, -0.0001441]
+        supply.COOL_CAP_FFLOW_SPEC_coefficients = [0.718664047, 0.41797409, -0.136638137]
+        supply.COOL_EIR_FFLOW_SPEC_coefficients = [1.143487507, -0.13943972, -0.004047787]
+      elsif num_speeds == 2.0
+        # one set for low, one set for high
+        supply.COOL_CAP_FT_SPEC_coefficients = [[3.998418659, -0.108728222, 0.001056818, 0.007512314, -0.0000139, -0.000164716], [3.466810106, -0.091476056, 0.000901205, 0.004163355, -0.00000919, -0.000110829]]
+        supply.COOL_EIR_FT_SPEC_coefficients = [[-4.282911381, 0.181023691, -0.001357391, -0.026310378, 0.000333282, -0.000197405], [-3.557757517, 0.112737397, -0.000731381, 0.013184877, 0.000132645, -0.000338716]]
+        supply.COOL_CAP_FFLOW_SPEC_coefficients = [[0.655239515, 0.511655216, -0.166894731], [0.618281092, 0.569060264, -0.187341356]]
+        supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1.639108268, -0.998953996, 0.359845728], [1.570774717, -0.914152018, 0.343377302]]
+      elsif num_speeds == 4.0
+        supply.COOL_CAP_FT_SPEC_coefficients = [[3.63396857, -0.093606786, 0.000918114, 0.011852512, -0.0000318307, -0.000206446],
+                                                [1.808745668, -0.041963484, 0.000545263, 0.011346539, -0.000023838, -0.000205162],
+                                                [0.112814745, 0.005638646, 0.000203427, 0.011981545, -0.0000207957, -0.000212379],
+                                                [1.141506147, -0.023973142, 0.000420763, 0.01038334, -0.0000174633, -0.000197092]]
+        supply.COOL_EIR_FT_SPEC_coefficients = [[-1.380674217, 0.083176919, -0.000676029, -0.028120348, 0.000320593, -0.0000616147],
+                                                [4.817787321, -0.100122768, 0.000673499, -0.026889359, 0.00029445, -0.0000390331],
+                                                [-1.502227232, 0.05896401, -0.000439349, 0.002198465, 0.000148486, -0.000159553],
+                                                [-3.443078025, 0.115186164, -0.000852001, 0.004678056, 0.000134319, -0.000171976]]
+        supply.COOL_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
+        supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
+      elsif num_speeds == constants.Num_Speeds_MSHP
+        # NOTE: These coefficients are in SI UNITS, which differs from the coefficients for 1, 2, and 4 speed units, which are in IP UNITS
+        supply.COOL_CAP_FT_SPEC_coefficients = [[1.008993521905866, 0.006512749025457, 0.0, 0.003917565735935, -0.000222646705889, 0.0]] * num_speeds
+        supply.COOL_EIR_FT_SPEC_coefficients = [[0.429214441601141, -0.003604841598515, 0.000045783162727, 0.026490875804937, -0.000159212286878, -0.000159062656483]] * num_speeds
+
+        supply.COOL_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]] * num_speeds
+        supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]] * num_speeds
+      end
     else #AC
       if num_speeds == 1.0
         supply.COOL_CAP_FT_SPEC_coefficients = [3.670270705, -0.098652414, 0.000955906, 0.006552414, -0.0000156, -0.000131877]
@@ -3912,8 +3997,64 @@ def get_cooling_coefficients(num_speeds, is_ideal_system, isHeatPump, supply)
 
 end
 
+def get_heating_coefficients(num_speeds, is_ideal_system, supply)
+  # Hard coded curves
+  if is_ideal_system
+    if num_speeds == 1.0
+      supply.HEAT_CAP_FT_SPEC_coefficients = [1, 0, 0, 0, 0, 0]
+      supply.HEAT_EIR_FT_SPEC_coefficients = [1, 0, 0, 0, 0, 0]
+      supply.HEAT_CAP_FFLOW_SPEC_coefficients = [1, 0, 0]
+      supply.HEAT_EIR_FFLOW_SPEC_coefficients = [1, 0, 0]
+    else
+      supply.HEAT_CAP_FT_SPEC_coefficients = [[1, 0, 0, 0, 0, 0]]*num_speeds
+      supply.HEAT_EIR_FT_SPEC_coefficients = [[1, 0, 0, 0, 0, 0]]*num_speeds
+      supply.HEAT_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]]*num_speeds
+      supply.HEAT_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]]*num_speeds
+    end
+
+  else
+    if num_speeds == 1.0
+      supply.HEAT_CAP_FT_SPEC_coefficients = [0.566333415, -0.000744164, -0.0000103, 0.009414634, 0.0000506, -0.00000675]
+      supply.HEAT_EIR_FT_SPEC_coefficients = [0.718398423, 0.003498178, 0.000142202, -0.005724331, 0.00014085, -0.000215321]
+      supply.HEAT_CAP_FFLOW_SPEC_coefficients = [0.694045465, 0.474207981, -0.168253446]
+      supply.HEAT_EIR_FFLOW_SPEC_coefficients = [2.185418751, -1.942827919, 0.757409168]
+    elsif num_speeds == 2.0
+      # one set for low, one set for high
+      supply.HEAT_CAP_FT_SPEC_coefficients = [[0.335690634, 0.002405123, -0.0000464, 0.013498735, 0.0000499, -0.00000725], [0.306358843, 0.005376987, -0.0000579, 0.011645092, 0.0000591, -0.0000203]]
+      supply.HEAT_EIR_FT_SPEC_coefficients = [[0.36338171, 0.013523725, 0.000258872, -0.009450269, 0.000439519, -0.000653723], [0.981100941, -0.005158493, 0.000243416, -0.005274352, 0.000230742, -0.000336954]]
+      supply.HEAT_CAP_FFLOW_SPEC_coefficients = [[0.741466907, 0.378645444, -0.119754733], [0.76634609, 0.32840943, -0.094701495]]
+      supply.HEAT_EIR_FFLOW_SPEC_coefficients = [[2.153618211, -1.737190609, 0.584269478], [2.001041353, -1.58869128, 0.587593517]]
+    elsif num_speeds == 4.0
+      supply.HEAT_CAP_FT_SPEC_coefficients = [[0.304192655, -0.003972566, 0.0000196432, 0.024471251, -0.000000774126, -0.0000841323],
+                                              [0.496381324, -0.00144792, 0.0, 0.016020855, 0.0000203447, -0.0000584118],
+                                              [0.697171186, -0.006189599, 0.0000337077, 0.014291981, 0.0000105633, -0.0000387956],
+                                              [0.555513805, -0.001337363, -0.00000265117, 0.014328826, 0.0000163849, -0.0000480711]]
+      supply.HEAT_EIR_FT_SPEC_coefficients = [[0.708311527, 0.020732093, 0.000391479, -0.037640031, 0.000979937, -0.001079042],
+                                              [0.025480155, 0.020169585, 0.000121341, -0.004429789, 0.000166472, -0.00036447],
+                                              [0.379003189, 0.014195012, 0.0000821046, -0.008894061, 0.000151519, -0.000210299],
+                                              [0.690404655, 0.00616619, 0.000137643, -0.009350199, 0.000153427, -0.000213258]]
+      supply.HEAT_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
+      supply.HEAT_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
+    elsif num_speeds == Constants.Num_Speeds_MSHP
+      # NOTE: These coefficients are in SI UNITS, which differs from the coefficients for 1, 2, and 4 speed units, which are in IP UNITS
+      supply.HEAT_CAP_FT_SPEC_coefficients = [[1.1527124655908571, -0.010386676170938, 0.0, 0.011263752411403, -0.000392549621117, 0.0]] * num_speeds
+      supply.HEAT_EIR_FT_SPEC_coefficients = [[0.966475472847719, 0.005914950101249, 0.000191201688297, -0.012965668198361, 0.000042253229429, -0.000524002558712]] * num_speeds
+
+      supply.HEAT_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]] * num_speeds
+      supply.HEAT_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]] * num_speeds
+    end
+  end
+
+  return supply
+
+end
+
 def calc_EIR_from_EER(eer, supplyFanPower_Rated)
   return OpenStudio::convert((1.0 - OpenStudio::convert(supplyFanPower_Rated * 0.03333,"Wh","Btu").get) / eer - supplyFanPower_Rated * 0.03333,"Wh","Btu").get
+end
+
+def calc_EIR_from_COP(cop, supplyFanPower_Rated)
+  return OpenStudio::convert((OpenStudio::convert(1.0,"Btu","Wh").get + supplyFanPower_Rated * 0.03333) / cop - supplyFanPower_Rated * 0.03333,"Wh","Btu").get
 end
 
 def calc_Cd_from_SEER_EER_SingleSpeed(seer, eer_A, supplyFanPower_Rated, isHeatPump, supply)
@@ -4052,6 +4193,156 @@ def calc_Cd_from_SEER_EER_FourSpeed(seer, eer_A, capacityRatio, fanSpeedRatio, s
 #         C_d = 0.25
 #
 #     return C_d
+end
+
+def calc_Cd_from_HSPF_COP_SingleSpeed(hspf, cop_47, supplyFanPower_Rated)
+
+  # Use hard-coded Cd values
+  if hspf < 7.0
+      return 0.20
+  else
+      return 0.11
+  end
+
+  # C_d = 0.1
+  # C_d_1 = C_d
+  # C_d_2 = C_d
+  #
+  # error = HSPF - calc_HSPF_SingleSpeed(COP_47, C_d, SupplyFanPower_Rated)
+  # error1 = error
+  # error2 = error
+  #
+  # itmax = 50  # maximum iterations
+  # cvg = False
+  #
+  # for n in range(1,itmax+1):
+  #
+  #   error = HSPF - calc_HSPF_SingleSpeed(COP_47, C_d, SupplyFanPower_Rated)
+  #
+  #   C_d,cvg,C_d_1,error1,C_d_2,error2 = \
+  #               MathTools.Iterate(C_d,error,C_d_1,error1,C_d_2,error2,n,cvg)
+  #
+  #   if cvg == True: break
+  #
+  #   if cvg == False:
+  #       C_d = 0.25
+  #   SimWarning('Single-speed heating C_d iteration failed to converge. Setting to maximum value.')
+  #
+  #   if C_d < 0:
+  #       C_d = 0.02
+  #   elif C_d > 0.25:
+  #       C_d = 0.25
+  #
+  #   return C_d
+
+end
+
+def calc_Cd_from_HSPF_COP_TwoSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, supplyFanPower_Rated)
+
+  # Use hard-coded Cd values
+  return 0.11
+
+  # C_d = 0.1
+  # C_d_1 = C_d
+  # C_d_2 = C_d
+  #
+  # error = HSPF - calc_HSPF_TwoSpeed(COP_47, C_d, CapacityRatio, FanSpeedRatio,
+  #                                   SupplyFanPower_Rated)
+  # error1 = error
+  # error2 = error
+  #
+  # itmax = 50  # maximum iterations
+  # cvg = False
+  #
+  # for n in range(1,itmax+1):
+  #
+  #   error = HSPF - calc_HSPF_TwoSpeed(COP_47, C_d, CapacityRatio, FanSpeedRatio,
+  #                                     SupplyFanPower_Rated)
+  #
+  #   C_d,cvg,C_d_1,error1,C_d_2,error2 = \
+  #               MathTools.Iterate(C_d,error,C_d_1,error1,C_d_2,error2,n,cvg)
+  #
+  #   if cvg == True: break
+  #
+  #   if cvg == False:
+  #       C_d = 0.25
+  #   SimWarning('Two-speed heating C_d iteration failed to converge. Setting to maximum value.')
+  #
+  #   if C_d < 0:
+  #       C_d = 0.02
+  #   elif C_d > 0.25:
+  #       C_d = 0.25
+  #
+  #   return C_d
+
+end
+
+def calc_Cd_from_HSPF_COP_FourSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, supplyFanPower_Rated)
+
+  # Use hard-coded Cd values
+  return 0.24
+
+  # l_COP_47 = list(COP_47)
+  # l_CapacityRatio = list(CapacityRatio)
+  # l_FanSpeedRatio = list(FanSpeedRatio)
+  #
+  # # first need to find the nominal capacity
+  # if 1 in l_CapacityRatio:
+  #     nomIndex = l_CapacityRatio.index(1)
+  #
+  # if nomIndex <= 1:
+  #     SimError('Invalid CapacityRatio array passed to calc_Cd_from_HSPF_COP_FourSpeed. Must contain more than 2 elements.')
+  # elif nomIndex == 2:
+  #     del l_COP_47[3]
+  # del l_CapacityRatio[3]
+  # del l_FanSpeedRatio[3]
+  # elif nomIndex == 3:
+  #     l_COP_47[2] = (l_COP_47[1] + l_COP_47[2]) / 2
+  # l_CapacityRatio[2] = (l_CapacityRatio[1] + l_CapacityRatio[2]) / 2
+  # l_FanSpeedRatio[2] = (l_FanSpeedRatio[1] + l_FanSpeedRatio[2]) / 2
+  # del l_COP_47[1]
+  # del l_CapacityRatio[1]
+  # del l_FanSpeedRatio[1]
+  # else:
+  #     SimError('Invalid CapacityRatio array passed to calc_Cd_from_HSPF_COP_FourSpeed. Must contain value of 1.')
+  #
+  # C_d = 0.25
+  # C_d_1 = C_d
+  # C_d_2 = C_d
+  #
+  # # Note: calc_HSPF_VariableSpeed has been modified for MSHPs and should be checked for use with 4 speed units
+  # error = HSPF - calc_HSPF_VariableSpeed(l_COP_47, C_d, l_CapacityRatio,
+  #                                        l_FanSpeedRatio, nomIndex,
+  #                                        SupplyFanPower_Rated)
+  # error1 = error
+  # error2 = error
+  #
+  # itmax = 50  # maximum iterations
+  # cvg = False
+  #
+  # for n in range(1,itmax+1):
+  #
+  #   # Note: calc_HSPF_VariableSpeed has been modified for MSHPs and should be checked for use with 4 speed units
+  #   error = HSPF - calc_HSPF_VariableSpeed(l_COP_47, C_d, l_CapacityRatio,
+  #                                          l_FanSpeedRatio, nomIndex,
+  #                                          SupplyFanPower_Rated)
+  #
+  #   C_d,cvg,C_d_1,error1,C_d_2,error2 = \
+  #               MathTools.Iterate(C_d,error,C_d_1,error1,C_d_2,error2,n,cvg)
+  #
+  #   if cvg == True: break
+  #
+  #   if cvg == False:
+  #       C_d = 0.25
+  #   SimWarning('Variable-speed heating C_d iteration failed to converge. Setting to maximum value.')
+  #
+  #   if C_d < 0:
+  #       C_d = 0.02
+  #   elif C_d > 0.25:
+  #       C_d = 0.25
+  #
+  #   return C_d
+
 end
 
 class Process_refrigerator

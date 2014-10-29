@@ -1,0 +1,59 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessFurnace</Channel>
+      <Message>Added on/off fan 'Supply Fan' to branch 'Forced Air System' of air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessFurnace</Channel>
+      <Message>Added heating coil 'Furnace Heating Coil' to branch 'Forced Air System' of air loop 'Central Air System'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessFurnace</Channel>
+      <Message>Added air loop 'Central Air System' to thermal zone 'living'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{61847daa-bf20-43ed-afb9-654032802e63}</UUID>
+      <VersionUUID>{349cc164-f62e-44ad-8f77-b17fd6f53a4b}</VersionUUID>
+      <Name>selectedliving</Name>
+      <Source>ProcessFurnace</Source>
+      <ValueType>String</ValueType>
+      <Value>{0d608b96-ffd4-46de-9129-cd315ba55b12}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{d6d76b54-7402-4fce-9e23-437e662c79b6}</UUID>
+      <VersionUUID>{505718c9-6ef4-4dfe-9428-2fbb864f1bd7}</VersionUUID>
+      <Name>userdefinedafue</Name>
+      <Source>ProcessFurnace</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.78</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{fe4d2f87-a4db-4d24-a327-ea2859bd500d}</UUID>
+      <VersionUUID>{ad298c67-084f-4ad6-a391-5c8b3c084613}</VersionUUID>
+      <Name>selectedfurnacecap</Name>
+      <Source>ProcessFurnace</Source>
+      <ValueType>String</ValueType>
+      <Value>50 kBtu/hr</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{72945e17-bf76-4c22-9ee9-5a0631a79843}</UUID>
+      <VersionUUID>{31cfebc4-bd8b-4efb-ba28-610095505ea9}</VersionUUID>
+      <Name>userdefinedmaxtemp</Name>
+      <Source>ProcessFurnace</Source>
+      <ValueType>Double</ValueType>
+      <Value>120</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{e83ed1bd-ed19-44a5-a197-6a376eede9fd}</UUID>
+      <VersionUUID>{27f4184c-a04d-4a35-8ffb-db29e396257b}</VersionUUID>
+      <Name>selectedfurnacefuel</Name>
+      <Source>ProcessFurnace</Source>
+      <ValueType>String</ValueType>
+      <Value>gas</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

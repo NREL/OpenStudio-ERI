@@ -1,0 +1,224 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>process_central_air_conditioner</name>
+  <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
+  <version_id>a9142265-c652-437b-8c90-dbc84907d511</version_id>
+  <xml_checksum>9E2537CD</xml_checksum>
+  <class_name>ProcessCentralAirConditioner</class_name>
+  <display_name>ProcessCentralAirConditioner</display_name>
+  <description>Replace this text with an explanation of what the measure does in terms that can be understood by a general building professional audience (building owners, architects, engineers, contractors, etc.).  This description will be used to create reports aimed at convincing the owner and/or design team to implement the measure in the actual building design.  For this reason, the description may include details about how the measure would be implemented, along with explanations of qualitative benefits associated with the measure.  It is good practice to include citations in the measure if the description is taken from a known source or if specific benefits are listed.</description>
+  <modeler_description>Replace this text with an explanation for the energy modeler specifically.  It should explain how the measure is modeled, including any requirements about how the baseline model must be set up, major assumptions, citations of references to applicable modeling resources, etc.  The energy modeler should be able to read this description and understand what changes the measure is making to the model and why these changes are being made.  Because the Modeler Description is written for an expert audience, using common abbreviations for brevity is good practice.</modeler_description>
+  <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Which is the living space zone?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>selectedfbsmt</name>
+      <display_name>Which is the finished basement zone?</display_name>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>selectedac</name>
+      <display_name>Central air conditioner option.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>SEER 13</default_value>
+      <choices>
+        <choice>
+          <value>SEER 8</value>
+          <display_name>SEER 8</display_name>
+        </choice>
+        <choice>
+          <value>SEER 10</value>
+          <display_name>SEER 10</display_name>
+        </choice>
+        <choice>
+          <value>SEER 13</value>
+          <display_name>SEER 13</display_name>
+        </choice>
+        <choice>
+          <value>SEER 14</value>
+          <display_name>SEER 14</display_name>
+        </choice>
+        <choice>
+          <value>SEER 15</value>
+          <display_name>SEER 15</display_name>
+        </choice>
+        <choice>
+          <value>SEER 16</value>
+          <display_name>SEER 16</display_name>
+        </choice>
+        <choice>
+          <value>SEER 16 (2 Stage)</value>
+          <display_name>SEER 16 (2 Stage)</display_name>
+        </choice>
+        <choice>
+          <value>SEER 17</value>
+          <display_name>SEER 17</display_name>
+        </choice>
+        <choice>
+          <value>SEER 18</value>
+          <display_name>SEER 18</display_name>
+        </choice>
+        <choice>
+          <value>SEER 21</value>
+          <display_name>SEER 21</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>selectedaccap</name>
+      <display_name>Cooling Output Capacity.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Autosize</default_value>
+      <choices>
+        <choice>
+          <value>Autosize</value>
+          <display_name>Autosize</display_name>
+        </choice>
+        <choice>
+          <value>0.5 tons</value>
+          <display_name>0.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>1.0 tons</value>
+          <display_name>1.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>1.5 tons</value>
+          <display_name>1.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>2.0 tons</value>
+          <display_name>2.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>2.5 tons</value>
+          <display_name>2.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>3.0 tons</value>
+          <display_name>3.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>3.5 tons</value>
+          <display_name>3.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>4.0 tons</value>
+          <display_name>4.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>4.5 tons</value>
+          <display_name>4.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>5.0 tons</value>
+          <display_name>5.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>5.5 tons</value>
+          <display_name>5.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>6.0 tons</value>
+          <display_name>6.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>6.5 tons</value>
+          <display_name>6.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>7.0 tons</value>
+          <display_name>7.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>7.5 tons</value>
+          <display_name>7.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>8.0 tons</value>
+          <display_name>8.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>8.5 tons</value>
+          <display_name>8.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>9.0 tons</value>
+          <display_name>9.0 tons</display_name>
+        </choice>
+        <choice>
+          <value>9.5 tons</value>
+          <display_name>9.5 tons</display_name>
+        </choice>
+        <choice>
+          <value>10.0 tons</value>
+          <display_name>10.0 tons</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>HVAC.Cooling</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ProcessCentralAirConditioner_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A4D74917</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>326EDE90</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AE5EF352</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EA4777E</checksum>
+    </file>
+  </files>
+</measure>

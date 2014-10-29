@@ -1,0 +1,26 @@
+For Clothes Washer
+hr Fixed % of gallon per day value RESULT (gallon per hour)
+1 0.009 clothes_washer_daily_usage_per_month(Jan) * 0.009)
+2 0.007 clothes_washer_daily_usage_per_month(Jan) * 0.007)
+3 0.004 "" ""
+4 0.004
+5 0.007
+6 0.011
+7 0.022
+8 0.049
+9 0.073
+10 0.086
+11 0.084
+12 0.075
+13 0.067
+14 0.060
+15 0.052
+16 0.049
+17 0.050
+18 0.049
+19 0.049
+20 0.049
+21 0.049
+22 0.047
+23 0.032
+24 0.017
