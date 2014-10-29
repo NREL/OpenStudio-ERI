@@ -1,9 +1,15 @@
 <measure>
-  <name>Process Constructions Exterior Insulated Walls Double Wood Stud</name>
+  <schema_version>3.0</schema_version>
+  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
+  <name>process_constructions_exterior_insulated_walls_double_wood_stud</name>
   <uid>d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651</uid>
-  <version_id>4251dd66-5437-44c0-9cb2-e10cfbdec44a</version_id>
+  <version_id>c48a902e-aa60-41f1-940a-c3bd96c66405</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud</class_name>
+  <display_name>ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud</display_name>
   <description>This measure creates double wood stud constructions for the exterior walls adjacent to the living space.</description>
   <modeler_description>Calculates material layer properties of double wood stud constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -31,23 +37,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
+        <min_compatible>1.3.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EF93AE67</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A55D1614</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0094E368</checksum>
+      <checksum>5F856196</checksum>
     </file>
   </files>
 </measure>

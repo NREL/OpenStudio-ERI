@@ -1,9 +1,159 @@
 <measure>
-  <name>Process Constructions Crawlspace </name>
+  <schema_version>3.0</schema_version>
+  <name>process_constructions_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>4959d60f-b098-45f5-8c4b-9d908d6db6ce</version_id>
+  <version_id>c17f5874-b021-431f-a1cf-eea9db87125a</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsCrawlspace</class_name>
+  <display_name>ProcessConstructionsCrawlspace</display_name>
   <description>This measure creates constructions for the crawlspace ceiling, walls, floor, and rim joists.</description>
   <modeler_description>Calculates material layer properties of constructions for the crawlspace ceiling, walls, floor, and rim joists. Finds surfaces adjacent to the crawlspace and sets applicable constructions.</modeler_description>
+  <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Of what space type is the living space?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>selectedcrawlspace</name>
+      <display_name>Of what space type is the crawlspace?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>selectedcsins</name>
+      <display_name>Crawlspace insulation type.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>Uninsulated</value>
+          <display_name>Uninsulated</display_name>
+        </choice>
+        <choice>
+          <value>Wall</value>
+          <display_name>Wall</display_name>
+        </choice>
+        <choice>
+          <value>Ceiling</value>
+          <display_name>Ceiling</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedcswallceilr</name>
+      <display_name>Crawlspace wall continuous insulation or ceiling cavity insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>selectedcsceiljoistheight</name>
+      <display_name>Crawlspace ceiling joist height [in].</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>9.25</value>
+          <display_name>9.25</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedcsceilff</name>
+      <display_name>Crawlspace ceiling framing factor [frac].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.13</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcsrimjoistr</name>
+      <display_name>Crawlspace rim joist insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormassth</name>
+      <display_name>Floor mass thickness [in].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.625</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormasscond</name>
+      <display_name>Floor mass conductivity [Btu-in/h-ft^2-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.8004</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormassdens</name>
+      <display_name>Floor mass density [lb/ft^3].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>34</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormasssh</name>
+      <display_name>Floor mass specific heat [Btu/lb-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.29</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcarpetr</name>
+      <display_name>Carpet pad R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2.08</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcarpetfrac</name>
+      <display_name>Carpet floor fraction [frac].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.8</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcsheight</name>
+      <display_name>Height of the crawlspace [ft].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>4</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcsextperim</name>
+      <display_name>Perimeter of the crawlspace [ft].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>140</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcswallarea</name>
+      <display_name>Wall area of the crawlspace [ft^2].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>560</default_value>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -31,11 +181,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
+        <min_compatible>1.3.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FAC87C3D</checksum>
+      <checksum>CDE20B03</checksum>
     </file>
   </files>
 </measure>

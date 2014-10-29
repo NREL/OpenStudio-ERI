@@ -634,7 +634,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
       air_loop_unitary.setHeatingCoil(htg_coil)
       runner.registerInfo("Added heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
     else
-      air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0000001) # tk this is when there is no heating present
+      air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0000001) # this is when there is no heating present
     end
     air_loop_unitary.setSupplyFan(fan)
     air_loop_unitary.setFanPlacement("BlowThrough")

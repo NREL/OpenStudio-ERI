@@ -151,10 +151,10 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
       material_display_names << key
     end
 
-    #make a choice argument for roof insulation
-    selected_frroof = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfrroof", material_handles, material_display_names, false)
-    selected_frroof.setDisplayName("Finished roof insulation. For manually entering finished roof insulation properties, leave blank.")
-    args << selected_frroof
+    # #make a choice argument for roof insulation
+    # selected_frroof = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfrroof", material_handles, material_display_names, false)
+    # selected_frroof.setDisplayName("Finished roof insulation. For manually entering finished roof insulation properties, leave blank.")
+    # args << selected_frroof
 
     #make a double argument for finished roof insulation R-value
     userdefined_frroofr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfrroofr", false)
@@ -181,19 +181,16 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     selected_studsize.setDisplayName("Thickness of roof framing.")
     args << selected_studsize
 
-    #make a choice argument for model objects
-    frroofff_display_names = OpenStudio::StringVector.new
-    frroofff_display_names << "0.07"
-
     #make a choice argument for unfinished attic ceiling framing factor
-    selected_frroofff = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfrroofff", frroofff_display_names, true)
-    selected_frroofff.setDisplayName("Finished roof framing factor [frac].")
-    args << selected_frroofff
+    userdefined_frroofff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfrroofff", false)
+    userdefined_frroofff.setDisplayName("Finished roof framing factor [frac].")
+    userdefined_frroofff.setDefaultValue(0.07)
+    args << userdefined_frroofff
 
-    #make a choice argument for rigid insulation of roof cavity
-    selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
-    selected_rigidins.setDisplayName("Rigid insulation of roof cavity. For manually entering rigid insulation properties of roof cavity, leave blank.")
-    args << selected_rigidins
+    # #make a choice argument for rigid insulation of roof cavity
+    # selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
+    # selected_rigidins.setDisplayName("Rigid insulation of roof cavity. For manually entering rigid insulation properties of roof cavity, leave blank.")
+    # args << selected_rigidins
 
     #make a double argument for rigid insulation thickness of roof cavity
     userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)
@@ -207,25 +204,27 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     userdefined_rigidinsr.setDefaultValue(0)
     args << userdefined_rigidinsr
 
-    #make a choice argument for interior finish of cavity
-    selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
-    selected_gypsum.setDisplayName("Interior finish (gypsum) of cavity. For manually entering interior finish properties of cavity, leave blank.")
-    args << selected_gypsum
+    # #make a choice argument for interior finish of cavity
+    # selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
+    # selected_gypsum.setDisplayName("Interior finish (gypsum) of cavity. For manually entering interior finish properties of cavity, leave blank.")
+    # args << selected_gypsum
 
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
     userdefined_gypthickness.setDisplayName("Thickness of drywall layers [in].")
+    userdefined_gypthickness.setDefaultValue(0.5)
     args << userdefined_gypthickness
 
     #make a double argument for number of gypsum layers
     userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
     userdefined_gyplayers.setDisplayName("Number of drywall layers.")
+    userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
 
-    #make a choice argument for roofing material of finished roof
-    selected_roofmat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedroofmat", material_handles, material_display_names, false)
-    selected_roofmat.setDisplayName("Roofing material for finished roof. For manually entering roofing material properties of finished roof, leave blank.")
-    args << selected_roofmat
+    # #make a choice argument for roofing material of finished roof
+    # selected_roofmat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedroofmat", material_handles, material_display_names, false)
+    # selected_roofmat.setDisplayName("Roofing material for finished roof. For manually entering roofing material properties of finished roof, leave blank.")
+    # args << selected_roofmat
 
     #make a double argument for roofing material thermal absorptance of finished roof
     userdefined_roofmatthermalabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatthermalabs", false)
@@ -270,7 +269,11 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     selected_insfills = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
 
     # Ceiling Framing Factor
-    selected_frroofff = runner.getStringArgumentValue("selectedfrroofff",user_arguments)
+    userdefined_frroofff = runner.getDoubleArgumentValue("userdefinedfrroofff",user_arguments)
+    if not ( userdefined_frroofff > 0.0 and userdefined_frroofff < 1.0 )
+      runner.registerError("Invalid finished roof framing factor")
+      return false
+    end
 
     # Rigid
     selected_rigidins = runner.getOptionalWorkspaceObjectChoiceValue("selectedrigidins",user_arguments,model)
@@ -312,8 +315,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     frRoofCavityInsFillsCavity = selected_insfills
 
     # Ceiling Framing Factor
-    frRoofFramingFactor_dict = {"0.07"=>0.07}
-    frRoofFramingFactor = frRoofFramingFactor_dict[selected_frroofff]
+    frRoofFramingFactor = userdefined_frroofff
 
     # Rigid
     if userdefined_rigidinsthickness.nil?

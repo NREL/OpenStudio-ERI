@@ -71,10 +71,10 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
       material_display_names << key
     end
 
-    #make a choice argument for partition wall mass
-    selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
-    selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
-    args << selected_partitionwallmass
+    # #make a choice argument for partition wall mass
+    # selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
+    # selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
+    # args << selected_partitionwallmass
 
     #make a double argument for partition wall mass thickness
     userdefined_partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassth", false)
@@ -248,8 +248,6 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
       ruuuw.insertLayer(layercount,layer)
       layercount += 1
     end
-
-    puts "ENDED"
 
     return true
  

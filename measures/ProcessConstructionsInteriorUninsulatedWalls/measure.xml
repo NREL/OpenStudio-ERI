@@ -1,9 +1,47 @@
 <measure>
-  <name>Process Constructions Interior Uninsulated Walls</name>
+  <schema_version>3.0</schema_version>
+  <name>process_constructions_interior_uninsulated_walls</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>3d8e65e6-b244-4a98-8c4b-294366df6642</version_id>
-  <description>Replace this text with an explanation of what the measure does in terms that can be understood by a general building professional audience (building owners, architects, engineers, contractors, etc.).  This description will be used to create reports aimed at convincing the owner and/or design team to implement the measure in the actual building design.  For this reason, the description may include details about how the measure would be implemented, along with explanations of qualitative benefits associated with the measure.  It is good practice to include citations in the measure if the description is taken from a known source or if specific benefits are listed.</description>
-  <modeler_description>Replace this text with an explanation for the energy modeler specifically.  It should explain how the measure is modeled, including any requirements about how the baseline model must be set up, major assumptions, citations of references to applicable modeling resources, etc.  The energy modeler should be able to read this description and understand what changes the measure is making to the model and why these changes are being made.  Because the Modeler Description is written for an expert audience, using common abbreviations for brevity is good practice.</modeler_description>
+  <version_id>fc9e0c53-42cf-419d-9314-ca3c070c220b</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsInteriorUninsulatedWalls</class_name>
+  <display_name>ProcessConstructionsInteriorUninsulatedWalls</display_name>
+  <description>This measure is incomplete, but it should create constructions for interior partition walls.</description>
+  <modeler_description></modeler_description>
+  <arguments>
+    <argument>
+      <name>userdefinedpartitionwallmassth</name>
+      <display_name>Partition wall mass thickness [in].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.5</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedpartitionwallmasscond</name>
+      <display_name>Partition wall mass conductivity [Btu-in/h-ft^2-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1.1112</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedpartitionwallmassdens</name>
+      <display_name>Partition wall mass density [lb/ft^3].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>50</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedpartitionwallmasssh</name>
+      <display_name>Partition wall mass specific heat [Btu/lb-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.2</default_value>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -31,11 +69,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>50A5779C</checksum>
+      <checksum>C13A9C4A</checksum>
     </file>
   </files>
 </measure>

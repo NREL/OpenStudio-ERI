@@ -60,10 +60,10 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
       material_display_names << key
     end
 
-    #make a choice argument for window glazing
-    selected_windowglazing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedwindowglazing", material_handles, material_display_names, false)
-    selected_windowglazing.setDisplayName("Window simple glazing. For manually entering window simple glazing properties, leave blank.")
-    args << selected_windowglazing
+    # #make a choice argument for window glazing
+    # selected_windowglazing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedwindowglazing", material_handles, material_display_names, false)
+    # selected_windowglazing.setDisplayName("Window simple glazing. For manually entering window simple glazing properties, leave blank.")
+    # args << selected_windowglazing
 
     #make an argument for entering optional window u-factor
     userdefined_ufactor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufactor",false)

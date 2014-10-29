@@ -1,9 +1,15 @@
 <measure>
-  <name>Process Constructions Insulated Roof</name>
+  <schema_version>3.0</schema_version>
+  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
+  <name>process_constructions_insulated_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>2564bc2d-a0b4-4dae-9663-df97cee13580</version_id>
+  <version_id>baea033d-8709-43f1-8f1b-887a7467ac37</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsInsulatedRoof</class_name>
+  <display_name>ProcessConstructionsInsulatedRoof</display_name>
   <description>This measure creates finished constructions for the roof of the living space.</description>
   <modeler_description>Calculates material layer properties of finished constructions for the roof of the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -31,11 +37,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B994E18D</checksum>
+      <checksum>FB4B8212</checksum>
     </file>
   </files>
 </measure>

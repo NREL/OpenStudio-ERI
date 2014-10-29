@@ -219,10 +219,10 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     selected_uains.setDisplayName("Unfinished attic insulation type.")
     args << selected_uains
 
-    #make a choice argument for ceiling / roof insulation
-    selected_uaceilroof = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduaceilroof", material_handles, material_display_names, false)
-    selected_uaceilroof.setDisplayName("Unfinished attic ceiling or roof insulation. For manually entering unfinished attic ceiling or roof insulation properties, leave blank.")
-    args << selected_uaceilroof
+    # #make a choice argument for ceiling / roof insulation
+    # selected_uaceilroof = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduaceilroof", material_handles, material_display_names, false)
+    # selected_uaceilroof.setDisplayName("Unfinished attic ceiling or roof insulation. For manually entering unfinished attic ceiling or roof insulation properties, leave blank.")
+    # args << selected_uaceilroof
 
     #make a double argument for ceiling / roof insulation thickness
     userdefined_ceilroofinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedceilroofinsthickness", false)
@@ -246,14 +246,11 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     selected_joistthickness.setDefaultValue("3.5")
     args << selected_joistthickness
 
-    #make a choice argument for model objects
-    ceilff_display_names = OpenStudio::StringVector.new
-    ceilff_display_names << "0.07"
-
     #make a choice argument for unfinished attic ceiling framing factor
-    selected_uaceilff = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduaceilff", ceilff_display_names, true)
-    selected_uaceilff.setDisplayName("Unfinished attic ceiling framing factor [frac].")
-    args << selected_uaceilff
+    userdefined_uaceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefineduaceilff", false)
+    userdefined_uaceilff.setDisplayName("Unfinished attic ceiling framing factor [frac].")
+    userdefined_uaceilff.setDefaultValue(0.07)
+    args << userdefined_uaceilff
 
     #make a choice argument for model objects
     framethickness_display_names = OpenStudio::StringVector.new
@@ -265,15 +262,16 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     selected_framethickness.setDefaultValue("7.25")
     args << selected_framethickness
 
-    #make a choice argument for unfinished attic ceiling framing factor
-    selected_uaroofff = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduaroofff", ceilff_display_names, true)
-    selected_uaroofff.setDisplayName("Unfinished attic roof framing factor [frac].")
-    args << selected_uaroofff
+    #make a choice argument for unfinished attic roof framing factor
+    userdefined_uaroofff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefineduaroofff", false)
+    userdefined_uaroofff.setDisplayName("Unfinished attic roof framing factor [frac].")
+    userdefined_uaroofff.setDefaultValue(0.07)
+    args << userdefined_uaroofff
 
-    #make a choice argument for rigid insulation of roof cavity
-    selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
-    selected_rigidins.setDisplayName("Rigid insulation of roof cavity. For manually entering rigid insulation properties of roof cavity, leave blank.")
-    args << selected_rigidins
+    # #make a choice argument for rigid insulation of roof cavity
+    # selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
+    # selected_rigidins.setDisplayName("Rigid insulation of roof cavity. For manually entering rigid insulation properties of roof cavity, leave blank.")
+    # args << selected_rigidins
 
     #make a double argument for rigid insulation thickness of roof cavity
     userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)
@@ -292,25 +290,27 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     userdefined_hasradiantbarrier.setDisplayName("Roof has radiant barrier?")
     args << userdefined_hasradiantbarrier
 
-    #make a choice argument for interior finish of cavity
-    selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
-    selected_gypsum.setDisplayName("Interior finish (gypsum) of cavity. For manually entering interior finish properties of cavity, leave blank.")
-    args << selected_gypsum
+    # #make a choice argument for interior finish of cavity
+    # selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
+    # selected_gypsum.setDisplayName("Interior finish (gypsum) of cavity. For manually entering interior finish properties of cavity, leave blank.")
+    # args << selected_gypsum
 
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
     userdefined_gypthickness.setDisplayName("Thickness of drywall layers [in].")
+    userdefined_gypthickness.setDefaultValue(0.5)
     args << userdefined_gypthickness
 
     #make a double argument for number of gypsum layers
     userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
     userdefined_gyplayers.setDisplayName("Number of drywall layers.")
+    userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
 
-    #make a choice argument for roofing material of unfinished attic
-    selected_roofmat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedroofmat", material_handles, material_display_names, false)
-    selected_roofmat.setDisplayName("Roofing material for unfinished attic. For manually entering roofing material properties of unfinished attic, leave blank.")
-    args << selected_roofmat
+    # #make a choice argument for roofing material of unfinished attic
+    # selected_roofmat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedroofmat", material_handles, material_display_names, false)
+    # selected_roofmat.setDisplayName("Roofing material for unfinished attic. For manually entering roofing material properties of unfinished attic, leave blank.")
+    # args << selected_roofmat
 
     #make a double argument for roofing material thermal absorptance of unfinished attic
     userdefined_roofmatthermalabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatthermalabs", false)
@@ -365,13 +365,21 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     selected_uaceiljoistthickness = runner.getStringArgumentValue("selecteduaceiljoistthickness",user_arguments)
 
     # Ceiling Framing Factor
-    selected_uaceilff = runner.getStringArgumentValue("selecteduaceilff",user_arguments)
+    userdefined_uaceilff = runner.getDoubleArgumentValue("userdefineduaceilff",user_arguments)
+    if not ( userdefined_uaceilff > 0.0 and userdefined_uaceilff < 1.0 )
+      runner.registerError("Invalid unfinished attic ceiling framing factor")
+      return false
+    end
 
     # Roof Framing Thickness
     selected_uaroofframethickness = runner.getStringArgumentValue("selecteduaroofframethickness",user_arguments)
 
     # Roof Framing Factor
-    selected_uaroofff = runner.getStringArgumentValue("selecteduaroofff",user_arguments)
+    userdefined_uaroofff = runner.getDoubleArgumentValue("userdefineduaroofff",user_arguments)
+    if not ( userdefined_uaroofff > 0.0 and userdefined_uaroofff < 1.0 )
+      runner.registerError("Invalid unfinished attic roof framing factor")
+      return false
+    end
 
     # Rigid
     if ["Roof"].include? selected_uains.to_s
@@ -430,16 +438,14 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     uACeilingJoistThickness = uACeilingJoistThickness_dict[selected_uaceiljoistthickness]
 
     # Ceiling Framing Factor
-    uACeilingFramingFactor_dict = {"0.07"=>0.07}
-    uACeilingFramingFactor = uACeilingFramingFactor_dict[selected_uaceilff]
+    uACeilingFramingFactor = userdefined_uaceilff
 
     # Roof Framing Thickness
     uARoofFramingThickness_dict = {"7.25"=>7.25}
     uARoofFramingThickness = uARoofFramingThickness_dict[selected_uaroofframethickness]
 
     # Roof Framing Factor
-    uARoofFramingFactor_dict = {"0.07"=>0.07}
-    uARoofFramingFactor = uARoofFramingFactor_dict[selected_uaroofff]
+    uARoofFramingFactor = userdefined_uaroofff
 
     # Rigid
     if selected_uains.to_s == "Roof"

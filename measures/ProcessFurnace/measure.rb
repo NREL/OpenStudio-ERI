@@ -369,7 +369,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       air_loop_unitary.setCoolingCoil(clg_coil)
       runner.registerInfo("Added cooling coil '#{clg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
     else
-      air_loop_unitary.setSupplyAirFlowRateDuringCoolingOperation(0.0000001) # tk this is when there is no cooling present
+      air_loop_unitary.setSupplyAirFlowRateDuringCoolingOperation(0.0000001) # this is when there is no cooling present
     end
     air_loop_unitary.setSupplyFan(fan)
     air_loop_unitary.setFanPlacement("BlowThrough")

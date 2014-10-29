@@ -139,7 +139,7 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
       end
 
       if supply.compressor_speeds > 1.0
-        # tk what do we want to replace this with?
+        # tk what output variable do we need to add to get this to work?
         # ems << "
         # EnergyManagementSystem:Sensor,
         #   UnitaryEquipCyclingRatio,

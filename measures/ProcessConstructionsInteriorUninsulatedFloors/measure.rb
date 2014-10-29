@@ -140,26 +140,28 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
       material_display_names << key
     end
 
-    #make a choice argument for interior finish of cavity
-    selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
-    selected_gypsum.setDisplayName("Interior finish (gypsum) of cavity. For manually entering interior finish properties of cavity, leave blank.")
-    args << selected_gypsum
+    # #make a choice argument for interior finish of cavity
+    # selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
+    # selected_gypsum.setDisplayName("Interior finish (gypsum) of cavity. For manually entering interior finish properties of cavity, leave blank.")
+    # args << selected_gypsum
 
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
     userdefined_gypthickness.setDisplayName("Thickness of drywall layers [in].")
+    userdefined_gypthickness.setDefaultValue(0.5)
     args << userdefined_gypthickness
 
     #make a double argument for number of gypsum layers
     userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
     userdefined_gyplayers.setDisplayName("Number of drywall layers.")
+    userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
 
     # Floor Mass
-    #make a choice argument for floor mass
-    selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
-    selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
-    args << selected_floormass
+    # #make a choice argument for floor mass
+    # selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
+    # selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
+    # args << selected_floormass
 
     #make a double argument for floor mass thickness
     userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
@@ -186,10 +188,10 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     args << userdefined_floormasssh
 
     # Carpet
-    #make a choice argument for carpet pad R-value
-    selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-    selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-    args << selected_carpet
+    # #make a choice argument for carpet pad R-value
+    # selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
+    # selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
+    # args << selected_carpet
 
     #make a double argument for carpet pad R-value
     userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)

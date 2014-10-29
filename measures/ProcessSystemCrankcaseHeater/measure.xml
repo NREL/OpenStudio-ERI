@@ -1,9 +1,15 @@
 <measure>
-  <name>Process System Crankcase Heater</name>
+  <schema_version>3.0</schema_version>
+  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
+  <name>process_system_crankcase_heater</name>
   <uid>b0630593-f352-4753-ae2c-2aa68f1c5611</uid>
-  <version_id>6989a7b8-f51f-451a-89cc-4287958675a2</version_id>
-  <description>Replace this text with an explanation of what the measure does in terms that can be understood by a general building professional audience (building owners, architects, engineers, contractors, etc.).  This description will be used to create reports aimed at convincing the owner and/or design team to implement the measure in the actual building design.  For this reason, the description may include details about how the measure would be implemented, along with explanations of qualitative benefits associated with the measure.  It is good practice to include citations in the measure if the description is taken from a known source or if specific benefits are listed.</description>
-  <modeler_description>Replace this text with an explanation for the energy modeler specifically.  It should explain how the measure is modeled, including any requirements about how the baseline model must be set up, major assumptions, citations of references to applicable modeling resources, etc.  The energy modeler should be able to read this description and understand what changes the measure is making to the model and why these changes are being made.  Because the Modeler Description is written for an expert audience, using common abbreviations for brevity is good practice.</modeler_description>
+  <version_id>dc90a18f-98fe-466a-94ac-4073155a6784</version_id>
+  <xml_checksum>C7ED76C0</xml_checksum>
+  <class_name>ProcessSystemCrankcaseHeater</class_name>
+  <display_name>ProcessSystemCrankcaseHeater</display_name>
+  <description>This measure creates a crankcase heater for heat pumps and multispeed air conditioners.</description>
+  <modeler_description>Using EMS code, this measure creates a crankcase heater electric equipment object for heat pumps and also air conditioners with number of compressor speeds greater than one.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -31,11 +37,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EED9BE34</checksum>
+      <checksum>96A459E2</checksum>
     </file>
   </files>
 </measure>

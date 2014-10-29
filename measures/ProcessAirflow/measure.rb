@@ -535,7 +535,133 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     userdefined_relhumratio.setDisplayName("Outdoor air relative humidity (0-1) above which windows will not open for natural ventilation.")
     userdefined_relhumratio.setDefaultValue(0.7)
     args << userdefined_relhumratio
-    
+
+    # Geometry
+    num_bedrooms = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("num_bedrooms",true)
+    num_bedrooms.setDisplayName("Number of bedrooms.")
+    num_bedrooms.setDefaultValue(3.0)
+    args << num_bedrooms
+
+    num_bathrooms = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("num_bathrooms",true)
+    num_bathrooms.setDisplayName("Number of bathrooms.")
+    num_bathrooms.setDefaultValue(2.0)
+    args << num_bathrooms
+
+    finished_floor_area = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("finished_floor_area",true)
+    finished_floor_area.setDisplayName("Finished floor area [ft^2].")
+    finished_floor_area.setDefaultValue(2700.0)
+    args << finished_floor_area
+
+    above_grade_finished_floor_area = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("above_grade_finished_floor_area",true)
+    above_grade_finished_floor_area.setDisplayName("Above grade finished floor area [ft^2].")
+    above_grade_finished_floor_area.setDefaultValue(2700.0)
+    args << above_grade_finished_floor_area
+
+    building_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("building_height",true)
+    building_height.setDisplayName("Height of building [ft].")
+    building_height.setDefaultValue(24.5)
+    args << building_height
+
+    stories = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("stories",true)
+    stories.setDisplayName("Number of stories.")
+    stories.setDefaultValue(2.0)
+    args << stories
+
+    window_area = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("window_area",true)
+    window_area.setDisplayName("Window area [ft^2].")
+    window_area.setDefaultValue(348.0)
+    args << window_area
+
+    livingspacevolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("livingspacevolume",true)
+    livingspacevolume.setDisplayName("Volume of living space [ft^3].")
+    livingspacevolume.setDefaultValue(21600.0)
+    args << livingspacevolume
+
+    livingspaceheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("livingspaceheight",true)
+    livingspaceheight.setDisplayName("Height of living space [ft].")
+    livingspaceheight.setDefaultValue(16.0)
+    args << livingspaceheight
+
+    livingspacearea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("livingspacearea",true)
+    livingspacearea.setDisplayName("Area of living space [ft^2].")
+    livingspacearea.setDefaultValue(2700.0)
+    args << livingspacearea
+
+    uavolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("uavolume",true)
+    uavolume.setDisplayName("Volume of unfinished attic [ft^3].")
+    uavolume.setDefaultValue(5250.0)
+    args << uavolume
+
+    uaheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("uaheight",true)
+    uaheight.setDisplayName("Height of unfinished attic [ft].")
+    uaheight.setDefaultValue(8.5)
+    args << uaheight
+
+    uaarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("uaarea",true)
+    uaarea.setDisplayName("Area of unfinished attic [ft^2].")
+    uaarea.setDefaultValue(1500.0)
+    args << uaarea
+
+    cvolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cvolume",true)
+    cvolume.setDisplayName("Volume of crawlspace [ft^3].")
+    cvolume.setDefaultValue(4800.0)
+    args << cvolume
+
+    cheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cheight",true)
+    cheight.setDisplayName("Height of crawlspace [ft].")
+    cheight.setDefaultValue(4.0)
+    args << cheight
+
+    carea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("carea",true)
+    carea.setDisplayName("Area of crawlspace [ft^2].")
+    carea.setDefaultValue(1200.0)
+    args << carea
+
+    gvolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gvolume",true)
+    gvolume.setDisplayName("Volume of garage [ft^3].")
+    gvolume.setDefaultValue(2400.0)
+    args << gvolume
+
+    gheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gheight",true)
+    gheight.setDisplayName("Height of garage [ft].")
+    gheight.setDefaultValue(8.0)
+    args << gheight
+
+    garea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("garea",true)
+    garea.setDisplayName("Area of garage [ft^2].")
+    garea.setDefaultValue(300.0)
+    args << garea
+
+    fbvolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fbvolume",true)
+    fbvolume.setDisplayName("Volume of finished basement [ft^3].")
+    fbvolume.setDefaultValue(9600.0)
+    args << fbvolume
+
+    fbheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fbheight",true)
+    fbheight.setDisplayName("Height of finished basement [ft].")
+    fbheight.setDefaultValue(8.0)
+    args << fbheight
+
+    fbarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fbarea",true)
+    fbarea.setDisplayName("Area of finished basement [ft^2].")
+    fbarea.setDefaultValue(1200.0)
+    args << fbarea
+
+    ufbvolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufbvolume",true)
+    ufbvolume.setDisplayName("Volume of unfinished basement [ft^3].")
+    ufbvolume.setDefaultValue(9600.0)
+    args << ufbvolume
+
+    ufbheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufbheight",true)
+    ufbheight.setDisplayName("Height of unfinished basement [ft].")
+    ufbheight.setDefaultValue(8.0)
+    args << ufbheight
+
+    ufbarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufbarea",true)
+    ufbarea.setDisplayName("Area of unfinished basement [ft^2].")
+    ufbarea.setDefaultValue(1200.0)
+    args << ufbarea
+
     return args
   end #end the arguments method
 
@@ -575,8 +701,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     mechVentHouseFanPower = runner.getDoubleArgumentValue("userdefinedfanpower",user_arguments)
     mechVentFractionOfASHRAE = runner.getDoubleArgumentValue("userdefinedfracofashrae",user_arguments)
     dryerExhaust = runner.getDoubleArgumentValue("userdefineddryerexhaust",user_arguments)
-    # tk temp below, has_cd should initially be set to false
-    has_cd = true
+    has_cd = false
     electricEquipments = workspace.getObjectsByType("ElectricEquipment".to_IddObjectType)
     electricEquipments.each do |electricEquipment|
       electricEquipment_name = electricEquipment.getString(0).to_s # Name
@@ -710,31 +835,31 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     cooling_set_point.CoolingSetpointWeekend = cooling_set_point.CoolingSetpointWeekday
 
     # temp code for testing
-    geometry.num_bedrooms = 3.0 # tk get this
-    geometry.finished_floor_area = 2700.0 # tk get this
-    geometry.above_grade_finished_floor_area = 2700.0 # tk get this
-    geometry.num_bathrooms = 2.0 # tk get this
-    geometry.building_height = 24.5 # tk get this
-    geometry.stories = 2.0 # tk get this
-    geometry.window_area = 348.0 # tk get this
-    living_space.volume = 21600.0 # tk get this
-    living_space.height = 16.0 # tk get this
-    living_space.area = 2700.0 # tk get this
-    unfinished_attic.volume = 5250.00 # tk get this
-    unfinished_attic.height = 8.5 # tk get this
-    unfinished_attic.area = 1500.0 # tk get this
-    crawlspace.volume = 4800.0 # tk get this
-    crawlspace.height = 4.0 # tk get this
-    crawlspace.area = 1200.0 # tk get this
-    garage.volume = 2400.0 # tk get this
-    garage.height = 8.0 # tk get this
-    garage.area = 300.0 # tk get this
-    finished_basement.volume = 9600.0 # tk get this
-    finished_basement.height = 8.0 # tk get this
-    finished_basement.area = 1200.0 # tk get this
-    space_unfinished_basement.volume = 9600.0 # tk get this
-    space_unfinished_basement.height = 8.0 # tk get this
-    space_unfinished_basement.area = 1200.0 # tk get this
+    geometry.num_bedrooms = runner.getDoubleArgumentValue("num_bedrooms",user_arguments)
+    geometry.num_bathrooms = runner.getDoubleArgumentValue("num_bathrooms",user_arguments)
+    geometry.finished_floor_area = runner.getDoubleArgumentValue("finished_floor_area",user_arguments)
+    geometry.above_grade_finished_floor_area = runner.getDoubleArgumentValue("above_grade_finished_floor_area",user_arguments)
+    geometry.building_height = runner.getDoubleArgumentValue("building_height",user_arguments)
+    geometry.stories = runner.getDoubleArgumentValue("stories",user_arguments)
+    geometry.window_area = runner.getDoubleArgumentValue("window_area",user_arguments)
+    living_space.volume = runner.getDoubleArgumentValue("livingspacevolume",user_arguments)
+    living_space.height = runner.getDoubleArgumentValue("livingspaceheight",user_arguments)
+    living_space.area = runner.getDoubleArgumentValue("livingspacearea",user_arguments)
+    unfinished_attic.volume = runner.getDoubleArgumentValue("uavolume",user_arguments)
+    unfinished_attic.height = runner.getDoubleArgumentValue("uaheight",user_arguments)
+    unfinished_attic.area = runner.getDoubleArgumentValue("uaarea",user_arguments)
+    crawlspace.volume = runner.getDoubleArgumentValue("cvolume",user_arguments)
+    crawlspace.height = runner.getDoubleArgumentValue("cheight",user_arguments)
+    crawlspace.area = runner.getDoubleArgumentValue("carea",user_arguments)
+    garage.volume = runner.getDoubleArgumentValue("gvolume",user_arguments)
+    garage.height = runner.getDoubleArgumentValue("gheight",user_arguments)
+    garage.area = runner.getDoubleArgumentValue("garea",user_arguments)
+    finished_basement.volume = runner.getDoubleArgumentValue("fbvolume",user_arguments)
+    finished_basement.height = runner.getDoubleArgumentValue("fbheight",user_arguments)
+    finished_basement.area = runner.getDoubleArgumentValue("fbarea",user_arguments)
+    space_unfinished_basement.volume = runner.getDoubleArgumentValue("ufbvolume",user_arguments)
+    space_unfinished_basement.height = runner.getDoubleArgumentValue("ufbheight",user_arguments)
+    space_unfinished_basement.area = runner.getDoubleArgumentValue("ufbarea",user_arguments)
     #
 
     # Create the sim object
@@ -823,7 +948,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ems << "
     ZoneVentilation:DesignFlowRate,
       Natural Ventilation,                                        !- Name
-      living,                                                     !- Zone Name
+      #{selected_living},                                         !- Zone Name
       NatVent,                                                    !- Schedule Name
       Flow/Zone,                                                  !- Design Flow Rate Calculation Method
       0.001,                                                      !- Design Flow rate {m^3/s}
@@ -836,7 +961,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       1,                                                          !- Constant Term Coefficient
       0,                                                          !- Temperature Term Coefficient
       0,                                                          !- Velocity Term Coefficient
-      0;                                                          !- Velocity Squared Term Coefficient" # tk living should be selected_living
+      0;                                                          !- Velocity Squared Term Coefficient"
 
     # Sensors
 

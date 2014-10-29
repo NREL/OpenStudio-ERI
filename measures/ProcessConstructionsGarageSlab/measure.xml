@@ -2,6 +2,7 @@
   <name>Process Constructions Garage Slab</name>
   <uid>3da62049-50f9-4ed0-b05a-6b89a202482d</uid>
   <version_id>5c967f9b-ec72-4a9d-b7f8-8d6b38eac231</version_id>
+  <display_name>ProcessConstructionsGarageSlab</display_name>
   <description>This measure creates slab constructions for the garage floor.</description>
   <modeler_description>Calculates material layer properties of slab constructions for the garage floor. Finds surfaces adjacent to the garage and sets applicable constructions.</modeler_description>
   <provenances/>

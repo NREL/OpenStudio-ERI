@@ -149,10 +149,10 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	args << selected_slabins
 		
 	# Perimeter / Exterior Insulation
-	#make a choice argument for perimeter / exterior / insulation
-	selected_slabperiext = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedslabperiext", material_handles, material_display_names, false)
-	selected_slabperiext.setDisplayName("Slab perimeter or exterior insulation. For manually entering slab perimeter or exterior insulation properties, leave blank.")
-	args << selected_slabperiext	
+	# #make a choice argument for perimeter / exterior / insulation
+	# selected_slabperiext = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedslabperiext", material_handles, material_display_names, false)
+	# selected_slabperiext.setDisplayName("Slab perimeter or exterior insulation. For manually entering slab perimeter or exterior insulation properties, leave blank.")
+	# args << selected_slabperiext
 
 	#make a double argument for slab perimeter / exterior insulation R-value
 	userdefined_slabperiextr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabperiextr", false)
@@ -165,10 +165,10 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	args << userdefined_slabperiextwidthdepth
 	
 	# Gap
-	#make a choice argument for slab perimeter gap
-	selected_slabgap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedslabgap", material_handles, material_display_names, false)
-	selected_slabgap.setDisplayName("Perimeter or whole slab gap. For manually entering slab gap properties, leave blank.")
-	args << selected_slabgap	
+	# #make a choice argument for slab perimeter gap
+	# selected_slabgap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedslabgap", material_handles, material_display_names, false)
+	# selected_slabgap.setDisplayName("Perimeter or whole slab gap. For manually entering slab gap properties, leave blank.")
+	# args << selected_slabgap
 	
 	#make a double argument for slab perimeter gap R-value
 	userdefined_slabgapr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabgapr", false)
@@ -182,10 +182,10 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	args << userdefined_slabwholer
 	
 	# Carpet
-	#make a choice argument for carpet pad R-value
-	selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-	selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-	args << selected_carpet
+	# #make a choice argument for carpet pad R-value
+	# selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
+	# selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
+	# args << selected_carpet
 	
 	#make a double argument for carpet pad R-value
 	userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
@@ -198,6 +198,17 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	userdefined_carpetfrac.setDisplayName("Carpet floor fraction [frac].")
 	userdefined_carpetfrac.setDefaultValue(0.8)
 	args << userdefined_carpetfrac
+
+    # Geometry
+    userdefinedslabarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabarea", true)
+    userdefinedslabarea.setDisplayName("Area of the slab foundation [ft^2].")
+    userdefinedslabarea.setDefaultValue(1200.0)
+    args << userdefinedslabarea
+
+    userdefinedslabextperim = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabextperim", true)
+    userdefinedslabextperim.setDisplayName("Perimeter of the slab foundation [ft].")
+    userdefinedslabextperim.setDefaultValue(140.0)
+    args << userdefinedslabextperim
 	
     return args
   end #end the arguments method
@@ -313,6 +324,10 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 
 	# Create the sim object
 	sim = Sim.new(model)
+
+  slab.area = runner.getDoubleArgumentValue("userdefinedslabarea",user_arguments)
+  slab.ext_perimeter = runner.getDoubleArgumentValue("userdefinedslabextperim",user_arguments)
+
 	
 	# Process the slab
 	slab = sim._processConstructionsSlab(slab, carpet)

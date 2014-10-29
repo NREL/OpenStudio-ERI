@@ -45,6 +45,18 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     attr_accessor(:living_space_area, :finished_basement_area)
   end
 
+  class LivingSpace
+    def initialize
+    end
+    attr_accessor(:area)
+  end
+
+  class FinishedBasement
+    def initialize
+    end
+    attr_accessor(:area)
+  end
+
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -99,16 +111,10 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
       material_display_names << key
     end
 
-    #make a double argument for area of partition wall
-    userdefined_partwallarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartwallarea", true)
-    userdefined_partwallarea.setDisplayName("The total exposed area of partition walls (including both sides) [ft^2].")
-    #userdefined_partwallarea.setDefaultValue() tk get foot print of building
-    args << userdefined_partwallarea
-
-    #make a choice argument for partition wall mass
-    selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
-    selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
-    args << selected_partitionwallmass
+    # #make a choice argument for partition wall mass
+    # selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
+    # selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
+    # args << selected_partitionwallmass
 
     #make a double argument for partition wall mass thickness
     userdefined_partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassth", false)
@@ -134,6 +140,23 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     userdefined_partitionwallmasssh.setDefaultValue(0.2)
     args << userdefined_partitionwallmasssh
 
+    #make a double argument for partition wall fraction of floor area
+    userdefined_partitionwallfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallfrac", false)
+    userdefined_partitionwallfrac.setDisplayName("Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.")
+    userdefined_partitionwallfrac.setDefaultValue(1.0)
+    args << userdefined_partitionwallfrac
+
+    # Geometry
+    userdefinedlivingarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedlivingarea", true)
+    userdefinedlivingarea.setDisplayName("The area of the living space [ft^2].")
+    userdefinedlivingarea.setDefaultValue(2700.0)
+    args << userdefinedlivingarea
+
+    userdefinedfbsmtarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtarea", true)
+    userdefinedfbsmtarea.setDisplayName("The area of the finished basement [ft^2].")
+    userdefinedfbsmtarea.setDefaultValue(1200.0)
+    args << userdefinedfbsmtarea
+
     return args
   end #end the arguments method
 
@@ -155,9 +178,6 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     if not selected_fbsmt.empty?
       hasFinishedBasement = true
     end
-
-    # Area
-    userdefined_partwallarea = runner.getDoubleArgumentValue("userdefinedpartwallarea",user_arguments)
 
     # Partition Wall Mass
     selected_partitionwallmass = runner.getOptionalWorkspaceObjectChoiceValue("selectedpartitionwallmass",user_arguments,model)
@@ -185,9 +205,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
       partitionWallMassSpecificHeat = userdefined_partitionwallmasssh
     end
 
-    #footprint = tk get this value
-    #partitionWallMassFractionOfFloorArea = userdefined_partwallarea / footprint
-    partitionWallMassFractionOfFloorArea = 1.0
+    partitionWallMassFractionOfFloorArea = runner.getDoubleArgumentValue("userdefinedpartitionwallfrac",user_arguments)
 
     partitionWallMassPCMType = nil
 
@@ -196,9 +214,14 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
 
     # Create the sim object
     sim = Sim.new(model)
+    living_space = LivingSpace.new
+    finished_basement = FinishedBasement.new
+
+    living_space.area = runner.getDoubleArgumentValue("userdefinedlivingarea",user_arguments)
+    finished_basement.area = runner.getDoubleArgumentValue("userdefinedfbsmtarea",user_arguments)
 
     # Process the partition wall
-    partition_wall_mass = sim._processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass)
+    partition_wall_mass = sim._processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
 
     # Initialize variables for drawn partition wall areas
     livingPartWallDrawnArea = 0 # Drawn partition wall area of the living space
@@ -214,8 +237,8 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     #       # End drawn partition wall area sumation loop
 
     # temp
-    livingPartWallDrawnArea = 0
-    fbsmtPartWallDrawnArea = 0
+    livingPartWallDrawnArea = partition_wall_mass.living_space_area / 2.0
+    fbsmtPartWallDrawnArea = partition_wall_mass.finished_basement_area / 2.0
     #
 
     # ConcPCMPartWall

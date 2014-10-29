@@ -1,9 +1,47 @@
 <measure>
-  <name>Process Constructions Windows</name>
+  <schema_version>3.0</schema_version>
+  <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>56df87bd-6cc5-448e-a8ee-dc812976a1d7</version_id>
+  <version_id>e778fc36-db22-409e-b886-134e15099888</version_id>
+  <xml_checksum>6FAFA9DE</xml_checksum>
+  <class_name>ProcessConstructionsWindows</class_name>
+  <display_name>ProcessConstructionsWindows</display_name>
   <description>This measure creates constructions for windows. This measure also creates the interior shading schedule, which is based on shade multipliers and the heating and cooling season logic defined in the Building America House Simulation Protocols.</description>
   <modeler_description>Calculates material layer properties of constructions for windows. Finds sub surfaces and sets applicable constructions. Using interior heating and cooling shading multipliers and the Building America heating and cooling season logic, creates schedule rulesets for window shade and shading control.</modeler_description>
+  <arguments>
+    <argument>
+      <name>ufactor</name>
+      <display_name>U-Value [Btu/hr-ft^2-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>shgc</name>
+      <display_name>SHGC.</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedintshadeheatingmult</name>
+      <display_name>Heating shade multiplier.</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.7</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedintshadecoolingmult</name>
+      <display_name>Cooling shade multiplier.</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.7</default_value>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>
@@ -31,11 +69,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>52F02E7E</checksum>
+      <checksum>C554990C</checksum>
     </file>
   </files>
 </measure>
