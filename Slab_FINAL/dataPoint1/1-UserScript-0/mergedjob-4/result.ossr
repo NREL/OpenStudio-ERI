@@ -1,0 +1,31 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsDoors</Channel>
+      <Message>Sub Surface 'Sub Surface 1' of Sub Surface Type 'Door', attached to Surface 'Surface 38' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'LivingDoors'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsDoors</Channel>
+      <Message>Sub Surface 'Sub Surface 2' of Sub Surface Type 'Door', attached to Surface 'Surface 20' which is attached to Space 'first floor garage' of Space Type 'garage spacetype', was assigned Construction 'GarageDoors'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{1d1bdb77-c5d9-4b7a-8f39-7ec6da1a675f}</UUID>
+      <VersionUUID>{e28807cd-4d0f-4a3e-b2f7-c0d3af54ccc7}</VersionUUID>
+      <Name>selectedliving</Name>
+      <Source>ProcessConstructionsDoors</Source>
+      <ValueType>String</ValueType>
+      <Value>{d1bd02b9-70d1-4abf-b189-d328d05759df}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{5f719892-8a2c-4647-a42a-c308f14b95ed}</UUID>
+      <VersionUUID>{2449e8cd-74ed-430a-9226-2a703dc02f25}</VersionUUID>
+      <Name>selectedgarage</Name>
+      <Source>ProcessConstructionsDoors</Source>
+      <ValueType>String</ValueType>
+      <Value>{37474fb7-61c6-4919-a4f9-39cdee4eebb4}</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

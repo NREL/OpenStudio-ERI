@@ -599,6 +599,13 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     fan.setFanEfficiency(supply.eff)
     fan.setPressureRise(supply.static)
 
+	#if acOutputCapacity != "Autosize"
+	#	capacity = furnaceOutputCapacity #Btu/hr
+	#	deltaT = furnaceMaxSupplyTemp - 70.0 # F
+	#	flowrate = ((60.0 *capacity) / (8.273 * 0.24 * deltaT))/0.000471947443 #flow rate in cfm
+	#	fan.setMaximumFlowRate(flowrate)
+	#end
+	
     # if test_suite.min_test_ideal_systems or air_conditioner.IsIdealAC
     #   fan.setMaximumFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate + 0.05,"cfm","m^3/s").get)
     # else

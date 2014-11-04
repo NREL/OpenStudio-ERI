@@ -1,0 +1,257 @@
+{
+    "job_params": [
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "--argumentName=selectedgarage"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue={37474fb7-61c6-4919-a4f9-39cdee4eebb4}"
+                        },
+                        "param_index": 1
+                    }
+                ],
+                "value": "ruby_scriptparameters"
+            },
+            "param_index": 0
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "children": [
+                                                        {
+                                                            "param": {
+                                                                "value": "in.osm"
+                                                            },
+                                                            "param_index": 0
+                                                        }
+                                                    ],
+                                                    "value": ".*\\.osm"
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "All"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "Last"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_inputfiles"
+            },
+            "param_index": 1
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "-I"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "C:/Program Files (x86)/OpenStudio 1.5.0/Ruby"
+                        },
+                        "param_index": 1
+                    }
+                ],
+                "value": "ruby_toolparameters"
+            },
+            "param_index": 2
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "value": ""
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "osm"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "osm"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_copyrequired"
+            },
+            "param_index": 3
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "user_script.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsGarageSlab/measure.rb"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "measure.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsGarageSlab/measure.rb"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/util.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsGarageSlab/resources/util.rb"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/weather.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsGarageSlab/resources/weather.rb"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/sim.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsGarageSlab/resources/sim.rb"
+                        },
+                        "param_index": 4
+                    }
+                ],
+                "value": "ruby_requiredfiles"
+            },
+            "param_index": 4
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "{2326795b-7129-486a-90f3-40988c4216a7}"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "original_job_uuid"
+            },
+            "param_index": 5
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "true"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_isuserscriptjob"
+            },
+            "param_index": 6
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "C:/Program Files (x86)/OpenStudio 1.5.0/Ruby/openstudio/runmanager/rubyscripts/UserScriptAdapter.rb"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_scriptfile"
+            },
+            "param_index": 7
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "{3da62049-50f9-4ed0-b05a-6b89a202482d}"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "bcl_measure_uuid"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_bclmeasureparameters"
+            },
+            "param_index": 8
+        }
+    ],
+    "metadata": {
+        "openstudio_version": "1.5.0"
+    }
+}

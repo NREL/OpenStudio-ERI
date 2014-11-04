@@ -1,0 +1,437 @@
+{
+    "job_params": [
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "--argumentName=selectedliving"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue={d1bd02b9-70d1-4abf-b189-d328d05759df}"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=selectedattic"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue={a57e9a2b-e5fd-41c9-9b62-f35844eeaed6}"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=selecteduains"
+                        },
+                        "param_index": 4
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=Uninsulated"
+                        },
+                        "param_index": 5
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedceilroofinsthickness"
+                        },
+                        "param_index": 6
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0"
+                        },
+                        "param_index": 7
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefineduaceilroofr"
+                        },
+                        "param_index": 8
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0"
+                        },
+                        "param_index": 9
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=selecteduaceiljoistthickness"
+                        },
+                        "param_index": 10
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=3.5"
+                        },
+                        "param_index": 11
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefineduaceilff"
+                        },
+                        "param_index": 12
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.07"
+                        },
+                        "param_index": 13
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=selecteduaroofframethickness"
+                        },
+                        "param_index": 14
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=7.25"
+                        },
+                        "param_index": 15
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefineduaroofff"
+                        },
+                        "param_index": 16
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.07"
+                        },
+                        "param_index": 17
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedrigidinsthickness"
+                        },
+                        "param_index": 18
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0"
+                        },
+                        "param_index": 19
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedrigidinsr"
+                        },
+                        "param_index": 20
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0"
+                        },
+                        "param_index": 21
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedhasradiantbarrier"
+                        },
+                        "param_index": 22
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=false"
+                        },
+                        "param_index": 23
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedgypthickness"
+                        },
+                        "param_index": 24
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.5"
+                        },
+                        "param_index": 25
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedgyplayers"
+                        },
+                        "param_index": 26
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=1"
+                        },
+                        "param_index": 27
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedroofmatthermalabs"
+                        },
+                        "param_index": 28
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.91"
+                        },
+                        "param_index": 29
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedroofmatabs"
+                        },
+                        "param_index": 30
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.85"
+                        },
+                        "param_index": 31
+                    }
+                ],
+                "value": "ruby_scriptparameters"
+            },
+            "param_index": 0
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "children": [
+                                                        {
+                                                            "param": {
+                                                                "value": "in.osm"
+                                                            },
+                                                            "param_index": 0
+                                                        }
+                                                    ],
+                                                    "value": ".*\\.osm"
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "All"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "Last"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_inputfiles"
+            },
+            "param_index": 1
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "-I"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "C:/Program Files (x86)/OpenStudio 1.5.0/Ruby"
+                        },
+                        "param_index": 1
+                    }
+                ],
+                "value": "ruby_toolparameters"
+            },
+            "param_index": 2
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "value": ""
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "osm"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "osm"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_copyrequired"
+            },
+            "param_index": 3
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "user_script.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsUnfinishedAttic/measure.rb"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "measure.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsUnfinishedAttic/measure.rb"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/sim.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsUnfinishedAttic/resources/sim.rb"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/util.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsUnfinishedAttic/resources/util.rb"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/weather.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/OS_BEopt_GitHub/OpenStudio-Beopt/Slab_FINAL/scripts/ProcessConstructionsUnfinishedAttic/resources/weather.rb"
+                        },
+                        "param_index": 4
+                    }
+                ],
+                "value": "ruby_requiredfiles"
+            },
+            "param_index": 4
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "{dbb037a9-40dc-4505-bd6d-3891869b1734}"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "original_job_uuid"
+            },
+            "param_index": 5
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "true"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_isuserscriptjob"
+            },
+            "param_index": 6
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "C:/Program Files (x86)/OpenStudio 1.5.0/Ruby/openstudio/runmanager/rubyscripts/UserScriptAdapter.rb"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_scriptfile"
+            },
+            "param_index": 7
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "{235ba3ce-dd83-4287-aa0e-435dc1cbf1a7}"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "bcl_measure_uuid"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_bclmeasureparameters"
+            },
+            "param_index": 8
+        }
+    ],
+    "metadata": {
+        "openstudio_version": "1.5.0"
+    }
+}

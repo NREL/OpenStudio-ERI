@@ -1,0 +1,143 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>process_constructions_interior_insulated_floors</name>
+  <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
+  <version_id>fc85a4d0-43a5-4953-9c1f-13ab45bde0ca</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsInteriorInsulatedFloors</class_name>
+  <display_name>ProcessConstructionsInteriorInsulatedFloors</display_name>
+  <description>This measure creates insulated constructions for the interzonal floors between the living space and the garage.</description>
+  <modeler_description>Calculates material layer properties of insulated constructions for the interzonal floors between the living space and the garage. Finds surfaces adjacent to the living space and garage and sets applicable constructions.</modeler_description>
+  <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Of what space type is the living space?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>selectedgarage</name>
+      <display_name>Of what space type is the garage?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>userdefinedinstcavr</name>
+      <display_name>R-value of cavity insulation [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>userdefinedfloorff</name>
+      <display_name>Interzonal floor framing factor [frac].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.13</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormassth</name>
+      <display_name>Floor mass thickness [in].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.625</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormasscond</name>
+      <display_name>Floor mass conductivity [Btu-in/h-ft^2-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.8004</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormassdens</name>
+      <display_name>Floor mass density [lb/ft^3].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>34</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormasssh</name>
+      <display_name>Floor mass specific heat [Btu/lb-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.29</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcarpetr</name>
+      <display_name>Carpet pad R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2.08</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcarpetfrac</name>
+      <display_name>Carpet floor fraction [frac].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.8</default_value>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Opaque</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ProcessConstructionsInteriorInsulatedFloors_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CCAC69DB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>04E0DF87</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EA4777E</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>98150D16</checksum>
+    </file>
+  </files>
+</measure>

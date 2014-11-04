@@ -1,15 +1,9 @@
 <measure>
-  <schema_version>3.0</schema_version>
-  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
-  <name>process_airflow</name>
+  <name>process airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>9c1e76a0-03cd-42cb-8d8e-10e2eed900f9</version_id>
-  <xml_checksum>2AC0F979</xml_checksum>
-  <class_name>ProcessAirflow</class_name>
-  <display_name>ProcessAirflow</display_name>
+  <version_id>72796b91-23d8-4e7d-a3eb-516b23c06f04</version_id>
   <description>This measure processes infiltration for the living space, garage, finished basement, unfinished basement, crawlspace, and unfinished attic. It also processes mechanical ventilation and natural ventilation for the living space.</description>
   <modeler_description>Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation).</modeler_description>
-  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Infiltration</tag>
@@ -37,12 +31,11 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7EAC0AB7</checksum>
+      <checksum>AC1FAE20</checksum>
     </file>
   </files>
 </measure>

@@ -1,0 +1,214 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>add_oS_water_heater_mixed_storage_gas</name>
+  <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
+  <version_id>c0d08306-561e-46c4-bdfe-00f5dd77f919</version_id>
+  <xml_checksum>9882CBDB</xml_checksum>
+  <class_name>AddOSWaterHeaterMixedStorageGas</class_name>
+  <display_name>AddOSWaterHeaterMixedStorageGas</display_name>
+  <description>This measure adds an OS:WaterHeater:Mixed object representing a Natural Gas Storage Water Heater. Users will be asked to provide the following arguments: 1) Use case; 2) Number of Bedrooms; 3) Number of Bathrooms; 4) Plant Loop Assignment; 5) Tank Volume; 6) Energy Factor; 7) Water Temperature Setpoint; 8) Water Heater Location; 9) Water Heater Capacity; 10) Recovery Efficiency; 11) Heater Fuel Type </description>
+  <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a Natural Gas Storage Water Heater. The object will either create a new plant loop, or be assigned to an existing plant loop. The object will be configured be to use the user arguments. The EIO file (generated upon successful simulation) can be viewed to compare the calculated industry standard ratings of Recovery Efficiency and Energy Factor for water heater objects as compared to the user input values for these ratings.</modeler_description>
+  <arguments>
+    <argument>
+      <name>use_case</name>
+      <display_name>How will this measure be used?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>Create a water heater representing B10 Benchmark standard</value>
+          <display_name>Create a water heater representing B10 Benchmark standard</display_name>
+        </choice>
+        <choice>
+          <value>Create a water heater representing NCTH standard</value>
+          <display_name>Create a water heater representing NCTH standard</display_name>
+        </choice>
+        <choice>
+          <value>Create a water heater representing BA Pre-Retrofit Case standard</value>
+          <display_name>Create a water heater representing BA Pre-Retrofit Case standard</display_name>
+        </choice>
+        <choice>
+          <value>General</value>
+          <display_name>General</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>number_of_bedrooms</name>
+      <display_name>Number of Bedrooms in the Proposed Home</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>1</value>
+          <display_name>1</display_name>
+        </choice>
+        <choice>
+          <value>2</value>
+          <display_name>2</display_name>
+        </choice>
+        <choice>
+          <value>3</value>
+          <display_name>3</display_name>
+        </choice>
+        <choice>
+          <value>4</value>
+          <display_name>4</display_name>
+        </choice>
+        <choice>
+          <value>5</value>
+          <display_name>5</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>number_of_bathrooms</name>
+      <display_name>Number of Bathrooms in the Proposed Home</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>1</value>
+          <display_name>1</display_name>
+        </choice>
+        <choice>
+          <value>1.5</value>
+          <display_name>1.5</display_name>
+        </choice>
+        <choice>
+          <value>2</value>
+          <display_name>2</display_name>
+        </choice>
+        <choice>
+          <value>2.5</value>
+          <display_name>2.5</display_name>
+        </choice>
+        <choice>
+          <value>3</value>
+          <display_name>3</display_name>
+        </choice>
+        <choice>
+          <value>3.5 or more</value>
+          <display_name>3.5 or more</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>existing_plant_loop_name</name>
+      <display_name>Plant Loop to assign Water heater as a Supply Equipment</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>New Plant Loop</value>
+          <display_name>New Plant Loop</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>storage_tank_volume</name>
+      <display_name>Volume of the Storage Tank (gallons) of the Gas Hot Water Heater. Set to 0 to have Storage tank volume autosized. This field is ignored for NCTH and B10 protocols.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>shw_setpoint_temperature</name>
+      <display_name>Hot Water Temperature Setpoint (Deg F).</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>water_heater_location</name>
+      <display_name>Thermal Zone where the Gas Storage Water Heater is located</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>water_heater_capacity</name>
+      <display_name>The nominal capacity [kBtu/hr] of the gas storage water heater. Set to 0 to have this field autosized. This field is ignored for NCTH and B10 protocols.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>rated_energy_factor</name>
+      <display_name>Rated Energy Factor of Gas Storage Tank Water Heater. This field is ignored for NCTH and B10 protocols.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>water_heater_recovery_efficiency</name>
+      <display_name>Rated Recovery Efficiency of the water heater equal to the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the DOE in 10 CFR Part 430, Appendix E to Subpart B. Enter a number between 0 and 1.0. This is used to calculate the thermal efficiency. Users wil need to review the E+out.eio file to confirm Calculated recovery efficiency - Rated recovery efficiency.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.8</default_value>
+    </argument>
+    <argument>
+      <name>water_heater_fuel_type</name>
+      <display_name>The Type of Fuel used for heating.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>Natural Gas</value>
+          <display_name>Natural Gas</display_name>
+        </choice>
+        <choice>
+          <value>Propane Gas</value>
+          <display_name>Propane Gas</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Service Water Heating.Water Heating</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ba_protocol_table_8_page_13.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>61747C72</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.4.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>34E96FA2</checksum>
+    </file>
+    <file>
+      <filename>AddOSWaterHeaterMixedStorageGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>896E9F53</checksum>
+    </file>
+  </files>
+</measure>

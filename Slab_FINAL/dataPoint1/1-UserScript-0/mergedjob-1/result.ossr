@@ -1,0 +1,51 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 15', attached to Space 'attic_above second floor living' of Space Type 'attic spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 14', attached to Space 'attic_above second floor living' of Space Type 'attic spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 32', attached to Space 'attic_above garage' of Space Type 'attic spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 21', attached to Space 'first floor garage' of Space Type 'garage spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 10', attached to Space 'first floor garage' of Space Type 'garage spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 18', attached to Space 'first floor garage' of Space Type 'garage spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsExteriorUninsulatedWalls</Channel>
+      <Message>Surface 'Surface 20', attached to Space 'first floor garage' of Space Type 'garage spacetype' and with Surface Type 'Wall' and Outside Boundary Condition 'Outdoors', was assigned Construction 'ExtUninsUnfinWall'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{a3920ca8-8cf8-4130-ba04-589c3d11d0f5}</UUID>
+      <VersionUUID>{51121f46-1f10-460e-8325-3b86ec86bf8d}</VersionUUID>
+      <Name>selectedattic</Name>
+      <Source>ProcessConstructionsExteriorUninsulatedWalls</Source>
+      <ValueType>String</ValueType>
+      <Value>{a57e9a2b-e5fd-41c9-9b62-f35844eeaed6}</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{e038f430-af72-41fe-9553-fc5e554192ea}</UUID>
+      <VersionUUID>{a77f4fad-fed6-4b19-8791-38f6345b79a6}</VersionUUID>
+      <Name>selectedgarage</Name>
+      <Source>ProcessConstructionsExteriorUninsulatedWalls</Source>
+      <ValueType>String</ValueType>
+      <Value>{37474fb7-61c6-4919-a4f9-39cdee4eebb4}</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

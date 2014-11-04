@@ -251,7 +251,7 @@ def get_wood_stud_wall_r_assembly(category, prefix, gypsumThickness, gypsumNumLa
 	
     # For foundation walls, only add OSB if there is wall insulation.
     # This is consistent with the NREMDB costs.
-    if wallCavityInsRvalueInstalled == 0 and rigidInsRvalue == 0
+    if prefix != "WS" and wallCavityInsRvalueInstalled == 0 and rigidInsRvalue == 0
         hasOSB = false
 	end
 	
@@ -660,11 +660,11 @@ class Get_films_constant
     end
 
     def flat_reduced
-      return @floor_average
+      return @flat_reduced
     end
 
     def floor_average
-      return @floor_reduced
+      return @floor_average
     end
 
     def floor_reduced
@@ -701,6 +701,40 @@ class Sim
     end
 	end
 
+  def _getGroundTemperatures
+    # Return monthly ground temperatures.
+
+    # This correlation is the same that is used in DOE-2's src\WTH.f file, subroutine GTEMP.
+    monthly_temps = @weather.data.MonthlyAvgDrybulbs
+    annual_temp = @weather.data.AnnualAvgDrybulb
+
+    amon = [15.0, 46.0, 74.0, 95.0, 135.0, 166.0, 196.0, 227.0, 258.0, 288.0, 319.0, 349.0]
+    po = 0.6
+    dif = 0.025
+    p = OpenStudio::convert(1.0,"yr","hr").get
+
+    beta = Math::sqrt(Math::PI / (p * dif)) * 10.0
+    x = Math::exp(-beta)
+    x2 = x * x
+    s = Math::sin(beta)
+    c = Math::cos(beta)
+    y = (x2 - 2.0 * x * c + 1.0) / (2.0 * beta ** 2.0)
+    gm = Math::sqrt(y)
+    z = (1.0 - x * (c + s)) / (1.0 - x * (c - s))
+    phi = Math::atan(z)
+    bo = (monthly_temps.max - monthly_temps.min) * 0.5
+
+    ground_temps = []
+    (0...12).to_a.each do |i|
+      theta = amon[i] * 24.0
+      ground_temps << OpenStudio::convert(annual_temp - bo * Math::cos(2.0 * Math::PI / p * theta - po - phi) * gm + 460.0,"R","F").get
+    end
+
+    return ground_temps, annual_temp
+
+  end
+
+	
   def _processHeatingCoolingSeasons(misc, schedules)
     # Assigns monthly heating and cooling seasons.
 
@@ -833,12 +867,66 @@ class Sim
 
     constants = Constants.new
 
-    if not ish.IntShadeCoolingMonths.nil?
-      cooling_season = ish.IntShadeCoolingMonths.item # TODO: what is this?
-    else
-      cooling_season = [0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0]
+    #if not ish.IntShadeCoolingMonths.nil?
+    #  cooling_season = ish.IntShadeCoolingMonths.item # TODO: what is this?
+    #else
+    #  cooling_season = [0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0]
+    #end
+
+	monthly_temps = @weather.data.MonthlyAvgDrybulbs
+    heat_design_db = @weather.design.HeatingDrybulb
+
+    # create basis lists with zero for every month
+    cooling_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+    heating_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+
+    monthly_temps.each_with_index do |temp, i|
+      if temp < 66.0
+        heating_season_temp_basis[i] = 1.0
+      elsif temp >= 66.0
+        cooling_season_temp_basis[i] = 1.0
+      end
+
+      if (i == 0 or i == 11) and heat_design_db < 59.0
+        heating_season_temp_basis[i] = 1.0
+      elsif i == 6 or i == 7
+        cooling_season_temp_basis[i] = 1.0
+      end
     end
 
+    cooling_season = Array.new(monthly_temps.length, 0.0)
+    heating_season = Array.new(monthly_temps.length, 0.0)
+
+    monthly_temps.each_with_index do |temp, i|
+      # Heating overlaps with cooling at beginning of summer
+      if i == 0 # January
+        prevmonth = 11 # December
+      else
+        prevmonth = i - 1
+      end
+
+      if (heating_season_temp_basis[i] == 1.0 or (cooling_season_temp_basis[prevmonth] == 0.0 and cooling_season_temp_basis[i] == 1.0))
+        heating_season[i] = 1.0
+      else
+        heating_season[i] = 0.0
+      end
+
+      if (cooling_season_temp_basis[i] == 1.0 or (heating_season_temp_basis[prevmonth] == 0.0 and heating_season_temp_basis[i] == 1.0))
+        cooling_season[i] = 1.0
+      else
+        cooling_season[i] = 0.0
+      end
+    end
+
+    # Find the first month of cooling and add one month
+    (1...12).to_a.each do |i|
+      if cooling_season[i] == 1.0
+        cooling_season[i - 1] = 1.0
+        break
+      end
+    end
+
+	
     window_shade_multiplier = []
     window_shade_cooling_season = cooling_season
     (0...constants.MonthNames.length).to_a.each do |i|
@@ -1080,10 +1168,10 @@ class Sim
 
       if space.inf_method == constants.InfMethodSG
 
-        space.f_s_SG = 2 / 3 * (1 + space.hor_leak_frac / 2) * (2 * space.neutral_level * (1 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1 - space.neutral_level) ** 0.5)
-        space.f_w_SG = ws.shielding_coef * (1 - space.hor_leak_frac) ** (1 / 3) * space.f_t_SG
-        space.C_s_SG = space.f_s_SG ** 2 * constants.g * space.height / (si.assumed_inside_temp + 460.0)
-        space.C_w_SG = space.f_w_SG ** 2
+        space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_leak_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
+        space.f_w_SG = ws.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
+        space.C_s_SG = space.f_s_SG ** 2.0 * constants.g * space.height / (si.assumed_inside_temp + 460.0)
+        space.C_w_SG = space.f_w_SG ** 2.0
         space.ELA = space.SLA * space.area # ft^2
 
       elsif space.inf_method == constants.InfMethodASHRAE
@@ -1099,7 +1187,7 @@ class Sim
 
     end
 
-    return si, living_space, ws
+    return si, living_space, ws, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic
 
   end
 
@@ -2120,8 +2208,8 @@ class Sim
 		slab = SlabPerimeterConductancesByType(slab)
 		
 		# Calculate Slab exterior perimeter and slab area
-		slab.ext_perimeter = 0 # ft
-		slab.area = 0 # ft
+		# slab.ext_perimeter = 0 # ft
+		# slab.area = 0 # ft
 		
         # for floor in geometry.floors.floor:
             # if self._getSpace(floor.space_above).finished and \
@@ -2130,8 +2218,8 @@ class Sim
                 # self.slab.area += floor.area
 		
 		# temp tk
-		slab.ext_perimeter = 154.0
-		slab.area = 1482.0
+		# slab.ext_perimeter = 154.0
+		# slab.area = 1482.0
 		#
 
 		slab.slab_carp_ext_perimeter = slab.ext_perimeter * carpet.CarpetFloorFraction
@@ -2227,7 +2315,7 @@ class Sim
 		
 		# crawlspace_conduction = calc_crawlspace_wall_conductance(cs.CrawlWallContInsRvalueNominal, _getSpace(Constants::SpaceCrawl).height) # tk _getSpace
 		# temp tk
-		crawlspace_conduction = calc_crawlspace_wall_conductance(cs.CrawlWallContInsRvalueNominal, 4)
+		crawlspace_conduction = calc_crawlspace_wall_conductance(cs.CrawlWallContInsRvalueNominal, cs.height)
 		#
 		
 		cci.crawl_ceiling_Rvalue = get_crawlspace_ceiling_r_assembly(cs, carpet, floor_mass)
@@ -2249,8 +2337,8 @@ class Sim
 		end
 		
 		# Calculate Exterior Crawlspace Wall Area and PerimeterSlabInsulation
-		crawlspace_wall_area = 0 # ft^2
-		cs.ext_perimeter = 0 # ft^2
+		# crawlspace_wall_area = 0 # ft^2
+		# cs.ext_perimeter = 0 # ft^2
 
     # spaces = @model.getSpaces
     # selected_crawlspace.each do |selected_spacetype|
@@ -2281,8 +2369,8 @@ class Sim
                 # cs.ext_perimeter += wall.foundation_ext_perimeter
 		
 		# temp
-		crawlspace_wall_area = 624.0
-		cs.ext_perimeter = 156.0
+		crawlspace_wall_area = cs.crawlspace_wall_area
+		# cs.ext_perimeter = 156.0
 		#
 		
 		if cs.ext_perimeter > 0
@@ -2862,7 +2950,7 @@ class Sim
 		
   end
 
-  def _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass)
+  def _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
 
     # Handle Exception for user entry of zero (avoids EPlus complaining about zero value)
     if partitionWallMassFractionOfFloorArea <= 0.0
@@ -2870,8 +2958,8 @@ class Sim
     end
 
     # Calculate the total partition wall mass areas for conditioned spaces
-    partition_wall_mass.living_space_area = partitionWallMassFractionOfFloorArea * 1200 # ft^2 # TODO: replace the 1200 with living space area
-    partition_wall_mass.finished_basement_area = partitionWallMassFractionOfFloorArea * 1200 # ft^2 # TODO: replace the 1200 with finished basement area
+    partition_wall_mass.living_space_area = partitionWallMassFractionOfFloorArea * living_space.area # ft^2
+    partition_wall_mass.finished_basement_area = partitionWallMassFractionOfFloorArea * finished_basement.area # ft^2
 
     return partition_wall_mass
 
