@@ -1,15 +1,136 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
   <name>process_constructions_insulated_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>baea033d-8709-43f1-8f1b-887a7467ac37</version_id>
+  <version_id>4fe2df7d-6075-4c4a-b2c7-5192b1b66832</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInsulatedRoof</class_name>
   <display_name>ProcessConstructionsInsulatedRoof</display_name>
   <description>This measure creates finished constructions for the roof of the living space.</description>
   <modeler_description>Calculates material layer properties of finished constructions for the roof of the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
-  <arguments/>
+  <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Of what space type is the living space?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>userdefinedfrroofr</name>
+      <display_name>Installed finished roof cavity insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>selectedinsfills</name>
+      <display_name>Cavity insulation fills the cavity?</display_name>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>selectedstudsize</name>
+      <display_name>Thickness of roof framing.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>2x4</value>
+          <display_name>2x4</display_name>
+        </choice>
+        <choice>
+          <value>2x6</value>
+          <display_name>2x6</display_name>
+        </choice>
+        <choice>
+          <value>2x8</value>
+          <display_name>2x8</display_name>
+        </choice>
+        <choice>
+          <value>2x10</value>
+          <display_name>2x10</display_name>
+        </choice>
+        <choice>
+          <value>2x12</value>
+          <display_name>2x12</display_name>
+        </choice>
+        <choice>
+          <value>2x14</value>
+          <display_name>2x14</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedfrroofff</name>
+      <display_name>Finished roof framing factor [frac].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.07</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedrigidinsthickness</name>
+      <display_name>Rigid insulation thickness of roof cavity [in].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedrigidinsr</name>
+      <display_name>Rigid insulation R-value of roof cavity [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedgypthickness</name>
+      <display_name>Thickness of drywall layers [in].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.5</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedgyplayers</name>
+      <display_name>Number of drywall layers.</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedroofmatthermalabs</name>
+      <display_name>Roofing material emissivity of finished roof.</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.91</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedroofmatabs</name>
+      <display_name>Roofing material absorptance of finished roof.</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.85</default_value>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -42,7 +163,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FB4B8212</checksum>
+      <checksum>DA86A7D8</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>45572B85</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EA4777E</checksum>
     </file>
   </files>
 </measure>

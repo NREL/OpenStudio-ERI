@@ -1,9 +1,258 @@
 <measure>
-  <name>Add Hot Water Draw and Distribution</name>
+  <schema_version>3.0</schema_version>
+  <name>add_water_use_equipment_object</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38c</uid>
-  <version_id>854e3ebb-fd16-42f7-8958-18a844ce646b</version_id>
+  <version_id>cc786f49-7639-4f35-be60-0837ebd5f919</version_id>
+  <xml_checksum>A6ACD89C</xml_checksum>
+  <class_name>AddWaterUseEquipmentObject</class_name>
+  <display_name>Add Hot Water Draw and Distribution</display_name>
   <description>This measure allows the user to model Building America Benchmark service water draws and service water distribution systems, as well as user defined service water draws and service water distribution descriptions. Service water draws and distribution systems impact both the volume of hot water required to meet the delivered hot water loads at the fixtures and the internal heat gains to the building. Relationships for distribution losses and gains related to internal gain and gallons per day per fixture are described in the "Monthly Profiles" tab of the B10 Analysis New Construction 2011.1.26.xlsx Spreadsheet.</description>
   <modeler_description>This measure creates new OS:OtherEquipment and OS:WaterUseDefinition and OS:WaterUseEquipment objects for showers, sinks and baths in accordance with the 2014 BA Simulation Protocols document. Major modeling assumptions (schedule profiles, etc. follow methods used by BeOpt v2.2, using functional relationships described in the "Monthly Profiles" tab of the B10 Analysis New Construction 2011.1.26.xlsx spreadsheet. Daily internal gain, and water usage amounts are modified based on user arguments.</modeler_description>
+  <arguments>
+    <argument>
+      <name>existing_plant_loop_name</name>
+      <display_name>Hot Water Loop WaterUseEquipment will be assigned to</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>New Plant Loop</value>
+          <display_name>New Plant Loop</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>using_standard_dhw_event_schedules</name>
+      <display_name>Check to use the standard SHW Event schedules and event draws from the spreadsheet found in the "Hourly Profiles" tab of the B10 Analysis - New Construction 2011.1.26.xlsm spreadsheet. If this box is checked, user arguments entered for gallons per day flow amounts below will be ignored. If this box is not checked, user arguments for gallons per day of usage will be used, and a schedule of constant hourly usage values (1.0 for each hour) will be created.</display_name>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>number_of_bedrooms</name>
+      <display_name>Number of Bedrooms in the Proposed Home. If more than 5 bedrooms enter 5.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>1</value>
+          <display_name>1</display_name>
+        </choice>
+        <choice>
+          <value>2</value>
+          <display_name>2</display_name>
+        </choice>
+        <choice>
+          <value>3</value>
+          <display_name>3</display_name>
+        </choice>
+        <choice>
+          <value>4</value>
+          <display_name>4</display_name>
+        </choice>
+        <choice>
+          <value>5</value>
+          <display_name>5</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>shower_gpd</name>
+      <display_name>Gallons per day of shower water usage (combined hot and cold water draw, delivered at 110F). If standard event schedules are used this value is ignored.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>bath_gpd</name>
+      <display_name>Gallons per day of bath water usage (combined hot and cold water draw, delivered at 110F). If standard event schedules are used this value is ignored.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>sinks_gpd</name>
+      <display_name>Gallons per day of sinks water usage (combined hot and cold water draw, delivered at 110F). If standard event schedules are used this value is ignored.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>shower_sinks_bath_space_name</name>
+      <display_name>Location of Showers, Sinks and Baths</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>clothes_washer_gpd</name>
+      <display_name>Gallons per day of clothes washer usage (hot water only, delivered at the hot water setpoint). If standard event schedules are used this value is ignored.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>clothes_washer_space_name</name>
+      <display_name>Location of Clothes Washer</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>dishwasher_gpd</name>
+      <display_name>Gallons per day of dishwasher usage (hot water only, delivered at the hot water setpoint). If standard event schedules are used this value is ignored.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>dishwasher_space_name</name>
+      <display_name>Location of Dishwasher</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>avg_annual_temp</name>
+      <display_name>The average annual outside dry bulb temperature of the building's location (Deg F).</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>min_monthly_avg_temp</name>
+      <display_name>The minimum value of the monthly average temperatures of the building's location (Deg F).</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>max_monthly_avg_temp</name>
+      <display_name>The maximum value of the monthly average temperatures of the building's location (Deg F).</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>using_distribution</name>
+      <display_name>Include distribution and recirculation adjustments for draw schedules and internal gains</display_name>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>distribution_location</name>
+      <display_name>Primary location of the service hot water distribution piping.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Basement or Interior Space</default_value>
+      <choices>
+        <choice>
+          <value>Basement or Interior Space</value>
+          <display_name>Basement or Interior Space</display_name>
+        </choice>
+        <choice>
+          <value>Attic</value>
+          <display_name>Attic</display_name>
+        </choice>
+        <choice>
+          <value>Garage</value>
+          <display_name>Garage</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>distribution_type</name>
+      <display_name>The plumbing layout of the hot water distribution system. Trunk and branch uses a main trunk branch to supply various branch take-offs to specific fixtures. In the home run layout, all fixtures are fed from dedicated piping that runs directly from central manifolds.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Trunk and Branch</default_value>
+      <choices>
+        <choice>
+          <value>Home run</value>
+          <display_name>Home run</display_name>
+        </choice>
+        <choice>
+          <value>Trunk and Branch</value>
+          <display_name>Trunk and Branch</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>pipe_material</name>
+      <display_name>The plumbing material.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Copper</default_value>
+      <choices>
+        <choice>
+          <value>Copper</value>
+          <display_name>Copper</display_name>
+        </choice>
+        <choice>
+          <value>Pex</value>
+          <display_name>Pex</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>recirculation_type</name>
+      <display_name>The type of hot water recirculation control, if any. Timer recirculation assumes 16 hrs of daily pump operation (from 0600 to 2200). Demand recirculation assumes push button control at all non-appliance fixtures with 100% ideal control (button pushed for every draw event no false signals, and immediate use of hot water when it arrives at the fixture.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>None</default_value>
+      <choices>
+        <choice>
+          <value>Demand</value>
+          <display_name>Demand</display_name>
+        </choice>
+        <choice>
+          <value>Timer</value>
+          <display_name>Timer</display_name>
+        </choice>
+        <choice>
+          <value>None</value>
+          <display_name>None</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>insulation_nominal_r_value</name>
+      <display_name>Nominal R value for hot water pipe insulation in units of Deg F-ft2-h/Btu. This variable is used to adjust the internal gains and fixture flows based on domestic hot water distribution description.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Water Use</tag>
@@ -100,12 +349,6 @@
       <checksum>1207A86C</checksum>
     </file>
     <file>
-      <filename>ScheduleDraws_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DE2FFDD9</checksum>
-    </file>
-    <file>
       <filename>dhw.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
@@ -136,16 +379,6 @@
       <checksum>1F3A6B41</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>8D1FE0B9</checksum>
-    </file>
-    <file>
       <filename>dailyusage.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
@@ -156,6 +389,23 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>B72B07B8</checksum>
+    </file>
+    <file>
+      <filename>ScheduleDraws_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8CFF3DC2</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.4.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>BC795F66</checksum>
     </file>
   </files>
 </measure>

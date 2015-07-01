@@ -1,9 +1,171 @@
 <measure>
-  <name>Process Electric Baseboard</name>
+  <schema_version>3.0</schema_version>
+  <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>db3282fd-26a7-4875-b16d-5547dcf414aa</version_id>
+  <version_id>98f63f45-9d5d-4d57-b8e3-3938c1bb589f</version_id>
+  <xml_checksum>0DA5C9E6</xml_checksum>
+  <class_name>ProcessElectricBaseboard</class_name>
+  <display_name>ProcessElectricBaseboard</display_name>
   <description>This measure removes any existing electric baseboards from the building and adds electric baseboards.</description>
   <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule. Any existing baseboard convective electrics are removed from any existing zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists.</modeler_description>
+  <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Which is the living space zone?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>selectedfbsmt</name>
+      <display_name>Which is the finished basement zone?</display_name>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>userdefinedeff</name>
+      <display_name>The efficiency of the electric baseboard.</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>selectedbaseboardcap</name>
+      <display_name>Heating Output Capacity.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Autosize</default_value>
+      <choices>
+        <choice>
+          <value>Autosize</value>
+          <display_name>Autosize</display_name>
+        </choice>
+        <choice>
+          <value>5 kBtu/hr</value>
+          <display_name>5 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>10 kBtu/hr</value>
+          <display_name>10 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>15 kBtu/hr</value>
+          <display_name>15 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>20 kBtu/hr</value>
+          <display_name>20 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>25 kBtu/hr</value>
+          <display_name>25 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>30 kBtu/hr</value>
+          <display_name>30 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>35 kBtu/hr</value>
+          <display_name>35 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>40 kBtu/hr</value>
+          <display_name>40 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>45 kBtu/hr</value>
+          <display_name>45 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>50 kBtu/hr</value>
+          <display_name>50 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>55 kBtu/hr</value>
+          <display_name>55 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>60 kBtu/hr</value>
+          <display_name>60 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>65 kBtu/hr</value>
+          <display_name>65 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>70 kBtu/hr</value>
+          <display_name>70 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>75 kBtu/hr</value>
+          <display_name>75 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>80 kBtu/hr</value>
+          <display_name>80 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>85 kBtu/hr</value>
+          <display_name>85 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>90 kBtu/hr</value>
+          <display_name>90 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>95 kBtu/hr</value>
+          <display_name>95 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>100 kBtu/hr</value>
+          <display_name>100 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>105 kBtu/hr</value>
+          <display_name>105 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>110 kBtu/hr</value>
+          <display_name>110 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>115 kBtu/hr</value>
+          <display_name>115 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>120 kBtu/hr</value>
+          <display_name>120 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>125 kBtu/hr</value>
+          <display_name>125 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>130 kBtu/hr</value>
+          <display_name>130 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>135 kBtu/hr</value>
+          <display_name>135 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>140 kBtu/hr</value>
+          <display_name>140 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>145 kBtu/hr</value>
+          <display_name>145 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>150 kBtu/hr</value>
+          <display_name>150 kBtu/hr</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -31,11 +193,30 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>432ACDD9</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>45572B85</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EA4777E</checksum>
     </file>
   </files>
 </measure>

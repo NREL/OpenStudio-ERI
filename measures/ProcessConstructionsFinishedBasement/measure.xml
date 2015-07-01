@@ -1,15 +1,206 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
   <name>process_constructions_finished_basement</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>ab92cfc5-2eed-4ec1-b3cb-7c6e4886baf1</version_id>
+  <version_id>1cad8263-c2ef-4b12-ad90-1f92a28a8597</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFinishedBasement</class_name>
-  <display_name>ProcessConstructionsFinishedBasement</display_name>
+  <display_name>ProcessConstructionsUnfinishedBasement</display_name>
   <description>This measure creates constructions for the finished basement walls, floor, and rim joists.</description>
   <modeler_description>Calculates material layer properties of constructions for the finished basement walls, floor, and rim joists. Finds surfaces adjacent to the finished basement and sets applicable constructions.</modeler_description>
-  <arguments/>
+  <arguments>
+    <argument>
+      <name>selectedfbsmt</name>
+      <display_name>Of what space type is the finished basement?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>selectedfbsmtins</name>
+      <display_name>Finished basement insulation type.</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>Uninsulated</value>
+          <display_name>Uninsulated</display_name>
+        </choice>
+        <choice>
+          <value>Half Wall</value>
+          <display_name>Half Wall</display_name>
+        </choice>
+        <choice>
+          <value>Whole Wall</value>
+          <display_name>Whole Wall</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>selectedstudsize</name>
+      <display_name>Wood stud size of wall cavity.</display_name>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>None</default_value>
+      <choices>
+        <choice>
+          <value>None</value>
+          <display_name>None</display_name>
+        </choice>
+        <choice>
+          <value>2x4, 16 in o.c.</value>
+          <display_name>2x4, 16 in o.c.</display_name>
+        </choice>
+        <choice>
+          <value>2x6, 24 in o.c.</value>
+          <display_name>2x6, 24 in o.c.</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedfbsmtwallcavr</name>
+      <display_name>Finished basement whole wall cavity insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>selectedinstallgrade</name>
+      <display_name>Insulation installation grade of wood stud wall cavity.</display_name>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>I</default_value>
+      <choices>
+        <choice>
+          <value>I</value>
+          <display_name>I</display_name>
+        </choice>
+        <choice>
+          <value>II</value>
+          <display_name>II</display_name>
+        </choice>
+        <choice>
+          <value>III</value>
+          <display_name>III</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>selectedinsfills</name>
+      <display_name>Cavity insulation fills the cavity?</display_name>
+      <type>Boolean</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedfbsmtwallcontth</name>
+      <display_name>Finished basement wall continuous insulation thickness [in].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfbsmtwallcontr</name>
+      <display_name>Finished basement wall continuous insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>selectedfbsmtceiljoistheight</name>
+      <display_name>Finished basement ceiling joist height [in].</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>9.25</value>
+          <display_name>9.25</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedfbsmtceilff</name>
+      <display_name>Finished basement ceiling framing factor [frac].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.13</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfbsmtrimjoistr</name>
+      <display_name>Finished basement rim joist insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormassth</name>
+      <display_name>Floor mass thickness [in].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.625</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormasscond</name>
+      <display_name>Floor mass conductivity [Btu-in/h-ft^2-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.8004</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormassdens</name>
+      <display_name>Floor mass density [lb/ft^3].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>34</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfloormasssh</name>
+      <display_name>Floor mass specific heat [Btu/lb-R].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.29</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcarpetr</name>
+      <display_name>Carpet pad R-value [hr-ft^2-R/Btu].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2.08</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcarpetfrac</name>
+      <display_name>Carpet floor fraction [frac].</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.8</default_value>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -42,7 +233,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D116F498</checksum>
+      <checksum>1F45DA12</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>45572B85</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EA4777E</checksum>
     </file>
   </files>
 </measure>

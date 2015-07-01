@@ -1,0 +1,365 @@
+{
+    "job_params": [
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "--argumentName=selectedliving"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue={d1bd02b9-70d1-4abf-b189-d328d05759df}"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=selectedgarage"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue={37474fb7-61c6-4919-a4f9-39cdee4eebb4}"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedinstcavr"
+                        },
+                        "param_index": 4
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0"
+                        },
+                        "param_index": 5
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedfloorff"
+                        },
+                        "param_index": 6
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.13"
+                        },
+                        "param_index": 7
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedfloormassth"
+                        },
+                        "param_index": 8
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.625"
+                        },
+                        "param_index": 9
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedfloormasscond"
+                        },
+                        "param_index": 10
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.8004"
+                        },
+                        "param_index": 11
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedfloormassdens"
+                        },
+                        "param_index": 12
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=34"
+                        },
+                        "param_index": 13
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedfloormasssh"
+                        },
+                        "param_index": 14
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.29"
+                        },
+                        "param_index": 15
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedcarpetr"
+                        },
+                        "param_index": 16
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=2.08"
+                        },
+                        "param_index": 17
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentName=userdefinedcarpetfrac"
+                        },
+                        "param_index": 18
+                    },
+                    {
+                        "param": {
+                            "value": "--argumentValue=0.8"
+                        },
+                        "param_index": 19
+                    }
+                ],
+                "value": "ruby_scriptparameters"
+            },
+            "param_index": 0
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "children": [
+                                                        {
+                                                            "param": {
+                                                                "value": "in.osm"
+                                                            },
+                                                            "param_index": 0
+                                                        }
+                                                    ],
+                                                    "value": ".*\\.osm"
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "All"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "Last"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_inputfiles"
+            },
+            "param_index": 1
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "-I"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "value": "C:/Program Files/OpenStudio 1.7.5/Ruby"
+                        },
+                        "param_index": 1
+                    }
+                ],
+                "value": "ruby_toolparameters"
+            },
+            "param_index": 2
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "children": [
+                                            {
+                                                "param": {
+                                                    "value": ""
+                                                },
+                                                "param_index": 0
+                                            }
+                                        ],
+                                        "value": "osm"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "osm"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_copyrequired"
+            },
+            "param_index": 3
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "user_script.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/Users/dgoldwas/Documents/GitHub/OpenStudio-Beopt/Sample Workflows/PAT slab_FINAL 175/scripts/ProcessConstructionsInteriorInsulatedFloors/measure.rb"
+                        },
+                        "param_index": 0
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "measure.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/Users/dgoldwas/Documents/GitHub/OpenStudio-Beopt/Sample Workflows/PAT slab_FINAL 175/scripts/ProcessConstructionsInteriorInsulatedFloors/measure.rb"
+                        },
+                        "param_index": 1
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/sim.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/Users/dgoldwas/Documents/GitHub/OpenStudio-Beopt/Sample Workflows/PAT slab_FINAL 175/scripts/ProcessConstructionsInteriorInsulatedFloors/resources/sim.rb"
+                        },
+                        "param_index": 2
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/util.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/Users/dgoldwas/Documents/GitHub/OpenStudio-Beopt/Sample Workflows/PAT slab_FINAL 175/scripts/ProcessConstructionsInteriorInsulatedFloors/resources/util.rb"
+                        },
+                        "param_index": 3
+                    },
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "resources/weather.rb"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "C:/Users/dgoldwas/Documents/GitHub/OpenStudio-Beopt/Sample Workflows/PAT slab_FINAL 175/scripts/ProcessConstructionsInteriorInsulatedFloors/resources/weather.rb"
+                        },
+                        "param_index": 4
+                    }
+                ],
+                "value": "ruby_requiredfiles"
+            },
+            "param_index": 4
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "{612508bc-3a46-4fa9-b1d2-f52cffffcb4c}"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "original_job_uuid"
+            },
+            "param_index": 5
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "true"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_isuserscriptjob"
+            },
+            "param_index": 6
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "value": "C:/Program Files/OpenStudio 1.7.5/Ruby/openstudio/runmanager/rubyscripts/UserScriptAdapter.rb"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_scriptfile"
+            },
+            "param_index": 7
+        },
+        {
+            "param": {
+                "children": [
+                    {
+                        "param": {
+                            "children": [
+                                {
+                                    "param": {
+                                        "value": "{65e577ab-327e-4afa-af30-0f6b4e6b1ebf}"
+                                    },
+                                    "param_index": 0
+                                }
+                            ],
+                            "value": "bcl_measure_uuid"
+                        },
+                        "param_index": 0
+                    }
+                ],
+                "value": "ruby_bclmeasureparameters"
+            },
+            "param_index": 8
+        }
+    ],
+    "metadata": {
+        "openstudio_version": "1.7.5"
+    }
+}

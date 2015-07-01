@@ -1,15 +1,55 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>Sizes of choiceValues and choiceDisplayNames do not match</error>
   <name>process_constructions_garage_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>624340a8-96d1-4ca8-9cc7-ed890f8b55dd</version_id>
+  <version_id>74439526-4afe-4b2d-b3a1-539582941cbe</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageRoof</class_name>
   <display_name>ProcessConstructionsGarageRoof</display_name>
   <description>This measure creates uninsulated, unfinished, stud and air constructions for the garage roof.</description>
   <modeler_description>Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the garage roof. Finds surfaces adjacent to the garage and sets applicable constructions.</modeler_description>
-  <arguments/>
+  <arguments>
+    <argument>
+      <name>selectedgarage</name>
+      <display_name>Of what space type is the garage?</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>userdefinedhasradiantbarrier</name>
+      <display_name>Roof has radiant barrier?</display_name>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedroofmatthermalabs</name>
+      <display_name>Roofing material emissivity of unfinished attic.</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.91</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedroofmatabs</name>
+      <display_name>Roofing material absorptance of unfinished attic.</display_name>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.85</default_value>
+    </argument>
+  </arguments>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -42,7 +82,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D644618B</checksum>
+      <checksum>50927743</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>45572B85</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EA4777E</checksum>
     </file>
   </files>
 </measure>

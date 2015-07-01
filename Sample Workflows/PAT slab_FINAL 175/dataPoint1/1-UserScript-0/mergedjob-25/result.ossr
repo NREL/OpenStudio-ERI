@@ -1,0 +1,295 @@
+<OSResult>
+  <Value>Success</Value>
+  <Info>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 14' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 2' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 14-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 15' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 2' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 15-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 16' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 2' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 16-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 19' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 36' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 19-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 20' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 36' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 20-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 32' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 32-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 33' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 33-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 34' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 34-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 35' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 35-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 36' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 36-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 3' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 38' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 3-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 4' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 38' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 4-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 5' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 38' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 5-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 14' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 2' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 15' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 2' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 16' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 2' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 19' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 36' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 20' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 36' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 32' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 33' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 34' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 35' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 36' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 3' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 3' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 38' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 4' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 38' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 5' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 38' which is attached to Space 'first floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 11' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 8' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 11-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 12' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 8' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 12-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 13' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 8' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 13-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 6' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 9' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 6-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 7' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 9' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 7-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 8' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 9' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 8-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 26' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 26-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 27' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 27-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 28' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 28-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 29' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 29-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 30' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 30-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 18' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 34' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 18-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 10' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 34' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 10-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 11' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 8' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 12' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 8' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 13' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 8' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 6' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 9' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 7' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 9' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 8' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 9' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 26' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 27' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 28' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 29' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 30' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 11' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 18' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 34' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 10' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 34' which is attached to Space 'second floor living' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 21' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 24' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 21-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 22' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 24' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 22-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 23' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 24' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 23-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 24' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 27' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 24-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 25' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 27' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 25-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 9' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 28' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Construction 'Sub Surface 9-Glass'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 21' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 24' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 22' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 24' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 23' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 24' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 24' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 27' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 25' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 27' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+    <LogMessage>
+      <Channel>openstudio.ruleset.ProcessConstructionsWindows</Channel>
+      <Message>Sub Surface 'Sub Surface 9' of Sub Surface Type 'FixedWindow', attached to Surface 'Surface 28' which is attached to Space 'second floor living_above garage' of Space Type 'living spacetype', was assigned Shading Control 'WindowShadingControl'</Message>
+    </LogMessage>
+  </Info>
+  <Attributes>
+    <Attribute>
+      <UUID>{cea57518-f9b4-4f7b-80f1-2ee793949235}</UUID>
+      <VersionUUID>{824c7dc2-e493-4e01-bb74-46e3a18514f0}</VersionUUID>
+      <Name>ufactor</Name>
+      <Source>ProcessConstructionsWindows</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.38</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{2c4188a3-8871-47da-b42f-848a81a10af8}</UUID>
+      <VersionUUID>{e032c2d6-9e18-4a62-9807-235a63a0ba23}</VersionUUID>
+      <Name>shgc</Name>
+      <Source>ProcessConstructionsWindows</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.44</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{162ee521-1966-4981-9424-40ca14a8612c}</UUID>
+      <VersionUUID>{81154cd5-015d-4aaf-9734-4676ef41dc45}</VersionUUID>
+      <Name>userdefinedintshadeheatingmult</Name>
+      <Source>ProcessConstructionsWindows</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.7</Value>
+    </Attribute>
+    <Attribute>
+      <UUID>{d68d5f67-11a7-4996-a4da-9a15d480c88e}</UUID>
+      <VersionUUID>{b68d2184-01f0-4814-b439-1d49c2814065}</VersionUUID>
+      <Name>userdefinedintshadecoolingmult</Name>
+      <Source>ProcessConstructionsWindows</Source>
+      <ValueType>Double</ValueType>
+      <Value>0.7</Value>
+    </Attribute>
+  </Attributes>
+</OSResult>

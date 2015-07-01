@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>c17f5874-b021-431f-a1cf-eea9db87125a</version_id>
+  <version_id>1493975b-fc06-4e67-80a8-a40c94e15df8</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCrawlspace</class_name>
   <display_name>ProcessConstructionsCrawlspace</display_name>
@@ -186,7 +186,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CDE20B03</checksum>
+      <checksum>445A5A62</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>45572B85</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6EA4777E</checksum>
     </file>
   </files>
 </measure>
