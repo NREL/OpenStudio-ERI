@@ -1,0 +1,89 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    archive-tar-minitar (0.5.2)
+    ast (2.0.0)
+    astrolabe (1.3.0)
+      parser (>= 2.2.0.pre.3, < 3.0)
+    bcl (0.5.5)
+      archive-tar-minitar
+      builder
+      faraday
+      multi_json
+      nokogiri
+      roo
+      rubyXL
+      rubyzip
+      uuid
+      yamler
+      zliby
+    builder (3.2.2)
+    ci_reporter (2.0.0)
+      builder (>= 2.1.2)
+    ci_reporter_minitest (1.0.0)
+      ci_reporter (~> 2.0)
+      minitest (~> 5.0)
+    colored (1.2)
+    docker-api (1.20.0)
+      excon (>= 0.38.0)
+      json
+    excon (0.45.1)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
+    json (1.7.7)
+    macaddr (1.7.1)
+      systemu (~> 2.6.2)
+    mini_portile (0.6.2)
+    minitest (5.4.0)
+    multi_json (1.10.1)
+    multipart-post (2.0.0)
+    nokogiri (1.6.6.2-x64-mingw32)
+      mini_portile (~> 0.6.0)
+    parser (2.2.0.pre.5)
+      ast (>= 1.1, < 3.0)
+      slop (~> 3.4, >= 3.4.5)
+    powerpack (0.0.9)
+    rainbow (2.0.0)
+    rake (10.4.2)
+    roo (1.13.2)
+      nokogiri
+      rubyzip
+      spreadsheet (> 0.6.4)
+    rubocop (0.26.1)
+      astrolabe (~> 1.3)
+      parser (>= 2.2.0.pre.4, < 3.0)
+      powerpack (~> 0.0.6)
+      rainbow (>= 1.99.1, < 3.0)
+      ruby-progressbar (~> 1.4)
+    rubocop-checkstyle_formatter (0.1.1)
+      rubocop (>= 0.14.0)
+    ruby-ole (1.2.11.8)
+    ruby-progressbar (1.6.0)
+    rubyXL (3.3.6)
+      nokogiri (>= 1.4.4)
+      rubyzip (>= 1.1.6)
+    rubyzip (1.1.7)
+    slop (3.6.0)
+    spreadsheet (1.0.1)
+      ruby-ole (>= 1.0)
+    systemu (2.6.4)
+    uuid (2.3.7)
+      macaddr (~> 1.0)
+    yamler (0.1.0)
+    zliby (0.0.5)
+
+PLATFORMS
+  x64-mingw32
+  x86-mingw32
+
+DEPENDENCIES
+  bcl (~> 0.5)
+  ci_reporter_minitest (~> 1.0.0)
+  colored (~> 1.2)
+  docker-api
+  json (~> 1.7.7)
+  minitest (~> 5.4.0)
+  rake (~> 10.4.2)
+  rubocop (~> 0.26.0)
+  rubocop-checkstyle_formatter (~> 0.1.1)
+  ruby-prof (~> 0.15.1)

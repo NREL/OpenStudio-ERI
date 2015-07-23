@@ -1,0 +1,60 @@
+{
+  "classname": "ProcessThermalMassFurniture",
+  "name": "process_thermal_mass_furniture",
+  "display_name": "Process Thermal Mass Furniture",
+  "measure_type": "RubyMeasure",
+  "arguments": [
+    {
+      "local_variable": "selected_living",
+      "variable_type": "Choice",
+      "name": "selectedliving",
+      "display_name": "Of what space type is the living space",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "selected_fbsmt",
+      "variable_type": "Choice",
+      "name": "selectedfbsmt",
+      "display_name": "Of what space type is the finished basement",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "selected_ufbsmt",
+      "variable_type": "Choice",
+      "name": "selectedufbsmt",
+      "display_name": "Of what space type is the unfinished basement",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "selected_garage",
+      "variable_type": "Choice",
+      "name": "selectedgarage",
+      "display_name": "Of what space type is the garage",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    }
+  ],
+  "name_xml": "Process Thermal Mass Furniture",
+  "uid": "5665361d-fa13-4341-8776-185ede476540",
+  "version_id": "7f65e50b-d3bf-4ca1-88b5-e767081fe317",
+  "modeler_description": "Replace this text with an explanation for the energy modeler specifically.  It should explain how the measure is modeled, including any requirements about how the baseline model must be set up, major assumptions, citations of references to applicable modeling resources, etc.  The energy modeler should be able to read this description and understand what changes the measure is making to the model and why these changes are being made.  Because the Modeler Description is written for an expert audience, using common abbreviations for brevity is good practice.",
+  "description": "Replace this text with an explanation of what the measure does in terms that can be understood by a general building professional audience (building owners, architects, engineers, contractors, etc.).  This description will be used to create reports aimed at convincing the owner and/or design team to implement the measure in the actual building design.  For this reason, the description may include details about how the measure would be implemented, along with explanations of qualitative benefits associated with the measure.  It is good practice to include citations in the measure if the description is taken from a known source or if specific benefits are listed.",
+  "tags": [
+    "Envelope.Form"
+  ]
+}

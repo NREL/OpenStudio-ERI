@@ -1,0 +1,17 @@
+{
+  "classname": "ProcessGroundTemperature",
+  "name": "process_ground_temperature",
+  "display_name": "Process Ground Temperature",
+  "measure_type": "EnergyPlusMeasure",
+  "arguments": [
+
+  ],
+  "name_xml": "process_ground_temperature",
+  "uid": "4a3a96e7-00ea-4b61-9433-3d6fc3395a62",
+  "version_id": "fd7ff88a-42ae-42f4-9700-1ee63c575d5d",
+  "modeler_description": "This measure writes monthly ground temperatures to the EnergyPlus objects Site:GroundTemperature:BuildingSurface and Site:GroundTemperature:Deep.",
+  "description": "This measure calculates ground temperatures using weather data.",
+  "tags": [
+    "Envelope.Form"
+  ]
+}

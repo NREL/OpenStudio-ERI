@@ -1,0 +1,27 @@
+{
+  "classname": "ProcessConstructionsGarageSlab",
+  "name": "process_constructions_garage_slab",
+  "display_name": "Process Constructions Garage Slab",
+  "measure_type": "RubyMeasure",
+  "arguments": [
+    {
+      "local_variable": "selected_garage",
+      "variable_type": "Choice",
+      "name": "selectedgarage",
+      "display_name": "Of what space type is the garage",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    }
+  ],
+  "name_xml": "Process Constructions Garage Slab",
+  "uid": "3da62049-50f9-4ed0-b05a-6b89a202482d",
+  "version_id": "5c967f9b-ec72-4a9d-b7f8-8d6b38eac231",
+  "modeler_description": "Calculates material layer properties of slab constructions for the garage floor. Finds surfaces adjacent to the garage and sets applicable constructions.",
+  "description": "This measure creates slab constructions for the garage floor.",
+  "tags": [
+    "Envelope.Opaque"
+  ]
+}

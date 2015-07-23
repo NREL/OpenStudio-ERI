@@ -1,0 +1,85 @@
+{
+  "classname": "ResidentialMiscellaneousGasLoads",
+  "name": "residential_miscellaneous_gas_loads",
+  "display_name": "Residential Miscellaneous Gas Loads",
+  "measure_type": "RubyMeasure",
+  "arguments": [
+    {
+      "local_variable": "selected_mgl",
+      "variable_type": "Choice",
+      "name": "selected_mgl",
+      "display_name": "MGL Energy Consumption Option",
+      "units": null,
+      "description": null,
+      "choices": [
+        "Benchmark",
+        "Simple"
+      ]
+    },
+    {
+      "local_variable": "mgl_E",
+      "variable_type": "Double",
+      "name": "mgl_E",
+      "display_name": "Simple MGL Annual Energy Consumption",
+      "units": "therm/yr",
+      "description": null,
+      "default_value": 0.0
+    },
+    {
+      "local_variable": "cfa",
+      "variable_type": "Double",
+      "name": "CondFA",
+      "display_name": "Living Space Floor Area",
+      "units": "ft^2",
+      "description": null,
+      "default_value": 1800.0
+    },
+    {
+      "local_variable": "bab_mult",
+      "variable_type": "Double",
+      "name": "BAB_mult",
+      "display_name": "Building America Benchmark Multipler",
+      "units": null,
+      "description": null,
+      "default_value": 1.0
+    },
+    {
+      "local_variable": "num_br",
+      "variable_type": "Integer",
+      "name": "Num_Br",
+      "display_name": "Number of Bedrooms",
+      "units": null,
+      "description": null,
+      "default_value": 1
+    },
+    {
+      "local_variable": "#has_cf",
+      "variable_type": "Bool",
+      "name": "Has_fan",
+      "display_name": "Has a ceiling fan",
+      "units": null,
+      "description": null,
+      "default_value": false
+    },
+    {
+      "local_variable": "space_type",
+      "variable_type": "Choice",
+      "name": "space_type",
+      "display_name": "Select the space where the miscellaneous gas loads are located",
+      "units": null,
+      "description": null,
+      "default_value": "*None*",
+      "choices": [
+        "*None*"
+      ]
+    }
+  ],
+  "name_xml": "residential_miscellaneous_gas_loads",
+  "uid": "0ba8d5d6-6fc1-4822-b9dd-42410a5b9017",
+  "version_id": "fbddc3ce-786d-410f-a79d-c4f36a1d63ac",
+  "modeler_description": "This measure creates a new gas equipment object and adds it to the user selected space. If MGLs are already present in the model, this measure will replace them with the user specified MGL.",
+  "description": "This measure adds miscellaneous gas loads (representing a pool heater, spa heater, fireplace, grill, and/or lighting) to the living space. Users can specify the annual gas consumption (in therms) of their MGL or a faction of the benchmark MGLs to add to the space.",
+  "tags": [
+    "Equipment.Gas Equipment"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "classname": "ProcessHeatingandCoolingSetpoints",
+  "name": "process_heatingand_cooling_setpoints",
+  "display_name": "Process Heatingand Cooling Setpoints",
+  "measure_type": "RubyMeasure",
+  "arguments": [
+    {
+      "local_variable": "selectedliving",
+      "variable_type": "Choice",
+      "name": "selectedliving",
+      "display_name": "Select the living zone",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "userdefinedhsp",
+      "variable_type": "Double",
+      "name": "userdefinedhsp",
+      "display_name": "Enter the constant heating setpoint",
+      "units": null,
+      "description": null,
+      "default_value": 71.0
+    },
+    {
+      "local_variable": "userdefinedcsp",
+      "variable_type": "Double",
+      "name": "userdefinedcsp",
+      "display_name": "Enter the constant cooling setpoint",
+      "units": null,
+      "description": null,
+      "default_value": 76.0
+    },
+    {
+      "local_variable": "selectedheating",
+      "variable_type": "Bool",
+      "name": "selectedheating",
+      "display_name": "The house has heating equipment",
+      "units": null,
+      "description": null,
+      "default_value": true
+    },
+    {
+      "local_variable": "selectedcooling",
+      "variable_type": "Bool",
+      "name": "selectedcooling",
+      "display_name": "The house has cooling equipment",
+      "units": null,
+      "description": null,
+      "default_value": true
+    }
+  ],
+  "name_xml": "process_heatingand_cooling_setpoints",
+  "uid": "2b167665-f760-462d-8c9d-1d909da7b628",
+  "version_id": "770a9a6c-e366-412d-b2c1-56a464321bea",
+  "modeler_description": "Replace this text with an explanation for the energy modeler specifically.  It should explain how the measure is modeled, including any requirements about how the baseline model must be set up, major assumptions, citations of references to applicable modeling resources, etc.  The energy modeler should be able to read this description and understand what changes the measure is making to the model and why these changes are being made.  Because the Modeler Description is written for an expert audience, using common abbreviations for brevity is good practice.",
+  "description": "Replace this text with an explanation of what the measure does in terms that can be understood by a general building professional audience (building owners, architects, engineers, contractors, etc.).  This description will be used to create reports aimed at convincing the owner and/or design team to implement the measure in the actual building design.  For this reason, the description may include details about how the measure would be implemented, along with explanations of qualitative benefits associated with the measure.  It is good practice to include citations in the measure if the description is taken from a known source or if specific benefits are listed.",
+  "tags": [
+    "HVAC.HVAC Controls"
+  ]
+}

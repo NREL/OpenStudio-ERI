@@ -1,0 +1,60 @@
+{
+  "classname": "ProcessThermalMassFurniture",
+  "name": "process_thermal_mass_furniture",
+  "display_name": "Process Thermal Mass Furniture",
+  "measure_type": "RubyMeasure",
+  "arguments": [
+    {
+      "local_variable": "selected_living",
+      "variable_type": "Choice",
+      "name": "selectedliving",
+      "display_name": "Of what space type is the living space",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "selected_fbsmt",
+      "variable_type": "Choice",
+      "name": "selectedfbsmt",
+      "display_name": "Of what space type is the finished basement",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "selected_ufbsmt",
+      "variable_type": "Choice",
+      "name": "selectedufbsmt",
+      "display_name": "Of what space type is the unfinished basement",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "selected_garage",
+      "variable_type": "Choice",
+      "name": "selectedgarage",
+      "display_name": "Of what space type is the garage",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    }
+  ],
+  "name_xml": "process_thermal_mass_furniture",
+  "uid": "5665361d-fa13-4341-8776-185ede476540",
+  "version_id": "d8920783-2908-401f-bc4d-8179c66f320a",
+  "modeler_description": "This measure creates constructions representing the internal mass of furniture in the living space, finished basement, unfinished basement, and garage. The constructions are set to define the internal mass objects of their respective spaces.",
+  "description": "This measure creates internal mass for furniture in the living space, finished basement, unfinished basement, and garage.",
+  "tags": [
+    "Envelope.Form"
+  ]
+}

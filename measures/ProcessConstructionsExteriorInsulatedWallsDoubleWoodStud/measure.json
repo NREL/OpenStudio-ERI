@@ -1,0 +1,195 @@
+{
+  "classname": "ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud",
+  "name": "process_constructions_exterior_insulated_walls_double_wood_stud",
+  "display_name": "Process Constructions Exterior Insulated Walls Double Wood Stud",
+  "measure_type": "RubyMeasure",
+  "arguments": [
+    {
+      "local_variable": "selected_living",
+      "variable_type": "Choice",
+      "name": "selectedliving",
+      "display_name": "Of what space type is the living space",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "# selected_gypsum",
+      "variable_type": "Choice",
+      "name": "selectedgypsum",
+      "display_name": "Interior finish  of wall cavityFor manually entering interior finish properties of wall cavity, leave blank",
+      "units": "gypsum",
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "userdefined_gypthickness",
+      "variable_type": "Double",
+      "name": "userdefinedgypthickness",
+      "display_name": "Thickness of drywall layers",
+      "units": null,
+      "description": null,
+      "default_value": 0.5
+    },
+    {
+      "local_variable": "userdefined_gyplayers",
+      "variable_type": "Double",
+      "name": "userdefinedgyplayers",
+      "display_name": "Number of drywall layers",
+      "units": null,
+      "description": null,
+      "default_value": 1.0
+    },
+    {
+      "local_variable": "userdefined_cavitydepth",
+      "variable_type": "Double",
+      "name": "userdefinedcavitydepth",
+      "display_name": "The depth of the wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 10.5
+    },
+    {
+      "local_variable": "selected_spacing",
+      "variable_type": "Choice",
+      "name": "selectedspacing",
+      "display_name": "Wood stud spacing of wall cavity",
+      "units": null,
+      "description": null,
+      "choices": [
+        "24 in o.c."
+      ]
+    },
+    {
+      "local_variable": "userdefined_wallstaggered",
+      "variable_type": "Bool",
+      "name": "userdefinedwallstaggered",
+      "display_name": "Wall cavity has staggered studs",
+      "units": null,
+      "description": null,
+      "default_value": true
+    },
+    {
+      "local_variable": "userdefined_instcavr",
+      "variable_type": "Double",
+      "name": "userdefinedinstcavr",
+      "display_name": "The R-value of cavity insulation",
+      "units": null,
+      "description": null
+    },
+    {
+      "local_variable": "# selected_rigidins",
+      "variable_type": "Choice",
+      "name": "selectedrigidins",
+      "display_name": "Rigid insulation of wall cavityFor manually entering rigid insulation properties of wall cavity, leave blank",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "userdefined_rigidinsthickness",
+      "variable_type": "Double",
+      "name": "userdefinedrigidinsthickness",
+      "display_name": "Rigid insulation thickness of wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 0.0
+    },
+    {
+      "local_variable": "userdefined_rigidinsr",
+      "variable_type": "Double",
+      "name": "userdefinedrigidinsr",
+      "display_name": "Rigid insulation R-value of wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 0.0
+    },
+    {
+      "local_variable": "userdefined_hasosb",
+      "variable_type": "Bool",
+      "name": "userdefinedhasosb",
+      "display_name": "Double wood stud wall has OSB sheathing",
+      "units": null,
+      "description": null
+    },
+    {
+      "local_variable": "# selected_extfin",
+      "variable_type": "Choice",
+      "name": "selectedextfin",
+      "display_name": "Exterior finish of wall cavityFor manually entering exterior finish properties of wall cavity, leave blank",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "userdefined_extfinthickness",
+      "variable_type": "Double",
+      "name": "userdefinedextfinthickness",
+      "display_name": "Exterior finish thickness of wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 0.375
+    },
+    {
+      "local_variable": "userdefined_extfinr",
+      "variable_type": "Double",
+      "name": "userdefinedextfinr",
+      "display_name": "Exterior finish R-value of wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 0.6
+    },
+    {
+      "local_variable": "userdefined_extfindensity",
+      "variable_type": "Double",
+      "name": "userdefinedextfindensity",
+      "display_name": "Exterior finish density of wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 11.1
+    },
+    {
+      "local_variable": "userdefined_extfinspecheat",
+      "variable_type": "Double",
+      "name": "userdefinedextfinspecheat",
+      "display_name": "Exterior finish specific heat of wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 0.25
+    },
+    {
+      "local_variable": "userdefined_extfinthermalabs",
+      "variable_type": "Double",
+      "name": "userdefinedextfinthermalabs",
+      "display_name": "Exterior finish emissivity of wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 0.9
+    },
+    {
+      "local_variable": "userdefined_extfinabs",
+      "variable_type": "Double",
+      "name": "userdefinedextfinabs",
+      "display_name": "Exterior finish absorptance of wall cavity",
+      "units": null,
+      "description": null,
+      "default_value": 0.3
+    }
+  ],
+  "name_xml": "process_constructions_exterior_insulated_walls_double_wood_stud",
+  "uid": "d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651",
+  "version_id": "6556fdac-ae87-4dc1-be64-81947249d1b0",
+  "modeler_description": "Calculates material layer properties of double wood stud constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.",
+  "description": "This measure creates double wood stud constructions for the exterior walls adjacent to the living space.",
+  "tags": [
+    "Envelope.Opaque"
+  ]
+}

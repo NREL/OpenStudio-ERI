@@ -1,0 +1,63 @@
+{
+  "classname": "ProcessSystemCrankcaseHeater",
+  "name": "process_system_crankcase_heater",
+  "display_name": "Process System Crankcase Heater",
+  "measure_type": "EnergyPlusMeasure",
+  "arguments": [
+    {
+      "local_variable": "selected_living",
+      "variable_type": "Choice",
+      "name": "selectedliving",
+      "display_name": "Which is the living space zone",
+      "units": null,
+      "description": null,
+      "choices": [
+
+      ]
+    },
+    {
+      "local_variable": "userdefined_crankcase",
+      "variable_type": "Double",
+      "name": "userdefinedcrankcase",
+      "display_name": "Crankcase heater capacity",
+      "units": null,
+      "description": null,
+      "default_value": 0.0
+    },
+    {
+      "local_variable": "userdefined_crankcasemaxt",
+      "variable_type": "Double",
+      "name": "userdefinedcrankcasemaxt",
+      "display_name": "Maximum outdoor drybulb temperature for crankcase heater operation",
+      "units": null,
+      "description": null,
+      "default_value": 55.0
+    },
+    {
+      "local_variable": "selected_heatpump",
+      "variable_type": "Bool",
+      "name": "selectedheatpump",
+      "display_name": "The building has a heat pump",
+      "units": null,
+      "description": null,
+      "default_value": false
+    },
+    {
+      "local_variable": "userdefined_speeds",
+      "variable_type": "Double",
+      "name": "userdefinedspeeds",
+      "display_name": "Number of speeds of the compressor",
+      "units": null,
+      "description": null,
+      "default_value": 1.0
+    }
+  ],
+  "name_xml": "process_system_crankcase_heater",
+  "uid": "b0630593-f352-4753-ae2c-2aa68f1c5611",
+  "version_id": "50c50456-f407-47e7-9763-ab62346b8515",
+  "modeler_description": "Using EMS code, this measure creates a crankcase heater electric equipment object for heat pumps and also air conditioners with number of compressor speeds greater than one.",
+  "description": "This measure creates a crankcase heater for heat pumps and multispeed air conditioners.",
+  "tags": [
+    "HVAC.Cooling"
+  ]
+}

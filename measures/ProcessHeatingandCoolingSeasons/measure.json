@@ -1,0 +1,17 @@
+{
+  "classname": "ProcessHeatingandCoolingSeasons",
+  "name": "process_heatingand_cooling_seasons",
+  "display_name": "Process Heatingand Cooling Seasons",
+  "measure_type": "RubyMeasure",
+  "arguments": [
+
+  ],
+  "name_xml": "process_heatingand_cooling_seasons",
+  "uid": "5103ca65-8462-4633-a65f-02954f4c929f",
+  "version_id": "86136698-8806-48a2-ab1e-8acc9de41aa4",
+  "modeler_description": "This measure creates HeatingSeasonSchedule and CoolingSeasonSchedule ruleset objects. Schedule values are populated based on information contained in the EPW file.",
+  "description": "This measure creates the heating season and cooling season schedules based on weather data.",
+  "tags": [
+    "Envelope.Infiltration"
+  ]
+}
