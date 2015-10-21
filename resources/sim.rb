@@ -697,7 +697,7 @@ class Sim
     begin
       @weather = WeatherProcess.new("#{File.expand_path('.')}/in.epw")
     rescue
-      @weather = WeatherProcess.new("#{File.expand_path('.')}/../in.epw")
+	  @weather = WeatherProcess.new("#{File.expand_path('.')}/../in.epw")
     end
 	end
 

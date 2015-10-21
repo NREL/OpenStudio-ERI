@@ -42,7 +42,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a double argument for BA Benchamrk multiplier
 	bab_mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("BAB_mult")
-	bab_mult.setDisplayName("Building America Benchmark Multipler")
+	bab_mult.setDisplayName("Building America Benchmark Multiplier")
 	bab_mult.setDefaultValue(1)
 	args << bab_mult
 	

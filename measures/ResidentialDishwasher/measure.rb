@@ -74,7 +74,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a choice argument for space type
     space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
-    space_type.setDisplayName("Select the space where the miscellaneous electric loads are located")
+    space_type.setDisplayName("Select the space where the dishwasher is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
     
