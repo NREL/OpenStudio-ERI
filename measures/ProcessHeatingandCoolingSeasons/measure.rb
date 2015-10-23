@@ -58,7 +58,7 @@ class ProcessHeatingandCoolingSeasons < OpenStudio::Ruleset::ModelUserScript
     schedules = Schedules.new
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the heating and cooling seasons
     schedules = sim._processHeatingCoolingSeasons(misc, schedules)

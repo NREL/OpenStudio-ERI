@@ -326,7 +326,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     iwi = IntWallIns.new
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the wood stud walls
     iwi = sim._processConstructionsInteriorInsulatedWalls(iw, partition_wall_mass, iwi)

@@ -515,7 +515,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     roofing_material = RoofingMaterial.new(roofMatEmissivity, roofMatAbsorptivity)
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the unfinished attic ceiling
     uaaci, uatai = sim._processConstructionsUnfinishedAtticCeiling(uatc, eaves_options, ceiling_mass, uaaci, uatai)

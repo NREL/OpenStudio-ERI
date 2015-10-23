@@ -181,7 +181,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     site = Site.new
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     hasFurnace = true
     hasCoolingEquipment = false

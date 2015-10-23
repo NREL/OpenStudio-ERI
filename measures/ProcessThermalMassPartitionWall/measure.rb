@@ -213,7 +213,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat, partitionWallMassPCMType)
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
     living_space = LivingSpace.new
     finished_basement = FinishedBasement.new
 

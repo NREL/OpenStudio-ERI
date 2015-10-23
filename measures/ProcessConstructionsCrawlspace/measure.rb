@@ -494,7 +494,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	end
 
 	# Create the sim object
-	sim = Sim.new(model)
+	sim = Sim.new(model, runner)
 
   cs.height = runner.getDoubleArgumentValue("userdefinedcsheight",user_arguments)
   cs.crawlspace_wall_area = runner.getDoubleArgumentValue("userdefinedcswallarea",user_arguments)

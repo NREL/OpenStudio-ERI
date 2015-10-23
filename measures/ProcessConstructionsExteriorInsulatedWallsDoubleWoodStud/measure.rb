@@ -425,7 +425,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     c = Cavity.new
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the wood stud walls
     sc, c, wallsh = sim._processConstructionsExteriorInsulatedWallsDoubleStud(dsw, extwallmass, exteriorfinish, wallsh, sc, c)

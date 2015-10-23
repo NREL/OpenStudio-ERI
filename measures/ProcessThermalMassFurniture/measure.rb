@@ -93,7 +93,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the furniture
     living_space_furn, finished_basement_furn, ubsmt_furn, garage_furn, has_furniture = sim._processThermalMassFurniture(hasFinishedBasement, hasUnfinishedBasement, hasGarage)

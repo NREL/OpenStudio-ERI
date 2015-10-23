@@ -123,7 +123,7 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     ish = InteriorShading.new(intShadeCoolingMonths, intshadecoolingmult, intshadeheatingmult)
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the windows
     window_shade_cooling_season, window_shade_multiplier = sim._processInteriorShadingSchedule(ish)

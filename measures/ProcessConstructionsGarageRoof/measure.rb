@@ -158,7 +158,7 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     roofing_material = RoofingMaterial.new(roofMatEmissivity, roofMatAbsorptivity)
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the slab
     gsa = sim._processConstructionsGarageRoof(gsa)
