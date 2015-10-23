@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>b8ad5ad8-5ffe-4d72-97c8-963612306eb1</version_id>
+  <version_id>d526e929-40aa-4a1a-9bed-ee7cf94d62fd</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>ResidentialRefrigerator</display_name>
@@ -10,33 +10,16 @@
   <modeler_description>To add a residential refrigerator, select the appropriate refrigerator option from the drop down list. A user defined refrigerator can be defined based on it's rated energy use (kWh/yr)</modeler_description>
   <arguments>
     <argument>
-      <name>selected_fridge</name>
-      <display_name>Refrigerator Energy Consumption Option</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <choices>
-        <choice>
-          <value>Benchmark</value>
-          <display_name>Benchmark</display_name>
-        </choice>
-        <choice>
-          <value>Annual Energy Consumption</value>
-          <display_name>Annual Energy Consumption</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>fridge_E</name>
-      <display_name>User Defined Refrigerator Annual Energy Consumption (kWh/yr)</display_name>
+      <display_name>Rated Annual Consumption (kWh/yr)</display_name>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>434</default_value>
     </argument>
     <argument>
-      <name>BAB_mult</name>
-      <display_name>Building America Benchmark Multiplier</display_name>
+      <name>mult</name>
+      <display_name>Occupancy Energy Multiplier</display_name>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -48,6 +31,30 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>weekday_sch</name>
+      <display_name>Specify the 24-hour weekday schedule</display_name>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041</default_value>
+    </argument>
+    <argument>
+      <name>weekend_sch</name>
+      <display_name>Specify the 24-hour weekend schedule</display_name>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041</default_value>
+    </argument>
+    <argument>
+      <name>monthly_sch</name>
+      <display_name>Specify the 12-month schedule</display_name>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -74,22 +81,10 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
+      <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>82471B39</checksum>
     </file>
     <file>
       <version>
@@ -100,7 +95,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4FF75E61</checksum>
+      <checksum>D927998D</checksum>
     </file>
   </files>
 </measure>
