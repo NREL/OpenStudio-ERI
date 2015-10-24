@@ -690,15 +690,14 @@ end
 
 class Sim
 
-	def initialize(model=nil)
-		if not model.nil?
-      @model = model
-    end
-    begin
-      @weather = WeatherProcess.new("#{File.expand_path('.')}/in.epw")
-    rescue
-      @weather = WeatherProcess.new("#{File.expand_path('.')}/../in.epw")
-    end
+	def initialize(model=nil, runner=nil)
+	  if not model.nil?
+		@model = model
+	  end
+	  if not runner.nil?
+		@runner = runner
+		@weather = WeatherProcess.new(@runner.lastEpwFilePath.get.to_s)
+	  end
 	end
 
   def _getGroundTemperatures

@@ -881,7 +881,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     #
 
     # Create the sim object
-    sim = Sim.new(workspace)
+    sim = Sim.new(workspace, runner)
 
     # Process the infiltration
     si, living_space, wind_speed, garage, fb, ub, cs, ua = sim._processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site, geometry)

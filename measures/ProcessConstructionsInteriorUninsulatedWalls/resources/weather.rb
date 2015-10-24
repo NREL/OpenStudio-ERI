@@ -39,7 +39,7 @@ class WeatherProcess
 
     # if not os.path.exists(epwfile):
     #     raise IOError("Cannot find file " + epwfile)
-
+	
     epwlines = []
     File.open(epwfile) do |file|
       file.each do |line|

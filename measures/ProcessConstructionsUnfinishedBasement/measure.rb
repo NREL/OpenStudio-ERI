@@ -661,7 +661,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	end	
 
 	# Create the sim object
-	sim = Sim.new(model)	
+	sim = Sim.new(model, runner)	
 	
 	# Process the slab
 	uci, uwi, uwfr, uffr, ujc, wallsh = sim._processConstructionsUnfinishedBasement(ub, carpet, floor_mass, extwallmass, wallsh, exterior_finish, uci, uwi, uwfr, uffr, ujc)	

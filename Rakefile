@@ -229,3 +229,28 @@ RuboCop::RakeTask.new(:rubocop) do |task|
 end
 
 task default: 'test:unit:all'
+
+desc 'update all resources'
+task :update_resources do
+
+  resources_to_update = Dir[File.expand_path("../resources/*.*", __FILE__)].map { |f| File.basename(f) }
+  measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry =='.' || entry == '..') }
+  measures.each do |m|
+    copied = false
+    subfolders = Dir.entries(File.expand_path("../measures/#{m}", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/#{m}", __FILE__), entry) and !(entry =='.' || entry == '..') }
+	if subfolders.include? "resources"
+	  resources = Dir[File.expand_path("../measures/#{m}/resources/*.*", __FILE__)]
+	  resources.each do |r|
+	    r = File.basename(r)
+		if resources_to_update.include? r
+		  FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
+		  copied = true
+		end
+	  end	
+	end
+	if copied
+	  puts "Updated resources for #{m}."
+	end
+  end
+
+end

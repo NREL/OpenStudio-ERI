@@ -306,7 +306,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     saf = StudandAirFloor.new
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the interior uninsulated floor
     saf = sim._processConstructionsInteriorUninsulatedFloors(saf)

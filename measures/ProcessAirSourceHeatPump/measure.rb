@@ -292,7 +292,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     misc = Misc.new(nil)
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     hasFurnace = false
     hasCoolingEquipment = true

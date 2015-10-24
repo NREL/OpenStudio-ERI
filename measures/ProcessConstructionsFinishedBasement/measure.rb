@@ -630,7 +630,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     end
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the slab
     fwi, fwfr, fffr, fjc, wallsh = sim._processConstructionsFinishedBasement(fb, carpet, floor_mass, extwallmass, wallsh, exterior_finish, fwi, fwfr, fffr, fjc)
