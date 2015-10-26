@@ -236,20 +236,18 @@ task :update_resources do
   resources_to_update = Dir[File.expand_path("../resources/*.*", __FILE__)].map { |f| File.basename(f) }
   measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry =='.' || entry == '..') }
   measures.each do |m|
-    copied = false
     subfolders = Dir.entries(File.expand_path("../measures/#{m}", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/#{m}", __FILE__), entry) and !(entry =='.' || entry == '..') }
 	if subfolders.include? "resources"
 	  resources = Dir[File.expand_path("../measures/#{m}/resources/*.*", __FILE__)]
 	  resources.each do |r|
 	    r = File.basename(r)
 		if resources_to_update.include? r
-		  FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
-		  copied = true
+		  if not FileUtils.compare_file(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/#{r}", __FILE__)) 
+		    FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
+			puts "Updated #{r} in #{m}/resources/."
+		  end
 		end
 	  end	
-	end
-	if copied
-	  puts "Updated resources for #{m}."
 	end
   end
 

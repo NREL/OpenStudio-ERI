@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>b8ad5ad8-5ffe-4d72-97c8-963612306eb1</version_id>
+  <version_id>2f645fbb-388e-4290-829f-9fd858c7f147</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>ResidentialRefrigerator</display_name>
@@ -74,22 +74,10 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
     </file>
     <file>
       <version>
@@ -101,6 +89,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>4FF75E61</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5E03A9C7</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A38F0058</checksum>
     </file>
   </files>
 </measure>

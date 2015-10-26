@@ -374,6 +374,51 @@ def get_double_stud_wall_r_assembly(dsw, gypsumThickness, gypsumNumLayers, finis
 
 end
 
+def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=true):
+    # Returns assembly R-value for steel stud wall, including air films.
+    
+    # Uses Equation 4-1 from 2015 IECC, which includes a correction factor, as an alternative
+    # calculation to the parallel path approach.
+
+    mat_air = get_mat_air()
+    mat_wood = get_mat_wood()
+    mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
+    films = get_films_constant.new
+
+    if not ss.SSWallCavityInsRvalueInstalled
+        ss.SSWallCavityInsRvalueInstalled = 0
+	end
+    if not ss.SSWallFramingFactor
+        ss.SSWallFramingFactor = 0
+	end
+    if not ss.SSWallCorrectionFactor
+        ss.SSWallCorrectionFactor = 1
+	end
+
+    # Add air gap when insulation thickness < cavity depth
+    if not ss.SSWallCavityInsFillsCavity
+        ss.SSWallCavityInsRvalueInstalled += mat_air.R_air_gap
+	end
+    
+    gapFactor = get_wall_gap_factor(ss.SSWallInstallGrade, ss.SSWallFramingFactor)
+
+    # The cumulative R-value of the wall components along the path of heat transfer,
+    # excluding the cavity insulation and steel studs
+    r = films.vertical # Interior film
+    r += (OpenStudio::convert(gypsumThickness,"in","ft").get) * gypsumNumLayers / mat_gyp.k) # Interior Finish (GWB)
+    if hasOSB
+        r += mat_plywood1_2in # OSB sheathing
+    r += rigidInsRvalue
+    r += (OpenStudio::convert(finishThickness,"in","ft").get / OpenStudio::convert(finishConductivity,"in","ft").get) # Exterior Finish
+    r += films.outside # Exterior film
+    
+    # The effective R-value of the cavity insulation with steel studs
+    eR = ss.SSWallCavityInsRvalueInstalled * ss.SSWallCorrectionFactor
+    
+    return r + 1/((1-gapFactor)/eR + gapFactor/mat_air.R_air_gap)
+	
+end
+
 def get_interzonal_wall_r_assembly(iw, gypsumThickness, gypsumConductivity=nil)
   # Returns assemblu R-value for Other wall, including air films.
 
@@ -691,12 +736,29 @@ end
 class Sim
 
 	def initialize(model=nil, runner=nil)
-	  if not model.nil?
+	  @model = nil
+	  @weather = nil
+	  epw_path = nil
+	  unless model.nil?
 		@model = model
 	  end
-	  if not runner.nil?
-		@runner = runner
-		@weather = WeatherProcess.new(@runner.lastEpwFilePath.get.to_s)
+	  unless runner.nil?
+		begin # Spreadsheet
+		  former_workflow_arguments = runner.former_workflow_arguments
+		  weather_file_name = former_workflow_arguments["set_dr_weather_file"]["weather_file_name"]
+		  weather_file_dir = former_workflow_arguments["set_dr_weather_file"]["weather_directory_name"]
+		  epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
+		rescue # PAT
+		  if runner.lastEpwFilePath.is_initialized
+			test = runner.lastEpwFilePath.get.to_s
+			if File.exist?(test)
+			  epw_path = test
+			end
+		  end
+		end
+	  end
+	  unless epw_path.nil?
+		@weather = WeatherProcess.new(epw_path)
 	  end
 	end
 
@@ -1198,7 +1260,6 @@ class Sim
 		else
 			cavityInsDens = get_mat_densepack_generic.rho
 			cavityInsSH = get_mat_densepack_generic.Cp
-			cavityInsSH = get_mat_densepack_generic.Cp
 		end
 		
 		wsGapFactor = get_wall_gap_factor(wsw.WSWallInstallGrade, wsw.WSWallFramingFactor)
@@ -1206,13 +1267,13 @@ class Sim
 		overall_wall_Rvalue = get_wood_stud_wall_r_assembly(wsw, "WS", extwallmass.ExtWallMassGypsumThickness, extwallmass.ExtWallMassGypsumNumLayers, exteriorfinish.FinishThickness, exteriorfinish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
 		
 		# Create layers for modeling
-    films = Get_films_constant.new
+		films = Get_films_constant.new
 		sc.stud_layer_thickness = OpenStudio::convert(wsw.WSWallCavityDepth,"in","ft").get
 		sc.stud_layer_conductivity = sc.stud_layer_thickness / (overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exteriorfinish.FinishRvalue + extwallmass.ExtWallMassGypsumRvalue))
 		sc.stud_layer_density = wsw.WSWallFramingFactor * get_mat_wood.rho + (1 - wsw.WSWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * inside_air_dens
 		sc.stud_layer_spec_heat = (wsw.WSWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - wsw.WSWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / sc.stud_layer_density
 
-    wallsh = _addInsulatedSheathingMaterial(wallsh)
+		wallsh = _addInsulatedSheathingMaterial(wallsh)
 
 		return sc, wallsh
 		
@@ -1238,6 +1299,33 @@ class Sim
 
     return sc, c
 
+  end
+  
+  def _processConstructionsExteriorInsulatedWallsSteelStud(ss, ext_wall_mass, exterior_finish, wallsh, sc)
+        # Set Furring insulation/air properties
+        if ss.SSWallCavityInsRvalueInstalled == 0
+            cavityInsDens = inside_air_dens # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
+            cavityInsSH = get_mat_air.inside_air_sh
+        else
+            cavityInsDens = get_mat_densepack_generic.rho
+            cavityInsSH = get_mat_densepack_generic.Cp
+		end
+		
+        wsGapFactor = get_wall_gap_factor(ss.SSWallInstallGrade, ss.SSWallFramingFactor)	
+
+        overall_wall_Rvalue = get_steel_stud_wall_r_assembly(ss, ext_wall_mass.ExtWallMassLayerThickness, ext_wall_mass.ExtWallMassNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
+		
+        # Create layers for modeling
+		films = Get_films_constant.new
+        sc.stud_layer_thickness = OpenStudio::convert(ss.SSWallCavityDepth) # ft
+        sc.stud_layer_conductivity = sc.stud_layer_thickness / (overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exteriorfinish.FinishRvalue + extwallmass.ExtWallMassGypsumRvalue)) # Btu/hr*ft*F		
+        sc.stud_layer_density = ss.SSWallFramingFactor * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * inside_air_dens 
+        sc.stud_layer_spec_heat = (ss.SSWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / sc.stud_layer_density		
+		
+		wallsh = _addInsulatedSheathingMaterial(wallsh)
+		
+		return sc, wallsh
+		
   end
 
   def _processConstructionsInteriorInsulatedWalls(iw, partition_wall_mass, iwi)
