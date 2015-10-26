@@ -10,7 +10,6 @@ class Schedule
   
 	def validateValues(values_str, num_values, runner, sch_name)
 	    begin
-			# FIXME: Converts string to floats with value 0.0
 			vals = values_str.split(",")
 			vals.each do |val|
 				if not valid_float?(val)
@@ -134,5 +133,15 @@ class Schedule
 		
 		return ruleset
     end
+	
+	def self.replaceSchedule(obj, ruleset)
+		# Helper method to replace a schedule with a new schedule without 
+		# leaving the original schedule in the model (clutter).
+		if not obj.schedule.empty?
+			sch = obj.schedule.get
+			sch.remove
+		end
+		obj.setSchedule(ruleset)
+	end
 	
 end

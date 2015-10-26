@@ -1,12 +1,3 @@
-#see the URL below for information on how to write OpenStudio measures
-# http://openstudio.nrel.gov/openstudio-measure-writing-guide
-
-#see the URL below for information on using life cycle cost objects in OpenStudio
-# http://openstudio.nrel.gov/openstudio-life-cycle-examples
-
-#see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
-# http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
-
 require "#{File.dirname(__FILE__)}/resources/schedules"
 
 #start the measure
@@ -15,7 +6,15 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ResidentialRefrigerator"
+    return "Add/Replace Residential Refrigerator"
+  end
+  
+  def description
+    return "Adds/replaces a residential refrigerator."
+  end
+  
+  def modeler_description
+    return "Adds/replaces the ElectricEquipment object."
   end
   
   #define the arguments that the user will input
@@ -26,13 +25,16 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a double argument for user defined fridge options
 	fridge_E = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fridge_E",true)
-	fridge_E.setDisplayName("Rated Annual Consumption (kWh/yr)")
+	fridge_E.setDisplayName("Rated Annual Consumption")
+	fridge_E.setUnits("kWh/yr")
+	fridge_E.setDescription("The EnergyGuide rated annual energy consumption for a refrigerator.")
 	fridge_E.setDefaultValue(434)
 	args << fridge_E
 	
 	#make a double argument for Occupancy Energy Multiplier
 	mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mult")
 	mult.setDisplayName("Occupancy Energy Multiplier")
+	mult.setDescription("Appliance energy use is multiplied by this factor to account for occupancy usage that differs from the national average.")
 	mult.setDefaultValue(1)
 	args << mult
 	
@@ -59,25 +61,29 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a choice argument for space type
     space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
-    space_type.setDisplayName("Select the space where the refrigerator is located")
+    space_type.setDisplayName("Location")
+	space_type.setDescription("Select the space where the refrigerator is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
 	
 	#Make a string argument for 24 weekday schedule values
 	weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch")
-	weekday_sch.setDisplayName("Specify the 24-hour weekday schedule")
+	weekday_sch.setDisplayName("Weekday schedule")
+	weekday_sch.setDescription("Specify the 24-hour weekday schedule.")
 	weekday_sch.setDefaultValue("0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041")
 	args << weekday_sch
     
 	#Make a string argument for 24 weekend schedule values
 	weekend_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekend_sch")
-	weekend_sch.setDisplayName("Specify the 24-hour weekend schedule")
+	weekend_sch.setDisplayName("Weekend schedule")
+	weekend_sch.setDescription("Specify the 24-hour weekend schedule.")
 	weekend_sch.setDefaultValue("0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041")
 	args << weekend_sch
 
 	#Make a string argument for 12 monthly schedule values
 	monthly_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("monthly_sch")
-	monthly_sch.setDisplayName("Specify the 12-month schedule")
+	monthly_sch.setDisplayName("Month schedule")
+	monthly_sch.setDescription("Specify the 12-month schedule.")
 	monthly_sch.setDefaultValue("0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837")
 	args << monthly_sch
 
@@ -94,14 +100,14 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #assign the user inputs to variables
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
-	mult = runner.getDoubleArgumentValue("mult",user_arguments)
     fridge_E = runner.getDoubleArgumentValue("fridge_E",user_arguments)
+	mult = runner.getDoubleArgumentValue("mult",user_arguments)
+	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
 	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
 	
-	#if fridge energy consumption is defined, check for reasonable energy consumption
+	#check for reasonable energy consumption
 	if fridge_E < 0
 		runner.registerError("Refrigerator energy consumption must be greater than or equal to 0")
 		return false
@@ -117,7 +123,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	fridge_ann = fridge_E*mult
 	fridge_daily = fridge_ann/365.0
 
-    #hard coded convective, radiative, latent, and lost fractions for fridges
+    #hard coded convective, radiative, latent, and lost fractions
     fridge_lat = 0
     fridge_rad = 0
     fridge_lost = 0
@@ -127,10 +133,11 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	if not s.validated?
 		return false
 	end
+	fridge_ruleset = s.createSchedule(model, obj_name)
 	fridge_max = s.calcDesignLevel(fridge_daily)
 	
 	#add refrigerator to the selected space
-	fridge_name = "residential_refrigerator"
+	obj_name = "residential_refrigerator"
 	has_fridge = 0
 	replace_fridge = 0
 	num_equip = 1
@@ -140,16 +147,11 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 		if spacehandle == space_type_r #add refrigerator
 			space_equipments = spaceType.electricEquipment
 			space_equipments.each do |space_equipment|
-				if space_equipment.electricEquipmentDefinition.name.get.to_s == fridge_name #TODO: double check that this actually gets equipment name
+				if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
 					has_fridge = 1
 					runner.registerWarning("This space already has a refrigerator, the existing refrigerator will be replaced with the the currently selected option")
 					space_equipment.electricEquipmentDefinition.setDesignLevel(fridge_max)
-					
-					#Assign schedule
-					#TODO: This apparently leaves the old, unused schedule in the file
-					refrig_ruleset = s.createSchedule(model, fridge_name)
-					space_equipment.setSchedule(refrig_ruleset)
-					
+					Schedule.replaceSchedule(space_equipment, fridge_ruleset)
 					num_equip += 1
 					replace_fridge = 1
 				end
@@ -160,17 +162,14 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 				#Add electric equipment for the fridge
 				frg_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
 				frg = OpenStudio::Model::ElectricEquipment.new(frg_def)
-				frg.setName(fridge_name)
+				frg.setName(obj_name)
 				frg.setSpaceType(spaceType)
-				frg_def.setName(fridge_name)
+				frg_def.setName(obj_name)
 				frg_def.setDesignLevel(fridge_max)
 				frg_def.setFractionRadiant(fridge_rad)
 				frg_def.setFractionLatent(fridge_lat)
 				frg_def.setFractionLost(fridge_lost)
-				
-				#Assign schedule
-				refrig_ruleset = s.createSchedule(model, fridge_name)
-				frg.setSchedule(refrig_ruleset)
+				frg.setSchedule(fridge_ruleset)
 				
 			end
 		end

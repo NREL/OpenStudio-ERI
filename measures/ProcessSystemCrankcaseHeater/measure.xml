@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_system_crankcase_heater</name>
   <uid>b0630593-f352-4753-ae2c-2aa68f1c5611</uid>
-  <version_id>50c50456-f407-47e7-9763-ab62346b8515</version_id>
+  <version_id>353bfc3b-4f29-49a1-b706-85481f09024e</version_id>
   <xml_checksum>C7ED76C0</xml_checksum>
   <class_name>ProcessSystemCrankcaseHeater</class_name>
   <display_name>ProcessSystemCrankcaseHeater</display_name>
@@ -94,22 +94,22 @@
       <checksum>96A459E2</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5E03A9C7</checksum>
+    </file>
+    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
     </file>
   </files>
 </measure>

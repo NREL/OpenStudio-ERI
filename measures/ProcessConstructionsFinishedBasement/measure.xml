@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_finished_basement</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>1cad8263-c2ef-4b12-ad90-1f92a28a8597</version_id>
+  <version_id>1ff93392-442a-4161-95df-0a7c7e4b038b</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFinishedBasement</class_name>
   <display_name>ProcessConstructionsUnfinishedBasement</display_name>
@@ -225,6 +225,12 @@
       <checksum>695FAA9D</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -233,25 +239,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1F45DA12</checksum>
+      <checksum>9F791382</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>5E03A9C7</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
     </file>
   </files>
 </measure>

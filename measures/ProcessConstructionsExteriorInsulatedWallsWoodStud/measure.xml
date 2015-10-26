@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>c5509d83-59cc-4647-a693-f76a08addd5e</version_id>
+  <version_id>f25260f3-3343-4b0a-8ec2-ea85b23de2bc</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsWoodStud</class_name>
   <display_name>ProcessConstructionsExteriorInsulatedWallsWoodStud</display_name>
@@ -255,13 +255,13 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BE2EE00</checksum>
+      <checksum>5E03A9C7</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8133C759</checksum>
+      <checksum>A38F0058</checksum>
     </file>
   </files>
 </measure>

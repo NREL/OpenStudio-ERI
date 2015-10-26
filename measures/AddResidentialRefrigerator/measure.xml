@@ -2,17 +2,19 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>d526e929-40aa-4a1a-9bed-ee7cf94d62fd</version_id>
+  <version_id>8e5f9d99-10f7-489e-9e63-a6e75a703503</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
-  <display_name>ResidentialRefrigerator</display_name>
-  <description>This measure adds a residential refrigerator to the building, with a schedule based on the Building America House Simulation Protocols (add reference). TODO: add the capability to do user defined schedules (monthly multiplier and weekday/weekend schedule)</description>
-  <modeler_description>To add a residential refrigerator, select the appropriate refrigerator option from the drop down list. A user defined refrigerator can be defined based on it's rated energy use (kWh/yr)</modeler_description>
+  <display_name>Add/Replace Residential Refrigerator</display_name>
+  <description>Adds/replaces a residential refrigerator.</description>
+  <modeler_description>Adds/replaces the ElectricEquipment object.</modeler_description>
   <arguments>
     <argument>
       <name>fridge_E</name>
-      <display_name>Rated Annual Consumption (kWh/yr)</display_name>
+      <display_name>Rated Annual Consumption</display_name>
+      <description>The EnergyGuide rated annual energy consumption for a refrigerator.</description>
       <type>Double</type>
+      <units>kWh/yr</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>434</default_value>
@@ -20,6 +22,7 @@
     <argument>
       <name>mult</name>
       <display_name>Occupancy Energy Multiplier</display_name>
+      <description>Appliance energy use is multiplied by this factor to account for occupancy usage that differs from the national average.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -27,14 +30,16 @@
     </argument>
     <argument>
       <name>space_type</name>
-      <display_name>Select the space where the refrigerator is located</display_name>
+      <display_name>Location</display_name>
+      <description>Select the space where the refrigerator is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>weekday_sch</name>
-      <display_name>Specify the 24-hour weekday schedule</display_name>
+      <display_name>Weekday schedule</display_name>
+      <description>Specify the 24-hour weekday schedule.</description>
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -42,7 +47,8 @@
     </argument>
     <argument>
       <name>weekend_sch</name>
-      <display_name>Specify the 24-hour weekend schedule</display_name>
+      <display_name>Weekend schedule</display_name>
+      <description>Specify the 24-hour weekend schedule.</description>
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -50,7 +56,8 @@
     </argument>
     <argument>
       <name>monthly_sch</name>
-      <display_name>Specify the 12-month schedule</display_name>
+      <display_name>Month schedule</display_name>
+      <description>Specify the 12-month schedule.</description>
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -81,10 +88,22 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5E03A9C7</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>82471B39</checksum>
+      <checksum>ABBC4DD5</checksum>
     </file>
     <file>
       <version>
@@ -95,7 +114,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D927998D</checksum>
+      <checksum>CA5B0A61</checksum>
     </file>
   </files>
 </measure>

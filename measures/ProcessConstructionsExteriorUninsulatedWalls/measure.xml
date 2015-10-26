@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_uninsulated_walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>9ebd75a2-dcd3-429e-a3cd-be752c866fb3</version_id>
+  <version_id>1ad3ce29-ee1f-4abe-8b05-d6d735d5106c</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorUninsulatedWalls</class_name>
   <display_name>ProcessConstructionsExteriorUninsulatedWalls</display_name>
@@ -59,22 +59,22 @@
       <checksum>5B2933F1</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5E03A9C7</checksum>
+    </file>
+    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
     </file>
   </files>
 </measure>

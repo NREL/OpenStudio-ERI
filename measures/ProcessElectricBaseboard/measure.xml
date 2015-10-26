@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>98f63f45-9d5d-4d57-b8e3-3938c1bb589f</version_id>
+  <version_id>a1be3e94-6026-46d8-95b7-7d1b3a306b64</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>ProcessElectricBaseboard</display_name>
@@ -201,22 +201,22 @@
       <checksum>432ACDD9</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5E03A9C7</checksum>
+    </file>
+    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
     </file>
   </files>
 </measure>

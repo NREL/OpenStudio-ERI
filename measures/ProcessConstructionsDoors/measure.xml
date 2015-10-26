@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>75c5c7b4-96f8-4091-8c23-7f4d3ef1567f</version_id>
+  <version_id>63be6c84-9d25-4cc9-b0cc-bd63d742f860</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>ProcessConstructionsDoors</display_name>
@@ -48,6 +48,12 @@
       <checksum>BA787397</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -56,25 +62,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3C503272</checksum>
+      <checksum>455DCECD</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>5E03A9C7</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
     </file>
   </files>
 </measure>

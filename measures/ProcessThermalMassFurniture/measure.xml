@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>d8920783-2908-401f-bc4d-8179c66f320a</version_id>
+  <version_id>1158328e-ec0c-4c93-9389-f4dcac1c6f50</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>ProcessThermalMassFurniture</display_name>
@@ -62,6 +62,12 @@
       <checksum>A956F71E</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -70,25 +76,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>63911F83</checksum>
+      <checksum>A21E7747</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>5E03A9C7</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
     </file>
   </files>
 </measure>
