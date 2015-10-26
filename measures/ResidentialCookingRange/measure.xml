@@ -5,94 +5,85 @@
   <version_id>03131ef6-69f1-4fcd-ac06-b36bcee6e530</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
-  <display_name>ResidentialCookingRange</display_name>
-  <description>Adds a cooking range to the building. The range can use either gas or electricity. If there is already a gas or electric range in the building, it is replaced with the user selected range. Users can specify either the annual energy use (in kWh/yr), Benchmark multiplier, or the cooktop and oven energy factors. Users can also sepcify if the gas range uses a glo bar for ignition. Energy use for cases other than simple depends on the number of bedrooms as a way to determine how often the range is use. From BEopt, typical oven and cooktop energy factors for a typical electric range are O_EF = 0.11, C_EF = 0.74. For an induction range, O_EF = 0.11, C_EF = 0.84. For a gas range, O_EF = 0.058, C_EF = 0.4.</description>
-  <modeler_description>Adds a new Electric Equipment or Gas Equipment object with a typical range schedule (the default defined in the Building America House Simulation Protocols: http://energy.gov/sites/prod/files/2014/03/f13/house_simulation_protocols_2014.pdf). If a gas range with a glo bar is selected, the model will have a separate Electric Equipment object to capture it's energy consumption.</modeler_description>
+  <display_name>Add/Replace Residential Cooking Range</display_name>
+  <description>Adds/replaces a residential cooking range.</description>
+  <modeler_description>Adds/replaces the ElectricEquipment or GasEquipment object. If a non-electric range with electric ignition is specified, the model will have a separate ElectricEquipment object to capture its energy consumption.</modeler_description>
   <arguments>
     <argument>
-      <name>selected_range</name>
-      <display_name>Cooking Range Energy Consumption Option</display_name>
+      <name>Num_Br</name>
+      <display_name>Number of Bedrooms</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>3</default_value>
       <choices>
         <choice>
-          <value>Benchmark</value>
-          <display_name>Benchmark</display_name>
+          <value>1</value>
+          <display_name>1</display_name>
         </choice>
         <choice>
-          <value>Detailed</value>
-          <display_name>Detailed</display_name>
+          <value>2</value>
+          <display_name>2</display_name>
         </choice>
         <choice>
-          <value>Simple</value>
-          <display_name>Simple</display_name>
+          <value>3</value>
+          <display_name>3</display_name>
+        </choice>
+        <choice>
+          <value>4</value>
+          <display_name>4</display_name>
+        </choice>
+        <choice>
+          <value>5+</value>
+          <display_name>5+</display_name>
         </choice>
       </choices>
     </argument>
     <argument>
       <name>range_fuel</name>
-      <display_name>Cooking Range Fuel</display_name>
+      <display_name>Fuel Type</display_name>
+      <description>Type of fuel used for heating.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>Electric</default_value>
       <choices>
+        <choice>
+          <value>Electric</value>
+          <display_name>Electric</display_name>
+        </choice>
         <choice>
           <value>Gas</value>
           <display_name>Gas</display_name>
         </choice>
-        <choice>
-          <value>Electricity</value>
-          <display_name>Electricity</display_name>
-        </choice>
       </choices>
-    </argument>
-    <argument>
-      <name>range_E</name>
-      <display_name>Simple Range Annual Energy Consumption (kWh/yr or therms/yr)</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>BAB_mult</name>
-      <display_name>Building America Benchmark Multipler</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1</default_value>
-    </argument>
-    <argument>
-      <name>Num_Br</name>
-      <display_name>Number of Bedrooms</display_name>
-      <type>Integer</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1</default_value>
-    </argument>
-    <argument>
-      <name>O_ef</name>
-      <display_name>Oven Energy Factor</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
     </argument>
     <argument>
       <name>C_ef</name>
       <display_name>Cooktop Energy Factor</display_name>
+      <description>Cooktop energy factor determined by DOE test procedures for cooking appliances (DOE 1997).</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>0.71</default_value>
     </argument>
     <argument>
-      <name>Glo_Bar</name>
-      <display_name>Has glo bar ignition</display_name>
+      <name>O_ef</name>
+      <display_name>Oven Energy Factor</display_name>
+      <description>Oven energy factor determined by DOE test procedures for cooking appliances (DOE 1997).</description>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.11</default_value>
+    </argument>
+    <argument>
+      <name>e_ignition</name>
+      <display_name>Has Electronic Ignition</display_name>
+      <description>For gas/propane cooking ranges with electronic ignition, an extra (40 + 13.3x(#BR)) kWh/yr of electricity will be included.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
       <choices>
         <choice>
           <value>true</value>
@@ -105,11 +96,48 @@
       </choices>
     </argument>
     <argument>
+      <name>mult</name>
+      <display_name>Occupancy Energy Multiplier</display_name>
+      <description>Appliance energy use is multiplied by this factor to account for occupancy usage that differs from the national average.</description>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
       <name>space_type</name>
-      <display_name>Select the space where the cooking range is located</display_name>
+      <display_name>Location</display_name>
+      <description>Select the space where the cooking range is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>weekday_sch</name>
+      <display_name>Weekday schedule</display_name>
+      <description>Specify the 24-hour weekday schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011</default_value>
+    </argument>
+    <argument>
+      <name>weekend_sch</name>
+      <display_name>Weekend schedule</display_name>
+      <description>Specify the 24-hour weekend schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011</default_value>
+    </argument>
+    <argument>
+      <name>monthly_sch</name>
+      <display_name>Month schedule</display_name>
+      <description>Specify the 12-month schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -136,6 +164,43 @@
       <checksum>8CE5D019</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+<<<<<<< HEAD
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5E03A9C7</checksum>
+=======
+      <checksum>5E03A9C7</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A38F0058</checksum>
+>>>>>>> db790ed2c6481e3389efa9a0ab502586ead85992
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+<<<<<<< HEAD
+      <checksum>A38F0058</checksum>
+=======
+      <checksum>ABBC4DD5</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -144,25 +209,8 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>33EB6C75</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5E03A9C7</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>25E0D5C1</checksum>
+>>>>>>> db790ed2c6481e3389efa9a0ab502586ead85992
     </file>
   </files>
 </measure>
