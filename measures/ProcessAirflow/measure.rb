@@ -297,14 +297,20 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
     #make a choice argument for model objects
     zone_display_names = OpenStudio::StringVector.new
-
+	
     #get all thermal zones in model
-    zone_args = workspace.getObjectsByType("Zone".to_IddObjectType)
-    zone_args.each do |zone_arg|
-      zone_arg_name = zone_arg.getString(0) # Name
-      zone_display_names << zone_arg_name.to_s
-    end
-    zone_display_names << "NA"
+    #zone_args = workspace.getObjectsByType("Zone".to_IddObjectType)
+    #zone_args.each do |zone_arg|
+    #  zone_arg_name = zone_arg.getString(0) # Name
+    #  zone_display_names << zone_arg_name.to_s
+    #end
+	# TODO: figure out why in spreadsheet workspace.getObjectsByType returns an empty list
+    zone_display_names << "living"
+	zone_display_names << "basement"
+	zone_display_names << "crawl"
+	zone_display_names << "attic"
+	zone_display_names << "garage"
+	zone_display_names << "NA"
 
     #make a choice argument for living space
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", zone_display_names, true)

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>b45e8da6-42d5-4d1f-b593-3676caa7bf4e</version_id>
+  <version_id>48905914-ffcb-4427-9bab-dc1a44b01f79</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageGas</class_name>
   <display_name>AddOSWaterHeaterMixedStorageGas</display_name>
@@ -194,6 +194,12 @@
       <checksum>61747C72</checksum>
     </file>
     <file>
+      <filename>AddOSWaterHeaterMixedStorageGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>896E9F53</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -202,13 +208,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>34E96FA2</checksum>
-    </file>
-    <file>
-      <filename>AddOSWaterHeaterMixedStorageGas_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>896E9F53</checksum>
+      <checksum>68135332</checksum>
     </file>
   </files>
 </measure>

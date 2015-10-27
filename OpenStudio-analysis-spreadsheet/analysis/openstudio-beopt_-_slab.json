@@ -345,41 +345,6 @@
       },
       "workflow": [
         {
-          "name": "setdrweatherfile",
-          "display_name": "SetDRWeatherFIle",
-          "measure_type": "RubyMeasure",
-          "measure_definition_class_name": "SetDRWeatherFIle",
-          "measure_definition_directory": "./measures/SetDRWeatherFIle",
-          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/SetDRWeatherFIle",
-          "measure_definition_display_name": "SetDRWeatherFIle",
-          "measure_definition_name": "setdrweatherfile",
-          "measure_definition_name_xml": null,
-          "measure_definition_uuid": "ef4a02df-3390-4218-bd91-d029249bb08b",
-          "measure_definition_version_uuid": "4b4364d8-682f-41d3-8609-141c4ec9972e",
-          "arguments": [
-            {
-              "display_name": "Weather Directory Name",
-              "display_name_short": "Weather Directory Name",
-              "name": "weather_directory_name",
-              "value_type": "string",
-              "default_value": "beopt_weather_dir",
-              "value": "beopt_weather_dir"
-            },
-            {
-              "display_name": "Weather File Name",
-              "display_name_short": "Weather File Name",
-              "name": "weather_file_name",
-              "value_type": "string",
-              "default_value": "USA_CO_Denver.Intl.AP.725650_TMY3.epw",
-              "value": "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
-            }
-          ],
-          "variables": [
-
-          ],
-          "workflow_index": 0
-        },
-        {
           "name": "processconstructionsexteriorinsulatedwallswoodstud",
           "display_name": "ProcessConstructionsExteriorInsulatedWallsWoodStud",
           "measure_type": "RubyMeasure",
@@ -389,8 +354,8 @@
           "measure_definition_display_name": "ProcessConstructionsExteriorInsulatedWallsWoodStud",
           "measure_definition_name": "processconstructionsexteriorinsulatedwallswoodstud",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "d9e6be23-5130-4aad-a701-e771e6a92c38",
-          "measure_definition_version_uuid": "eca2f99a-0c37-46ac-9f36-c8f14a6052a6",
+          "measure_definition_uuid": "8843627d-901f-4307-8dd8-9c8ebf15080e",
+          "measure_definition_version_uuid": "97bbc98a-27e4-4cbb-ac04-9742c4214c6d",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -531,8 +496,8 @@
               "maximum": 0.51,
               "relation_to_output": null,
               "static_value": 0.5,
-              "uuid": "e1e57dac-aa2d-4cf7-aacb-ad98ccc10c2e",
-              "version_uuid": "f9144e51-cad1-476d-9dee-4cd5ce5f6e90",
+              "uuid": "0b202a48-7063-426c-84e5-962a63824575",
+              "version_uuid": "23a278d2-6780-4da5-9556-470ecb48443b",
               "variable": true,
               "uncertainty_description": {
                 "type": "discrete_uncertain",
@@ -591,8 +556,8 @@
               "maximum": 2.0,
               "relation_to_output": null,
               "static_value": 1.0,
-              "uuid": "d27509f4-a51a-4834-b68c-786b7bfd1d4f",
-              "version_uuid": "6e40d00f-a16a-4141-9752-263e1e8e5987",
+              "uuid": "885cd677-3600-4761-ba6c-eb234cd2264a",
+              "version_uuid": "03939385-b507-4844-849d-da1bfdca0d9a",
               "variable": true,
               "uncertainty_description": {
                 "type": "discrete_uncertain",
@@ -635,7 +600,7 @@
               "workflow_index": 1
             }
           ],
-          "workflow_index": 1
+          "workflow_index": 0
         },
         {
           "name": "processconstructionsexterioruninsulatedwalls",
@@ -647,16 +612,16 @@
           "measure_definition_display_name": "ProcessConstructionsExteriorUninsulatedWalls",
           "measure_definition_name": "processconstructionsexterioruninsulatedwalls",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "a6f5c3ee-ab6a-4494-a3d5-8a5c0e3bcf53",
-          "measure_definition_version_uuid": "019dccfc-817d-4205-b3a4-ce32c9ceee1d",
+          "measure_definition_uuid": "c4d85381-9f0c-48b4-b42d-acb5239668fa",
+          "measure_definition_version_uuid": "2300ea4a-02d8-4513-b8fd-b057881d68b8",
           "arguments": [
             {
               "display_name": "Of what space type is the attic?",
               "display_name_short": "Of what space type is the attic?",
-              "name": "selectedliving",
+              "name": "selectedattic",
               "value_type": "string",
-              "default_value": "living spacetype",
-              "value": "living spacetype"
+              "default_value": "attic spacetype",
+              "value": "attic spacetype"
             },
             {
               "display_name": "Of what space type is the garage?",
@@ -670,7 +635,7 @@
           "variables": [
 
           ],
-          "workflow_index": 2
+          "workflow_index": 1
         },
         {
           "name": "processconstructionsunfinishedattic",
@@ -682,8 +647,8 @@
           "measure_definition_display_name": "ProcessConstructionsUnfinishedAttic",
           "measure_definition_name": "processconstructionsunfinishedattic",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "d2df6196-9bfa-4316-b305-83983fafeb74",
-          "measure_definition_version_uuid": "05b4d442-94bb-4eae-b1c9-59ca6d43f153",
+          "measure_definition_uuid": "97982428-a9b4-4f71-8af8-8fac831c8035",
+          "measure_definition_version_uuid": "2b00d689-5795-407d-98c8-4e2652bcd164",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -817,7 +782,7 @@
           "variables": [
 
           ],
-          "workflow_index": 3
+          "workflow_index": 2
         },
         {
           "name": "processconstructionsinteriorinsulatedwalls",
@@ -829,8 +794,8 @@
           "measure_definition_display_name": "ProcessConstructionsInteriorInsulatedWalls",
           "measure_definition_name": "processconstructionsinteriorinsulatedwalls",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "6ba724ff-a245-4d79-8847-4582110df472",
-          "measure_definition_version_uuid": "620c8eb8-a1b6-4c73-b463-2edbe650c964",
+          "measure_definition_uuid": "84220a5d-4ced-4f2d-9878-62d333bdf314",
+          "measure_definition_version_uuid": "3ab2d519-a1c2-4183-bc36-3718c0c4f05d",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -940,7 +905,7 @@
           "variables": [
 
           ],
-          "workflow_index": 4
+          "workflow_index": 3
         },
         {
           "name": "processconstructionsdoors",
@@ -952,8 +917,8 @@
           "measure_definition_display_name": "ProcessConstructionsDoors",
           "measure_definition_name": "processconstructionsdoors",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "798eb092-d2ab-44d9-b22e-c300d20ed125",
-          "measure_definition_version_uuid": "00b9986a-59e9-4c1d-8178-5e3b3abbb704",
+          "measure_definition_uuid": "eae9eec1-ed70-43ac-9b80-b7a5cf5e2b49",
+          "measure_definition_version_uuid": "93216286-8b97-41de-ac3f-cf636a19a28b",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -975,7 +940,7 @@
           "variables": [
 
           ],
-          "workflow_index": 5
+          "workflow_index": 4
         },
         {
           "name": "processthermalmassfurniture",
@@ -987,8 +952,8 @@
           "measure_definition_display_name": "ProcessThermalMassFurniture",
           "measure_definition_name": "processthermalmassfurniture",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "9b3792d2-51f5-47e5-9888-596fca6bb6ae",
-          "measure_definition_version_uuid": "407cda0c-d795-451a-8a70-1d4b6f583e1b",
+          "measure_definition_uuid": "a4aad6f0-ee65-414c-9022-86997a17eb2c",
+          "measure_definition_version_uuid": "e98153f7-aa14-4e7f-a703-8dcf4546f314",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -1026,7 +991,7 @@
           "variables": [
 
           ],
-          "workflow_index": 6
+          "workflow_index": 5
         },
         {
           "name": "residentialclotheswasheranddryer",
@@ -1038,8 +1003,8 @@
           "measure_definition_display_name": "ResidentialClothesWasherandDryer",
           "measure_definition_name": "residentialclotheswasheranddryer",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "df2da3ad-9b16-4f89-9664-b64ae2806e08",
-          "measure_definition_version_uuid": "d05836bb-faa2-44c8-89e3-7304c0c854a5",
+          "measure_definition_uuid": "f902ce8f-9df6-48c0-84c9-558746376d00",
+          "measure_definition_version_uuid": "8cf5d4f7-e8f9-46bd-8b47-c9ed51450ec7",
           "arguments": [
             {
               "display_name": "Clothes Dryer Energy Consumption Option",
@@ -1133,98 +1098,7 @@
           "variables": [
 
           ],
-          "workflow_index": 7
-        },
-        {
-          "name": "residentialcookingrange",
-          "display_name": "ResidentialCookingRange",
-          "measure_type": "RubyMeasure",
-          "measure_definition_class_name": "ResidentialCookingRange",
-          "measure_definition_directory": "./measures/ResidentialCookingRange",
-          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ResidentialCookingRange",
-          "measure_definition_display_name": "ResidentialCookingRange",
-          "measure_definition_name": "residentialcookingrange",
-          "measure_definition_name_xml": null,
-          "measure_definition_uuid": "711eea72-b104-4be5-9254-686bbb1ae98f",
-          "measure_definition_version_uuid": "37649bb2-af0b-4a95-999e-a71fd4efe8b3",
-          "arguments": [
-            {
-              "display_name": "Cooking Range Energy Consumption Option",
-              "display_name_short": "Cooking Range Energy Consumption Option",
-              "name": "selected_range",
-              "value_type": "string",
-              "default_value": "Benchmark",
-              "value": "Benchmark"
-            },
-            {
-              "display_name": "Cooking Range Fuel",
-              "display_name_short": "Cooking Range Fuel",
-              "name": "range_fuel",
-              "value_type": "string",
-              "default_value": "Electricity",
-              "value": "Electricity"
-            },
-            {
-              "display_name": "Simple Range Annual Consumption (kWh/yr or therms/yr)",
-              "display_name_short": "Simple Range Annual Consumption (kWh/yr or therms/yr)",
-              "name": "range_E",
-              "value_type": "double",
-              "default_value": 0.0,
-              "value": 0.0
-            },
-            {
-              "display_name": "Building America Benchmark Multiplier",
-              "display_name_short": "Building America Benchmark Multiplier",
-              "name": "BAB_mult",
-              "value_type": "double",
-              "default_value": 1.0,
-              "value": 1.0
-            },
-            {
-              "display_name": "Number of Bedrooms",
-              "display_name_short": "Number of Bedrooms",
-              "name": "Num_Br",
-              "value_type": "integer",
-              "default_value": 3,
-              "value": 3
-            },
-            {
-              "display_name": "Oven Energy Factor",
-              "display_name_short": "Oven Energy Factor",
-              "name": "O_ef",
-              "value_type": "double",
-              "default_value": 0.0,
-              "value": 0.0
-            },
-            {
-              "display_name": "Cooktop Energy Factor",
-              "display_name_short": "Cooktop Energy Factor",
-              "name": "C_ef",
-              "value_type": "double",
-              "default_value": 0.0,
-              "value": 0.0
-            },
-            {
-              "display_name": "Has glo bar ignition",
-              "display_name_short": "Has glo bar ignition",
-              "name": "Glo_Bar",
-              "value_type": "bool",
-              "default_value": false,
-              "value": false
-            },
-            {
-              "display_name": "Select the space where the cooking range is located",
-              "display_name_short": "Select the space where the cooking range is located",
-              "name": "space_type",
-              "value_type": "string",
-              "default_value": "living spacetype",
-              "value": "living spacetype"
-            }
-          ],
-          "variables": [
-
-          ],
-          "workflow_index": 8
+          "workflow_index": 6
         },
         {
           "name": "residentialdishwasher",
@@ -1236,8 +1110,8 @@
           "measure_definition_display_name": "ResidentialDishwasher",
           "measure_definition_name": "residentialdishwasher",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "1dc70114-1bf1-481a-8506-b8c69c5df14b",
-          "measure_definition_version_uuid": "bf0f2474-604c-404a-8b97-9deb4aaa6e0f",
+          "measure_definition_uuid": "de0feb15-0166-4c90-b46d-c291a7aee1f5",
+          "measure_definition_version_uuid": "52fcd597-0a31-4a08-8cef-8f0c42a3af98",
           "arguments": [
             {
               "display_name": "Dishwasher Energy Consumption Option",
@@ -1283,7 +1157,7 @@
           "variables": [
 
           ],
-          "workflow_index": 9
+          "workflow_index": 7
         },
         {
           "name": "residentialmiscellaneouselectricloads",
@@ -1295,8 +1169,8 @@
           "measure_definition_display_name": "ResidentialMiscellaneousElectricLoads",
           "measure_definition_name": "residentialmiscellaneouselectricloads",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "ee0a5127-6024-4084-a7ca-22eea6b0d27f",
-          "measure_definition_version_uuid": "2b261e2e-4ee9-4b9c-bbe4-de1097e4f7bc",
+          "measure_definition_uuid": "b58e20e5-4341-4b05-8379-64fb464cfef9",
+          "measure_definition_version_uuid": "31dcda95-6b5c-421c-b723-3e3f7c41b414",
           "arguments": [
             {
               "display_name": "MEL Energy Consumption Option",
@@ -1350,58 +1224,7 @@
           "variables": [
 
           ],
-          "workflow_index": 10
-        },
-        {
-          "name": "residentialrefrigerator",
-          "display_name": "ResidentialRefrigerator",
-          "measure_type": "RubyMeasure",
-          "measure_definition_class_name": "ResidentialRefrigerator",
-          "measure_definition_directory": "./measures/AddResidentialRefrigerator",
-          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/AddResidentialRefrigerator",
-          "measure_definition_display_name": "ResidentialRefrigerator",
-          "measure_definition_name": "residentialrefrigerator",
-          "measure_definition_name_xml": null,
-          "measure_definition_uuid": "82f85166-bba0-4648-adb7-05ba6c32f825",
-          "measure_definition_version_uuid": "ddd5d77c-be82-410d-901b-c85cd7c728fe",
-          "arguments": [
-            {
-              "display_name": "Refrigerator Energy Consumption Option",
-              "display_name_short": "Refrigerator Energy Consumption Option",
-              "name": "selected_fridge",
-              "value_type": "string",
-              "default_value": "Benchmark",
-              "value": "Benchmark"
-            },
-            {
-              "display_name": "User Defined Refrigerator Annual Energy Consumption (kWh/yr)",
-              "display_name_short": "User Defined Refrigerator Annual Energy Consumption (kWh/yr)",
-              "name": "fridge_E",
-              "value_type": "double",
-              "default_value": 0.0,
-              "value": 0.0
-            },
-            {
-              "display_name": "Building America Benchmark Multiplier",
-              "display_name_short": "Building America Benchmark Multiplier",
-              "name": "BAB_mult",
-              "value_type": "double",
-              "default_value": 1.0,
-              "value": 1.0
-            },
-            {
-              "display_name": "Select the space where the refrigerator is located",
-              "display_name_short": "Select the space where the refrigerator is located",
-              "name": "space_type",
-              "value_type": "string",
-              "default_value": "living spacetype",
-              "value": "living spacetype"
-            }
-          ],
-          "variables": [
-
-          ],
-          "workflow_index": 11
+          "workflow_index": 8
         },
         {
           "name": "residentialmiscellaneousgasloads",
@@ -1413,8 +1236,8 @@
           "measure_definition_display_name": "ResidentialMiscellaneousGasLoads",
           "measure_definition_name": "residentialmiscellaneousgasloads",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "bdb54255-c36b-44eb-bdb8-3cb183800968",
-          "measure_definition_version_uuid": "0a44fdf1-bdad-4f83-a813-94c9b1f26d31",
+          "measure_definition_uuid": "b2d7441b-1689-4d9f-b027-49bd0d25efce",
+          "measure_definition_version_uuid": "0d306f54-23c2-46f3-bf36-63097b978492",
           "arguments": [
             {
               "display_name": "MGL Energy Consumption Option",
@@ -1468,7 +1291,7 @@
           "variables": [
 
           ],
-          "workflow_index": 12
+          "workflow_index": 9
         },
         {
           "name": "addbuildingamericabenchmarkoccupants",
@@ -1480,8 +1303,8 @@
           "measure_definition_display_name": "AddBuildingAmericaBenchmarkOccupants",
           "measure_definition_name": "addbuildingamericabenchmarkoccupants",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "734e9931-31c3-4344-8e50-4eccef745676",
-          "measure_definition_version_uuid": "94f5866e-a55a-4fea-af70-f75085a91801",
+          "measure_definition_uuid": "cdf616f8-1f58-4921-aa87-baad876d99dd",
+          "measure_definition_version_uuid": "56b1a1b5-8078-4247-9770-b987b9c09b79",
           "arguments": [
             {
               "display_name": "Number of Bedrooms",
@@ -1503,114 +1326,7 @@
           "variables": [
 
           ],
-          "workflow_index": 13
-        },
-        {
-          "name": "addoswaterheatermixedstoragegas",
-          "display_name": "AddOSWaterHeaterMixedStorageGas",
-          "measure_type": "RubyMeasure",
-          "measure_definition_class_name": "AddOSWaterHeaterMixedStorageGas",
-          "measure_definition_directory": "./measures/AddOSWaterHeaterMixedStorageGas",
-          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/AddOSWaterHeaterMixedStorageGas",
-          "measure_definition_display_name": "AddOSWaterHeaterMixedStorageGas",
-          "measure_definition_name": "addoswaterheatermixedstoragegas",
-          "measure_definition_name_xml": null,
-          "measure_definition_uuid": "c86f8c08-c008-430b-b738-0bafb767bd9d",
-          "measure_definition_version_uuid": "e3cb30ac-b0f4-419b-bbd8-3923ff92e859",
-          "arguments": [
-            {
-              "display_name": "How will this measure be used?",
-              "display_name_short": "How will this measure be used?",
-              "name": "use_case",
-              "value_type": "string",
-              "default_value": "General",
-              "value": "General"
-            },
-            {
-              "display_name": "Number of Bedrooms in the Proposed Home",
-              "display_name_short": "Number of Bedrooms in the Proposed Home",
-              "name": "number_of_bedrooms",
-              "value_type": "string",
-              "default_value": "3.0",
-              "value": "3.0"
-            },
-            {
-              "display_name": "Number of Bathrooms in the Proposed Home",
-              "display_name_short": "Number of Bathrooms in the Proposed Home",
-              "name": "number_of_bathrooms",
-              "value_type": "string",
-              "default_value": "2.0",
-              "value": "2.0"
-            },
-            {
-              "display_name": "Plant Loop to assign Water heater as a Supply Equipment",
-              "display_name_short": "Plant Loop to assign Water heater as a Supply Equipment",
-              "name": "existing_plant_loop_name",
-              "value_type": "string",
-              "default_value": "Service Hot Water Loop",
-              "value": "Service Hot Water Loop"
-            },
-            {
-              "display_name": "Volume of the Storage Tank (gallons) of the Gas Hot Water Heater. Set to 0 to have Storage tank volume autosized. This field is ignored for NCTH and B10 protocols.",
-              "display_name_short": "Volume of the Storage Tank (gallons) of the Gas Hot Water Heater. Set to 0 to have Storage tank volume autosized. This field is ignored for NCTH and B10 protocols.",
-              "name": "storage_tank_volume",
-              "value_type": "double",
-              "default_value": 40.0,
-              "value": 40.0
-            },
-            {
-              "display_name": "Hot Water Temperature Setpoint (Deg F).",
-              "display_name_short": "Hot Water Temperature Setpoint (Deg F).",
-              "name": "shw_setpoint_temperature",
-              "value_type": "double",
-              "default_value": 125.0,
-              "value": 125.0
-            },
-            {
-              "display_name": "Thermal Zone where the Gas Storage Water Heater is located",
-              "display_name_short": "Thermal Zone where the Gas Storage Water Heater is located",
-              "name": "water_heater_location",
-              "value_type": "string",
-              "default_value": "living",
-              "value": "living"
-            },
-            {
-              "display_name": "The nominal capacity [kBtu/hr] of the gas storage water heater. Set to 0 to have this field autosized. This field is ignored for NCTH and B10 protocols.",
-              "display_name_short": "The nominal capacity [kBtu/hr] of the gas storage water heater. Set to 0 to have this field autosized. This field is ignored for NCTH and B10 protocols.",
-              "name": "water_heater_capacity",
-              "value_type": "double",
-              "default_value": 40.0,
-              "value": 40.0
-            },
-            {
-              "display_name": "Rated Energy Factor of Gas Storage Tank Water Heater. This field is ignored for NCTH and B10 protocols.",
-              "display_name_short": "Rated Energy Factor of Gas Storage Tank Water Heater. This field is ignored for NCTH and B10 protocols.",
-              "name": "rated_energy_factor",
-              "value_type": "double",
-              "default_value": 0.59,
-              "value": 0.59
-            },
-            {
-              "display_name": "Rated Recovery Efficiency of the water heater equal to the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the DOE in 10 CFR Part 430, Appendix E to Subpart B. Enter a number between 0 and 1.0. This is used to calculate the thermal efficiency. Users wil need to review the E+out.eio file to confirm Calculated recovery efficiency - Rated recovery efficiency.",
-              "display_name_short": "Rated Recovery Efficiency of the water heater equal to the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the DOE in 10 CFR Part 430, Appendix E to Subpart B. Enter a number between 0 and 1.0. This is used to calculate the thermal efficiency. Users wil need to review the E+out.eio file to confirm Calculated recovery efficiency - Rated recovery efficiency.",
-              "name": "water_heater_recovery_efficiency",
-              "value_type": "double",
-              "default_value": 0.78,
-              "value": 0.78
-            },
-            {
-              "display_name": "The Type of Fuel used for heating.",
-              "display_name_short": "The Type of Fuel used for heating.",
-              "name": "water_heater_fuel_type",
-              "value_type": "string",
-              "default_value": "Natural Gas",
-              "value": "Natural Gas"
-            }
-          ],
-          "variables": [
-
-          ],
-          "workflow_index": 14
+          "workflow_index": 10
         },
         {
           "name": "modifysitewatermainstemperature",
@@ -1622,8 +1338,8 @@
           "measure_definition_display_name": "ModifySiteWaterMainsTemperature",
           "measure_definition_name": "modifysitewatermainstemperature",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "1d52772f-ae95-4447-9f4c-491e381202a2",
-          "measure_definition_version_uuid": "ecb2b18e-117b-46ed-a210-0dd949ba5ffa",
+          "measure_definition_uuid": "a29a7c20-f1a9-43ca-b9d5-4258ad233677",
+          "measure_definition_version_uuid": "e1dec532-50a0-4967-8958-470c5a19190d",
           "arguments": [
             {
               "display_name": "Avg Annual Outdoor Air Temperature (?F)",
@@ -1645,7 +1361,7 @@
           "variables": [
 
           ],
-          "workflow_index": 15
+          "workflow_index": 11
         },
         {
           "name": "processheatingandcoolingseasons",
@@ -1657,15 +1373,15 @@
           "measure_definition_display_name": "ProcessHeatingandCoolingSeasons",
           "measure_definition_name": "processheatingandcoolingseasons",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "8aa6dcea-0496-4d78-97b2-431f629cd80c",
-          "measure_definition_version_uuid": "ab15fdd7-57c6-4810-8a75-db08c282c644",
+          "measure_definition_uuid": "923ca339-5291-4b13-a5c7-b67a3cbb03ce",
+          "measure_definition_version_uuid": "e052574f-a96d-4206-94a2-45ea977457bc",
           "arguments": [
 
           ],
           "variables": [
 
           ],
-          "workflow_index": 16
+          "workflow_index": 12
         },
         {
           "name": "processheatingandcoolingsetpoints",
@@ -1677,8 +1393,8 @@
           "measure_definition_display_name": "ProcessHeatingandCoolingSetpoints",
           "measure_definition_name": "processheatingandcoolingsetpoints",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "0ef0d17f-aee4-4e2b-87ee-3091d794f37b",
-          "measure_definition_version_uuid": "75e5e8c8-5841-4912-95de-789a32797435",
+          "measure_definition_uuid": "16608c7a-a6be-4dfb-bea2-a5dc093d799f",
+          "measure_definition_version_uuid": "57783886-3796-4c21-97ea-aaae9afb5de1",
           "arguments": [
             {
               "display_name": "Select the living zone.",
@@ -1724,125 +1440,7 @@
           "variables": [
 
           ],
-          "workflow_index": 17
-        },
-        {
-          "name": "processcentralairconditioner",
-          "display_name": "ProcessCentralAirConditioner",
-          "measure_type": "RubyMeasure",
-          "measure_definition_class_name": "ProcessCentralAirConditioner",
-          "measure_definition_directory": "./measures/ProcessCentralAirConditioner",
-          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessCentralAirConditioner",
-          "measure_definition_display_name": "ProcessCentralAirConditioner",
-          "measure_definition_name": "processcentralairconditioner",
-          "measure_definition_name_xml": null,
-          "measure_definition_uuid": "4a9db569-e8c7-40b1-9f68-73a4f9fbb14c",
-          "measure_definition_version_uuid": "0727fb73-2ab0-4bed-a391-15bf07b1662e",
-          "arguments": [
-            {
-              "display_name": "Which is the living space zone?",
-              "display_name_short": "Which is the living space zone?",
-              "name": "selectedliving",
-              "value_type": "string",
-              "default_value": "living",
-              "value": "living"
-            },
-            {
-              "display_name": "Which is the finished basement zone?",
-              "display_name_short": "Which is the finished basement zone?",
-              "name": "selectedfbsmt",
-              "value_type": "string",
-              "default_value": null,
-              "value": null
-            },
-            {
-              "display_name": "Central air conditioner option.",
-              "display_name_short": "Central air conditioner option.",
-              "name": "selectedac",
-              "value_type": "string",
-              "default_value": "SEER 13",
-              "value": "SEER 13"
-            },
-            {
-              "display_name": "Cooling Output Capacity.",
-              "display_name_short": "Cooling Output Capacity.",
-              "name": "selectedaccap",
-              "value_type": "string",
-              "default_value": "4.0 tons",
-              "value": "4.0 tons"
-            }
-          ],
-          "variables": [
-
-          ],
-          "workflow_index": 18
-        },
-        {
-          "name": "processfurnace",
-          "display_name": "ProcessFurnace",
-          "measure_type": "RubyMeasure",
-          "measure_definition_class_name": "ProcessFurnace",
-          "measure_definition_directory": "./measures/ProcessFurnace",
-          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessFurnace",
-          "measure_definition_display_name": "ProcessFurnace",
-          "measure_definition_name": "processfurnace",
-          "measure_definition_name_xml": null,
-          "measure_definition_uuid": "d080c5e2-ce2b-4abd-8580-c7653a60bdeb",
-          "measure_definition_version_uuid": "abb3fa98-07ee-4182-8fce-b9ba73dbddde",
-          "arguments": [
-            {
-              "display_name": "Which is the living space zone?",
-              "display_name_short": "Which is the living space zone?",
-              "name": "selectedliving",
-              "value_type": "string",
-              "default_value": "living",
-              "value": "living"
-            },
-            {
-              "display_name": "Which is the finished basement zone?",
-              "display_name_short": "Which is the finished basement zone?",
-              "name": "selectedfbsmt",
-              "value_type": "string",
-              "default_value": null,
-              "value": null
-            },
-            {
-              "display_name": "The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value. [Btu/Btu].",
-              "display_name_short": "The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value. [Btu/Btu].",
-              "name": "userdefinedafue",
-              "value_type": "double",
-              "default_value": 0.78,
-              "value": 0.78
-            },
-            {
-              "display_name": "Heating Output Capacity.",
-              "display_name_short": "Heating Output Capacity.",
-              "name": "selectedfurnacecap",
-              "value_type": "string",
-              "default_value": "120 kBtu/hr",
-              "value": "120 kBtu/hr"
-            },
-            {
-              "display_name": "Maximum supply air temperature [F].",
-              "display_name_short": "Maximum supply air temperature [F].",
-              "name": "userdefinedmaxtemp",
-              "value_type": "double",
-              "default_value": 120.0,
-              "value": 120.0
-            },
-            {
-              "display_name": "Type of fuel used for heating.",
-              "display_name_short": "Type of fuel used for heating.",
-              "name": "selectedfurnacefuel",
-              "value_type": "string",
-              "default_value": "gas",
-              "value": "gas"
-            }
-          ],
-          "variables": [
-
-          ],
-          "workflow_index": 19
+          "workflow_index": 13
         },
         {
           "name": "residentiallighting",
@@ -1854,8 +1452,8 @@
           "measure_definition_display_name": "ResidentialLighting",
           "measure_definition_name": "residentiallighting",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "400ac3d5-a2e8-40da-86f3-4edac3dba49b",
-          "measure_definition_version_uuid": "22a22f0d-2545-4779-bfae-da3333e4cabe",
+          "measure_definition_uuid": "69a6b8da-5456-4d3e-9ce9-8805ba8ce73d",
+          "measure_definition_version_uuid": "91c83b35-5718-4f48-bfd2-38ea80a28b19",
           "arguments": [
             {
               "display_name": "Lighting Energy Consumption Option",
@@ -1918,8 +1516,8 @@
               "display_name_short": "Finished Basement Floor Area (ft^2)",
               "name": "fbfa",
               "value_type": "double",
-              "default_value": 900.0,
-              "value": 900.0
+              "default_value": 0.0,
+              "value": 0.0
             },
             {
               "display_name": "Hardwired Fraction CFL",
@@ -2029,7 +1627,7 @@
           "variables": [
 
           ],
-          "workflow_index": 20
+          "workflow_index": 14
         },
         {
           "name": "processthermalmasspartitionwall",
@@ -2041,8 +1639,8 @@
           "measure_definition_display_name": "ProcessThermalMassPartitionWall",
           "measure_definition_name": "processthermalmasspartitionwall",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "69bae358-2e70-4161-acb6-ecabf5a977ae",
-          "measure_definition_version_uuid": "5b59706d-cd9a-4e71-a2ce-ee9736608469",
+          "measure_definition_uuid": "30e16fce-b1d5-410d-88cf-3555ea14acf9",
+          "measure_definition_version_uuid": "55bd6c99-5a3c-430c-a4fb-67ed3d7f6468",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -2120,7 +1718,7 @@
           "variables": [
 
           ],
-          "workflow_index": 21
+          "workflow_index": 15
         },
         {
           "name": "processconstructionsinteriorinsulatedfloors",
@@ -2132,8 +1730,8 @@
           "measure_definition_display_name": "ProcessConstructionsInteriorInsulatedFloors",
           "measure_definition_name": "processconstructionsinteriorinsulatedfloors",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "85db01ba-98d7-4875-a4a3-4837b809fc7d",
-          "measure_definition_version_uuid": "ebdcfdda-d0ec-4a58-948e-4e0754df974c",
+          "measure_definition_uuid": "06a8f9a5-d01a-43e9-ba80-ca0f2f3fcb52",
+          "measure_definition_version_uuid": "f156129e-64ee-4c16-915e-026766725261",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -2219,7 +1817,7 @@
           "variables": [
 
           ],
-          "workflow_index": 22
+          "workflow_index": 16
         },
         {
           "name": "processconstructionsslab",
@@ -2231,8 +1829,8 @@
           "measure_definition_display_name": "ProcessConstructionsSlab",
           "measure_definition_name": "processconstructionsslab",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "be204cf6-b4dd-41de-b9d0-3f584cd0b78e",
-          "measure_definition_version_uuid": "2bf5bd85-b031-4150-a49d-fb8f18b6a5b6",
+          "measure_definition_uuid": "aaf870d7-e432-4d25-ada5-47de890ce8c0",
+          "measure_definition_version_uuid": "5f57c3d1-74dc-49e4-8f34-fe4a4b2fd5a5",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -2318,7 +1916,7 @@
           "variables": [
 
           ],
-          "workflow_index": 23
+          "workflow_index": 17
         },
         {
           "name": "processconstructionsinterioruninsulatedfloors",
@@ -2330,8 +1928,8 @@
           "measure_definition_display_name": "ProcessConstructionsInteriorUninsulatedFloors",
           "measure_definition_name": "processconstructionsinterioruninsulatedfloors",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "5588078f-bed9-4c0a-bc55-40d2c6dfa19f",
-          "measure_definition_version_uuid": "e9e44aac-8143-4f20-af6b-63858fa7da51",
+          "measure_definition_uuid": "08afad08-cb9b-4f64-b9b5-bda47e81afb0",
+          "measure_definition_version_uuid": "94b34329-c82a-4d21-98a6-fd881db877cd",
           "arguments": [
             {
               "display_name": "Of what space type is the living space?",
@@ -2417,7 +2015,7 @@
           "variables": [
 
           ],
-          "workflow_index": 24
+          "workflow_index": 18
         },
         {
           "name": "processconstructionsgarageslab",
@@ -2429,8 +2027,8 @@
           "measure_definition_display_name": "ProcessConstructionsGarageSlab",
           "measure_definition_name": "processconstructionsgarageslab",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "be5eb49d-fa55-405f-87e6-81b03163a330",
-          "measure_definition_version_uuid": "6d3447a2-6dc4-479d-a7a3-10d3ab4ffc1c",
+          "measure_definition_uuid": "e2c2db52-8adb-446b-b6c9-2f1814f63039",
+          "measure_definition_version_uuid": "da363e82-7756-4b9b-a321-adfba7de57de",
           "arguments": [
             {
               "display_name": "Of what space type is the garage?",
@@ -2444,7 +2042,7 @@
           "variables": [
 
           ],
-          "workflow_index": 25
+          "workflow_index": 19
         },
         {
           "name": "processconstructionswindows",
@@ -2456,8 +2054,8 @@
           "measure_definition_display_name": "ProcessConstructionsWindows",
           "measure_definition_name": "processconstructionswindows",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "818bdc3c-f437-453d-acef-211f79caf5c8",
-          "measure_definition_version_uuid": "7857c2e8-d756-48b7-885c-f24702a9c14e",
+          "measure_definition_uuid": "96ff8613-69cc-4976-b244-568af967f5bd",
+          "measure_definition_version_uuid": "64311b65-f3ca-4f7e-af8a-61b440816674",
           "arguments": [
             {
               "display_name": "U-Value [Btu/hr-ft^2-R].",
@@ -2495,7 +2093,7 @@
           "variables": [
 
           ],
-          "workflow_index": 26
+          "workflow_index": 20
         },
         {
           "name": "processgroundtemperature",
@@ -2507,15 +2105,15 @@
           "measure_definition_display_name": "ProcessGroundTemperature",
           "measure_definition_name": "processgroundtemperature",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "50fbe7db-0758-43fa-b076-dda0f9d997a6",
-          "measure_definition_version_uuid": "e8cd2843-4297-443c-917f-a7d6e96f840a",
+          "measure_definition_uuid": "cdf5eaae-e1f3-439d-97ea-68c37bd1f6f6",
+          "measure_definition_version_uuid": "38935e13-c0eb-47b2-88ac-8710690858d7",
           "arguments": [
 
           ],
           "variables": [
 
           ],
-          "workflow_index": 27
+          "workflow_index": 21
         },
         {
           "name": "processairflow",
@@ -2527,8 +2125,8 @@
           "measure_definition_display_name": "ProcessAirflow",
           "measure_definition_name": "processairflow",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "fa32eb28-c31b-4a94-91c9-f54a03d5a581",
-          "measure_definition_version_uuid": "e4e70d6e-697a-40a6-b043-b2ca0c36a7e3",
+          "measure_definition_uuid": "d518918c-c092-4264-a09d-2373371a87dc",
+          "measure_definition_version_uuid": "3adef6c9-d4a4-4b5f-a628-2bb658eedd5f",
           "arguments": [
             {
               "display_name": "Which is the living space zone?",
@@ -3014,7 +2612,7 @@
           "variables": [
 
           ],
-          "workflow_index": 28
+          "workflow_index": 22
         }
       ]
     },

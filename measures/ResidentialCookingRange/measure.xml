@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>03131ef6-69f1-4fcd-ac06-b36bcee6e530</version_id>
+  <version_id>9bd722fd-1b76-493a-bbac-d379259e8df5</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Add/Replace Residential Cooking Range</display_name>
@@ -164,53 +164,20 @@
       <checksum>8CE5D019</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-<<<<<<< HEAD
-      <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5E03A9C7</checksum>
-=======
-      <checksum>5E03A9C7</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
->>>>>>> db790ed2c6481e3389efa9a0ab502586ead85992
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-<<<<<<< HEAD
-      <checksum>A38F0058</checksum>
-=======
       <checksum>ABBC4DD5</checksum>
     </file>
     <file>
       <version>
         <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
+        <identifier>1.9.0</identifier>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>25E0D5C1</checksum>
->>>>>>> db790ed2c6481e3389efa9a0ab502586ead85992
     </file>
   </files>
 </measure>

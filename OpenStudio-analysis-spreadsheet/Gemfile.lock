@@ -13,7 +13,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     archive-tar-minitar (0.5.2)
-    aws-sdk-core (2.1.31)
+    aws-sdk-core (2.1.32)
       jmespath (~> 1.0)
     bcl (0.5.6)
       archive-tar-minitar
@@ -80,3 +80,6 @@ DEPENDENCIES
   openstudio-aws!
   rake (~> 10.4.2)
   rubyzip
+
+BUNDLED WITH
+   1.10.6

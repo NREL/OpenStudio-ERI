@@ -374,7 +374,7 @@ def get_double_stud_wall_r_assembly(dsw, gypsumThickness, gypsumNumLayers, finis
 
 end
 
-def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=true):
+def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=true)
     # Returns assembly R-value for steel stud wall, including air films.
     
     # Uses Equation 4-1 from 2015 IECC, which includes a correction factor, as an alternative
@@ -405,9 +405,10 @@ def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishT
     # The cumulative R-value of the wall components along the path of heat transfer,
     # excluding the cavity insulation and steel studs
     r = films.vertical # Interior film
-    r += (OpenStudio::convert(gypsumThickness,"in","ft").get) * gypsumNumLayers / mat_gyp.k) # Interior Finish (GWB)
+    r += (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k) # Interior Finish (GWB)
     if hasOSB
         r += mat_plywood1_2in # OSB sheathing
+	end
     r += rigidInsRvalue
     r += (OpenStudio::convert(finishThickness,"in","ft").get / OpenStudio::convert(finishConductivity,"in","ft").get) # Exterior Finish
     r += films.outside # Exterior film
@@ -645,9 +646,9 @@ def get_mat_carpet_bare(carpet)
 	return Material.new(name=constants.MaterialCarpetBareLayer, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(0.5,"in","ft").get / (carpet.CarpetPadRValue * carpet.CarpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
 end
 
-def get_mat_stud_and_air(model, mat_wood)
+def get_mat_stud_and_air(model, runner, mat_wood)
 	# Weight specific heat of layer by mass (previously by volume)
-	return Mat_solid.new(rho=(get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * Sim.new(model).inside_air_dens, cp=((get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.Cp * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * get_mat_air.inside_air_sh * Sim.new(model).inside_air_dens) / ((get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * Sim.new(model).inside_air_dens), k=Sim.stud_and_air_thick / Sim.stud_and_air_Rvalue)
+	return Mat_solid.new(rho=(get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * Sim.new(model, runner).inside_air_dens, cp=((get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.Cp * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * get_mat_air.inside_air_sh * Sim.new(model, runner).inside_air_dens) / ((get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * Sim.new(model, runner).inside_air_dens), k=Sim.stud_and_air_thick / Sim.stud_and_air_Rvalue)
 end
 
 def get_mat_2x4(mat_wood)
@@ -660,9 +661,9 @@ def get_mat_2x6(mat_wood)
   return Material.new(name=constants.Material2x6, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(5.5,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
 end
 
-def get_stud_and_air_wall(model, mat_wood)
+def get_stud_and_air_wall(model, runner, mat_wood)
   constants = Constants.new
-	return Material.new(name=constants.MaterialStudandAirWall, type=constants.MaterialTypeProperties, thick=Sim.stud_and_air_thick, thick_in=nil, width=nil, width_in=nil, mat_base=get_mat_stud_and_air(model, mat_wood))
+	return Material.new(name=constants.MaterialStudandAirWall, type=constants.MaterialTypeProperties, thick=Sim.stud_and_air_thick, thick_in=nil, width=nil, width_in=nil, mat_base=get_mat_stud_and_air(model, runner, mat_wood))
 end
 
 def get_mat_roofing_mat(roofing_material)
@@ -738,27 +739,32 @@ class Sim
 	def initialize(model=nil, runner=nil)
 	  @model = nil
 	  @weather = nil
-	  epw_path = nil
 	  unless model.nil?
 		@model = model
 	  end
 	  unless runner.nil?
 		begin # Spreadsheet
-		  former_workflow_arguments = runner.former_workflow_arguments
-		  weather_file_name = former_workflow_arguments["set_dr_weather_file"]["weather_file_name"]
-		  weather_file_dir = former_workflow_arguments["set_dr_weather_file"]["weather_directory_name"]
+		  #former_workflow_arguments = runner.former_workflow_arguments
+		  #weather_file_name = former_workflow_arguments["setdrweatherfile"]["weather_file_name"]
+		  #weather_file_dir = former_workflow_arguments["setdrweatherfile"]["weather_directory_name"]
+		  weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
+		  weather_file_dir = "weather"
 		  epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
+		  @weather = WeatherProcess.new(epw_path)
 		rescue # PAT
 		  if runner.lastEpwFilePath.is_initialized
 			test = runner.lastEpwFilePath.get.to_s
 			if File.exist?(test)
 			  epw_path = test
+			  @weather = WeatherProcess.new(epw_path)
 			end
 		  end
 		end
 	  end
-	  unless epw_path.nil?
-		@weather = WeatherProcess.new(epw_path)
+	  unless @weather.nil?
+		runner.registerInfo("EPW weather path set to #{epw_path}")
+	  else
+		runner.registerInfo("EPW weather path was NOT set")
 	  end
 	end
 

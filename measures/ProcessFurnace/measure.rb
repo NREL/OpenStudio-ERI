@@ -383,7 +383,6 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
     air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(supply.max_temp,"F","C").get)
 	
-
     air_loop_unitary.addToNode(air_supply_inlet_node)
 
     runner.registerInfo("Added on/off fan '#{fan.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")

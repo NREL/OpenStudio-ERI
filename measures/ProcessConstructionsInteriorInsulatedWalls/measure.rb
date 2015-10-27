@@ -212,6 +212,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     #make a choice argument for wall cavity insulation installation grade
     selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
     selected_installgrade.setDisplayName("Insulation installation grade of wood stud wall cavity.")
+	selected_installgrade.setDefaultValue("I")
     args << selected_installgrade
 
     #make a bool argument for whether the cavity insulation fills the cavity

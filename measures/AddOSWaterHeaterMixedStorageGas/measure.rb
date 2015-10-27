@@ -8,7 +8,7 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-require 'OpenStudio'
+require 'openstudio'
 require_relative "resources/ba_protocol_table_8_page_13.rb"
 
 #start the measure
