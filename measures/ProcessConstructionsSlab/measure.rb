@@ -323,7 +323,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	carpet = Carpet.new(carpetFloorFraction, carpetPadRValue)
 
 	# Create the sim object
-	sim = Sim.new(model)
+	sim = Sim.new(model, runner)
 
   slab.area = runner.getDoubleArgumentValue("userdefinedslabarea",user_arguments)
   slab.ext_perimeter = runner.getDoubleArgumentValue("userdefinedslabextperim",user_arguments)

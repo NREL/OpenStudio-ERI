@@ -439,7 +439,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 	sc = StudandCavity.new
 	
 	# Create the sim object
-	sim = Sim.new(model)
+	sim = Sim.new(model, runner)
 	
 	# Process the wood stud walls
 	sc, wallsh = sim._processConstructionsExteriorInsulatedWallsWoodStud(wsw, extwallmass, exteriorfinish, wallsh, sc)

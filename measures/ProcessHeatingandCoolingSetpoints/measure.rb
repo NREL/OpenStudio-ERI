@@ -152,7 +152,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     csp = CoolingSetpoint.new(coolingSetpointConstantSetpoint)
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the heating and cooling setpoints
     hsp, csp, controlType = sim._processHeatingCoolingSetpoints(hsp, csp, selectedheating, selectedcooling)

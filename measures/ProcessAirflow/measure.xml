@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>b165803d-f231-42fb-a532-d71916a010a3</version_id>
+  <version_id>3ea22c6a-832b-4a97-ace1-fd148e66ae99</version_id>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>ProcessAirflow</display_name>
@@ -16,6 +16,26 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+        <choice>
+          <value>basement</value>
+          <display_name>basement</display_name>
+        </choice>
+        <choice>
+          <value>crawl</value>
+          <display_name>crawl</display_name>
+        </choice>
+        <choice>
+          <value>attic</value>
+          <display_name>attic</display_name>
+        </choice>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
         <choice>
           <value>NA</value>
           <display_name>NA</display_name>
@@ -55,6 +75,26 @@
       <default_value>NA</default_value>
       <choices>
         <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+        <choice>
+          <value>basement</value>
+          <display_name>basement</display_name>
+        </choice>
+        <choice>
+          <value>crawl</value>
+          <display_name>crawl</display_name>
+        </choice>
+        <choice>
+          <value>attic</value>
+          <display_name>attic</display_name>
+        </choice>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
+        <choice>
           <value>NA</value>
           <display_name>NA</display_name>
         </choice>
@@ -68,6 +108,26 @@
       <model_dependent>false</model_dependent>
       <default_value>NA</default_value>
       <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+        <choice>
+          <value>basement</value>
+          <display_name>basement</display_name>
+        </choice>
+        <choice>
+          <value>crawl</value>
+          <display_name>crawl</display_name>
+        </choice>
+        <choice>
+          <value>attic</value>
+          <display_name>attic</display_name>
+        </choice>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
         <choice>
           <value>NA</value>
           <display_name>NA</display_name>
@@ -91,6 +151,26 @@
       <default_value>NA</default_value>
       <choices>
         <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+        <choice>
+          <value>basement</value>
+          <display_name>basement</display_name>
+        </choice>
+        <choice>
+          <value>crawl</value>
+          <display_name>crawl</display_name>
+        </choice>
+        <choice>
+          <value>attic</value>
+          <display_name>attic</display_name>
+        </choice>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
+        <choice>
           <value>NA</value>
           <display_name>NA</display_name>
         </choice>
@@ -113,6 +193,26 @@
       <default_value>NA</default_value>
       <choices>
         <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+        <choice>
+          <value>basement</value>
+          <display_name>basement</display_name>
+        </choice>
+        <choice>
+          <value>crawl</value>
+          <display_name>crawl</display_name>
+        </choice>
+        <choice>
+          <value>attic</value>
+          <display_name>attic</display_name>
+        </choice>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
+        <choice>
           <value>NA</value>
           <display_name>NA</display_name>
         </choice>
@@ -134,6 +234,26 @@
       <model_dependent>false</model_dependent>
       <default_value>NA</default_value>
       <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+        <choice>
+          <value>basement</value>
+          <display_name>basement</display_name>
+        </choice>
+        <choice>
+          <value>crawl</value>
+          <display_name>crawl</display_name>
+        </choice>
+        <choice>
+          <value>attic</value>
+          <display_name>attic</display_name>
+        </choice>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
         <choice>
           <value>NA</value>
           <display_name>NA</display_name>
@@ -629,23 +749,6 @@
       <checksum>6EEE80CB</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>194C8065</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -655,7 +758,24 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>2748A090</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4719A345</checksum>
     </file>
   </files>
 </measure>

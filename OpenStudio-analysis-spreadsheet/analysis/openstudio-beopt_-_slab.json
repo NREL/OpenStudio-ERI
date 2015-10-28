@@ -1,0 +1,2629 @@
+{
+  "analysis": {
+    "display_name": "OpenStudio-BEopt - slab",
+    "name": "openstudio-beopt_-_slab",
+    "output_variables": [
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 0,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Total Site Energy Intensity",
+        "display_name_short": "Site EUI",
+        "metadata_id": "total_site_energy_intensity",
+        "name": "standard_report_legacy.total_energy",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 1,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Total Source Energy Intensity",
+        "display_name_short": "Source EUI",
+        "metadata_id": "total_source_energy_intensity",
+        "name": "standard_report_legacy.total_source_energy",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 2,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Total Natural Gas Intensity",
+        "display_name_short": "NG EUI",
+        "metadata_id": "total_natural_gas_intensity",
+        "name": "standard_report_legacy.total_natural_gas",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 3,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Total Electricity Intensity",
+        "display_name_short": "Elec EUI",
+        "metadata_id": "total_electricity_intensity",
+        "name": "standard_report_legacy.total_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 4,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Natural Gas Heating Intensity",
+        "display_name_short": "Natural Gas Heating Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.heating_natural_gas",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 5,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Cooling Electricity Intensity",
+        "display_name_short": "Cooling Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.cooling_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 6,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Interior Lighting Electricity Intensity",
+        "display_name_short": "Interior Lighting Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.interior_lighting_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 7,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Exterior Lighting Electricity Intensity",
+        "display_name_short": "Exterior Lighting Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.exterior_lighting_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 8,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Equipment Electricity Intensity",
+        "display_name_short": "Equipment Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.interior_equipment_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 9,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Equipment Natural Gas Intensity",
+        "display_name_short": "Equipment Natural Gas Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.interior_equipment_natural_gas",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 10,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Experior Equipment Electricity Intensity",
+        "display_name_short": "Experior Equipment Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.exterior_equipment_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 11,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Fans Electricity Intensity",
+        "display_name_short": "Fans Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.fans_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 12,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Pumps Electricity Intensity",
+        "display_name_short": "Pumps Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.pumps_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 13,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Heat Rejection Electricity Intensity",
+        "display_name_short": "Heat Rejection Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.heat_rejection_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 14,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Humidification Electricity Intensity",
+        "display_name_short": "Humidification Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.humidification_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 15,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Water Systems Electricity Intensity",
+        "display_name_short": "Water Systems Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.water_systems_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 16,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Water Systems Natural Gas Intensity",
+        "display_name_short": "Water Systems Natural Gas Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.water_systems_natural_gas",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "MJ/m2",
+        "objective_function": false,
+        "objective_function_index": 17,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Refrigeration Electricity Intensity",
+        "display_name_short": "Refrigeration Electricity Intensity",
+        "metadata_id": null,
+        "name": "standard_report_legacy.refrigeration_electricity",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "hrs",
+        "objective_function": false,
+        "objective_function_index": 18,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Unmet Cooling Hours",
+        "display_name_short": "Unmet Cooling Hours",
+        "metadata_id": null,
+        "name": "standard_reports.time_setpoint_not_met_during_occupied_cooling",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "hrs",
+        "objective_function": false,
+        "objective_function_index": 19,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Unmet Heating Hours",
+        "display_name_short": "Unmet Heating Hours",
+        "metadata_id": null,
+        "name": "standard_reports.time_setpoint_not_met_during_occupied_heating",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "hrs",
+        "objective_function": false,
+        "objective_function_index": 20,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Total Unmet Hours",
+        "display_name_short": "Total Unmet Hours",
+        "metadata_id": null,
+        "name": "standard_reports.time_setpoint_not_met_during_occupied_hours",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      },
+      {
+        "units": "m2",
+        "objective_function": false,
+        "objective_function_index": 21,
+        "objective_function_target": null,
+        "objective_function_group": null,
+        "scaling_factor": null,
+        "display_name": "Building Area",
+        "display_name_short": "Building Area",
+        "metadata_id": null,
+        "name": "standard_reports.total_building_area",
+        "visualize": false,
+        "export": true,
+        "variable_type": "double"
+      }
+    ],
+    "problem": {
+      "analysis_type": "doe",
+      "algorithm": {
+        "experiment_type": "full_factorial",
+        "number_of_samples": 2,
+        "objective_functions": [
+
+        ]
+      },
+      "workflow": [
+        {
+          "name": "processconstructionsexteriorinsulatedwallswoodstud",
+          "display_name": "ProcessConstructionsExteriorInsulatedWallsWoodStud",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsExteriorInsulatedWallsWoodStud",
+          "measure_definition_directory": "./measures/ProcessConstructionsExteriorInsulatedWallsWoodStud",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsExteriorInsulatedWallsWoodStud",
+          "measure_definition_display_name": "ProcessConstructionsExteriorInsulatedWallsWoodStud",
+          "measure_definition_name": "processconstructionsexteriorinsulatedwallswoodstud",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "8843627d-901f-4307-8dd8-9c8ebf15080e",
+          "measure_definition_version_uuid": "97bbc98a-27e4-4cbb-ac04-9742c4214c6d",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Wood stud size of wall cavity.",
+              "display_name_short": "Wood stud size of wall cavity.",
+              "name": "selectedstudsize",
+              "value_type": "string",
+              "default_value": "2x4",
+              "value": "2x4"
+            },
+            {
+              "display_name": "Wood stud spacing of wall cavity.",
+              "display_name_short": "Wood stud spacing of wall cavity.",
+              "name": "selectedspacing",
+              "value_type": "string",
+              "default_value": "16 in o.c.",
+              "value": "16 in o.c."
+            },
+            {
+              "display_name": "Installed R-value of cavity insulation [hr-ft^2-R/Btu].",
+              "display_name_short": "Installed R-value of cavity insulation [hr-ft^2-R/Btu].",
+              "name": "userdefinedinstcavr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Insulation installation grade of wood stud wall cavity.",
+              "display_name_short": "Insulation installation grade of wood stud wall cavity.",
+              "name": "selectedinstallgrade",
+              "value_type": "string",
+              "default_value": "I",
+              "value": "I"
+            },
+            {
+              "display_name": "Cavity insulation fills the cavity?",
+              "display_name_short": "Cavity insulation fills the cavity?",
+              "name": "selectedinsfills",
+              "value_type": "bool",
+              "default_value": false,
+              "value": false
+            },
+            {
+              "display_name": "Rigid insulation thickness of wall cavity [in].",
+              "display_name_short": "Rigid insulation thickness of wall cavity [in].",
+              "name": "userdefinedrigidinsthickness",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Rigid insulation R-value of wall cavity [hr-ft^2-R/Btu].",
+              "display_name_short": "Rigid insulation R-value of wall cavity [hr-ft^2-R/Btu].",
+              "name": "userdefinedrigidinsr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Wood stud wall has OSB sheathing?",
+              "display_name_short": "Wood stud wall has OSB sheathing?",
+              "name": "userdefinedhasosb",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            },
+            {
+              "display_name": "Exterior finish thickness of wall cavity [in].",
+              "display_name_short": "Exterior finish thickness of wall cavity [in].",
+              "name": "userdefinedextfinthickness",
+              "value_type": "double",
+              "default_value": 0.375,
+              "value": 0.375
+            },
+            {
+              "display_name": "Exterior finish R-value of wall cavity [hr-ft^2-R/Btu].",
+              "display_name_short": "Exterior finish R-value of wall cavity [hr-ft^2-R/Btu].",
+              "name": "userdefinedextfinr",
+              "value_type": "double",
+              "default_value": 0.6,
+              "value": 0.6
+            },
+            {
+              "display_name": "Exterior finish density of wall cavity [lb/ft^3].",
+              "display_name_short": "Exterior finish density of wall cavity [lb/ft^3].",
+              "name": "userdefinedextfindensity",
+              "value_type": "double",
+              "default_value": 11.1,
+              "value": 11.1
+            },
+            {
+              "display_name": "Exterior finish specific heat of wall cavity [Btu/lb-R].",
+              "display_name_short": "Exterior finish specific heat of wall cavity [Btu/lb-R].",
+              "name": "userdefinedextfinspecheat",
+              "value_type": "double",
+              "default_value": 0.25,
+              "value": 0.25
+            },
+            {
+              "display_name": "Exterior finish emissivity of wall cavity.",
+              "display_name_short": "Exterior finish emissivity of wall cavity.",
+              "name": "userdefinedextfinthermalabs",
+              "value_type": "double",
+              "default_value": 0.9,
+              "value": 0.9
+            },
+            {
+              "display_name": "Exterior finish absorptance of wall cavity.",
+              "display_name_short": "Exterior finish absorptance of wall cavity.",
+              "name": "userdefinedextfinabs",
+              "value_type": "double",
+              "default_value": 0.3,
+              "value": 0.3
+            }
+          ],
+          "variables": [
+            {
+              "argument": {
+                "display_name": "Thickness of drywall layers [in].",
+                "display_name_short": "Thickness of drywall layers [in].",
+                "name": "userdefinedgypthickness",
+                "value_type": "double",
+                "default_value": 0.5,
+                "value": 0.5
+              },
+              "display_name": "Thickness of drywall layers [in].",
+              "display_name_short": "Thickness of drywall layers [in].",
+              "variable_type": "variable",
+              "units": null,
+              "minimum": 0.5,
+              "maximum": 0.51,
+              "relation_to_output": null,
+              "static_value": 0.5,
+              "uuid": "0b202a48-7063-426c-84e5-962a63824575",
+              "version_uuid": "23a278d2-6780-4da5-9556-470ecb48443b",
+              "variable": true,
+              "uncertainty_description": {
+                "type": "discrete_uncertain",
+                "attributes": [
+                  {
+                    "name": "discrete",
+                    "values_and_weights": [
+                      {
+                        "value": 0.5,
+                        "weight": 0.5
+                      },
+                      {
+                        "value": 0.51,
+                        "weight": 0.5
+                      }
+                    ]
+                  },
+                  {
+                    "name": "lower_bounds",
+                    "value": 0.5
+                  },
+                  {
+                    "name": "upper_bounds",
+                    "value": 0.51
+                  },
+                  {
+                    "name": "modes",
+                    "value": 0.5
+                  },
+                  {
+                    "name": "delta_x",
+                    "value": null
+                  },
+                  {
+                    "name": "stddev",
+                    "value": 1.0
+                  }
+                ]
+              },
+              "workflow_index": 0
+            },
+            {
+              "argument": {
+                "display_name": "Number of drywall layers.",
+                "display_name_short": "Number of drywall layers.",
+                "name": "userdefinedgyplayers",
+                "value_type": "double",
+                "default_value": 1.0,
+                "value": 1.0
+              },
+              "display_name": "Number of drywall layers.",
+              "display_name_short": "Number of drywall layers.",
+              "variable_type": "variable",
+              "units": null,
+              "minimum": 1.0,
+              "maximum": 2.0,
+              "relation_to_output": null,
+              "static_value": 1.0,
+              "uuid": "885cd677-3600-4761-ba6c-eb234cd2264a",
+              "version_uuid": "03939385-b507-4844-849d-da1bfdca0d9a",
+              "variable": true,
+              "uncertainty_description": {
+                "type": "discrete_uncertain",
+                "attributes": [
+                  {
+                    "name": "discrete",
+                    "values_and_weights": [
+                      {
+                        "value": 1,
+                        "weight": 0.5
+                      },
+                      {
+                        "value": 2,
+                        "weight": 0.5
+                      }
+                    ]
+                  },
+                  {
+                    "name": "lower_bounds",
+                    "value": 1.0
+                  },
+                  {
+                    "name": "upper_bounds",
+                    "value": 2.0
+                  },
+                  {
+                    "name": "modes",
+                    "value": 1.0
+                  },
+                  {
+                    "name": "delta_x",
+                    "value": null
+                  },
+                  {
+                    "name": "stddev",
+                    "value": 1.0
+                  }
+                ]
+              },
+              "workflow_index": 1
+            }
+          ],
+          "workflow_index": 0
+        },
+        {
+          "name": "processconstructionsexterioruninsulatedwalls",
+          "display_name": "ProcessConstructionsExteriorUninsulatedWalls",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsExteriorUninsulatedWalls",
+          "measure_definition_directory": "./measures/ProcessConstructionsExteriorUninsulatedWalls",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsExteriorUninsulatedWalls",
+          "measure_definition_display_name": "ProcessConstructionsExteriorUninsulatedWalls",
+          "measure_definition_name": "processconstructionsexterioruninsulatedwalls",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "c4d85381-9f0c-48b4-b42d-acb5239668fa",
+          "measure_definition_version_uuid": "2300ea4a-02d8-4513-b8fd-b057881d68b8",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the attic?",
+              "display_name_short": "Of what space type is the attic?",
+              "name": "selectedattic",
+              "value_type": "string",
+              "default_value": "attic spacetype",
+              "value": "attic spacetype"
+            },
+            {
+              "display_name": "Of what space type is the garage?",
+              "display_name_short": "Of what space type is the garage?",
+              "name": "selectedgarage",
+              "value_type": "string",
+              "default_value": "garage spacetype",
+              "value": "garage spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 1
+        },
+        {
+          "name": "processconstructionsunfinishedattic",
+          "display_name": "ProcessConstructionsUnfinishedAttic",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsUnfinishedAttic",
+          "measure_definition_directory": "./measures/ProcessConstructionsUnfinishedAttic",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsUnfinishedAttic",
+          "measure_definition_display_name": "ProcessConstructionsUnfinishedAttic",
+          "measure_definition_name": "processconstructionsunfinishedattic",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "97982428-a9b4-4f71-8af8-8fac831c8035",
+          "measure_definition_version_uuid": "2b00d689-5795-407d-98c8-4e2652bcd164",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Of what space type is the attic?",
+              "display_name_short": "Of what space type is the attic?",
+              "name": "selectedattic",
+              "value_type": "string",
+              "default_value": "attic spacetype",
+              "value": "attic spacetype"
+            },
+            {
+              "display_name": "Unfinished attic insulation type.",
+              "display_name_short": "Unfinished attic insulation type.",
+              "name": "selecteduains",
+              "value_type": "string",
+              "default_value": "Uninsulated",
+              "value": "Uninsulated"
+            },
+            {
+              "display_name": "Unfinished attic ceiling or roof cavity insulation thickness [in].",
+              "display_name_short": "Unfinished attic ceiling or roof cavity insulation thickness [in].",
+              "name": "userdefinedceilroofinsthickness",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Unfinished attic ceiling or roof cavity insulation R-value [hr-ft^2-R/Btu].",
+              "display_name_short": "Unfinished attic ceiling or roof cavity insulation R-value [hr-ft^2-R/Btu].",
+              "name": "userdefineduaceilroofr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Thickness of joists in the ceiling.",
+              "display_name_short": "Thickness of joists in the ceiling.",
+              "name": "selecteduaceiljoistthickness",
+              "value_type": "string",
+              "default_value": "3.5",
+              "value": "3.5"
+            },
+            {
+              "display_name": "Unfinished attic ceiling framing factor [frac].",
+              "display_name_short": "Unfinished attic ceiling framing factor [frac].",
+              "name": "userdefineduaceilff",
+              "value_type": "double",
+              "default_value": 0.07,
+              "value": 0.07
+            },
+            {
+              "display_name": "Thickness of joists in the ceiling.",
+              "display_name_short": "Thickness of joists in the ceiling.",
+              "name": "selecteduaroofframethickness",
+              "value_type": "string",
+              "default_value": "7.25",
+              "value": "7.25"
+            },
+            {
+              "display_name": "Unfinished attic roof framing factor [frac].",
+              "display_name_short": "Unfinished attic roof framing factor [frac].",
+              "name": "userdefineduaroofff",
+              "value_type": "double",
+              "default_value": 0.07,
+              "value": 0.07
+            },
+            {
+              "display_name": "Rigid insulation thickness of roof cavity [in].",
+              "display_name_short": "Rigid insulation thickness of roof cavity [in].",
+              "name": "userdefinedrigidinsthickness",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Rigid insulation R-value of roof cavity [hr-ft^2-R/Btu].",
+              "display_name_short": "Rigid insulation R-value of roof cavity [hr-ft^2-R/Btu].",
+              "name": "userdefinedrigidinsr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Roof has radiant barrier?",
+              "display_name_short": "Roof has radiant barrier?",
+              "name": "userdefinedhasradiantbarrier",
+              "value_type": "bool",
+              "default_value": false,
+              "value": false
+            },
+            {
+              "display_name": "Thickness of drywall layers [in].",
+              "display_name_short": "Thickness of drywall layers [in].",
+              "name": "userdefinedgypthickness",
+              "value_type": "double",
+              "default_value": 0.5,
+              "value": 0.5
+            },
+            {
+              "display_name": "Number of drywall layers.",
+              "display_name_short": "Number of drywall layers.",
+              "name": "userdefinedgyplayers",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "Roofing material emissivity of unfinished attic.",
+              "display_name_short": "Roofing material emissivity of unfinished attic.",
+              "name": "userdefinedroofmatthermalabs",
+              "value_type": "double",
+              "default_value": 0.91,
+              "value": 0.91
+            },
+            {
+              "display_name": "Roofing material absorptance of unfinished attic.",
+              "display_name_short": "Roofing material absorptance of unfinished attic.",
+              "name": "userdefinedroofmatabs",
+              "value_type": "double",
+              "default_value": 0.85,
+              "value": 0.85
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 2
+        },
+        {
+          "name": "processconstructionsinteriorinsulatedwalls",
+          "display_name": "ProcessConstructionsInteriorInsulatedWalls",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsInteriorInsulatedWalls",
+          "measure_definition_directory": "./measures/ProcessConstructionsInteriorInsulatedWalls",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsInteriorInsulatedWalls",
+          "measure_definition_display_name": "ProcessConstructionsInteriorInsulatedWalls",
+          "measure_definition_name": "processconstructionsinteriorinsulatedwalls",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "84220a5d-4ced-4f2d-9878-62d333bdf314",
+          "measure_definition_version_uuid": "3ab2d519-a1c2-4183-bc36-3718c0c4f05d",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Of what space type is the garage?",
+              "display_name_short": "Of what space type is the garage?",
+              "name": "selectedgarage",
+              "value_type": "string",
+              "default_value": "garage spacetype",
+              "value": "garage spacetype"
+            },
+            {
+              "display_name": "Partition wall mass thickness [in].",
+              "display_name_short": "Partition wall mass thickness [in].",
+              "name": "userdefinedpartitionwallmassth",
+              "value_type": "double",
+              "default_value": 0.5,
+              "value": 0.5
+            },
+            {
+              "display_name": "Partition wall mass conductivity [Btu-in/h-ft^2-R].",
+              "display_name_short": "Partition wall mass conductivity [Btu-in/h-ft^2-R].",
+              "name": "userdefinedpartitionwallmasscond",
+              "value_type": "double",
+              "default_value": 1.1112,
+              "value": 1.1112
+            },
+            {
+              "display_name": "Partition wall mass density [lb/ft^3].",
+              "display_name_short": "Partition wall mass density [lb/ft^3].",
+              "name": "userdefinedpartitionwallmassdens",
+              "value_type": "double",
+              "default_value": 50.0,
+              "value": 50.0
+            },
+            {
+              "display_name": "Partition wall mass specific heat [Btu/lb-R].",
+              "display_name_short": "Partition wall mass specific heat [Btu/lb-R].",
+              "name": "userdefinedpartitionwallmasssh",
+              "value_type": "double",
+              "default_value": 0.2,
+              "value": 0.2
+            },
+            {
+              "display_name": "Wood stud size of wall cavity.",
+              "display_name_short": "Wood stud size of wall cavity.",
+              "name": "selectedstudsize",
+              "value_type": "string",
+              "default_value": "2x4",
+              "value": "2x4"
+            },
+            {
+              "display_name": "Wood stud spacing of wall cavity.",
+              "display_name_short": "Wood stud spacing of wall cavity.",
+              "name": "selectedspacing",
+              "value_type": "string",
+              "default_value": "16 in o.c.",
+              "value": "16 in o.c."
+            },
+            {
+              "display_name": "Installed R-value of cavity insulation [hr-ft^2-R/Btu].",
+              "display_name_short": "Installed R-value of cavity insulation [hr-ft^2-R/Btu].",
+              "name": "userdefinedinstcavr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Insulation installation grade of wood stud wall cavity.",
+              "display_name_short": "Insulation installation grade of wood stud wall cavity.",
+              "name": "selectedinstallgrade",
+              "value_type": "string",
+              "default_value": "I",
+              "value": "I"
+            },
+            {
+              "display_name": "Cavity insulation fills the cavity?",
+              "display_name_short": "Cavity insulation fills the cavity?",
+              "name": "selectedinsfills",
+              "value_type": "bool",
+              "default_value": false,
+              "value": false
+            },
+            {
+              "display_name": "Rigid insulation thickness of wall cavity [in].",
+              "display_name_short": "Rigid insulation thickness of wall cavity [in].",
+              "name": "userdefinedrigidinsthickness",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Rigid insulation R-value of wall cavity [hr-ft^2-R/Btu].",
+              "display_name_short": "Rigid insulation R-value of wall cavity [hr-ft^2-R/Btu].",
+              "name": "userdefinedrigidinsr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 3
+        },
+        {
+          "name": "processconstructionsdoors",
+          "display_name": "ProcessConstructionsDoors",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsDoors",
+          "measure_definition_directory": "./measures/ProcessConstructionsDoors",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsDoors",
+          "measure_definition_display_name": "ProcessConstructionsDoors",
+          "measure_definition_name": "processconstructionsdoors",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "eae9eec1-ed70-43ac-9b80-b7a5cf5e2b49",
+          "measure_definition_version_uuid": "93216286-8b97-41de-ac3f-cf636a19a28b",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Of what space type is the garage?",
+              "display_name_short": "Of what space type is the garage?",
+              "name": "selectedgarage",
+              "value_type": "string",
+              "default_value": "garage spacetype",
+              "value": "garage spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 4
+        },
+        {
+          "name": "processthermalmassfurniture",
+          "display_name": "ProcessThermalMassFurniture",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessThermalMassFurniture",
+          "measure_definition_directory": "./measures/ProcessThermalMassFurniture",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessThermalMassFurniture",
+          "measure_definition_display_name": "ProcessThermalMassFurniture",
+          "measure_definition_name": "processthermalmassfurniture",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "a4aad6f0-ee65-414c-9022-86997a17eb2c",
+          "measure_definition_version_uuid": "e98153f7-aa14-4e7f-a703-8dcf4546f314",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Of what space type is the finished basement?",
+              "display_name_short": "Of what space type is the finished basement?",
+              "name": "selectedfbsmt",
+              "value_type": "string",
+              "default_value": null,
+              "value": null
+            },
+            {
+              "display_name": "Of what space type is the unfinished basement?",
+              "display_name_short": "Of what space type is the unfinished basement?",
+              "name": "selectedufbsmt",
+              "value_type": "string",
+              "default_value": null,
+              "value": null
+            },
+            {
+              "display_name": "Of what space type is the garage?",
+              "display_name_short": "Of what space type is the garage?",
+              "name": "selectedgarage",
+              "value_type": "string",
+              "default_value": "garage spacetype",
+              "value": "garage spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 5
+        },
+        {
+          "name": "residentialclotheswasheranddryer",
+          "display_name": "ResidentialClothesWasherandDryer",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ResidentialClothesWasherandDryer",
+          "measure_definition_directory": "./measures/ResidentialClothesWasherandDryer",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ResidentialClothesWasherandDryer",
+          "measure_definition_display_name": "ResidentialClothesWasherandDryer",
+          "measure_definition_name": "residentialclotheswasheranddryer",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "f902ce8f-9df6-48c0-84c9-558746376d00",
+          "measure_definition_version_uuid": "8cf5d4f7-e8f9-46bd-8b47-c9ed51450ec7",
+          "arguments": [
+            {
+              "display_name": "Clothes Dryer Energy Consumption Option",
+              "display_name_short": "Clothes Dryer Energy Consumption Option",
+              "name": "selected_cd",
+              "value_type": "string",
+              "default_value": "Benchmark",
+              "value": "Benchmark"
+            },
+            {
+              "display_name": "Clothes Dryer Fuel",
+              "display_name_short": "Clothes Dryer Fuel",
+              "name": "cd_fuel",
+              "value_type": "string",
+              "default_value": "Electricity",
+              "value": "Electricity"
+            },
+            {
+              "display_name": "Clothes Dryer Building America Benchmark Multiplier",
+              "display_name_short": "Clothes Dryer Building America Benchmark Multiplier",
+              "name": "BAB_mult_cd",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "Number of Bedrooms",
+              "display_name_short": "Number of Bedrooms",
+              "name": "Num_Br",
+              "value_type": "integer",
+              "default_value": 3,
+              "value": 3
+            },
+            {
+              "display_name": "Clothes Dryer Energy Factor",
+              "display_name_short": "Clothes Dryer Energy Factor",
+              "name": "EF_cd",
+              "value_type": "double",
+              "default_value": 3.1,
+              "value": 3.1
+            },
+            {
+              "display_name": "Clothes Washer Energy Consumption Option",
+              "display_name_short": "Clothes Washer Energy Consumption Option",
+              "name": "selected_cw",
+              "value_type": "string",
+              "default_value": "Benchmark",
+              "value": "Benchmark"
+            },
+            {
+              "display_name": "Clothes Washer Building America Benchmark Multiplier",
+              "display_name_short": "Clothes Washer Building America Benchmark Multiplier",
+              "name": "BAB_mult_cw",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "Clothes Washer Energy Factor",
+              "display_name_short": "Clothes Washer Energy Factor",
+              "name": "EF_cw",
+              "value_type": "double",
+              "default_value": 1.41,
+              "value": 1.41
+            },
+            {
+              "display_name": "Clothes Washer Drum Volume (ft^3)",
+              "display_name_short": "Clothes Washer Drum Volume (ft^3)",
+              "name": "DV_cw",
+              "value_type": "double",
+              "default_value": 3.5,
+              "value": 3.5
+            },
+            {
+              "display_name": "Clothes Washer Test Date",
+              "display_name_short": "Clothes Washer Test Date",
+              "name": "CW_testdate",
+              "value_type": "integer",
+              "default_value": 2007,
+              "value": 2007
+            },
+            {
+              "display_name": "Select the space where the clothes washer and dryer are located",
+              "display_name_short": "Select the space where the clothes washer and dryer are located",
+              "name": "space_type",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 6
+        },
+        {
+          "name": "residentialdishwasher",
+          "display_name": "ResidentialDishwasher",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ResidentialDishwasher",
+          "measure_definition_directory": "./measures/ResidentialDishwasher",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ResidentialDishwasher",
+          "measure_definition_display_name": "ResidentialDishwasher",
+          "measure_definition_name": "residentialdishwasher",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "de0feb15-0166-4c90-b46d-c291a7aee1f5",
+          "measure_definition_version_uuid": "52fcd597-0a31-4a08-8cef-8f0c42a3af98",
+          "arguments": [
+            {
+              "display_name": "Dishwasher Energy Consumption Option",
+              "display_name_short": "Dishwasher Energy Consumption Option",
+              "name": "selected_dw",
+              "value_type": "string",
+              "default_value": "Benchmark",
+              "value": "Benchmark"
+            },
+            {
+              "display_name": "Simple Dishwasher Annual Energy Consumption (kWh/yr)",
+              "display_name_short": "Simple Dishwasher Annual Energy Consumption (kWh/yr)",
+              "name": "dw_E",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Building America Benchmark Multiplier",
+              "display_name_short": "Building America Benchmark Multiplier",
+              "name": "BAB_mult",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "Number of Bedrooms",
+              "display_name_short": "Number of Bedrooms",
+              "name": "Num_Br",
+              "value_type": "integer",
+              "default_value": 3,
+              "value": 3
+            },
+            {
+              "display_name": "Select the space where the dishwasher is located",
+              "display_name_short": "Select the space where the dishwasher is located",
+              "name": "space_type",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 7
+        },
+        {
+          "name": "residentialmiscellaneouselectricloads",
+          "display_name": "ResidentialMiscellaneousElectricLoads",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ResidentialMiscellaneousElectricLoads",
+          "measure_definition_directory": "./measures/ResidentialMiscellaneousElectricLoads",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ResidentialMiscellaneousElectricLoads",
+          "measure_definition_display_name": "ResidentialMiscellaneousElectricLoads",
+          "measure_definition_name": "residentialmiscellaneouselectricloads",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "b58e20e5-4341-4b05-8379-64fb464cfef9",
+          "measure_definition_version_uuid": "31dcda95-6b5c-421c-b723-3e3f7c41b414",
+          "arguments": [
+            {
+              "display_name": "MEL Energy Consumption Option",
+              "display_name_short": "MEL Energy Consumption Option",
+              "name": "selected_mel",
+              "value_type": "string",
+              "default_value": "Benchmark",
+              "value": "Benchmark"
+            },
+            {
+              "display_name": "Simple MEL Annual Energy Consumption (kWh/yr)",
+              "display_name_short": "Simple MEL Annual Energy Consumption (kWh/yr)",
+              "name": "mel_E",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Living Space Floor Area (ft^2)",
+              "display_name_short": "Living Space Floor Area (ft^2)",
+              "name": "CondFA",
+              "value_type": "double",
+              "default_value": 2700.0,
+              "value": 2700.0
+            },
+            {
+              "display_name": "Building America Benchmark Multiplier",
+              "display_name_short": "Building America Benchmark Multiplier",
+              "name": "BAB_mult",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "Number of Bedrooms",
+              "display_name_short": "Number of Bedrooms",
+              "name": "Num_Br",
+              "value_type": "integer",
+              "default_value": 3,
+              "value": 3
+            },
+            {
+              "display_name": "Select the space where the miscellaneous electric loads are located",
+              "display_name_short": "Select the space where the miscellaneous electric loads are located",
+              "name": "space_type",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 8
+        },
+        {
+          "name": "residentialmiscellaneousgasloads",
+          "display_name": "ResidentialMiscellaneousGasLoads",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ResidentialMiscellaneousGasLoads",
+          "measure_definition_directory": "./measures/ResidentialMiscellaneousGasLoads",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ResidentialMiscellaneousGasLoads",
+          "measure_definition_display_name": "ResidentialMiscellaneousGasLoads",
+          "measure_definition_name": "residentialmiscellaneousgasloads",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "b2d7441b-1689-4d9f-b027-49bd0d25efce",
+          "measure_definition_version_uuid": "0d306f54-23c2-46f3-bf36-63097b978492",
+          "arguments": [
+            {
+              "display_name": "MGL Energy Consumption Option",
+              "display_name_short": "MGL Energy Consumption Option",
+              "name": "selected_mgl",
+              "value_type": "string",
+              "default_value": "Benchmark",
+              "value": "Benchmark"
+            },
+            {
+              "display_name": "Simple MGL Annual Energy Consumption (therm/yr)",
+              "display_name_short": "Simple MGL Annual Energy Consumption (therm/yr)",
+              "name": "mgl_E",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Living Space Floor Area (ft^2)",
+              "display_name_short": "Living Space Floor Area (ft^2)",
+              "name": "CondFA",
+              "value_type": "double",
+              "default_value": 2700.0,
+              "value": 2700.0
+            },
+            {
+              "display_name": "Building America Benchmark Multiplier",
+              "display_name_short": "Building America Benchmark Multiplier",
+              "name": "BAB_mult",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "Number of Bedrooms",
+              "display_name_short": "Number of Bedrooms",
+              "name": "Num_Br",
+              "value_type": "integer",
+              "default_value": 3,
+              "value": 3
+            },
+            {
+              "display_name": "Select the space where the miscellaneous gas loads are located",
+              "display_name_short": "Select the space where the miscellaneous gas loads are located",
+              "name": "space_type",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 9
+        },
+        {
+          "name": "addbuildingamericabenchmarkoccupants",
+          "display_name": "AddBuildingAmericaBenchmarkOccupants",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "AddBuildingAmericaBenchmarkOccupants",
+          "measure_definition_directory": "./measures/AddBuildingAmericaBenchmarkOccupants",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/AddBuildingAmericaBenchmarkOccupants",
+          "measure_definition_display_name": "AddBuildingAmericaBenchmarkOccupants",
+          "measure_definition_name": "addbuildingamericabenchmarkoccupants",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "cdf616f8-1f58-4921-aa87-baad876d99dd",
+          "measure_definition_version_uuid": "56b1a1b5-8078-4247-9770-b987b9c09b79",
+          "arguments": [
+            {
+              "display_name": "Number of Bedrooms",
+              "display_name_short": "Number of Bedrooms",
+              "name": "NumBr",
+              "value_type": "integer",
+              "default_value": 3,
+              "value": 3
+            },
+            {
+              "display_name": "Select the space where the occupants is located",
+              "display_name_short": "Select the space where the occupants is located",
+              "name": "space_type",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 10
+        },
+        {
+          "name": "modifysitewatermainstemperature",
+          "display_name": "ModifySiteWaterMainsTemperature",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ModifySiteWaterMainsTemperature",
+          "measure_definition_directory": "./measures/ModifySiteWaterMainsTemperature",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ModifySiteWaterMainsTemperature",
+          "measure_definition_display_name": "ModifySiteWaterMainsTemperature",
+          "measure_definition_name": "modifysitewatermainstemperature",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "a29a7c20-f1a9-43ca-b9d5-4258ad233677",
+          "measure_definition_version_uuid": "e1dec532-50a0-4967-8958-470c5a19190d",
+          "arguments": [
+            {
+              "display_name": "Avg Annual Outdoor Air Temperature (?F)",
+              "display_name_short": "Avg Annual Outdoor Air Temperature (?F)",
+              "name": "avgOAT",
+              "value_type": "double",
+              "default_value": 49.57,
+              "value": 49.57
+            },
+            {
+              "display_name": "Max Difference in Monthly Outdoor Air Temp (?F)",
+              "display_name_short": "Max Difference in Monthly Outdoor Air Temp (?F)",
+              "name": "maxDiffOAT",
+              "value_type": "double",
+              "default_value": 41.06,
+              "value": 41.06
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 11
+        },
+        {
+          "name": "processheatingandcoolingseasons",
+          "display_name": "ProcessHeatingandCoolingSeasons",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessHeatingandCoolingSeasons",
+          "measure_definition_directory": "./measures/ProcessHeatingandCoolingSeasons",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessHeatingandCoolingSeasons",
+          "measure_definition_display_name": "ProcessHeatingandCoolingSeasons",
+          "measure_definition_name": "processheatingandcoolingseasons",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "923ca339-5291-4b13-a5c7-b67a3cbb03ce",
+          "measure_definition_version_uuid": "e052574f-a96d-4206-94a2-45ea977457bc",
+          "arguments": [
+
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 12
+        },
+        {
+          "name": "processheatingandcoolingsetpoints",
+          "display_name": "ProcessHeatingandCoolingSetpoints",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessHeatingandCoolingSetpoints",
+          "measure_definition_directory": "./measures/ProcessHeatingandCoolingSetpoints",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessHeatingandCoolingSetpoints",
+          "measure_definition_display_name": "ProcessHeatingandCoolingSetpoints",
+          "measure_definition_name": "processheatingandcoolingsetpoints",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "16608c7a-a6be-4dfb-bea2-a5dc093d799f",
+          "measure_definition_version_uuid": "57783886-3796-4c21-97ea-aaae9afb5de1",
+          "arguments": [
+            {
+              "display_name": "Select the living zone.",
+              "display_name_short": "Select the living zone.",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living",
+              "value": "living"
+            },
+            {
+              "display_name": "Enter the constant heating setpoint [F].",
+              "display_name_short": "Enter the constant heating setpoint [F].",
+              "name": "userdefinedhsp",
+              "value_type": "double",
+              "default_value": 71.0,
+              "value": 71.0
+            },
+            {
+              "display_name": "Enter the constant cooling setpoint [F].",
+              "display_name_short": "Enter the constant cooling setpoint [F].",
+              "name": "userdefinedcsp",
+              "value_type": "double",
+              "default_value": 76.0,
+              "value": 76.0
+            },
+            {
+              "display_name": "The house has heating equipment.",
+              "display_name_short": "The house has heating equipment.",
+              "name": "selectedheating",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            },
+            {
+              "display_name": "The house has cooling equipment.",
+              "display_name_short": "The house has cooling equipment.",
+              "name": "selectedcooling",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 13
+        },
+        {
+          "name": "residentiallighting",
+          "display_name": "ResidentialLighting",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ResidentialLighting",
+          "measure_definition_directory": "./measures/ResidentialLighting",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ResidentialLighting",
+          "measure_definition_display_name": "ResidentialLighting",
+          "measure_definition_name": "residentiallighting",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "69a6b8da-5456-4d3e-9ce9-8805ba8ce73d",
+          "measure_definition_version_uuid": "91c83b35-5718-4f48-bfd2-38ea80a28b19",
+          "arguments": [
+            {
+              "display_name": "Lighting Energy Consumption Option",
+              "display_name_short": "Lighting Energy Consumption Option",
+              "name": "selected_ltg",
+              "value_type": "string",
+              "default_value": "Benchmark",
+              "value": "Benchmark"
+            },
+            {
+              "display_name": "Simple Interior Lighting Annual Energy Consumption (kWh/yr)",
+              "display_name_short": "Simple Interior Lighting Annual Energy Consumption (kWh/yr)",
+              "name": "ltg_E",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Building has exterior lighting",
+              "display_name_short": "Building has exterior lighting",
+              "name": "outside_ltg",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            },
+            {
+              "display_name": "Building has a garage?",
+              "display_name_short": "Building has a garage?",
+              "name": "garage_ltg",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            },
+            {
+              "display_name": "Building has a finished basement?",
+              "display_name_short": "Building has a finished basement?",
+              "name": "fb_ltg",
+              "value_type": "bool",
+              "default_value": false,
+              "value": false
+            },
+            {
+              "display_name": "Conditioned Floor Area (including basement if finished) (ft^2)",
+              "display_name_short": "Conditioned Floor Area (including basement if finished) (ft^2)",
+              "name": "cfa",
+              "value_type": "double",
+              "default_value": 1800.0,
+              "value": 1800.0
+            },
+            {
+              "display_name": "Garage Floor Area (ft^2)",
+              "display_name_short": "Garage Floor Area (ft^2)",
+              "name": "gfa",
+              "value_type": "double",
+              "default_value": 240.0,
+              "value": 240.0
+            },
+            {
+              "display_name": "Finished Basement Floor Area (ft^2)",
+              "display_name_short": "Finished Basement Floor Area (ft^2)",
+              "name": "fbfa",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Hardwired Fraction CFL",
+              "display_name_short": "Hardwired Fraction CFL",
+              "name": "hw_cfl",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Hardwired Fraction LED",
+              "display_name_short": "Hardwired Fraction LED",
+              "name": "hw_led",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Hardwired Fraction LFL",
+              "display_name_short": "Hardwired Fraction LFL",
+              "name": "hw_lfl",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Plugin Fraction CFL",
+              "display_name_short": "Plugin Fraction CFL",
+              "name": "pg_cfl",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Plugin Fraction LED",
+              "display_name_short": "Plugin Fraction LED",
+              "name": "pg_led",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Plugin Fraction LFL",
+              "display_name_short": "Plugin Fraction LFL",
+              "name": "pg_lfl",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Incandescent Efficacy (lm/W))",
+              "display_name_short": "Incandescent Efficacy (lm/W))",
+              "name": "in_eff",
+              "value_type": "double",
+              "default_value": 15.0,
+              "value": 15.0
+            },
+            {
+              "display_name": "CFL Efficacy (lm/W))",
+              "display_name_short": "CFL Efficacy (lm/W))",
+              "name": "cfl_eff",
+              "value_type": "double",
+              "default_value": 55.0,
+              "value": 55.0
+            },
+            {
+              "display_name": "LED Efficacy (lm/W))",
+              "display_name_short": "LED Efficacy (lm/W))",
+              "name": "led_eff",
+              "value_type": "double",
+              "default_value": 50.0,
+              "value": 50.0
+            },
+            {
+              "display_name": "LFL Efficacy (lm/W))",
+              "display_name_short": "LFL Efficacy (lm/W))",
+              "name": "lfl_eff",
+              "value_type": "double",
+              "default_value": 88.0,
+              "value": 88.0
+            },
+            {
+              "display_name": "Select the space where the interior lighting is located",
+              "display_name_short": "Select the space where the interior lighting is located",
+              "name": "space_type",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Select the garage space",
+              "display_name_short": "Select the garage space",
+              "name": "grg_space_type",
+              "value_type": "string",
+              "default_value": "garage spacetype",
+              "value": "garage spacetype"
+            },
+            {
+              "display_name": "Select the finished basement space",
+              "display_name_short": "Select the finished basement space",
+              "name": "fb_space_type",
+              "value_type": "string",
+              "default_value": null,
+              "value": null
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 14
+        },
+        {
+          "name": "processthermalmasspartitionwall",
+          "display_name": "ProcessThermalMassPartitionWall",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessThermalMassPartitionWall",
+          "measure_definition_directory": "./measures/ProcessThermalMassPartitionWall",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessThermalMassPartitionWall",
+          "measure_definition_display_name": "ProcessThermalMassPartitionWall",
+          "measure_definition_name": "processthermalmasspartitionwall",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "30e16fce-b1d5-410d-88cf-3555ea14acf9",
+          "measure_definition_version_uuid": "55bd6c99-5a3c-430c-a4fb-67ed3d7f6468",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Of what space type is the finished basement?",
+              "display_name_short": "Of what space type is the finished basement?",
+              "name": "selectedfbsmt",
+              "value_type": "string",
+              "default_value": null,
+              "value": null
+            },
+            {
+              "display_name": "Partition wall mass thickness [in].",
+              "display_name_short": "Partition wall mass thickness [in].",
+              "name": "userdefinedpartitionwallmassth",
+              "value_type": "double",
+              "default_value": 0.5,
+              "value": 0.5
+            },
+            {
+              "display_name": "Partition wall mass conductivity [Btu-in/h-ft^2-R].",
+              "display_name_short": "Partition wall mass conductivity [Btu-in/h-ft^2-R].",
+              "name": "userdefinedpartitionwallmasscond",
+              "value_type": "double",
+              "default_value": 1.1112,
+              "value": 1.1112
+            },
+            {
+              "display_name": "Partition wall mass density [lb/ft^3].",
+              "display_name_short": "Partition wall mass density [lb/ft^3].",
+              "name": "userdefinedpartitionwallmassdens",
+              "value_type": "double",
+              "default_value": 50.0,
+              "value": 50.0
+            },
+            {
+              "display_name": "Partition wall mass specific heat [Btu/lb-R].",
+              "display_name_short": "Partition wall mass specific heat [Btu/lb-R].",
+              "name": "userdefinedpartitionwallmasssh",
+              "value_type": "double",
+              "default_value": 0.2,
+              "value": 0.2
+            },
+            {
+              "display_name": "Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.",
+              "display_name_short": "Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.",
+              "name": "userdefinedpartitionwallfrac",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "The area of the living space [ft^2].",
+              "display_name_short": "The area of the living space [ft^2].",
+              "name": "userdefinedlivingarea",
+              "value_type": "double",
+              "default_value": 2700.0,
+              "value": 2700.0
+            },
+            {
+              "display_name": "The area of the finished basement [ft^2].",
+              "display_name_short": "The area of the finished basement [ft^2].",
+              "name": "userdefinedfbsmtarea",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 15
+        },
+        {
+          "name": "processconstructionsinteriorinsulatedfloors",
+          "display_name": "ProcessConstructionsInteriorInsulatedFloors",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsInteriorInsulatedFloors",
+          "measure_definition_directory": "./measures/ProcessConstructionsInteriorInsulatedFloors",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsInteriorInsulatedFloors",
+          "measure_definition_display_name": "ProcessConstructionsInteriorInsulatedFloors",
+          "measure_definition_name": "processconstructionsinteriorinsulatedfloors",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "06a8f9a5-d01a-43e9-ba80-ca0f2f3fcb52",
+          "measure_definition_version_uuid": "f156129e-64ee-4c16-915e-026766725261",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Of what space type is the garage?",
+              "display_name_short": "Of what space type is the garage?",
+              "name": "selectedgarage",
+              "value_type": "string",
+              "default_value": "garage spacetype",
+              "value": "garage spacetype"
+            },
+            {
+              "display_name": "R-value of cavity insulation [hr-ft^2-R/Btu].",
+              "display_name_short": "R-value of cavity insulation [hr-ft^2-R/Btu].",
+              "name": "userdefinedinstcavr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Interzonal floor framing factor [frac].",
+              "display_name_short": "Interzonal floor framing factor [frac].",
+              "name": "userdefinedfloorff",
+              "value_type": "double",
+              "default_value": 0.13,
+              "value": 0.13
+            },
+            {
+              "display_name": "Floor mass thickness [in].",
+              "display_name_short": "Floor mass thickness [in].",
+              "name": "userdefinedfloormassth",
+              "value_type": "double",
+              "default_value": 0.625,
+              "value": 0.625
+            },
+            {
+              "display_name": "Floor mass conductivity [Btu-in/h-ft^2-R].",
+              "display_name_short": "Floor mass conductivity [Btu-in/h-ft^2-R].",
+              "name": "userdefinedfloormasscond",
+              "value_type": "double",
+              "default_value": 0.8004,
+              "value": 0.8004
+            },
+            {
+              "display_name": "Floor mass density [lb/ft^3].",
+              "display_name_short": "Floor mass density [lb/ft^3].",
+              "name": "userdefinedfloormassdens",
+              "value_type": "double",
+              "default_value": 34.0,
+              "value": 34.0
+            },
+            {
+              "display_name": "Floor mass specific heat [Btu/lb-R].",
+              "display_name_short": "Floor mass specific heat [Btu/lb-R].",
+              "name": "userdefinedfloormasssh",
+              "value_type": "double",
+              "default_value": 0.29,
+              "value": 0.29
+            },
+            {
+              "display_name": "Carpet pad R-value [hr-ft^2-R/Btu].",
+              "display_name_short": "Carpet pad R-value [hr-ft^2-R/Btu].",
+              "name": "userdefinedcarpetr",
+              "value_type": "double",
+              "default_value": 2.08,
+              "value": 2.08
+            },
+            {
+              "display_name": "Carpet floor fraction [frac].",
+              "display_name_short": "Carpet floor fraction [frac].",
+              "name": "userdefinedcarpetfrac",
+              "value_type": "double",
+              "default_value": 0.8,
+              "value": 0.8
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 16
+        },
+        {
+          "name": "processconstructionsslab",
+          "display_name": "ProcessConstructionsSlab",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsSlab",
+          "measure_definition_directory": "./measures/ProcessConstructionsSlab",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsSlab",
+          "measure_definition_display_name": "ProcessConstructionsSlab",
+          "measure_definition_name": "processconstructionsslab",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "aaf870d7-e432-4d25-ada5-47de890ce8c0",
+          "measure_definition_version_uuid": "5f57c3d1-74dc-49e4-8f34-fe4a4b2fd5a5",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Slab insulation type.",
+              "display_name_short": "Slab insulation type.",
+              "name": "selectedslabins",
+              "value_type": "string",
+              "default_value": "Uninsulated",
+              "value": "Uninsulated"
+            },
+            {
+              "display_name": "Slab perimeter insulation R-value or exterior insulation R-value [hr-ft^2-R/Btu].",
+              "display_name_short": "Slab perimeter insulation R-value or exterior insulation R-value [hr-ft^2-R/Btu].",
+              "name": "userdefinedslabperiextr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Slab perimeter insulation width or exterior insulation depth [ft].",
+              "display_name_short": "Slab perimeter insulation width or exterior insulation depth [ft].",
+              "name": "userdefinedslabperiextwidthdepth",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Perimeter gap R-value or whole slab gap R-value [hr-ft^2-R/Btu].",
+              "display_name_short": "Perimeter gap R-value or whole slab gap R-value [hr-ft^2-R/Btu].",
+              "name": "userdefinedslabgapr",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Whole slab insulation R-value [hr-ft^2-R/Btu].",
+              "display_name_short": "Whole slab insulation R-value [hr-ft^2-R/Btu].",
+              "name": "userdefinedslabwholer",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Carpet pad R-value [hr-ft^2-R/Btu].",
+              "display_name_short": "Carpet pad R-value [hr-ft^2-R/Btu].",
+              "name": "userdefinedcarpetr",
+              "value_type": "double",
+              "default_value": 2.08,
+              "value": 2.08
+            },
+            {
+              "display_name": "Carpet floor fraction [frac].",
+              "display_name_short": "Carpet floor fraction [frac].",
+              "name": "userdefinedcarpetfrac",
+              "value_type": "double",
+              "default_value": 0.8,
+              "value": 0.8
+            },
+            {
+              "display_name": "Area of the slab foundation [ft^2].",
+              "display_name_short": "Area of the slab foundation [ft^2].",
+              "name": "userdefinedslabarea",
+              "value_type": "double",
+              "default_value": 1200.0,
+              "value": 1200.0
+            },
+            {
+              "display_name": "Perimeter of the slab foundation [ft].",
+              "display_name_short": "Perimeter of the slab foundation [ft].",
+              "name": "userdefinedslabextperim",
+              "value_type": "double",
+              "default_value": 140.0,
+              "value": 140.0
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 17
+        },
+        {
+          "name": "processconstructionsinterioruninsulatedfloors",
+          "display_name": "ProcessConstructionsInteriorUninsulatedFloors",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsInteriorUninsulatedFloors",
+          "measure_definition_directory": "./measures/ProcessConstructionsInteriorUninsulatedFloors",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsInteriorUninsulatedFloors",
+          "measure_definition_display_name": "ProcessConstructionsInteriorUninsulatedFloors",
+          "measure_definition_name": "processconstructionsinterioruninsulatedfloors",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "08afad08-cb9b-4f64-b9b5-bda47e81afb0",
+          "measure_definition_version_uuid": "94b34329-c82a-4d21-98a6-fd881db877cd",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the living space?",
+              "display_name_short": "Of what space type is the living space?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living spacetype",
+              "value": "living spacetype"
+            },
+            {
+              "display_name": "Of what space type is the finished basement?",
+              "display_name_short": "Of what space type is the finished basement?",
+              "name": "selectedfbsmt",
+              "value_type": "string",
+              "default_value": null,
+              "value": null
+            },
+            {
+              "display_name": "Thickness of drywall layers [in].",
+              "display_name_short": "Thickness of drywall layers [in].",
+              "name": "userdefinedgypthickness",
+              "value_type": "double",
+              "default_value": 0.5,
+              "value": 0.5
+            },
+            {
+              "display_name": "Number of drywall layers.",
+              "display_name_short": "Number of drywall layers.",
+              "name": "userdefinedgyplayers",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "Floor mass thickness [in].",
+              "display_name_short": "Floor mass thickness [in].",
+              "name": "userdefinedfloormassth",
+              "value_type": "double",
+              "default_value": 0.625,
+              "value": 0.625
+            },
+            {
+              "display_name": "Floor mass conductivity [Btu-in/h-ft^2-R].",
+              "display_name_short": "Floor mass conductivity [Btu-in/h-ft^2-R].",
+              "name": "userdefinedfloormasscond",
+              "value_type": "double",
+              "default_value": 0.8004,
+              "value": 0.8004
+            },
+            {
+              "display_name": "Floor mass density [lb/ft^3].",
+              "display_name_short": "Floor mass density [lb/ft^3].",
+              "name": "userdefinedfloormassdens",
+              "value_type": "double",
+              "default_value": 34.0,
+              "value": 34.0
+            },
+            {
+              "display_name": "Floor mass specific heat [Btu/lb-R].",
+              "display_name_short": "Floor mass specific heat [Btu/lb-R].",
+              "name": "userdefinedfloormasssh",
+              "value_type": "double",
+              "default_value": 0.29,
+              "value": 0.29
+            },
+            {
+              "display_name": "Carpet pad R-value [hr-ft^2-R/Btu].",
+              "display_name_short": "Carpet pad R-value [hr-ft^2-R/Btu].",
+              "name": "userdefinedcarpetr",
+              "value_type": "double",
+              "default_value": 2.08,
+              "value": 2.08
+            },
+            {
+              "display_name": "Carpet floor fraction [frac].",
+              "display_name_short": "Carpet floor fraction [frac].",
+              "name": "userdefinedcarpetfrac",
+              "value_type": "double",
+              "default_value": 0.8,
+              "value": 0.8
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 18
+        },
+        {
+          "name": "processconstructionsgarageslab",
+          "display_name": "ProcessConstructionsGarageSlab",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsGarageSlab",
+          "measure_definition_directory": "./measures/ProcessConstructionsGarageSlab",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsGarageSlab",
+          "measure_definition_display_name": "ProcessConstructionsGarageSlab",
+          "measure_definition_name": "processconstructionsgarageslab",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "e2c2db52-8adb-446b-b6c9-2f1814f63039",
+          "measure_definition_version_uuid": "da363e82-7756-4b9b-a321-adfba7de57de",
+          "arguments": [
+            {
+              "display_name": "Of what space type is the garage?",
+              "display_name_short": "Of what space type is the garage?",
+              "name": "selectedgarage",
+              "value_type": "string",
+              "default_value": "garage spacetype",
+              "value": "garage spacetype"
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 19
+        },
+        {
+          "name": "processconstructionswindows",
+          "display_name": "ProcessConstructionsWindows",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsWindows",
+          "measure_definition_directory": "./measures/ProcessConstructionsWindows",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsWindows",
+          "measure_definition_display_name": "ProcessConstructionsWindows",
+          "measure_definition_name": "processconstructionswindows",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "96ff8613-69cc-4976-b244-568af967f5bd",
+          "measure_definition_version_uuid": "64311b65-f3ca-4f7e-af8a-61b440816674",
+          "arguments": [
+            {
+              "display_name": "U-Value [Btu/hr-ft^2-R].",
+              "display_name_short": "U-Value [Btu/hr-ft^2-R].",
+              "name": "ufactor",
+              "value_type": "double",
+              "default_value": 0.38,
+              "value": 0.38
+            },
+            {
+              "display_name": "SHGC.",
+              "display_name_short": "SHGC.",
+              "name": "shgc",
+              "value_type": "double",
+              "default_value": 0.44,
+              "value": 0.44
+            },
+            {
+              "display_name": "Heating shade multiplier.",
+              "display_name_short": "Heating shade multiplier.",
+              "name": "userdefinedintshadeheatingmult",
+              "value_type": "double",
+              "default_value": 0.7,
+              "value": 0.7
+            },
+            {
+              "display_name": "Cooling shade multiplier.",
+              "display_name_short": "Cooling shade multiplier.",
+              "name": "userdefinedintshadecoolingmult",
+              "value_type": "double",
+              "default_value": 0.7,
+              "value": 0.7
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 20
+        },
+        {
+          "name": "processgroundtemperature",
+          "display_name": "ProcessGroundTemperature",
+          "measure_type": "EnergyPlusMeasure",
+          "measure_definition_class_name": "ProcessGroundTemperature",
+          "measure_definition_directory": "./measures/ProcessGroundTemperature",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessGroundTemperature",
+          "measure_definition_display_name": "ProcessGroundTemperature",
+          "measure_definition_name": "processgroundtemperature",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "cdf5eaae-e1f3-439d-97ea-68c37bd1f6f6",
+          "measure_definition_version_uuid": "38935e13-c0eb-47b2-88ac-8710690858d7",
+          "arguments": [
+
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 21
+        },
+        {
+          "name": "processairflow",
+          "display_name": "ProcessAirflow",
+          "measure_type": "EnergyPlusMeasure",
+          "measure_definition_class_name": "ProcessAirflow",
+          "measure_definition_directory": "./measures/ProcessAirflow",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessAirflow",
+          "measure_definition_display_name": "ProcessAirflow",
+          "measure_definition_name": "processairflow",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "d518918c-c092-4264-a09d-2373371a87dc",
+          "measure_definition_version_uuid": "3adef6c9-d4a4-4b5f-a628-2bb658eedd5f",
+          "arguments": [
+            {
+              "display_name": "Which is the living space zone?",
+              "display_name_short": "Which is the living space zone?",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living",
+              "value": "living"
+            },
+            {
+              "display_name": "Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for above-grade living space (including finished attic).",
+              "display_name_short": "Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for above-grade living space (including finished attic).",
+              "name": "userdefinedinflivingspace",
+              "value_type": "double",
+              "default_value": 7.0,
+              "value": 7.0
+            },
+            {
+              "display_name": "Air exchange rate, in natural Air Changes per Hour (ACH), for above-grade living space. Using this variable will override the AIM-2 calculation method with a constant air exchange rate.",
+              "display_name_short": "Air exchange rate, in natural Air Changes per Hour (ACH), for above-grade living space. Using this variable will override the AIM-2 calculation method with a constant air exchange rate.",
+              "name": "userdefinedconstinflivingspace",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "The local shelter coefficient (AIM-2 infiltration model) accounts for nearby buildings, trees and obstructions.",
+              "display_name_short": "The local shelter coefficient (AIM-2 infiltration model) accounts for nearby buildings, trees and obstructions.",
+              "name": "userdefinedinfsheltercoef",
+              "value_type": "string",
+              "default_value": "auto",
+              "value": "auto"
+            },
+            {
+              "display_name": "Which is the garage zone?",
+              "display_name_short": "Which is the garage zone?",
+              "name": "selectedgarage",
+              "value_type": "string",
+              "default_value": "garage",
+              "value": "garage"
+            },
+            {
+              "display_name": "Which is the finished basement zone?",
+              "display_name_short": "Which is the finished basement zone?",
+              "name": "selectedfbsmt",
+              "value_type": "string",
+              "default_value": "NA",
+              "value": "NA"
+            },
+            {
+              "display_name": "Constant air exchange rate, in Air Changes per Hour (ACH), for the finished basement.",
+              "display_name_short": "Constant air exchange rate, in Air Changes per Hour (ACH), for the finished basement.",
+              "name": "userdefinedinffbsmt",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Which is the unfinished basement zone?",
+              "display_name_short": "Which is the unfinished basement zone?",
+              "name": "selectedufbsmt",
+              "value_type": "string",
+              "default_value": "NA",
+              "value": "NA"
+            },
+            {
+              "display_name": "Constant air exchange rate, in Air Changes per Hour (ACH), for the unfinished basement. A value of 0.10 ACH or greater is recommended for modeling Heat Pump Water Heaters in unfinished basements.",
+              "display_name_short": "Constant air exchange rate, in Air Changes per Hour (ACH), for the unfinished basement. A value of 0.10 ACH or greater is recommended for modeling Heat Pump Water Heaters in unfinished basements.",
+              "name": "userdefinedinfufbsmt",
+              "value_type": "double",
+              "default_value": 0.1,
+              "value": 0.1
+            },
+            {
+              "display_name": "Which is the crawlspace zone?",
+              "display_name_short": "Which is the crawlspace zone?",
+              "name": "selectedcrawl",
+              "value_type": "string",
+              "default_value": "NA",
+              "value": "NA"
+            },
+            {
+              "display_name": "Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for the crawlspace.",
+              "display_name_short": "Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for the crawlspace.",
+              "name": "userdefinedinfcrawl",
+              "value_type": "double",
+              "default_value": 2.0,
+              "value": 2.0
+            },
+            {
+              "display_name": "Which is the unfinished attic zone?",
+              "display_name_short": "Which is the unfinished attic zone?",
+              "name": "selectedunfinattic",
+              "value_type": "string",
+              "default_value": "attic",
+              "value": "attic"
+            },
+            {
+              "display_name": "Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.",
+              "display_name_short": "Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.",
+              "name": "userdefinedinfunfinattic",
+              "value_type": "double",
+              "default_value": 0.00333,
+              "value": 0.00333
+            },
+            {
+              "display_name": "The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].",
+              "display_name_short": "The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].",
+              "name": "userdefinedneighboroffset",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Age of home [yrs]. Enter 0 for new construction.",
+              "display_name_short": "Age of home [yrs]. Enter 0 for new construction.",
+              "name": "userdefinedhomeage",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Site terrain type.",
+              "display_name_short": "Site terrain type.",
+              "name": "selectedterraintype",
+              "value_type": "string",
+              "default_value": "suburban",
+              "value": "suburban"
+            },
+            {
+              "display_name": "Ventilation strategy used (none, exhaust, supply, or balanced).",
+              "display_name_short": "Ventilation strategy used (none, exhaust, supply, or balanced).",
+              "name": "selectedventtype",
+              "value_type": "string",
+              "default_value": "none",
+              "value": "none"
+            },
+            {
+              "display_name": "If True, the ASHRAE 62.2 infiltration credit will be included for buildings with infiltration that exceeds a default rate of 2 cfm per 100sqft of finished floor area.",
+              "display_name_short": "If True, the ASHRAE 62.2 infiltration credit will be included for buildings with infiltration that exceeds a default rate of 2 cfm per 100sqft of finished floor area.",
+              "name": "selectedinfilcredit",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            },
+            {
+              "display_name": "The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plys the exhaust fan energy.",
+              "display_name_short": "The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plys the exhaust fan energy.",
+              "name": "userdefinedtotaleff",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "The net sensible energy recovered by the supply airstream as adjusted by electric consumption, case heat loss or heat gain, air leakage, airflow mass imbalance between the two airstreams and the energy used for defrost (when running the Very Low Temperature Test), as a percent of the potential sensible energy that could be recovered plus the exhaust fan energy.",
+              "display_name_short": "The net sensible energy recovered by the supply airstream as adjusted by electric consumption, case heat loss or heat gain, air leakage, airflow mass imbalance between the two airstreams and the energy used for defrost (when running the Very Low Temperature Test), as a percent of the potential sensible energy that could be recovered plus the exhaust fan energy.",
+              "name": "userdefinedsenseff",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Fan power (in W) per delivered airflow rate (in cfm) of fan(s) providing whole house ventilation. If the house uses a balanced ventilation system thtere is assumed to be two fans operating at this efficiency.",
+              "display_name_short": "Fan power (in W) per delivered airflow rate (in cfm) of fan(s) providing whole house ventilation. If the house uses a balanced ventilation system thtere is assumed to be two fans operating at this efficiency.",
+              "name": "userdefinedfanpower",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Fraction of the ventilation rate (including any infiltration credit) specified by 2010 ASHRAE 62.2 that is desired in the bulding.",
+              "display_name_short": "Fraction of the ventilation rate (including any infiltration credit) specified by 2010 ASHRAE 62.2 that is desired in the bulding.",
+              "name": "userdefinedfracofashrae",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Rated flow capacity of the clothes dryer exhaust. This fan is assumed to run 60 min/day between 11am and 12pm.",
+              "display_name_short": "Rated flow capacity of the clothes dryer exhaust. This fan is assumed to run 60 min/day between 11am and 12pm.",
+              "name": "userdefineddryerexhaust",
+              "value_type": "double",
+              "default_value": 100.0,
+              "value": 100.0
+            },
+            {
+              "display_name": "The temperature offset below the hourly cooling setpoint, to which the living space is allowed to cool during months that are only in the heating season [F].",
+              "display_name_short": "The temperature offset below the hourly cooling setpoint, to which the living space is allowed to cool during months that are only in the heating season [F].",
+              "name": "userdefinedhtgoffset",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "The temperature offset above the hourly heating setpoint, to which the living space is allowed to cool during months that are only in the cooling season [F].",
+              "display_name_short": "The temperature offset above the hourly heating setpoint, to which the living space is allowed to cool during months that are only in the cooling season [F].",
+              "name": "userdefinedclgoffset",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "The temperature offset above the maximum heating setpoint, to which the living space is allowed to cool during months that are in both the heating season and cooling season [F].",
+              "display_name_short": "The temperature offset above the maximum heating setpoint, to which the living space is allowed to cool during months that are in both the heating season and cooling season [F].",
+              "name": "userdefinedovlpoffset",
+              "value_type": "double",
+              "default_value": 1.0,
+              "value": 1.0
+            },
+            {
+              "display_name": "True if windows are allowed to be opened during months that are only in the heating season.",
+              "display_name_short": "True if windows are allowed to be opened during months that are only in the heating season.",
+              "name": "selectedheatingssn",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            },
+            {
+              "display_name": "True if windows are allowed to be opened during months that are only in the cooling season.",
+              "display_name_short": "True if windows are allowed to be opened during months that are only in the cooling season.",
+              "name": "selectedcoolingssn",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            },
+            {
+              "display_name": "True if windows are allowed to be opened during months that are in both the heating season and cooling season.",
+              "display_name_short": "True if windows are allowed to be opened during months that are in both the heating season and cooling season.",
+              "name": "selectedoverlapssn",
+              "value_type": "bool",
+              "default_value": true,
+              "value": true
+            },
+            {
+              "display_name": "Number of weekdays in the week that natural ventilation can occur.",
+              "display_name_short": "Number of weekdays in the week that natural ventilation can occur.",
+              "name": "userdefinedventweekdays",
+              "value_type": "double",
+              "default_value": 3.0,
+              "value": 3.0
+            },
+            {
+              "display_name": "Number of weekend days in the week that natural ventilation can occur.",
+              "display_name_short": "Number of weekend days in the week that natural ventilation can occur.",
+              "name": "userdefinedventweekenddays",
+              "value_type": "double",
+              "default_value": 0.0,
+              "value": 0.0
+            },
+            {
+              "display_name": "Specifies the fraction of the total openable window area in the building that is opened for ventilation.",
+              "display_name_short": "Specifies the fraction of the total openable window area in the building that is opened for ventilation.",
+              "name": "userdefinedfracwinopen",
+              "value_type": "double",
+              "default_value": 0.33,
+              "value": 0.33
+            },
+            {
+              "display_name": "Specifies the fraction of total window area in the home that can be opened (e.g. typical sliding windows can be opened to half of their area.",
+              "display_name_short": "Specifies the fraction of total window area in the home that can be opened (e.g. typical sliding windows can be opened to half of their area.",
+              "name": "userdefinedfracwinareaopen",
+              "value_type": "double",
+              "default_value": 0.2,
+              "value": 0.2
+            },
+            {
+              "display_name": "Outdoor air humidity ratio above which windows will not open for natural ventilation.",
+              "display_name_short": "Outdoor air humidity ratio above which windows will not open for natural ventilation.",
+              "name": "userdefinedhumratio",
+              "value_type": "double",
+              "default_value": 0.0115,
+              "value": 0.0115
+            },
+            {
+              "display_name": "Outdoor air relative humidity (0-1) above which windows will not open for natural ventilation.",
+              "display_name_short": "Outdoor air relative humidity (0-1) above which windows will not open for natural ventilation.",
+              "name": "userdefinedrelhumratio",
+              "value_type": "double",
+              "default_value": 0.7,
+              "value": 0.7
+            },
+            {
+              "display_name": "Number of bedrooms.",
+              "display_name_short": "Number of bedrooms.",
+              "name": "num_bedrooms",
+              "value_type": "double",
+              "default_value": 3.0,
+              "value": 3.0
+            },
+            {
+              "display_name": "Number of bathrooms.",
+              "display_name_short": "Number of bathrooms.",
+              "name": "num_bathrooms",
+              "value_type": "double",
+              "default_value": 2.0,
+              "value": 2.0
+            },
+            {
+              "display_name": "Finished floor area [ft^2].",
+              "display_name_short": "Finished floor area [ft^2].",
+              "name": "finished_floor_area",
+              "value_type": "double",
+              "default_value": 2700.0,
+              "value": 2700.0
+            },
+            {
+              "display_name": "Above grade finished floor area [ft^2].",
+              "display_name_short": "Above grade finished floor area [ft^2].",
+              "name": "above_grade_finished_floor_area",
+              "value_type": "double",
+              "default_value": 2700.0,
+              "value": 2700.0
+            },
+            {
+              "display_name": "Height of building [ft].",
+              "display_name_short": "Height of building [ft].",
+              "name": "building_height",
+              "value_type": "double",
+              "default_value": 24.5,
+              "value": 24.5
+            },
+            {
+              "display_name": "Number of stories.",
+              "display_name_short": "Number of stories.",
+              "name": "stories",
+              "value_type": "double",
+              "default_value": 2.0,
+              "value": 2.0
+            },
+            {
+              "display_name": "Window area [ft^2].",
+              "display_name_short": "Window area [ft^2].",
+              "name": "window_area",
+              "value_type": "double",
+              "default_value": 348.0,
+              "value": 348.0
+            },
+            {
+              "display_name": "Volume of living space [ft^3].",
+              "display_name_short": "Volume of living space [ft^3].",
+              "name": "livingspacevolume",
+              "value_type": "double",
+              "default_value": 21600.0,
+              "value": 21600.0
+            },
+            {
+              "display_name": "Height of living space [ft].",
+              "display_name_short": "Height of living space [ft].",
+              "name": "livingspaceheight",
+              "value_type": "double",
+              "default_value": 16.0,
+              "value": 16.0
+            },
+            {
+              "display_name": "Area of living space [ft^2].",
+              "display_name_short": "Area of living space [ft^2].",
+              "name": "livingspacearea",
+              "value_type": "double",
+              "default_value": 2700.0,
+              "value": 2700.0
+            },
+            {
+              "display_name": "Volume of unfinished attic [ft^3].",
+              "display_name_short": "Volume of unfinished attic [ft^3].",
+              "name": "uavolume",
+              "value_type": "double",
+              "default_value": 5250.0,
+              "value": 5250.0
+            },
+            {
+              "display_name": "Height of unfinished attic [ft].",
+              "display_name_short": "Height of unfinished attic [ft].",
+              "name": "uaheight",
+              "value_type": "double",
+              "default_value": 8.5,
+              "value": 8.5
+            },
+            {
+              "display_name": "Area of unfinished attic [ft^2].",
+              "display_name_short": "Area of unfinished attic [ft^2].",
+              "name": "uaarea",
+              "value_type": "double",
+              "default_value": 1500.0,
+              "value": 1500.0
+            },
+            {
+              "display_name": "Volume of crawlspace [ft^3].",
+              "display_name_short": "Volume of crawlspace [ft^3].",
+              "name": "cvolume",
+              "value_type": "double",
+              "default_value": 4800.0,
+              "value": 4800.0
+            },
+            {
+              "display_name": "Height of crawlspace [ft].",
+              "display_name_short": "Height of crawlspace [ft].",
+              "name": "cheight",
+              "value_type": "double",
+              "default_value": 4.0,
+              "value": 4.0
+            },
+            {
+              "display_name": "Area of crawlspace [ft^2].",
+              "display_name_short": "Area of crawlspace [ft^2].",
+              "name": "carea",
+              "value_type": "double",
+              "default_value": 1200.0,
+              "value": 1200.0
+            },
+            {
+              "display_name": "Volume of garage [ft^3].",
+              "display_name_short": "Volume of garage [ft^3].",
+              "name": "gvolume",
+              "value_type": "double",
+              "default_value": 2400.0,
+              "value": 2400.0
+            },
+            {
+              "display_name": "Height of garage [ft].",
+              "display_name_short": "Height of garage [ft].",
+              "name": "gheight",
+              "value_type": "double",
+              "default_value": 8.0,
+              "value": 8.0
+            },
+            {
+              "display_name": "Area of garage [ft^2].",
+              "display_name_short": "Area of garage [ft^2].",
+              "name": "garea",
+              "value_type": "double",
+              "default_value": 300.0,
+              "value": 300.0
+            },
+            {
+              "display_name": "Volume of finished basement [ft^3].",
+              "display_name_short": "Volume of finished basement [ft^3].",
+              "name": "fbvolume",
+              "value_type": "double",
+              "default_value": 9600.0,
+              "value": 9600.0
+            },
+            {
+              "display_name": "Height of finished basement [ft].",
+              "display_name_short": "Height of finished basement [ft].",
+              "name": "fbheight",
+              "value_type": "double",
+              "default_value": 8.0,
+              "value": 8.0
+            },
+            {
+              "display_name": "Area of finished basement [ft^2].",
+              "display_name_short": "Area of finished basement [ft^2].",
+              "name": "fbarea",
+              "value_type": "double",
+              "default_value": 1200.0,
+              "value": 1200.0
+            },
+            {
+              "display_name": "Volume of unfinished basement [ft^3].",
+              "display_name_short": "Volume of unfinished basement [ft^3].",
+              "name": "ufbvolume",
+              "value_type": "double",
+              "default_value": 9600.0,
+              "value": 9600.0
+            },
+            {
+              "display_name": "Height of unfinished basement [ft].",
+              "display_name_short": "Height of unfinished basement [ft].",
+              "name": "ufbheight",
+              "value_type": "double",
+              "default_value": 8.0,
+              "value": 8.0
+            },
+            {
+              "display_name": "Area of unfinished basement [ft^2].",
+              "display_name_short": "Area of unfinished basement [ft^2].",
+              "name": "ufbarea",
+              "value_type": "double",
+              "default_value": 1200.0,
+              "value": 1200.0
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 22
+        }
+      ]
+    },
+    "seed": {
+      "file_type": "OSM",
+      "path": "./seed/Res_Garage_IZFloor_slab_windows_fix2.osm"
+    },
+    "weather_file": {
+      "file_type": "EPW",
+      "path": "./weather/USA_CO_Denver.Intl.AP.725650_TMY3.epw"
+    },
+    "file_format_version": 1
+  }
+}

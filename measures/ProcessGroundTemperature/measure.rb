@@ -39,7 +39,7 @@ class ProcessGroundTemperature < OpenStudio::Ruleset::WorkspaceUserScript
     end
 
     # Create the sim object
-    sim = Sim.new(workspace)
+    sim = Sim.new(workspace, runner)
 
     # Process the ground temperatures
     ground_temps, annual_temp = sim._getGroundTemperatures

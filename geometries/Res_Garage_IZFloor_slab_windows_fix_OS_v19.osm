@@ -1,7 +1,7 @@
 
 OS:Version,
-  {cb2b87ed-692b-4c09-96bf-35b012a0233e}, !- Handle
-  1.4.0;                                  !- Version Identifier
+  {38fcea04-489d-4dce-a96f-d14e7d942d63}, !- Handle
+  1.9.0;                                  !- Version Identifier
 
 OS:Rendering:Color,
   {d1e86687-6885-4070-81da-3a576f17ff5c}, !- Handle
@@ -1162,7 +1162,7 @@ OS:SurfaceConvectionAlgorithm:Outside,
 OS:HeatBalanceAlgorithm,
   {36dc4b09-4ab2-4e18-9f56-e3ca4ae35023}, !- Handle
   ConductionTransferFunction,             !- Algorithm
-  200;                                    !- Surface Temperature Upper Limit {F}
+  200;                                    !- Surface Temperature Upper Limit {C}
 
 OS:ZoneAirHeatBalanceAlgorithm,
   {401d09e5-6487-426d-8b8a-492dede98864}, !- Handle
@@ -1193,25 +1193,25 @@ OS:RunPeriod,
 
 OS:WeatherFile,
   {2b3a0ec7-a01f-4d02-bb1b-7c0f5d35503e}, !- Handle
-  Denver Centennial  Golden   Nr,         !- City
+  Denver Intl Ap,                         !- City
   CO,                                     !- State Province Region
   USA,                                    !- Country
   TMY3,                                   !- Data Source
-  724666,                                 !- WMO Number
-  39.74,                                  !- Latitude {deg}
-  -105.18,                                !- Longitude {deg}
+  725650,                                 !- WMO Number
+  39.83,                                  !- Latitude {deg}
+  -104.65,                                !- Longitude {deg}
   -7,                                     !- Time Zone {hr}
-  1829,                                   !- Elevation {m}
-  file:files/USA_CO_Golden-NREL.724666_TMY3.epw, !- Url
-  BDF687C1;                               !- Checksum
+  1650,                                   !- Elevation {m}
+  file:files/USA_CO_Denver.Intl.AP.725650_TMY3.epw, !- Url
+  E23378AA;                               !- Checksum
 
 OS:Site,
   {7d9c061b-2f9b-42f2-af0f-c793948c974a}, !- Handle
-  Site 1,                                 !- Name
-  39.74,                                  !- Latitude {deg}
-  -105.18,                                !- Longitude {deg}
+  Denver Intl Ap,                         !- Name
+  39.83,                                  !- Latitude {deg}
+  -104.65,                                !- Longitude {deg}
   -7,                                     !- Time Zone {hr}
-  1829,                                   !- Elevation {m}
+  1650,                                   !- Elevation {m}
   ;                                       !- Terrain
 
 OS:BuildingStory,

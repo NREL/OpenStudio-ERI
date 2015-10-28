@@ -213,7 +213,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat, partitionWallMassPCMType)
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
     living_space = LivingSpace.new
     finished_basement = FinishedBasement.new
 
@@ -268,10 +268,10 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saw.setName("StudandAirWall")
     saw.setRoughness("Rough")
-    saw.setThickness(OpenStudio::convert(get_stud_and_air_wall(model, mat_wood).thick,"ft","m").get)
-    saw.setConductivity(OpenStudio::convert(get_stud_and_air_wall(model, mat_wood).k,"Btu/hr*ft*R","W/m*K").get)
-    saw.setDensity(OpenStudio::convert(get_stud_and_air_wall(model, mat_wood).rho,"lb/ft^3","kg/m^3").get)
-    saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, mat_wood).Cp,"Btu/lb*R","J/kg*K").get) # tk
+    saw.setThickness(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).thick,"ft","m").get)
+    saw.setConductivity(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).k,"Btu/hr*ft*R","W/m*K").get)
+    saw.setDensity(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).rho,"lb/ft^3","kg/m^3").get)
+    saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).Cp,"Btu/lb*R","J/kg*K").get) # tk
 
     # FinUninsFinWall
     layercount = 0

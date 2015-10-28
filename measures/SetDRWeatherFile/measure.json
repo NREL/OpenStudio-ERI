@@ -1,0 +1,22 @@
+{
+  "classname": "SetDRWeatherFile",
+  "name": "set_dr_weather_file",
+  "display_name": "Set Dr Weather File",
+  "measure_type": "RubyMeasure",
+  "arguments": [
+    {
+      "name": "weather_directory_name",
+      "display_name": "Weather Directory",
+      "variable_type": "String",
+      "local_variable": "weather_directory_name",
+      "units": ""
+    },
+    {
+      "name": "weather_file_name",
+      "display_name": "Weather File Name",
+      "variable_type": "String",
+      "local_variable": "weather_file_name",
+      "units": ""
+    }
+  ]
+}

@@ -2,41 +2,27 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>b8ad5ad8-5ffe-4d72-97c8-963612306eb1</version_id>
+  <version_id>d244b931-41bc-4fce-a2c3-98cb3be4d4ee</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
-  <display_name>ResidentialRefrigerator</display_name>
-  <description>This measure adds a residential refrigerator to the building, with a schedule based on the Building America House Simulation Protocols (add reference). TODO: add the capability to do user defined schedules (monthly multiplier and weekday/weekend schedule)</description>
-  <modeler_description>To add a residential refrigerator, select the appropriate refrigerator option from the drop down list. A user defined refrigerator can be defined based on it's rated energy use (kWh/yr)</modeler_description>
+  <display_name>Add/Replace Residential Refrigerator</display_name>
+  <description>Adds/replaces a residential refrigerator.</description>
+  <modeler_description>Adds/replaces the ElectricEquipment object.</modeler_description>
   <arguments>
     <argument>
-      <name>selected_fridge</name>
-      <display_name>Refrigerator Energy Consumption Option</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <choices>
-        <choice>
-          <value>Benchmark</value>
-          <display_name>Benchmark</display_name>
-        </choice>
-        <choice>
-          <value>Annual Energy Consumption</value>
-          <display_name>Annual Energy Consumption</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>fridge_E</name>
-      <display_name>User Defined Refrigerator Annual Energy Consumption (kWh/yr)</display_name>
+      <display_name>Rated Annual Consumption</display_name>
+      <description>The EnergyGuide rated annual energy consumption for a refrigerator.</description>
       <type>Double</type>
+      <units>kWh/yr</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>434</default_value>
     </argument>
     <argument>
-      <name>BAB_mult</name>
-      <display_name>Building America Benchmark Multiplier</display_name>
+      <name>mult</name>
+      <display_name>Occupancy Energy Multiplier</display_name>
+      <description>Appliance energy use is multiplied by this factor to account for occupancy usage that differs from the national average.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -44,10 +30,38 @@
     </argument>
     <argument>
       <name>space_type</name>
-      <display_name>Select the space where the refrigerator is located</display_name>
+      <display_name>Location</display_name>
+      <description>Select the space where the refrigerator is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>weekday_sch</name>
+      <display_name>Weekday schedule</display_name>
+      <description>Specify the 24-hour weekday schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041</default_value>
+    </argument>
+    <argument>
+      <name>weekend_sch</name>
+      <display_name>Weekend schedule</display_name>
+      <description>Specify the 24-hour weekend schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041</default_value>
+    </argument>
+    <argument>
+      <name>monthly_sch</name>
+      <display_name>Month schedule</display_name>
+      <description>Specify the 12-month schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -74,33 +88,20 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
+      <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>ABBC4DD5</checksum>
     </file>
     <file>
       <version>
         <software_program>OpenStudio</software_program>
-        <identifier>1.3.1</identifier>
-        <min_compatible>1.3.1</min_compatible>
+        <identifier>1.9.0</identifier>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4FF75E61</checksum>
+      <checksum>CA5B0A61</checksum>
     </file>
   </files>
 </measure>

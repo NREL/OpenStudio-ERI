@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_heatingand_cooling_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>9659138f-5abf-4990-b133-3cad35324ef6</version_id>
+  <version_id>4c34256b-8b34-442e-b4fe-1f285da122a6</version_id>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingandCoolingSetpoints</class_name>
   <display_name>ProcessHeatingandCoolingSetpoints</display_name>
@@ -93,6 +93,12 @@
       <checksum>7C73784F</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -101,25 +107,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>268F9FA9</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>3CF07F17</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4719A345</checksum>
     </file>
   </files>
 </measure>

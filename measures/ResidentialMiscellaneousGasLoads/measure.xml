@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_gas_loads</name>
   <uid>0ba8d5d6-6fc1-4822-b9dd-42410a5b9017</uid>
-  <version_id>fbddc3ce-786d-410f-a79d-c4f36a1d63ac</version_id>
+  <version_id>fb1a5efa-c686-41ce-a576-175919c9a01d</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialMiscellaneousGasLoads</class_name>
   <display_name>ResidentialMiscellaneousGasLoads</display_name>
@@ -96,12 +96,6 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -113,10 +107,16 @@
       <checksum>3E809587</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
+      <checksum>4719A345</checksum>
     </file>
   </files>
 </measure>

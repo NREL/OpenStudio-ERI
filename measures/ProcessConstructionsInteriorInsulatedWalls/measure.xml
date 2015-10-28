@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_walls</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>d1208eac-be9b-4cf4-8cf8-4089f69e5bfa</version_id>
+  <version_id>4cee5eff-f736-4c09-9ca8-3a3e88294edf</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedWalls</class_name>
   <display_name>ProcessConstructionsInteriorInsulatedWalls</display_name>
@@ -118,6 +118,7 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>I</default_value>
       <choices>
         <choice>
           <value>I</value>
@@ -191,23 +192,6 @@
       <checksum>151160D4</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>0540DD1E</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -217,7 +201,24 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4719A345</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>D92D7A9B</checksum>
     </file>
   </files>
 </measure>

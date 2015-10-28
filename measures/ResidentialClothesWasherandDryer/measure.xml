@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washerand_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>5b57858f-ea7a-4cdc-acc4-c3aace5df7c6</version_id>
+  <version_id>29adc350-30cc-48d4-a093-cec7fadc12e8</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasherandDryer</class_name>
   <display_name>ResidentialClothesWasherandDryer</display_name>
@@ -155,18 +155,6 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -176,6 +164,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>77C5898C</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4719A345</checksum>
     </file>
   </files>
 </measure>

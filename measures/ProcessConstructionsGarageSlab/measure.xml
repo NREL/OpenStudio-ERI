@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_slab</name>
   <uid>3da62049-50f9-4ed0-b05a-6b89a202482d</uid>
-  <version_id>1a0c53a6-5cb4-4f81-a51f-6143c7cc7a9a</version_id>
+  <version_id>7e1e4950-0691-4046-a796-87e67bfb8e39</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageSlab</class_name>
   <display_name>ProcessConstructionsGarageSlab</display_name>
@@ -52,12 +52,6 @@
       <checksum>28498488</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -67,7 +61,13 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4719A345</checksum>
     </file>
   </files>
 </measure>

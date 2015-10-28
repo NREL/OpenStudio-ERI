@@ -374,6 +374,52 @@ def get_double_stud_wall_r_assembly(dsw, gypsumThickness, gypsumNumLayers, finis
 
 end
 
+def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=true)
+    # Returns assembly R-value for steel stud wall, including air films.
+    
+    # Uses Equation 4-1 from 2015 IECC, which includes a correction factor, as an alternative
+    # calculation to the parallel path approach.
+
+    mat_air = get_mat_air()
+    mat_wood = get_mat_wood()
+    mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
+    films = get_films_constant.new
+
+    if not ss.SSWallCavityInsRvalueInstalled
+        ss.SSWallCavityInsRvalueInstalled = 0
+	end
+    if not ss.SSWallFramingFactor
+        ss.SSWallFramingFactor = 0
+	end
+    if not ss.SSWallCorrectionFactor
+        ss.SSWallCorrectionFactor = 1
+	end
+
+    # Add air gap when insulation thickness < cavity depth
+    if not ss.SSWallCavityInsFillsCavity
+        ss.SSWallCavityInsRvalueInstalled += mat_air.R_air_gap
+	end
+    
+    gapFactor = get_wall_gap_factor(ss.SSWallInstallGrade, ss.SSWallFramingFactor)
+
+    # The cumulative R-value of the wall components along the path of heat transfer,
+    # excluding the cavity insulation and steel studs
+    r = films.vertical # Interior film
+    r += (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k) # Interior Finish (GWB)
+    if hasOSB
+        r += mat_plywood1_2in # OSB sheathing
+	end
+    r += rigidInsRvalue
+    r += (OpenStudio::convert(finishThickness,"in","ft").get / OpenStudio::convert(finishConductivity,"in","ft").get) # Exterior Finish
+    r += films.outside # Exterior film
+    
+    # The effective R-value of the cavity insulation with steel studs
+    eR = ss.SSWallCavityInsRvalueInstalled * ss.SSWallCorrectionFactor
+    
+    return r + 1/((1-gapFactor)/eR + gapFactor/mat_air.R_air_gap)
+	
+end
+
 def get_interzonal_wall_r_assembly(iw, gypsumThickness, gypsumConductivity=nil)
   # Returns assemblu R-value for Other wall, including air films.
 
@@ -600,9 +646,9 @@ def get_mat_carpet_bare(carpet)
 	return Material.new(name=constants.MaterialCarpetBareLayer, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(0.5,"in","ft").get / (carpet.CarpetPadRValue * carpet.CarpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
 end
 
-def get_mat_stud_and_air(model, mat_wood)
+def get_mat_stud_and_air(model, runner, mat_wood)
 	# Weight specific heat of layer by mass (previously by volume)
-	return Mat_solid.new(rho=(get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * Sim.new(model).inside_air_dens, cp=((get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.Cp * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * get_mat_air.inside_air_sh * Sim.new(model).inside_air_dens) / ((get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * Sim.new(model).inside_air_dens), k=Sim.stud_and_air_thick / Sim.stud_and_air_Rvalue)
+	return Mat_solid.new(rho=(get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * Sim.new(model, runner).inside_air_dens, cp=((get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.Cp * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * get_mat_air.inside_air_sh * Sim.new(model, runner).inside_air_dens) / ((get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * mat_wood.rho + (1 - get_mat_2x4(mat_wood).width_in / Sim.stud_spacing_default) * Sim.new(model, runner).inside_air_dens), k=Sim.stud_and_air_thick / Sim.stud_and_air_Rvalue)
 end
 
 def get_mat_2x4(mat_wood)
@@ -615,9 +661,9 @@ def get_mat_2x6(mat_wood)
   return Material.new(name=constants.Material2x6, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(5.5,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
 end
 
-def get_stud_and_air_wall(model, mat_wood)
+def get_stud_and_air_wall(model, runner, mat_wood)
   constants = Constants.new
-	return Material.new(name=constants.MaterialStudandAirWall, type=constants.MaterialTypeProperties, thick=Sim.stud_and_air_thick, thick_in=nil, width=nil, width_in=nil, mat_base=get_mat_stud_and_air(model, mat_wood))
+	return Material.new(name=constants.MaterialStudandAirWall, type=constants.MaterialTypeProperties, thick=Sim.stud_and_air_thick, thick_in=nil, width=nil, width_in=nil, mat_base=get_mat_stud_and_air(model, runner, mat_wood))
 end
 
 def get_mat_roofing_mat(roofing_material)
@@ -690,15 +736,36 @@ end
 
 class Sim
 
-	def initialize(model=nil)
-		if not model.nil?
-      @model = model
-    end
-    begin
-      @weather = WeatherProcess.new("#{File.expand_path('.')}/in.epw")
-    rescue
-      @weather = WeatherProcess.new("#{File.expand_path('.')}/../in.epw")
-    end
+	def initialize(model=nil, runner=nil)
+	  @model = nil
+	  @weather = nil
+	  unless model.nil?
+		@model = model
+	  end
+	  unless runner.nil?
+		begin # Spreadsheet
+		  #former_workflow_arguments = runner.former_workflow_arguments
+		  #weather_file_name = former_workflow_arguments["setdrweatherfile"]["weather_file_name"]
+		  #weather_file_dir = former_workflow_arguments["setdrweatherfile"]["weather_directory_name"]
+		  weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
+		  weather_file_dir = "weather"
+		  epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
+		  @weather = WeatherProcess.new(epw_path)
+		rescue # PAT
+		  if runner.lastEpwFilePath.is_initialized
+			test = runner.lastEpwFilePath.get.to_s
+			if File.exist?(test)
+			  epw_path = test
+			  @weather = WeatherProcess.new(epw_path)
+			end
+		  end
+		end
+	  end
+	  unless @weather.nil?
+		runner.registerInfo("EPW weather path set to #{epw_path}")
+	  else
+		runner.registerInfo("EPW weather path was NOT set")
+	  end
 	end
 
   def _getGroundTemperatures
@@ -1199,7 +1266,6 @@ class Sim
 		else
 			cavityInsDens = get_mat_densepack_generic.rho
 			cavityInsSH = get_mat_densepack_generic.Cp
-			cavityInsSH = get_mat_densepack_generic.Cp
 		end
 		
 		wsGapFactor = get_wall_gap_factor(wsw.WSWallInstallGrade, wsw.WSWallFramingFactor)
@@ -1207,13 +1273,13 @@ class Sim
 		overall_wall_Rvalue = get_wood_stud_wall_r_assembly(wsw, "WS", extwallmass.ExtWallMassGypsumThickness, extwallmass.ExtWallMassGypsumNumLayers, exteriorfinish.FinishThickness, exteriorfinish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
 		
 		# Create layers for modeling
-    films = Get_films_constant.new
+		films = Get_films_constant.new
 		sc.stud_layer_thickness = OpenStudio::convert(wsw.WSWallCavityDepth,"in","ft").get
 		sc.stud_layer_conductivity = sc.stud_layer_thickness / (overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exteriorfinish.FinishRvalue + extwallmass.ExtWallMassGypsumRvalue))
 		sc.stud_layer_density = wsw.WSWallFramingFactor * get_mat_wood.rho + (1 - wsw.WSWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * inside_air_dens
 		sc.stud_layer_spec_heat = (wsw.WSWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - wsw.WSWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / sc.stud_layer_density
 
-    wallsh = _addInsulatedSheathingMaterial(wallsh)
+		wallsh = _addInsulatedSheathingMaterial(wallsh)
 
 		return sc, wallsh
 		
@@ -1239,6 +1305,33 @@ class Sim
 
     return sc, c
 
+  end
+  
+  def _processConstructionsExteriorInsulatedWallsSteelStud(ss, ext_wall_mass, exterior_finish, wallsh, sc)
+        # Set Furring insulation/air properties
+        if ss.SSWallCavityInsRvalueInstalled == 0
+            cavityInsDens = inside_air_dens # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
+            cavityInsSH = get_mat_air.inside_air_sh
+        else
+            cavityInsDens = get_mat_densepack_generic.rho
+            cavityInsSH = get_mat_densepack_generic.Cp
+		end
+		
+        wsGapFactor = get_wall_gap_factor(ss.SSWallInstallGrade, ss.SSWallFramingFactor)	
+
+        overall_wall_Rvalue = get_steel_stud_wall_r_assembly(ss, ext_wall_mass.ExtWallMassLayerThickness, ext_wall_mass.ExtWallMassNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
+		
+        # Create layers for modeling
+		films = Get_films_constant.new
+        sc.stud_layer_thickness = OpenStudio::convert(ss.SSWallCavityDepth) # ft
+        sc.stud_layer_conductivity = sc.stud_layer_thickness / (overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exteriorfinish.FinishRvalue + extwallmass.ExtWallMassGypsumRvalue)) # Btu/hr*ft*F		
+        sc.stud_layer_density = ss.SSWallFramingFactor * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * inside_air_dens 
+        sc.stud_layer_spec_heat = (ss.SSWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / sc.stud_layer_density		
+		
+		wallsh = _addInsulatedSheathingMaterial(wallsh)
+		
+		return sc, wallsh
+		
   end
 
   def _processConstructionsInteriorInsulatedWalls(iw, partition_wall_mass, iwi)
@@ -4542,106 +4635,6 @@ class Process_refrigerator
   # else
   # Maxval_fridge = Monthly_mult_fridge.max * Weekend_hourly_fridge.max #/ sum_fridge_wknd
   # end
-end
-
-class Process_range
-  #Range energy use comes from the measure (user specified), schedule is here
-  def initialize
-    #hard coded convective, radiative, latent, and lost fractions for fridges
-	@range_lat_elec = 0.3
-    @range_rad_elec = 0.24
-    @range_lost_elec = 0.3
-    @range_conv_elec = 0.16
-  
-    @range_lat_gas = 0.2
-    @range_rad_gas = 0.18
-    @range_lost_gas = 0.5
-    @range_conv_gas = 0.12
-    #Range weekday, weekend schedule and monthly multipliers
-	
-    #Right now hard coded simple schedules
-    #TODO: Schedule inputs. Should be 24 or 48 hourly + 12 monthly, is 36-60 inputs too much? how to handle 8760 schedules (from a file?)
-    @monthly_mult_range = [1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097]
-    @weekday_hourly_range = [0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011]
-    @weekend_hourly_range = @weekday_hourly_range
-
-  end
-
-  def Range_lat_elec
-    return @range_lat_elec
-  end
-
-  def Range_rad_elec
-    return @range_rad_elec
-  end
-
-  def Range_lost_elec
-    return @range_lost_elec
-  end
-
-  def Range_conv_elec
-    return @range_conv_elec
-  end
-  
-  def Range_lat_gas
-    return @range_lat_gas
-  end
-
-  def Range_rad_gas
-    return @range_rad_gas
-  end
-
-  def Range_lost_gas
-    return @range_lost_gas
-  end
-
-  def Range_conv_gas
-    return @range_conv_gas
-  end
-
-  def Monthly_mult_range
-    return @monthly_mult_range
-  end
-
-  def Weekday_hourly_range
-    return @weekday_hourly_range
-  end
-
-  def Weekend_hourly_range
-    return @weekend_hourly_range
-  end
-
-  def Sum_range_max
-    #if sum != 1, normalize to get correct max val
-    sum_range_wkdy = 0
-    sum_range_wknd = 0
-	sum_range_max = 0
-
-    @weekday_hourly_range.each do |v|
-      sum_range_wkdy = sum_range_wkdy + v
-    end
-
-    @weekend_hourly_range.each do |v|
-      sum_range_wknd = sum_range_wknd + v
-    end
-	
-	if sum_range_wkdy < sum_range_wknd
-		sum_range_max = sum_range_wknd
-	else
-		sum_range_max = sum_range_wkdy
-	end
-	
-    return sum_range_max
-  end
-
-  def Maxval_range
-    #get max schedule value
-    if @weekday_hourly_range.max > @weekend_hourly_range.max
-      return @monthly_mult_range.max * @weekday_hourly_range.max #/ sum_range_wkdy
-    else
-      return @monthly_mult_range.max * @weekend_hourly_range.max #/ sum_range_wknd
-    end
-  end
 end
 
 class Process_clothes_washer

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_temperature</name>
   <uid>4a3a96e7-00ea-4b61-9433-3d6fc3395a62</uid>
-  <version_id>fd7ff88a-42ae-42f4-9700-1ee63c575d5d</version_id>
+  <version_id>ca93e666-8168-439d-a994-9a6f3448e63d</version_id>
   <xml_checksum>3BE1CF9C</xml_checksum>
   <class_name>ProcessGroundTemperature</class_name>
   <display_name>ProcessGroundTemperature</display_name>
@@ -33,6 +33,12 @@
       <checksum>4EE9ECE3</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3D1ABA94</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -41,25 +47,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8BFE0C6C</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45572B85</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>7B9EA6A6</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EA4777E</checksum>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4719A345</checksum>
     </file>
   </files>
 </measure>

@@ -83,7 +83,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     gd = GarageDoor.new
 
     # Create the sim object
-    sim = Sim.new(model)
+    sim = Sim.new(model, runner)
 
     # Process the windows
     d, gd = sim._processConstructionsDoors(d, gd)
