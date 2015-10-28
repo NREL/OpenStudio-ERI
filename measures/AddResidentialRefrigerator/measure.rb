@@ -129,6 +129,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     fridge_lost = 0
     fridge_conv = 1
 	
+	obj_name = "residential_refrigerator"
 	s = Schedule.new(weekday_sch, weekend_sch, monthly_sch, runner)
 	if not s.validated?
 		return false
@@ -137,7 +138,6 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	fridge_max = s.calcDesignLevel(fridge_daily)
 	
 	#add refrigerator to the selected space
-	obj_name = "residential_refrigerator"
 	has_fridge = 0
 	replace_fridge = 0
 	num_equip = 1

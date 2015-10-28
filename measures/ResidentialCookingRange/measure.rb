@@ -189,6 +189,10 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	range_lost_g = 0.5
 	range_rad_g = 0.18
 
+	obj_name = "residential_range"
+	obj_name_e = obj_name + "_electric"
+	obj_name_g = obj_name + "_gas"
+	obj_name_i = obj_name + "_elec_ignition"
 	s = Schedule.new(weekday_sch, weekend_sch, monthly_sch, runner)
 	if not s.validated?
 		return false
@@ -203,10 +207,6 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	end
 
 	#add range to the selected space
-	obj_name = "residential_range"
-	obj_name_e = obj_name + "_electric"
-	obj_name_g = obj_name + "_gas"
-	obj_name_i = obj_name + "_elec_ignition"
 	has_elec_range = 0
 	has_gas_range = 0
 	replace_gas_range = 0
