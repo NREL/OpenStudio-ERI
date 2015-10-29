@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_gas_loads</name>
   <uid>0ba8d5d6-6fc1-4822-b9dd-42410a5b9017</uid>
-  <version_id>fb1a5efa-c686-41ce-a576-175919c9a01d</version_id>
+  <version_id>24b73458-8ecf-4c94-b321-1c31a30dd89b</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialMiscellaneousGasLoads</class_name>
   <display_name>ResidentialMiscellaneousGasLoads</display_name>
@@ -116,7 +116,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

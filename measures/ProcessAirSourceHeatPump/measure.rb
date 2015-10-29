@@ -208,7 +208,8 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for ashp options
     selected_hp = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedhp", hp_display_names, true)
-    selected_hp.setDisplayName("Air source heat pump option.")
+    selected_hp.setDisplayName("Air Source Heat Pump: Installed SEER [Btu/W-h], Installed HSPF [Btu/W-h]")
+	selected_hp.setDescription("The installed Seasonal Energy Efficiency Ratio (SEER) of the heat pump, and the installed Heating Seasonal Performance Factor (HSPF) of the heat pump.")
     selected_hp.setDefaultValue("SEER 13, 7.7 HSPF")
     args << selected_hp
 
@@ -221,7 +222,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for ashp cooling/heating output capacity
     selected_hpcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedhpcap", cap_display_names, true)
-    selected_hpcap.setDisplayName("Cooling/Heating Output Capacity.")
+    selected_hpcap.setDisplayName("Cooling/Heating Output Capacity")
     selected_hpcap.setDefaultValue("Autosize")
     args << selected_hpcap
 
@@ -234,7 +235,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for supplemental heating output capacity
     selected_supcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedsupcap", cap_display_names, true)
-    selected_supcap.setDisplayName("Supplemental Heating Output Capacity.")
+    selected_supcap.setDisplayName("Supplemental Heating Output Capacity")
     selected_supcap.setDefaultValue("Autosize")
     args << selected_supcap
 

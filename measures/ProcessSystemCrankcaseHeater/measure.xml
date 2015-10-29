@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_system_crankcase_heater</name>
   <uid>b0630593-f352-4753-ae2c-2aa68f1c5611</uid>
-  <version_id>00f2b294-9f59-4a72-a02d-cfff4d03a161</version_id>
+  <version_id>040edacd-00f0-4d25-b08f-99d511c69393</version_id>
   <xml_checksum>C7ED76C0</xml_checksum>
   <class_name>ProcessSystemCrankcaseHeater</class_name>
   <display_name>ProcessSystemCrankcaseHeater</display_name>
@@ -18,7 +18,8 @@
     </argument>
     <argument>
       <name>userdefinedcrankcase</name>
-      <display_name>Crankcase heater capacity [kW].</display_name>
+      <display_name>Crankcase [kW]</display_name>
+      <description>Capacity of the crankcase heater for the compressor.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -26,7 +27,8 @@
     </argument>
     <argument>
       <name>userdefinedcrankcasemaxt</name>
-      <display_name>Maximum outdoor drybulb temperature for crankcase heater operation [F].</display_name>
+      <display_name>Crankcase Max Temp [degrees F]</display_name>
+      <description></description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -34,7 +36,8 @@
     </argument>
     <argument>
       <name>selectedheatpump</name>
-      <display_name>The building has a heat pump.</display_name>
+      <display_name>Has Heat Pump</display_name>
+      <description>Indicates whether the house has a heat pump.</description>
       <type>Boolean</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -52,7 +55,8 @@
     </argument>
     <argument>
       <name>userdefinedspeeds</name>
-      <display_name>Number of speeds of the compressor.</display_name>
+      <display_name>Num Speeds [#]</display_name>
+      <description>Integer number of speeds of the compressor.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -83,17 +87,6 @@
       <checksum>B79FDDBB</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>96A459E2</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -106,10 +99,21 @@
       <checksum>A38F0058</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4249D641</checksum>
+    </file>
+    <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

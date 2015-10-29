@@ -46,25 +46,29 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
 
     #make an argument for entering crankcase heater capacity
     userdefined_crankcase = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcrankcase",true)
-    userdefined_crankcase.setDisplayName("Crankcase heater capacity [kW].")
+    userdefined_crankcase.setDisplayName("Crankcase [kW]")
+	userdefined_crankcase.setDescription("Capacity of the crankcase heater for the compressor.")
     userdefined_crankcase.setDefaultValue(0.0)
     args << userdefined_crankcase
 
     #make an argument for entering crankcase heater max temp
     userdefined_crankcasemaxt = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcrankcasemaxt",true)
-    userdefined_crankcasemaxt.setDisplayName("Maximum outdoor drybulb temperature for crankcase heater operation [F].")
+    userdefined_crankcasemaxt.setDisplayName("Crankcase Max Temp [degrees F]")
+	userdefined_crankcasemaxt.setDescription("")
     userdefined_crankcasemaxt.setDefaultValue(55.0)
     args << userdefined_crankcasemaxt
 
     #make a bool argument for heat pump
     selected_heatpump = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedheatpump",false)
-    selected_heatpump.setDisplayName("The building has a heat pump.")
+    selected_heatpump.setDisplayName("Has Heat Pump")
+	selected_heatpump.setDescription("Indicates whether the house has a heat pump.")
     selected_heatpump.setDefaultValue(false)
     args << selected_heatpump
 
     #make an argument for entering speeds
     userdefined_speeds = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedspeeds",true)
-    userdefined_speeds.setDisplayName("Number of speeds of the compressor.")
+    userdefined_speeds.setDisplayName("Num Speeds [#]")
+	userdefined_speeds.setDescription("Integer number of speeds of the compressor.")
     userdefined_speeds.setDefaultValue(1.0)
     args << userdefined_speeds
 

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>d7a1c9c2-07a6-4289-9117-a30ef04f834a</version_id>
+  <version_id>02501974-f4bd-455a-877e-c1af035c02ae</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
   <display_name>ProcessAirSourceHeatPump</display_name>
@@ -25,7 +25,8 @@
     </argument>
     <argument>
       <name>selectedhp</name>
-      <display_name>Air source heat pump option.</display_name>
+      <display_name>Air Source Heat Pump: Installed SEER [Btu/W-h], Installed HSPF [Btu/W-h]</display_name>
+      <description>The installed Seasonal Energy Efficiency Ratio (SEER) of the heat pump, and the installed Heating Seasonal Performance Factor (HSPF) of the heat pump.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -55,7 +56,7 @@
     </argument>
     <argument>
       <name>selectedhpcap</name>
-      <display_name>Cooling/Heating Output Capacity.</display_name>
+      <display_name>Cooling/Heating Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -149,7 +150,7 @@
     </argument>
     <argument>
       <name>selectedsupcap</name>
-      <display_name>Supplemental Heating Output Capacity.</display_name>
+      <display_name>Supplemental Heating Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -312,6 +313,12 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -320,19 +327,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>221B4CD8</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>3176FB13</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

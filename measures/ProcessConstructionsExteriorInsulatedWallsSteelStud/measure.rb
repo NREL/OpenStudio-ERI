@@ -8,16 +8,15 @@ require "#{File.dirname(__FILE__)}/resources/sim"
 class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset::ModelUserScript
 
 	class SteelStudWall
-		def initialize(ssWallCavityInsRvalueInstalled, ssWallInstallGrade, ssWallCavityDepth, ssWallCavityInsFillsCavity, ssWallFramingFactor, ssWallStudSpacing, ssWallCorrectionFactor)
+		def initialize(ssWallCavityInsRvalueInstalled, ssWallInstallGrade, ssWallCavityDepth, ssWallCavityInsFillsCavity, ssWallFramingFactor, ssWallCorrectionFactor)
 			@ssWallCavityInsRvalueInstalled = ssWallCavityInsRvalueInstalled
 			@ssWallInstallGrade = ssWallInstallGrade
 			@ssWallCavityDepth = ssWallCavityDepth
 			@ssWallCavityInsFillsCavity = ssWallCavityInsFillsCavity
 			@ssWallFramingFactor = ssWallFramingFactor
-			@ssWallStudSpacing = ssWallStudSpacing
 			@ssWallCorrectionFactor = ssWallCorrectionFactor
 		end
-		
+				
 		def SSWallCavityInsRvalueInstalled
 			return @ssWallCavityInsRvalueInstalled
 		end
@@ -36,10 +35,6 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
 		
 		def SSWallFramingFactor
 			return @ssWallFramingFactor
-		end
-		
-		def SSWallStudSpacing
-			return @ssWallStudSpacing
 		end
 		
 		def SSWallCorrectionFactor
@@ -122,17 +117,17 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
 
   # human readable name
   def name
-    return "ProcessConstructionsExteriorInsulatedWallsSteelStud"
+    return "Add/Replace Residential Steel Stud Walls"
   end
 
   # human readable description
   def description
-    return ""
+    return "This measure creates steel stud constructions for the exterior walls adjacent to the living space."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return ""
+    return "Calculates material layer properties of steel stud constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions."
   end
 
   # define the arguments that the user will input
@@ -158,20 +153,156 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
 
     #make a choice argument for living space
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
-    userdefined_gypthickness.setDisplayName("Thickness of drywall layers [in].")
+    userdefined_gypthickness.setDisplayName("Exterior Wall Mass: Thickness")
+	userdefined_gypthickness.setUnits("in")
+	userdefined_gypthickness.setDescription("Gypsum layer thickness.")
     userdefined_gypthickness.setDefaultValue(0.5)
     args << userdefined_gypthickness
 
     #make a double argument for number of gypsum layers
     userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
-    userdefined_gyplayers.setDisplayName("Number of drywall layers.")
+    userdefined_gyplayers.setDisplayName("Exterior Wall Mass: Num Layers")
+	userdefined_gyplayers.setUnits("#")
+	userdefined_gyplayers.setDescription("Integer number of layers of gypsum.")
     userdefined_gyplayers.setDefaultValue(1)
-    args << userdefined_gyplayers	
+    args << userdefined_gyplayers
+
+	#make a choice argument for model objects
+	studsize_display_names = OpenStudio::StringVector.new
+	studsize_display_names << "2x4"
+	studsize_display_names << "2x6"
+	studsize_display_names << "2x8"
+	
+    #make a string argument for steel stud size of wall cavity
+    selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, true)
+    selected_studsize.setDisplayName("Steel Stud: Cavity Depth")
+	selected_studsize.setUnits("in")
+	selected_studsize.setDescription("Depth of the stud cavity.")
+	selected_studsize.setDefaultValue("2x4")
+    args << selected_studsize
+	
+	#make a choice argument for model objects
+	spacing_display_names = OpenStudio::StringVector.new
+	spacing_display_names << "16 in o.c."
+	spacing_display_names << "24 in o.c."
+	
+	#make a choice argument for steel stud spacing
+	selected_spacing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedspacing", spacing_display_names, true)
+	selected_spacing.setDisplayName("Steel Stud: Stud Spacing")
+	selected_spacing.setUnits("in")
+	selected_spacing.setDescription("The on-center spacing between studs in a wall assembly.")
+	selected_spacing.setDefaultValue("16 in o.c.")
+	args << selected_spacing	
+	
+	#make a double argument for nominal R-value of installed cavity insulation
+	userdefined_instcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinstcavr", true)
+	userdefined_instcavr.setDisplayName("Steel Stud: Cavity Insulation Installed R-value")
+	userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
+	userdefined_instcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+	userdefined_instcavr.setDefaultValue(13.0)
+	args << userdefined_instcavr
+	
+	#make a choice argument for model objects
+	installgrade_display_names = OpenStudio::StringVector.new
+	installgrade_display_names << "I"
+	installgrade_display_names << "II"
+	installgrade_display_names << "III"
+	
+	#make a choice argument for wall cavity insulation installation grade
+	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
+	selected_installgrade.setDisplayName("Steel Stud: Cavity Install Grade")
+	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    selected_installgrade.setDefaultValue("I")
+	args << selected_installgrade
+	
+	#make a bool argument for whether the cavity insulation fills the cavity
+	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
+	selected_insfills.setDisplayName("Steel Stud: Insulation Fills Cavity")
+	selected_insfills.setDescription("Specifies whether the cavity insulation completely fills the depth of the wall cavity.")
+    selected_insfills.setDefaultValue(true)
+	args << selected_insfills
+	
+	#make a double argument for correction factor
+	userdefined_corrfact = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcorrfact", true)
+	userdefined_corrfact.setDisplayName("Steel Stud: Correction Factor")
+	userdefined_corrfact.setDescription("The parallel path correction factor.")
+	userdefined_corrfact.setDefaultValue(0.46)
+	args << userdefined_corrfact
+
+	#make a bool argument for OSB of wall cavity
+	userdefined_hasosb = OpenStudio::Ruleset::OSArgument::makeBoolArgument("userdefinedhasosb", true)
+	userdefined_hasosb.setDisplayName("Wall Sheathing: Has OSB")
+	userdefined_hasosb.setDescription("Specifies if the walls have a layer of structural shear OSB sheathing.")
+	userdefined_hasosb.setDefaultValue(true)
+	args << userdefined_hasosb	
+	
+	#make a double argument for rigid insulation thickness of wall cavity
+    userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)
+    userdefined_rigidinsthickness.setDisplayName("Wall Sheathing: Continuous Insulation Thickness")
+	userdefined_rigidinsthickness.setUnits("in")
+	userdefined_rigidinsthickness.setDescription("The thickness of the continuous insulation.")
+    userdefined_rigidinsthickness.setDefaultValue(0)
+    args << userdefined_rigidinsthickness
+	
+	#make a double argument for rigid insulation R-value of wall cavity
+	userdefined_rigidinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsr", false)
+	userdefined_rigidinsr.setDisplayName("Wall Sheathing: Continuous Insulation Nominal R-value")
+	userdefined_rigidinsr.setUnits("hr-ft^2-R/Btu")
+	userdefined_rigidinsr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    userdefined_rigidinsr.setDefaultValue(0)
+	args << userdefined_rigidinsr
+	
+	#make a double argument for exterior finish thickness of wall cavity
+	userdefined_extfinthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedextfinthickness", false)
+	userdefined_extfinthickness.setDisplayName("Exterior Finish: Thickness")
+	userdefined_extfinthickness.setUnits("in")
+	userdefined_extfinthickness.setDescription("Thickness of the exterior finish assembly.")
+    userdefined_extfinthickness.setDefaultValue(0.375)
+	args << userdefined_extfinthickness
+	
+	#make a double argument for exterior finish R-value of wall cavity
+	userdefined_extfinr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedextfinr", false)
+	userdefined_extfinr.setDisplayName("Exterior Finish: R-value")
+	userdefined_extfinr.setUnits("hr-ft^2-R/Btu")
+	userdefined_extfinr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    userdefined_extfinr.setDefaultValue(0.6)
+	args << userdefined_extfinr	
+	
+	#make a double argument for exterior finish density of wall cavity
+	userdefined_extfindensity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedextfindensity", false)
+	userdefined_extfindensity.setDisplayName("Exterior Finish: Density")
+	userdefined_extfindensity.setUnits("lb/ft^3")
+	userdefined_extfindensity.setDescription("Density of the exterior finish assembly.")
+    userdefined_extfindensity.setDefaultValue(11.1)
+	args << userdefined_extfindensity
+
+	#make a double argument for exterior finish specific heat of wall cavity
+	userdefined_extfinspecheat = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedextfinspecheat", false)
+	userdefined_extfinspecheat.setDisplayName("Exterior Finish: Specific Heat")
+	userdefined_extfinspecheat.setUnits("Btu/lb-R")
+	userdefined_extfinspecheat.setDescription("Specific heat of the exterior finish assembly.")
+    userdefined_extfinspecheat.setDefaultValue(0.25)
+	args << userdefined_extfinspecheat
+	
+	#make a double argument for exterior finish thermal absorptance of wall cavity
+	userdefined_extfinthermalabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedextfinthermalabs", false)
+	userdefined_extfinthermalabs.setDisplayName("Exterior Finish: Emissivity")
+	userdefined_extfinthermalabs.setDescription("The property that determines the fraction of the incident radiation that is absorbed.")
+    userdefined_extfinthermalabs.setDefaultValue(0.9)
+	args << userdefined_extfinthermalabs
+
+	#make a double argument for exterior finish solar/visible absorptance of wall cavity
+	userdefined_extfinabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedextfinabs", false)
+	userdefined_extfinabs.setDisplayName("Exterior Finish: Solar Absorptivity")
+	userdefined_extfinabs.setDescription("The property that determines the fraction of the incident radiation that is absorbed.")
+    userdefined_extfinabs.setDefaultValue(0.3)
+	args << userdefined_extfinabs	
 	
     return args
   end
@@ -189,82 +320,53 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
     selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
 
 	# Gypsum
-	selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
-	if selected_gypsum.empty?
-		userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
-		userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-	end	
+	userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
+	userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
 	# Cavity
 	selected_studsize = runner.getStringArgumentValue("selectedstudsize",user_arguments)
 	selected_spacing = runner.getStringArgumentValue("selectedspacing",user_arguments)
 	userdefined_instcavr = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
 	selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)
 	selected_insfills = runner.getBoolArgumentValue("selectedinsfills",user_arguments)	
+	userdefined_corrfact = runner.getDoubleArgumentValue("userdefinedcorrfact",user_arguments)	
 	# Rigid
-	selected_rigidins = runner.getOptionalWorkspaceObjectChoiceValue("selectedrigidins",user_arguments,model)
-	if selected_rigidins.empty?
-		userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
-		userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
-	end	
+	userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
+	userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
+	userdefined_hasosb = runner.getBoolArgumentValue("userdefinedhasosb",user_arguments)
 	# Exterior Finish
-	selected_extfin = runner.getOptionalWorkspaceObjectChoiceValue("selectedextfin",user_arguments,model)
-	if selected_extfin.empty?
-		userdefined_extfinthickness = runner.getDoubleArgumentValue("userdefinedextfinthickness",user_arguments)
-		userdefined_extfinr = runner.getDoubleArgumentValue("userdefinedextfinr",user_arguments)
-		userdefined_extfindensity = runner.getDoubleArgumentValue("userdefinedextfindensity",user_arguments)
-		userdefined_extfinspecheat = runner.getDoubleArgumentValue("userdefinedextfinspecheat",user_arguments)
-		userdefined_extfinthermalabs = runner.getDoubleArgumentValue("userdefinedextfinthermalabs",user_arguments)
-		userdefined_extfinabs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)		
-	end	
+	userdefined_extfinthickness = runner.getDoubleArgumentValue("userdefinedextfinthickness",user_arguments)
+	userdefined_extfinr = runner.getDoubleArgumentValue("userdefinedextfinr",user_arguments)
+	userdefined_extfindensity = runner.getDoubleArgumentValue("userdefinedextfindensity",user_arguments)
+	userdefined_extfinspecheat = runner.getDoubleArgumentValue("userdefinedextfinspecheat",user_arguments)
+	userdefined_extfinthermalabs = runner.getDoubleArgumentValue("userdefinedextfinthermalabs",user_arguments)
+	userdefined_extfinabs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)		
 	
 	# Constants
 	mat_wood = get_mat_wood
 	mat_gyp = get_mat_gypsum
 	mat_air = get_mat_air
 	mat_rigid = get_mat_rigid_ins
-	mat_densepack_generic = get_mat_densepack_generics	
+	mat_densepack_generic = get_mat_densepack_generic	
 	
 	# Gypsum	
-	if userdefined_gypthickness.nil?
-		gypsumRoughness = selected_gypsum.get.to_StandardOpaqueMaterial.get.roughness
-		gypsumThickness = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-		gypsumNumLayers = 1.0
-		gypsumConductivity = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-		gypsumDensity = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-		gypsumSpecificHeat = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-		gypsumThermalAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getThermalAbsorptance.value
-		gypsumSolarAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getSolarAbsorptance.value
-		gypsumVisibleAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getVisibleAbsorptance.value
-		gypsumRvalue = OpenStudio::convert(gypsumThickness,"in","ft").get / gypsumConductivity
-	else
-		gypsumRoughness = "Rough"
-		gypsumThickness = userdefined_gypthickness
-		gypsumNumLayers = userdefined_gyplayers
-		gypsumConductivity = mat_gyp.k
-		gypsumDensity = mat_gyp.rho
-		gypsumSpecificHeat = mat_gyp.Cp
-		gypsumThermalAbs = get_mat_gypsum_extwall(mat_gyp).TAbs
-		gypsumSolarAbs = get_mat_gypsum_extwall(mat_gyp).SAbs
-		gypsumVisibleAbs = get_mat_gypsum_extwall(mat_gyp).VAbs
-		gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
-	end	
+	gypsumRoughness = "Rough"
+	gypsumThickness = userdefined_gypthickness
+	gypsumNumLayers = userdefined_gyplayers
+	gypsumConductivity = mat_gyp.k
+	gypsumDensity = mat_gyp.rho
+	gypsumSpecificHeat = mat_gyp.Cp
+	gypsumThermalAbs = get_mat_gypsum_extwall(mat_gyp).TAbs
+	gypsumSolarAbs = get_mat_gypsum_extwall(mat_gyp).SAbs
+	gypsumVisibleAbs = get_mat_gypsum_extwall(mat_gyp).VAbs
+	gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
 	
 	# Rigid	
-	if userdefined_rigidinsthickness.nil?
-		rigidInsRoughness = selected_rigidins.get.to_StandardOpaqueMaterial.get.roughness
-		rigidInsThickness = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-		rigidInsConductivity = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-		rigidInsDensity = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-		rigidInsSpecificHeat = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-		rigidInsRvalue = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsConductivity		
-	else
-		rigidInsRvalue = userdefined_rigidinsr
-		rigidInsRoughness = "Rough"
-		rigidInsThickness = userdefined_rigidinsthickness
-		rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
-		rigidInsDensity = mat_rigid.rho
-		rigidInsSpecificHeat = mat_rigid.Cp	
-	end
+	rigidInsRvalue = userdefined_rigidinsr
+	rigidInsRoughness = "Rough"
+	rigidInsThickness = userdefined_rigidinsthickness
+	rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+	rigidInsDensity = mat_rigid.rho
+	rigidInsSpecificHeat = mat_rigid.Cp	
 	hasOSB = userdefined_hasosb
 	osbRoughness = "Rough"
 	osbThickness = 0.5
@@ -287,34 +389,21 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
 	ssWallCavityDepth = ssWallCavityDepth_dict[selected_studsize]	
 	ssWallFramingFactor_dict = {"16 in o.c."=>0.25, "24 in o.c."=>0.22}
 	ssWallFramingFactor = ssWallFramingFactor_dict[selected_spacing]
-	ssWallStudSpacing =
-	ssWallCorrectionFactor =
+	ssWallCorrectionFactor = userdefined_corrfact
 
 	# Exterior Finish
-	if userdefined_extfinthickness.nil?
-		finishRoughness = selected_extfin.get.to_StandardOpaqueMaterial.get.roughness
-		finishThickness = OpenStudio::convert(selected_extfin.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-		finishConductivity = OpenStudio::convert(selected_extfin.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-		finishDensity = OpenStudio::convert(selected_extfin.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-		finishSpecHeat = OpenStudio::convert(selected_extfin.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-		finishThermalAbs = selected_extfin.get.to_StandardOpaqueMaterial.get.getThermalAbsorptance.value
-		finishSolarAbs = selected_extfin.get.to_StandardOpaqueMaterial.get.getSolarAbsorptance.value
-		finishVisibleAbs = selected_extfin.get.to_StandardOpaqueMaterial.get.getVisibleAbsorptance.value
-		finishRvalue = OpenStudio::convert(finishThickness,"in","ft").get / finishConductivity
-	else
-		finishRvalue = userdefined_extfinr
-		finishRoughness = "Rough"
-		finishThickness = userdefined_extfinthickness
-		finishConductivity = finishThickness / finishRvalue
-		finishDensity = userdefined_extfindensity
-		finishSpecHeat = userdefined_extfinspecheat
-		finishThermalAbs = userdefined_extfinthermalabs
-		finishSolarAbs = userdefined_extfinabs
-		finishVisibleAbs = userdefined_extfinabs
-	end	
+	finishRvalue = userdefined_extfinr
+	finishRoughness = "Rough"
+	finishThickness = userdefined_extfinthickness
+	finishConductivity = finishThickness / finishRvalue
+	finishDensity = userdefined_extfindensity
+	finishSpecHeat = userdefined_extfinspecheat
+	finishThermalAbs = userdefined_extfinthermalabs
+	finishSolarAbs = userdefined_extfinabs
+	finishVisibleAbs = userdefined_extfinabs
 	
 	# Create the material class instances
-	ss = StudSteelWall.new(ssWallCavityInsRvalueInstalled, ssWallInstallGrade, ssWallCavityDepth, ssWallCavityInsFillsCavity, ssWallFramingFactor, ssWallStudSpacing, ssWallCorrectionFactor)
+	ss = SteelStudWall.new(ssWallCavityInsRvalueInstalled, ssWallInstallGrade, ssWallCavityDepth, ssWallCavityInsFillsCavity, ssWallFramingFactor, ssWallCorrectionFactor)
 	extwallmass = ExtWallMass.new(gypsumThickness, gypsumNumLayers, gypsumRvalue)
 	exteriorfinish = ExteriorFinish.new(finishThickness, finishConductivity, finishRvalue)
 	wallsh = WallSheathing.new(rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)

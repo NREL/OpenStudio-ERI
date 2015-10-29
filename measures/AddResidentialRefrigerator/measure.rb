@@ -137,7 +137,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	fridge_max = s.calcDesignLevel(fridge_daily)
 	
 	#add refrigerator to the selected space
-	obj_name = "residential_refrigerator"
+	
 	has_fridge = 0
 	replace_fridge = 0
 	num_equip = 1

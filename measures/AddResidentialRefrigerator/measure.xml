@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>d244b931-41bc-4fce-a2c3-98cb3be4d4ee</version_id>
+  <version_id>ec6963d5-19be-4b0d-af98-703d007c88a6</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Add/Replace Residential Refrigerator</display_name>
@@ -97,11 +97,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CA5B0A61</checksum>
+      <checksum>99D51F8D</checksum>
     </file>
   </files>
 </measure>

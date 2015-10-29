@@ -14,10 +14,11 @@ require "#{File.dirname(__FILE__)}/resources/sim"
 class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
   class Furnace
-    def initialize(furnaceInstalledAFUE, furnaceMaxSupplyTemp, furnaceFuelType)
+    def initialize(furnaceInstalledAFUE, furnaceMaxSupplyTemp, furnaceFuelType, furnaceInstalledSupplyFanPower)
       @furnaceInstalledAFUE = furnaceInstalledAFUE
       @furnaceMaxSupplyTemp = furnaceMaxSupplyTemp
       @furnaceFuelType = furnaceFuelType
+	  @furnaceInstalledSupplyFanPower = furnaceInstalledSupplyFanPower
     end
 
     attr_accessor(:hir, :aux_elec)
@@ -33,6 +34,10 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     def FurnaceFuelType
       return @furnaceFuelType
     end
+	
+	def FurnaceSupplyFanPowerInstalled
+	  return @furnaceInstalledSupplyFanPower
+	end
   end
 
   class AirConditioner
@@ -112,10 +117,23 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     selected_fbsmt.setDisplayName("Which is the finished basement zone?")
     args << selected_fbsmt
 
+    #make a choice argument for furnace fuel type
+    fuel_display_names = OpenStudio::StringVector.new
+    fuel_display_names << "gas"
+    fuel_display_names << "electric"
+
+    #make a string argument for furnace fuel type
+    selected_furnacefuel = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfurnacefuel", fuel_display_names, true)
+    selected_furnacefuel.setDisplayName("Fuel Type")
+	selected_furnacefuel.setDescription("Type of fuel used for heating.")
+    selected_furnacefuel.setDefaultValue("gas")
+    args << selected_furnacefuel	
+	
     #make an argument for entering furnace installed afue
     userdefined_afue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedafue",true)
-    userdefined_afue.setDisplayName("The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value. [Btu/Btu].")
-    userdefined_afue.setDefaultValue(0.78)
+    userdefined_afue.setDisplayName("Installed AFUE [Btu/Btu]")
+    userdefined_afue.setDescription("The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value.")
+	userdefined_afue.setDefaultValue(0.78)
     args << userdefined_afue
 
     #make a choice argument for furnace heating output capacity
@@ -127,26 +145,23 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for furnace heating output capacity
     selected_furnacecap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfurnacecap", cap_display_names, true)
-    selected_furnacecap.setDisplayName("Heating Output Capacity.")
+    selected_furnacecap.setDisplayName("Heating Output Capacity")
     selected_furnacecap.setDefaultValue("Autosize")
     args << selected_furnacecap
 
     #make an argument for entering furnace max supply temp
     userdefined_maxtemp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedmaxtemp",true)
-    userdefined_maxtemp.setDisplayName("Maximum supply air temperature [F].")
+    userdefined_maxtemp.setDisplayName("Max Supply Temp [F]")
+	userdefined_maxtemp.setDescription("Maximum supply air temperature.")
     userdefined_maxtemp.setDefaultValue(120.0)
     args << userdefined_maxtemp
 
-    #make a choice argument for furnace fuel type
-    fuel_display_names = OpenStudio::StringVector.new
-    fuel_display_names << "gas"
-    fuel_display_names << "electric"
-
-    #make a string argument for furnace fuel type
-    selected_furnacefuel = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfurnacefuel", fuel_display_names, true)
-    selected_furnacefuel.setDisplayName("Type of fuel used for heating.")
-    selected_furnacefuel.setDefaultValue("gas")
-    args << selected_furnacefuel
+	#make an argument for entering furnace installed supply fan power
+    userdefined_fanpower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfanpower",true)
+    userdefined_fanpower.setDisplayName("Installed Supply Fan Power [W/cfm]")
+	userdefined_fanpower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.")
+    userdefined_fanpower.setDefaultValue(0.5)
+    args << userdefined_fanpower	
 
     return args
   end #end the arguments method
@@ -162,18 +177,19 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
     selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
-    furnaceInstalledAFUE = runner.getDoubleArgumentValue("userdefinedafue",user_arguments)
+    furnaceFuelType = runner.getStringArgumentValue("selectedfurnacefuel",user_arguments)
+	furnaceInstalledAFUE = runner.getDoubleArgumentValue("userdefinedafue",user_arguments)
     furnaceOutputCapacity = runner.getStringArgumentValue("selectedfurnacecap",user_arguments)
     if not furnaceOutputCapacity == "Autosize"
       furnaceOutputCapacity = OpenStudio::convert(furnaceOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end
     furnaceMaxSupplyTemp = runner.getDoubleArgumentValue("userdefinedmaxtemp",user_arguments)
-    furnaceFuelType = runner.getStringArgumentValue("selectedfurnacefuel",user_arguments)
+    furnaceInstalledSupplyFanPower = runner.getDoubleArgumentValue("userdefinedfanpower",user_arguments)
 
     constants = Constants.new
 
     # Create the material class instances
-    furnace = Furnace.new(furnaceInstalledAFUE, furnaceMaxSupplyTemp, furnaceFuelType)
+    furnace = Furnace.new(furnaceInstalledAFUE, furnaceMaxSupplyTemp, furnaceFuelType, furnaceInstalledSupplyFanPower)
     air_conditioner = AirConditioner.new(nil)
     supply = Supply.new
     test_suite = TestSuite.new(false)
@@ -402,13 +418,12 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         # Supply Air
         zone_splitter = air_loop.zoneSplitter
         zone_splitter.setName("Zone Splitter")
-        # zone_splitter.addToNote(air_demand_inlet_node)
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
         diffuser_living.setName("Living Zone Direct Air")
         # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-        air_loop.addBranchForZone(zone, diffuser_living.to_StraightComponent)
-
+        air_loop.addBranchForZone(zone, diffuser_living.to_StraightComponent) # tk this doesn't add the air terminal anymore, for some reason
+		
         setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
         setpoint_mgr.setControlZone(zone)
         setpoint_mgr.addToNode(air_supply_outlet_node)

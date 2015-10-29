@@ -13,6 +13,22 @@ require "#{File.dirname(__FILE__)}/resources/sim"
 #start the measure
 class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
 
+  class Misc
+    def initialize(simTestSuiteBuilding)
+      @simTestSuiteBuilding = simTestSuiteBuilding
+    end
+
+    def SimTestSuiteBuilding
+      return @simTestSuiteBuilding
+    end
+  end
+
+  class Schedules
+    def initialize
+    end
+    attr_accessor(:heating_season, :cooling_season)
+  end
+
   class HeatingSetpoint
     def initialize(heatingSetpointConstantSetpoint)
       @heatingSetpointConstantSetpoint = heatingSetpointConstantSetpoint
@@ -71,25 +87,29 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
 
     #make a double argument for constant heating setpoint
     userdefinedhsp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedhsp", false)
-    userdefinedhsp.setDisplayName("Enter the constant heating setpoint [F].")
+    userdefinedhsp.setDisplayName("Heating Set Point: Constant Setpoint [degrees F]")
+	userdefinedhsp.setDescription("Constant heating setpoint for every hour.")
     userdefinedhsp.setDefaultValue(71.0)
     args << userdefinedhsp
 
     #make a double argument for constant cooling setpoint
     userdefinedcsp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsp", false)
-    userdefinedcsp.setDisplayName("Enter the constant cooling setpoint [F].")
+    userdefinedcsp.setDisplayName("Cooling Set Point: Constant Setpoint [degrees F]")
+	userdefinedcsp.setDescription("Constant cooling setpoint for every hour.")
     userdefinedcsp.setDefaultValue(76.0)
     args << userdefinedcsp
 
     #make a bool argument for whether the house has heating equipment
     selectedheating = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedheating", false)
-    selectedheating.setDisplayName("The house has heating equipment.")
+    selectedheating.setDisplayName("Has Heating Equipment")
+	selectedheating.setDescription("Indicates whether the house has heating equipment.")
     selectedheating.setDefaultValue(true)
     args << selectedheating
 
     #make a bool argument for whether the house has cooling equipment
     selectedcooling = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedcooling", false)
-    selectedcooling.setDisplayName("The house has cooling equipment.")
+    selectedcooling.setDisplayName("Has Cooling Equipment")
+	selectedcooling.setDescription("Indicates whether the house has cooling equipment.")
     selectedcooling.setDefaultValue(true)
     args << selectedcooling
 
@@ -105,6 +125,110 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
+    simTestSuiteBuilding = nil
+
+    # Create the material class instances
+    misc = Misc.new(simTestSuiteBuilding)
+    schedules = Schedules.new
+
+    # Create the sim object
+    sim = Sim.new(model, runner)
+
+    # Process the heating and cooling seasons
+    schedules = sim._processHeatingCoolingSeasons(misc, schedules)
+
+    day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
+    day_startm = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
+
+    sched_type = OpenStudio::Model::ScheduleTypeLimits.new(model)
+    sched_type.setName("ON/OFF")
+    sched_type.setLowerLimitValue(0)
+    sched_type.setUpperLimitValue(1)
+    sched_type.setNumericType("Discrete")
+
+    # HeatingSeasonSchedule
+    htgssn_ruleset = OpenStudio::Model::ScheduleRuleset.new(model)
+    htgssn_ruleset.setName("HeatingSeasonSchedule")
+
+    htgssn_ruleset.setScheduleTypeLimits(sched_type)
+
+    htgssn_rule_days = []
+    for m in 1..12
+      date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
+      date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
+      htgssn_rule = OpenStudio::Model::ScheduleRule.new(htgssn_ruleset)
+      htgssn_rule.setName("HeatingSeasonSchedule%02d" % m.to_s)
+      htgssn_rule_day = htgssn_rule.daySchedule
+      htgssn_rule_day.setName("HeatingSeasonSchedule%02dd" % m.to_s)
+      for h in 1..24
+        time = OpenStudio::Time.new(0,h,0,0)
+        val = schedules.heating_season[m - 1]
+        htgssn_rule_day.addValue(time,val)
+      end
+      htgssn_rule_days << htgssn_rule_day
+      htgssn_rule.setApplySunday(true)
+      htgssn_rule.setApplyMonday(true)
+      htgssn_rule.setApplyTuesday(true)
+      htgssn_rule.setApplyWednesday(true)
+      htgssn_rule.setApplyThursday(true)
+      htgssn_rule.setApplyFriday(true)
+      htgssn_rule.setApplySaturday(true)
+      htgssn_rule.setStartDate(date_s)
+      htgssn_rule.setEndDate(date_e)
+    end
+
+    htgssn_sumDesSch = htgssn_rule_days[6]
+    htgssn_winDesSch = htgssn_rule_days[1]
+    htgssn_ruleset.setSummerDesignDaySchedule(htgssn_sumDesSch)
+    htgssn_summer = htgssn_ruleset.summerDesignDaySchedule
+    htgssn_summer.setName("HeatingSeasonScheduleSummer")
+    htgssn_ruleset.setWinterDesignDaySchedule(htgssn_winDesSch)
+    htgssn_winter = htgssn_ruleset.winterDesignDaySchedule
+    htgssn_winter.setName("HeatingSeasonScheduleWinter")
+
+    # CoolingSeasonSchedule
+    clgssn_ruleset = OpenStudio::Model::ScheduleRuleset.new(model)
+    clgssn_ruleset.setName("CoolingSeasonSchedule")
+
+    clgssn_ruleset.setScheduleTypeLimits(sched_type)
+
+    clgssn_rule_days = []
+    for m in 1..12
+      date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
+      date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
+      clgssn_rule = OpenStudio::Model::ScheduleRule.new(clgssn_ruleset)
+      clgssn_rule.setName("CoolingSeasonSchedule%02d" % m.to_s)
+      clgssn_rule_day = clgssn_rule.daySchedule
+      clgssn_rule_day.setName("CoolingSeasonSchedule%02dd" % m.to_s)
+      for h in 1..24
+        time = OpenStudio::Time.new(0,h,0,0)
+        val = schedules.cooling_season[m - 1]
+        clgssn_rule_day.addValue(time,val)
+      end
+      clgssn_rule_days << clgssn_rule_day
+      clgssn_rule.setApplySunday(true)
+      clgssn_rule.setApplyMonday(true)
+      clgssn_rule.setApplyTuesday(true)
+      clgssn_rule.setApplyWednesday(true)
+      clgssn_rule.setApplyThursday(true)
+      clgssn_rule.setApplyFriday(true)
+      clgssn_rule.setApplySaturday(true)
+      clgssn_rule.setStartDate(date_s)
+      clgssn_rule.setEndDate(date_e)
+    end
+
+    clgssn_sumDesSch = clgssn_rule_days[6]
+    clgssn_winDesSch = clgssn_rule_days[1]
+    clgssn_ruleset.setSummerDesignDaySchedule(clgssn_sumDesSch)
+    clgssn_summer = clgssn_ruleset.summerDesignDaySchedule
+    clgssn_summer.setName("CoolingSeasonScheduleSummer")
+    clgssn_ruleset.setWinterDesignDaySchedule(clgssn_winDesSch)
+    clgssn_winter = clgssn_ruleset.winterDesignDaySchedule
+    clgssn_winter.setName("CoolingSeasonScheduleWinter")
+
+    runner.registerInfo("Set the monthly HeatingSeasonSchedule as #{schedules.heating_season.join(", ")}")
+    runner.registerInfo("Set the monthly CoolingSeasonSchedule as #{schedules.cooling_season.join(", ")}")	
+	
     # Thermal Zone
     selectedliving = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
 

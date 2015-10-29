@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>efdae075-6b21-4816-ac55-7d13c9fc039c</version_id>
+  <version_id>aff8a2bf-bbce-4db2-a27e-09899c43823b</version_id>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>ProcessCentralAirConditioner</display_name>
@@ -25,7 +25,8 @@
     </argument>
     <argument>
       <name>selectedac</name>
-      <display_name>Central air conditioner option.</display_name>
+      <display_name>Installed SEER [Btu/W-h]</display_name>
+      <description>The installed Seasonal Energy Efficiency Ratio (SEER) of the air conditioner, which can be used to account for performance derating or degradation relative to the rated value.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -75,7 +76,7 @@
     </argument>
     <argument>
       <name>selectedaccap</name>
-      <display_name>Cooling Output Capacity.</display_name>
+      <display_name>Cooling Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -198,6 +199,12 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A38F0058</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -206,19 +213,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>80FB1B46</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>4CC3884E</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

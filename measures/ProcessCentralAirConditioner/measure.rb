@@ -169,7 +169,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for central air options
     selected_ac = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedac", ac_display_names, true)
-    selected_ac.setDisplayName("Central air conditioner option.")
+    selected_ac.setDisplayName("Installed SEER [Btu/W-h]")
+	selected_ac.setDescription("The installed Seasonal Energy Efficiency Ratio (SEER) of the air conditioner, which can be used to account for performance derating or degradation relative to the rated value.")
     selected_ac.setDefaultValue("SEER 13")
     args << selected_ac
 
@@ -182,7 +183,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for central air cooling output capacity
     selected_accap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedaccap", cap_display_names, true)
-    selected_accap.setDisplayName("Cooling Output Capacity.")
+    selected_accap.setDisplayName("Cooling Output Capacity")
     selected_accap.setDefaultValue("Autosize")
     args << selected_accap
 

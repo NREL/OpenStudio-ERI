@@ -1,36 +1,243 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>ProcessConstructionsExteriorInsulatedWallsSteelStud</name>
+  <name>process_constructions_exterior_insulated_walls_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>644fb79a-1c9d-41fe-9566-b7bc8804372a</version_id>
+  <version_id>f314f2a9-111b-41fc-8f0e-952253b8b3db</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsSteelStud</class_name>
-  <display_name>ProcessConstructionsExteriorInsulatedWallsSteelStud</display_name>
-  <description></description>
-  <modeler_description></modeler_description>
+  <display_name>Add/Replace Residential Steel Stud Walls</display_name>
+  <description>This measure creates steel stud constructions for the exterior walls adjacent to the living space.</description>
+  <modeler_description>Calculates material layer properties of steel stud constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Of what space type is the living space?</display_name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>userdefinedgypthickness</name>
-      <display_name>Thickness of drywall layers [in].</display_name>
+      <display_name>Exterior Wall Mass: Thickness</display_name>
+      <description>Gypsum layer thickness.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
     </argument>
     <argument>
       <name>userdefinedgyplayers</name>
-      <display_name>Number of drywall layers.</display_name>
+      <display_name>Exterior Wall Mass: Num Layers</display_name>
+      <description>Integer number of layers of gypsum.</description>
       <type>Double</type>
+      <units>#</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>selectedstudsize</name>
+      <display_name>Steel Stud: Cavity Depth</display_name>
+      <description>Depth of the stud cavity.</description>
+      <type>Choice</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2x4</default_value>
+      <choices>
+        <choice>
+          <value>2x4</value>
+          <display_name>2x4</display_name>
+        </choice>
+        <choice>
+          <value>2x6</value>
+          <display_name>2x6</display_name>
+        </choice>
+        <choice>
+          <value>2x8</value>
+          <display_name>2x8</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>selectedspacing</name>
+      <display_name>Steel Stud: Stud Spacing</display_name>
+      <description>The on-center spacing between studs in a wall assembly.</description>
+      <type>Choice</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>16 in o.c.</default_value>
+      <choices>
+        <choice>
+          <value>16 in o.c.</value>
+          <display_name>16 in o.c.</display_name>
+        </choice>
+        <choice>
+          <value>24 in o.c.</value>
+          <display_name>24 in o.c.</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedinstcavr</name>
+      <display_name>Steel Stud: Cavity Insulation Installed R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>13</default_value>
+    </argument>
+    <argument>
+      <name>selectedinstallgrade</name>
+      <display_name>Steel Stud: Cavity Install Grade</display_name>
+      <description>5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>I</default_value>
+      <choices>
+        <choice>
+          <value>I</value>
+          <display_name>I</display_name>
+        </choice>
+        <choice>
+          <value>II</value>
+          <display_name>II</display_name>
+        </choice>
+        <choice>
+          <value>III</value>
+          <display_name>III</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>selectedinsfills</name>
+      <display_name>Steel Stud: Insulation Fills Cavity</display_name>
+      <description>Specifies whether the cavity insulation completely fills the depth of the wall cavity.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedcorrfact</name>
+      <display_name>Steel Stud: Correction Factor</display_name>
+      <description>The parallel path correction factor.</description>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.46</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedhasosb</name>
+      <display_name>Wall Sheathing: Has OSB</display_name>
+      <description>Specifies if the walls have a layer of structural shear OSB sheathing.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedrigidinsthickness</name>
+      <display_name>Wall Sheathing: Continuous Insulation Thickness</display_name>
+      <description>The thickness of the continuous insulation.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedrigidinsr</name>
+      <display_name>Wall Sheathing: Continuous Insulation Nominal R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinthickness</name>
+      <display_name>Exterior Finish: Thickness</display_name>
+      <description>Thickness of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.375</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinr</name>
+      <display_name>Exterior Finish: R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.6</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfindensity</name>
+      <display_name>Exterior Finish: Density</display_name>
+      <description>Density of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>lb/ft^3</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>11.1</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinspecheat</name>
+      <display_name>Exterior Finish: Specific Heat</display_name>
+      <description>Specific heat of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>Btu/lb-R</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.25</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinthermalabs</name>
+      <display_name>Exterior Finish: Emissivity</display_name>
+      <description>The property that determines the fraction of the incident radiation that is absorbed.</description>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.9</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinabs</name>
+      <display_name>Exterior Finish: Solar Absorptivity</display_name>
+      <description>The property that determines the fraction of the incident radiation that is absorbed.</description>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.3</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -73,17 +280,6 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>B8648579</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -96,10 +292,21 @@
       <checksum>A38F0058</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>62900ABE</checksum>
+    </file>
+    <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>
