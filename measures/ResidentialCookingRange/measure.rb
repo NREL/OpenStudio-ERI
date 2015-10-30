@@ -51,7 +51,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	c_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("C_ef")
 	c_ef.setDisplayName("Cooktop Energy Factor")
 	c_ef.setDescription("Cooktop energy factor determined by DOE test procedures for cooking appliances (DOE 1997).")
-	c_ef.setDefaultValue(0.71)
+	c_ef.setDefaultValue(0.74)
 	args << c_ef
 
 	#make a double argument for oven EF
@@ -168,14 +168,11 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	
 	#Calculate electric range daily energy use
 	if range_fuel == "Electric"
-		range_ann_e = ((86.5 + 28.9 * num_br) / c_ef + (14.6 + 4.9 * num_br) / o_ef)*mult
-		range_daily_e = range_ann_e / 365.0
+		range_ann_e = ((86.5 + 28.9 * num_br) / c_ef + (14.6 + 4.9 * num_br) / o_ef)*mult #kWh/yr
 	else
 		range_ann_g = ((2.64 + 0.88 * num_br) / c_ef + (0.44 + 0.15 * num_br) / o_ef)*mult # therm/yr
-		range_daily_g = range_ann_g / 365.0
 		if e_ignition == true
 			range_ann_i = (40 +13.3 * num_br)*mult #kWh/yr
-			range_daily_i = range_ann_i / 365.0
 		end
 	end	
 	
@@ -193,17 +190,16 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	obj_name_e = obj_name + "_electric"
 	obj_name_g = obj_name + "_gas"
 	obj_name_i = obj_name + "_elec_ignition"
-	s = Schedule.new(weekday_sch, weekend_sch, monthly_sch, runner)
-	if not s.validated?
+	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
+	if not sch.validated?
 		return false
 	end
-	range_ruleset = s.createSchedule(model, obj_name)
 	if range_fuel == "Electric"
-		range_max_e = s.calcDesignLevel(range_daily_e)
+		design_level_e = sch.calcDesignLevelElec(range_ann_e/365.0)
 	else
 		# FIXME: Need to handle therms for gas
-		range_max_g = s.calcDesignLevel(range_daily_g)
-		range_max_i = s.calcDesignLevel(range_daily_i)
+		design_level_g = sch.calcDesignLevelGas(range_ann_g/365.0)
+		design_level_i = sch.calcDesignLevelElec(range_ann_i/365.0)
 	end
 
 	#add range to the selected space
@@ -223,8 +219,8 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 					if range_fuel == "Gas"
 						has_gas_range = 1
 						runner.registerWarning("This space already has a gas range. The existing gas range will be replaced with the specified gas range")
-						space_equipment.gasEquipmentDefinition.setDesignLevel(range_max_g)
-						Schedule.replaceSchedule(space_equipment, range_ruleset)
+						space_equipment.gasEquipmentDefinition.setDesignLevel(design_level_g)
+						sch.replaceSchedule(space_equipment)
 						replace_gas_range = 1
 					else
 						runner.registerWarning("This space already has a gas range. The existing gas range will be removed and replaced with the specified electric range")
@@ -243,16 +239,16 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 					else
 						has_elec_range = 1
 						runner.registerWarning("This space already has an electric range. The existing range will be replaced with the the currently selected option")
-						space_equipment.electricEquipmentDefinition.setDesignLevel(range_max_e)
-						Schedule.replaceSchedule(space_equipment, range_ruleset)
+						space_equipment.electricEquipmentDefinition.setDesignLevel(design_level_e)
+						sch.replaceSchedule(space_equipment)
 						replace_elec_range = 1
 					end
 				elsif space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_i
 					if range_fuel == "Electric"
 						space_equipment_e.remove
 					elsif e_ignition == true and range_fuel == "Gas"
-						space_equipment.electricEquipmentDefinition.setDesignLevel(range_max_i)
-						Schedule.replaceSchedule(space_equipment, range_ruleset)
+						space_equipment.electricEquipmentDefinition.setDesignLevel(design_level_i)
+						sch.replaceSchedule(space_equipment)
 					else
 						space_equipment_e.remove
 					end
@@ -274,7 +270,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 					rng.setName(obj_name_g)
 					rng.setSpaceType(spaceType)
 					rng_def.setName(obj_name_g)
-					rng_def.setDesignLevel(range_max_g)
+					rng_def.setDesignLevel(design_level_g)
 					rng_def.setFractionRadiant(range_rad_g)
 					rng_def.setFractionLatent(range_lat_g)
 					rng_def.setFractionLost(range_lost_g)
@@ -284,27 +280,27 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 						rng2.setName(obj_name_i)
 						rng2.setSpaceType(spaceType)
 						rng_def2.setName(obj_name_i)
-						rng_def2.setDesignLevel(range_max_i)
+						rng_def2.setDesignLevel(design_level_i)
 						rng_def2.setFractionRadiant(range_rad_e)
 						rng_def2.setFractionLatent(range_lat_e)
 						rng_def2.setFractionLost(range_lost_e)
 					end
 					
 					#Assign schedule
-					rng.setSchedule(range_ruleset)
-					rng2.setSchedule(range_ruleset)
+					rng.setSchedule(sch.ruleset)
+					rng2.setSchedule(sch.ruleset)
 
 				else
 					rng_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
 					rng = OpenStudio::Model::ElectricEquipment.new(rng_def)
-					rng.setName("residential_electric_range")
+					rng.setName(obj_name_e)
 					rng.setSpaceType(spaceType)
-					rng_def.setName("residential_electric_range")
-					rng_def.setDesignLevel(range_max_e)
+					rng_def.setName(obj_name_e)
+					rng_def.setDesignLevel(design_level_e)
 					rng_def.setFractionRadiant(range_rad_e)
 					rng_def.setFractionLatent(range_lat_e)
 					rng_def.setFractionLost(range_lost_e)
-					rng.setSchedule(range_ruleset)
+					rng.setSchedule(sch.ruleset)
 				end		
 			end
 		end
@@ -340,7 +336,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 			end
 		end
 	else
-		runner.registerFinalCondition("No range was not added.")
+		runner.registerFinalCondition("Range was not added to #{space_type_r}.")
     end
 	
     return true
