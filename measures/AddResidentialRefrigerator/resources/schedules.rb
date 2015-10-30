@@ -1,3 +1,5 @@
+require "#{File.dirname(__FILE__)}/units"
+
 class Schedule
     def initialize(weekday_hourly_values, weekend_hourly_values, monthly_values, model, sch_name, runner)
 		@validated = true
@@ -21,22 +23,16 @@ class Schedule
 		return @validated
 	end
 	
-	def ruleset
-		return @ruleset
-	end
-	
 	def calcDesignLevelElec(daily_kwh)
 		return daily_kwh * @maxval * 1000 * @schadjust
 	end
 
 	def calcDesignLevelGas(daily_therm)
-		# FIXME: This is not correct
-		return daily_therm * @maxval * 1000 * @schadjust
+		return calcDesignLevelElec(Units.therms2kWh(daily_therm))
 	end
 
-	def replaceSchedule(obj)
-		# Helper method to replace a schedule with a new schedule without 
-		# leaving the original schedule in the model (clutter).
+	def setSchedule(obj)
+		# Helper method to set (or replace) the object's schedule
 		if not obj.schedule.empty?
 			sch = obj.schedule.get
 			sch.remove
@@ -44,10 +40,6 @@ class Schedule
 		obj.setSchedule(@ruleset)
 	end
 
-	def valid_float?(str)
-		!!Float(str) rescue false
-	end
-	
 	private 
 	
 		def validateValues(values_str, num_values, runner, sch_name)
@@ -69,6 +61,10 @@ class Schedule
 				@validated = false
 			end
 			return floats
+		end
+
+		def valid_float?(str)
+			!!Float(str) rescue false
 		end
 
 		def normalizeSumToOne(values)
