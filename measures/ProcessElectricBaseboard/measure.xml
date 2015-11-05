@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>fde50cf4-f95b-4bd3-8642-35a815d22b5d</version_id>
+  <version_id>e1a21c27-e5e5-4809-91dd-eaefa9f62356</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>ProcessElectricBaseboard</display_name>
@@ -25,7 +25,8 @@
     </argument>
     <argument>
       <name>userdefinedeff</name>
-      <display_name>The efficiency of the electric baseboard.</display_name>
+      <display_name>Efficiency [Btu/Btu]</display_name>
+      <description>The efficiency of the electric baseboard.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -33,7 +34,7 @@
     </argument>
     <argument>
       <name>selectedbaseboardcap</name>
-      <display_name>Heating Output Capacity.</display_name>
+      <display_name>Heating Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -190,17 +191,6 @@
       <checksum>528EA52F</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>432ACDD9</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -213,10 +203,21 @@
       <checksum>A38F0058</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8A0ED848</checksum>
+    </file>
+    <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

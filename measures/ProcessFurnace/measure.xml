@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>82bff7d7-afa9-4cf8-9972-3c0edfc367d9</version_id>
+  <version_id>324031d5-805f-4549-8050-e186b461514c</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>ProcessFurnace</display_name>
@@ -24,8 +24,28 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
+      <name>selectedfurnacefuel</name>
+      <display_name>Fuel Type</display_name>
+      <description>Type of fuel used for heating.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>gas</default_value>
+      <choices>
+        <choice>
+          <value>gas</value>
+          <display_name>gas</display_name>
+        </choice>
+        <choice>
+          <value>electric</value>
+          <display_name>electric</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
       <name>userdefinedafue</name>
-      <display_name>The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value. [Btu/Btu].</display_name>
+      <display_name>Installed AFUE [Btu/Btu]</display_name>
+      <description>The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -33,7 +53,7 @@
     </argument>
     <argument>
       <name>selectedfurnacecap</name>
-      <display_name>Heating Output Capacity.</display_name>
+      <display_name>Heating Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -167,29 +187,21 @@
     </argument>
     <argument>
       <name>userdefinedmaxtemp</name>
-      <display_name>Maximum supply air temperature [F].</display_name>
+      <display_name>Max Supply Temp [F]</display_name>
+      <description>Maximum supply air temperature.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>120</default_value>
     </argument>
     <argument>
-      <name>selectedfurnacefuel</name>
-      <display_name>Type of fuel used for heating.</display_name>
-      <type>Choice</type>
+      <name>userdefinedfanpower</name>
+      <display_name>Installed Supply Fan Power [W/cfm]</display_name>
+      <description>Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.</description>
+      <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>gas</default_value>
-      <choices>
-        <choice>
-          <value>gas</value>
-          <display_name>gas</display_name>
-        </choice>
-        <choice>
-          <value>electric</value>
-          <display_name>electric</display_name>
-        </choice>
-      </choices>
+      <default_value>0.5</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -228,12 +240,6 @@
       <checksum>A38F0058</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -242,7 +248,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7883707F</checksum>
+      <checksum>291FE935</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

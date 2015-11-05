@@ -1,20 +1,19 @@
 require "#{File.dirname(__FILE__)}/resources/schedules"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
   
-  #define the name that a user will see, this method may be deprecated as
-  #the display name in PAT comes from the name field in measure.xml
   def name
     return "Add/Replace Residential Refrigerator"
   end
   
   def description
-    return "Adds/replaces a residential refrigerator."
+    return "Adds (or replaces) a residential refrigerator with the specified efficiency, operation, and schedule."
   end
   
   def modeler_description
-    return "Adds/replaces the ElectricEquipment object."
+    return "Since there is no Refrigerator object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential refrigerator. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
   end
   
   #define the arguments that the user will input
@@ -121,7 +120,6 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	
 	#Calculate fridge daily energy use
 	fridge_ann = fridge_E*mult
-	fridge_daily = fridge_ann/365.0
 
     #hard coded convective, radiative, latent, and lost fractions
     fridge_lat = 0
@@ -129,15 +127,13 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     fridge_lost = 0
     fridge_conv = 1
 	
-	s = Schedule.new(weekday_sch, weekend_sch, monthly_sch, runner)
-	if not s.validated?
+	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, Constants.ObjectNameRefrigerator, runner)
+	if not sch.validated?
 		return false
 	end
-	fridge_ruleset = s.createSchedule(model, obj_name)
-	fridge_max = s.calcDesignLevel(fridge_daily)
+	design_level = sch.calcDesignLevelElec(fridge_ann/365.0)
 	
 	#add refrigerator to the selected space
-	obj_name = "residential_refrigerator"
 	has_fridge = 0
 	replace_fridge = 0
 	num_equip = 1
@@ -147,11 +143,11 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 		if spacehandle == space_type_r #add refrigerator
 			space_equipments = spaceType.electricEquipment
 			space_equipments.each do |space_equipment|
-				if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
+				if space_equipment.electricEquipmentDefinition.name.get.to_s == Constants.ObjectNameRefrigerator
 					has_fridge = 1
 					runner.registerWarning("This space already has a refrigerator, the existing refrigerator will be replaced with the the currently selected option")
-					space_equipment.electricEquipmentDefinition.setDesignLevel(fridge_max)
-					Schedule.replaceSchedule(space_equipment, fridge_ruleset)
+					space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
+					sch.setSchedule(space_equipment)
 					num_equip += 1
 					replace_fridge = 1
 				end
@@ -162,14 +158,14 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 				#Add electric equipment for the fridge
 				frg_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
 				frg = OpenStudio::Model::ElectricEquipment.new(frg_def)
-				frg.setName(obj_name)
+				frg.setName(Constants.ObjectNameRefrigerator)
 				frg.setSpaceType(spaceType)
-				frg_def.setName(obj_name)
-				frg_def.setDesignLevel(fridge_max)
+				frg_def.setName(Constants.ObjectNameRefrigerator)
+				frg_def.setDesignLevel(design_level)
 				frg_def.setFractionRadiant(fridge_rad)
 				frg_def.setFractionLatent(fridge_lat)
 				frg_def.setFractionLost(fridge_lost)
-				frg.setSchedule(fridge_ruleset)
+				sch.setSchedule(frg)
 				
 			end
 		end

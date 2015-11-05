@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>720aa3da-51e0-4542-8d68-e4ae0e3c25a1</version_id>
+  <version_id>18a54556-0b29-4123-831a-8288fc485f97</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUnfinishedAttic</class_name>
   <display_name>ProcessConstructionsUnfinishedAttic</display_name>
@@ -220,7 +220,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

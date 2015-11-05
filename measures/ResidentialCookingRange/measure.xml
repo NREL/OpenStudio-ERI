@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>9bd722fd-1b76-493a-bbac-d379259e8df5</version_id>
+  <version_id>c293a260-3beb-4891-ba29-470f0387b708</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Add/Replace Residential Cooking Range</display_name>
-  <description>Adds/replaces a residential cooking range.</description>
-  <modeler_description>Adds/replaces the ElectricEquipment or GasEquipment object. If a non-electric range with electric ignition is specified, the model will have a separate ElectricEquipment object to capture its energy consumption.</modeler_description>
+  <description>Adds (or replaces) a residential cooking range with the specified efficiency, operation, and schedule.</description>
+  <modeler_description>Since there is no Cooking Range object in OpenStudio/EnergyPlus, we look for an ElectricEquipment or GasEquipment object with the name that denotes it is a residential cooking range. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
     <argument>
       <name>Num_Br</name>
@@ -46,15 +46,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Electric</default_value>
+      <default_value>electric</default_value>
       <choices>
         <choice>
-          <value>Electric</value>
-          <display_name>Electric</display_name>
+          <value>electric</value>
+          <display_name>electric</display_name>
         </choice>
         <choice>
-          <value>Gas</value>
-          <display_name>Gas</display_name>
+          <value>gas</value>
+          <display_name>gas</display_name>
         </choice>
       </choices>
     </argument>
@@ -65,7 +65,7 @@
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.71</default_value>
+      <default_value>0.74</default_value>
     </argument>
     <argument>
       <name>O_ef</name>
@@ -164,20 +164,33 @@
       <checksum>8CE5D019</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
+      <filename>units.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ABBC4DD5</checksum>
+      <checksum>E62B461B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4EE56212</checksum>
     </file>
     <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>25E0D5C1</checksum>
+      <checksum>B6F3CAFA</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>65A7FC83</checksum>
     </file>
   </files>
 </measure>

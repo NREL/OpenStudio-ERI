@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>5f6d2b11-9818-4774-a886-10bce0847d8b</version_id>
+  <version_id>b8803df2-4fb6-45f2-bf00-1a18a2cf572e</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageRoof</class_name>
   <display_name>ProcessConstructionsGarageRoof</display_name>
@@ -100,7 +100,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

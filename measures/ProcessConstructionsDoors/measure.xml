@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>4f5efbd1-ffb5-458b-be8a-d5bd10db239e</version_id>
+  <version_id>168648c8-534c-4959-9e2f-af14d86675bc</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>ProcessConstructionsDoors</display_name>
@@ -74,7 +74,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

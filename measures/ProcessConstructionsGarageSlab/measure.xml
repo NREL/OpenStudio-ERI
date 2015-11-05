@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_slab</name>
   <uid>3da62049-50f9-4ed0-b05a-6b89a202482d</uid>
-  <version_id>7e1e4950-0691-4046-a796-87e67bfb8e39</version_id>
+  <version_id>44a3b272-7ba5-4963-b5fe-96d7222cb48f</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageSlab</class_name>
   <display_name>ProcessConstructionsGarageSlab</display_name>
@@ -67,7 +67,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

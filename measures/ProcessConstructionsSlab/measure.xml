@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>ee873a2b-30bd-49d8-8c9b-676d31819086</version_id>
+  <version_id>93944b8a-0aca-42e1-a9b0-d8b3cb15db62</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsSlab</class_name>
   <display_name>ProcessConstructionsSlab</display_name>
@@ -152,7 +152,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

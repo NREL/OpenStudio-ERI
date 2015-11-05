@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_floors</name>
   <uid>477cfef1-0c37-4b16-9cfd-82d617472e43</uid>
-  <version_id>38db1c32-1476-4491-ab17-f487b2c7c765</version_id>
+  <version_id>eb24b6af-4efe-40d5-826c-d8c1d4afe7c7</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedFloors</class_name>
   <display_name>ProcessConstructionsInteriorUninsulatedFloors</display_name>
@@ -138,7 +138,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

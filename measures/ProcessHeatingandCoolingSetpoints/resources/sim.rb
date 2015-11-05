@@ -191,15 +191,15 @@ class Material
 	
 	def thick
 		return @thick
-  end
+    end
 
-  def thick_in
-    return @thick_in
-  end
+    def thick_in
+		return @thick_in
+    end
 
-  def width
-    return @width
-  end
+    def width
+		return @width
+    end
 	
 	def width_in
 		return @width_in
@@ -259,7 +259,7 @@ def get_wood_stud_wall_r_assembly(category, prefix, gypsumThickness, gypsumNumLa
 	mat_air = get_mat_air
 	mat_wood = get_mat_wood
 	mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
-  films = Get_films_constant.new
+    films = Get_films_constant.new
 	
 	# Add air gap when insulation thickness < cavity depth
 	if not wallCavityInsFillsCavity
@@ -317,39 +317,47 @@ def get_double_stud_wall_r_assembly(dsw, gypsumThickness, gypsumNumLayers, finis
   mat_gyp = get_mat_gypsum
   mat_wood = get_mat_wood
   mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
-  mat_2x4 = get_mat_2x4(mat_wood)
+  mat_2x = get_mat_2x(mat_wood, dsw.DSWallStudDepth)
+  mat_air = get_mat_air
   films = Get_films_constant.new
 
-  dsw.MiscFramingFactor = (dsw.DSWallFramingFactor - mat_2x4.width_in / dsw.DSWallStudSpacing)
+  gapFactor = get_wall_gap_factor(dsw.DSWallInstallGrade, dsw.DSWallFramingFactor)
+  
+  cavityDepth = 2.0 * dsw.DSWallStudDepth + dsw.DSWallGapDepth
+  
+  dsw.MiscFramingFactor = (dsw.DSWallFramingFactor - mat_2x.width_in / dsw.DSWallStudSpacing)
 
-  ins_k = OpenStudio::convert(dsw.DSWallCavityDepth,"in","ft").get / dsw.DSWallCavityInsRvalue # = 1/R_per_foot
+  ins_k = OpenStudio::convert(cavityDepth,"in","ft").get / dsw.DSWallCavityInsRvalue # = 1/R_per_foot
+  gap_k = OpenStudio::convert(cavityDepth,"in","ft").get / mat_air.R_air_gap
 
   if dsw.DSWallIsStaggered
-    stud_frac = (2.0 * mat_2x4.width_in) / dsw.DSWallStudSpacing
+    stud_frac = (2.0 * mat_2x.width_in) / dsw.DSWallStudSpacing
   else
-    stud_frac = (1.0 * mat_2x4.width_in) / dsw.DSWallStudSpacing
+    stud_frac = (1.0 * mat_2x.width_in) / dsw.DSWallStudSpacing
   end
 
-  path_fracs = [dsw.MiscFramingFactor, stud_frac, (1.0 - (stud_frac + dsw.MiscFramingFactor))] # frame frac, # stud frac, # Cavity frac
+  path_fracs = [dsw.MiscFramingFactor, stud_frac, gapFactor, (1.0 - (stud_frac + dsw.MiscFramingFactor - gapFactor))] # frame frac, # stud frac, # Cavity frac
   double_stud_wall = Construction.new(path_fracs)
 
   # Interior Film
   double_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / films.vertical])
 
   # Interior Finish (GWB)
-  double_stud_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[mat_wood.k, mat_wood.k, ins_k])
+  double_stud_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[mat_gyp.k])
 
   # Inner Stud / Cavity Ins
-  double_stud_wall.addlayer(thickness=mat_2x4.thick, conductivity_list=[mat_wood.k, mat_wood.k, ins_k])
+  double_stud_wall.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, mat_wood.k, gap_k, ins_k])
 
   # All cavity layer
-  double_stud_wall.addlayer(thickness=OpenStudio::convert(dsw.DSWallCavityDepth - (2.0 * mat_2x4.thick_in),"in","ft").get, conductivity_list=[mat_wood.k, ins_k, ins_k])
+  if dsw.DSWallGapDepth > 0
+	double_stud_wall.addlayer(thickness=OpenStudio::convert(dsw.DSWallGapDepth,"in","ft").get, conductivity_list=[mat_wood.k, ins_k, gap_k, ins_k])
+  end
 
   # Outer Stud / Cavity Ins
   if dsw.DSWallIsStaggered
-    double_stud_wall.addlayer(thickness=mat_2x4.thick, conductivity_list=[mat_wood.k, ins_k, ins_k])
+    double_stud_wall.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, ins_k, gap_k, ins_k])
   else
-    double_stud_wall.addlayer(thickness=mat_2x4.thick, conductivity_list=[mat_wood.k, mat_wood.k, ins_k])
+    double_stud_wall.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, mat_wood.k, gap_k, ins_k])
   end
 
   # OSB sheathing
@@ -380,24 +388,16 @@ def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishT
     # Uses Equation 4-1 from 2015 IECC, which includes a correction factor, as an alternative
     # calculation to the parallel path approach.
 
+	mat_gyp = get_mat_gypsum
     mat_air = get_mat_air()
     mat_wood = get_mat_wood()
     mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
-    films = get_films_constant.new
-
-    if not ss.SSWallCavityInsRvalueInstalled
-        ss.SSWallCavityInsRvalueInstalled = 0
-	end
-    if not ss.SSWallFramingFactor
-        ss.SSWallFramingFactor = 0
-	end
-    if not ss.SSWallCorrectionFactor
-        ss.SSWallCorrectionFactor = 1
-	end
-
+    films = Get_films_constant.new
+	
     # Add air gap when insulation thickness < cavity depth
+	ssWallCavityInsRvalueInstalled = ss.SSWallCavityInsRvalueInstalled
     if not ss.SSWallCavityInsFillsCavity
-        ss.SSWallCavityInsRvalueInstalled += mat_air.R_air_gap
+		ssWallCavityInsRvalueInstalled += mat_air.R_air_gap
 	end
     
     gapFactor = get_wall_gap_factor(ss.SSWallInstallGrade, ss.SSWallFramingFactor)
@@ -407,14 +407,14 @@ def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishT
     r = films.vertical # Interior film
     r += (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k) # Interior Finish (GWB)
     if hasOSB
-        r += mat_plywood1_2in # OSB sheathing
+        r += mat_plywood1_2in.Rvalue # OSB sheathing
 	end
     r += rigidInsRvalue
     r += (OpenStudio::convert(finishThickness,"in","ft").get / OpenStudio::convert(finishConductivity,"in","ft").get) # Exterior Finish
     r += films.outside # Exterior film
     
     # The effective R-value of the cavity insulation with steel studs
-    eR = ss.SSWallCavityInsRvalueInstalled * ss.SSWallCorrectionFactor
+    eR = ssWallCavityInsRvalueInstalled * ss.SSWallCorrectionFactor
     
     return r + 1/((1-gapFactor)/eR + gapFactor/mat_air.R_air_gap)
 	
@@ -1286,24 +1286,31 @@ class Sim
   end
 
   def _processConstructionsExteriorInsulatedWallsDoubleStud(dsw, extwallmass, exterior_finish, wallsh, sc, c)
-    dsw, overall_wall_Rvalue = get_double_stud_wall_r_assembly(dsw, extwallmass.ExtWallMassGypsumThickness, extwallmass.ExtWallMassGypsumNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
-
-    # R-value of wall if there were no studs, only misc framing (?)
-    ins_layer_equiv_Rvalue = 1.0 / ((1.0 - dsw.MiscFramingFactor) / (1.0 / 3.0 * dsw.DSWallCavityInsRvalue) + dsw.MiscFramingFactor / (1.0 / 3.0 * OpenStudio::convert(dsw.DSWallCavityDepth,"in","ft").get / get_mat_wood.k)) # hr*ft^2*F/Btu
-
-    sc.stud_layer_thickness = OpenStudio::convert(dsw.DSWallCavityDepth / 3.0,"in","ft").get # ft
-    sc.stud_layer_conductivity = sc.stud_layer_thickness / ((overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + ins_layer_equiv_Rvalue + wallsh.OSBRvalue + (exterior_finish.FinishThickness / exterior_finish.FinishConductivity) + (OpenStudio::convert(extwallmass.ExtWallMassGypsumThickness,"in","ft").get * extwallmass.ExtWallMassGypsumNumLayers / get_mat_gypsum.k))) / 2.0) # Btu/hr*ft*F
+    dsGapFactor = get_wall_gap_factor(dsw.DSWallInstallGrade, dsw.DSWallFramingFactor)
+	
+	dsw, overall_wall_Rvalue = get_double_stud_wall_r_assembly(dsw, extwallmass.ExtWallMassGypsumThickness, extwallmass.ExtWallMassGypsumNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
+	
+    cavityDepth = 2 * dsw.DSWallStudDepth + dsw.DSWallGapDepth
+	
+	if dsw.DSWallGapDepth > 0
+	  cavity_layer_Rvalue = 1.0 / ((1.0 - dsw.MiscFramingFactor - dsGapFactor) / (dsw.DSWallGapDepth / cavityDepth * dsw.DSWallCavityInsRvalue) + dsw.MiscFramingFactor / (dsw.DSWallGapDepth / get_mat_wood.k)) # hr*ft^2*F/Btu
+      c.cavity_layer_thickness = OpenStudio::convert(dsw.DSWallGapDepth,"in","ft").get # ft
+      c.cavity_layer_conductivity = c.cavity_layer_thickness / cavity_layer_Rvalue # Btu/hr*ft*F
+      c.cavity_layer_density = dsw.MiscFramingFactor * get_mat_wood.rho + (1.0 - dsw.MiscFramingFactor - dsGapFactor) * get_mat_densepack_generic.rho # Btu/hr*ft*F
+	  c.cavity_layer_spec_heat = (dsw.MiscFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - dsw.MiscFramingFactor - dsGapFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho + dsGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / c.cavity_layer_density # Btu/lbm-F	
+	else
+	  cavity_layer_Rvalue = 0
+	end
+	
+	films = Get_films_constant.new
+    sc.stud_layer_thickness = OpenStudio::convert(dsw.DSWallStudDepth,"in","ft").get # ft
+    sc.stud_layer_conductivity = sc.stud_layer_thickness / ((overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + cavity_layer_Rvalue + wallsh.OSBRvalue + (exterior_finish.FinishThickness / exterior_finish.FinishConductivity) + (OpenStudio::convert(extwallmass.ExtWallMassGypsumThickness,"in","ft").get * extwallmass.ExtWallMassGypsumNumLayers / get_mat_gypsum.k))) / 2.0) # Btu/hr*ft*F
     sc.stud_layer_density = dsw.DSWallFramingFactor * get_mat_wood.rho + (1 - dsw.DSWallFramingFactor) * get_mat_densepack_generic.rho # lbm/ft^3
     sc.stud_layer_spec_heat = (dsw.DSWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - dsw.DSWallFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / sc.stud_layer_density # Btu/lbm-F
 
-    c.cavity_layer_thickness = OpenStudio::convert(dsw.DSWallCavityDepth / 3.0,"in","ft").get # ft
-    c.cavity_layer_conductivity = c.cavity_layer_thickness / ins_layer_equiv_Rvalue # Btu/hr*ft*F
-    c.cavity_layer_density = dsw.MiscFramingFactor * get_mat_wood.rho + (1.0 - dsw.MiscFramingFactor) * get_mat_densepack_generic.rho # Btu/hr*ft*F
-    c.cavity_layer_spec_heat = (dsw.MiscFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - dsw.MiscFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / c.cavity_layer_density # Btu/lbm-F
-
     wallsh = _addInsulatedSheathingMaterial(wallsh)
 
-    return sc, c
+	return sc, c, wallsh
 
   end
   
@@ -1319,12 +1326,12 @@ class Sim
 		
         wsGapFactor = get_wall_gap_factor(ss.SSWallInstallGrade, ss.SSWallFramingFactor)	
 
-        overall_wall_Rvalue = get_steel_stud_wall_r_assembly(ss, ext_wall_mass.ExtWallMassLayerThickness, ext_wall_mass.ExtWallMassNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
+        overall_wall_Rvalue = get_steel_stud_wall_r_assembly(ss, ext_wall_mass.ExtWallMassGypsumThickness, ext_wall_mass.ExtWallMassGypsumNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
 		
         # Create layers for modeling
 		films = Get_films_constant.new
-        sc.stud_layer_thickness = OpenStudio::convert(ss.SSWallCavityDepth) # ft
-        sc.stud_layer_conductivity = sc.stud_layer_thickness / (overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exteriorfinish.FinishRvalue + extwallmass.ExtWallMassGypsumRvalue)) # Btu/hr*ft*F		
+        sc.stud_layer_thickness = OpenStudio::convert(ss.SSWallCavityDepth,"in","ft").get # ft
+        sc.stud_layer_conductivity = sc.stud_layer_thickness / (overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exterior_finish.FinishRvalue + ext_wall_mass.ExtWallMassGypsumRvalue)) # Btu/hr*ft*F		
         sc.stud_layer_density = ss.SSWallFramingFactor * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * inside_air_dens 
         sc.stud_layer_spec_heat = (ss.SSWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / sc.stud_layer_density		
 		
@@ -3028,18 +3035,18 @@ class Sim
 
   end
 
-	def _addInsulatedSheathingMaterial(wallsh)
-		if wallsh.WallSheathingContInsThickness == 0
-			return wallsh
-		end
+  def _addInsulatedSheathingMaterial(wallsh)
+	if wallsh.WallSheathingContInsThickness == 0
+	  return wallsh
+	end
 		
-		# Set Rigid Insulation Layer Properties
-		wallsh.rigid_ins_layer_thickness = OpenStudio::convert(wallsh.WallSheathingContInsThickness,"in","ft").get # ft
-		wallsh.rigid_ins_layer_conductivity = wallsh.rigid_ins_layer_thickness / wallsh.WallSheathingContInsRvalue # Btu/hr*ft*F
-		wallsh.rigid_ins_layer_density = get_mat_rigid_ins.rho
-		wallsh.rigid_ins_layer_spec_heat = 0.29 # Btu/lbm*F
+	# Set Rigid Insulation Layer Properties
+	wallsh.rigid_ins_layer_thickness = OpenStudio::convert(wallsh.WallSheathingContInsThickness,"in","ft").get # ft
+	wallsh.rigid_ins_layer_conductivity = wallsh.rigid_ins_layer_thickness / wallsh.WallSheathingContInsRvalue # Btu/hr*ft*F
+	wallsh.rigid_ins_layer_density = get_mat_rigid_ins.rho
+	wallsh.rigid_ins_layer_spec_heat = 0.29 # Btu/lbm*F
 		
-		return wallsh
+	return wallsh
 		
   end
 
@@ -3174,7 +3181,7 @@ class Sim
 
   end
 
-  def _processAirSystem(supply, f=nil, air_conditioner=nil, heat_pump=nil, hasFurnace=false, hasCoolingEquipment=false, hasAirConditioner=false, hasHeatPump=false, hasMiniSplitHP=false, hasRoomAirConditioner=false, hasGroundSourceHP=false, test_suite=nil)
+  def _processAirSystem(supply, furnace=nil, air_conditioner=nil, heat_pump=nil, hasFurnace=false, hasCoolingEquipment=false, hasAirConditioner=false, hasHeatPump=false, hasMiniSplitHP=false, hasRoomAirConditioner=false, hasGroundSourceHP=false, test_suite=nil)
     # Air System
 
     if air_conditioner.ACCoolingInstalledSEER == 999
@@ -3193,6 +3200,8 @@ class Sim
 
     if hasFurnace
 
+		f = furnace
+	
       # Before we allowed systems with no cooling equipment, the system
       # fan was defined by the cooling equipment option. For systems
       # with only a furnace, the system fan is (for the time being) hard
@@ -3200,7 +3209,7 @@ class Sim
 
       if not hasAirConditioner or not hasHeatPump or not hasGroundSourceHP or not hasMiniSplitHP or not hasRoomAirConditioner
 
-        supply.fan_power = 0.500 # Based on 2010 BA Benchmark
+        supply.fan_power = f.FurnaceSupplyFanPowerInstalled # Based on 2010 BA Benchmark
         supply.eff = OpenStudio::convert(supply.static / supply.fan_power,"cfm","m^3/s").get # Overall Efficiency of the Supply Fan, Motor and Drive
         # self.supply.delta_t = 0.00055000 / units.Btu2kWh(1.0) / (self.mat.air.inside_air_dens * self.mat.air.inside_air_sh * units.hr2min(1.0))
         supply.min_flow_ratio = 1.00000000
@@ -3229,7 +3238,7 @@ class Sim
         ac = air_conditioner
 
         # Cooling Coil
-        if air_conditioner.IsIdealAC
+        if ac.IsIdealAC
           supply = get_cooling_coefficients(ac.ACNumberSpeeds, true, false, supply)
         else
           supply = get_cooling_coefficients(ac.ACNumberSpeeds, false, false, supply)
@@ -3279,7 +3288,7 @@ class Sim
         supply.compressor_speeds = 2.0
       end
 
-      return air_conditioner, supply
+      return ac, supply
 
     else
       supply.compressor_speeds = nil
@@ -4524,117 +4533,6 @@ def calc_Cd_from_HSPF_COP_FourSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, 
   #
   #   return C_d
 
-end
-
-class Process_refrigerator
-  #Refrigerator energy use comes from the measure (user specified), schedule is here
-  def initialize
-    #hard coded convective, radiative, latent, and lost fractions for fridges
-    @fridge_lat = 0
-    @fridge_rad = 0
-    @fridge_lost = 0
-    @fridge_conv = 1
-    #Fridge weekday, weekend schedule and monthly multipliers
-    #Right now hard coded simple schedules
-    #TODO: Schedule inputs. Should be 24 or 48 hourly + 12 monthly, is 36-60 inputs too much? how to handle 8760 schedules (from a file?)
-    @monthly_mult_fridge = [0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837]
-    @weekday_hourly_fridge = [0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041]
-    @weekend_hourly_fridge = @weekday_hourly_fridge
-  end
-
-  def Fridge_lat
-    return @fridge_lat
-  end
-
-  def Fridge_rad
-    return @fridge_rad
-  end
-
-  def Fridge_lost
-    return @fridge_lost
-  end
-
-  def Fridge_conv
-    return @fridge_conv
-  end
-
-  def Monthly_mult_fridge
-    return @monthly_mult_fridge
-  end
-
-  def Weekday_hourly_fridge
-    return @weekday_hourly_fridge
-  end
-
-  def Weekend_hourly_fridge
-    return @weekend_hourly_fridge
-  end
-
-  def Sum_wkdy
-    #if sum != 1, normalize to get correct max val
-    sum_fridge_wkdy = 0
-    sum_fridge_wknd = 0
-
-    @weekday_hourly_fridge.each do |v|
-      sum_fridge_wkdy = sum_fridge_wkdy + v
-    end
-
-    @weekend_hourly_fridge.each do |v|
-      sum_fridge_wknd = sum_fridge_wknd + v
-    end
-
-    return sum_fridge_wkdy
-  end
-
-  def Maxval_fridge
-    #get max schedule value
-    if @weekday_hourly_fridge.max > @weekend_hourly_fridge.max
-      return @monthly_mult_fridge.max * @weekday_hourly_fridge.max #/ sum_fridge_wkdy
-    else
-      return @monthly_mult_fridge.max * @weekend_hourly_fridge.max #/ sum_fridge_wknd
-    end
-  end
-
-  # #hard coded convective, radiative, latent, and lost fractions for fridges
-  # Fridge_lat = 0
-  # Fridge_rad = 0
-  # Fridge_lost = 0
-  # Fridge_conv = 1
-  #
-  # #Fridge weekday, weekend schedule and monthly multipliers
-  #
-  # #Right now hard coded simple schedules
-  # #TODO: Schedule inputs. Should be 24 or 48 hourly + 12 monthly, is 36-60 inputs too much? how to handle 8760 schedules (from a file?)
-  # Monthly_mult_fridge = [0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837]
-  # Weekday_hourly_fridge = [0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041]
-  # Weekend_hourly_fridge = Weekday_hourly_fridge
-  #
-  # #if sum != 1, normalize to get correct max val
-  # sum_fridge_wkdy = 0
-  # sum_fridge_wknd = 0
-  #
-  # Weekday_hourly_fridge.each do |v|
-  #   sum_fridge_wkdy = sum_fridge_wkdy + v
-  # end
-  #
-  # Weekend_hourly_fridge.each do |v|
-  #   sum_fridge_wknd = sum_fridge_wkdy + v
-  # end
-  #
-  # Sum_wkdy = sum_fridge_wkdy
-  #
-  # #for v in 0..23
-  # #Weekday_hourly_fridge[v] = Weekday_hourly_fridge[v]/sum_fridge_wkdy
-  # #Weekend_hourly_fridge[v] = Weekday_hourly_fridge[v]/sum_fridge_wknd
-  # #end
-  #
-  # #get max schedule value
-  #
-  # if Weekday_hourly_fridge.max > Weekend_hourly_fridge.max
-  # Maxval_fridge = Monthly_mult_fridge.max * Weekday_hourly_fridge.max #/ sum_fridge_wkdy
-  # else
-  # Maxval_fridge = Monthly_mult_fridge.max * Weekend_hourly_fridge.max #/ sum_fridge_wknd
-  # end
 end
 
 class Process_clothes_washer

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_partition_wall</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>8f42ca57-4493-4743-a00b-1f45362f7f1b</version_id>
+  <version_id>a9fc6c23-7a0c-4122-a08b-9d3bd469a2d7</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassPartitionWall</class_name>
   <display_name>ProcessThermalMassPartitionWall</display_name>
@@ -130,7 +130,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>

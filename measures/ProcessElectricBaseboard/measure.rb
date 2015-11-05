@@ -49,7 +49,8 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
 
     #make an argument for entering furnace installed afue
     userdefined_eff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedeff",true)
-    userdefined_eff.setDisplayName("The efficiency of the electric baseboard.")
+    userdefined_eff.setDisplayName("Efficiency [Btu/Btu]")
+	userdefined_eff.setDescription("The efficiency of the electric baseboard.")
     userdefined_eff.setDefaultValue(1)
     args << userdefined_eff
 
@@ -62,7 +63,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for furnace heating output capacity
     selected_baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedbaseboardcap", cap_display_names, true)
-    selected_baseboardcap.setDisplayName("Heating Output Capacity.")
+    selected_baseboardcap.setDisplayName("Heating Output Capacity")
     selected_baseboardcap.setDefaultValue("Autosize")
     args << selected_baseboardcap
 

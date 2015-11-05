@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>54d162bc-5c85-4499-a396-894391f05cac</version_id>
+  <version_id>3f9cd65e-8b01-4756-bb2d-4a37e16f00ee</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>ProcessConstructionsWindows</display_name>
@@ -92,7 +92,7 @@
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4719A345</checksum>
+      <checksum>CF688F44</checksum>
     </file>
   </files>
 </measure>
