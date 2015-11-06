@@ -108,13 +108,13 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	
 	#check for reasonable energy consumption
 	if fridge_E < 0
-		runner.registerError("Refrigerator energy consumption must be greater than or equal to 0")
+		runner.registerError("Refrigerator energy consumption must be greater than or equal to 0.")
 		return false
 	elsif fridge_E < 100
-		runner.registerError("Refrigerator energy consumption seems low, double check inputs") 
+		runner.registerError("Refrigerator energy consumption seems low, double check inputs.") 
 		return false
 	elsif fridge_E > 3000
-		runner.registerError("Refrigerator energy consumption seems high, double check inputs") 
+		runner.registerError("Refrigerator energy consumption seems high, double check inputs.") 
 		return false
 	end
 	
@@ -145,7 +145,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 			space_equipments.each do |space_equipment|
 				if space_equipment.electricEquipmentDefinition.name.get.to_s == Constants.ObjectNameRefrigerator
 					has_fridge = 1
-					runner.registerWarning("This space already has a refrigerator, the existing refrigerator will be replaced with the the currently selected option")
+					runner.registerWarning("This space already has a refrigerator, the existing refrigerator will be replaced with the the currently selected option.")
 					space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
 					sch.setSchedule(space_equipment)
 					num_equip += 1
@@ -176,9 +176,9 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
 	if has_fridge == 1
 		if replace_fridge == 1
-			runner.registerFinalCondition("The existing fridge has been replaced by one with #{fridge_ann} kWh annual energy consumption.")
+			runner.registerFinalCondition("The existing fridge has been replaced by one with #{fridge_ann.round} kWhs annual energy consumption.")
 		else
-			runner.registerFinalCondition("A fridge has been added with #{fridge_ann} kWh annual energy consumption.")
+			runner.registerFinalCondition("A fridge has been added with #{fridge_ann.round} kWhs annual energy consumption.")
 		end
 	else
 		runner.registerFinalCondition("Refrigerator was not added to #{space_type_r}.")

@@ -26,7 +26,7 @@ class Schedule
 	end
 
 	def calcDesignLevelGas(daily_therm)
-		return calcDesignLevelElec(OpenStudio.convert(daily_therm, "therm", "kWh"))
+		return calcDesignLevelElec(OpenStudio.convert(daily_therm, "therm", "kWh").get)
 	end
 
 	def setSchedule(obj)
