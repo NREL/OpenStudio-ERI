@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>06ecc9a9-6bf5-4a89-9983-62a99106a3aa</version_id>
+  <version_id>fe8e7f9c-d68c-4e03-8757-ecdf16837927</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Add/Replace Residential Refrigerator</display_name>
-  <description>Adds/replaces a residential refrigerator.</description>
-  <modeler_description>Adds/replaces the ElectricEquipment object.</modeler_description>
+  <description>Adds (or replaces) a residential refrigerator with the specified efficiency, operation, and schedule.</description>
+  <modeler_description>Since there is no Refrigerator object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential refrigerator. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
     <argument>
       <name>fridge_E</name>
@@ -88,10 +88,16 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
+      <filename>units.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ABBC4DD5</checksum>
+      <checksum>E62B461B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4EE56212</checksum>
     </file>
     <file>
       <version>
@@ -102,7 +108,17 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
+<<<<<<< HEAD
       <checksum>FB449627</checksum>
+=======
+      <checksum>A60FCFB6</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>65A7FC83</checksum>
+>>>>>>> 8a0354c79dbdd4060eabdc0d4fcdd002260f5042
     </file>
   </files>
 </measure>
