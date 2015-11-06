@@ -2,34 +2,39 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_insulated_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>a575bec9-0011-4b91-bf16-104441258268</version_id>
+  <version_id>408578a3-a5e1-4ba9-b5d2-4e56cfa76927</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInsulatedRoof</class_name>
-  <display_name>ProcessConstructionsInsulatedRoof</display_name>
+  <display_name>Add/Replace Residential Finished Roof</display_name>
   <description>This measure creates finished constructions for the roof of the living space.</description>
   <modeler_description>Calculates material layer properties of finished constructions for the roof of the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Of what space type is the living space?</display_name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>userdefinedfrroofr</name>
-      <display_name>Installed finished roof cavity insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <display_name>Finished Roof: Cavity Insulation Installed R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>30</default_value>
     </argument>
     <argument>
       <name>selectedinsfills</name>
-      <display_name>Cavity insulation fills the cavity?</display_name>
+      <display_name>Finished Roof: Insulation Fills Cavity</display_name>
+      <description>Specifies whether the cavity insulation completely fills the depth of the wall cavity.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
       <choices>
         <choice>
           <value>true</value>
@@ -43,10 +48,13 @@
     </argument>
     <argument>
       <name>selectedstudsize</name>
-      <display_name>Thickness of roof framing.</display_name>
+      <display_name>Finished Roof: Cavity Depth</display_name>
+      <description>Thickness of roof framing.</description>
       <type>Choice</type>
+      <units>in</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>2x10</default_value>
       <choices>
         <choice>
           <value>2x4</value>
@@ -76,47 +84,58 @@
     </argument>
     <argument>
       <name>userdefinedfrroofff</name>
-      <display_name>Finished roof framing factor [frac].</display_name>
+      <display_name>Finished Roof: Framing Factor</display_name>
+      <description>The framing factor of the finished roof.</description>
       <type>Double</type>
+      <units>frac</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.07</default_value>
     </argument>
     <argument>
       <name>userdefinedrigidinsthickness</name>
-      <display_name>Rigid insulation thickness of roof cavity [in].</display_name>
+      <display_name>Finished Roof: Continuous Insulation Thickness</display_name>
+      <description>Thickness of rigid insulation added to the roof.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedrigidinsr</name>
-      <display_name>Rigid insulation R-value of roof cavity [hr-ft^2-R/Btu].</display_name>
+      <display_name>Finished Roof: Continuous Insulation Nominal R-value</display_name>
+      <description>The nominal R-value of the continuous insulation.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedgypthickness</name>
-      <display_name>Thickness of drywall layers [in].</display_name>
+      <display_name>Ceiling Mass: Thickness</display_name>
+      <description>Gypsum layer thickness.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
     </argument>
     <argument>
       <name>userdefinedgyplayers</name>
-      <display_name>Number of drywall layers.</display_name>
+      <display_name>Ceiling Mass: Num Layers</display_name>
+      <description>Integer number of layers of gypsum.</description>
       <type>Double</type>
+      <units>#</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
     </argument>
     <argument>
       <name>userdefinedroofmatthermalabs</name>
-      <display_name>Roofing material emissivity of finished roof.</display_name>
+      <display_name>Roof Material: Emissivity.</display_name>
+      <description>Infrared emissivity of the outside surface of the roof.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -124,7 +143,8 @@
     </argument>
     <argument>
       <name>userdefinedroofmatabs</name>
-      <display_name>Roofing material absorptance of finished roof.</display_name>
+      <display_name>Roof Material: Absorptivity</display_name>
+      <description>The solar radiation absorptance of the outside roof surface, specified as a value between 0 and 1.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -169,19 +189,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E7B07185</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>5FAA52A5</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

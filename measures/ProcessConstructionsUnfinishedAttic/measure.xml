@@ -2,33 +2,37 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>18a54556-0b29-4123-831a-8288fc485f97</version_id>
+  <version_id>15199a57-cf29-45c0-9f00-657f5a376fbc</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUnfinishedAttic</class_name>
-  <display_name>ProcessConstructionsUnfinishedAttic</display_name>
+  <display_name>Add/Replace Residential Unfinished Attic Floor and Ceiling</display_name>
   <description>This measure creates constructions for the unfinished attic floor and ceiling.</description>
   <modeler_description>Calculates material layer properties of constructions for the unfinished attic floor and ceiling. Finds surfaces adjacent to the unfinished attic and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Of what space type is the living space?</display_name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedattic</name>
-      <display_name>Of what space type is the attic?</display_name>
+      <display_name>Attic Space</display_name>
+      <description>The attic space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selecteduains</name>
-      <display_name>Unfinished attic insulation type.</display_name>
+      <display_name>Unfinished Attic: Insulation Type</display_name>
+      <description>The type of insulation.</description>
       <type>Choice</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value>Ceiling</default_value>
       <choices>
         <choice>
           <value>Uninsulated</value>
@@ -46,23 +50,28 @@
     </argument>
     <argument>
       <name>userdefinedceilroofinsthickness</name>
-      <display_name>Unfinished attic ceiling or roof cavity insulation thickness [in].</display_name>
+      <display_name>Unfinished Attic: Ceiling/Roof Insulation Thickness</display_name>
+      <description>The thickness in inches of insulation required to obtain a certain R-value.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>8.55</default_value>
     </argument>
     <argument>
       <name>userdefineduaceilroofr</name>
-      <display_name>Unfinished attic ceiling or roof cavity insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <display_name>Unfinished Attic: Ceiling/Roof Insulation Nominal R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>30</default_value>
     </argument>
     <argument>
       <name>selecteduaceiljoistthickness</name>
-      <display_name>Thickness of joists in the ceiling.</display_name>
+      <display_name>Unfinished Attic: Ceiling Joist Thickness</display_name>
+      <description>Thickness of joists in the ceiling.</description>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -76,16 +85,20 @@
     </argument>
     <argument>
       <name>userdefineduaceilff</name>
-      <display_name>Unfinished attic ceiling framing factor [frac].</display_name>
+      <display_name>Unfinished Attic: Ceiling Framing Factor</display_name>
+      <description>The framing factor of the ceiling.</description>
       <type>Double</type>
+      <units>frac</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.07</default_value>
     </argument>
     <argument>
       <name>selecteduaroofframethickness</name>
-      <display_name>Thickness of joists in the ceiling.</display_name>
+      <display_name>Unfinished Attic: Roof Framing Thickness</display_name>
+      <description>Thickness of roof framing.</description>
       <type>Choice</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>7.25</default_value>
@@ -98,34 +111,42 @@
     </argument>
     <argument>
       <name>userdefineduaroofff</name>
-      <display_name>Unfinished attic roof framing factor [frac].</display_name>
+      <display_name>Unfinished Attic: Roof Framing Factor</display_name>
+      <description>Fraction of roof that is made up of framing elements.</description>
       <type>Double</type>
+      <units>frac</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.07</default_value>
     </argument>
     <argument>
       <name>userdefinedrigidinsthickness</name>
-      <display_name>Rigid insulation thickness of roof cavity [in].</display_name>
+      <display_name>Unfinished Attic: Roof Continuous Insulation Thickness</display_name>
+      <description>Thickness of rigid insulation added to the roof.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedrigidinsr</name>
-      <display_name>Rigid insulation R-value of roof cavity [hr-ft^2-R/Btu].</display_name>
+      <display_name>Unfinished Attic: Roof Continuous Insulation Nominal R-value</display_name>
+      <description>The nominal R-value of the continuous insulation.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedhasradiantbarrier</name>
-      <display_name>Roof has radiant barrier?</display_name>
+      <display_name>Has Radiant Barrier</display_name>
+      <description>Layers of reflective material used to reduce heat transfer between the attic roof and the ceiling insulation and ductwork (if present).</description>
       <type>Boolean</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
       <choices>
         <choice>
           <value>true</value>
@@ -139,23 +160,28 @@
     </argument>
     <argument>
       <name>userdefinedgypthickness</name>
-      <display_name>Thickness of drywall layers [in].</display_name>
+      <display_name>Ceiling Mass: Thickness</display_name>
+      <description>Gypsum layer thickness.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
     </argument>
     <argument>
       <name>userdefinedgyplayers</name>
-      <display_name>Number of drywall layers.</display_name>
+      <display_name>Ceiling Mass: Num Layers</display_name>
+      <description>Integer number of layers of gypsum.</description>
       <type>Double</type>
+      <units>#</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
     </argument>
     <argument>
       <name>userdefinedroofmatthermalabs</name>
-      <display_name>Roofing material emissivity of unfinished attic.</display_name>
+      <display_name>Roof Material: Emissivity.</display_name>
+      <description>Infrared emissivity of the outside surface of the roof.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -163,7 +189,8 @@
     </argument>
     <argument>
       <name>userdefinedroofmatabs</name>
-      <display_name>Roofing material absorptance of unfinished attic.</display_name>
+      <display_name>Roof Material: Absorptivity</display_name>
+      <description>The solar radiation absorptance of the outside roof surface, specified as a value between 0 and 1.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -208,19 +235,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BA06FD18</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>A97C339A</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

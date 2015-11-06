@@ -60,8 +60,16 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessThermalMassPartitionWall"
+    return "Add/Replace Residential Partition Wall Thermal Mass"
   end
+  
+  def description
+    return "This measure creates internal mass for partition walls in the living space and finished basement."
+  end
+  
+  def modeler_description
+    return "This measure creates constructions representing the internal mass of partition walls in the living space and finished basement. The constructions are set to define the internal mass objects of their respective spaces."
+  end    
   
   #define the arguments that the user will input
   def arguments(model)
@@ -86,74 +94,67 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for living
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
     #make a choice argument for crawlspace
     selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_fbsmt.setDisplayName("Of what space type is the finished basement?")
+    selected_fbsmt.setDisplayName("Finished Basement Space")
+	selected_fbsmt.setDescription("The finished basement space type.")
     args << selected_fbsmt
-
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
-
-    # #make a choice argument for partition wall mass
-    # selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
-    # selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
-    # args << selected_partitionwallmass
 
     #make a double argument for partition wall mass thickness
     userdefined_partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassth", false)
-    userdefined_partitionwallmassth.setDisplayName("Partition wall mass thickness [in].")
+    userdefined_partitionwallmassth.setDisplayName("Partition Wall Mass: Thickness")
+	userdefined_partitionwallmassth.setUnits("in")
+	userdefined_partitionwallmassth.setDescription("Thickness of the layer.")
     userdefined_partitionwallmassth.setDefaultValue(0.5)
     args << userdefined_partitionwallmassth
 
     #make a double argument for partition wall mass conductivity
     userdefined_partitionwallmasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmasscond", false)
-    userdefined_partitionwallmasscond.setDisplayName("Partition wall mass conductivity [Btu-in/h-ft^2-R].")
+    userdefined_partitionwallmasscond.setDisplayName("Partition Wall Mass: Conductivity")
+	userdefined_partitionwallmasscond.setUnits("Btu-in/h-ft^2-R")
+	userdefined_partitionwallmasscond.setDescription("Conductivity of the layer.")
     userdefined_partitionwallmasscond.setDefaultValue(1.1112)
     args << userdefined_partitionwallmasscond
 
     #make a double argument for partition wall mass density
     userdefined_partitionwallmassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassdens", false)
-    userdefined_partitionwallmassdens.setDisplayName("Partition wall mass density [lb/ft^3].")
+    userdefined_partitionwallmassdens.setDisplayName("Partition Wall Mass: Density")
+	userdefined_partitionwallmassdens.setUnits("lb/ft^3")
+	userdefined_partitionwallmassdens.setDescription("Density of the layer.")
     userdefined_partitionwallmassdens.setDefaultValue(50.0)
     args << userdefined_partitionwallmassdens
 
     #make a double argument for partition wall mass specific heat
     userdefined_partitionwallmasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmasssh", false)
-    userdefined_partitionwallmasssh.setDisplayName("Partition wall mass specific heat [Btu/lb-R].")
+    userdefined_partitionwallmasssh.setDisplayName("Partition Wall Mass: Specific Heat")
+	userdefined_partitionwallmasssh.setUnits("Btu/lb-R")
+	userdefined_partitionwallmasssh.setDescription("Specific heat of the layer.")
     userdefined_partitionwallmasssh.setDefaultValue(0.2)
     args << userdefined_partitionwallmasssh
 
     #make a double argument for partition wall fraction of floor area
     userdefined_partitionwallfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallfrac", false)
-    userdefined_partitionwallfrac.setDisplayName("Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.")
+    userdefined_partitionwallfrac.setDisplayName("Partition Wall Mass: Fraction of Floor Area")
+	userdefined_partitionwallfrac.setDescription("Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.")
     userdefined_partitionwallfrac.setDefaultValue(1.0)
     args << userdefined_partitionwallfrac
 
     # Geometry
     userdefinedlivingarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedlivingarea", true)
-    userdefinedlivingarea.setDisplayName("The area of the living space [ft^2].")
+    userdefinedlivingarea.setDisplayName("Living Space Area")
+	userdefinedlivingarea.setUnits("ft^2")
+	userdefinedlivingarea.setDescription("The area of the living space.")
     userdefinedlivingarea.setDefaultValue(2700.0)
     args << userdefinedlivingarea
 
     userdefinedfbsmtarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtarea", true)
-    userdefinedfbsmtarea.setDisplayName("The area of the finished basement [ft^2].")
+    userdefinedfbsmtarea.setDisplayName("Finished Basement Area")
+	userdefinedfbsmtarea.setUnits("ft^2")
+	userdefinedfbsmtarea.setDescription("The area of the finished basement.")
     userdefinedfbsmtarea.setDefaultValue(1200.0)
     args << userdefinedfbsmtarea
 

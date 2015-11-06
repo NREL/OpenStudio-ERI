@@ -22,8 +22,16 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessSystemCrankcaseHeater"
+    return "Add Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner"
   end
+  
+  def description
+    return "This measure creates a crankcase heater for heat pumps and multispeed air conditioners."
+  end
+  
+  def modeler_description
+    return "Using EMS code, this measure creates a crankcase heater electric equipment object for heat pumps and also air conditioners with number of compressor speeds greater than one."
+  end     
   
   #define the arguments that the user will input
   def arguments(workspace)
@@ -41,7 +49,8 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
 
     #make a choice argument for living space
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", zone_display_names, true)
-    selected_living.setDisplayName("Which is the living space zone?")
+    selected_living.setDisplayName("Living Zone")
+	selected_living.setDescription("The living zone.")
     args << selected_living
 
     #make an argument for entering crankcase heater capacity
@@ -69,7 +78,7 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
     userdefined_speeds = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedspeeds",true)
     userdefined_speeds.setDisplayName("Num Speeds [#]")
 	userdefined_speeds.setDescription("Integer number of speeds of the compressor.")
-    userdefined_speeds.setDefaultValue(1.0)
+    userdefined_speeds.setDefaultValue(2.0)
     args << userdefined_speeds
 
     return args

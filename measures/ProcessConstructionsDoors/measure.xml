@@ -2,25 +2,27 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>168648c8-534c-4959-9e2f-af14d86675bc</version_id>
+  <version_id>1ea50ee0-0f6e-4296-87dd-dbaa4769b05f</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
-  <display_name>ProcessConstructionsDoors</display_name>
+  <display_name>Add/Replace Residential Exterior Doors</display_name>
   <description>This measure creates constructions for exterior doors adjacent to the living space as well as garage doors.</description>
   <modeler_description>Calculates material layer properties of constructions for exterior doors adjacent to the living space as well as garage doors. Finds sub surfaces adjacent to the living space and garage and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Of what space type is the living space?</display_name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedgarage</name>
-      <display_name>Of what space type is the garage?</display_name>
+      <display_name>Garage Space</display_name>
+      <description>The garage space type.</description>
       <type>Choice</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
   </arguments>
@@ -62,19 +64,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>455DCECD</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>B3EA748F</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

@@ -19,8 +19,16 @@ class ProcessGroundTemperature < OpenStudio::Ruleset::WorkspaceUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessGroundTemperature"
+    return "Add Residential Ground Temperatures"
   end
+  
+  def description
+    return "This measure calculates ground temperatures using weather data."
+  end
+  
+  def modeler_description
+    return "This measure writes monthly ground temperatures to the EnergyPlus objects Site:GroundTemperature:BuildingSurface and Site:GroundTemperature:Deep."
+  end   
   
   #define the arguments that the user will input
   def arguments(workspace)

@@ -2,62 +2,73 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_partition_wall</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>a9fc6c23-7a0c-4122-a08b-9d3bd469a2d7</version_id>
+  <version_id>d64a9375-a194-49d8-bbd2-ae25bd19ff1a</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassPartitionWall</class_name>
-  <display_name>ProcessThermalMassPartitionWall</display_name>
+  <display_name>Add/Replace Residential Partition Wall Thermal Mass</display_name>
   <description>This measure creates internal mass for partition walls in the living space and finished basement.</description>
   <modeler_description>This measure creates constructions representing the internal mass of partition walls in the living space and finished basement. The constructions are set to define the internal mass objects of their respective spaces.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Of what space type is the living space?</display_name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedfbsmt</name>
-      <display_name>Of what space type is the finished basement?</display_name>
+      <display_name>Finished Basement Space</display_name>
+      <description>The finished basement space type.</description>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>userdefinedpartitionwallmassth</name>
-      <display_name>Partition wall mass thickness [in].</display_name>
+      <display_name>Partition Wall Mass: Thickness</display_name>
+      <description>Thickness of the layer.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
     </argument>
     <argument>
       <name>userdefinedpartitionwallmasscond</name>
-      <display_name>Partition wall mass conductivity [Btu-in/h-ft^2-R].</display_name>
+      <display_name>Partition Wall Mass: Conductivity</display_name>
+      <description>Conductivity of the layer.</description>
       <type>Double</type>
+      <units>Btu-in/h-ft^2-R</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>1.1112</default_value>
     </argument>
     <argument>
       <name>userdefinedpartitionwallmassdens</name>
-      <display_name>Partition wall mass density [lb/ft^3].</display_name>
+      <display_name>Partition Wall Mass: Density</display_name>
+      <description>Density of the layer.</description>
       <type>Double</type>
+      <units>lb/ft^3</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>50</default_value>
     </argument>
     <argument>
       <name>userdefinedpartitionwallmasssh</name>
-      <display_name>Partition wall mass specific heat [Btu/lb-R].</display_name>
+      <display_name>Partition Wall Mass: Specific Heat</display_name>
+      <description>Specific heat of the layer.</description>
       <type>Double</type>
+      <units>Btu/lb-R</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.2</default_value>
     </argument>
     <argument>
       <name>userdefinedpartitionwallfrac</name>
-      <display_name>Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.</display_name>
+      <display_name>Partition Wall Mass: Fraction of Floor Area</display_name>
+      <description>Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -65,16 +76,20 @@
     </argument>
     <argument>
       <name>userdefinedlivingarea</name>
-      <display_name>The area of the living space [ft^2].</display_name>
+      <display_name>Living Space Area</display_name>
+      <description>The area of the living space.</description>
       <type>Double</type>
+      <units>ft^2</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>2700</default_value>
     </argument>
     <argument>
       <name>userdefinedfbsmtarea</name>
-      <display_name>The area of the finished basement [ft^2].</display_name>
+      <display_name>Finished Basement Area</display_name>
+      <description>The area of the finished basement.</description>
       <type>Double</type>
+      <units>ft^2</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>1200</default_value>
@@ -110,12 +125,6 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -124,13 +133,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B5F3B8BC</checksum>
+      <checksum>47549EFE</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

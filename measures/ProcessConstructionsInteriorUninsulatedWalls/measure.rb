@@ -47,56 +47,50 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsInteriorUninsulatedWalls"
+    return "Add/Replace Residential Uninsulated Walls"
   end
+  
+  def description
+    return "This measure is incomplete, but it should create constructions for interior partition walls."
+  end
+  
+  def modeler_description
+    return ""
+  end    
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
-
-    # #make a choice argument for partition wall mass
-    # selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
-    # selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
-    # args << selected_partitionwallmass
-
     #make a double argument for partition wall mass thickness
     userdefined_partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassth", false)
-    userdefined_partitionwallmassth.setDisplayName("Partition wall mass thickness [in].")
+    userdefined_partitionwallmassth.setDisplayName("Partition Wall Mass: Thickness")
+	userdefined_partitionwallmassth.setUnits("in")
+	userdefined_partitionwallmassth.setDescription("Thickness of the layer.")
     userdefined_partitionwallmassth.setDefaultValue(0.5)
     args << userdefined_partitionwallmassth
 
     #make a double argument for partition wall mass conductivity
     userdefined_partitionwallmasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmasscond", false)
-    userdefined_partitionwallmasscond.setDisplayName("Partition wall mass conductivity [Btu-in/h-ft^2-R].")
+    userdefined_partitionwallmasscond.setDisplayName("Partition Wall Mass: Conductivity")
+	userdefined_partitionwallmasscond.setUnits("Btu-in/h-ft^2-R")
+	userdefined_partitionwallmasscond.setDescription("Conductivity of the layer.")
     userdefined_partitionwallmasscond.setDefaultValue(1.1112)
     args << userdefined_partitionwallmasscond
 
     #make a double argument for partition wall mass density
     userdefined_partitionwallmassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassdens", false)
-    userdefined_partitionwallmassdens.setDisplayName("Partition wall mass density [lb/ft^3].")
+    userdefined_partitionwallmassdens.setDisplayName("Partition Wall Mass: Density")
+	userdefined_partitionwallmassdens.setUnits("lb/ft^3")
+	userdefined_partitionwallmassdens.setDescription("Density of the layer.")
     userdefined_partitionwallmassdens.setDefaultValue(50.0)
     args << userdefined_partitionwallmassdens
 
     #make a double argument for partition wall mass specific heat
     userdefined_partitionwallmasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmasssh", false)
-    userdefined_partitionwallmasssh.setDisplayName("Partition wall mass specific heat [Btu/lb-R].")
+    userdefined_partitionwallmasssh.setDisplayName("Partition Wall Mass: Specific Heat")
+	userdefined_partitionwallmasssh.setUnits("Btu/lb-R")
+	userdefined_partitionwallmasssh.setDescription("Specific heat of the layer.")
     userdefined_partitionwallmasssh.setDefaultValue(0.2)
     args << userdefined_partitionwallmasssh
 
@@ -115,30 +109,20 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     partitionWallMassPCMType = nil
 
     # Partition Wall Mass
-    selected_partitionwallmass = runner.getOptionalWorkspaceObjectChoiceValue("selectedpartitionwallmass",user_arguments,model)
-    if selected_partitionwallmass.empty?
-      userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
-      userdefined_partitionwallmasscond = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
-      userdefined_partitionwallmassdens = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
-      userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
-    end
+    userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
+    userdefined_partitionwallmasscond = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
+    userdefined_partitionwallmassdens = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
+    userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
 
     # Constants
     constants = Constants.new
     mat_wood = get_mat_wood
 
     # Partition Wall Mass
-    if userdefined_partitionwallmassth.nil?
-      partitionWallMassThickness = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      partitionWallMassConductivity = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      partitionWallMassDensity = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-      partitionWallMassSpecificHeat = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-    else
-      partitionWallMassThickness = userdefined_partitionwallmassth
-      partitionWallMassConductivity = userdefined_partitionwallmasscond
-      partitionWallMassDensity = userdefined_partitionwallmassdens
-      partitionWallMassSpecificHeat = userdefined_partitionwallmasssh
-    end
+    partitionWallMassThickness = userdefined_partitionwallmassth
+    partitionWallMassConductivity = userdefined_partitionwallmasscond
+    partitionWallMassDensity = userdefined_partitionwallmassdens
+    partitionWallMassSpecificHeat = userdefined_partitionwallmasssh
 
     # Create the material class instances
     partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat, partitionWallMassPCMType)

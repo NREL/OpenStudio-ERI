@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>9bd722fd-1b76-493a-bbac-d379259e8df5</version_id>
+  <version_id>6cc33b5f-a2bf-473e-89e9-d618b451219b</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Add/Replace Residential Cooking Range</display_name>
@@ -173,11 +173,12 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>25E0D5C1</checksum>
+      <checksum>177C39C9</checksum>
     </file>
   </files>
 </measure>

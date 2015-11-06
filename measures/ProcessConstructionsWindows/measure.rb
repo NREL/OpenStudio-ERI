@@ -36,56 +36,47 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsWindows"
+    return "Add/Replace Residential Window Properties"
   end
+  
+  def description
+    return "This measure creates constructions for windows. This measure also creates the interior shading schedule, which is based on shade multipliers and the heating and cooling season logic defined in the Building America House Simulation Protocols."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of constructions for windows. Finds sub surfaces and sets applicable constructions. Using interior heating and cooling shading multipliers and the Building America heating and cooling season logic, creates schedule rulesets for window shade and shading control."
+  end   
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getSimpleGlazings
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
-
-    # #make a choice argument for window glazing
-    # selected_windowglazing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedwindowglazing", material_handles, material_display_names, false)
-    # selected_windowglazing.setDisplayName("Window simple glazing. For manually entering window simple glazing properties, leave blank.")
-    # args << selected_windowglazing
-
     #make an argument for entering optional window u-factor
     userdefined_ufactor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufactor",false)
-    userdefined_ufactor.setDisplayName("U-Value [Btu/hr-ft^2-R].")
-    userdefined_ufactor.setDefaultValue(0.0)
+    userdefined_ufactor.setDisplayName("U-Value")
+	userdefined_ufactor.setUnits("Btu/hr-ft^2-R")
+	userdefined_ufactor.setDescription("The heat transfer coefficient of the windows.")
+    userdefined_ufactor.setDefaultValue(0.37)
     args << userdefined_ufactor
 
     #make an argument for entering optional window shgc
     userdefined_shgc = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shgc",false)
-    userdefined_shgc.setDisplayName("SHGC.")
-    userdefined_shgc.setDefaultValue(0.0)
+    userdefined_shgc.setDisplayName("SHGC")
+	userdefined_shgc.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening.")
+    userdefined_shgc.setDefaultValue(0.3)
     args << userdefined_shgc
 
     #make an argument for entering optional window u-factor
     userdefined_intshadeheatingmult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedintshadeheatingmult",false)
-    userdefined_intshadeheatingmult.setDisplayName("Heating shade multiplier.")
+    userdefined_intshadeheatingmult.setDisplayName("Heating Shade Multiplier")
+	userdefined_intshadeheatingmult.setDescription("Interior shading multiplier for heating season.")
     userdefined_intshadeheatingmult.setDefaultValue(0.7)
     args << userdefined_intshadeheatingmult
 
     #make an argument for entering optional window shgc
     userdefined_intshadecoolingmult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedintshadecoolingmult",false)
-    userdefined_intshadecoolingmult.setDisplayName("Cooling shade multiplier.")
+    userdefined_intshadecoolingmult.setDisplayName("Cooling Shade Multiplier")
+	userdefined_intshadecoolingmult.setDescription("Interior shading multiplier for cooling season.")
     userdefined_intshadecoolingmult.setDefaultValue(0.7)
     args << userdefined_intshadecoolingmult
 
@@ -101,19 +92,11 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    selected_windowglazing = runner.getOptionalWorkspaceObjectChoiceValue("selectedwindowglazing",user_arguments,model)
-    if selected_windowglazing.empty?
-      userdefined_ufactor = runner.getDoubleArgumentValue("ufactor",user_arguments)
-      userdefined_shgc = runner.getDoubleArgumentValue("shgc",user_arguments)
-    end
+    userdefined_ufactor = runner.getDoubleArgumentValue("ufactor",user_arguments)
+    userdefined_shgc = runner.getDoubleArgumentValue("shgc",user_arguments)
 
-    if userdefined_ufactor.nil?
-      ufactor = OpenStudio::convert(selected_ufactor.get.to_SimpleGlazing.get.getUFactor.value,"Btu/hr*ft*R","W/m*K").get
-      shgc = selected_shgc.get.to_SimpleGlazing.get.getSolarHeatGainCoefficient.value
-    else
-      ufactor = OpenStudio::convert(userdefined_ufactor,"Btu/hr*ft^2*R","W/m^2*K").get
-      shgc = userdefined_shgc
-    end
+    ufactor = OpenStudio::convert(userdefined_ufactor,"Btu/hr*ft^2*R","W/m^2*K").get
+    shgc = userdefined_shgc
 
     intShadeCoolingMonths = nil
     intshadeheatingmult = runner.getDoubleArgumentValue("userdefinedintshadeheatingmult",user_arguments)

@@ -2,16 +2,17 @@
   <schema_version>3.0</schema_version>
   <name>process_system_crankcase_heater</name>
   <uid>b0630593-f352-4753-ae2c-2aa68f1c5611</uid>
-  <version_id>040edacd-00f0-4d25-b08f-99d511c69393</version_id>
+  <version_id>9d5cab67-acae-4782-a46e-3e45fb6c9079</version_id>
   <xml_checksum>C7ED76C0</xml_checksum>
   <class_name>ProcessSystemCrankcaseHeater</class_name>
-  <display_name>ProcessSystemCrankcaseHeater</display_name>
+  <display_name>Add Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner</display_name>
   <description>This measure creates a crankcase heater for heat pumps and multispeed air conditioners.</description>
   <modeler_description>Using EMS code, this measure creates a crankcase heater electric equipment object for heat pumps and also air conditioners with number of compressor speeds greater than one.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Which is the living space zone?</display_name>
+      <display_name>Living Zone</display_name>
+      <description>The living zone.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -93,12 +94,6 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -107,13 +102,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4249D641</checksum>
+      <checksum>1D06ABAC</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>61F7758E</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CD6B0BDF</checksum>
     </file>
   </files>
 </measure>

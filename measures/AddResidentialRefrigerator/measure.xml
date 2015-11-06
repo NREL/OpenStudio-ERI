@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>ec6963d5-19be-4b0d-af98-703d007c88a6</version_id>
+  <version_id>06ecc9a9-6bf5-4a89-9983-62a99106a3aa</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Add/Replace Residential Refrigerator</display_name>
@@ -102,7 +102,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>99D51F8D</checksum>
+      <checksum>FB449627</checksum>
     </file>
   </files>
 </measure>

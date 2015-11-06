@@ -14,11 +14,12 @@ require "#{File.dirname(__FILE__)}/resources/sim"
 class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
   
 	class Crawlspace
-		def initialize(crawlWallContInsRvalueNominal, crawlCeilingCavityInsRvalueNominal, crawlCeilingJoistHeight, crawlCeilingFramingFactor)
+		def initialize(crawlWallContInsRvalueNominal, crawlCeilingCavityInsRvalueNominal, crawlCeilingJoistHeight, crawlCeilingFramingFactor, crawlCeilingInstallGrade)
 			@crawlWallContInsRvalueNominal = crawlWallContInsRvalueNominal
 			@crawlCeilingCavityInsRvalueNominal = crawlCeilingCavityInsRvalueNominal
 			@crawlCeilingJoistHeight = crawlCeilingJoistHeight
 			@crawlCeilingFramingFactor = crawlCeilingFramingFactor
+			@crawlCeilingInstallGrade = crawlCeilingInstallGrade
 		end
 		
 		attr_accessor(:CrawlRimJoistInsRvalue, :ext_perimeter, :height, :crawlspace_wall_area)
@@ -37,6 +38,10 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 		
 		def CrawlCeilingFramingFactor
 			return @crawlCeilingFramingFactor
+		end
+		
+		def CrawlCeilingInstallGrade
+			return @crawlCeilingInstallGrade
 		end
 	end
   
@@ -147,8 +152,16 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsCrawlspace"
+    return "Add/Replace Residential Crawlspace Constructions"
   end
+  
+  def description
+    return "This measure creates constructions for the crawlspace ceiling, walls, floor, and rim joists."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of constructions for the crawlspace ceiling, walls, floor, and rim joists. Finds surfaces adjacent to the crawlspace and sets applicable constructions."
+  end    
   
   #define the arguments that the user will input
   def arguments(model)
@@ -173,30 +186,15 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for living
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
     #make a choice argument for crawlspace
     selected_crawlspace = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcrawlspace", spacetype_handles, spacetype_display_names, true)
-    selected_crawlspace.setDisplayName("Of what space type is the crawlspace?")
+    selected_crawlspace.setDisplayName("Crawlspace Space")
+	selected_crawlspace.setDescription("The crawlspace space type.")
     args << selected_crawlspace
-
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-	
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
 
 	#make a choice argument for model objects
 	csins_display_names = OpenStudio::StringVector.new
@@ -206,111 +204,129 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a choice argument for cs insulation type
 	selected_csins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcsins", csins_display_names, true)
-	selected_csins.setDisplayName("Crawlspace insulation type.")
+	selected_csins.setDisplayName("Crawlspace: Insulation Type")
+	selected_csins.setDescription("The type of insulation.")
+	selected_csins.setDefaultValue("Wall")
 	args << selected_csins	
-
-	# Wall / Ceiling Insulation
-	# #make a choice argument for wall / ceiling insulation
-	# selected_cswallceil = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcswallceil", material_handles, material_display_names, false)
-	# selected_cswallceil.setDisplayName("Crawlspace wall or ceiling insulation. For manually entering crawlspace wall or ceiling insulation properties, leave blank.")
-	# args << selected_cswallceil
 
 	#make a double argument for crawlspace ceiling / wall insulation R-value
 	userdefined_cswallceilr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcswallceilr", false)
-	userdefined_cswallceilr.setDisplayName("Crawlspace wall continuous insulation or ceiling cavity insulation R-value [hr-ft^2-R/Btu].")
-	userdefined_cswallceilr.setDefaultValue(0)
+	userdefined_cswallceilr.setDisplayName("Crawlspace: Wall/Ceiling Continuous/Cavity Insulation Nominal R-value")
+	userdefined_cswallceilr.setUnits("hr-ft^2-R/Btu")
+	userdefined_cswallceilr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+	userdefined_cswallceilr.setDefaultValue(5.0)
 	args << userdefined_cswallceilr
 	
 	# Ceiling Joist Height
 	#make a choice argument for model objects
 	joistheight_display_names = OpenStudio::StringVector.new
-	joistheight_display_names << "9.25"	
+	joistheight_display_names << "2x10"	
 	
 	#make a choice argument for crawlspace ceiling joist height
 	selected_csceiljoistheight = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcsceiljoistheight", joistheight_display_names, true)
-	selected_csceiljoistheight.setDisplayName("Crawlspace ceiling joist height [in].")
+	selected_csceiljoistheight.setDisplayName("Crawlspace: Ceiling Joist Height")
+	selected_csceiljoistheight.setUnits("in")
+	selected_csceiljoistheight.setDescription("Height of the joist member.")
+	selected_csceiljoistheight.setDefaultValue("2x10")
 	args << selected_csceiljoistheight	
+	
+	#make a choice argument for model objects
+	installgrade_display_names = OpenStudio::StringVector.new
+	installgrade_display_names << "I"
+	installgrade_display_names << "II"
+	installgrade_display_names << "III"
+	
+	#make a choice argument for wall cavity insulation installation grade
+	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
+	selected_installgrade.setDisplayName("Crawlspace: Ceiling Cavity Install Grade")
+	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    selected_installgrade.setDefaultValue("I")
+	args << selected_installgrade	
 	
 	# Ceiling Framing Factor
 	#make a choice argument for crawlspace ceiling framing factor
 	userdefined_csceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsceilff", false)
-  userdefined_csceilff.setDisplayName("Crawlspace ceiling framing factor [frac].")
-  userdefined_csceilff.setDefaultValue(0.13)
+    userdefined_csceilff.setDisplayName("Crawlspace: Ceiling Framing Factor")
+	userdefined_csceilff.setUnits("frac")
+	userdefined_csceilff.setDescription("Fraction of ceiling that is framing.")
+    userdefined_csceilff.setDefaultValue(0.13)
 	args << userdefined_csceilff
-	
-	# Rim Joist
-	# #make a choice argument for rim joist insulation
-	# selected_csrimjoist = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcsrimjoist", material_handles, material_display_names, false)
-	# selected_csrimjoist.setDisplayName("Crawlspace rim joist insulation. Applies only to crawlspace with wall insulation. For crawlspace with ceiling insulation, rim joist insulation assumes ceiling cavity insulation. For manually entering crawlspace rim joist insulation properties, leave blank.")
-	# args << selected_csrimjoist
 	
 	#make a double argument for rim joist insulation R-value
 	userdefined_csrimjoistr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsrimjoistr", false)
-	userdefined_csrimjoistr.setDisplayName("Crawlspace rim joist insulation R-value [hr-ft^2-R/Btu].")
-	userdefined_csrimjoistr.setDefaultValue(0)
-	args << userdefined_csrimjoistr	
+	userdefined_csrimjoistr.setDisplayName("Crawlspace: Rim Joist Insulation R-value")
+	userdefined_csrimjoistr.setUnits("hr-ft^2-R/Btu")
+	userdefined_csrimjoistr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+	userdefined_csrimjoistr.setDefaultValue(5.0)
+	args << userdefined_csrimjoistr
+	
+    #make a double argument for floor mass thickness
+    userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
+    userdefined_floormassth.setDisplayName("Floor Mass: Thickness")
+	userdefined_floormassth.setUnits("in")
+	userdefined_floormassth.setDescription("Thickness of the floor mass.")
+    userdefined_floormassth.setDefaultValue(0.625)
+    args << userdefined_floormassth
 
-	# Floor Mass
-	# #make a choice argument for floor mass
-	# selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
-	# selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
-	# args << selected_floormass
-	
-	#make a double argument for floor mass thickness
-	userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
-	userdefined_floormassth.setDisplayName("Floor mass thickness [in].")
-	userdefined_floormassth.setDefaultValue(0.625)
-	args << userdefined_floormassth	
-	
-	#make a double argument for floor mass conductivity
-	userdefined_floormasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasscond", false)
-	userdefined_floormasscond.setDisplayName("Floor mass conductivity [Btu-in/h-ft^2-R].")
-	userdefined_floormasscond.setDefaultValue(0.8004)
-	args << userdefined_floormasscond
-	
-	#make a double argument for floor mass density
-	userdefined_floormassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassdens", false)
-	userdefined_floormassdens.setDisplayName("Floor mass density [lb/ft^3].")
-	userdefined_floormassdens.setDefaultValue(34.0)
-	args << userdefined_floormassdens
+    #make a double argument for floor mass conductivity
+    userdefined_floormasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasscond", false)
+    userdefined_floormasscond.setDisplayName("Floor Mass: Conductivity")
+	userdefined_floormasscond.setUnits("Btu-in/h-ft^2-R")
+	userdefined_floormasscond.setDescription("Conductivity of the floor mass.")
+    userdefined_floormasscond.setDefaultValue(0.8004)
+    args << userdefined_floormasscond
 
-	#make a double argument for floor mass specific heat
-	userdefined_floormasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasssh", false)
-	userdefined_floormasssh.setDisplayName("Floor mass specific heat [Btu/lb-R].")
-	userdefined_floormasssh.setDefaultValue(0.29)
-	args << userdefined_floormasssh		
+    #make a double argument for floor mass density
+    userdefined_floormassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassdens", false)
+    userdefined_floormassdens.setDisplayName("Floor Mass: Density")
+	userdefined_floormassdens.setUnits("lb/ft^3")
+	userdefined_floormassdens.setDescription("Density of the floor mass.")
+    userdefined_floormassdens.setDefaultValue(34.0)
+    args << userdefined_floormassdens
+
+    #make a double argument for floor mass specific heat
+    userdefined_floormasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasssh", false)
+    userdefined_floormasssh.setDisplayName("Floor Mass: Specific Heat")
+	userdefined_floormasssh.setUnits("Btu/lb-R")
+	userdefined_floormasssh.setDescription("Specific heat of the floor mass.")
+    userdefined_floormasssh.setDefaultValue(0.29)
+    args << userdefined_floormasssh
 	
-	# Carpet
-	# #make a choice argument for carpet pad R-value
-	# selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-	# selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-	# args << selected_carpet
-	
-	#make a double argument for carpet pad R-value
-	userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
-	userdefined_carpetr.setDisplayName("Carpet pad R-value [hr-ft^2-R/Btu].")
-	userdefined_carpetr.setDefaultValue(2.08)
-	args << userdefined_carpetr
-	
-	#make a double argument for carpet floor fraction
-	userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
-	userdefined_carpetfrac.setDisplayName("Carpet floor fraction [frac].")
-	userdefined_carpetfrac.setDefaultValue(0.8)
-	args << userdefined_carpetfrac
+    #make a double argument for carpet pad R-value
+    userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
+    userdefined_carpetr.setDisplayName("Carpet: Carpet Pad R-value")
+	userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
+	userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
+    userdefined_carpetr.setDefaultValue(2.08)
+    args << userdefined_carpetr
+
+    #make a double argument for carpet floor fraction
+    userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
+    userdefined_carpetfrac.setDisplayName("Carpet: Floor Carpet Fraction")
+	userdefined_carpetfrac.setUnits("frac")
+	userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
+    userdefined_carpetfrac.setDefaultValue(0.8)
+    args << userdefined_carpetfrac
 
     # Geometry
     userdefinedcsheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsheight", false)
-    userdefinedcsheight.setDisplayName("Height of the crawlspace [ft].")
+    userdefinedcsheight.setDisplayName("Crawlspace Height")
+	userdefinedcsheight.setUnits("ft")
+	userdefinedcsheight.setDescription("The height of the crawlspace.")
     userdefinedcsheight.setDefaultValue(4.0)
     args << userdefinedcsheight
 
     userdefinedcsextperim = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsextperim", false)
-    userdefinedcsextperim.setDisplayName("Perimeter of the crawlspace [ft].")
+    userdefinedcsextperim.setDisplayName("Crawlspace Perimeter")
+	userdefinedcsextperim.setUnits("ft")
+	userdefinedcsextperim.setDescription("The perimeter of the crawlspace.")
     userdefinedcsextperim.setDefaultValue(140.0)
     args << userdefinedcsextperim
 
     userdefinedcswallarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcswallarea", false)
-    userdefinedcswallarea.setDisplayName("Wall area of the crawlspace [ft^2].")
+    userdefinedcswallarea.setDisplayName("Crawlspace Wall Area")
+	userdefinedcswallarea.setUnits("ft^2")
+	userdefinedcswallarea.setDescription("The wall area of the crawlspace.")
     userdefinedcswallarea.setDefaultValue(560.0)
     args << userdefinedcswallarea
 	
@@ -331,19 +347,17 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	crawlRimJoistInsRvalue = 0
 	carpetPadRValue = 0
 
-  # Space Type
-  selected_crawlspace = runner.getOptionalWorkspaceObjectChoiceValue("selectedcrawlspace",user_arguments,model)
-  selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
+    # Space Type
+    selected_crawlspace = runner.getOptionalWorkspaceObjectChoiceValue("selectedcrawlspace",user_arguments,model)
+    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
 
 	# Crawlspace Insulation
 	selected_csins = runner.getStringArgumentValue("selectedcsins",user_arguments)
+	selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)
 	
 	# Wall / Ceiling Insulation
 	if ["Wall", "Ceiling"].include? selected_csins.to_s
-		selected_cswallceil = runner.getOptionalWorkspaceObjectChoiceValue("selectedcswallceil",user_arguments,model)
-		if selected_cswallceil.empty?
-			userdefined_cswallceilr = runner.getDoubleArgumentValue("userdefinedcswallceilr",user_arguments)
-		end
+		userdefined_cswallceilr = runner.getDoubleArgumentValue("userdefinedcswallceilr",user_arguments)
 	end
 	
 	# Ceiling Joist Height
@@ -351,10 +365,10 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	
 	# Ceiling Framing Factor
 	userdefined_csceilff = runner.getDoubleArgumentValue("userdefinedcsceilff",user_arguments)
-  if not ( userdefined_csceilff > 0.0 and userdefined_csceilff < 1.0 )
-    runner.registerError("Invalid crawlspace ceiling framing factor")
-    return false
-  end
+    if not ( userdefined_csceilff > 0.0 and userdefined_csceilff < 1.0 )
+      runner.registerError("Invalid crawlspace ceiling framing factor")
+      return false
+    end
 
 	# Rim Joist
 	if ["Wall"].include? selected_csins.to_s
@@ -365,19 +379,13 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	# Floor Mass
-	selected_slabfloormass = runner.getOptionalWorkspaceObjectChoiceValue("selectedfloormass",user_arguments,model)
-	if selected_slabfloormass.empty?
-		userdefined_floormassth = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
-		userdefined_floormasscond = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
-		userdefined_floormassdens = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
-		userdefined_floormasssh = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
-	end	
+	userdefined_floormassth = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
+	userdefined_floormasscond = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
+	userdefined_floormassdens = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
+	userdefined_floormasssh = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
 	
 	# Carpet
-	selected_carpet = runner.getOptionalWorkspaceObjectChoiceValue("selectedcarpet",user_arguments,model)
-	if selected_carpet.empty?
-		userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-	end
+	userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
 	userdefined_carpetfrac = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 	
 	# Constants
@@ -387,25 +395,15 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	
 	# Insulation
 	if selected_csins.to_s == "Wall"
-		if userdefined_cswallceilr.nil?
-			csWallThickness = OpenStudio::convert(selected_cswallceil.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-			csWallConductivity = OpenStudio::convert(selected_cswallceil.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-			crawlWallContInsRvalueNominal = OpenStudio::convert(csWallThickness,"in","ft").get / csWallConductivity	
-		else
-			crawlWallContInsRvalueNominal = userdefined_cswallceilr
-		end
+		crawlWallContInsRvalueNominal = userdefined_cswallceilr
 	elsif selected_csins.to_s == "Ceiling"
-		if userdefined_cswallceilr.nil?
-			csCeilingThickness = OpenStudio::convert(selected_cswallceil.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-			csCeilingConductivity = OpenStudio::convert(selected_cswallceil.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get		
-			crawlCeilingCavityInsRvalueNominal = OpenStudio::convert(csCeilingThickness,"in","ft").get / csCeilingConductivity
-		else
-			crawlCeilingCavityInsRvalueNominal = userdefined_cswallceilr
-		end
+		crawlCeilingCavityInsRvalueNominal = userdefined_cswallceilr
 	end
+	crawlCeilingInstallGrade_dict = {"I"=>1, "II"=>2, "III"=>3}
+	crawlCeilingInstallGrade = crawlCeilingInstallGrade_dict[selected_installgrade]	
 	
 	# Ceiling Joist Height
-	csCeilingJoistHeight_dict = {"9.25"=>9.25}
+	csCeilingJoistHeight_dict = {"2x10"=>9.25}
 	crawlCeilingJoistHeight = csCeilingJoistHeight_dict[selected_csceiljoistheight]	
 		
 	# Ceiling Framing Factor
@@ -413,36 +411,17 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	
 	# Rim Joist
 	if ["Wall"].include? selected_csins.to_s
-		if userdefined_csrimjoistr.nil?
-			csRimJoistThickness = OpenStudio::convert(selected_csrimjoist.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-			csRimJoistConductivity = OpenStudio::convert(selected_csrimjoist.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get		
-			crawlRimJoistInsRvalue = OpenStudio::convert(csRimJoistThickness,"in","ft").get / csRimJoistConductivity	
-		else
-			crawlRimJoistInsRvalue = userdefined_csrimjoistr
-		end
+		crawlRimJoistInsRvalue = userdefined_csrimjoistr
 	end
 	
 	# Floor Mass
-	if userdefined_floormassth.nil?
-		floorMassThickness = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-		floorMassConductivity = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-		floorMassDensity = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-		floorMassSpecificHeat = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-	else
-		floorMassThickness = userdefined_floormassth
-		floorMassConductivity = userdefined_floormasscond
-		floorMassDensity = userdefined_floormassdens
-		floorMassSpecificHeat = userdefined_floormasssh
-	end
+	floorMassThickness = userdefined_floormassth
+	floorMassConductivity = userdefined_floormasscond
+	floorMassDensity = userdefined_floormassdens
+	floorMassSpecificHeat = userdefined_floormasssh
 	
 	# Carpet
-	if userdefined_carpetr.nil?
-		carpetPadThickness = OpenStudio::convert(selected_carpet.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-		carpetPadConductivity = OpenStudio::convert(selected_carpet.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-		carpetPadRValue = OpenStudio::convert(carpetPadThickness,"in","ft").get / carpetPadConductivity
-	else
-		carpetPadRValue = userdefined_carpetr
-	end
+	carpetPadRValue = userdefined_carpetr
 	carpetFloorFraction = userdefined_carpetfrac
 
     # Exterior Finish
@@ -478,7 +457,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     end
 
 	# Create the material class instances
-	cs = Crawlspace.new(crawlWallContInsRvalueNominal, crawlCeilingCavityInsRvalueNominal, crawlCeilingJoistHeight, crawlCeilingFramingFactor)
+	cs = Crawlspace.new(crawlWallContInsRvalueNominal, crawlCeilingCavityInsRvalueNominal, crawlCeilingJoistHeight, crawlCeilingFramingFactor, crawlCeilingInstallGrade)
 	carpet = Carpet.new(carpetFloorFraction, carpetPadRValue)
 	floor_mass = FloorMass.new(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
 	cci = CrawlCeilingIns.new
@@ -486,8 +465,8 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	cwi = CWallIns.new
 	cffr = CFloorFicR.new
 	cjc = CSJoistandCavity.new
-  wallsh = WallSheathing.new(wallSheathingContInsThickness, wallSheathingContInsRvalue)
-  exterior_finish = ExteriorFinish.new(finishThickness, finishConductivity)
+    wallsh = WallSheathing.new(wallSheathingContInsThickness, wallSheathingContInsRvalue)
+    exterior_finish = ExteriorFinish.new(finishThickness, finishConductivity)
 
 	if crawlWallContInsRvalueNominal > 0
 		cs.CrawlRimJoistInsRvalue = crawlRimJoistInsRvalue
@@ -496,9 +475,9 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	# Create the sim object
 	sim = Sim.new(model, runner)
 
-  cs.height = runner.getDoubleArgumentValue("userdefinedcsheight",user_arguments)
-  cs.crawlspace_wall_area = runner.getDoubleArgumentValue("userdefinedcswallarea",user_arguments)
-  cs.ext_perimeter = runner.getDoubleArgumentValue("userdefinedcsextperim",user_arguments)
+    cs.height = runner.getDoubleArgumentValue("userdefinedcsheight",user_arguments)
+    cs.crawlspace_wall_area = runner.getDoubleArgumentValue("userdefinedcswallarea",user_arguments)
+    cs.ext_perimeter = runner.getDoubleArgumentValue("userdefinedcsextperim",user_arguments)
 	
 	# Process the crawlspace
 	cci, cwfr, cwi, cffr, cjc, wallsh = sim._processConstructionsCrawlspace(cs, carpet, floor_mass, wallsh, exterior_finish, cci, cwfr, cwi, cffr, cjc, selected_crawlspace)

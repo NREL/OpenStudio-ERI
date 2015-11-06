@@ -16,8 +16,16 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessThermalMassFurniture"
+    return "Add/Replace Residential Furniture Thermal Mass"
   end
+  
+  def description
+    return "This measure creates internal mass for furniture in the living space, finished basement, unfinished basement, and garage."
+  end
+  
+  def modeler_description
+    return "This measure creates constructions representing the internal mass of furniture in the living space, finished basement, unfinished basement, and garage. The constructions are set to define the internal mass objects of their respective spaces."
+  end    
   
   #define the arguments that the user will input
   def arguments(model)
@@ -43,21 +51,25 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     #make a choice argument for living space
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
     selected_living.setDisplayName("Of what space type is the living space?")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
     #make a choice argument for fbsmt
     selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_fbsmt.setDisplayName("Of what space type is the finished basement?")
+    selected_fbsmt.setDisplayName("Finished Basement Space")
+	selected_fbsmt.setDescription("The finished basement space type.")
     args << selected_fbsmt
 
     #make a choice argument for ufbsmt
     selected_ufbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_ufbsmt.setDisplayName("Of what space type is the unfinished basement?")
+    selected_ufbsmt.setDisplayName("Unfinished Basement Space")
+	selected_ufbsmt.setDescription("The unfinished basement space type.")
     args << selected_ufbsmt
 
     #make a choice argument for garage
     selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, false)
-    selected_garage.setDisplayName("Of what space type is the garage?")
+    selected_garage.setDisplayName("Garage Space")
+	selected_garage.setDescription("The garage space type.")
     args << selected_garage
 
     return args

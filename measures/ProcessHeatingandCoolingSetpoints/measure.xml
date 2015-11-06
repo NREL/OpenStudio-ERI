@@ -2,34 +2,37 @@
   <schema_version>3.0</schema_version>
   <name>process_heatingand_cooling_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>f62610d6-9885-4de3-a3c5-a300206df029</version_id>
+  <version_id>009f1cd5-2d73-4d96-b01c-b64b26bbc90e</version_id>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingandCoolingSetpoints</class_name>
-  <display_name>ProcessHeatingandCoolingSetpoints</display_name>
+  <display_name>Set Residential Heating/Cooling Setpoints and Schedules</display_name>
   <description>This measure creates the heating season and cooling season schedules based on weather data, and the heating setpoint and cooling setpoint schedules.</description>
   <modeler_description>This measure creates HeatingSeasonSchedule and CoolingSeasonSchedule ruleset objects. Schedule values are populated based on information contained in the EPW file. This measure also creates HeatingSetPoint and CoolingSetPoint ruleset objects. Schedule values are populated based on information input by the user as well as contained in the HeatingSeasonSchedule and CoolingSeasonSchedule. The heating and cooling setpoint schedules are added to the living zone's thermostat.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Select the living zone.</display_name>
+      <display_name>Living Zone</display_name>
+      <description>The living zone.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>userdefinedhsp</name>
-      <display_name>Heating Set Point: Constant Setpoint [degrees F]</display_name>
+      <display_name>Heating Set Point: Constant Setpoint</display_name>
       <description>Constant heating setpoint for every hour.</description>
       <type>Double</type>
+      <units>degrees F</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>71</default_value>
     </argument>
     <argument>
       <name>userdefinedcsp</name>
-      <display_name>Cooling Set Point: Constant Setpoint [degrees F]</display_name>
+      <display_name>Cooling Set Point: Constant Setpoint</display_name>
       <description>Constant cooling setpoint for every hour.</description>
       <type>Double</type>
+      <units>degrees F</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>76</default_value>
@@ -103,12 +106,6 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -117,13 +114,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9A356900</checksum>
+      <checksum>EF2C4DA8</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>61F7758E</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CD6B0BDF</checksum>
+    </file>
+    <file>
+      <filename>ASHRAE622WSF.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C1BB835</checksum>
     </file>
   </files>
 </measure>

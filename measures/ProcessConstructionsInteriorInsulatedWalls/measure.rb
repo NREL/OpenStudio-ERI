@@ -94,8 +94,16 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsInteriorInsulatedWalls"
+    return "Add/Replace Residential Interzonal Walls"
   end
+  
+  def description
+    return "This measure creates insulated constructions for the interzonal walls between the living space and the garage."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of insulated constructions for the interzonal walls between the living space and the garage. Finds surfaces adjacent to the living space and garage and sets applicable constructions."
+  end  
   
   #define the arguments that the user will input
   def arguments(model)
@@ -120,57 +128,45 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     #make a choice argument for living
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
     #make a choice argument for crawlspace
     selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, true)
-    selected_garage.setDisplayName("Of what space type is the garage?")
+    selected_garage.setDisplayName("Garage Space")
+	selected_garage.setDescription("The garage space type.")
     args << selected_garage
-
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
-
-    # #make a choice argument for partition wall mass
-    # selected_partitionwallmass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedpartitionwallmass", material_handles, material_display_names, false)
-    # selected_partitionwallmass.setDisplayName("Partition wall mass. For manually entering partition wall mass properties, leave blank.")
-    # args << selected_partitionwallmass
 
     #make a double argument for partition wall mass thickness
     userdefined_partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassth", false)
-    userdefined_partitionwallmassth.setDisplayName("Partition wall mass thickness [in].")
+    userdefined_partitionwallmassth.setDisplayName("Partition Wall Mass: Thickness")
+	userdefined_partitionwallmassth.setUnits("in")
+	userdefined_partitionwallmassth.setDescription("Thickness of the layer.")
     userdefined_partitionwallmassth.setDefaultValue(0.5)
     args << userdefined_partitionwallmassth
 
     #make a double argument for partition wall mass conductivity
     userdefined_partitionwallmasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmasscond", false)
-    userdefined_partitionwallmasscond.setDisplayName("Partition wall mass conductivity [Btu-in/h-ft^2-R].")
+    userdefined_partitionwallmasscond.setDisplayName("Partition Wall Mass: Conductivity")
+	userdefined_partitionwallmasscond.setUnits("Btu-in/h-ft^2-R")
+	userdefined_partitionwallmasscond.setDescription("Conductivity of the layer.")
     userdefined_partitionwallmasscond.setDefaultValue(1.1112)
     args << userdefined_partitionwallmasscond
 
     #make a double argument for partition wall mass density
     userdefined_partitionwallmassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassdens", false)
-    userdefined_partitionwallmassdens.setDisplayName("Partition wall mass density [lb/ft^3].")
+    userdefined_partitionwallmassdens.setDisplayName("Partition Wall Mass: Density")
+	userdefined_partitionwallmassdens.setUnits("lb/ft^3")
+	userdefined_partitionwallmassdens.setDescription("Density of the layer.")
     userdefined_partitionwallmassdens.setDefaultValue(50.0)
     args << userdefined_partitionwallmassdens
 
     #make a double argument for partition wall mass specific heat
     userdefined_partitionwallmasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmasssh", false)
-    userdefined_partitionwallmasssh.setDisplayName("Partition wall mass specific heat [Btu/lb-R].")
+    userdefined_partitionwallmasssh.setDisplayName("Partition Wall Mass: Specific Heat")
+	userdefined_partitionwallmasssh.setUnits("Btu/lb-R")
+	userdefined_partitionwallmasssh.setDescription("Specific heat of the layer.")
     userdefined_partitionwallmasssh.setDefaultValue(0.2)
     args << userdefined_partitionwallmasssh
 
@@ -185,7 +181,10 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     #make a string argument for wood stud size of wall cavity
     selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, true)
-    selected_studsize.setDisplayName("Wood stud size of wall cavity.")
+    selected_studsize.setDisplayName("Interzonal Walls: Cavity Depth")
+	selected_studsize.setUnits("in")
+	selected_studsize.setDescription("Depth of the stud cavity.")
+	selected_studsize.setDefaultValue("2x4")
     args << selected_studsize
 
     #make a choice argument for model objects
@@ -196,11 +195,17 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     #make a choice argument for wood stud spacing
     selected_spacing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedspacing", spacing_display_names, true)
     selected_spacing.setDisplayName("Wood stud spacing of wall cavity.")
+	selected_spacing.setUnits("in")
+	selected_spacing.setDescription("The on-center spacing between studs in a wall assembly.")
+	selected_spacing.setDefaultValue("16 in o.c.")
     args << selected_spacing
 
     #make a double argument for nominal R-value of installed cavity insulation
     userdefined_instcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinstcavr", true)
-    userdefined_instcavr.setDisplayName("Installed R-value of cavity insulation [hr-ft^2-R/Btu].")
+    userdefined_instcavr.setDisplayName("Interzonal Walls: Cavity Insulation Installed R-value")
+	userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
+	userdefined_instcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+	userdefined_instcavr.setDefaultValue(13.0)
     args << userdefined_instcavr
 
     #make a choice argument for model objects
@@ -209,33 +214,35 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     installgrade_display_names << "II"
     installgrade_display_names << "III"
 
-    #make a choice argument for wall cavity insulation installation grade
-    selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
-    selected_installgrade.setDisplayName("Insulation installation grade of wood stud wall cavity.")
-	selected_installgrade.setDefaultValue("I")
-    args << selected_installgrade
+	#make a choice argument for wall cavity insulation installation grade
+	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
+	selected_installgrade.setDisplayName("Wood Stud: Cavity Install Grade")
+	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    selected_installgrade.setDefaultValue("I")
+	args << selected_installgrade
 
-    #make a bool argument for whether the cavity insulation fills the cavity
-    selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
-    selected_insfills.setDisplayName("Cavity insulation fills the cavity?")
-    args << selected_insfills
+	#make a bool argument for whether the cavity insulation fills the cavity
+	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
+	selected_insfills.setDisplayName("Interzonal Walls: Insulation Fills Cavity")
+	selected_insfills.setDescription("Specifies whether the cavity insulation completely fills the depth of the wall cavity.")
+    selected_insfills.setDefaultValue(true)
+	args << selected_insfills
 
-    # #make a choice argument for rigid insulation of wall cavity
-    # selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
-    # selected_rigidins.setDisplayName("Rigid insulation of wall cavity. For manually entering rigid insulation properties of wall cavity, leave blank.")
-    # args << selected_rigidins
-
-    #make a double argument for rigid insulation thickness of wall cavity
+	#make a double argument for rigid insulation thickness of wall cavity
     userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)
-    userdefined_rigidinsthickness.setDisplayName("Rigid insulation thickness of wall cavity [in].")
+    userdefined_rigidinsthickness.setDisplayName("Interzonal Walls: Continuous Insulation Thickness")
+	userdefined_rigidinsthickness.setUnits("in")
+	userdefined_rigidinsthickness.setDescription("The thickness of the continuous insulation.")
     userdefined_rigidinsthickness.setDefaultValue(0)
     args << userdefined_rigidinsthickness
-
-    #make a double argument for rigid insulation R-value of wall cavity
-    userdefined_rigidinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsr", false)
-    userdefined_rigidinsr.setDisplayName("Rigid insulation R-value of wall cavity [hr-ft^2-R/Btu].")
+	
+	#make a double argument for rigid insulation R-value of wall cavity
+	userdefined_rigidinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsr", false)
+	userdefined_rigidinsr.setDisplayName("Interzonal Walls: Continuous Insulation Nominal R-value")
+	userdefined_rigidinsr.setUnits("hr-ft^2-R/Btu")
+	userdefined_rigidinsr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
     userdefined_rigidinsr.setDefaultValue(0)
-    args << userdefined_rigidinsr
+	args << userdefined_rigidinsr
 
     return args
   end #end the arguments method
@@ -256,13 +263,10 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
 
     # Partition Wall Mass
-    selected_partitionwallmass = runner.getOptionalWorkspaceObjectChoiceValue("selectedpartitionwallmass",user_arguments,model)
-    if selected_partitionwallmass.empty?
-      userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
-      userdefined_partitionwallmasscond = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
-      userdefined_partitionwallmassdens = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
-      userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
-    end
+    userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
+    userdefined_partitionwallmasscond = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
+    userdefined_partitionwallmassdens = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
+    userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
     # Cavity
     selected_studsize = runner.getStringArgumentValue("selectedstudsize",user_arguments)
     selected_spacing = runner.getStringArgumentValue("selectedspacing",user_arguments)
@@ -270,11 +274,8 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)
     selected_insfills = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
     # Rigid
-    selected_rigidins = runner.getOptionalWorkspaceObjectChoiceValue("selectedrigidins",user_arguments,model)
-    if selected_rigidins.empty?
-      userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
-      userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
-    end
+    userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
+    userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
 
     # Constants
     mat_gyp = get_mat_gypsum
@@ -282,34 +283,18 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     constants = Constants.new
 
     # Partition Wall Mass
-    if userdefined_partitionwallmassth.nil?
-      partitionWallMassThickness = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      partitionWallMassConductivity = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      partitionWallMassDensity = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-      partitionWallMassSpecificHeat = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-    else
-      partitionWallMassThickness = userdefined_partitionwallmassth
-      partitionWallMassConductivity = userdefined_partitionwallmasscond
-      partitionWallMassDensity = userdefined_partitionwallmassdens
-      partitionWallMassSpecificHeat = userdefined_partitionwallmasssh
-    end
+    partitionWallMassThickness = userdefined_partitionwallmassth
+    partitionWallMassConductivity = userdefined_partitionwallmasscond
+    partitionWallMassDensity = userdefined_partitionwallmassdens
+    partitionWallMassSpecificHeat = userdefined_partitionwallmasssh
 
     # Rigid
-    if userdefined_rigidinsthickness.nil?
-      rigidInsRoughness = selected_rigidins.get.to_StandardOpaqueMaterial.get.roughness
-      rigidInsThickness = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      rigidInsConductivity = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      rigidInsDensity = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-      rigidInsSpecificHeat = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-      rigidInsRvalue = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsConductivity
-    else
-      rigidInsRvalue = userdefined_rigidinsr
-      rigidInsRoughness = "Rough"
-      rigidInsThickness = userdefined_rigidinsthickness
-      rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
-      rigidInsDensity = mat_rigid.rho
-      rigidInsSpecificHeat = mat_rigid.Cp
-    end
+    rigidInsRvalue = userdefined_rigidinsr
+    rigidInsRoughness = "Rough"
+    rigidInsThickness = userdefined_rigidinsthickness
+    rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+    rigidInsDensity = mat_rigid.rho
+    rigidInsSpecificHeat = mat_rigid.Cp
 
     # Cavity
     intWallCavityInsFillsCavity = selected_insfills

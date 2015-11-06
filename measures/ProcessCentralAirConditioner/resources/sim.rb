@@ -476,7 +476,9 @@ def get_interzonal_floor_r_assembly(izf, carpetPadRValue, carpetFloorFraction, f
   mat_plywood3_4in = get_mat_plywood3_4in(mat_wood)
   films = Get_films_constant.new
 
-  path_fracs = [izf.IntFloorFramingFactor, 1 - izf.IntFloorFramingFactor]
+  gapFactor = get_wall_gap_factor(izf.IntFloorInstallGrade, izf.IntFloorFramingFactor)
+  
+  path_fracs = [izf.IntFloorFramingFactor, 1 - izf.IntFloorFramingFactor - gapFactor, gapFactor]
 
   izf_const = Construction.new(path_fracs)
 
@@ -489,7 +491,9 @@ def get_interzonal_floor_r_assembly(izf, carpetPadRValue, carpetFloorFraction, f
   else
     cavity_k = mat_2x6.thick / izf.IntFloorCavityInsRvalueNominal
   end
-  izf_const.addlayer(thickness=mat_2x6.thick, conductivity_list=[mat_wood.k, cavity_k])
+  gap_k = mat_2x6.thick / get_mat_air.R_air_gap
+  
+  izf_const.addlayer(thickness=mat_2x6.thick, conductivity_list=[mat_wood.k, cavity_k, gap_k])
 
   # Floor deck
   izf_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
@@ -1444,24 +1448,42 @@ class Sim
     constants = Constants.new
     psychrometrics = Psychrometrics.new
 
+    # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
+    ashrae_mv_without_infil_credit = get_mech_vent_whole_house_cfm(1, geometry.num_bedrooms, geometry.finished_floor_area, vent.MechVentASHRAEStandard)	
+	
     # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2);
     # only applies to existing buildings
-
+	infil.rate_credit = 0 # default to no credit
     if vent.MechVentInfilCreditForExistingHomes and misc.AgeOfHome > 0
 
-      # (2 cfm per 100ft^2 of occupiable floor area per ASHRAE 62.2)
-      infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
-
-      # Half the excess infiltration rate above the default rate is credited toward mech vent:
-      infil.rate_credit = [(living_space.inf_flow - infil.default_rate) / 2.0, 0.0].max
-
-    else
-
-      infil.rate_credit = 0.0 # default to no credit
+	  if vent.MechVentASHRAEStandard == '2010'
+        # ASHRAE Standard 62.2 2010
+        # 2 cfm per 100ft^2 of occupiable floor area
+		infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
+        # Half the excess infiltration rate above the default rate is credited toward mech vent:
+        infil.rate_credit = [(living_space.inf_flow - default_rate) / 2.0, 0].max
+	  
+	  elsif vent.MechVentASHRAEStandard == '2013'
+        # ASHRAE Standard 62.2 2013
+        # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
+        # rate shall not be reduced as described in Section 4.1.3.").	  
+	    if geometry.num_units == 1
+		  ela = infil.A_o # Effective leakage area, ft^2
+		  nl = 1000.0 * ela / living_space.area * (living_space.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
+		  qinf = nl * @weather.header.WSF * living_space.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+		  infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
+		end
+	  
+	  end
 
     end
 
-    # Whole House and Spot Ventilation
+	# Apply infiltration credit (if any)
+    vent.ashrae_vent_rate = [ashrae_mv_without_infil_credit - infil.rate_credit, 0.0].max # cfm
+    # Apply fraction of ASHRAE value
+    vent.whole_house_vent_rate = vent.MechVentFractionOfASHRAE * vent.ashrae_vent_rate # cfm	
+
+    # Spot Ventilation
     if misc.SimTestSuiteBuilding != constants.TestBldgMinimal
       vent.MechVentBathroomExhaust = 50.0 # cfm, per HSP
       vent.MechVentRangeHoodExhaust = 100.0 # cfm, per HSP
@@ -1475,27 +1497,18 @@ class Sim
     vent.bath_exhaust_operation = 60.0 # min/day, per HSP
     vent.range_hood_exhaust_operation = 60.0 # min/day, per HSP
     vent.clothes_dryer_exhaust_operation = 60.0 # min/day, per HSP
-    # Based on ASHRAE 62.2 (the maximum allowable ventilation based on the
-    # 2010 BA Benchmark), including any infiltration credit
-    ashrae_mv = get_mech_vent_whole_house_cfm(1.0, geometry.num_bedrooms, geometry.finished_floor_area)
 
-    vent.ashrae_vent_rate = [ashrae_mv - infil.rate_credit, 0.0].max # cfm
+    vent.num_vent_fans = get_mech_vent_num_vent_fans(vent.MechVentType)
 
     if vent.MechVentType == constants.VentTypeExhaust
-      vent.num_vent_fans = 1.0 # One fan for unbalanced airflow
       vent.percent_fan_heat_to_space = 0.0 # Fan heat does not enter space
     elsif vent.MechVentType == constants.VentTypeSupply
-      vent.num_vent_fans = 1.0 # One fan for unbalanced airflow
       vent.percent_fan_heat_to_space = 1.0 # Fan heat does enter space
     elsif vent.MechVentType == constants.VentTypeBalanced
-      vent.num_vent_fans = 2.0 # Two fan for balanced airflow
       vent.percent_fan_heat_to_space = 0.5 # Assumes supply fan heat enters space
     else
-      vent.num_vent_fans = 1.0 # Default to one fan
       vent.percent_fan_heat_to_space = 0.0
     end
-
-    vent.whole_house_vent_rate = vent.MechVentFractionOfASHRAE * vent.ashrae_vent_rate # cfm
 
     vent.bathroom_hour_avg_exhaust = vent.MechVentBathroomExhaust * geometry.num_bathrooms * vent.bath_exhaust_operation / 60.0 # cfm
     vent.range_hood_hour_avg_exhaust = vent.MechVentRangeHoodExhaust * vent.range_hood_exhaust_operation / 60.0 # cfm
@@ -2301,7 +2314,7 @@ class Sim
 			# return
 		# end
 
-    films = Get_films_constant.new
+        films = Get_films_constant.new
 
 		slab_concrete_Rvalue = OpenStudio::convert(slab.SlabMassThickness,"in","ft").get / slab.SlabMassConductivity
 		
@@ -2402,7 +2415,7 @@ class Sim
 			# return
 		# end		
 
-    films = Get_films_constant.new
+        films = Get_films_constant.new
 
 		# If there is no wall insulation, apply the ceiling insulation R-value to the rim joists
 		if cs.CrawlWallContInsRvalueNominal == 0
@@ -2422,15 +2435,17 @@ class Sim
 		
 		crawl_ceiling_studlayer_Rvalue = cci.crawl_ceiling_Rvalue - floor_nonstud_layer_Rvalue(floor_mass, carpet)
 		
+		csGapFactor = get_wall_gap_factor(cs.CrawlCeilingInstallGrade, cs.CrawlCeilingFramingFactor)
+		
 		if cci.crawl_ceiling_Rvalue > 0
 			cci.crawl_ceiling_thickness = mat_2x.thick
 			cci.crawl_ceiling_conductivity = cci.crawl_ceiling_thickness / crawl_ceiling_studlayer_Rvalue
-			cci.crawl_ceiling_density = cs.CrawlCeilingFramingFactor * get_mat_wood.rho + (1 - cs.CrawlCeilingFramingFactor) * get_mat_densepack_generic.rho # lbm/ft^3
-			cci.crawl_ceiling_spec_heat = (cs.CrawlCeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - cs.CrawlCeilingFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / cci.crawl_ceiling_density # Btu/lbm*F
+			cci.crawl_ceiling_density = cs.CrawlCeilingFramingFactor * get_mat_wood.rho + (1 - cs.CrawlCeilingFramingFactor - csGapFactor) * get_mat_densepack_generic.rho + csGapFactor * inside_air_dens # lbm/ft^3
+			cci.crawl_ceiling_spec_heat = (cs.CrawlCeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - cs.CrawlCeilingFramingFactor - csGapFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho + csGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / cci.crawl_ceiling_density # Btu/lbm*F
 		end
 		
 		if cs.CrawlWallContInsRvalueNominal > 0
-			crawlspace_wall_thickness = OpenStudio::convert(cs.CrawlWallContInsRvalueNominal / 5,"in","ft").get # ft
+			crawlspace_wall_thickness = OpenStudio::convert(cs.CrawlWallContInsRvalueNominal / 5.0,"in","ft").get # ft
 			crawlspace_wall_conductivity = crawlspace_wall_thickness / cs.CrawlWallContInsRvalueNominal # Btu/hr*ft*F
 			crawlspace_wall_density = get_mat_rigid_ins.rho # lbm/ft^3
 			crawlspace_wall_spec_heat = get_mat_rigid_ins.Cp # Btu/lbm*F
@@ -2828,11 +2843,13 @@ class Sim
 
     # Get overall R-value using parallel paths:
     boundaryFloorRvalue = (overall_floor_Rvalue - floor_nonstud_layer_Rvalue(floor_mass, carpet))
+	
+	izfGapFactor = get_wall_gap_factor(izf.IntFloorInstallGrade, izf.IntFloorFramingFactor)
 
     ifi.boundary_floor_thickness = mat_2x6.thick # ft
     ifi.boundary_floor_conductivity = ifi.boundary_floor_thickness / boundaryFloorRvalue # Btu/hr*ft*F
-    ifi.boundary_floor_density = izf.IntFloorFramingFactor * mat_wood.rho + (1 - izf.IntFloorFramingFactor) * get_mat_densepack_generic.rho # lbm/ft^3
-    ifi.boundary_floor_spec_heat = (izf.IntFloorFramingFactor * mat_wood.Cp * mat_wood.rho + (1 - izf.IntFloorFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / ifi.boundary_floor_density # Btu/lbm*F
+    ifi.boundary_floor_density = izf.IntFloorFramingFactor * mat_wood.rho + (1 - izf.IntFloorFramingFactor - izfGapFactor) * get_mat_densepack_generic.rho  + izfGapFactor * inside_air_dens # lbm/ft^3
+    ifi.boundary_floor_spec_heat = (izf.IntFloorFramingFactor * mat_wood.Cp * mat_wood.rho + (1 - izf.IntFloorFramingFactor - izfGapFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho + izfGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / ifi.boundary_floor_density # Btu/lbm*F
 
     return ifi
 
@@ -3490,7 +3507,9 @@ def get_crawlspace_ceiling_r_assembly(cs, carpet, floor_mass)
 	mat_plywood3_4in = get_mat_plywood3_4in(mat_wood)
 	films = Get_films_constant.new
 	
-	path_fracs = [cs.CrawlCeilingFramingFactor, 1 - cs.CrawlCeilingFramingFactor]
+	gapFactor = get_wall_gap_factor(cs.CrawlCeilingInstallGrade, cs.CrawlCeilingFramingFactor)
+	
+	path_fracs = [cs.CrawlCeilingFramingFactor, 1 - cs.CrawlCeilingFramingFactor - gapFactor, gapFactor]
 	
 	crawl_ceiling = Construction.new(path_fracs)
 	
@@ -3503,7 +3522,9 @@ def get_crawlspace_ceiling_r_assembly(cs, carpet, floor_mass)
 	else
 		cavity_k = (mat_2x.thick / cs.CrawlCeilingCavityInsRvalueNominal)
 	end
-	crawl_ceiling.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k])
+	gap_k = mat_2x.thick / get_mat_air.R_air_gap
+	
+	crawl_ceiling.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k, gap_k])
 
 	# Floor deck
 	crawl_ceiling.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in)
@@ -4057,10 +4078,13 @@ def get_infiltration_SLA_from_ACH50(ach50, n_i, livingSpaceFloorArea, livingSpac
 
 end
 
-def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa)
+def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa, std)
   # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
 
-  return frac622 * ((num_beds + 1.0) * 7.5 + ffa / 100.0)
+  if std == '2013'
+	return frac622 * ((num_beds + 1.0) * 7.5 + 0.03 * ffa)
+  end
+  return frac622 * ((num_beds + 1.0) * 7.5 + 0.01 * ffa)
 end
 
 def set_variable_list_heating_set_point(category)
@@ -4533,6 +4557,18 @@ def calc_Cd_from_HSPF_COP_FourSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, 
   #
   #   return C_d
 
+end
+
+def get_mech_vent_num_vent_fans(vent_type)
+	constants = Constants.new
+    if vent_type == constants.VentTypeExhaust
+        return 1 # One fan for unbalanced airflow
+    elsif vent_type == constants.VentTypeSupply
+        return 1 # One fan for unbalanced airflow
+    elsif vent_type == constants.VentTypeBalanced
+        return 2 # Two fans for balanced airflow
+    end
+	return 1 # Default to one fan
 end
 
 class Process_refrigerator

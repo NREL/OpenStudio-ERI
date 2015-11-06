@@ -47,8 +47,16 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsGarageRoof"
+    return "Add/Replace Residential Exterior Uninsulated Garage Roof"
   end
+  
+  def description
+    return "This measure creates uninsulated, unfinished, stud and air constructions for the garage roof."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the garage roof. Finds surfaces adjacent to the garage and sets applicable constructions."
+  end   
   
   #define the arguments that the user will input
   def arguments(model)
@@ -73,45 +81,28 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for crawlspace
     selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, true)
-    selected_garage.setDisplayName("Of what space type is the garage?")
+    selected_garage.setDisplayName("Garage Space")
+	selected_garage.setDescription("The garage space type.")
     args << selected_garage
 
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
-
     #make a bool argument for radiant barrier of roof cavity
-    userdefined_hasradiantbarrier = OpenStudio::Ruleset::OSArgument::makeBoolArgument("userdefinedhasradiantbarrier", true)
-    userdefined_hasradiantbarrier.setDisplayName("Roof has radiant barrier?")
+    userdefined_hasradiantbarrier = OpenStudio::Ruleset::OSArgument::makeBoolArgument("userdefinedhasradiantbarrier", false)
+    userdefined_hasradiantbarrier.setDisplayName("Has Radiant Barrier")
+	userdefined_hasradiantbarrier.setDescription("Layers of reflective material used to reduce heat transfer between the attic roof and the ceiling insulation and ductwork (if present).")
+	userdefined_hasradiantbarrier.setDefaultValue(false)
     args << userdefined_hasradiantbarrier
-
-    # #make a choice argument for roofing material of unfinished attic
-    # selected_roofmat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedroofmat", material_handles, material_display_names, false)
-    # selected_roofmat.setDisplayName("Roofing material for unfinished attic. For manually entering roofing material properties of unfinished attic, leave blank.")
-    # args << selected_roofmat
 
     #make a double argument for roofing material thermal absorptance of unfinished attic
     userdefined_roofmatthermalabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatthermalabs", false)
-    userdefined_roofmatthermalabs.setDisplayName("Roofing material emissivity of unfinished attic.")
+    userdefined_roofmatthermalabs.setDisplayName("Roof Material: Emissivity.")
+	userdefined_roofmatthermalabs.setDescription("Infrared emissivity of the outside surface of the roof.")
     userdefined_roofmatthermalabs.setDefaultValue(0.91)
     args << userdefined_roofmatthermalabs
 
     #make a double argument for roofing material solar/visible absorptance of unfinished attic
     userdefined_roofmatabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatabs", false)
-    userdefined_roofmatabs.setDisplayName("Roofing material absorptance of unfinished attic.")
+    userdefined_roofmatabs.setDisplayName("Roof Material: Absorptivity")
+	userdefined_roofmatabs.setDescription("The solar radiation absorptance of the outside roof surface, specified as a value between 0 and 1.")
     userdefined_roofmatabs.setDefaultValue(0.85)
     args << userdefined_roofmatabs
 
@@ -134,23 +125,15 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     userdefined_hasradiantbarrier = runner.getBoolArgumentValue("userdefinedhasradiantbarrier",user_arguments)
 
     # Exterior Finish
-    selected_roofmat = runner.getOptionalWorkspaceObjectChoiceValue("selectedroofmat",user_arguments,model)
-    if selected_roofmat.empty?
-      userdefined_roofmatthermalabs = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
-      userdefined_roofmatabs = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
-    end
+    userdefined_roofmatthermalabs = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
+    userdefined_roofmatabs = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
     # Radiant Barrier
     hasRadiantBarrier = userdefined_hasradiantbarrier
 
     # Roofing Material
-    if userdefined_roofmatthermalabs.nil?
-      roofMatEmissivity = selected_roofmat.get.to_StandardOpaqueMaterial.get.getThermalAbsorptance.value
-      roofMatAbsorptivity = selected_roofmat.get.to_StandardOpaqueMaterial.get.getSolarAbsorptance.value
-    else
-      roofMatEmissivity = userdefined_roofmatthermalabs
-      roofMatAbsorptivity = userdefined_roofmatabs
-    end
+    roofMatEmissivity = userdefined_roofmatthermalabs
+    roofMatAbsorptivity = userdefined_roofmatabs
 
     # Create the material class instances
     gsa = GrgRoofStudandAir.new
