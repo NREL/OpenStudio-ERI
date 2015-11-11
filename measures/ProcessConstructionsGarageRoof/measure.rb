@@ -94,7 +94,7 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
 
     #make a double argument for roofing material thermal absorptance of unfinished attic
     userdefined_roofmatthermalabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatthermalabs", false)
-    userdefined_roofmatthermalabs.setDisplayName("Roof Material: Emissivity.")
+    userdefined_roofmatthermalabs.setDisplayName("Roof Material: Emissivity")
 	userdefined_roofmatthermalabs.setDescription("Infrared emissivity of the outside surface of the roof.")
     userdefined_roofmatthermalabs.setDefaultValue(0.91)
     args << userdefined_roofmatthermalabs

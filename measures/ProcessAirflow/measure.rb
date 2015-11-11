@@ -312,17 +312,17 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     zone_display_names = OpenStudio::StringVector.new
 	
     #get all thermal zones in model
-    zone_args = workspace.getObjectsByType("Zone".to_IddObjectType)
-    zone_args.each do |zone_arg|
-      zone_arg_name = zone_arg.getString(0) # Name
-      zone_display_names << zone_arg_name.to_s
-    end
+    # zone_args = workspace.getObjectsByType("Zone".to_IddObjectType)
+    # zone_args.each do |zone_arg|
+      # zone_arg_name = zone_arg.getString(0) # Name
+      # zone_display_names << zone_arg_name.to_s
+    # end
 	# TODO: figure out why in spreadsheet workspace.getObjectsByType returns an empty list
-    # zone_display_names << "living"
+    zone_display_names << "living_1 Thermal Zone"
 	# zone_display_names << "basement"
 	# zone_display_names << "crawl"
-	# zone_display_names << "attic"
-	# zone_display_names << "garage"
+	zone_display_names << "unfinishedattic Thermal Zone"
+	zone_display_names << "garage Thermal Zone"
 	zone_display_names << "NA"
 
     #make a choice argument for living space
@@ -464,7 +464,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ventilation_types_names << "supply"
     ventilation_types_names << "balanced"
     selected_venttype = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedventtype", ventilation_types_names, false)
-    selected_venttype.setDisplayName("Ventilation strategy used (none, exhaust, supply, or balanced).")
+    selected_venttype.setDisplayName("Mechanical Ventilation: Ventilation Type")
     selected_venttype.setDefaultValue("exhaust")
     args << selected_venttype
 

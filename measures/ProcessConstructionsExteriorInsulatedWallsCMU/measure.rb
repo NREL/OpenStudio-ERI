@@ -1,48 +1,53 @@
-#see the URL below for information on how to write OpenStudio measures
-# http://openstudio.nrel.gov/openstudio-measure-writing-guide
-
-#see the URL below for information on using life cycle cost objects in OpenStudio
-# http://openstudio.nrel.gov/openstudio-life-cycle-examples
-
-#see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
-# http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
+# see the URL below for information on how to write OpenStudio measures
+# http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
 
-#start the measure
-class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::ModelUserScript
-  
-	class WoodStudWall
-		def initialize(wsWallCavityInsFillsCavity, wsWallCavityInsRvalueInstalled, wsWallInstallGrade, wsWallCavityDepth, wsWallFramingFactor)
-			@wsWallCavityInsFillsCavity = wsWallCavityInsFillsCavity
-			@wsWallCavityInsRvalueInstalled = wsWallCavityInsRvalueInstalled
-			@wsWallInstallGrade = wsWallInstallGrade
-			@wsWallCavityDepth = wsWallCavityDepth
-			@wsWallFramingFactor = wsWallFramingFactor
+# start the measure
+class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::ModelUserScript
+
+	class CMUWall
+		def initialize(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue)
+			@cmuThickness = cmuThickness
+			@cmuDensity = cmuDensity
+			@cmuFramingFactor = cmuFramingFactor
+			@cmuFurringCavityDepth = cmuFurringCavityDepth
+			@cmuFurringStudSpacing = cmuFurringStudSpacing
+			@cmuFurringInsRvalue = cmuFurringInsRvalue
+			@cmuConductivity = cmuConductivity
+		end
+		attr_accessor(:cmu_layer_conductivity, :cmu_layer_density, :cmu_layer_spec_heat)
+		
+		def CMUThickness
+			return @cmuThickness
 		end
 		
-		def WSWallCavityInsFillsCavity
-			return @wsWallCavityInsFillsCavity
+		def CMUDensity
+			return @cmuDensity
 		end
 		
-		def WSWallCavityInsRvalueInstalled
-			return @wsWallCavityInsRvalueInstalled
+		def CMUFramingFactor
+			return @cmuFramingFactor
 		end
 		
-		def WSWallInstallGrade
-			return @wsWallInstallGrade
+		def CMUFurringCavityDepth
+			return @cmuFurringCavityDepth
 		end
 		
-		def WSWallCavityDepth
-			return @wsWallCavityDepth
-		end 
+		def CMUFurringStudSpacing
+			return @cmuFurringStudSpacing
+		end
 		
-		def WSWallFramingFactor
-			return @wsWallFramingFactor
-		end	
+		def CMUFurringInsRvalue
+			return @cmuFurringInsRvalue		
+		end
+		
+		def CMUConductivity
+			return @cmuConductivity
+		end
 	end
-	
+
 	class ExtWallMass
 		def initialize(gypsumThickness, gypsumNumLayers, gypsumRvalue)
 			@gypsumThickness = gypsumThickness
@@ -108,29 +113,30 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 		def OSBRvalue
 			return @osbRvalue		
 		end
-	end 
+	end	
 	
-	class StudandCavity
+	class Furring
 		def initialize
 		end
-		attr_accessor(:stud_layer_thickness, :stud_layer_conductivity, :stud_layer_density, :stud_layer_spec_heat)
+		attr_accessor(:furring_layer_thickness, :furring_layer_conductivity, :furring_layer_density, :furring_layer_spec_heat)
 	end
-  
-  #define the name that a user will see, this method may be deprecated as
-  #the display name in PAT comes from the name field in measure.xml
+	
+  # human readable name
   def name
-    return "Add/Replace Residential Wood Stud Walls"
+    return "Add/Replace Residential CMU Walls"
   end
-  
+
+  # human readable description
   def description
-    return "This measure creates wood stud constructions for the exterior walls adjacent to the living space."
+    return "This measure creates CMU constructions for the exterior walls adjacent to the living space."
   end
-  
+
+  # human readable description of modeling approach
   def modeler_description
-    return "Calculates material layer properties of wood stud constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions."
-  end  
-  
-  #define the arguments that the user will input
+    return "Calculates material layer properties of CMU constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions."
+  end
+
+  # define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
@@ -156,7 +162,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     selected_living.setDisplayName("Living Space")
 	selected_living.setDescription("The living space type.")
     args << selected_living
-
+	
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
     userdefined_gypthickness.setDisplayName("Exterior Wall Mass: Thickness")
@@ -172,61 +178,63 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 	userdefined_gyplayers.setDescription("Integer number of layers of gypsum.")
     userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
-
-	#make a choice argument for model objects
-	studsize_display_names = OpenStudio::StringVector.new
-	studsize_display_names << "2x4"
-	studsize_display_names << "2x6"
 	
-    #make a string argument for wood stud size of wall cavity
-    selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, true)
-    selected_studsize.setDisplayName("Wood Stud: Cavity Depth")
-	selected_studsize.setUnits("in")
-	selected_studsize.setDescription("Depth of the stud cavity.")
-	selected_studsize.setDefaultValue("2x4")
-    args << selected_studsize
+    #make a double argument for thickness of the cmu block
+    userdefined_cmuthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcmuthickness", true)
+    userdefined_cmuthickness.setDisplayName("CMU: CMU Block Thickness")
+	userdefined_cmuthickness.setUnits("in")
+	userdefined_cmuthickness.setDescription("Thickness of the CMU portion of the wall.")
+	userdefined_cmuthickness.setDefaultValue(6.0)
+    args << userdefined_cmuthickness
 	
-	#make a choice argument for model objects
-	spacing_display_names = OpenStudio::StringVector.new
-	spacing_display_names << "16 in o.c."
-	spacing_display_names << "24 in o.c."
+	#make a double argument for conductivity of the cmu block
+	userdefined_cmuconductivity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcmuconductivity", false)
+	userdefined_cmuconductivity.setDisplayName("CMU: CMU Conductivity")
+	userdefined_cmuconductivity.setUnits("Btu-in/hr-ft^2-R")
+	userdefined_cmuconductivity.setDescription("Overall conductivity of the finished CMU block.")
+    userdefined_cmuconductivity.setDefaultValue(5.33)
+	args << userdefined_cmuconductivity	
 	
-	#make a choice argument for wood stud spacing
-	selected_spacing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedspacing", spacing_display_names, true)
-	selected_spacing.setDisplayName("Wood Stud: Stud Spacing")
-	selected_spacing.setUnits("in")
-	selected_spacing.setDescription("The on-center spacing between studs in a wall assembly.")
-	selected_spacing.setDefaultValue("16 in o.c.")
-	args << selected_spacing
+	#make a double argument for density of the cmu block
+	userdefined_cmudensity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcmudensity", false)
+	userdefined_cmudensity.setDisplayName("CMU: CMU Density")
+	userdefined_cmudensity.setUnits("lb/ft^3")
+	userdefined_cmudensity.setDescription("The density of the finished CMU block.")
+    userdefined_cmudensity.setDefaultValue(119.0)
+	args << userdefined_cmudensity		
 	
-	#make a double argument for nominal R-value of installed cavity insulation
-	userdefined_instcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinstcavr", true)
-	userdefined_instcavr.setDisplayName("Wood Stud: Cavity Insulation Installed R-value")
-	userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
-	userdefined_instcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-	userdefined_instcavr.setDefaultValue(13.0)
-	args << userdefined_instcavr
+	#make a double argument for framing factor
+	userdefined_framingfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedframingfrac", false)
+	userdefined_framingfrac.setDisplayName("CMU: Framing Factor")
+	userdefined_framingfrac.setUnits("frac")
+	userdefined_framingfrac.setDescription("Total fraction of the wall that is framing for windows or doors.")
+    userdefined_framingfrac.setDefaultValue(0.076)
+	args << userdefined_framingfrac
 	
-	#make a choice argument for model objects
-	installgrade_display_names = OpenStudio::StringVector.new
-	installgrade_display_names << "I"
-	installgrade_display_names << "II"
-	installgrade_display_names << "III"
+	#make a double argument for furring insulation R-value
+	userdefined_furringr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringr", false)
+	userdefined_furringr.setDisplayName("CMU: Furring Insulation R-value")
+	userdefined_furringr.setUnits("hr-ft^2-R/Btu")
+	userdefined_furringr.setDescription("R-value of the insulation filling the furring cavity.")
+    userdefined_furringr.setDefaultValue(0.0)
+	args << userdefined_furringr
 	
-	#make a choice argument for wall cavity insulation installation grade
-	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
-	selected_installgrade.setDisplayName("Wood Stud: Cavity Install Grade")
-	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
-    selected_installgrade.setDefaultValue("I")
-	args << selected_installgrade
+	#make a double argument for furring cavity depth
+	userdefined_furringcavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringcavdepth", false)
+	userdefined_furringcavdepth.setDisplayName("CMU: Furring Cavity Depth")
+	userdefined_furringcavdepth.setUnits("in")
+	userdefined_furringcavdepth.setDescription("The depth of the interior furring cavity.")
+    userdefined_furringcavdepth.setDefaultValue(1.0)
+	args << userdefined_furringcavdepth	
 	
-	#make a bool argument for whether the cavity insulation fills the cavity
-	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
-	selected_insfills.setDisplayName("Wood Stud: Insulation Fills Cavity")
-	selected_insfills.setDescription("Specifies whether the cavity insulation completely fills the depth of the wall cavity.")
-    selected_insfills.setDefaultValue(true)
-	args << selected_insfills
-
+	#make a double argument for furring stud spacing
+	userdefined_furringstudspacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringstudspacing", false)
+	userdefined_furringstudspacing.setDisplayName("CMU: Furring Stud Spacing")
+	userdefined_furringstudspacing.setUnits("in")
+	userdefined_furringstudspacing.setDescription("Spacing of studs in the furring.")
+    userdefined_furringstudspacing.setDefaultValue(24.0)
+	args << userdefined_furringstudspacing	
+	
 	#make a bool argument for OSB of wall cavity
 	userdefined_hasosb = OpenStudio::Ruleset::OSArgument::makeBoolArgument("userdefinedhasosb", true)
 	userdefined_hasosb.setDisplayName("Wall Sheathing: Has OSB")
@@ -294,32 +302,34 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 	userdefined_extfinabs.setDisplayName("Exterior Finish: Solar Absorptivity")
 	userdefined_extfinabs.setDescription("The property that determines the fraction of the incident radiation that is absorbed.")
     userdefined_extfinabs.setDefaultValue(0.3)
-	args << userdefined_extfinabs
-	   
+	args << userdefined_extfinabs	
+	
     return args
-  end #end the arguments method
+  end
 
-  #define what happens when the measure is run
+  # define what happens when the measure is run
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-    
-    #use the built-in error checking 
-    if not runner.validateUserArguments(arguments(model), user_arguments)
+
+    # use the built-in error checking
+    if !runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
 
-    # Space Type
+	# Space Type
     selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
 	
 	# Gypsum
 	userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
 	userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-	# Cavity
-	selected_studsize = runner.getStringArgumentValue("selectedstudsize",user_arguments)
-	selected_spacing = runner.getStringArgumentValue("selectedspacing",user_arguments)
-	userdefined_instcavr = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
-	selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)
-	selected_insfills = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
+	# CMU / Furring
+	userdefined_cmuthickness = runner.getDoubleArgumentValue("userdefinedcmuthickness",user_arguments)
+	userdefined_cmuconductivity = runner.getDoubleArgumentValue("userdefinedcmuconductivity",user_arguments)
+	userdefined_cmudensity = runner.getDoubleArgumentValue("userdefinedcmudensity",user_arguments)
+	userdefined_framingfrac = runner.getDoubleArgumentValue("userdefinedframingfrac",user_arguments)
+	userdefined_furringr = runner.getDoubleArgumentValue("userdefinedfurringr",user_arguments)
+	userdefined_furringcavdepth = runner.getDoubleArgumentValue("userdefinedfurringcavdepth",user_arguments)
+	userdefined_furringstudspacing = runner.getDoubleArgumentValue("userdefinedfurringstudspacing",user_arguments)
 	# Rigid
 	userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
 	userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
@@ -330,8 +340,8 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 	userdefined_extfindensity = runner.getDoubleArgumentValue("userdefinedextfindensity",user_arguments)
 	userdefined_extfinspecheat = runner.getDoubleArgumentValue("userdefinedextfinspecheat",user_arguments)
 	userdefined_extfinthermalabs = runner.getDoubleArgumentValue("userdefinedextfinthermalabs",user_arguments)
-	userdefined_extfinabs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)		
-	
+	userdefined_extfinabs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)	
+
 	# Constants
 	mat_wood = get_mat_wood
 	mat_gyp = get_mat_gypsum
@@ -368,16 +378,15 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 		osbRvalue = 0
 	end
 	
-	# Cavity
-	wsWallCavityInsFillsCavity = selected_insfills
-	wsWallCavityInsRvalueInstalled = userdefined_instcavr
-	wsWallInstallGrade_dict = {"I"=>1, "II"=>2, "III"=>3}
-	wsWallInstallGrade = wsWallInstallGrade_dict[selected_installgrade]
-	wsWallCavityDepth_dict = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}
-	wsWallCavityDepth = wsWallCavityDepth_dict[selected_studsize]
-	wsWallFramingFactor_dict = {"16 in o.c."=>0.25, "24 in o.c."=>0.22}
-	wsWallFramingFactor = wsWallFramingFactor_dict[selected_spacing]
-	
+	# CMU / Furring
+	cmuThickness = userdefined_cmuthickness
+	cmuConductivity = userdefined_cmuconductivity
+	cmuDensity = userdefined_cmudensity
+	cmuFramingFactor = userdefined_framingfrac
+	cmuFurringInsRvalue = userdefined_furringr
+	cmuFurringCavityDepth = userdefined_furringcavdepth
+	cmuFurringStudSpacing = userdefined_furringstudspacing
+
 	# Exterior Finish
 	finishRvalue = userdefined_extfinr
 	finishThickness = userdefined_extfinthickness
@@ -387,27 +396,32 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 	finishThermalAbs = userdefined_extfinthermalabs
 	finishSolarAbs = userdefined_extfinabs
 	finishVisibleAbs = userdefined_extfinabs
-	
+
 	# Create the material class instances
-	wsw = WoodStudWall.new(wsWallCavityInsFillsCavity, wsWallCavityInsRvalueInstalled, wsWallInstallGrade, wsWallCavityDepth, wsWallFramingFactor)
+	cmu = CMUWall.new(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue)
 	extwallmass = ExtWallMass.new(gypsumThickness, gypsumNumLayers, gypsumRvalue)
 	exteriorfinish = ExteriorFinish.new(finishThickness, finishConductivity, finishRvalue)
 	wallsh = WallSheathing.new(rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
-	sc = StudandCavity.new
+	fu = Furring.new
 	
 	# Create the sim object
 	sim = Sim.new(model, runner)
 	
 	# Process the wood stud walls
-	sc, wallsh = sim._processConstructionsExteriorInsulatedWallsWoodStud(wsw, extwallmass, exteriorfinish, wallsh, sc)
-
+	cmu, fu, wallsh = sim._processConstructionsExteriorInsulatedWallsCMU(cmu, extwallmass, exteriorfinish, wallsh, fu)
+	
 	# Create the material layers
 	
-	# Stud and Cavity
-	scThickness = sc.stud_layer_thickness
-	scConductivity = sc.stud_layer_conductivity
-	scDensity = sc.stud_layer_density
-	scSpecificHeat = sc.stud_layer_spec_heat
+	# CMU
+	cmuConductivity = cmu.cmu_layer_conductivity 
+	cmuDensity = cmu.cmu_layer_density
+	cmuSpecificHeat = cmu.cmu_layer_spec_heat
+	
+	# Furring
+	fuThickness = fu.furring_layer_thickness
+	fuConductivity = fu.furring_layer_conductivity
+	fuDensity = fu.furring_layer_density
+	fuSpecificHeat = fu.furring_layer_spec_heat
 	
 	# Gypsum
 	gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -421,16 +435,16 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 	gypsum.setSolarAbsorptance(gypsumSolarAbs)
 	gypsum.setVisibleAbsorptance(gypsumVisibleAbs)
 
-  # Rigid
-  if rigidInsRvalue > 0
-    rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    rigid.setName("WallRigidIns")
-    rigid.setRoughness("Rough")
-    rigid.setThickness(OpenStudio::convert(wallsh.rigid_ins_layer_thickness,"ft","m").get)
-    rigid.setConductivity(OpenStudio::convert(wallsh.rigid_ins_layer_conductivity,"Btu/hr*ft*R","W/m*K").get)
-    rigid.setDensity(OpenStudio::convert(wallsh.rigid_ins_layer_density,"lb/ft^3","kg/m^3").get)
-    rigid.setSpecificHeat(OpenStudio::convert(wallsh.rigid_ins_layer_spec_heat,"Btu/lb*R","J/kg*K").get)
-  end
+	# Rigid
+	if rigidInsRvalue > 0
+	  rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)
+      rigid.setName("WallRigidIns")
+      rigid.setRoughness("Rough")
+      rigid.setThickness(OpenStudio::convert(wallsh.rigid_ins_layer_thickness,"ft","m").get)
+      rigid.setConductivity(OpenStudio::convert(wallsh.rigid_ins_layer_conductivity,"Btu/hr*ft*R","W/m*K").get)
+      rigid.setDensity(OpenStudio::convert(wallsh.rigid_ins_layer_density,"lb/ft^3","kg/m^3").get)
+      rigid.setSpecificHeat(OpenStudio::convert(wallsh.rigid_ins_layer_spec_heat,"Btu/lb*R","J/kg*K").get)
+	end
 	
 	# OSB
 	osb = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -451,16 +465,25 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 	extfin.setSpecificHeat(OpenStudio::convert(finishSpecHeat,"Btu/lb*R","J/kg*K").get)
 	extfin.setThermalAbsorptance(finishThermalAbs)
 	extfin.setSolarAbsorptance(finishSolarAbs)
-	extfin.setVisibleAbsorptance(finishVisibleAbs)
+	extfin.setVisibleAbsorptance(finishVisibleAbs)	
 	
-	# StudandCavity
-	sc = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-	sc.setName("StudandCavity")
-	sc.setRoughness("Rough")
-	sc.setThickness(OpenStudio::convert(scThickness,"ft","m").get)
-	sc.setConductivity(OpenStudio::convert(scConductivity,"Btu/hr*ft*R","W/m*K").get)
-	sc.setDensity(OpenStudio::convert(scDensity,"lb/ft^3","kg/m^3").get)
-	sc.setSpecificHeat(OpenStudio::convert(scSpecificHeat,"Btu/lb*R","J/kg*K").get)
+	# CMU
+	cmu = OpenStudio::Model::StandardOpaqueMaterial.new(model)
+	cmu.setName("CMU")
+	cmu.setRoughness("Rough")
+	cmu.setThickness(OpenStudio::convert(cmuThickness,"in","m").get)
+	cmu.setConductivity(OpenStudio::convert(cmuConductivity,"Btu/hr*ft*R","W/m*K").get)
+	cmu.setDensity(OpenStudio::convert(cmuDensity,"lb/ft^3","kg/m^3").get)
+	cmu.setSpecificHeat(OpenStudio::convert(cmuSpecificHeat,"Btu/lb*R","J/kg*K").get)	
+	
+	# Furring
+	fu = OpenStudio::Model::StandardOpaqueMaterial.new(model)
+	fu.setName("Furring")
+	fu.setRoughness("Rough")
+	fu.setThickness(OpenStudio::convert(fuThickness,"ft","m").get)
+	fu.setConductivity(OpenStudio::convert(fuConductivity,"Btu/hr*ft*R","W/m*K").get)
+	fu.setDensity(OpenStudio::convert(fuDensity,"lb/ft^3","kg/m^3").get)
+	fu.setSpecificHeat(OpenStudio::convert(fuSpecificHeat,"Btu/lb*R","J/kg*K").get)	
 	
 	# ExtInsFinWall
 	layercount = 0
@@ -476,19 +499,37 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
 		extinsfinwall.insertLayer(layercount,osb)
 		layercount += 1
 	end
-	extinsfinwall.insertLayer(layercount,sc)
-	layercount += 1
-    (0...gypsumNumLayers).to_a.each do |i|
-		extinsfinwall.insertLayer(layercount,gypsum)
-    layercount += 1
+	extinsfinwall.insertLayer(layercount,cmu)
+	if cmuFurringCavityDepth > 0
+		extinsfinwall.insertLayer(layercount,fu)
+		layercount += 1
 	end
+	layercount += 1
+	(0...gypsumNumLayers).to_a.each do |i|
+		extinsfinwall.insertLayer(layercount,gypsum)
+		layercount += 1
+	end	
 	
 	# ExtInsUnfinWall
+	layercount = 0
 	extinsunfinwall = OpenStudio::Model::Construction.new(model)
 	extinsunfinwall.setName("ExtInsUnfinWall")
-	extinsunfinwall.insertLayer(0,extfin)
-	extinsunfinwall.insertLayer(1,sc)
-
+	extinsunfinwall.insertLayer(layercount,extfin)
+	layercount += 1
+	if rigidInsRvalue > 0
+		extinsunfinwall.insertLayer(layercount,rigid)
+		layercount += 1
+	end
+	if hasOSB
+		extinsunfinwall.insertLayer(layercount,osb)
+		layercount += 1
+	end
+	extinsunfinwall.insertLayer(layercount,cmu)
+	if cmuFurringCavityDepth > 0
+		extinsunfinwall.insertLayer(layercount,fu)
+		layercount += 1
+	end
+	
     # loop thru all the spaces
     spaces = model.getSpaces
     spaces.each do |space|
@@ -507,13 +548,13 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
       constructions_hash.map do |key,value|
         runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
       end
-    end
-
+    end	
+	
     return true
- 
-  end #end the run method
 
-end #end the measure
+  end
+  
+end
 
-#this allows the measure to be use by the application
-ProcessConstructionsExteriorInsulatedWallsWoodStud.new.registerWithApplication
+# register the measure to be used by the application
+ProcessConstructionsExteriorInsulatedWallsCMU.new.registerWithApplication

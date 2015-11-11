@@ -1,0 +1,283 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>process_constructions_exterior_insulated_walls_cmu</name>
+  <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
+  <version_id>f97a5b44-4842-4ee9-8bc7-e77077b0eb96</version_id>
+  <xml_checksum>2609226D</xml_checksum>
+  <class_name>ProcessConstructionsExteriorInsulatedWallsCMU</class_name>
+  <display_name>Add/Replace Residential CMU Walls</display_name>
+  <description>This measure creates CMU constructions for the exterior walls adjacent to the living space.</description>
+  <modeler_description>Calculates material layer properties of CMU constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>userdefinedgypthickness</name>
+      <display_name>Exterior Wall Mass: Thickness</display_name>
+      <description>Gypsum layer thickness.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.5</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedgyplayers</name>
+      <display_name>Exterior Wall Mass: Num Layers</display_name>
+      <description>Integer number of layers of gypsum.</description>
+      <type>Double</type>
+      <units>#</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcmuthickness</name>
+      <display_name>CMU: CMU Block Thickness</display_name>
+      <description>Thickness of the CMU portion of the wall.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>6</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcmuconductivity</name>
+      <display_name>CMU: CMU Conductivity</display_name>
+      <description>Overall conductivity of the finished CMU block.</description>
+      <type>Double</type>
+      <units>Btu-in/hr-ft^2-R</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>5.33</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedcmudensity</name>
+      <display_name>CMU: CMU Density</display_name>
+      <description>The density of the finished CMU block.</description>
+      <type>Double</type>
+      <units>lb/ft^3</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>119</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedframingfrac</name>
+      <display_name>CMU: Framing Factor</display_name>
+      <description>Total fraction of the wall that is framing for windows or doors.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.076</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfurringr</name>
+      <display_name>CMU: Furring Insulation R-value</display_name>
+      <description>R-value of the insulation filling the furring cavity.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfurringcavdepth</name>
+      <display_name>CMU: Furring Cavity Depth</display_name>
+      <description>The depth of the interior furring cavity.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedfurringstudspacing</name>
+      <display_name>CMU: Furring Stud Spacing</display_name>
+      <description>Spacing of studs in the furring.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>24</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedhasosb</name>
+      <display_name>Wall Sheathing: Has OSB</display_name>
+      <description>Specifies if the walls have a layer of structural shear OSB sheathing.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedrigidinsthickness</name>
+      <display_name>Wall Sheathing: Continuous Insulation Thickness</display_name>
+      <description>The thickness of the continuous insulation.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedrigidinsr</name>
+      <display_name>Wall Sheathing: Continuous Insulation Nominal R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinthickness</name>
+      <display_name>Exterior Finish: Thickness</display_name>
+      <description>Thickness of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.375</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinr</name>
+      <display_name>Exterior Finish: R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.6</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfindensity</name>
+      <display_name>Exterior Finish: Density</display_name>
+      <description>Density of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>lb/ft^3</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>11.1</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinspecheat</name>
+      <display_name>Exterior Finish: Specific Heat</display_name>
+      <description>Specific heat of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>Btu/lb-R</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.25</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinthermalabs</name>
+      <display_name>Exterior Finish: Emissivity</display_name>
+      <description>The property that determines the fraction of the incident radiation that is absorbed.</description>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.9</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinabs</name>
+      <display_name>Exterior Finish: Solar Absorptivity</display_name>
+      <description>The property that determines the fraction of the incident radiation that is absorbed.</description>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.3</default_value>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Opaque</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>process_constructions_exterior_insulated_walls_cmu_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C5ED39A4</checksum>
+    </file>
+    <file>
+      <filename>example_model.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4F35230</checksum>
+    </file>
+    <file>
+      <filename>ASHRAE622WSF.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C1BB835</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>E1BABF3B</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>39852CD3</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>72EDEC43</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CB3EAC1E</checksum>
+    </file>
+  </files>
+</measure>

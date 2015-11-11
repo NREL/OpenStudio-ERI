@@ -534,7 +534,6 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	end
 	
 	# Gypsum	
-    gypsumRoughness = "Rough"
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
     gypsumConductivity = mat_gyp.k

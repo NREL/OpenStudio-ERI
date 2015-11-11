@@ -1,0 +1,272 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>process_constructions_exterior_insulated_walls_sip</name>
+  <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
+  <version_id>ce7033e4-2090-4ede-b3da-d3500846374d</version_id>
+  <xml_checksum>2609226D</xml_checksum>
+  <class_name>ProcessConstructionsExteriorInsulatedWallsSIP</class_name>
+  <display_name>Add/Replace Residential SIP Walls</display_name>
+  <description>This measure creates SIP constructions for the exterior walls adjacent to the living space.</description>
+  <modeler_description>Calculates material layer properties of SIP constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>userdefinedgypthickness</name>
+      <display_name>Exterior Wall Mass: Thickness</display_name>
+      <description>Gypsum layer thickness.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.5</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedgyplayers</name>
+      <display_name>Exterior Wall Mass: Num Layers</display_name>
+      <description>Integer number of layers of gypsum.</description>
+      <type>Double</type>
+      <units>#</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>selectedintsheathingtype</name>
+      <display_name>SIP: Interior Sheathing Type</display_name>
+      <description>The interior sheathing type of the SIP wall.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>osb</default_value>
+      <choices>
+        <choice>
+          <value>osb</value>
+          <display_name>osb</display_name>
+        </choice>
+        <choice>
+          <value>gyp</value>
+          <display_name>gyp</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedframingfrac</name>
+      <display_name>SIP: Framing Factor</display_name>
+      <description>Total fraction of the wall that is framing for windows or doors.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.156</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedsipinsthickness</name>
+      <display_name>SIP: Insulation Thickness</display_name>
+      <description>Thickness of the insulating core of the SIP.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>3.625</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedsipinsr</name>
+      <display_name>SIP: Nominal Insulation R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>17.5</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedsipintsheathingthick</name>
+      <display_name>SIP: Interior Sheathing Thickness</display_name>
+      <description>The thickness of the interior sheathing.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.44</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedhasosb</name>
+      <display_name>Wall Sheathing: Has OSB</display_name>
+      <description>Specifies if the walls have a layer of structural shear OSB sheathing.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>userdefinedrigidinsthickness</name>
+      <display_name>Wall Sheathing: Continuous Insulation Thickness</display_name>
+      <description>The thickness of the continuous insulation.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedrigidinsr</name>
+      <display_name>Wall Sheathing: Continuous Insulation Nominal R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinthickness</name>
+      <display_name>Exterior Finish: Thickness</display_name>
+      <description>Thickness of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.375</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinr</name>
+      <display_name>Exterior Finish: R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.6</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfindensity</name>
+      <display_name>Exterior Finish: Density</display_name>
+      <description>Density of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>lb/ft^3</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>11.1</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinspecheat</name>
+      <display_name>Exterior Finish: Specific Heat</display_name>
+      <description>Specific heat of the exterior finish assembly.</description>
+      <type>Double</type>
+      <units>Btu/lb-R</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.25</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinthermalabs</name>
+      <display_name>Exterior Finish: Emissivity</display_name>
+      <description>The property that determines the fraction of the incident radiation that is absorbed.</description>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.9</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedextfinabs</name>
+      <display_name>Exterior Finish: Solar Absorptivity</display_name>
+      <description>The property that determines the fraction of the incident radiation that is absorbed.</description>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.3</default_value>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Opaque</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>process_constructions_exterior_insulated_walls_sip_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E547BA59</checksum>
+    </file>
+    <file>
+      <filename>example_model.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4F35230</checksum>
+    </file>
+    <file>
+      <filename>ASHRAE622WSF.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C1BB835</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>39852CD3</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A8A4DF6D</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>72EDEC43</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CB3EAC1E</checksum>
+    </file>
+  </files>
+</measure>

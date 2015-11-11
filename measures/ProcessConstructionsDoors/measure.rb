@@ -103,6 +103,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     door_thickness = d.door_thickness
     d = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     d.setName("DoorMaterial")
+	d.setRoughness("Rough")
     d.setThickness(OpenStudio::convert(door_thickness,"ft","m").get)
     d.setConductivity(OpenStudio::convert(mat_door_Uvalue * door_thickness,"Btu/hr*ft*R","W/m*K").get)
     d.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
@@ -118,6 +119,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     garage_door_thickness = gd.garage_door_thickness
     gd = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     gd.setName("GarageDoorMaterial")
+	gd.setRoughness("Rough")
     gd.setThickness(OpenStudio::convert(garage_door_thickness,"ft","m").get)
     gd.setConductivity(OpenStudio::convert(garage_door_Uvalue * garage_door_thickness,"Btu/hr*ft*R","W/m*K").get)
     gd.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)

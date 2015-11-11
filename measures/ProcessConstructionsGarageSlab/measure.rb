@@ -112,7 +112,7 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|
-          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Ground"
+          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition.downcase == "ground"
             surface.resetConstruction
             surface.setConstruction(grnduninsunfingrgfloor)
             constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"GrndUninsUnfinGrgFloor"]

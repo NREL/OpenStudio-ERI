@@ -102,6 +102,9 @@ class Constants
     @fuelTypeElectric = "electric"
     @num_Speeds_MSHP = 10.0
     @condenserTypeAir = "aircooled"
+	@materialOSB = "osb"
+	@materialGypsum = 'gyp'
+	@materialGypcrete = 'crete'
   end
 
   def DefaultSolarAbsCeiling
@@ -351,7 +354,18 @@ class Constants
   def CondenserTypeAir
     return @condenserTypeAir
   end
+  
+  def MaterialOSB
+	return @materialOSB
+  end
 
+  def MaterialGypsum
+	return @materialGypsum
+  end
+
+  def MaterialGypcrete
+	return @materialGypcrete
+  end  
 end
 
 class Mat_liq

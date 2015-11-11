@@ -365,7 +365,6 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     mat_densepack_generic = get_mat_densepack_generic
 
     # Gypsum
-    gypsumRoughness = "Rough"
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
     gypsumConductivity = mat_gyp.k
@@ -378,13 +377,11 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
 
     # Rigid
     rigidInsRvalue = userdefined_rigidinsr
-    rigidInsRoughness = "Rough"
     rigidInsThickness = userdefined_rigidinsthickness
     rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
     rigidInsDensity = mat_rigid.rho
     rigidInsSpecificHeat = mat_rigid.Cp
     hasOSB = userdefined_hasosb
-    osbRoughness = "Rough"
     osbThickness = 0.5
     osbConductivity = mat_wood.k
     osbDensity = mat_wood.rho
@@ -411,7 +408,6 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
 
     # Exterior Finish
     finishRvalue = userdefined_extfinr
-    finishRoughness = "Rough"
     finishThickness = userdefined_extfinthickness
     finishConductivity = finishThickness / finishRvalue
     finishDensity = userdefined_extfindensity
@@ -467,7 +463,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     # Gypsum
     gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     gypsum.setName("GypsumBoard-ExtWall")
-    gypsum.setRoughness(gypsumRoughness)
+    gypsum.setRoughness("Rough")
     gypsum.setThickness(OpenStudio::convert(gypsumThickness,"in","m").get)
     gypsum.setConductivity(OpenStudio::convert(gypsumConductivity,"Btu/hr*ft*R","W/m*K").get)
     gypsum.setDensity(OpenStudio::convert(gypsumDensity,"lb/ft^3","kg/m^3").get)
@@ -479,7 +475,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     # ExteriorFinish
     extfin = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     extfin.setName("ExteriorFinish")
-    extfin.setRoughness(finishRoughness)
+    extfin.setRoughness("Rough")
     extfin.setThickness(OpenStudio::convert(finishThickness,"in","m").get)
     extfin.setConductivity(OpenStudio::convert(finishConductivity,"Btu*in/hr*ft^2*R","W/m*K").get)
     extfin.setDensity(OpenStudio::convert(finishDensity,"lb/ft^3","kg/m^3").get)
@@ -502,7 +498,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     # OSB
     osb = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     osb.setName("Plywood-1_2in")
-    osb.setRoughness(osbRoughness)
+    osb.setRoughness("Rough")
     osb.setThickness(OpenStudio::convert(osbThickness,"in","m").get)
     osb.setConductivity(OpenStudio::convert(osbConductivity,"Btu/hr*ft*R","W/m*K").get)
     osb.setDensity(OpenStudio::convert(osbDensity,"lb/ft^3","kg/m^3").get)

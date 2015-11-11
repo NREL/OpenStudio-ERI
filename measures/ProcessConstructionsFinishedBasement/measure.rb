@@ -504,7 +504,6 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     end
 
     # Gypsum
-    gypsumRoughness = "Rough"
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
     gypsumConductivity = mat_gyp.k
@@ -628,7 +627,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     # Gypsum
     gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     gypsum.setName("GypsumBoard-1_2in")
-    gypsum.setRoughness(gypsumRoughness)
+    gypsum.setRoughness("Rough")
     gypsum.setThickness(OpenStudio::convert(0.5,"in","m").get)
     gypsum.setConductivity(OpenStudio::convert(gypsumConductivity,"Btu/hr*ft*R","W/m*K").get)
     gypsum.setDensity(OpenStudio::convert(gypsumDensity,"lb/ft^3","kg/m^3").get)

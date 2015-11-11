@@ -19,8 +19,8 @@ end
 
 class WeatherProcess
 
-  def initialize(epwfile)
-    @header, @data, @design = WeatherProcess._process_epw_text(epwfile)
+  def initialize(epwfile, runner)
+    @header, @data, @design = WeatherProcess._process_epw_text(epwfile, runner)
   end
 
   def header
@@ -35,8 +35,8 @@ class WeatherProcess
     return @design
   end
 
-  def self._process_epw_text(epwfile)
-
+  def self._process_epw_text(epwfile, runner)
+  
     # if not os.path.exists(epwfile):
     #     raise IOError("Cannot find file " + epwfile)
 	
@@ -62,7 +62,7 @@ class WeatherProcess
 
 	# self._get_climate_zones_ba(self.header.Station)
 	# self._get_states_in_ba_zone(self.zones.BA)
-	header = WeatherProcess._get_ashrae_622_wsf(header, header.Station)
+	# header = WeatherProcess._get_ashrae_622_wsf(header, header.Station, runner) TODO: getting utf-8 byte error on linux server when parsing this csv
 	
     # Design data line:
 
@@ -282,19 +282,22 @@ class WeatherProcess
 
   end
 
-  def self._get_ashrae_622_wsf(header, wmo)
+  def self._get_ashrae_622_wsf(header, wmo, runner)
     # Looks up the ASHRAE 62.2 weather and sheilding factor from ASHRAE622WSF
     # for the specified WMO station number. If not found, uses the average value 
     # in the file.
         
     # Sets the WSF value.
     
+	runner.registerInfo("Getting ASHRAE 62.2 WSF...")
+	
 	ashrae_csv = File.absolute_path(File.join(__FILE__, '..', 'ASHRAE622WSF.csv'))
 	ashrae_csvlines = []
-    File.open(ashrae_csv) do |file|
-        # if not os.path.exists(ashrae_csv):
-        #    raise IOError("Cannot find file " + ashrae_csv)
+	File.open(ashrae_csv) do |file|
+		# if not os.path.exists(ashrae_csv):
+		#    raise IOError("Cannot find file " + ashrae_csv)
 		file.each do |line|
+			line = line.strip.chomp.chomp(',').chomp # remove RHS whitespace and extra comma
 			ashrae_csvlines << line
 		end
 	end
@@ -317,7 +320,7 @@ class WeatherProcess
 	
 	# Value not found, use average
 	header.WSF = wsfs.inject{ |sum, n| sum + n } / wsfs.length
-		
+				
 	return header
 		
   end

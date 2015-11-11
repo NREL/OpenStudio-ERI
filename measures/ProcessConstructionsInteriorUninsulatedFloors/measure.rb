@@ -238,7 +238,6 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     constants = Constants.new
 
     # Gypsum
-    gypsumRoughness = "Rough"
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
     gypsumConductivity = mat_gyp.k
@@ -298,7 +297,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     # Gypsum
     gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     gypsum.setName("GypsumBoard-Ceiling")
-    gypsum.setRoughness(gypsumRoughness)
+    gypsum.setRoughness("Rough")
     gypsum.setThickness(OpenStudio::convert(gypsumThickness,"in","m").get)
     gypsum.setConductivity(OpenStudio::convert(gypsumConductivity,"Btu/hr*ft*R","W/m*K").get)
     gypsum.setDensity(OpenStudio::convert(gypsumDensity,"lb/ft^3","kg/m^3").get)

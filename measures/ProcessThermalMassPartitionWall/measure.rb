@@ -155,7 +155,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     userdefinedfbsmtarea.setDisplayName("Finished Basement Area")
 	userdefinedfbsmtarea.setUnits("ft^2")
 	userdefinedfbsmtarea.setDescription("The area of the finished basement.")
-    userdefinedfbsmtarea.setDefaultValue(1200.0)
+    userdefinedfbsmtarea.setDefaultValue(0.0)
     args << userdefinedfbsmtarea
 
     return args
@@ -237,11 +237,6 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     #           self.FBsmtPartWallDrawnArea += wall.area
     #       # End drawn partition wall area sumation loop
 
-    # temp
-    livingPartWallDrawnArea = partition_wall_mass.living_space_area / 2.0
-    fbsmtPartWallDrawnArea = partition_wall_mass.finished_basement_area / 2.0
-    #
-
     # ConcPCMPartWall
     if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
       pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -272,7 +267,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     saw.setThickness(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).thick,"ft","m").get)
     saw.setConductivity(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).k,"Btu/hr*ft*R","W/m*K").get)
     saw.setDensity(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).rho,"lb/ft^3","kg/m^3").get)
-    saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).Cp,"Btu/lb*R","J/kg*K").get) # tk
+    saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).Cp,"Btu/lb*R","J/kg*K").get)
 
     # FinUninsFinWall
     layercount = 0
