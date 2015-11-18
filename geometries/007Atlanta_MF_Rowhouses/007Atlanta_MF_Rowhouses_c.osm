@@ -147,7 +147,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {706da858-1d10-4548-9b6e-cd38020ea7f4}, !- Handle
   living_4,                               !- Name
-  {8b2aae96-0e4a-4cc9-ab70-75ca81ff6132}, !- Space Type Name
+  {0388fe88-cad5-4837-92ba-b9daf3e05a0a}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -294,7 +294,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {fa3e79fe-8c5a-45ad-a866-4f3d14e8105e}, !- Handle
   living_3,                               !- Name
-  {b1610041-985e-4b59-8d56-fc32f771fd5e}, !- Space Type Name
+  {0388fe88-cad5-4837-92ba-b9daf3e05a0a}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -467,7 +467,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {c75c0ec5-8550-4b30-a7c3-52c917e7e2d2}, !- Handle
   living_5,                               !- Name
-  {22f4f1ec-f23c-4d64-9c84-21c870f03f18}, !- Space Type Name
+  {0388fe88-cad5-4837-92ba-b9daf3e05a0a}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -648,7 +648,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {f9124418-6f5a-4c8e-a2e0-dfe92f714518}, !- Handle
   living_2,                               !- Name
-  {ccd0dad8-67f5-4332-b466-9a69982fdab2}, !- Space Type Name
+  {0388fe88-cad5-4837-92ba-b9daf3e05a0a}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3534,26 +3534,12 @@ OS:Rendering:Color,
   255,                                    !- Rendering Green Value
   224;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {ccd0dad8-67f5-4332-b466-9a69982fdab2}, !- Handle
-  living_2,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {7cd30487-d136-40e5-8fa6-e0c01212cf3d}; !- Group Rendering Name
-
 OS:Rendering:Color,
   {7cd30487-d136-40e5-8fa6-e0c01212cf3d}, !- Handle
   Rendering Color 31,                     !- Name
   189,                                    !- Rendering Red Value
   183,                                    !- Rendering Green Value
   107;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {b1610041-985e-4b59-8d56-fc32f771fd5e}, !- Handle
-  living_3,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {01bbc55d-8edc-449f-985c-b6872ab664fb}; !- Group Rendering Name
 
 OS:Rendering:Color,
   {01bbc55d-8edc-449f-985c-b6872ab664fb}, !- Handle
@@ -3562,26 +3548,12 @@ OS:Rendering:Color,
   230,                                    !- Rendering Green Value
   140;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {8b2aae96-0e4a-4cc9-ab70-75ca81ff6132}, !- Handle
-  living_4,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {cec42809-b821-4b23-907e-023c82b68af8}; !- Group Rendering Name
-
 OS:Rendering:Color,
   {cec42809-b821-4b23-907e-023c82b68af8}, !- Handle
   Rendering Color 33,                     !- Name
   85,                                     !- Rendering Red Value
   107,                                    !- Rendering Green Value
   47;                                     !- Rendering Blue Value
-
-OS:SpaceType,
-  {22f4f1ec-f23c-4d64-9c84-21c870f03f18}, !- Handle
-  living_5,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {874291a5-265c-4786-afa0-727115d18ff3}; !- Group Rendering Name
 
 OS:Rendering:Color,
   {874291a5-265c-4786-afa0-727115d18ff3}, !- Handle
@@ -3636,7 +3608,7 @@ OS:WeatherFile,
   -84.43,                                 !- Longitude {deg}
   -5,                                     !- Time Zone {hr}
   308,                                    !- Elevation {m}
-  file:files/USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMY3.epw, !- Url
+  file:///C:/Res_measures_git/OpenStudio-Beopt/geometries/007Atlanta_MF_Rowhouses/007Atlanta_MF_Rowhouses_c/files/USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMY3.epw, !- Url
   813B1688;                               !- Checksum
 
 OS:RunPeriod,
@@ -3652,4 +3624,21 @@ OS:RunPeriod,
   ,                                       !- Use Weather File Rain Indicators
   ,                                       !- Use Weather File Snow Indicators
   ;                                       !- Number of Times Runperiod to be Repeated
+
+OS:SpaceType,
+  {0388fe88-cad5-4837-92ba-b9daf3e05a0a}, !- Handle
+  living,                                 !- Name
+  ,                                       !- Default Construction Set Name
+  ,                                       !- Default Schedule Set Name
+  {d1edc5d4-267a-4367-bf6f-f5ae3655d15d}, !- Group Rendering Name
+  ,                                       !- Design Specification Outdoor Air Object Name
+  ,                                       !- Standards Building Type
+  ;                                       !- Standards Space Type
+
+OS:Rendering:Color,
+  {d1edc5d4-267a-4367-bf6f-f5ae3655d15d}, !- Handle
+  Rendering Color 35,                     !- Name
+  64,                                     !- Rendering Red Value
+  224,                                    !- Rendering Green Value
+  208;                                    !- Rendering Blue Value
 
