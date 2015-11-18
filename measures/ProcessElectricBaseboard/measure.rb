@@ -13,8 +13,16 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessElectricBaseboard"
+    return "Add/Replace Residential Electric Baseboard"
   end
+  
+  def description
+    return "This measure removes any existing electric baseboards from the building and adds electric baseboards."
+  end
+  
+  def modeler_description
+    return "This measure parses the OSM for the HeatingSeasonSchedule. Any existing baseboard convective electrics are removed from any existing zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists."
+  end   
   
   #define the arguments that the user will input
   def arguments(model)
@@ -39,19 +47,22 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for living zone
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", zone_handles, zone_display_names, true)
-    selected_living.setDisplayName("Which is the living space zone?")
+    selected_living.setDisplayName("Living Zone")
+	selected_living.setDescription("The living zone.")
     args << selected_living
 
     #make a choice argument for fbsmt
     selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", zone_handles, zone_display_names, false)
-    selected_fbsmt.setDisplayName("Which is the finished basement zone?")
+    selected_fbsmt.setDisplayName("Finished Basement Zone")
+	selected_fbsmt.setDescription("The finished basement zone.")
     args << selected_fbsmt
 
     #make an argument for entering furnace installed afue
     userdefined_eff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedeff",true)
-    userdefined_eff.setDisplayName("Efficiency [Btu/Btu]")
+    userdefined_eff.setDisplayName("Efficiency")
+	userdefined_eff.setUnits("Btu/Btu")
 	userdefined_eff.setDescription("The efficiency of the electric baseboard.")
-    userdefined_eff.setDefaultValue(1)
+    userdefined_eff.setDefaultValue(1.0)
     args << userdefined_eff
 
     #make a choice argument for furnace heating output capacity

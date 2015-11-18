@@ -13,11 +13,31 @@ require "#{File.dirname(__FILE__)}/resources/sim"
 #start the measure
 class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 
+  class LivingSpace
+    def initialize
+    end
+    attr_accessor(:area)
+  end
+
+  class FinishedBasement
+    def initialize
+    end
+    attr_accessor(:area)
+  end
+
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessThermalMassFurniture"
+    return "Add/Replace Residential Furniture Thermal Mass"
   end
+  
+  def description
+    return "This measure creates internal mass for furniture in the living space, finished basement, unfinished basement, and garage."
+  end
+  
+  def modeler_description
+    return "This measure creates constructions representing the internal mass of furniture in the living space, finished basement, unfinished basement, and garage. The constructions are set to define the internal mass objects of their respective spaces."
+  end    
   
   #define the arguments that the user will input
   def arguments(model)
@@ -43,22 +63,55 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     #make a choice argument for living space
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
     selected_living.setDisplayName("Of what space type is the living space?")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
     #make a choice argument for fbsmt
     selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_fbsmt.setDisplayName("Of what space type is the finished basement?")
+    selected_fbsmt.setDisplayName("Finished Basement Space")
+	selected_fbsmt.setDescription("The finished basement space type.")
     args << selected_fbsmt
 
     #make a choice argument for ufbsmt
     selected_ufbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_ufbsmt.setDisplayName("Of what space type is the unfinished basement?")
+    selected_ufbsmt.setDisplayName("Unfinished Basement Space")
+	selected_ufbsmt.setDescription("The unfinished basement space type.")
     args << selected_ufbsmt
 
     #make a choice argument for garage
     selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, false)
-    selected_garage.setDisplayName("Of what space type is the garage?")
+    selected_garage.setDisplayName("Garage Space")
+	selected_garage.setDescription("The garage space type.")
     args << selected_garage
+	
+    # Geometry
+    userdefinedlivingarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedlivingarea", true)
+    userdefinedlivingarea.setDisplayName("Living Space Area")
+	userdefinedlivingarea.setUnits("ft^2")
+	userdefinedlivingarea.setDescription("The area of the living space.")
+    userdefinedlivingarea.setDefaultValue(2700.0)
+    args << userdefinedlivingarea
+
+    userdefinedfbsmtarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtarea", true)
+    userdefinedfbsmtarea.setDisplayName("Finished Basement Area")
+	userdefinedfbsmtarea.setUnits("ft^2")
+	userdefinedfbsmtarea.setDescription("The area of the finished basement.")
+    userdefinedfbsmtarea.setDefaultValue(0.0)
+    args << userdefinedfbsmtarea
+
+	userdefinedufbsmtarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedufbsmtarea", true)
+    userdefinedufbsmtarea.setDisplayName("Unfinished Basement Area")
+	userdefinedufbsmtarea.setUnits("ft^2")
+	userdefinedufbsmtarea.setDescription("The area of the unfinished basement.")
+    userdefinedufbsmtarea.setDefaultValue(0.0)
+    args << userdefinedufbsmtarea
+	
+    userdefinedgaragearea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgaragearea", true)
+    userdefinedgaragearea.setDisplayName("Garage Area")
+	userdefinedgaragearea.setUnits("ft^2")
+	userdefinedgaragearea.setDescription("The area of the garage.")
+    userdefinedgaragearea.setDefaultValue(0.0)
+    args << userdefinedgaragearea	
 
     return args
   end #end the arguments method
@@ -94,7 +147,14 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 
     # Create the sim object
     sim = Sim.new(model, runner)
+    living_space_furn = LivingSpace.new
+    finished_basement_furn = FinishedBasement.new	
 
+	living_space_furn_area = runner.getDoubleArgumentValue("userdefinedlivingarea",user_arguments)
+	finished_basement_furn_area = runner.getDoubleArgumentValue("userdefinedfbsmtarea",user_arguments)
+	unfinished_basement_furn_area = runner.getDoubleArgumentValue("userdefinedufbsmtarea",user_arguments)
+	garage_furn_area = runner.getDoubleArgumentValue("userdefinedgaragearea",user_arguments)
+	
     # Process the furniture
     living_space_furn, finished_basement_furn, ubsmt_furn, garage_furn, has_furniture = sim._processThermalMassFurniture(hasFinishedBasement, hasUnfinishedBasement, hasGarage)
 
@@ -117,7 +177,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
       lsf = OpenStudio::Model::InternalMassDefinition.new(model)
       lsf.setName("LivingSpaceFurniture")
       lsf.setConstruction(lf)
-      lsf.setSurfaceArea(living_space_furn.area_frac * OpenStudio::convert(1200,"ft^2","m^2").get) # TODO: replace the 1200 with living space area
+      lsf.setSurfaceArea(living_space_furn.area_frac * OpenStudio::convert(living_space_furn_area,"ft^2","m^2").get)
       im = OpenStudio::Model::InternalMass.new(lsf)
       im.setName("LivingSpaceFurniture")
       # loop thru all the space types
@@ -148,7 +208,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
         fsf = OpenStudio::Model::InternalMassDefinition.new(model)
         fsf.setName("FBsmtSpaceFurniture")
         fsf.setConstruction(ff)
-        fsf.setSurfaceArea(living_space_furn.area_frac * OpenStudio::convert(1200,"ft^2","m^2").get) # TODO: replace the 1200 with finished basement area
+        fsf.setSurfaceArea(living_space_furn.area_frac * OpenStudio::convert(finished_basement_furn_area,"ft^2","m^2").get)
         im = OpenStudio::Model::InternalMass.new(fsf)
         im.setName("FBsmtSpaceFurniture")
         # loop thru all the space types
@@ -179,7 +239,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
         usf = OpenStudio::Model::InternalMassDefinition.new(model)
         usf.setName("UFBsmtSpaceFurniture")
         usf.setConstruction(uf)
-        usf.setSurfaceArea(ubsmt_furn.area_frac * OpenStudio::convert(1200,"ft^2","m^2").get) # TODO: replace the 1200 with unfinished basement area
+        usf.setSurfaceArea(ubsmt_furn.area_frac * OpenStudio::convert(unfinished_basement_furn_area,"ft^2","m^2").get)
         im = OpenStudio::Model::InternalMass.new(usf)
         im.setName("UFBsmtSpaceFurniture")
         # loop thru all the space types
@@ -208,7 +268,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
       gsf = OpenStudio::Model::InternalMassDefinition.new(model)
       gsf.setName("GarageSpaceFurniture")
       gsf.setConstruction(gf)
-      gsf.setSurfaceArea(garage_furn.area_frac * OpenStudio::convert(300,"ft^2","m^2").get) # TODO: replace the 300 with garage area
+      gsf.setSurfaceArea(garage_furn.area_frac * OpenStudio::convert(garage_furn_area,"ft^2","m^2").get)
       im = OpenStudio::Model::InternalMass.new(gsf)
       im.setName("GarageSpaceFurniture")
       # loop thru all the space types

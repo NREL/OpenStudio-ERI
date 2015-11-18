@@ -2,26 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>93944b8a-0aca-42e1-a9b0-d8b3cb15db62</version_id>
+  <version_id>6f8b3e13-d795-4040-9abb-29d72d023a05</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsSlab</class_name>
-  <display_name>ProcessConstructionsSlab</display_name>
+  <display_name>Add/Replace Residential Slab Constructions</display_name>
   <description>This measure creates slab constructions for the living space floor.</description>
   <modeler_description>Calculates material layer properties of slab constructions for the living space floor. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Of what space type is the living space?</display_name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedslabins</name>
-      <display_name>Slab insulation type.</display_name>
+      <display_name>Slab: Insulation Type</display_name>
+      <description>The type of insulation.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>Uninsulated</default_value>
       <choices>
         <choice>
           <value>Uninsulated</value>
@@ -43,60 +46,80 @@
     </argument>
     <argument>
       <name>userdefinedslabperiextr</name>
-      <display_name>Slab perimeter insulation R-value or exterior insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <display_name>Slab: Perimeter/Exterior Insulation Nominal R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedslabperiextwidthdepth</name>
-      <display_name>Slab perimeter insulation width or exterior insulation depth [ft].</display_name>
+      <display_name>Slab: Perimeter/Exterior Insulation Width/Depth</display_name>
+      <description>The width or depth of the perimeter or exterior insulation.</description>
       <type>Double</type>
+      <units>ft</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedslabgapr</name>
-      <display_name>Perimeter gap R-value or whole slab gap R-value [hr-ft^2-R/Btu].</display_name>
+      <display_name>Slab: Gap Insulation Nominal R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedslabwholer</name>
-      <display_name>Whole slab insulation R-value [hr-ft^2-R/Btu].</display_name>
+      <display_name>Slab: Whole Slab Insulation Nominal R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedcarpetr</name>
-      <display_name>Carpet pad R-value [hr-ft^2-R/Btu].</display_name>
+      <display_name>Carpet: Carpet Pad R-value</display_name>
+      <description>The combined R-value of the carpet and the pad.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>2.08</default_value>
     </argument>
     <argument>
       <name>userdefinedcarpetfrac</name>
-      <display_name>Carpet floor fraction [frac].</display_name>
+      <display_name>Carpet: Floor Carpet Fraction</display_name>
+      <description>Defines the fraction of a floor which is covered by carpet.</description>
       <type>Double</type>
+      <units>frac</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.8</default_value>
     </argument>
     <argument>
       <name>userdefinedslabarea</name>
-      <display_name>Area of the slab foundation [ft^2].</display_name>
+      <display_name>Slab Area</display_name>
+      <description>The area of the slab.</description>
       <type>Double</type>
+      <units>ft^2</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>1200</default_value>
     </argument>
     <argument>
       <name>userdefinedslabextperim</name>
-      <display_name>Perimeter of the slab foundation [ft].</display_name>
+      <display_name>Slab Perimeter</display_name>
+      <description>The perimeter of the slab.</description>
       <type>Double</type>
+      <units>ft</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>140</default_value>
@@ -140,19 +163,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9A7D35FA</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>EDBDEF12</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

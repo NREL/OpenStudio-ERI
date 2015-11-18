@@ -89,8 +89,16 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsInteriorUninsulatedFloors"
+    return "Add/Replace Residential Uninsulated Floors"
   end
+  
+  def description
+    return "This measure creates uninsulated constructions for the floors between living spaces and the floors between the living space and finished basement."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of uninsulated constructions for the floors between living spaces and the floors between the living space and finished basement. Finds surfaces adjacent to the living space and finished basement and sets applicable constructions."
+  end   
   
   #define the arguments that the user will input
   def arguments(model)
@@ -115,93 +123,77 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
 
     #make a choice argument for crawlspace
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
     #make a choice argument for fbsmt
     selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_fbsmt.setDisplayName("Of what space type is the finished basement?")
+    selected_fbsmt.setDisplayName("Finished Basement Space")
+	selected_fbsmt.setDescription("The finished basement space type.")
     args << selected_fbsmt
-
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
-
-    # #make a choice argument for interior finish of cavity
-    # selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
-    # selected_gypsum.setDisplayName("Interior finish (gypsum) of cavity. For manually entering interior finish properties of cavity, leave blank.")
-    # args << selected_gypsum
 
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
-    userdefined_gypthickness.setDisplayName("Thickness of drywall layers [in].")
+    userdefined_gypthickness.setDisplayName("Partition Wall Mass: Thickness")
+	userdefined_gypthickness.setUnits("in")
+	userdefined_gypthickness.setDescription("Gypsum layer thickness.")
     userdefined_gypthickness.setDefaultValue(0.5)
     args << userdefined_gypthickness
 
     #make a double argument for number of gypsum layers
     userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
-    userdefined_gyplayers.setDisplayName("Number of drywall layers.")
+    userdefined_gyplayers.setDisplayName("Partition Wall Mass: Num Layers")
+	userdefined_gyplayers.setUnits("#")
+	userdefined_gyplayers.setDescription("Integer number of layers of gypsum.")
     userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
 
-    # Floor Mass
-    # #make a choice argument for floor mass
-    # selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
-    # selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
-    # args << selected_floormass
-
     #make a double argument for floor mass thickness
     userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
-    userdefined_floormassth.setDisplayName("Floor mass thickness [in].")
+    userdefined_floormassth.setDisplayName("Floor Mass: Thickness")
+	userdefined_floormassth.setUnits("in")
+	userdefined_floormassth.setDescription("Thickness of the floor mass.")
     userdefined_floormassth.setDefaultValue(0.625)
     args << userdefined_floormassth
 
     #make a double argument for floor mass conductivity
     userdefined_floormasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasscond", false)
-    userdefined_floormasscond.setDisplayName("Floor mass conductivity [Btu-in/h-ft^2-R].")
+    userdefined_floormasscond.setDisplayName("Floor Mass: Conductivity")
+	userdefined_floormasscond.setUnits("Btu-in/h-ft^2-R")
+	userdefined_floormasscond.setDescription("Conductivity of the floor mass.")
     userdefined_floormasscond.setDefaultValue(0.8004)
     args << userdefined_floormasscond
 
     #make a double argument for floor mass density
     userdefined_floormassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassdens", false)
-    userdefined_floormassdens.setDisplayName("Floor mass density [lb/ft^3].")
+    userdefined_floormassdens.setDisplayName("Floor Mass: Density")
+	userdefined_floormassdens.setUnits("lb/ft^3")
+	userdefined_floormassdens.setDescription("Density of the floor mass.")
     userdefined_floormassdens.setDefaultValue(34.0)
     args << userdefined_floormassdens
 
     #make a double argument for floor mass specific heat
     userdefined_floormasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasssh", false)
-    userdefined_floormasssh.setDisplayName("Floor mass specific heat [Btu/lb-R].")
+    userdefined_floormasssh.setDisplayName("Floor Mass: Specific Heat")
+	userdefined_floormasssh.setUnits("Btu/lb-R")
+	userdefined_floormasssh.setDescription("Specific heat of the floor mass.")
     userdefined_floormasssh.setDefaultValue(0.29)
     args << userdefined_floormasssh
 
-    # Carpet
-    # #make a choice argument for carpet pad R-value
-    # selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-    # selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-    # args << selected_carpet
-
     #make a double argument for carpet pad R-value
     userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
-    userdefined_carpetr.setDisplayName("Carpet pad R-value [hr-ft^2-R/Btu].")
+    userdefined_carpetr.setDisplayName("Carpet: Carpet Pad R-value")
+	userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
+	userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
     userdefined_carpetr.setDefaultValue(2.08)
     args << userdefined_carpetr
 
     #make a double argument for carpet floor fraction
     userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
-    userdefined_carpetfrac.setDisplayName("Carpet floor fraction [frac].")
+    userdefined_carpetfrac.setDisplayName("Carpet: Floor Carpet Fraction")
+	userdefined_carpetfrac.setUnits("frac")
+	userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
     userdefined_carpetfrac.setDefaultValue(0.8)
     args << userdefined_carpetfrac
 
@@ -231,19 +223,13 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     end
 
     # Floor Mass
-    selected_slabfloormass = runner.getOptionalWorkspaceObjectChoiceValue("selectedfloormass",user_arguments,model)
-    if selected_slabfloormass.empty?
-      userdefined_floormassth = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
-      userdefined_floormasscond = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
-      userdefined_floormassdens = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
-      userdefined_floormasssh = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
-    end
+    userdefined_floormassth = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
+    userdefined_floormasscond = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
+    userdefined_floormassdens = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
+    userdefined_floormasssh = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
 
     # Carpet
-    selected_carpet = runner.getOptionalWorkspaceObjectChoiceValue("selectedcarpet",user_arguments,model)
-    if selected_carpet.empty?
-      userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-    end
+    userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
     userdefined_carpetfrac = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
     # Constants
@@ -252,51 +238,24 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     constants = Constants.new
 
     # Gypsum
-    if userdefined_gypthickness.nil?
-      gypsumRoughness = selected_gypsum.get.to_StandardOpaqueMaterial.get.roughness
-      gypsumThickness = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      gypsumNumLayers = 1.0
-      gypsumConductivity = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      gypsumDensity = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-      gypsumSpecificHeat = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-      gypsumThermalAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getThermalAbsorptance.value
-      gypsumSolarAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getSolarAbsorptance.value
-      gypsumVisibleAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getVisibleAbsorptance.value
-      gypsumRvalue = OpenStudio::convert(gypsumThickness,"in","ft").get / gypsumConductivity
-    else
-      gypsumRoughness = "Rough"
-      gypsumThickness = userdefined_gypthickness
-      gypsumNumLayers = userdefined_gyplayers
-      gypsumConductivity = mat_gyp.k
-      gypsumDensity = mat_gyp.rho
-      gypsumSpecificHeat = mat_gyp.Cp
-      gypsumThermalAbs = get_mat_gypsum_ceiling(mat_gyp).TAbs
-      gypsumSolarAbs = get_mat_gypsum_ceiling(mat_gyp).SAbs
-      gypsumVisibleAbs = get_mat_gypsum_ceiling(mat_gyp).VAbs
-      gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
-    end
+    gypsumThickness = userdefined_gypthickness
+    gypsumNumLayers = userdefined_gyplayers
+    gypsumConductivity = mat_gyp.k
+    gypsumDensity = mat_gyp.rho
+    gypsumSpecificHeat = mat_gyp.Cp
+    gypsumThermalAbs = get_mat_gypsum_ceiling(mat_gyp).TAbs
+    gypsumSolarAbs = get_mat_gypsum_ceiling(mat_gyp).SAbs
+    gypsumVisibleAbs = get_mat_gypsum_ceiling(mat_gyp).VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
 
     # Floor Mass
-    if userdefined_floormassth.nil?
-      floorMassThickness = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      floorMassConductivity = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      floorMassDensity = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-      floorMassSpecificHeat = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-    else
-      floorMassThickness = userdefined_floormassth
-      floorMassConductivity = userdefined_floormasscond
-      floorMassDensity = userdefined_floormassdens
-      floorMassSpecificHeat = userdefined_floormasssh
-    end
+    floorMassThickness = userdefined_floormassth
+    floorMassConductivity = userdefined_floormasscond
+    floorMassDensity = userdefined_floormassdens
+    floorMassSpecificHeat = userdefined_floormasssh
 
     # Carpet
-    if userdefined_carpetr.nil?
-      carpetPadThickness = OpenStudio::convert(selected_carpet.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      carpetPadConductivity = OpenStudio::convert(selected_carpet.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      carpetPadRValue = OpenStudio::convert(carpetPadThickness,"in","ft").get / carpetPadConductivity
-    else
-      carpetPadRValue = userdefined_carpetr
-    end
+    carpetPadRValue = userdefined_carpetr
     carpetFloorFraction = userdefined_carpetfrac
 
     # Create the material class instances
@@ -338,7 +297,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     # Gypsum
     gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     gypsum.setName("GypsumBoard-Ceiling")
-    gypsum.setRoughness(gypsumRoughness)
+    gypsum.setRoughness("Rough")
     gypsum.setThickness(OpenStudio::convert(gypsumThickness,"in","m").get)
     gypsum.setConductivity(OpenStudio::convert(gypsumConductivity,"Btu/hr*ft*R","W/m*K").get)
     gypsum.setDensity(OpenStudio::convert(gypsumDensity,"lb/ft^3","kg/m^3").get)

@@ -119,8 +119,16 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessCentralAirConditioner"
+    return "Add/Replace Residential Central Air Conditioner"
   end
+  
+  def description
+    return "This measure removes any existing HVAC cooling components from the building and adds a central air conditioner along with an on/off supply fan to a unitary air loop."
+  end
+  
+  def modeler_description
+    return "This measure parses the OSM for the CoolingSeasonSchedule. Any supply components, except for heating coils, are removed from any existing air loops or zones. Any existing air loops are also removed. A cooling DX coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
+  end   
   
   #define the arguments that the user will input
   def arguments(model)
@@ -145,12 +153,14 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for living zone
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", zone_handles, zone_display_names, true)
-    selected_living.setDisplayName("Which is the living space zone?")
+    selected_living.setDisplayName("Living Zone")
+	selected_living.setDescription("The living zone.")
     args << selected_living
 
     #make a choice argument for fbsmt
     selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", zone_handles, zone_display_names, false)
-    selected_fbsmt.setDisplayName("Which is the finished basement zone?")
+    selected_fbsmt.setDisplayName("Finished Basement Zone")
+	selected_fbsmt.setDescription("The finished basement zone.")
     args << selected_fbsmt
 
     #make a choice argument for central air options
@@ -169,7 +179,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for central air options
     selected_ac = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedac", ac_display_names, true)
-    selected_ac.setDisplayName("Installed SEER [Btu/W-h]")
+    selected_ac.setDisplayName("Installed SEER")
+	selected_ac.setUnits("Btu/W-h")
 	selected_ac.setDescription("The installed Seasonal Energy Efficiency Ratio (SEER) of the air conditioner, which can be used to account for performance derating or degradation relative to the rated value.")
     selected_ac.setDefaultValue("SEER 13")
     args << selected_ac

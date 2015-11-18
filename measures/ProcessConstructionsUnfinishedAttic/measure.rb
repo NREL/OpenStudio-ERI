@@ -157,8 +157,16 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsUnfinishedAttic"
+    return "Add/Replace Residential Unfinished Attic Floor and Ceiling"
   end
+  
+  def description
+    return "This measure creates constructions for the unfinished attic floor and ceiling."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of constructions for the unfinished attic floor and ceiling. Finds surfaces adjacent to the unfinished attic and sets applicable constructions."
+  end    
   
   #define the arguments that the user will input
   def arguments(model)
@@ -183,30 +191,15 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for living
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
     #make a choice argument for crawlspace
     selected_attic = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedattic", spacetype_handles, spacetype_display_names, true)
-    selected_attic.setDisplayName("Of what space type is the attic?")
+    selected_attic.setDisplayName("Attic Space")
+	selected_attic.setDescription("The attic space type.")
     args << selected_attic
-
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
 
     #make a choice argument for model objects
     uains_display_names = OpenStudio::StringVector.new
@@ -215,25 +208,26 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     uains_display_names << "Roof"
 
     #make a choice argument for unfinished attic insulation type
-    selected_uains = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduains", uains_display_names, true)
-    selected_uains.setDisplayName("Unfinished attic insulation type.")
+    selected_uains = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduains", uains_display_names, false)
+    selected_uains.setDisplayName("Unfinished Attic: Insulation Type")
+	selected_uains.setDescription("The type of insulation.")
+	selected_uains.setDefaultValue("Ceiling")
     args << selected_uains
-
-    # #make a choice argument for ceiling / roof insulation
-    # selected_uaceilroof = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduaceilroof", material_handles, material_display_names, false)
-    # selected_uaceilroof.setDisplayName("Unfinished attic ceiling or roof insulation. For manually entering unfinished attic ceiling or roof insulation properties, leave blank.")
-    # args << selected_uaceilroof
 
     #make a double argument for ceiling / roof insulation thickness
     userdefined_ceilroofinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedceilroofinsthickness", false)
-    userdefined_ceilroofinsthickness.setDisplayName("Unfinished attic ceiling or roof cavity insulation thickness [in].")
-    userdefined_ceilroofinsthickness.setDefaultValue(0)
+    userdefined_ceilroofinsthickness.setDisplayName("Unfinished Attic: Ceiling/Roof Insulation Thickness")
+	userdefined_ceilroofinsthickness.setUnits("in")
+	userdefined_ceilroofinsthickness.setDescription("The thickness in inches of insulation required to obtain a certain R-value.")
+    userdefined_ceilroofinsthickness.setDefaultValue(8.55)
     args << userdefined_ceilroofinsthickness
 
     #make a double argument for unfinished attic ceiling / roof insulation R-value
     userdefined_uaceilroofr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefineduaceilroofr", false)
-    userdefined_uaceilroofr.setDisplayName("Unfinished attic ceiling or roof cavity insulation R-value [hr-ft^2-R/Btu].")
-    userdefined_uaceilroofr.setDefaultValue(0)
+    userdefined_uaceilroofr.setDisplayName("Unfinished Attic: Ceiling/Roof Insulation Nominal R-value")
+	userdefined_uaceilroofr.setUnits("hr-ft^2-R/Btu")
+	userdefined_uaceilroofr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    userdefined_uaceilroofr.setDefaultValue(30.0)
     args << userdefined_uaceilroofr
 
     #make a choice argument for model objects
@@ -242,13 +236,16 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for wood stud size of wall cavity
     selected_joistthickness = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduaceiljoistthickness", joistthickness_display_names, false)
-    selected_joistthickness.setDisplayName("Thickness of joists in the ceiling.")
+    selected_joistthickness.setDisplayName("Unfinished Attic: Ceiling Joist Thickness")
+	selected_joistthickness.setDescription("Thickness of joists in the ceiling.")
     selected_joistthickness.setDefaultValue("3.5")
     args << selected_joistthickness
 
     #make a choice argument for unfinished attic ceiling framing factor
     userdefined_uaceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefineduaceilff", false)
-    userdefined_uaceilff.setDisplayName("Unfinished attic ceiling framing factor [frac].")
+    userdefined_uaceilff.setDisplayName("Unfinished Attic: Ceiling Framing Factor")
+	userdefined_uaceilff.setUnits("frac")
+	userdefined_uaceilff.setDescription("The framing factor of the ceiling.")
     userdefined_uaceilff.setDefaultValue(0.07)
     args << userdefined_uaceilff
 
@@ -258,69 +255,70 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
 
     #make a string argument for unfinished attic roof framing factor
     selected_framethickness = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteduaroofframethickness", framethickness_display_names, false)
-    selected_framethickness.setDisplayName("Thickness of joists in the ceiling.")
+    selected_framethickness.setDisplayName("Unfinished Attic: Roof Framing Thickness")
+	selected_framethickness.setUnits("in")
+	selected_framethickness.setDescription("Thickness of roof framing.")
     selected_framethickness.setDefaultValue("7.25")
     args << selected_framethickness
 
     #make a choice argument for unfinished attic roof framing factor
     userdefined_uaroofff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefineduaroofff", false)
-    userdefined_uaroofff.setDisplayName("Unfinished attic roof framing factor [frac].")
+    userdefined_uaroofff.setDisplayName("Unfinished Attic: Roof Framing Factor")
+	userdefined_uaroofff.setUnits("frac")
+	userdefined_uaroofff.setDescription("Fraction of roof that is made up of framing elements.")
     userdefined_uaroofff.setDefaultValue(0.07)
     args << userdefined_uaroofff
 
-    # #make a choice argument for rigid insulation of roof cavity
-    # selected_rigidins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedrigidins", material_handles, material_display_names, false)
-    # selected_rigidins.setDisplayName("Rigid insulation of roof cavity. For manually entering rigid insulation properties of roof cavity, leave blank.")
-    # args << selected_rigidins
-
     #make a double argument for rigid insulation thickness of roof cavity
     userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)
-    userdefined_rigidinsthickness.setDisplayName("Rigid insulation thickness of roof cavity [in].")
+    userdefined_rigidinsthickness.setDisplayName("Unfinished Attic: Roof Continuous Insulation Thickness")
+	userdefined_rigidinsthickness.setUnits("in")
+	userdefined_rigidinsthickness.setDescription("Thickness of rigid insulation added to the roof.")
     userdefined_rigidinsthickness.setDefaultValue(0)
     args << userdefined_rigidinsthickness
 
     #make a double argument for rigid insulation R-value of roof cavity
     userdefined_rigidinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsr", false)
-    userdefined_rigidinsr.setDisplayName("Rigid insulation R-value of roof cavity [hr-ft^2-R/Btu].")
+    userdefined_rigidinsr.setDisplayName("Unfinished Attic: Roof Continuous Insulation Nominal R-value")
+	userdefined_rigidinsr.setUnits("hr-ft^2-R/Btu")
+	userdefined_rigidinsr.setDescription("The nominal R-value of the continuous insulation.")
     userdefined_rigidinsr.setDefaultValue(0)
     args << userdefined_rigidinsr
 
     #make a bool argument for radiant barrier of roof cavity
-    userdefined_hasradiantbarrier = OpenStudio::Ruleset::OSArgument::makeBoolArgument("userdefinedhasradiantbarrier", true)
-    userdefined_hasradiantbarrier.setDisplayName("Roof has radiant barrier?")
+    userdefined_hasradiantbarrier = OpenStudio::Ruleset::OSArgument::makeBoolArgument("userdefinedhasradiantbarrier", false)
+    userdefined_hasradiantbarrier.setDisplayName("Has Radiant Barrier")
+	userdefined_hasradiantbarrier.setDescription("Layers of reflective material used to reduce heat transfer between the attic roof and the ceiling insulation and ductwork (if present).")
+	userdefined_hasradiantbarrier.setDefaultValue(false)
     args << userdefined_hasradiantbarrier
-
-    # #make a choice argument for interior finish of cavity
-    # selected_gypsum = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgypsum", material_handles, material_display_names, false)
-    # selected_gypsum.setDisplayName("Interior finish (gypsum) of cavity. For manually entering interior finish properties of cavity, leave blank.")
-    # args << selected_gypsum
 
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
-    userdefined_gypthickness.setDisplayName("Thickness of drywall layers [in].")
+    userdefined_gypthickness.setDisplayName("Ceiling Mass: Thickness")
+	userdefined_gypthickness.setUnits("in")
+	userdefined_gypthickness.setDescription("Gypsum layer thickness.")
     userdefined_gypthickness.setDefaultValue(0.5)
     args << userdefined_gypthickness
 
     #make a double argument for number of gypsum layers
     userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
-    userdefined_gyplayers.setDisplayName("Number of drywall layers.")
+    userdefined_gyplayers.setDisplayName("Ceiling Mass: Num Layers")
+	userdefined_gyplayers.setUnits("#")
+	userdefined_gyplayers.setDescription("Integer number of layers of gypsum.")
     userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
 
-    # #make a choice argument for roofing material of unfinished attic
-    # selected_roofmat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedroofmat", material_handles, material_display_names, false)
-    # selected_roofmat.setDisplayName("Roofing material for unfinished attic. For manually entering roofing material properties of unfinished attic, leave blank.")
-    # args << selected_roofmat
-
     #make a double argument for roofing material thermal absorptance of unfinished attic
     userdefined_roofmatthermalabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatthermalabs", false)
-    userdefined_roofmatthermalabs.setDisplayName("Roofing material emissivity of unfinished attic.")
+    userdefined_roofmatthermalabs.setDisplayName("Roof Material: Emissivity.")
+	userdefined_roofmatthermalabs.setDescription("Infrared emissivity of the outside surface of the roof.")
     userdefined_roofmatthermalabs.setDefaultValue(0.91)
     args << userdefined_roofmatthermalabs
 
     #make a double argument for roofing material solar/visible absorptance of unfinished attic
     userdefined_roofmatabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatabs", false)
-    userdefined_roofmatabs.setDisplayName("Roofing material absorptance of unfinished attic.")
+    userdefined_roofmatabs.setDisplayName("Roof Material: Absorptivity")
+	userdefined_roofmatabs.setDescription("The solar radiation absorptance of the outside roof surface, specified as a value between 0 and 1.")
     userdefined_roofmatabs.setDefaultValue(0.85)
     args << userdefined_roofmatabs
 
@@ -354,11 +352,8 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
 
     # Ceiling / Roof Insulation
     if ["Ceiling", "Roof"].include? selected_uains.to_s
-      selected_uaceil = runner.getOptionalWorkspaceObjectChoiceValue("selecteduaceil",user_arguments,model)
-      if selected_uaceil.empty?
-        userdefined_uaceilroofr = runner.getDoubleArgumentValue("userdefineduaceilroofr",user_arguments)
-        userdefined_ceilroofinsthickness = runner.getDoubleArgumentValue("userdefinedceilroofinsthickness",user_arguments)
-      end
+      userdefined_uaceilroofr = runner.getDoubleArgumentValue("userdefineduaceilroofr",user_arguments)
+      userdefined_ceilroofinsthickness = runner.getDoubleArgumentValue("userdefinedceilroofinsthickness",user_arguments)
     end
 
     # Ceiling Joist Thickness
@@ -383,29 +378,20 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
 
     # Rigid
     if ["Roof"].include? selected_uains.to_s
-      selected_rigidins = runner.getOptionalWorkspaceObjectChoiceValue("selectedrigidins",user_arguments,model)
-      if selected_rigidins.empty?
-        userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
-        userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
-      end
+      userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
+      userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
     end
 
     # Radiant Barrier
     userdefined_hasradiantbarrier = runner.getBoolArgumentValue("userdefinedhasradiantbarrier",user_arguments)
 
     # Gypsum
-    selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
-    if selected_gypsum.empty?
-      userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
-      userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-    end
+    userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
+    userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
 
     # Exterior Finish
-    selected_roofmat = runner.getOptionalWorkspaceObjectChoiceValue("selectedroofmat",user_arguments,model)
-    if selected_roofmat.empty?
-      userdefined_roofmatthermalabs = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
-      userdefined_roofmatabs = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
-    end
+    userdefined_roofmatthermalabs = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
+    userdefined_roofmatabs = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
     # Constants
     mat_gyp = get_mat_gypsum
@@ -414,23 +400,11 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
 
     # Insulation
     if selected_uains.to_s == "Ceiling"
-      if userdefined_uaceilroofr.nil?
-        uACeilingInsThickness = OpenStudio::convert(selected_uaceilroof.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-        uACeilingConductivity = OpenStudio::convert(selected_uaceilroof.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-        uACeilingInsRvalueNominal = OpenStudio::convert(uACeilingInsThickness,"in","ft").get / uACeilingConductivity
-      else
-        uACeilingInsThickness = userdefined_ceilroofinsthickness
-        uACeilingInsRvalueNominal = userdefined_uaceilroofr
-      end
+      uACeilingInsThickness = userdefined_ceilroofinsthickness
+      uACeilingInsRvalueNominal = userdefined_uaceilroofr
     elsif selected_uains.to_s == "Roof"
-      if userdefined_uaceilroofr.nil?
-        uARoofInsThickness = OpenStudio::convert(selected_uaceilroof.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-        uARoofConductivity = OpenStudio::convert(selected_uaceilroof.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-        uARoofInsRvalueNominal = OpenStudio::convert(uARoofInsThickness,"in","ft").get / uARoofConductivity
-      else
-        uARoofInsThickness = userdefined_ceilroofinsthickness
-        uARoofInsRvalueNominal = userdefined_uaceilroofr
-      end
+      uARoofInsThickness = userdefined_ceilroofinsthickness
+      uARoofInsRvalueNominal = userdefined_uaceilroofr
     end
 
     # Ceiling Joist Thickness
@@ -449,59 +423,30 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
 
     # Rigid
     if selected_uains.to_s == "Roof"
-      if userdefined_rigidinsthickness.nil?
-        rigidInsRoughness = selected_rigidins.get.to_StandardOpaqueMaterial.get.roughness
-        rigidInsThickness = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-        rigidInsConductivity = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-        rigidInsDensity = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-        rigidInsSpecificHeat = OpenStudio::convert(selected_rigidins.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-        rigidInsRvalue = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsConductivity
-      else
-        rigidInsRvalue = userdefined_rigidinsr
-        rigidInsRoughness = "Rough"
-        rigidInsThickness = userdefined_rigidinsthickness
-        rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
-        rigidInsDensity = mat_rigid.rho
-        rigidInsSpecificHeat = mat_rigid.Cp
-      end
+      rigidInsRvalue = userdefined_rigidinsr
+      rigidInsThickness = userdefined_rigidinsthickness
+      rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+      rigidInsDensity = mat_rigid.rho
+      rigidInsSpecificHeat = mat_rigid.Cp
     end
 
     # Radiant Barrier
     hasRadiantBarrier = userdefined_hasradiantbarrier
 
     # Gypsum
-    if userdefined_gypthickness.nil?
-      gypsumRoughness = selected_gypsum.get.to_StandardOpaqueMaterial.get.roughness
-      gypsumThickness = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      gypsumNumLayers = 1.0
-      gypsumConductivity = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      gypsumDensity = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-      gypsumSpecificHeat = OpenStudio::convert(selected_gypsum.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-      gypsumThermalAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getThermalAbsorptance.value
-      gypsumSolarAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getSolarAbsorptance.value
-      gypsumVisibleAbs = selected_gypsum.get.to_StandardOpaqueMaterial.get.getVisibleAbsorptance.value
-      gypsumRvalue = OpenStudio::convert(gypsumThickness,"in","ft").get / gypsumConductivity
-    else
-      gypsumRoughness = "Rough"
-      gypsumThickness = userdefined_gypthickness
-      gypsumNumLayers = userdefined_gyplayers
-      gypsumConductivity = mat_gyp.k
-      gypsumDensity = mat_gyp.rho
-      gypsumSpecificHeat = mat_gyp.Cp
-      gypsumThermalAbs = get_mat_gypsum_ceiling(mat_gyp).TAbs
-      gypsumSolarAbs = get_mat_gypsum_ceiling(mat_gyp).SAbs
-      gypsumVisibleAbs = get_mat_gypsum_ceiling(mat_gyp).VAbs
-      gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
-    end
+    gypsumThickness = userdefined_gypthickness
+    gypsumNumLayers = userdefined_gyplayers
+    gypsumConductivity = mat_gyp.k
+    gypsumDensity = mat_gyp.rho
+    gypsumSpecificHeat = mat_gyp.Cp
+    gypsumThermalAbs = get_mat_gypsum_ceiling(mat_gyp).TAbs
+    gypsumSolarAbs = get_mat_gypsum_ceiling(mat_gyp).SAbs
+    gypsumVisibleAbs = get_mat_gypsum_ceiling(mat_gyp).VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
 
     # Roofing Material
-    if userdefined_roofmatthermalabs.nil?
-      roofMatEmissivity = selected_roofmat.get.to_StandardOpaqueMaterial.get.getThermalAbsorptance.value
-      roofMatAbsorptivity = selected_roofmat.get.to_StandardOpaqueMaterial.get.getSolarAbsorptance.value
-    else
-      roofMatEmissivity = userdefined_roofmatthermalabs
-      roofMatAbsorptivity = userdefined_roofmatabs
-    end
+    roofMatEmissivity = userdefined_roofmatthermalabs
+    roofMatAbsorptivity = userdefined_roofmatabs
 
     # Create the material class instances
     uatc = UnfinishedAttic.new(uACeilingInsThickness, uARoofFramingThickness, uACeilingFramingFactor, uACeilingInsRvalueNominal, uACeilingJoistThickness, rigidInsThickness, rigidInsRvalue, uARoofFramingFactor, uARoofInsThickness, uARoofInsRvalueNominal)
@@ -554,7 +499,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     # Gypsum
     gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     gypsum.setName("GypsumBoard-Ceiling")
-    gypsum.setRoughness(gypsumRoughness)
+    gypsum.setRoughness("Rough")
     gypsum.setThickness(OpenStudio::convert(gypsumThickness,"in","m").get)
     gypsum.setConductivity(OpenStudio::convert(gypsumConductivity,"Btu/hr*ft*R","W/m*K").get)
     gypsum.setDensity(OpenStudio::convert(gypsumDensity,"lb/ft^3","kg/m^3").get)

@@ -7,17 +7,22 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
-
 #start the measure
 class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelUserScript
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsExteriorUninsulatedWalls"
+    return "Add/Replace Residential Exterior Uninsulated Attic and Garage Walls"
   end
+  
+  def description
+    return "This measure creates uninsulated, unfinished, stud and air constructions for the exterior walls of the attic and garage."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the exterior walls of the attic and garage. Finds surfaces adjacent to the attic and garage and sets applicable constructions."
+  end   
   
   #define the arguments that the user will input
   def arguments(model)
@@ -42,12 +47,14 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 
     #make a choice argument for crawlspace
     selected_attic = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedattic", spacetype_handles, spacetype_display_names, false)
-    selected_attic.setDisplayName("Of what space type is the attic?")
+	selected_attic.setDisplayName("Attic Space")
+	selected_attic.setDescription("The attic space type.")
     args << selected_attic
 
     #make a choice argument for living
     selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, false)
-    selected_garage.setDisplayName("Of what space type is the garage?")
+    selected_garage.setDisplayName("Garage Space")
+	selected_garage.setDescription("The garage space type.")
     args << selected_garage
 
     return args

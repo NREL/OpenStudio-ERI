@@ -2,23 +2,25 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>324031d5-805f-4549-8050-e186b461514c</version_id>
+  <version_id>ef03db55-50e5-42b4-8e00-bdd2fdd81488</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
-  <display_name>ProcessFurnace</display_name>
+  <display_name>Add/Replace Residential Furnace</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop.</description>
   <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule. Any supply components or baseboard convective electrics, except for cooling DX coils, are removed from any existing air loops or zones. Any existing air loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Which is the living space zone?</display_name>
+      <display_name>Living Zone</display_name>
+      <description>The living zone.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedfbsmt</name>
-      <display_name>Which is the finished basement zone?</display_name>
+      <display_name>Finished Basement Zone</display_name>
+      <description>The finished basement zone.</description>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -44,9 +46,10 @@
     </argument>
     <argument>
       <name>userdefinedafue</name>
-      <display_name>Installed AFUE [Btu/Btu]</display_name>
+      <display_name>Installed AFUE</display_name>
       <description>The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value.</description>
       <type>Double</type>
+      <units>Btu/Btu</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.78</default_value>
@@ -187,18 +190,20 @@
     </argument>
     <argument>
       <name>userdefinedmaxtemp</name>
-      <display_name>Max Supply Temp [F]</display_name>
+      <display_name>Max Supply Temp</display_name>
       <description>Maximum supply air temperature.</description>
       <type>Double</type>
+      <units>F</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>120</default_value>
     </argument>
     <argument>
       <name>userdefinedfanpower</name>
-      <display_name>Installed Supply Fan Power [W/cfm]</display_name>
+      <display_name>Installed Supply Fan Power</display_name>
       <description>Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.</description>
       <type>Double</type>
+      <units>W/cfm</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
@@ -234,12 +239,6 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -248,13 +247,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>291FE935</checksum>
+      <checksum>A42A8D4D</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

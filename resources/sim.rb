@@ -98,6 +98,7 @@ class Construction
 			end
 		rescue
 			runner.registerError("Wrong number of conductivity values specified (#{conductivity_list.length} specified); should be one if a continuous layer, or one per path for non-continuous layers (#{@path_fracs.length} paths).")	
+			return false
 		end
 		
 	end
@@ -389,8 +390,8 @@ def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishT
     # calculation to the parallel path approach.
 
 	mat_gyp = get_mat_gypsum
-    mat_air = get_mat_air()
-    mat_wood = get_mat_wood()
+    mat_air = get_mat_air
+    mat_wood = get_mat_wood
     mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
     films = Get_films_constant.new
 	
@@ -420,6 +421,203 @@ def get_steel_stud_wall_r_assembly(ss, gypsumThickness, gypsumNumLayers, finishT
 	
 end
 
+def get_cmu_wall_r_assembly(cmu, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=true)
+    # Returns assembly R-value for CMU wall, including air films.
+    # Also returns furring layer equivalent R-value.
+	
+	mat_gyp = get_mat_gypsum
+    mat_wood = get_mat_wood
+    mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
+    mat_2x4 = get_mat_2x4(mat_wood)
+    films = Get_films_constant.new
+    mat_air = get_mat_air	
+	
+	# Set paths
+	cmuFurringInsRvalue = cmu.CMUFurringInsRvalue
+	if cmu.CMUFurringCavityDepth != 0
+		# Add air film coefficients when no insulation
+		if cmuFurringInsRvalue.nil? or cmuFurringInsRvalue == 0
+			cmuFurringInsRvalue = mat_air.R_air_gap
+		end
+		
+		stud_frac = mat_2x4.width_in / cmu.CMUFurringStudSpacing
+		cavity_frac = 1.0 - (stud_frac + cmu.CMUFramingFactor)
+		path_fracs = [cmu.CMUFramingFactor, stud_frac, cavity_frac]
+		furring_layer_equiv_Rvalue = 1.0 / (cavity_frac / cmuFurringInsRvalue + (1.0 - cavity_frac) / (OpenStudio.convert(cmu.CMUFurringCavityDepth,"in","ft").get / mat_wood.k)) # hr*ft^2*F/Btu
+	else # No furring:
+		path_fracs = [cmu.CMUFramingFactor, 1.0 - cmu.CMUFramingFactor]
+		furring_layer_equiv_Rvalue = 0.0
+	end
+	
+	cmu_wall = Construction.new(path_fracs)
+	
+	# Interior Film
+	cmu_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / films.vertical])
+	
+	# Interior Finish (GWB)
+	cmu_wall.addlayer(thickness=OpenStudio.convert(gypsumThickness,"in","ft").get, conductivity_list=[mat_gyp.k])
+
+	# Furring/Cavity layer
+	cmu_layer_conductivity = OpenStudio.convert(cmu.CMUConductivity,"in","ft").get # Btu/hr-ft-F
+	
+	if cmu.CMUFurringCavityDepth != 0
+		cavity_ins_k = OpenStudio.convert(cmu.CMUFurringCavityDepth,"in","ft").get / cmuFurringInsRvalue
+		cmu_wall.addlayer(thickness=OpenStudio.convert(cmu.CMUFurringCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k, mat_wood.k, cavity_ins_k])
+		# CMU layer
+		cmu_wall.addlayer(thickness=OpenStudio.convert(cmu.CMUThickness,"in","ft").get, conductivity_list=[mat_wood.k, cmu_layer_conductivity, cmu_layer_conductivity])
+	else
+		cmu_wall.addlayer(thickness=OpenStudio.convert(cmu.CMUThickness,"in","ft").get, conductivity_list=[mat_wood.k, cmu_layer_conductivity])		
+	end
+	
+	# OSB sheathing
+	if hasOSB
+		cmu_wall.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood1_2in, material_list=nil)
+	end
+	
+	if rigidInsRvalue > 0
+		rigid_k = OpenStudio.convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+		cmu_wall.addlayer(thickness=OpenStudio.convert(rigidInsThickness,"in","ft").get, conductivity_list=[rigid_k])
+	end
+	
+	# Exterior Finish
+	cmu_wall.addlayer(thickness=OpenStudio.convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio.convert(finishConductivity,"in","ft").get])
+	
+	# Exterior Film
+	cmu_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / films.outside])
+	
+	return cmu_wall.Rvalue_parallel, furring_layer_equiv_Rvalue
+	
+end
+
+def get_sip_sheathing_type(sheathingType)
+	constants = Constants.new
+    mat_wood = get_mat_wood
+    mat_gyp = get_mat_gypsum
+    mat_gypcrete = get_mat_gypcrete
+    if sheathingType == constants.MaterialOSB
+        sheathing = mat_wood
+    elsif sheathingType == constants.MaterialGypsum
+        sheathing = mat_gyp
+    elsif sheathingType == constants.MaterialGypcrete
+        sheathing = mat_gypcrete
+    else
+        runner.registerError("Unknown sheathing type for SIP wall: #{sheathingType}")
+		return false
+	end
+    return sheathing
+end
+
+def get_sip_wall_r_assembly(sip, int_sheathing, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=true)
+    # Returns assembly R-value for SIP wall, including air films.
+    # Also returns spline layer thickness, insulation layer thickness, and cavity fraction.
+                                    
+    mat_wood = get_mat_wood
+	mat_gyp = get_mat_gypsum
+    mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
+    films = Get_films_constant.new
+
+    spline_layer_thickness = OpenStudio.convert(0.5,"in","ft").get
+    spline_frac = 4.0 / 48.0 # One 4" spline for every 48" wide panel
+    cavity_frac = 1.0 - (spline_frac + sip.SIPFramingFactor)
+    path_fracs = [sip.SIPFramingFactor, # frame frac
+                  spline_frac, # spline_frac
+                  cavity_frac]                              # Cavity frac
+
+    sip_wall = Construction.new(path_fracs)
+
+    cavity_ins_k = OpenStudio.convert(sip.SIPInsThickness,"in","ft").get / sip.SIPInsRvalue
+
+    # Interior Film
+    sip_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / films.vertical])
+
+    # Interior Finish (GWB)
+    sip_wall.addlayer(thickness=OpenStudio.convert(gypsumThickness,"in","ft").get, conductivity_list=[mat_gyp.k])
+
+    # Int sheathing
+    sip_wall.addlayer(thickness=OpenStudio.convert(sip.SIPIntSheathingThick,"in","ft").get, conductivity_list=[int_sheathing.k])
+
+    # Spline layer
+    sip_wall.addlayer(thickness=spline_layer_thickness, conductivity_list=[mat_wood.k, mat_wood.k, cavity_ins_k])
+
+    # Ins layer
+    ins_layer_thickness = OpenStudio.convert(sip.SIPInsThickness,"in","ft").get - (2.0 * spline_layer_thickness) # ft
+    sip_wall.addlayer(thickness=ins_layer_thickness, conductivity_list=[mat_wood.k, cavity_ins_k, cavity_ins_k])
+
+    # Spline layer
+    sip_wall.addlayer(thickness=spline_layer_thickness, conductivity_list=[mat_wood.k, mat_wood.k, cavity_ins_k])
+
+    # OSB sheathing
+    if hasOSB
+        sip_wall.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood1_2in, material_list=nil)
+	end
+
+    # Rigid
+    if rigidInsRvalue > 0
+        rigid_k = OpenStudio.convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+        sip_wall.addlayer(thickness=OpenStudio.convert(rigidInsThickness,"in","ft").get, conductivity_list=[rigid_k])
+	end
+						  
+    # Exterior Finish
+    sip_wall.addlayer(thickness=OpenStudio.convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio.convert(finishConductivity,"in","ft").get])
+
+    # Exterior Film
+    sip_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / films.outside])
+
+    return sip_wall.Rvalue_parallel, spline_layer_thickness, ins_layer_thickness, cavity_frac
+	
+end
+	
+def get_icf_wall_r_assembly(icf, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=false)
+	# Returns assembly R-value for ICF wall, including air films.
+	
+	mat_wood = get_mat_wood
+	mat_gyp = get_mat_gypsum
+    mat_plywood1_2in = get_mat_plywood1_2in(mat_wood)
+    mat_concrete = get_mat_concrete
+    films = films = Get_films_constant.new
+	
+	path_fracs = [icf.ICFFramingFactor, 1.0 - icf.ICFFramingFactor]
+	
+    icf_wall = Construction.new(path_fracs)
+
+    # Interior Film
+    icf_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / films.vertical])
+
+    # Interior Finish (GWB)
+    icf_wall.addlayer(thickness=OpenStudio.convert(gypsumThickness,"in","ft").get, conductivity_list=[mat_gyp.k])
+
+    # Framing / Rigid Ins
+    ins_k = OpenStudio.convert(icf.ICFInsThickness,"in","ft").get / icf.ICFInsRvalue
+    icf_wall.addlayer(thickness=OpenStudio.convert(icf.ICFInsThickness,"in","ft").get, conductivity_list=[mat_wood.k, ins_k])
+
+    # Concrete
+    icf_wall.addlayer(thickness=OpenStudio.convert(icf.ICFConcreteThickness,"in","ft").get, conductivity_list=[mat_wood.k, mat_concrete.k])
+
+    # Framing / Rigid Ins
+    ins_k = OpenStudio.convert(icf.ICFInsThickness,"in","ft").get / icf.ICFInsRvalue
+    icf_wall.addlayer(thickness=OpenStudio.convert(icf.ICFInsThickness,"in","ft").get, conductivity_list=[mat_wood.k, ins_k])
+
+    # OSB sheathing
+    if hasOSB
+        icf_wall.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood1_2in, material_list=nil)
+	end
+
+    # Rigid
+    if rigidInsRvalue > 0
+        rigid_k = OpenStudio.convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+        icf_wall.addlayer(thickness=OpenStudio.convert(rigidInsThickness,"in","ft").get, conductivity_list=[rigid_k])
+	end
+
+    # Exterior Finish
+    icf_wall.addlayer(thickness=OpenStudio.convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio.convert(finishConductivity,"in","ft").get])
+
+    # Exterior Film
+    icf_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / films.outside])
+
+    return icf_wall.Rvalue_parallel	
+	
+end
+	
 def get_interzonal_wall_r_assembly(iw, gypsumThickness, gypsumConductivity=nil)
   # Returns assemblu R-value for Other wall, including air films.
 
@@ -476,7 +674,9 @@ def get_interzonal_floor_r_assembly(izf, carpetPadRValue, carpetFloorFraction, f
   mat_plywood3_4in = get_mat_plywood3_4in(mat_wood)
   films = Get_films_constant.new
 
-  path_fracs = [izf.IntFloorFramingFactor, 1 - izf.IntFloorFramingFactor]
+  gapFactor = get_wall_gap_factor(izf.IntFloorInstallGrade, izf.IntFloorFramingFactor)
+  
+  path_fracs = [izf.IntFloorFramingFactor, 1 - izf.IntFloorFramingFactor - gapFactor, gapFactor]
 
   izf_const = Construction.new(path_fracs)
 
@@ -489,7 +689,9 @@ def get_interzonal_floor_r_assembly(izf, carpetPadRValue, carpetFloorFraction, f
   else
     cavity_k = mat_2x6.thick / izf.IntFloorCavityInsRvalueNominal
   end
-  izf_const.addlayer(thickness=mat_2x6.thick, conductivity_list=[mat_wood.k, cavity_k])
+  gap_k = mat_2x6.thick / get_mat_air.R_air_gap
+  
+  izf_const.addlayer(thickness=mat_2x6.thick, conductivity_list=[mat_wood.k, cavity_k, gap_k])
 
   # Floor deck
   izf_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
@@ -530,6 +732,11 @@ end
 def get_mat_gypsum_ceiling(mat_gypsum)
   constants = Constants.new
   return Material.new(name=constants.MaterialGypsumBoard1_2in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=constants.DefaultSolarAbsCeiling, vAbs=0.1)
+end
+
+def get_mat_gypcrete
+	# http://www.maxxon.com/gyp-crete/data
+	return Mat_solid.new(rho=100.0, cp=0.223, k=0.3952)
 end
 
 def get_mat_air
@@ -747,16 +954,17 @@ class Sim
 		  #former_workflow_arguments = runner.former_workflow_arguments
 		  #weather_file_name = former_workflow_arguments["setdrweatherfile"]["weather_file_name"]
 		  #weather_file_dir = former_workflow_arguments["setdrweatherfile"]["weather_directory_name"]
-		  weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
+		  weather_file_name = "USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3.epw"
 		  weather_file_dir = "weather"
 		  epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
-		  @weather = WeatherProcess.new(epw_path)
-		rescue # PAT
+		  @weather = WeatherProcess.new(epw_path, runner)
+		rescue Exception => e# PAT
+		  runner.registerInfo("Did not set EPW weather path to #{epw_path}: #{e.message}")
 		  if runner.lastEpwFilePath.is_initialized
 			test = runner.lastEpwFilePath.get.to_s
 			if File.exist?(test)
 			  epw_path = test
-			  @weather = WeatherProcess.new(epw_path)
+			  @weather = WeatherProcess.new(epw_path, runner)
 			end
 		  end
 		end
@@ -764,7 +972,7 @@ class Sim
 	  unless @weather.nil?
 		runner.registerInfo("EPW weather path set to #{epw_path}")
 	  else
-		runner.registerInfo("EPW weather path was NOT set")
+		runner.registerInfo("EPW weather path NOT set to: #{epw_path}")
 	  end
 	end
 
@@ -1315,32 +1523,118 @@ class Sim
   end
   
   def _processConstructionsExteriorInsulatedWallsSteelStud(ss, ext_wall_mass, exterior_finish, wallsh, sc)
-        # Set Furring insulation/air properties
-        if ss.SSWallCavityInsRvalueInstalled == 0
-            cavityInsDens = inside_air_dens # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
-            cavityInsSH = get_mat_air.inside_air_sh
-        else
-            cavityInsDens = get_mat_densepack_generic.rho
-            cavityInsSH = get_mat_densepack_generic.Cp
-		end
+    # Set Furring insulation/air properties
+    if ss.SSWallCavityInsRvalueInstalled == 0
+        cavityInsDens = inside_air_dens # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
+        cavityInsSH = get_mat_air.inside_air_sh
+    else
+        cavityInsDens = get_mat_densepack_generic.rho
+        cavityInsSH = get_mat_densepack_generic.Cp
+	end
 		
-        wsGapFactor = get_wall_gap_factor(ss.SSWallInstallGrade, ss.SSWallFramingFactor)	
+    wsGapFactor = get_wall_gap_factor(ss.SSWallInstallGrade, ss.SSWallFramingFactor)	
 
-        overall_wall_Rvalue = get_steel_stud_wall_r_assembly(ss, ext_wall_mass.ExtWallMassGypsumThickness, ext_wall_mass.ExtWallMassGypsumNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
+    overall_wall_Rvalue = get_steel_stud_wall_r_assembly(ss, ext_wall_mass.ExtWallMassGypsumThickness, ext_wall_mass.ExtWallMassGypsumNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
 		
-        # Create layers for modeling
-		films = Get_films_constant.new
-        sc.stud_layer_thickness = OpenStudio::convert(ss.SSWallCavityDepth,"in","ft").get # ft
-        sc.stud_layer_conductivity = sc.stud_layer_thickness / (overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exterior_finish.FinishRvalue + ext_wall_mass.ExtWallMassGypsumRvalue)) # Btu/hr*ft*F		
-        sc.stud_layer_density = ss.SSWallFramingFactor * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * inside_air_dens 
-        sc.stud_layer_spec_heat = (ss.SSWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / sc.stud_layer_density		
+    # Create layers for modeling
+	films = Get_films_constant.new
+    sc.stud_layer_thickness = OpenStudio::convert(ss.SSWallCavityDepth,"in","ft").get # ft
+    sc.stud_layer_conductivity = sc.stud_layer_thickness / (overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exterior_finish.FinishRvalue + ext_wall_mass.ExtWallMassGypsumRvalue)) # Btu/hr*ft*F		
+    sc.stud_layer_density = ss.SSWallFramingFactor * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * inside_air_dens 
+    sc.stud_layer_spec_heat = (ss.SSWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - ss.SSWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / sc.stud_layer_density		
 		
-		wallsh = _addInsulatedSheathingMaterial(wallsh)
+	wallsh = _addInsulatedSheathingMaterial(wallsh)
 		
-		return sc, wallsh
+	return sc, wallsh
 		
   end
 
+  def _processConstructionsExteriorInsulatedWallsCMU(cmu, ext_wall_mass, exterior_finish, wallsh, fu)
+	overall_wall_Rvalue, furring_layer_equiv_Rvalue = get_cmu_wall_r_assembly(cmu, ext_wall_mass.ExtWallMassGypsumThickness, ext_wall_mass.ExtWallMassGypsumNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
+	
+	# Set Furring insulation/air properties
+	films = Get_films_constant.new
+	cmu.cmu_layer_conductivity = (OpenStudio.convert(cmu.CMUThickness,"in","ft").get / (overall_wall_Rvalue - (films.vertical + films.outside + furring_layer_equiv_Rvalue + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + exterior_finish.FinishRvalue + ext_wall_mass.ExtWallMassGypsumRvalue))) # Btu/hr*ft*F
+	cmu.cmu_layer_density = (cmu.CMUFramingFactor * get_mat_wood.rho + (1.0 - cmu.CMUFramingFactor) * cmu.CMUDensity) # lbm/ft^3)
+	cmu.cmu_layer_spec_heat = (cmu.CMUFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - cmu.CMUFramingFactor) * get_mat_concrete.Cp * cmu.CMUDensity) / cmu.cmu_layer_density # Btu/lbm-F
+	
+	if cmu.CMUFurringCavityDepth != 0
+	
+		cmuFurringInsRvalue = cmu.CMUFurringInsRvalue
+		# Add air film coefficients when no insulation
+		if cmuFurringInsRvalue.nil? or cmuFurringInsRvalue == 0
+			cmuFurringInsRvalue = get_mat_air.R_air_gap
+		end
+	
+		if cmuFurringInsRvalue == 0
+			furring_ins_dens = inside_air_dens # lbm/ft^3   Assumes an empty cavity with air films
+			furring_ins_sh = get_mat_air.inside_air_sh
+		else
+			furring_ins_dens = get_mat_densepack_generic.rho # lbm/ft^3
+			furring_ins_sh = get_mat_densepack_generic.Cp
+		end
+		
+		fu.furring_layer_thickness = OpenStudio.convert(cmu.CMUFurringCavityDepth,"in","ft").get # ft
+		fu.furring_layer_conductivity = fu.furring_layer_thickness / furring_layer_equiv_Rvalue # Btu/hr*ft*F
+		frac = get_mat_2x4(get_mat_wood).width_in / cmu.CMUFurringStudSpacing + cmu.CMUFramingFactor
+		fu.furring_layer_density = frac * get_mat_wood.rho + (1.0 - frac) * furring_ins_dens # lbm/ft^3
+		fu.furring_layer_spec_heat = (frac * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - frac) * furring_ins_sh * furring_ins_dens) / fu.furring_layer_density # Btu/lbm*F
+		
+	end
+	
+	wallsh = _addInsulatedSheathingMaterial(wallsh)
+	
+	return cmu, fu, wallsh
+  
+  end
+  
+  def _processConstructionsExteriorInsulatedWallsSIP(sip, ext_wall_mass, exterior_finish, wallsh)
+	int_sheathing = get_sip_sheathing_type(sip.SIPIntSheathingType)
+  
+	overall_wall_Rvalue, sip.spline_layer_thickness, sip.ins_layer_thickness, cavity_frac = get_sip_wall_r_assembly(sip, int_sheathing, ext_wall_mass.ExtWallMassGypsumThickness, ext_wall_mass.ExtWallMassGypsumNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB)
+  
+	int_sheathing_Rvalue = OpenStudio.convert(sip.SIPIntSheathingThick,"in","ft").get / int_sheathing.k
+	
+	ins_layer_equiv_Rvalue = (1.0 / ((1.0 - sip.SIPFramingFactor) / ((sip.SIPInsThickness - 1.0) / sip.SIPInsThickness * sip.SIPInsRvalue) + sip.SIPFramingFactor / (OpenStudio.convert(sip.SIPInsThickness - 1.0,"in","ft").get / get_mat_wood.k))) # hr*ft^2*F/Btu
+	
+	films = Get_films_constant.new
+	sip.spline_layer_conductivity = (sip.spline_layer_thickness / ((overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + ins_layer_equiv_Rvalue + int_sheathing_Rvalue + exterior_finish.FinishRvalue + ext_wall_mass.ExtWallMassGypsumRvalue)) / 2.0)) # Btu/hr*ft*F
+
+	sip.spline_layer_density = (1.0 - cavity_frac) * get_mat_wood.rho + cavity_frac * get_mat_rigid_ins.rho # lbm/ft^3
+	sip.spline_layer_spec_heat = ((1.0 - cavity_frac) * get_mat_wood.Cp * get_mat_wood.rho + cavity_frac * get_mat_rigid_ins.Cp * get_mat_rigid_ins.rho) / sip.spline_layer_density # Btu/lbm-F
+	
+	sip.ins_layer_conductivity = sip.ins_layer_thickness / ins_layer_equiv_Rvalue # Btu/hr*ft*F
+	sip.ins_layer_density = sip.SIPFramingFactor * get_mat_wood.rho + (1.0 - sip.SIPFramingFactor) * get_mat_rigid_ins.rho # lbm/ft3
+	sip.ins_layer_spec_heat = (sip.SIPFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - sip.SIPFramingFactor) * get_mat_rigid_ins.Cp * get_mat_rigid_ins.rho) / sip.ins_layer_density # Btu/lbm-F
+	
+	wallsh = _addInsulatedSheathingMaterial(wallsh)
+	
+	return sip, int_sheathing, wallsh
+	
+  end
+  
+  def _processConstructionsExteriorInsulatedWallsICF(icf, ext_wall_mass, exterior_finish, wallsh)
+	overall_wall_Rvalue = get_icf_wall_r_assembly(icf, ext_wall_mass.ExtWallMassGypsumThickness, ext_wall_mass.ExtWallMassGypsumNumLayers, exterior_finish.FinishThickness, exterior_finish.FinishConductivity, wallsh.WallSheathingContInsThickness, wallsh.WallSheathingContInsRvalue, wallsh.WallSheathingHasOSB) 
+	
+	conc_layer_equiv_Rvalue = (1.0 / (icf.ICFFramingFactor / (OpenStudio.convert(icf.ICFConcreteThickness,"in","ft").get / get_mat_wood.k) + (1.0 - icf.ICFFramingFactor) / (OpenStudio.convert(icf.ICFConcreteThickness,"in","ft").get / get_mat_concrete.k))) # hr*ft^2*F/Btu
+	
+	films = Get_films_constant.new
+	icf.ins_layer_thickness = OpenStudio.convert(icf.ICFInsThickness,"in","ft").get # ft
+	icf.ins_layer_conductivity = (icf.ins_layer_thickness / ((overall_wall_Rvalue - (films.vertical + films.outside + wallsh.WallSheathingContInsRvalue + wallsh.OSBRvalue + conc_layer_equiv_Rvalue + exterior_finish.FinishRvalue + ext_wall_mass.ExtWallMassGypsumRvalue)) / 2.0)) # Btu/hr*ft*F
+	icf.ins_layer_density = icf.ICFFramingFactor * get_mat_wood.rho + (1.0 - icf.ICFFramingFactor) * get_mat_rigid_ins.rho # lbm/ft^3
+	icf.ins_layer_spec_heat = (icf.ICFFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - icf.ICFFramingFactor) * get_mat_rigid_ins.Cp * get_mat_rigid_ins.rho) / icf.ins_layer_density # Btu/lbm-F
+	
+	icf.conc_layer_thickness = OpenStudio.convert(icf.ICFConcreteThickness,"in","ft").get # ft
+	icf.conc_layer_conductivity = icf.conc_layer_thickness / conc_layer_equiv_Rvalue # Btu/hr*ft*F
+	icf.conc_layer_density = icf.ICFFramingFactor * get_mat_wood.rho + (1.0 - icf.ICFFramingFactor) * get_mat_concrete.rho # lbm/ft^3
+	icf.conc_layer_spec_heat = (icf.ICFFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - icf.ICFFramingFactor) * get_mat_concrete.Cp * get_mat_concrete.rho) / icf.conc_layer_density # lbm/ft^3
+	
+	wallsh = _addInsulatedSheathingMaterial(wallsh)
+	
+	return icf, wallsh
+	
+  end
+  
   def _processConstructionsInteriorInsulatedWalls(iw, partition_wall_mass, iwi)
     # Calculate R-value of Stud and Cavity Walls between two walls
     # where both interior and exterior spaces are not conditioned.
@@ -1444,24 +1738,42 @@ class Sim
     constants = Constants.new
     psychrometrics = Psychrometrics.new
 
+    # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
+    ashrae_mv_without_infil_credit = get_mech_vent_whole_house_cfm(1, geometry.num_bedrooms, geometry.finished_floor_area, vent.MechVentASHRAEStandard)	
+	
     # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2);
     # only applies to existing buildings
-
+	infil.rate_credit = 0 # default to no credit
     if vent.MechVentInfilCreditForExistingHomes and misc.AgeOfHome > 0
 
-      # (2 cfm per 100ft^2 of occupiable floor area per ASHRAE 62.2)
-      infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
-
-      # Half the excess infiltration rate above the default rate is credited toward mech vent:
-      infil.rate_credit = [(living_space.inf_flow - infil.default_rate) / 2.0, 0.0].max
-
-    else
-
-      infil.rate_credit = 0.0 # default to no credit
+	  if vent.MechVentASHRAEStandard == '2010'
+        # ASHRAE Standard 62.2 2010
+        # 2 cfm per 100ft^2 of occupiable floor area
+		infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
+        # Half the excess infiltration rate above the default rate is credited toward mech vent:
+        infil.rate_credit = [(living_space.inf_flow - default_rate) / 2.0, 0].max
+	  
+	  elsif vent.MechVentASHRAEStandard == '2013'
+        # ASHRAE Standard 62.2 2013
+        # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
+        # rate shall not be reduced as described in Section 4.1.3.").	  
+	    if geometry.num_units == 1
+		  ela = infil.A_o # Effective leakage area, ft^2
+		  nl = 1000.0 * ela / living_space.area * (living_space.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
+		  qinf = nl * @weather.header.WSF * living_space.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+		  infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
+		end
+	  
+	  end
 
     end
 
-    # Whole House and Spot Ventilation
+	# Apply infiltration credit (if any)
+    vent.ashrae_vent_rate = [ashrae_mv_without_infil_credit - infil.rate_credit, 0.0].max # cfm
+    # Apply fraction of ASHRAE value
+    vent.whole_house_vent_rate = vent.MechVentFractionOfASHRAE * vent.ashrae_vent_rate # cfm	
+
+    # Spot Ventilation
     if misc.SimTestSuiteBuilding != constants.TestBldgMinimal
       vent.MechVentBathroomExhaust = 50.0 # cfm, per HSP
       vent.MechVentRangeHoodExhaust = 100.0 # cfm, per HSP
@@ -1475,27 +1787,18 @@ class Sim
     vent.bath_exhaust_operation = 60.0 # min/day, per HSP
     vent.range_hood_exhaust_operation = 60.0 # min/day, per HSP
     vent.clothes_dryer_exhaust_operation = 60.0 # min/day, per HSP
-    # Based on ASHRAE 62.2 (the maximum allowable ventilation based on the
-    # 2010 BA Benchmark), including any infiltration credit
-    ashrae_mv = get_mech_vent_whole_house_cfm(1.0, geometry.num_bedrooms, geometry.finished_floor_area)
 
-    vent.ashrae_vent_rate = [ashrae_mv - infil.rate_credit, 0.0].max # cfm
+    vent.num_vent_fans = get_mech_vent_num_vent_fans(vent.MechVentType)
 
     if vent.MechVentType == constants.VentTypeExhaust
-      vent.num_vent_fans = 1.0 # One fan for unbalanced airflow
       vent.percent_fan_heat_to_space = 0.0 # Fan heat does not enter space
     elsif vent.MechVentType == constants.VentTypeSupply
-      vent.num_vent_fans = 1.0 # One fan for unbalanced airflow
       vent.percent_fan_heat_to_space = 1.0 # Fan heat does enter space
     elsif vent.MechVentType == constants.VentTypeBalanced
-      vent.num_vent_fans = 2.0 # Two fan for balanced airflow
       vent.percent_fan_heat_to_space = 0.5 # Assumes supply fan heat enters space
     else
-      vent.num_vent_fans = 1.0 # Default to one fan
       vent.percent_fan_heat_to_space = 0.0
     end
-
-    vent.whole_house_vent_rate = vent.MechVentFractionOfASHRAE * vent.ashrae_vent_rate # cfm
 
     vent.bathroom_hour_avg_exhaust = vent.MechVentBathroomExhaust * geometry.num_bathrooms * vent.bath_exhaust_operation / 60.0 # cfm
     vent.range_hood_hour_avg_exhaust = vent.MechVentRangeHoodExhaust * vent.range_hood_exhaust_operation / 60.0 # cfm
@@ -2301,7 +2604,7 @@ class Sim
 			# return
 		# end
 
-    films = Get_films_constant.new
+        films = Get_films_constant.new
 
 		slab_concrete_Rvalue = OpenStudio::convert(slab.SlabMassThickness,"in","ft").get / slab.SlabMassConductivity
 		
@@ -2402,7 +2705,7 @@ class Sim
 			# return
 		# end		
 
-    films = Get_films_constant.new
+        films = Get_films_constant.new
 
 		# If there is no wall insulation, apply the ceiling insulation R-value to the rim joists
 		if cs.CrawlWallContInsRvalueNominal == 0
@@ -2422,15 +2725,17 @@ class Sim
 		
 		crawl_ceiling_studlayer_Rvalue = cci.crawl_ceiling_Rvalue - floor_nonstud_layer_Rvalue(floor_mass, carpet)
 		
+		csGapFactor = get_wall_gap_factor(cs.CrawlCeilingInstallGrade, cs.CrawlCeilingFramingFactor)
+		
 		if cci.crawl_ceiling_Rvalue > 0
 			cci.crawl_ceiling_thickness = mat_2x.thick
 			cci.crawl_ceiling_conductivity = cci.crawl_ceiling_thickness / crawl_ceiling_studlayer_Rvalue
-			cci.crawl_ceiling_density = cs.CrawlCeilingFramingFactor * get_mat_wood.rho + (1 - cs.CrawlCeilingFramingFactor) * get_mat_densepack_generic.rho # lbm/ft^3
-			cci.crawl_ceiling_spec_heat = (cs.CrawlCeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - cs.CrawlCeilingFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / cci.crawl_ceiling_density # Btu/lbm*F
+			cci.crawl_ceiling_density = cs.CrawlCeilingFramingFactor * get_mat_wood.rho + (1 - cs.CrawlCeilingFramingFactor - csGapFactor) * get_mat_densepack_generic.rho + csGapFactor * inside_air_dens # lbm/ft^3
+			cci.crawl_ceiling_spec_heat = (cs.CrawlCeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - cs.CrawlCeilingFramingFactor - csGapFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho + csGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / cci.crawl_ceiling_density # Btu/lbm*F
 		end
 		
 		if cs.CrawlWallContInsRvalueNominal > 0
-			crawlspace_wall_thickness = OpenStudio::convert(cs.CrawlWallContInsRvalueNominal / 5,"in","ft").get # ft
+			crawlspace_wall_thickness = OpenStudio::convert(cs.CrawlWallContInsRvalueNominal / 5.0,"in","ft").get # ft
 			crawlspace_wall_conductivity = crawlspace_wall_thickness / cs.CrawlWallContInsRvalueNominal # Btu/hr*ft*F
 			crawlspace_wall_density = get_mat_rigid_ins.rho # lbm/ft^3
 			crawlspace_wall_spec_heat = get_mat_rigid_ins.Cp # Btu/lbm*F
@@ -2828,11 +3133,13 @@ class Sim
 
     # Get overall R-value using parallel paths:
     boundaryFloorRvalue = (overall_floor_Rvalue - floor_nonstud_layer_Rvalue(floor_mass, carpet))
+	
+	izfGapFactor = get_wall_gap_factor(izf.IntFloorInstallGrade, izf.IntFloorFramingFactor)
 
     ifi.boundary_floor_thickness = mat_2x6.thick # ft
     ifi.boundary_floor_conductivity = ifi.boundary_floor_thickness / boundaryFloorRvalue # Btu/hr*ft*F
-    ifi.boundary_floor_density = izf.IntFloorFramingFactor * mat_wood.rho + (1 - izf.IntFloorFramingFactor) * get_mat_densepack_generic.rho # lbm/ft^3
-    ifi.boundary_floor_spec_heat = (izf.IntFloorFramingFactor * mat_wood.Cp * mat_wood.rho + (1 - izf.IntFloorFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / ifi.boundary_floor_density # Btu/lbm*F
+    ifi.boundary_floor_density = izf.IntFloorFramingFactor * mat_wood.rho + (1 - izf.IntFloorFramingFactor - izfGapFactor) * get_mat_densepack_generic.rho  + izfGapFactor * inside_air_dens # lbm/ft^3
+    ifi.boundary_floor_spec_heat = (izf.IntFloorFramingFactor * mat_wood.Cp * mat_wood.rho + (1 - izf.IntFloorFramingFactor - izfGapFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho + izfGapFactor * get_mat_air.inside_air_sh * inside_air_dens) / ifi.boundary_floor_density # Btu/lbm*F
 
     return ifi
 
@@ -3014,7 +3321,7 @@ class Sim
 
   def _processConstructionsDoors(d, gd)
 
-    film = _processFilmResistances
+    films = Get_films_constant.new
 
     door_Uvalue_air_to_air = 0.2 # Btu/hr*ft^2*F, As per 2010 BA Benchmark
     garage_door_Uvalue_air_to_air = 0.2 # Btu/hr*ft^2*F, R-values typically vary from R5 to R10, from the Home Depot website
@@ -3022,14 +3329,14 @@ class Sim
     door_Rvalue_air_to_air = 1.0 / door_Uvalue_air_to_air
     garage_door_Rvalue_air_to_air = 1.0 / garage_door_Uvalue_air_to_air
 
-    door_Rvalue = door_Rvalue_air_to_air - film.outside - film.vertical
-    garage_door_Rvalue = garage_door_Rvalue_air_to_air - film.outside - film.vertical
+    door_Rvalue = door_Rvalue_air_to_air - films.outside - films.vertical
+    garage_door_Rvalue = garage_door_Rvalue_air_to_air - films.outside - films.vertical
 
     d.mat_door_Uvalue = 1.0 / door_Rvalue
     gd.garage_door_Uvalue = 1.0 / garage_door_Rvalue
 
-    d.door_thickness = 0.208 # ft
-    gd.garage_door_thickness = 0.208 # ft
+    d.door_thickness = OpenStudio.convert(1.75,"in","ft").get # ft
+    gd.garage_door_thickness = OpenStudio.convert(2.5,"in","ft").get # ft
 
     return d, gd
 
@@ -3365,6 +3672,7 @@ class Sim
 
     else
         runner.registerError("AC number of speeds must equal 1, 2, or 4.")
+		return false
     end
 
     if test_suite.min_test_ideal_loads or air_conditioner.IsIdealAC
@@ -3413,6 +3721,7 @@ class Sim
       c_d = calc_Cd_from_HSPF_COP_FourSpeed(heatingHSPF, heatingCOP, capacity_Ratio, fanspeed_Ratio_Heating, supplyFanPower_Rated)
     else
       runner.registerError("HP number of speeds must equal 1, 2, or 4.")
+	  return false
     end
 
     supply.HEAT_CLOSS_FPLR_SPEC_coefficients = [(1 - c_d), c_d, 0] # Linear part load model
@@ -3490,7 +3799,9 @@ def get_crawlspace_ceiling_r_assembly(cs, carpet, floor_mass)
 	mat_plywood3_4in = get_mat_plywood3_4in(mat_wood)
 	films = Get_films_constant.new
 	
-	path_fracs = [cs.CrawlCeilingFramingFactor, 1 - cs.CrawlCeilingFramingFactor]
+	gapFactor = get_wall_gap_factor(cs.CrawlCeilingInstallGrade, cs.CrawlCeilingFramingFactor)
+	
+	path_fracs = [cs.CrawlCeilingFramingFactor, 1 - cs.CrawlCeilingFramingFactor - gapFactor, gapFactor]
 	
 	crawl_ceiling = Construction.new(path_fracs)
 	
@@ -3503,7 +3814,9 @@ def get_crawlspace_ceiling_r_assembly(cs, carpet, floor_mass)
 	else
 		cavity_k = (mat_2x.thick / cs.CrawlCeilingCavityInsRvalueNominal)
 	end
-	crawl_ceiling.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k])
+	gap_k = mat_2x.thick / get_mat_air.R_air_gap
+	
+	crawl_ceiling.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k, gap_k])
 
 	# Floor deck
 	crawl_ceiling.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in)
@@ -3637,6 +3950,7 @@ def FullSlabInsulation(rbottom, rgap, w, l, carpet, k)
             rse = rsep
         else
             runner.registerError("In FullSlabInsulation, Carpet must be 0 or 1.")
+			return false
 		end
 	end
 			
@@ -3678,6 +3992,7 @@ def ExteriorSlabInsulation(depth, rvalue, carpet)
             e2 =  0.80699
         else
             runner.registerError("In ExteriorSlabInsulation, Carpet must be 0 or 1.")
+			return false
 		end
 	end
     perimeterConductance = a / (b + rvalue ** e1 * depth ** e2) 
@@ -4057,10 +4372,13 @@ def get_infiltration_SLA_from_ACH50(ach50, n_i, livingSpaceFloorArea, livingSpac
 
 end
 
-def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa)
+def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa, std)
   # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
 
-  return frac622 * ((num_beds + 1.0) * 7.5 + ffa / 100.0)
+  if std == '2013'
+	return frac622 * ((num_beds + 1.0) * 7.5 + 0.03 * ffa)
+  end
+  return frac622 * ((num_beds + 1.0) * 7.5 + 0.01 * ffa)
 end
 
 def set_variable_list_heating_set_point(category)
@@ -4104,6 +4422,7 @@ def get_cooling_coefficients(num_speeds, is_ideal_system, isHeatPump, supply)
   constants = Constants.new
   if not [1.0, 2.0, 4.0, constants.Num_Speeds_MSHP].include? num_speeds
     runner.registerError("Number_speeds = #{num_speeds} is not supported. Only 1, 2, 4, and 10 cooling equipment can be modeled.")
+	return false
   end
 
   # Hard coded curves
@@ -4533,6 +4852,18 @@ def calc_Cd_from_HSPF_COP_FourSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, 
   #
   #   return C_d
 
+end
+
+def get_mech_vent_num_vent_fans(vent_type)
+	constants = Constants.new
+    if vent_type == constants.VentTypeExhaust
+        return 1 # One fan for unbalanced airflow
+    elsif vent_type == constants.VentTypeSupply
+        return 1 # One fan for unbalanced airflow
+    elsif vent_type == constants.VentTypeBalanced
+        return 2 # Two fans for balanced airflow
+    end
+	return 1 # Default to one fan
 end
 
 class Process_clothes_washer

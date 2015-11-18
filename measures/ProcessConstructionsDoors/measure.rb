@@ -28,7 +28,15 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsDoors"
+    return "Add/Replace Residential Exterior Doors"
+  end
+  
+  def description
+    return "This measure creates constructions for exterior doors adjacent to the living space as well as garage doors."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of constructions for exterior doors adjacent to the living space as well as garage doors. Finds sub surfaces adjacent to the living space and garage and sets applicable constructions."
   end
   
   #define the arguments that the user will input
@@ -54,12 +62,14 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for living
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
     args << selected_living
 
-    #make a choice argument for crawlspace
-    selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, true)
-    selected_garage.setDisplayName("Of what space type is the garage?")
+    #make a choice argument for garage
+    selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, false)
+    selected_garage.setDisplayName("Garage Space")
+	selected_garage.setDescription("The garage space type.")
     args << selected_garage
 
     return args
@@ -93,6 +103,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     door_thickness = d.door_thickness
     d = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     d.setName("DoorMaterial")
+	d.setRoughness("Rough")
     d.setThickness(OpenStudio::convert(door_thickness,"ft","m").get)
     d.setConductivity(OpenStudio::convert(mat_door_Uvalue * door_thickness,"Btu/hr*ft*R","W/m*K").get)
     d.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
@@ -108,6 +119,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     garage_door_thickness = gd.garage_door_thickness
     gd = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     gd.setName("GarageDoorMaterial")
+	gd.setRoughness("Rough")
     gd.setThickness(OpenStudio::convert(garage_door_thickness,"ft","m").get)
     gd.setConductivity(OpenStudio::convert(garage_door_Uvalue * garage_door_thickness,"Btu/hr*ft*R","W/m*K").get)
     gd.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)

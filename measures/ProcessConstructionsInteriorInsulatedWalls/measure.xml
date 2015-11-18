@@ -2,65 +2,78 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_walls</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>3e8bed60-5590-4ce5-83fb-faec732a1b5d</version_id>
+  <version_id>5b218cb2-3846-4923-9518-be089794f4db</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedWalls</class_name>
-  <display_name>ProcessConstructionsInteriorInsulatedWalls</display_name>
+  <display_name>Add/Replace Residential Interzonal Walls</display_name>
   <description>This measure creates insulated constructions for the interzonal walls between the living space and the garage.</description>
   <modeler_description>Calculates material layer properties of insulated constructions for the interzonal walls between the living space and the garage. Finds surfaces adjacent to the living space and garage and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Of what space type is the living space?</display_name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedgarage</name>
-      <display_name>Of what space type is the garage?</display_name>
+      <display_name>Garage Space</display_name>
+      <description>The garage space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>userdefinedpartitionwallmassth</name>
-      <display_name>Partition wall mass thickness [in].</display_name>
+      <display_name>Partition Wall Mass: Thickness</display_name>
+      <description>Thickness of the layer.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
     </argument>
     <argument>
       <name>userdefinedpartitionwallmasscond</name>
-      <display_name>Partition wall mass conductivity [Btu-in/h-ft^2-R].</display_name>
+      <display_name>Partition Wall Mass: Conductivity</display_name>
+      <description>Conductivity of the layer.</description>
       <type>Double</type>
+      <units>Btu-in/h-ft^2-R</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>1.1112</default_value>
     </argument>
     <argument>
       <name>userdefinedpartitionwallmassdens</name>
-      <display_name>Partition wall mass density [lb/ft^3].</display_name>
+      <display_name>Partition Wall Mass: Density</display_name>
+      <description>Density of the layer.</description>
       <type>Double</type>
+      <units>lb/ft^3</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>50</default_value>
     </argument>
     <argument>
       <name>userdefinedpartitionwallmasssh</name>
-      <display_name>Partition wall mass specific heat [Btu/lb-R].</display_name>
+      <display_name>Partition Wall Mass: Specific Heat</display_name>
+      <description>Specific heat of the layer.</description>
       <type>Double</type>
+      <units>Btu/lb-R</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.2</default_value>
     </argument>
     <argument>
       <name>selectedstudsize</name>
-      <display_name>Wood stud size of wall cavity.</display_name>
+      <display_name>Interzonal Walls: Cavity Depth</display_name>
+      <description>Depth of the stud cavity.</description>
       <type>Choice</type>
+      <units>in</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>2x4</default_value>
       <choices>
         <choice>
           <value>2x4</value>
@@ -91,9 +104,12 @@
     <argument>
       <name>selectedspacing</name>
       <display_name>Wood stud spacing of wall cavity.</display_name>
+      <description>The on-center spacing between studs in a wall assembly.</description>
       <type>Choice</type>
+      <units>in</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>16 in o.c.</default_value>
       <choices>
         <choice>
           <value>16 in o.c.</value>
@@ -107,14 +123,18 @@
     </argument>
     <argument>
       <name>userdefinedinstcavr</name>
-      <display_name>Installed R-value of cavity insulation [hr-ft^2-R/Btu].</display_name>
+      <display_name>Interzonal Walls: Cavity Insulation Installed R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>13</default_value>
     </argument>
     <argument>
       <name>selectedinstallgrade</name>
-      <display_name>Insulation installation grade of wood stud wall cavity.</display_name>
+      <display_name>Wood Stud: Cavity Install Grade</display_name>
+      <description>5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -136,10 +156,12 @@
     </argument>
     <argument>
       <name>selectedinsfills</name>
-      <display_name>Cavity insulation fills the cavity?</display_name>
+      <display_name>Interzonal Walls: Insulation Fills Cavity</display_name>
+      <description>Specifies whether the cavity insulation completely fills the depth of the wall cavity.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
       <choices>
         <choice>
           <value>true</value>
@@ -153,16 +175,20 @@
     </argument>
     <argument>
       <name>userdefinedrigidinsthickness</name>
-      <display_name>Rigid insulation thickness of wall cavity [in].</display_name>
+      <display_name>Interzonal Walls: Continuous Insulation Thickness</display_name>
+      <description>The thickness of the continuous insulation.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
       <name>userdefinedrigidinsr</name>
-      <display_name>Rigid insulation R-value of wall cavity [hr-ft^2-R/Btu].</display_name>
+      <display_name>Interzonal Walls: Continuous Insulation Nominal R-value</display_name>
+      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
@@ -198,12 +224,6 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -212,13 +232,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D92D7A9B</checksum>
+      <checksum>55113C22</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

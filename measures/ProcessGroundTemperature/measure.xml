@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_temperature</name>
   <uid>4a3a96e7-00ea-4b61-9433-3d6fc3395a62</uid>
-  <version_id>26053995-2291-444c-a75e-2733e4bb8c60</version_id>
+  <version_id>1b726c74-bc88-4c24-bbd8-18948495e8ce</version_id>
   <xml_checksum>3BE1CF9C</xml_checksum>
   <class_name>ProcessGroundTemperature</class_name>
-  <display_name>ProcessGroundTemperature</display_name>
+  <display_name>Add Residential Ground Temperatures</display_name>
   <description>This measure calculates ground temperatures using weather data.</description>
   <modeler_description>This measure writes monthly ground temperatures to the EnergyPlus objects Site:GroundTemperature:BuildingSurface and Site:GroundTemperature:Deep.</modeler_description>
   <arguments/>
@@ -47,19 +47,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7B9EA6A6</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>0696E268</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>61F7758E</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CD6B0BDF</checksum>
+    </file>
+    <file>
+      <filename>ASHRAE622WSF.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C1BB835</checksum>
     </file>
   </files>
 </measure>

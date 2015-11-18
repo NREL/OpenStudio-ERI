@@ -2,87 +2,105 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_floors</name>
   <uid>477cfef1-0c37-4b16-9cfd-82d617472e43</uid>
-  <version_id>eb24b6af-4efe-40d5-826c-d8c1d4afe7c7</version_id>
+  <version_id>5985a5fe-92b1-48a7-a6ef-e30d9a52446f</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedFloors</class_name>
-  <display_name>ProcessConstructionsInteriorUninsulatedFloors</display_name>
+  <display_name>Add/Replace Residential Uninsulated Floors</display_name>
   <description>This measure creates uninsulated constructions for the floors between living spaces and the floors between the living space and finished basement.</description>
   <modeler_description>Calculates material layer properties of uninsulated constructions for the floors between living spaces and the floors between the living space and finished basement. Finds surfaces adjacent to the living space and finished basement and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Of what space type is the living space?</display_name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedfbsmt</name>
-      <display_name>Of what space type is the finished basement?</display_name>
+      <display_name>Finished Basement Space</display_name>
+      <description>The finished basement space type.</description>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>userdefinedgypthickness</name>
-      <display_name>Thickness of drywall layers [in].</display_name>
+      <display_name>Partition Wall Mass: Thickness</display_name>
+      <description>Gypsum layer thickness.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
     </argument>
     <argument>
       <name>userdefinedgyplayers</name>
-      <display_name>Number of drywall layers.</display_name>
+      <display_name>Partition Wall Mass: Num Layers</display_name>
+      <description>Integer number of layers of gypsum.</description>
       <type>Double</type>
+      <units>#</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
     </argument>
     <argument>
       <name>userdefinedfloormassth</name>
-      <display_name>Floor mass thickness [in].</display_name>
+      <display_name>Floor Mass: Thickness</display_name>
+      <description>Thickness of the floor mass.</description>
       <type>Double</type>
+      <units>in</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.625</default_value>
     </argument>
     <argument>
       <name>userdefinedfloormasscond</name>
-      <display_name>Floor mass conductivity [Btu-in/h-ft^2-R].</display_name>
+      <display_name>Floor Mass: Conductivity</display_name>
+      <description>Conductivity of the floor mass.</description>
       <type>Double</type>
+      <units>Btu-in/h-ft^2-R</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.8004</default_value>
     </argument>
     <argument>
       <name>userdefinedfloormassdens</name>
-      <display_name>Floor mass density [lb/ft^3].</display_name>
+      <display_name>Floor Mass: Density</display_name>
+      <description>Density of the floor mass.</description>
       <type>Double</type>
+      <units>lb/ft^3</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>34</default_value>
     </argument>
     <argument>
       <name>userdefinedfloormasssh</name>
-      <display_name>Floor mass specific heat [Btu/lb-R].</display_name>
+      <display_name>Floor Mass: Specific Heat</display_name>
+      <description>Specific heat of the floor mass.</description>
       <type>Double</type>
+      <units>Btu/lb-R</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.29</default_value>
     </argument>
     <argument>
       <name>userdefinedcarpetr</name>
-      <display_name>Carpet pad R-value [hr-ft^2-R/Btu].</display_name>
+      <display_name>Carpet: Carpet Pad R-value</display_name>
+      <description>The combined R-value of the carpet and the pad.</description>
       <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>2.08</default_value>
     </argument>
     <argument>
       <name>userdefinedcarpetfrac</name>
-      <display_name>Carpet floor fraction [frac].</display_name>
+      <display_name>Carpet: Floor Carpet Fraction</display_name>
+      <description>Defines the fraction of a floor which is covered by carpet.</description>
       <type>Double</type>
+      <units>frac</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.8</default_value>
@@ -126,19 +144,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F02A36D3</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>A6B6FBDB</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

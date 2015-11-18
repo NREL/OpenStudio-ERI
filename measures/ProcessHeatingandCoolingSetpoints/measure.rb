@@ -56,8 +56,16 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessHeatingandCoolingSetpoints"
+    return "Set Residential Heating/Cooling Setpoints and Schedules"
   end
+  
+  def description
+    return "This measure creates the heating season and cooling season schedules based on weather data, and the heating setpoint and cooling setpoint schedules."
+  end
+  
+  def modeler_description
+    return "This measure creates HeatingSeasonSchedule and CoolingSeasonSchedule ruleset objects. Schedule values are populated based on information contained in the EPW file. This measure also creates HeatingSetPoint and CoolingSetPoint ruleset objects. Schedule values are populated based on information input by the user as well as contained in the HeatingSeasonSchedule and CoolingSeasonSchedule. The heating and cooling setpoint schedules are added to the living zone's thermostat."
+  end     
   
   #define the arguments that the user will input
   def arguments(model)
@@ -82,19 +90,22 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for living space
     selectedliving = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", thermalzone_handles, thermalzone_display_names, true)
-    selectedliving.setDisplayName("Select the living zone.")
+    selectedliving.setDisplayName("Living Zone")
+	selectedliving.setDescription("The living zone.")
     args << selectedliving
 
     #make a double argument for constant heating setpoint
     userdefinedhsp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedhsp", false)
-    userdefinedhsp.setDisplayName("Heating Set Point: Constant Setpoint [degrees F]")
+    userdefinedhsp.setDisplayName("Heating Set Point: Constant Setpoint")
+	userdefinedhsp.setUnits("degrees F")
 	userdefinedhsp.setDescription("Constant heating setpoint for every hour.")
     userdefinedhsp.setDefaultValue(71.0)
     args << userdefinedhsp
 
     #make a double argument for constant cooling setpoint
     userdefinedcsp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsp", false)
-    userdefinedcsp.setDisplayName("Cooling Set Point: Constant Setpoint [degrees F]")
+    userdefinedcsp.setDisplayName("Cooling Set Point: Constant Setpoint")
+	userdefinedcsp.setUnits("degrees F")
 	userdefinedcsp.setDescription("Constant cooling setpoint for every hour.")
     userdefinedcsp.setDefaultValue(76.0)
     args << userdefinedcsp

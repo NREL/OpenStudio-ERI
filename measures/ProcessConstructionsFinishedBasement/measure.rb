@@ -191,9 +191,17 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsUnfinishedBasement"
+    return "Add/Replace Residential Finished Basement Constructions"
   end
 
+  def description
+    return "This measure creates constructions for the finished basement walls, floor, and rim joists."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of constructions for the finished basement walls, floor, and rim joists. Finds surfaces adjacent to the finished basement and sets applicable constructions."
+  end   
+  
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
@@ -217,25 +225,9 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
 
     #make a choice argument for finished basement
     selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, true)
-    selected_fbsmt.setDisplayName("Of what space type is the finished basement?")
+    selected_fbsmt.setDisplayName("Finished Basement Space")
+	selected_fbsmt.setDescription("The finished basement space type.")
     args << selected_fbsmt
-
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
 
     #make a choice argument for model objects
     fbsmtins_display_names = OpenStudio::StringVector.new
@@ -245,7 +237,9 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
 
     #make a choice argument for finished basement insulation type
     selected_fbsmtins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtins", fbsmtins_display_names, true)
-    selected_fbsmtins.setDisplayName("Finished basement insulation type.")
+    selected_fbsmtins.setDisplayName("Finished Basement: Insulation Type")
+	selected_fbsmtins.setDescription("The type of insulation.")
+	selected_fbsmtins.setDefaultValue("Whole Wall")
     args << selected_fbsmtins
 
     #make a choice argument for model objects
@@ -256,19 +250,17 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
 
     #make a string argument for wood stud size of wall cavity
     selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, false)
-    selected_studsize.setDisplayName("Wood stud size of wall cavity.")
+    selected_studsize.setDisplayName("Finished Basement: Cavity Depth")
+	selected_studsize.setUnits("in")
+	selected_studsize.setDescription("Depth of the stud cavity.")
     selected_studsize.setDefaultValue("None")
     args << selected_studsize
 
-    # Whole Wall Cavity Insulation
-    # #make a choice argument for wall / ceiling cavity insulation
-    # selected_fbsmtwallcav = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtwallcav", material_handles, material_display_names, false)
-    # selected_fbsmtwallcav.setDisplayName("Finished basement whole wall cavity insulation. For manually entering finished basement whole wall cavity insulation properties, leave blank.")
-    # args << selected_fbsmtwallcav
-
     #make a double argument for unfinished basement whole wall cavity insulation R-value
     userdefined_fbsmtwallcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtwallcavr", false)
-    userdefined_fbsmtwallcavr.setDisplayName("Finished basement whole wall cavity insulation R-value [hr-ft^2-R/Btu].")
+    userdefined_fbsmtwallcavr.setDisplayName("Finished Basement: Cavity Insulation Installed R-value")
+	userdefined_fbsmtwallcavr.setUnits("hr-ft^2-R/Btu")
+	userdefined_fbsmtwallcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
     userdefined_fbsmtwallcavr.setDefaultValue(0)
     args << userdefined_fbsmtwallcavr
 
@@ -278,110 +270,111 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     installgrade_display_names << "II"
     installgrade_display_names << "III"
 
-    #make a choice argument for wall cavity insulation installation grade
-    selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, false)
-    selected_installgrade.setDisplayName("Insulation installation grade of wood stud wall cavity.")
+	#make a choice argument for wall cavity insulation installation grade
+	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
+	selected_installgrade.setDisplayName("Finished Basement: Cavity Install Grade")
+	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     selected_installgrade.setDefaultValue("I")
-    args << selected_installgrade
+	args << selected_installgrade
 
-    #make a bool argument for whether the cavity insulation fills the cavity
-    selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", false)
-    selected_insfills.setDisplayName("Cavity insulation fills the cavity?")
-    selected_insfills.setDefaultValue(true)
-    args << selected_insfills
-
-    # Wall Continuous Insulation
-    # #make a choice argument for wall continuous insulation
-    # selected_fbsmtwallcont = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtwallcont", material_handles, material_display_names, false)
-    # selected_fbsmtwallcont.setDisplayName("Finished basement wall continuous insulation. For manually entering finished basement wall continuous insulation properties, leave blank.")
-    # args << selected_fbsmtwallcont
+	#make a bool argument for whether the cavity insulation fills the cavity
+	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
+	selected_insfills.setDisplayName("Finished Basement: Insulation Fills Cavity")
+	selected_insfills.setDescription("Specifies whether the cavity insulation completely fills the depth of the wall cavity.")
+    selected_insfills.setDefaultValue(false)
+	args << selected_insfills
 
     #make a double argument for finished basement wall continuous R-value
     userdefined_fbsmtwallcontth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtwallcontth", false)
-    userdefined_fbsmtwallcontth.setDisplayName("Finished basement wall continuous insulation thickness [in].")
-    userdefined_fbsmtwallcontth.setDefaultValue(0)
+    userdefined_fbsmtwallcontth.setDisplayName("Finished Basement: Continuous Insulation Thickness")
+	userdefined_fbsmtwallcontth.setUnits("in")
+	userdefined_fbsmtwallcontth.setDescription("The thickness of the continuous insulation.")
+    userdefined_fbsmtwallcontth.setDefaultValue(2.0)
     args << userdefined_fbsmtwallcontth
 
     #make a double argument for finished basement wall continuous insulation R-value
     userdefined_fbsmtwallcontr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtwallcontr", false)
-    userdefined_fbsmtwallcontr.setDisplayName("Finished basement wall continuous insulation R-value [hr-ft^2-R/Btu].")
-    userdefined_fbsmtwallcontr.setDefaultValue(0)
+    userdefined_fbsmtwallcontr.setDisplayName("Finished Basement: Continuous Insulation Nominal R-value")
+	userdefined_fbsmtwallcontr.setUnits("hr-ft^2-R/Btu")
+	userdefined_fbsmtwallcontr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    userdefined_fbsmtwallcontr.setDefaultValue(10.0)
     args << userdefined_fbsmtwallcontr
 
     # Ceiling Joist Height
     #make a choice argument for model objects
     joistheight_display_names = OpenStudio::StringVector.new
-    joistheight_display_names << "9.25"
+    joistheight_display_names << "2x10"
 
-    #make a choice argument for crawlspace ceiling joist height
-    selected_fbsmtceiljoistheight = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtceiljoistheight", joistheight_display_names, true)
-    selected_fbsmtceiljoistheight.setDisplayName("Finished basement ceiling joist height [in].")
-    args << selected_fbsmtceiljoistheight
+	#make a choice argument for finished basement ceiling joist height
+	selected_fbsmtceiljoistheight = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtceiljoistheight", joistheight_display_names, true)
+	selected_fbsmtceiljoistheight.setDisplayName("Finished Basement: Ceiling Joist Height")
+	selected_fbsmtceiljoistheight.setUnits("in")
+	selected_fbsmtceiljoistheight.setDescription("Height of the joist member.")
+	selected_fbsmtceiljoistheight.setDefaultValue("2x10")
+	args << selected_fbsmtceiljoistheight	
 
     # Ceiling Framing Factor
-    #make a choice argument for crawlspace ceiling framing factor
-    userdefined_fbsmtceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtceilff", false)
-    userdefined_fbsmtceilff.setDisplayName("Finished basement ceiling framing factor [frac].")
+	#make a choice argument for finished basement ceiling framing factor
+	userdefined_fbsmtceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtceilff", false)
+    userdefined_fbsmtceilff.setDisplayName("Finished Basement: Ceiling Framing Factor")
+	userdefined_fbsmtceilff.setUnits("frac")
+	userdefined_fbsmtceilff.setDescription("Fraction of ceiling that is framing.")
     userdefined_fbsmtceilff.setDefaultValue(0.13)
-    args << userdefined_fbsmtceilff
+	args << userdefined_fbsmtceilff
 
-    # Rim Joist
-    # #make a choice argument for rim joist insulation
-    # selected_fbsmtrimjoist = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtrimjoist", material_handles, material_display_names, false)
-    # selected_fbsmtrimjoist.setDisplayName("Finished basement rim joist insulation. For manually entering finished basement rim joist insulation properties, leave blank.")
-    # args << selected_fbsmtrimjoist
-
-    #make a double argument for rim joist insulation R-value
-    userdefined_fbsmtrimjoistr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtrimjoistr", false)
-    userdefined_fbsmtrimjoistr.setDisplayName("Finished basement rim joist insulation R-value [hr-ft^2-R/Btu].")
-    userdefined_fbsmtrimjoistr.setDefaultValue(0)
-    args << userdefined_fbsmtrimjoistr
-
-    # Floor Mass
-    # #make a choice argument for floor mass
-    # selected_floormass = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfloormass", material_handles, material_display_names, false)
-    # selected_floormass.setDisplayName("Floor mass. For manually entering floor mass properties, leave blank.")
-    # args << selected_floormass
+	#make a double argument for rim joist insulation R-value
+	userdefined_fbsmtrimjoistr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtrimjoistr", false)
+	userdefined_fbsmtrimjoistr.setDisplayName("Finished Basement: Rim Joist Insulation R-value")
+	userdefined_fbsmtrimjoistr.setUnits("hr-ft^2-R/Btu")
+	userdefined_fbsmtrimjoistr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+	userdefined_fbsmtrimjoistr.setDefaultValue(10.0)
+	args << userdefined_fbsmtrimjoistr
 
     #make a double argument for floor mass thickness
     userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
-    userdefined_floormassth.setDisplayName("Floor mass thickness [in].")
+    userdefined_floormassth.setDisplayName("Floor Mass: Thickness")
+	userdefined_floormassth.setUnits("in")
+	userdefined_floormassth.setDescription("Thickness of the floor mass.")
     userdefined_floormassth.setDefaultValue(0.625)
     args << userdefined_floormassth
 
     #make a double argument for floor mass conductivity
     userdefined_floormasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasscond", false)
-    userdefined_floormasscond.setDisplayName("Floor mass conductivity [Btu-in/h-ft^2-R].")
+    userdefined_floormasscond.setDisplayName("Floor Mass: Conductivity")
+	userdefined_floormasscond.setUnits("Btu-in/h-ft^2-R")
+	userdefined_floormasscond.setDescription("Conductivity of the floor mass.")
     userdefined_floormasscond.setDefaultValue(0.8004)
     args << userdefined_floormasscond
 
     #make a double argument for floor mass density
     userdefined_floormassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassdens", false)
-    userdefined_floormassdens.setDisplayName("Floor mass density [lb/ft^3].")
+    userdefined_floormassdens.setDisplayName("Floor Mass: Density")
+	userdefined_floormassdens.setUnits("lb/ft^3")
+	userdefined_floormassdens.setDescription("Density of the floor mass.")
     userdefined_floormassdens.setDefaultValue(34.0)
     args << userdefined_floormassdens
 
     #make a double argument for floor mass specific heat
     userdefined_floormasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasssh", false)
-    userdefined_floormasssh.setDisplayName("Floor mass specific heat [Btu/lb-R].")
+    userdefined_floormasssh.setDisplayName("Floor Mass: Specific Heat")
+	userdefined_floormasssh.setUnits("Btu/lb-R")
+	userdefined_floormasssh.setDescription("Specific heat of the floor mass.")
     userdefined_floormasssh.setDefaultValue(0.29)
     args << userdefined_floormasssh
 
-    # Carpet
-    # #make a choice argument for carpet pad R-value
-    # selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-    # selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-    # args << selected_carpet
-
     #make a double argument for carpet pad R-value
     userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
-    userdefined_carpetr.setDisplayName("Carpet pad R-value [hr-ft^2-R/Btu].")
+    userdefined_carpetr.setDisplayName("Carpet: Carpet Pad R-value")
+	userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
+	userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
     userdefined_carpetr.setDefaultValue(2.08)
     args << userdefined_carpetr
 
     #make a double argument for carpet floor fraction
     userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
-    userdefined_carpetfrac.setDisplayName("Carpet floor fraction [frac].")
+    userdefined_carpetfrac.setDisplayName("Carpet: Floor Carpet Fraction")
+	userdefined_carpetfrac.setUnits("frac")
+	userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
     userdefined_carpetfrac.setDefaultValue(0.8)
     args << userdefined_carpetfrac
 
@@ -417,19 +410,13 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
 
     # Whole Wall Cavity Insulation
     if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
-      selected_fbsmtwallcav = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmtwallcav",user_arguments,model)
-      if selected_fbsmtwallcav.empty?
-        userdefined_fbsmtwallcavr = runner.getDoubleArgumentValue("userdefinedfbsmtwallcavr",user_arguments)
-      end
+      userdefined_fbsmtwallcavr = runner.getDoubleArgumentValue("userdefinedfbsmtwallcavr",user_arguments)
     end
 
     # Wall Continuous Insulation
     if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
-      selected_fbsmtwallcont = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmtwallcont",user_arguments,model)
-      if selected_fbsmtwallcont.empty?
-        userdefined_fbsmtwallcontth = runner.getDoubleArgumentValue("userdefinedfbsmtwallcontth",user_arguments)
-        userdefined_fbsmtwallcontr = runner.getDoubleArgumentValue("userdefinedfbsmtwallcontr",user_arguments)
-      end
+      userdefined_fbsmtwallcontth = runner.getDoubleArgumentValue("userdefinedfbsmtwallcontth",user_arguments)
+      userdefined_fbsmtwallcontr = runner.getDoubleArgumentValue("userdefinedfbsmtwallcontr",user_arguments)
       if selected_fbsmtins.to_s == "Half Wall"
         fbsmtWallInsHeight = 4
       elsif selected_fbsmtins.to_s == "Whole Wall"
@@ -449,10 +436,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
 
     # Rim Joist
     if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
-      selected_fbsmtrimjoist = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmtrimjoist",user_arguments,model)
-      if selected_fbsmtrimjoist.empty?
-        userdefined_fbsmtrimjoistr = runner.getDoubleArgumentValue("userdefinedfbsmtrimjoistr",user_arguments)
-      end
+      userdefined_fbsmtrimjoistr = runner.getDoubleArgumentValue("userdefinedfbsmtrimjoistr",user_arguments)
     end
 
     # Gypsum
@@ -472,19 +456,13 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     end
 
     # Floor Mass
-    selected_slabfloormass = runner.getOptionalWorkspaceObjectChoiceValue("selectedfloormass",user_arguments,model)
-    if selected_slabfloormass.empty?
-      userdefined_floormassth = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
-      userdefined_floormasscond = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
-      userdefined_floormassdens = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
-      userdefined_floormasssh = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
-    end
+    userdefined_floormassth = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
+    userdefined_floormasscond = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
+    userdefined_floormassdens = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
+	userdefined_floormasssh = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
 
     # Carpet
-    selected_carpet = runner.getOptionalWorkspaceObjectChoiceValue("selectedcarpet",user_arguments,model)
-    if selected_carpet.empty?
-      userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-    end
+    userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
     userdefined_carpetfrac = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
     # Constants
@@ -495,26 +473,13 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
 
     # Cavity Insulation
     if selected_fbsmtins.to_s == "Half Wall" or selected_fbsmtins.to_s == "Whole Wall"
-      if userdefined_fbsmtwallcavr.nil?
-        fbWallThickness = OpenStudio::convert(selected_fbsmtwallcav.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-        fbWallConductivity = OpenStudio::convert(selected_fbsmtwallcav.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-        fbsmtWallCavityInsRvalueInstalled = OpenStudio::convert(fbWallThickness,"in","ft").get / fbWallConductivity
-      else
-        fbsmtWallCavityInsRvalueInstalled = userdefined_fbsmtwallcavr
-      end
+      fbsmtWallCavityInsRvalueInstalled = userdefined_fbsmtwallcavr
     end
 
     # Continuous Insulation
     if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
-      if userdefined_fbsmtwallcontr.nil?
-        fbWallThickness = OpenStudio::convert(selected_fbsmtwallcont.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-        fbWallConductivity = OpenStudio::convert(selected_fbsmtwallcont.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-        fbsmtWallContInsThickness = fbWallThickness
-        fbsmtWallContInsRvalue = OpenStudio::convert(fbWallThickness,"in","ft").get / fbWallConductivity
-      else
-        fbsmtWallContInsThickness = userdefined_fbsmtwallcontth
-        fbsmtWallContInsRvalue = userdefined_fbsmtwallcontr
-      end
+      fbsmtWallContInsThickness = userdefined_fbsmtwallcontth
+      fbsmtWallContInsRvalue = userdefined_fbsmtwallcontr
     end
 
     # Wall Cavity
@@ -527,7 +492,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     fbsmtWallCavityInsFillsCavity = selected_insfills
 
     # Ceiling Joist Height
-    fbsmtCeilingJoistHeight_dict = {"9.25"=>9.25}
+    fbsmtCeilingJoistHeight_dict = {"2x10"=>9.25}
     fbsmtCeilingJoistHeight = fbsmtCeilingJoistHeight_dict[selected_fbsmtceiljoistheight]
 
     # Ceiling Framing Factor
@@ -535,17 +500,10 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
 
     # Rim Joist
     if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
-      if userdefined_fbsmtrimjoistr.nil?
-        fbRimJoistThickness = OpenStudio::convert(selected_fbsmtrimjoist.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-        fbRimJoistConductivity = OpenStudio::convert(selected_fbsmtrimjoist.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-        fbsmtRimJoistInsRvalue = OpenStudio::convert(fbRimJoistThickness,"in","ft").get / fbRimJoistConductivity
-      else
-        fbsmtRimJoistInsRvalue = userdefined_fbsmtrimjoistr
-      end
+      fbsmtRimJoistInsRvalue = userdefined_fbsmtrimjoistr
     end
 
     # Gypsum
-    gypsumRoughness = "Rough"
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
     gypsumConductivity = mat_gyp.k
@@ -557,26 +515,13 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
 
     # Floor Mass
-    if userdefined_floormassth.nil?
-      floorMassThickness = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      floorMassConductivity = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      floorMassDensity = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-      floorMassSpecificHeat = OpenStudio::convert(selected_floormass.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-    else
-      floorMassThickness = userdefined_floormassth
-      floorMassConductivity = userdefined_floormasscond
-      floorMassDensity = userdefined_floormassdens
-      floorMassSpecificHeat = userdefined_floormasssh
-    end
+    floorMassThickness = userdefined_floormassth
+    floorMassConductivity = userdefined_floormasscond
+    floorMassDensity = userdefined_floormassdens
+    floorMassSpecificHeat = userdefined_floormasssh
 
     # Carpet
-    if userdefined_carpetr.nil?
-      carpetPadThickness = OpenStudio::convert(selected_carpet.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      carpetPadConductivity = OpenStudio::convert(selected_carpet.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      carpetPadRValue = OpenStudio::convert(carpetPadThickness,"in","ft").get / carpetPadConductivity
-    else
-      carpetPadRValue = userdefined_carpetr
-    end
+    carpetPadRValue = userdefined_carpetr
     carpetFloorFraction = userdefined_carpetfrac
 
     # Exterior Finish
@@ -682,7 +627,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     # Gypsum
     gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     gypsum.setName("GypsumBoard-1_2in")
-    gypsum.setRoughness(gypsumRoughness)
+    gypsum.setRoughness("Rough")
     gypsum.setThickness(OpenStudio::convert(0.5,"in","m").get)
     gypsum.setConductivity(OpenStudio::convert(gypsumConductivity,"Btu/hr*ft*R","W/m*K").get)
     gypsum.setDensity(OpenStudio::convert(gypsumDensity,"lb/ft^3","kg/m^3").get)

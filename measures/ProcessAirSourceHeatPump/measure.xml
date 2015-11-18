@@ -2,32 +2,35 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>02501974-f4bd-455a-877e-c1af035c02ae</version_id>
+  <version_id>4775b42d-a527-4aac-bd1e-9e4556d961e5</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
-  <display_name>ProcessAirSourceHeatPump</display_name>
+  <display_name>Add/Replace Residential Air Source Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds an air source heat pump along with an on/off supply fan to a unitary air loop.</description>
   <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule and CoolingSeasonSchedule. Any supply components or baseboard convective electrics are removed from any existing air loops or zones. Any existing air loops are also removed. A heating DX coil, cooling DX coil, electric supplemental heating coil, and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
-      <display_name>Which is the living space zone?</display_name>
+      <display_name>Living Zone</display_name>
+      <description>The living zone.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedfbsmt</name>
-      <display_name>Which is the finished basement zone?</display_name>
+      <display_name>Finished Basement Zone</display_name>
+      <description>The finished basement zone.</description>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedhp</name>
-      <display_name>Air Source Heat Pump: Installed SEER [Btu/W-h], Installed HSPF [Btu/W-h]</display_name>
+      <display_name>Air Source Heat Pump: Installed SEER, Installed HSPF</display_name>
       <description>The installed Seasonal Energy Efficiency Ratio (SEER) of the heat pump, and the installed Heating Seasonal Performance Factor (HSPF) of the heat pump.</description>
       <type>Choice</type>
+      <units>Btu/W-h</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>SEER 13, 7.7 HSPF</default_value>
@@ -313,12 +316,6 @@
       <checksum>3D1ABA94</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -327,13 +324,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3176FB13</checksum>
+      <checksum>17C4B418</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

@@ -16,8 +16,16 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsGarageSlab"
+    return "Add/Replace Residential Garage Slab"
   end
+  
+  def description
+    return "This measure creates slab constructions for the garage floor."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of slab constructions for the garage floor. Finds surfaces adjacent to the garage and sets applicable constructions."
+  end    
   
   #define the arguments that the user will input
   def arguments(model)
@@ -42,7 +50,8 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for crawlspace
     selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, true)
-    selected_garage.setDisplayName("Of what space type is the garage?")
+    selected_garage.setDisplayName("Garage Space")
+	selected_garage.setDescription("The garage space type.")
     args << selected_garage
 
     return args
@@ -103,7 +112,7 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|
-          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Ground"
+          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition.downcase == "ground"
             surface.resetConstruction
             surface.setConstruction(grnduninsunfingrgfloor)
             constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"GrndUninsUnfinGrgFloor"]

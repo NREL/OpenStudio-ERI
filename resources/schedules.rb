@@ -1,5 +1,3 @@
-require "#{File.dirname(__FILE__)}/units"
-
 class Schedule
     def initialize(weekday_hourly_values, weekend_hourly_values, monthly_values, model, sch_name, runner)
 		@validated = true
@@ -28,7 +26,7 @@ class Schedule
 	end
 
 	def calcDesignLevelGas(daily_therm)
-		return calcDesignLevelElec(Units.therms2kWh(daily_therm))
+		return calcDesignLevelElec(OpenStudio.convert(daily_therm, "therm", "kWh").get)
 	end
 
 	def setSchedule(obj)

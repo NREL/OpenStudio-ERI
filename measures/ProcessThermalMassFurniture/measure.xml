@@ -2,37 +2,41 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>ce8f0509-6879-402c-9a19-bda06c181523</version_id>
+  <version_id>7ef04245-9599-493a-bff3-1c18a2f36c19</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
-  <display_name>ProcessThermalMassFurniture</display_name>
+  <display_name>Add/Replace Residential Furniture Thermal Mass</display_name>
   <description>This measure creates internal mass for furniture in the living space, finished basement, unfinished basement, and garage.</description>
   <modeler_description>This measure creates constructions representing the internal mass of furniture in the living space, finished basement, unfinished basement, and garage. The constructions are set to define the internal mass objects of their respective spaces.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
       <display_name>Of what space type is the living space?</display_name>
+      <description>The living space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedfbsmt</name>
-      <display_name>Of what space type is the finished basement?</display_name>
+      <display_name>Finished Basement Space</display_name>
+      <description>The finished basement space type.</description>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedufbsmt</name>
-      <display_name>Of what space type is the unfinished basement?</display_name>
+      <display_name>Unfinished Basement Space</display_name>
+      <description>The unfinished basement space type.</description>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>selectedgarage</name>
-      <display_name>Of what space type is the garage?</display_name>
+      <display_name>Garage Space</display_name>
+      <description>The garage space type.</description>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -76,19 +80,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A21E7747</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>1CC23085</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

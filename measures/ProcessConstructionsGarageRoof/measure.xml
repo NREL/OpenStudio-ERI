@@ -2,26 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>b8803df2-4fb6-45f2-bf00-1a18a2cf572e</version_id>
+  <version_id>778074e0-0bd0-4ac2-8605-cd430d73d2b2</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageRoof</class_name>
-  <display_name>ProcessConstructionsGarageRoof</display_name>
+  <display_name>Add/Replace Residential Exterior Uninsulated Garage Roof</display_name>
   <description>This measure creates uninsulated, unfinished, stud and air constructions for the garage roof.</description>
   <modeler_description>Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the garage roof. Finds surfaces adjacent to the garage and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>selectedgarage</name>
-      <display_name>Of what space type is the garage?</display_name>
+      <display_name>Garage Space</display_name>
+      <description>The garage space type.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>userdefinedhasradiantbarrier</name>
-      <display_name>Roof has radiant barrier?</display_name>
+      <display_name>Has Radiant Barrier</display_name>
+      <description>Layers of reflective material used to reduce heat transfer between the attic roof and the ceiling insulation and ductwork (if present).</description>
       <type>Boolean</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
       <choices>
         <choice>
           <value>true</value>
@@ -35,7 +38,8 @@
     </argument>
     <argument>
       <name>userdefinedroofmatthermalabs</name>
-      <display_name>Roofing material emissivity of unfinished attic.</display_name>
+      <display_name>Roof Material: Emissivity.</display_name>
+      <description>Infrared emissivity of the outside surface of the roof.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -43,7 +47,8 @@
     </argument>
     <argument>
       <name>userdefinedroofmatabs</name>
-      <display_name>Roofing material absorptance of unfinished attic.</display_name>
+      <display_name>Roof Material: Absorptivity</display_name>
+      <description>The solar radiation absorptance of the outside roof surface, specified as a value between 0 and 1.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -88,19 +93,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>68AE1D17</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>90354C7B</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF688F44</checksum>
+      <checksum>10000549</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C234D390</checksum>
     </file>
   </files>
 </measure>

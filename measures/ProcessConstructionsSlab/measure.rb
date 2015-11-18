@@ -90,8 +90,16 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessConstructionsSlab"
+    return "Add/Replace Residential Slab Constructions"
   end
+  
+  def description
+    return "This measure creates slab constructions for the living space floor."
+  end
+  
+  def modeler_description
+    return "Calculates material layer properties of slab constructions for the living space floor. Finds surfaces adjacent to the living space and sets applicable constructions."
+  end  
   
   #define the arguments that the user will input
   def arguments(model)
@@ -116,25 +124,9 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for crawlspace
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
     args << selected_living
-
-    #make a choice argument for model objects
-    material_handles = OpenStudio::StringVector.new
-    material_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    material_args = model.getStandardOpaqueMaterials
-    material_args_hash = {}
-    material_args.each do |material_arg|
-      material_args_hash[material_arg.name.to_s] = material_arg
-    end
-	
-    #looping through sorted hash of model objects
-    material_args_hash.sort.map do |key,value|
-      material_handles << value.handle.to_s
-      material_display_names << key
-    end
 	
 	#make a choice argument for model objects
 	slabins_display_names = OpenStudio::StringVector.new
@@ -145,68 +137,72 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a choice argument for slab insulation type
 	selected_slabins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedslabins", slabins_display_names, true)
-	selected_slabins.setDisplayName("Slab insulation type.")
+	selected_slabins.setDisplayName("Slab: Insulation Type")
+	selected_slabins.setDescription("The type of insulation.")
+	selected_slabins.setDefaultValue("Uninsulated")
 	args << selected_slabins
-		
-	# Perimeter / Exterior Insulation
-	# #make a choice argument for perimeter / exterior / insulation
-	# selected_slabperiext = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedslabperiext", material_handles, material_display_names, false)
-	# selected_slabperiext.setDisplayName("Slab perimeter or exterior insulation. For manually entering slab perimeter or exterior insulation properties, leave blank.")
-	# args << selected_slabperiext
 
 	#make a double argument for slab perimeter / exterior insulation R-value
 	userdefined_slabperiextr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabperiextr", false)
-	userdefined_slabperiextr.setDisplayName("Slab perimeter insulation R-value or exterior insulation R-value [hr-ft^2-R/Btu].")
+	userdefined_slabperiextr.setDisplayName("Slab: Perimeter/Exterior Insulation Nominal R-value")
+	userdefined_slabperiextr.setUnits("hr-ft^2-R/Btu")
+	userdefined_slabperiextr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+	userdefined_slabperiextr.setDefaultValue(0.0)
 	args << userdefined_slabperiextr
 	
 	#make a double argument for slab perimeter insulation width / exterior insulation depth
 	userdefined_slabperiextwidthdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabperiextwidthdepth", false)
-	userdefined_slabperiextwidthdepth.setDisplayName("Slab perimeter insulation width or exterior insulation depth [ft].")
+	userdefined_slabperiextwidthdepth.setDisplayName("Slab: Perimeter/Exterior Insulation Width/Depth")
+	userdefined_slabperiextwidthdepth.setUnits("ft")
+	userdefined_slabperiextwidthdepth.setDescription("The width or depth of the perimeter or exterior insulation.")
+	userdefined_slabperiextwidthdepth.setDefaultValue(0.0)
 	args << userdefined_slabperiextwidthdepth
-	
-	# Gap
-	# #make a choice argument for slab perimeter gap
-	# selected_slabgap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedslabgap", material_handles, material_display_names, false)
-	# selected_slabgap.setDisplayName("Perimeter or whole slab gap. For manually entering slab gap properties, leave blank.")
-	# args << selected_slabgap
 	
 	#make a double argument for slab perimeter gap R-value
 	userdefined_slabgapr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabgapr", false)
-	userdefined_slabgapr.setDisplayName("Perimeter gap R-value or whole slab gap R-value [hr-ft^2-R/Btu].")
+	userdefined_slabgapr.setDisplayName("Slab: Gap Insulation Nominal R-value")
+	userdefined_slabgapr.setUnits("hr-ft^2-R/Btu")
+	userdefined_slabgapr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+	userdefined_slabgapr.setDefaultValue(0.0)
 	args << userdefined_slabgapr
 
 	# Whole Slab Insulation
 	#make a double argument for whole slab insulation R-value
 	userdefined_slabwholer = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabwholer", false)
-	userdefined_slabwholer.setDisplayName("Whole slab insulation R-value [hr-ft^2-R/Btu].")
+	userdefined_slabwholer.setDisplayName("Slab: Whole Slab Insulation Nominal R-value")
+	userdefined_slabwholer.setUnits("hr-ft^2-R/Btu")
+	userdefined_slabwholer.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+	userdefined_slabwholer.setDefaultValue(0.0)
 	args << userdefined_slabwholer
 	
-	# Carpet
-	# #make a choice argument for carpet pad R-value
-	# selected_carpet = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcarpet", material_handles, material_display_names, false)
-	# selected_carpet.setDisplayName("Carpet. For manually entering carpet properties, leave blank.")
-	# args << selected_carpet
-	
-	#make a double argument for carpet pad R-value
-	userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
-	userdefined_carpetr.setDisplayName("Carpet pad R-value [hr-ft^2-R/Btu].")
-	userdefined_carpetr.setDefaultValue(2.08)
-	args << userdefined_carpetr
-	
-	#make a double argument for carpet floor fraction
-	userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
-	userdefined_carpetfrac.setDisplayName("Carpet floor fraction [frac].")
-	userdefined_carpetfrac.setDefaultValue(0.8)
-	args << userdefined_carpetfrac
+    #make a double argument for carpet pad R-value
+    userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
+    userdefined_carpetr.setDisplayName("Carpet: Carpet Pad R-value")
+	userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
+	userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
+    userdefined_carpetr.setDefaultValue(2.08)
+    args << userdefined_carpetr
+
+    #make a double argument for carpet floor fraction
+    userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
+    userdefined_carpetfrac.setDisplayName("Carpet: Floor Carpet Fraction")
+	userdefined_carpetfrac.setUnits("frac")
+	userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
+    userdefined_carpetfrac.setDefaultValue(0.8)
+    args << userdefined_carpetfrac
 
     # Geometry
     userdefinedslabarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabarea", true)
-    userdefinedslabarea.setDisplayName("Area of the slab foundation [ft^2].")
+    userdefinedslabarea.setDisplayName("Slab Area")
+	userdefinedslabarea.setUnits("ft^2")
+	userdefinedslabarea.setDescription("The area of the slab.")
     userdefinedslabarea.setDefaultValue(1200.0)
     args << userdefinedslabarea
 
     userdefinedslabextperim = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabextperim", true)
-    userdefinedslabextperim.setDisplayName("Perimeter of the slab foundation [ft].")
+    userdefinedslabextperim.setDisplayName("Slab Perimeter")
+	userdefinedslabextperim.setUnits("ft")
+	userdefinedslabextperim.setDescription("The perimeter of the slab.")
     userdefinedslabextperim.setDefaultValue(140.0)
     args << userdefinedslabextperim
 	
@@ -238,19 +234,13 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	
 	# Perimeter / Exterior Insulation
 	if ["Perimeter", "Exterior"].include? selected_slabins.to_s
-		selected_slabperiext = runner.getOptionalWorkspaceObjectChoiceValue("selectedslabperiext",user_arguments,model)
-		if selected_slabperiext.empty?
-			userdefined_slabperiextr = runner.getDoubleArgumentValue("userdefinedslabperiextr",user_arguments)
-			userdefined_slabperiextwidthdepth = runner.getDoubleArgumentValue("userdefinedslabperiextwidthdepth",user_arguments)
-		end
+		userdefined_slabperiextr = runner.getDoubleArgumentValue("userdefinedslabperiextr",user_arguments)
+		userdefined_slabperiextwidthdepth = runner.getDoubleArgumentValue("userdefinedslabperiextwidthdepth",user_arguments)
 	end
 		
 	# Gap
 	if ["Perimeter", "Whole Slab"].include? selected_slabins.to_s
-		selected_slabgap = runner.getOptionalWorkspaceObjectChoiceValue("selectedslabgap",user_arguments,model)
-		if selected_slabgap.empty?
-			userdefined_slabgapr = runner.getDoubleArgumentValue("userdefinedslabgapr",user_arguments)
-		end
+		userdefined_slabgapr = runner.getDoubleArgumentValue("userdefinedslabgapr",user_arguments)
 	end
 	
 	# Whole Slab Insulation
@@ -259,10 +249,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	# Carpet
-	selected_carpet = runner.getOptionalWorkspaceObjectChoiceValue("selectedcarpet",user_arguments,model)
-	if selected_carpet.empty?
-		userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-	end
+	userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
 	userdefined_carpetfrac = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
   # Constants
@@ -270,48 +257,22 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	
 	# Insulation
 	if selected_slabins == "Perimeter"
-		if userdefined_slabperiextr.nil?
-			slabPerimeterThickness = OpenStudio::convert(selected_slabperiext.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-			slabPerimeterConductivity = OpenStudio::convert(selected_slabperiext.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-			slabPerimeterRvalue = OpenStudio::convert(slabPerimeterThickness,"in","ft").get / slabPerimeterConductivity
-			slabPerimeterInsWidth = OpenStudio::convert(slabPerimeterThickness,"in","ft").get
-		else
-			slabPerimeterRvalue = userdefined_slabperiextr
-			slabPerimeterInsWidth = userdefined_slabperiextwidthdepth
-		end
+		slabPerimeterRvalue = userdefined_slabperiextr
+		slabPerimeterInsWidth = userdefined_slabperiextwidthdepth
 	elsif selected_slabins == "Exterior"
-		if userdefined_slabperiextr.nil?
-			slabExtThickness = OpenStudio::convert(selected_slabperiext.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-			slabExtConductivity = OpenStudio::convert(selected_slabperiext.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-			slabExtRvalue = OpenStudio::convert(slabExtThickness,"in","ft").get / slabExtConductivity
-			slabExtInsDepth = OpenStudio::convert(slabExtThickness,"in","ft").get
-		else
-			slabExtRvalue = userdefined_slabperiextr
-			slabExtInsDepth = userdefined_slabperiextwidthdepth
-		end	
+		slabExtRvalue = userdefined_slabperiextr
+		slabExtInsDepth = userdefined_slabperiextwidthdepth
 	elsif selected_slabins == "Whole Slab"
 		slabWholeInsRvalue = userdefined_slabwholer	
 	end
 
 	# Gap
 	if ["Perimeter", "Whole Slab"].include? selected_slabins.to_s
-		if userdefined_slabgapr.nil?
-			slabGapThickness = OpenStudio::convert(selected_slabgap.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-			slabGapConductivity = OpenStudio::convert(selected_slabgap.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-			slabGapRvalue = OpenStudio::convert(slabGapThickness,"in","ft").get / slabGapConductivity
-		else
-			slabGapRvalue = userdefined_slabgapr
-		end		
+		slabGapRvalue = userdefined_slabgapr
 	end
 	
 	# Carpet
-	if userdefined_carpetr.nil?
-		carpetPadThickness = OpenStudio::convert(selected_carpet.get.to_StandardOpaqueMaterial.get.getThickness.value,"in","ft").get
-		carpetPadConductivity = OpenStudio::convert(selected_carpet.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-		carpetPadRValue = OpenStudio::convert(carpetPadThickness,"in","ft").get / carpetPadConductivity
-	else
-		carpetPadRValue = userdefined_carpetr
-	end
+	carpetPadRValue = userdefined_carpetr
 	carpetFloorFraction = userdefined_carpetfrac
 
 	# Create the material class instances
@@ -325,9 +286,8 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	# Create the sim object
 	sim = Sim.new(model, runner)
 
-  slab.area = runner.getDoubleArgumentValue("userdefinedslabarea",user_arguments)
-  slab.ext_perimeter = runner.getDoubleArgumentValue("userdefinedslabextperim",user_arguments)
-
+    slab.area = runner.getDoubleArgumentValue("userdefinedslabarea",user_arguments)
+    slab.ext_perimeter = runner.getDoubleArgumentValue("userdefinedslabextperim",user_arguments)
 	
 	# Process the slab
 	slab = sim._processConstructionsSlab(slab, carpet)
@@ -380,14 +340,14 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	# Living Area Slab with Equivalent Carpeted/Bare R-value
 	layercount = 0
 	s = OpenStudio::Model::Construction.new(model)
-  s.setName("Slab")
+    s.setName("Slab")
 	if slab.fictitious_slab_Rvalue > 0
     s.insertLayer(layercount,mfs)
 		layercount += 1
 	end
-  s.insertLayer(layercount,ss)
+    s.insertLayer(layercount,ss)
 	layercount += 1
-  s.insertLayer(layercount,sm)
+    s.insertLayer(layercount,sm)
 	layercount += 1
 	if carpet.CarpetFloorFraction > 0
     s.insertLayer(layercount,scbem)
@@ -401,7 +361,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|
-          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Ground"
+          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition.downcase == "ground"
             surface.resetConstruction
             surface.setConstruction(s)
             constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"Slab"]

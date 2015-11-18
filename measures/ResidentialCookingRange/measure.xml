@@ -184,6 +184,9 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
+<<<<<<< HEAD
+      <checksum>177C39C9</checksum>
+=======
       <checksum>B6F3CAFA</checksum>
     </file>
     <file>
@@ -191,6 +194,7 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>65A7FC83</checksum>
+>>>>>>> 8a0354c79dbdd4060eabdc0d4fcdd002260f5042
     </file>
   </files>
 </measure>

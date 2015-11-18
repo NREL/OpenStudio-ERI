@@ -83,8 +83,16 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ProcessFurnace"
+    return "Add/Replace Residential Furnace"
   end
+  
+  def description
+    return "This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop."
+  end
+  
+  def modeler_description
+    return "This measure parses the OSM for the HeatingSeasonSchedule. Any supply components or baseboard convective electrics, except for cooling DX coils, are removed from any existing air loops or zones. Any existing air loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
+  end   
   
   #define the arguments that the user will input
   def arguments(model)
@@ -109,12 +117,14 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for living zone
     selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", zone_handles, zone_display_names, true)
-    selected_living.setDisplayName("Which is the living space zone?")
+    selected_living.setDisplayName("Living Zone")
+	selected_living.setDescription("The living zone.")
     args << selected_living
 
     #make a choice argument for fbsmt
     selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", zone_handles, zone_display_names, false)
-    selected_fbsmt.setDisplayName("Which is the finished basement zone?")
+    selected_fbsmt.setDisplayName("Finished Basement Zone")
+	selected_fbsmt.setDescription("The finished basement zone.")
     args << selected_fbsmt
 
     #make a choice argument for furnace fuel type
@@ -131,7 +141,8 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 	
     #make an argument for entering furnace installed afue
     userdefined_afue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedafue",true)
-    userdefined_afue.setDisplayName("Installed AFUE [Btu/Btu]")
+    userdefined_afue.setDisplayName("Installed AFUE")
+	userdefined_afue.setUnits("Btu/Btu")
     userdefined_afue.setDescription("The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value.")
 	userdefined_afue.setDefaultValue(0.78)
     args << userdefined_afue
@@ -151,14 +162,16 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     #make an argument for entering furnace max supply temp
     userdefined_maxtemp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedmaxtemp",true)
-    userdefined_maxtemp.setDisplayName("Max Supply Temp [F]")
+    userdefined_maxtemp.setDisplayName("Max Supply Temp")
+	userdefined_maxtemp.setUnits("F")
 	userdefined_maxtemp.setDescription("Maximum supply air temperature.")
     userdefined_maxtemp.setDefaultValue(120.0)
     args << userdefined_maxtemp
 
 	#make an argument for entering furnace installed supply fan power
     userdefined_fanpower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfanpower",true)
-    userdefined_fanpower.setDisplayName("Installed Supply Fan Power [W/cfm]")
+    userdefined_fanpower.setDisplayName("Installed Supply Fan Power")
+	userdefined_fanpower.setUnits("W/cfm")
 	userdefined_fanpower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.")
     userdefined_fanpower.setDefaultValue(0.5)
     args << userdefined_fanpower	
