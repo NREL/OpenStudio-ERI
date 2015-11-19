@@ -7,8 +7,7 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
@@ -23,6 +22,44 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     def initialize
     end
     attr_accessor(:area)
+  end
+
+  class Furniture
+    def initialize(type=nil, density=nil, conductivity=nil, spec_heat=nil, area_frac=nil, total_mass=nil, solar_abs=nil)
+      @type = type
+      @density = density
+      @conductivity = conductivity
+      @spec_heat = spec_heat
+      @area_frac = area_frac
+      @total_mass = total_mass
+      @solar_abs = solar_abs
+    end
+
+    def area_frac
+      return @area_frac
+    end
+
+    def total_mass
+      return @total_mass
+    end
+
+    def density
+      return @density
+    end
+
+    def conductivity
+      return @conductivity
+    end
+
+    def spec_heat
+      return @spec_heat
+    end
+
+    def solar_abs
+      return @solar_abs
+    end
+
+    attr_accessor(:thickness)
   end
 
   #define the name that a user will see, this method may be deprecated as
@@ -130,6 +167,10 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
     selected_ufbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedufbsmt",user_arguments,model)
     selected_garage = runner.getOptionalWorkspaceObjectChoiceValue("selectedgarage",user_arguments,model)
+	living_space_furn_area = runner.getDoubleArgumentValue("userdefinedlivingarea",user_arguments)
+	finished_basement_furn_area = runner.getDoubleArgumentValue("userdefinedfbsmtarea",user_arguments)
+	unfinished_basement_furn_area = runner.getDoubleArgumentValue("userdefinedufbsmtarea",user_arguments)
+	garage_furn_area = runner.getDoubleArgumentValue("userdefinedgaragearea",user_arguments)
 
     # loop thru all the spaces
     hasFinishedBasement = false
@@ -145,19 +186,73 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
         hasGarage = true
     end
 
-    # Create the sim object
-    sim = Sim.new(model, runner)
-    living_space_furn = LivingSpace.new
-    finished_basement_furn = FinishedBasement.new	
-
-	living_space_furn_area = runner.getDoubleArgumentValue("userdefinedlivingarea",user_arguments)
-	finished_basement_furn_area = runner.getDoubleArgumentValue("userdefinedfbsmtarea",user_arguments)
-	unfinished_basement_furn_area = runner.getDoubleArgumentValue("userdefinedufbsmtarea",user_arguments)
-	garage_furn_area = runner.getDoubleArgumentValue("userdefinedgaragearea",user_arguments)
-	
     # Process the furniture
-    living_space_furn, finished_basement_furn, ubsmt_furn, garage_furn, has_furniture = sim._processThermalMassFurniture(hasFinishedBasement, hasUnfinishedBasement, hasGarage)
+    has_furniture = true
+    furnitureWeight = 8.0
+    furnitureAreaFraction = 0.4
+    furnitureDensity = 40.0
+    furnitureConductivity = 0.8004
+    furnitureSpecHeat = 0.29
+    furnitureSolarAbsorptance = 0.6
 
+    if furnitureDensity < 60.0
+      living_space_furn_type = Constants.FurnTypeLight
+      finished_basement_furn_type = Constants.FurnTypeLight
+    else
+      living_space_furn_type = Constants.FurnTypeHeavy
+      finished_basement_furn_type = Constants.FurnTypeHeavy
+    end
+
+    # Living Space Furniture
+    living_space_furn = Furniture.new(living_space_furn_type, furnitureDensity, furnitureConductivity, furnitureSpecHeat, furnitureAreaFraction, furnitureWeight, furnitureSolarAbsorptance)
+
+    if has_furniture
+      living_space_furn.thickness = living_space_furn.total_mass / (living_space_furn.density * living_space_furn.area_frac) # ft
+    else
+      living_space_furn.thickness = 0.00001 # ft. Set greater than EnergyPlus lower limit of zero.
+    end
+
+    # Finished Basement Furniture
+    if hasFinishedBasement
+
+      finished_basement_furn = Furniture.new(finished_basement_furn_type, furnitureDensity, furnitureConductivity, furnitureSpecHeat, furnitureAreaFraction, furnitureWeight, furnitureSolarAbsorptance)
+
+      if has_furniture
+        finished_basement_furn.thickness = finished_basement_furn.total_mass / (finished_basement_furn.density * finished_basement_furn.area_frac) # ft
+      else
+        finished_basement_furn.thickness = 0.00001 # ft, Set greater than the EnergyPlus lower limit of zero.
+      end
+
+    end
+
+    # Unfinished Basement Furniture with hard-coded variables
+    if hasUnfinishedBasement
+
+      furn_type_ubsmt = Constants.FurnTypeLight
+      if furn_type_ubsmt == Constants.FurnTypeLight
+        ubsmt_furn = Furniture.new(furn_type_ubsmt, 40.0, 0.0667, get_mat_wood.Cp, 0.4, 8.0, nil)
+      elsif furn_type_ubsmt == Constants.FurnTypeHeavy
+        ubsmt_furn = Furniture.new(furn_type_ubsmt, 80.0, 0.0939, 0.35, 0.4, 8.0, nil)
+      end
+
+      ubsmt_furn.thickness = ubsmt_furn.total_mass / (ubsmt_furn.density * ubsmt_furn.area_frac)
+
+    end
+
+    # Garage Furniture with hard-coded variables
+    if hasGarage
+
+      furn_type_grg = Constants.FurnTypeLight
+      if furn_type_grg == Constants.FurnTypeLight
+        garage_furn = Furniture.new(furn_type_grg, 40.0, 0.0667, get_mat_wood.Cp, 0.1, 2.0, nil)
+      elsif furn_type_grg == Constants.FurnTypeHeavy
+        garage_furn = Furniture.new(furn_type_grg, 80.0, 0.0939, 0.35, 0.1, 2.0, nil)
+      end
+
+      garage_furn.thickness = garage_furn.total_mass / (garage_furn.density * garage_furn.area_frac)
+
+    end
+    
     if living_space_furn.area_frac > 0 and has_furniture
       lfm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       lfm.setName("LivingFurnitureMaterial")

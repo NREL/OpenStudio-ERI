@@ -7,9 +7,6 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
-
 #start the measure
 class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
   
@@ -282,15 +279,14 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	#Calculate electric lighting daily energy use
-	lightval = Process_lighting.new
 	
-	bab_er_cfl = lightval.Bab_er_cfl
-	bab_er_led = lightval.Bab_er_led
-	bab_er_lfl = lightval.Bab_er_lfl
-	bab_frac_inc = lightval.Bab_frac_inc
-	bab_frac_cfl = lightval.Bab_frac_cfl
-	bab_frac_led = lightval.Bab_frac_led
-	bab_frac_lfl = lightval.Bab_frac_lfl
+	bab_er_cfl = 0.27
+	bab_er_led = 0.30
+	bab_er_lfl = 0.17
+	bab_frac_inc = 0.66
+	bab_frac_cfl = 0.21
+	bab_frac_led = 0.00
+	bab_frac_lfl = 0.13
 	
 	frac_hw = 0.8
     frac_pg = 0.2
@@ -391,15 +387,15 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		end
 	end
 				
-	dec_kws = lightval.Dec_kws
-	june_kws = lightval.June_kws
+	dec_kws = [0.075, 0.055, 0.040, 0.035, 0.030, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.030, 0.045, 0.075, 0.130, 0.160, 0.140, 0.100, 0.075, 0.065, 0.060, 0.050, 0.045, 0.045, 0.045, 0.045, 0.045, 0.045, 0.050, 0.060, 0.080, 0.130, 0.190, 0.230, 0.250, 0.260, 0.260, 0.250, 0.240, 0.225, 0.225, 0.220, 0.210, 0.200, 0.180, 0.155, 0.125, 0.100]
+	june_kws = [0.060, 0.040, 0.035, 0.025, 0.020, 0.020, 0.020, 0.020, 0.020, 0.020, 0.020, 0.020, 0.020, 0.025, 0.030, 0.030, 0.025, 0.020, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.020, 0.020, 0.020, 0.025, 0.025, 0.030, 0.030, 0.035, 0.045, 0.060, 0.085, 0.125, 0.145, 0.130, 0.105, 0.080]
 						
-	amplConst1 = lightval.AmplConst1
-	sunsetLag1 = lightval.SunsetLag1
-	stdDevCons1 = lightval.StdDevCons1
-	amplConst2 = lightval.AmplConst2
-	sunsetLag2 = lightval.SunsetLag2
-	stdDevCons2 = lightval.StdDevCons2
+	amplConst1 = 0.929707907917098
+	sunsetLag1 = 2.45016230615269
+	stdDevCons1 = 1.58679810983444
+	amplConst2 = 1.1372291802273
+	sunsetLag2 = 20.1501965859073
+	stdDevCons2 = 2.36567663279954
 	monthly_kwh_per_day = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0']
 	days_m = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 	wtd_avg_monthly_kwh_per_day = 0
@@ -494,10 +490,10 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	#pull schedule values and gain fractions from sim
-	ltg_rad = lightval.Ltg_rad
-	ltg_rep = lightval.Ltg_rep
-	ltg_vis = lightval.Ltg_vis
-	ltg_raf = lightval.Ltg_raf
+	ltg_rad = 0.6
+	ltg_rep = 0.0
+	ltg_vis = 0.2
+	ltg_raf = 0.00
 	
 	#get ltg max power
 	#ltg_max = ltg_daily * maxval * 1000 * sch_adjust
