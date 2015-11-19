@@ -89,6 +89,9 @@ class Constants
 	def self.CondenserTypeAir
 		return 'aircooled'
 	end
+	def self.DefaultSolarAbsFloor
+		return 0.6
+	end
 	def self.DehumidDucted
 		return 'ducted'
 	end
@@ -467,11 +470,17 @@ class Constants
 	def self.MaterialTypeResistance
 		return 'RESISTANCE'
 	end
-	def self.ObjectNameRefrigerator
-		return 'residential_refrigerator'
+	def self.MonthNumDays
+		return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 	end
 	def self.ObjectNameCookingRange
 		return 'residential_range'
+	end
+	def self.ObjectNameDishwasher
+		return 'residential_dishwasher'
+	end
+	def self.ObjectNameRefrigerator
+		return 'residential_refrigerator'
 	end
 	def self.PipeTypeTrunkBranch
 		return 'trunkbranch'

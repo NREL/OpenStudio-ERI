@@ -38,336 +38,6 @@ class Mat_air
 	end
 end
 
-class Constants
-  def initialize
-    @defaultSolarAbsCeiling = 0.3
-    @defaultSolarAbsFloor = 0.6
-    @defaultSolarAbsWall = 0.5
-    @materialPlywood1_2in = "Plywood-1_2in"
-    @materialPlywood3_4in = "Plywood-3_4in"
-    @materialPlywood3_2in = "Plywood-3_2in"
-    @materialTypeProperties = "PROPERTIES"
-    @materialGypsumBoard1_2in = "GypsumBoard-1_2in"
-    @materialSoil12in = "Soil-12in"
-    @spaceGround = "ground"
-    @spaceCrawl = "crawlspace"
-    @material2x = "2x" #for rim joist
-    @materialFloorMass = "FloorMass"
-    @materialCrawlCeilingIns = "CrawlCeilingIns"
-    @materialConcrete8in = "Concrete-8in"
-    @materialCWallIns = "CWallIns"
-    @materialCWallFicR = "CWall-FicR"
-    @materialTypeResistance = "RESISTANCE"
-    @materialCFloorFicR = "CFloor-FicR"
-    @materialWallRigidIns = "WallRigidIns"
-    @materialCSJoistandCavity = "CSJoistandCavity"
-    @materialAdiabatic = "Adiabatic"
-    @materialCarpetBareLayer = "CarpetBareLayer"
-    @materialStudandAirWall = "StudandAirWall"
-    @material2x4 = "2x4"
-    @material2x6 = "2x6"
-    @materialUFBsmtCeilingIns = "UFBsmtCeilingIns"
-    @materialUFBaseWallIns = "UFBaseWallIns"
-    @spaceUnfinAttic = "unfinishedattic"
-    @roofStructureRafter = "rafter"
-    @pcmtypeConcentrated = "concentrated"
-    @materialConcPCMCeilWall = "ConcPCMCeilWall"
-    @materialConcPCMPartWall = "ConcPCMPartWall"
-    @materialRoofingMaterial = "RoofingMaterial"
-    @materialRadiantBarrier = "RadiantBarrier"
-    @materialPartitionWallMass = "PartitionWallMass"
-    @monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    @scheduleTypeFraction = "FRACTION"
-    @furnTypeLight = "LIGHT"
-    @furnTypeHeavy = "HEAVY"
-    @infMethodASHRAE = "ASHRAE-ENHANCED"
-    @g = 32.174    # gravity (ft/s2)
-    @infMethodRes = "RESIDENTIAL"
-    @infMethodSG = "S-G"
-    @auto = "auto"
-    @terrainOcean = "ocean"
-    @terrainPlains = "plains"
-    @terrainRural = "rural"
-    @terrainSuburban = "suburban"
-    @terrainCity = "city"
-    @testBldgMinimal = "minimal"
-    @r = 1.9858 # gas constant (Btu/lbmol-R)
-    @ventTypeExhaust = "exhaust"
-    @ventTypeSupply = "supply"
-    @ventTypeBalanced = "balanced"
-    @seasonHeating = "Heating"
-    @seasonCooling = "Cooling"
-    @seasonOverlap = "Overlap"
-    @seasonNone = "None"
-    @fuelTypeElectric = "electric"
-    @num_Speeds_MSHP = 10.0
-    @condenserTypeAir = "aircooled"
-	@materialOSB = "osb"
-	@materialGypsum = 'gyp'
-	@materialGypcrete = 'crete'
-  end
-
-  def DefaultSolarAbsCeiling
-    return @defaultSolarAbsCeiling
-  end
-
-  def DefaultSolarAbsFloor
-    return @defaultSolarAbsFloor
-  end
-
-  def DefaultSolarAbsWall
-    return @defaultSolarAbsWall
-  end
-
-  def MaterialPlywood1_2in
-    return @materialPlywood1_2in
-  end
-
-  def MaterialPlywood3_4in
-    return @materialPlywood3_4in
-  end
-
-  def MaterialPlywood3_2in
-    return @materialPlywood3_2in
-  end
-
-  def MaterialTypeProperties
-    return @materialTypeProperties
-  end
-
-  def MaterialGypsumBoard1_2in
-    return @materialGypsumBoard1_2in
-  end
-
-  def MaterialSoil12in
-    return @materialSoil12in
-  end
-
-  def SpaceGround
-    return @spaceGround
-  end
-
-  def SpaceCrawl
-    return @spaceCrawl
-  end
-
-  def Material2x
-    return @material2x
-  end
-
-  def MaterialFloorMass
-    return @materialFloorMass
-  end
-
-  def MaterialCrawlCeilingIns
-    return @materialCrawlCeilingIns
-  end
-
-  def MaterialConcrete8in
-    return @materialConcrete8in
-  end
-
-  def MaterialCWallIns
-    return @materialCWallIns
-  end
-
-  def MaterialCWallFicR
-    return @materialCWallFicR
-  end
-
-  def MaterialTypeResistance
-    return @materialTypeResistance
-  end
-
-  def MaterialCFloorFicR
-    return @materialCFloorFicR
-  end
-
-  def MaterialWallRigidIns
-    return @materialWallRigidIns
-  end
-
-  def MaterialCSJoistandCavity
-    return @materialCSJoistandCavity
-  end
-
-  def MaterialAdiabatic
-    return @materialAdiabatic
-  end
-
-  def MaterialCarpetBareLayer
-    return @materialCarpetBareLayer
-  end
-
-  def MaterialStudandAirWall
-    return @materialStudandAirWall
-  end
-
-  def Material2x4
-    return @material2x4
-  end
-
-  def Material2x6
-    return @material2x6
-  end
-
-  def MaterialUFBsmtCeilingIns
-    return @materialUFBsmtCeilingIns
-  end
-
-  def MaterialUFBaseWallIns
-    return @materialUFBaseWallIns
-  end
-
-  def SpaceUnfinAttic
-    return @spaceUnfinAttic
-  end
-
-  def RoofStructureRafter
-    return @roofStructureRafter
-  end
-
-  def PCMtypeConcentrated
-    return @pcmtypeConcentrated
-  end
-
-  def MaterialConcPCMCeilWall
-    return @materialConcPCMCeilWall
-  end
-
-  def MaterialConcPCMPartWall
-    return @materialConcPCMPartWall
-  end
-
-  def MaterialRoofingMaterial
-    return @materialRoofingMaterial
-  end
-
-  def MaterialRadiantBarrier
-    return @materialRadiantBarrier
-  end
-
-  def MaterialPartitionWallMass
-    return @materialPartitionWallMass
-  end
-
-  def MonthNames
-    return @monthNames
-  end
-
-  def ScheduleTypeFraction
-    return @scheduleTypeFraction
-  end
-
-  def FurnTypeLight
-    return @furnTypeLight
-  end
-
-  def FurnTypeHeavy
-    return @furnTypeHeavy
-  end
-
-  def InfMethodASHRAE
-    return @infMethodASHRAE
-  end
-
-  def g
-    return @g
-  end
-
-  def InfMethodRes
-    return @infMethodRes
-  end
-
-  def InfMethodSG
-    return @infMethodSG
-  end
-
-  def Auto
-    return @auto
-  end
-
-  def TerrainOcean
-    return @terrainOcean
-  end
-
-  def TerrainPlains
-    return @terrainPlains
-  end
-
-  def TerrainRural
-    return @terrainRural
-  end
-
-  def TerrainSuburban
-    return @terrainSuburban
-  end
-
-  def TerrainCity
-    return @terrainCity
-  end
-
-  def TestBldgMinimal
-    return @testBldgMinimal
-  end
-
-  def R
-    return @r
-  end
-
-  def VentTypeExhaust
-    return @ventTypeExhaust
-  end
-
-  def VentTypeSupply
-    return @ventTypeSupply
-  end
-
-  def VentTypeBalanced
-    return @ventTypeBalanced
-  end
-
-  def SeasonHeating
-    return @seasonHeating
-  end
-
-  def SeasonCooling
-    return @seasonCooling
-  end
-
-  def SeasonOverlap
-    return @seasonOverlap
-  end
-
-  def SeasonNone
-    return @seasonNone
-  end
-
-  def FuelTypeElectric
-    return @fuelTypeElectric
-  end
-
-  def Num_Speeds_MSHP
-    return @num_Speeds_MSHP
-  end
-
-  def CondenserTypeAir
-    return @condenserTypeAir
-  end
-  
-  def MaterialOSB
-	return @materialOSB
-  end
-
-  def MaterialGypsum
-	return @materialGypsum
-  end
-
-  def MaterialGypcrete
-	return @materialGypcrete
-  end  
-end
-
 class Mat_liq
   def initialize(rho, cp, k, mu, h_fg, t_frz, t_boil, t_crit)
     @rho    = rho       # Density (lb/ft3)
@@ -421,7 +91,8 @@ class Mat_gas
     @mu     = mu            # Dynamic Viscosity (lbm/ft-h)
     @m      = m             # Molecular Weight (lbm/lbmol)
     if @m
-      @r  = Constants.new.R / m # Gas Constant (Btu/lbm-R)
+	  gas_constant = 1.9858 # Gas Constant (Btu/lbmol-R)
+      @r  = gas_constant / m # Gas Constant (Btu/lbm-R)
     else
       @r = nil
     end
@@ -526,7 +197,7 @@ class Psychrometrics
     properties = Properties.new
     constants = Constants.new
     pair = properties.PsychMassRat * p / (properties.PsychMassRat + w) # (psia)
-    rhoD = OpenStudio::convert(pair,"psi","Btu/ft^3").get / (constants.R / properties.Air.M) / (OpenStudio::convert(tdb,"F","R").get) # (lbm/ft3)
+    rhoD = OpenStudio::convert(pair,"psi","Btu/ft^3").get / properties.Air.R / (OpenStudio::convert(tdb,"F","R").get) # (lbm/ft3)
 
     return rhoD
 
@@ -701,4 +372,169 @@ class Psychrometrics
     end
     return psat
   end
+end
+
+class EnergyGuideLabel
+  def self.get_energy_guide_gas_cost(date)
+    # Search for, e.g., "Representative Average Unit Costs of Energy for 
+    # Five Residential Energy Sources (1996)"
+    if date <= 1991
+        # http://books.google.com/books?id=GsY5AAAAIAAJ&pg=PA184&lpg=PA184&dq=%22Representative+Average+Unit+Costs+of+Energy+for+Five+Residential+Energy+Sources%22+1991&source=bl&ots=QuQ83OQ1Wd&sig=jEsENidBQCtDnHkqpXGE3VYoLEg&hl=en&sa=X&ei=3QOjT-y4IJCo8QSsgIHVCg&ved=0CDAQ6AEwBA#v=onepage&q=%22Representative%20Average%20Unit%20Costs%20of%20Energy%20for%20Five%20Residential%20Energy%20Sources%22%201991&f=false
+        return 60.54
+    elsif date == 1992
+        # http://books.google.com/books?id=esk5AAAAIAAJ&pg=PA193&lpg=PA193&dq=%22Representative+Average+Unit+Costs+of+Energy+for+Five+Residential+Energy+Sources%22+1992&source=bl&ots=tiUb_2hZ7O&sig=xG2k0WRDwVNauPhoXEQOAbCF80w&hl=en&sa=X&ei=owOjT7aOMoic9gTw6P3vCA&ved=0CDIQ6AEwAw#v=onepage&q=%22Representative%20Average%20Unit%20Costs%20of%20Energy%20for%20Five%20Residential%20Energy%20Sources%22%201992&f=false
+        return 58.0
+    elsif date == 1993
+        # No data, use prev/next years
+        return (58.0 + 60.40)/2.0
+    elsif date == 1994
+        # http://govpulse.us/entries/1994/02/08/94-2823/rule-concerning-disclosures-of-energy-consumption-and-water-use-information-about-certain-home-appli
+        return 60.40
+    elsif date == 1995
+        # http://www.ftc.gov/os/fedreg/1995/february/950217appliancelabelingrule.pdf
+        return 63.0
+    elsif date == 1996
+        # http://www.gpo.gov/fdsys/pkg/FR-1996-01-19/pdf/96-574.pdf
+        return 62.6
+    elsif date == 1997
+        # http://www.ftc.gov/os/fedreg/1997/february/970205ruleconcerningdisclosures.pdf
+        return 61.2
+    elsif date == 1998
+        # http://www.gpo.gov/fdsys/pkg/FR-1997-12-08/html/97-32046.htm
+        return 61.9
+    elsif date == 1999
+        # http://www.gpo.gov/fdsys/pkg/FR-1999-01-05/html/99-89.htm
+        return 68.8
+    elsif date == 2000
+        # http://www.gpo.gov/fdsys/pkg/FR-2000-02-07/html/00-2707.htm
+        return 68.8
+    elsif date == 2001
+        # http://www.gpo.gov/fdsys/pkg/FR-2001-03-08/html/01-5668.htm
+        return 83.7
+    elsif date == 2002
+        # http://govpulse.us/entries/2002/06/07/02-14333/rule-concerning-disclosures-regarding-energy-consumption-and-water-use-of-certain-home-appliances-an#id963086
+        return 65.6
+    elsif date == 2003
+        # http://www.gpo.gov/fdsys/pkg/FR-2003-04-09/html/03-8634.htm
+        return 81.6
+    elsif date == 2004
+        # http://www.ftc.gov/os/fedreg/2004/april/040430ruleconcerningdisclosures.pdf
+        return 91.0
+    elsif date == 2005
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/2005_costs.pdf
+        return 109.2
+    elsif date == 2006
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/2006_energy_costs.pdf
+        return 141.5
+    elsif date == 2007
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/price_notice_032707.pdf
+        return 121.8
+    elsif date == 2008
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/2008_forecast.pdf
+        return 132.8
+    elsif date == 2009
+        # http://www1.eere.energy.gov/buildings/appliance_standards/commercial/pdfs/ee_rep_avg_unit_costs.pdf
+        return 111.2
+    elsif date == 2010
+        # http://www.gpo.gov/fdsys/pkg/FR-2010-03-18/html/2010-5936.htm
+        return 119.4
+    elsif date == 2011
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/2011_average_representative_unit_costs_of_energy.pdf
+        return 110.1
+    elsif date == 2012
+        # http://www.gpo.gov/fdsys/pkg/FR-2012-04-26/pdf/2012-10058.pdf
+        return 105.9
+	elsif date == 2013
+		# http://www.gpo.gov/fdsys/pkg/FR-2013-03-22/pdf/2013-06618.pdf
+		return 108.7
+	elsif date == 2014
+		# http://www.gpo.gov/fdsys/pkg/FR-2014-03-18/pdf/2014-05949.pdf
+		return 112.8
+	elsif date >= 2015
+		# http://www.gpo.gov/fdsys/pkg/FR-2015-08-27/pdf/2015-21243.pdf
+		return 100.3
+	end
+  end
+  
+  def self.get_energy_guide_elec_cost(date)
+    # Search for, e.g., "Representative Average Unit Costs of Energy for 
+    # Five Residential Energy Sources (1996)"
+    if date <= 1991
+        # http://books.google.com/books?id=GsY5AAAAIAAJ&pg=PA184&lpg=PA184&dq=%22Representative+Average+Unit+Costs+of+Energy+for+Five+Residential+Energy+Sources%22+1991&source=bl&ots=QuQ83OQ1Wd&sig=jEsENidBQCtDnHkqpXGE3VYoLEg&hl=en&sa=X&ei=3QOjT-y4IJCo8QSsgIHVCg&ved=0CDAQ6AEwBA#v=onepage&q=%22Representative%20Average%20Unit%20Costs%20of%20Energy%20for%20Five%20Residential%20Energy%20Sources%22%201991&f=false
+        return 8.24
+    elsif date == 1992
+        # http://books.google.com/books?id=esk5AAAAIAAJ&pg=PA193&lpg=PA193&dq=%22Representative+Average+Unit+Costs+of+Energy+for+Five+Residential+Energy+Sources%22+1992&source=bl&ots=tiUb_2hZ7O&sig=xG2k0WRDwVNauPhoXEQOAbCF80w&hl=en&sa=X&ei=owOjT7aOMoic9gTw6P3vCA&ved=0CDIQ6AEwAw#v=onepage&q=%22Representative%20Average%20Unit%20Costs%20of%20Energy%20for%20Five%20Residential%20Energy%20Sources%22%201992&f=false
+        return 8.25
+    elsif date == 1993
+        # No data, use prev/next years
+        return (8.25 + 8.41)/2.0
+    elsif date == 1994
+        # http://govpulse.us/entries/1994/02/08/94-2823/rule-concerning-disclosures-of-energy-consumption-and-water-use-information-about-certain-home-appli
+        return 8.41
+    elsif date == 1995
+        # http://www.ftc.gov/os/fedreg/1995/february/950217appliancelabelingrule.pdf
+        return 8.67
+    elsif date == 1996
+        # http://www.gpo.gov/fdsys/pkg/FR-1996-01-19/pdf/96-574.pdf
+        return 8.60
+    elsif date == 1997
+        # http://www.ftc.gov/os/fedreg/1997/february/970205ruleconcerningdisclosures.pdf
+        return 8.31
+    elsif date == 1998
+        # http://www.gpo.gov/fdsys/pkg/FR-1997-12-08/html/97-32046.htm
+        return 8.42
+    elsif date == 1999
+        # http://www.gpo.gov/fdsys/pkg/FR-1999-01-05/html/99-89.htm
+        return 8.22
+    elsif date == 2000
+        # http://www.gpo.gov/fdsys/pkg/FR-2000-02-07/html/00-2707.htm
+        return 8.03
+    elsif date == 2001
+        # http://www.gpo.gov/fdsys/pkg/FR-2001-03-08/html/01-5668.htm
+        return 8.29
+    elsif date == 2002
+        # http://govpulse.us/entries/2002/06/07/02-14333/rule-concerning-disclosures-regarding-energy-consumption-and-water-use-of-certain-home-appliances-an#id963086 
+        return 8.28
+    elsif date == 2003
+        # http://www.gpo.gov/fdsys/pkg/FR-2003-04-09/html/03-8634.htm
+        return 8.41
+    elsif date == 2004
+        # http://www.ftc.gov/os/fedreg/2004/april/040430ruleconcerningdisclosures.pdf
+        return 8.60
+    elsif date == 2005
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/2005_costs.pdf
+        return 9.06
+    elsif date == 2006
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/2006_energy_costs.pdf
+        return 9.91
+    elsif date == 2007
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/price_notice_032707.pdf
+        return 10.65
+    elsif date == 2008
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/2008_forecast.pdf
+        return 10.80
+    elsif date == 2009
+        # http://www1.eere.energy.gov/buildings/appliance_standards/commercial/pdfs/ee_rep_avg_unit_costs.pdf
+        return 11.40
+    elsif date == 2010
+        # http://www.gpo.gov/fdsys/pkg/FR-2010-03-18/html/2010-5936.htm
+        return 11.50
+    elsif date == 2011
+        # http://www1.eere.energy.gov/buildings/appliance_standards/pdfs/2011_average_representative_unit_costs_of_energy.pdf
+        return 11.65
+    elsif date == 2012
+        # http://www.gpo.gov/fdsys/pkg/FR-2012-04-26/pdf/2012-10058.pdf
+        return 11.84
+	elsif date == 2013
+		# http://www.gpo.gov/fdsys/pkg/FR-2013-03-22/pdf/2013-06618.pdf
+		return 12.10
+	elsif date == 2014
+		# http://www.gpo.gov/fdsys/pkg/FR-2014-03-18/pdf/2014-05949.pdf
+		return 12.40
+	elsif date >= 2015
+		# http://www.gpo.gov/fdsys/pkg/FR-2015-08-27/pdf/2015-21243.pdf
+		return 12.70
+	end
+  end
+  
 end

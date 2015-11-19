@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
@@ -190,7 +191,6 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Constants
-    constants = Constants.new
     mat_wood = get_mat_wood
 
     # Partition Wall Mass
@@ -238,7 +238,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     #       # End drawn partition wall area sumation loop
 
     # ConcPCMPartWall
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       pcm.setName("ConcPCMPartWall")
       pcm.setRoughness("Rough")
@@ -275,13 +275,13 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     fufw.setName("FinUninsFinWall")
     fufw.insertLayer(layercount,pwm)
     layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       fufw.insertLayer(layercount,pcm)
       layercount += 1
     end
     fufw.insertLayer(layercount,saw)
     layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       fufw.insertLayer(layercount,pcm)
       layercount += 1
     end

@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
@@ -293,8 +294,6 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     hpCOPCapacityDerateFactor = {"SEER 8, 6.0 HSPF"=>0.0, "SEER 10, 6.2 HSPF"=>0.0, "SEER 13, 7.7 HSPF"=>1.0, "SEER 14, 8.2 HSPF"=>1.0, "SEER 15, 8.5 HSPF"=>1.0, "SEER 16, 8.6 HSPF"=>1.0, "SEER 17, 8.7 HSPF"=>1.0, "SEER 18, 9.3 HSPF"=>1.0, "SEER 19, 9.5 HSPF"=>1.0, "SEER 22, 10 HSPF"=>1.0}[selected_hp]
     hpRatedAirFlowRateCooling = {"SEER 8, 6.0 HSPF"=>394.2, "SEER 10, 6.2 HSPF"=>394.2, "SEER 13, 7.7 HSPF"=>394.2, "SEER 14, 8.2 HSPF"=>394.2, "SEER 15, 8.5 HSPF"=>394.2, "SEER 16, 8.6 HSPF"=>344.1, "SEER 17, 8.7 HSPF"=>344.1, "SEER 18, 9.3 HSPF"=>344.1, "SEER 19, 9.5 HSPF"=>344.1, "SEER 22, 10 HSPF"=>315.8}[selected_hp]
     hpRatedAirFlowRateHeating = {"SEER 8, 6.0 HSPF"=>384.1, "SEER 10, 6.2 HSPF"=>384.1, "SEER 13, 7.7 HSPF"=>384.1, "SEER 14, 8.2 HSPF"=>384.1, "SEER 15, 8.5 HSPF"=>384.1, "SEER 16, 8.6 HSPF"=>352.2, "SEER 17, 8.7 HSPF"=>352.2, "SEER 18, 9.3 HSPF"=>352.2, "SEER 19, 9.5 HSPF"=>352.2, "SEER 22, 10 HSPF"=>296.9}[selected_hp]
-
-    constants = Constants.new
 
     # Create the material class instances
     air_conditioner = AirConditioner.new(nil)
@@ -743,7 +742,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         end
         clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(supply.fan_power / OpenStudio::convert(1.0,"cfm","m^3/s").get))
 
-        if misc.SimTestSuiteBuilding == constants.TestBldgMinimal or air_conditioner.IsIdealAC
+        if misc.SimTestSuiteBuilding == Constants.TestBldgMinimal or air_conditioner.IsIdealAC
           clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(0))
           clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(0))
           clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(0))
@@ -755,7 +754,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
           clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(45.0))
         end
 
-        if supply.CondenserType == constants.CondenserTypeAir
+        if supply.CondenserType == Constants.CondenserTypeAir
           clg_coil.setCondenserType("AirCooled")
         else
           clg_coil.setCondenserType("EvaporativelyCooled")
@@ -810,7 +809,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
           # stuff
 
-          if supply.CondenserType == constants.CondenserTypeAir
+          if supply.CondenserType == Constants.CondenserTypeAir
 
           else
 
