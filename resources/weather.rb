@@ -1,3 +1,4 @@
+require "#{File.dirname(__FILE__)}/psychrometrics"
 
 class WeatherHeader
   def initialize
@@ -71,21 +72,20 @@ class WeatherProcess
     epwHasDesignData = false
     if designData.length > 5
       begin
-        psychrometrics = Psychrometrics.new
         design.HeatingDrybulb = WeatherProcess._fmt(OpenStudio::convert(designData[7].to_f,"C","F").get, 2)
         design.HeatingWindspeed = designData[16].to_f
 
         design.CoolingDrybulb = WeatherProcess._fmt(OpenStudio::convert(designData[25].to_f,"C","F").get, 2)
         design.CoolingWetbulb = WeatherProcess._fmt(OpenStudio::convert(designData[26].to_f,"C","F").get, 2)
-        std_press = psychrometrics.Pstd_fZ(header.Altitude)
-        design.CoolingHumidityRatio = WeatherProcess._fmt(psychrometrics.w_fT_Twb_P(design.CoolingDrybulb, design.CoolingWetbulb, std_press), 4)
+        std_press = Psychrometrics.Pstd_fZ(header.Altitude)
+        design.CoolingHumidityRatio = WeatherProcess._fmt(Psychrometrics.w_fT_Twb_P(design.CoolingDrybulb, design.CoolingWetbulb, std_press), 4)
         design.CoolingWindspeed = designData[35].to_f
 
         design.DailyTemperatureRange = WeatherProcess._fmt(OpenStudio::convert(designData[22].to_f,"C","F").get, 2)
 
         dehum02per_dp = WeatherProcess._fmt(OpenStudio::convert(designData[43].to_f,"C","F").get, 2)
         design.DehumidDrybulb = WeatherProcess._fmt(OpenStudio::convert(designData[45].to_f,"C","F").get, 2)
-        design.DehumidHumidityRatio = WeatherProcess._fmt(psychrometrics.w_fT_Twb_P(dehum02per_dp, dehum02per_dp, std_press), 4)
+        design.DehumidHumidityRatio = WeatherProcess._fmt(Psychrometrics.w_fT_Twb_P(dehum02per_dp, dehum02per_dp, std_press), 4)
 
         epwHasDesignData = true
       rescue

@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUserScript
@@ -280,7 +281,6 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     # Constants
     mat_gyp = get_mat_gypsum
     mat_rigid = get_mat_rigid_ins
-    constants = Constants.new
 
     # Partition Wall Mass
     partitionWallMassThickness = userdefined_partitionwallmassth
@@ -320,7 +320,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     # Create the material layers
 
     # ConcPCMPartWall
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       pcm.setName("ConcPCMPartWall")
       pcm.setRoughness("Rough")
@@ -374,7 +374,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       layercount += 1
       unfininsfinwall.insertLayer(layercount,iwi)
       layercount += 1
-      if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+      if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
         unfininsfinwall.insertLayer(layercount,pcm)
         layercount += 1
       end
@@ -396,7 +396,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       unfininsfinwall.setName("UnfinInsFinWall")
       unfininsfinwall.insertLayer(layercount,iwi)
       layercount += 1
-      if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+      if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
         unfininsfinwall.insertLayer(layercount,pcm)
         layercount += 1
       end

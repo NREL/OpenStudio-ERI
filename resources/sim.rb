@@ -1,6 +1,8 @@
 
 require "#{File.dirname(__FILE__)}/util"
 require "#{File.dirname(__FILE__)}/weather"
+require "#{File.dirname(__FILE__)}/constants"
+require "#{File.dirname(__FILE__)}/psychrometrics"
 
 class Furniture
   def initialize(type=nil, density=nil, conductivity=nil, spec_heat=nil, area_frac=nil, total_mass=nil, solar_abs=nil)
@@ -490,15 +492,14 @@ def get_cmu_wall_r_assembly(cmu, gypsumThickness, gypsumNumLayers, finishThickne
 end
 
 def get_sip_sheathing_type(sheathingType)
-	constants = Constants.new
     mat_wood = get_mat_wood
     mat_gyp = get_mat_gypsum
     mat_gypcrete = get_mat_gypcrete
-    if sheathingType == constants.MaterialOSB
+    if sheathingType == Constants.MaterialOSB
         sheathing = mat_wood
-    elsif sheathingType == constants.MaterialGypsum
+    elsif sheathingType == Constants.MaterialGypsum
         sheathing = mat_gyp
-    elsif sheathingType == constants.MaterialGypcrete
+    elsif sheathingType == Constants.MaterialGypcrete
         sheathing = mat_gypcrete
     else
         runner.registerError("Unknown sheathing type for SIP wall: #{sheathingType}")
@@ -720,18 +721,15 @@ def get_mat_gypsum
 end
 
 def get_mat_gypsum1_2in(mat_gypsum)
-  constants = Constants.new
-  return Material.new(name=constants.MaterialGypsumBoard1_2in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=constants.DefaultSolarAbsWall, vAbs=0.1)
+  return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
 end
 
 def get_mat_gypsum_extwall(mat_gypsum)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialGypsumBoard1_2in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=constants.DefaultSolarAbsWall, vAbs=0.1)
+	return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
 end
 
 def get_mat_gypsum_ceiling(mat_gypsum)
-  constants = Constants.new
-  return Material.new(name=constants.MaterialGypsumBoard1_2in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=constants.DefaultSolarAbsCeiling, vAbs=0.1)
+  return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
 end
 
 def get_mat_gypcrete
@@ -754,18 +752,15 @@ def get_mat_rigid_ins
 end
 
 def get_mat_plywood1_2in(mat_wood)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialPlywood1_2in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
+	return Material.new(name=Constants.MaterialPlywood1_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
 end
 
 def get_mat_plywood3_4in(mat_wood)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialPlywood3_4in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.75,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
+	return Material.new(name=Constants.MaterialPlywood3_4in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.75,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
 end
 
 def get_mat_plywood3_2in(mat_wood)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialPlywood3_2in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(1.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
+	return Material.new(name=Constants.MaterialPlywood3_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(1.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
 end
 	
 def get_mat_densepack_generic
@@ -801,8 +796,7 @@ def get_mat_ceil_pcm(ceiling_mass)
 end
 
 def get_mat_ceil_pcm_conc(mat_ceil_pcm, ceiling_mass)
-  constants = Constants.new
-  return Material.new(name=constants.MaterialConcPCMCeilWall, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(ceiling_mass.CeilingMassPCMConcentratedThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_ceil_pcm, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=constants.DefaultSolarAbsCeiling, vAbs=0.1, rvalue=nil, is_pcm=true, pcm_temp=ceiling_mass.CeilingMassPCMTemperature, pcm_latent_heat=ceiling_mass.CeilingMassPCMLatentHeat, pcm_melting_range=ceiling_mass.CeilingMassPCMMeltingRange)
+  return Material.new(name=Constants.MaterialConcPCMCeilWall, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(ceiling_mass.CeilingMassPCMConcentratedThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_ceil_pcm, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1, rvalue=nil, is_pcm=true, pcm_temp=ceiling_mass.CeilingMassPCMTemperature, pcm_latent_heat=ceiling_mass.CeilingMassPCMLatentHeat, pcm_melting_range=ceiling_mass.CeilingMassPCMMeltingRange)
 end
 
 def get_mat_part_pcm(partition_wall_mass)
@@ -810,28 +804,23 @@ def get_mat_part_pcm(partition_wall_mass)
 end
 
 def get_mat_part_pcm_conc(mat_part_pcm, partition_wall_mass)
-  constants = Constants.new
-  return Material.new(name=constants.MaterialConcPCMPartWall, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(partition_wall_mass.PartitionWallMassPCMConcentratedThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_part_pcm, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=constants.DefaultSolarAbsWAll, vAbs=0.1, rvalue=nil, is_pcm=true, pcm_temp=partition_wall_mass.PartitionWallMassPCMTemperature, pcm_latent_heat=ceiling_mass.PartitionWallMassPCMLatentHeat, pcm_melting_range=partition_wall_mass.PartitionWallMassPCMMeltingRange)
+  return Material.new(name=Constants.MaterialConcPCMPartWall, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(partition_wall_mass.PartitionWallMassPCMConcentratedThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_part_pcm, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWAll, vAbs=0.1, rvalue=nil, is_pcm=true, pcm_temp=partition_wall_mass.PartitionWallMassPCMTemperature, pcm_latent_heat=ceiling_mass.PartitionWallMassPCMLatentHeat, pcm_melting_range=partition_wall_mass.PartitionWallMassPCMMeltingRange)
 end
 
 def get_mat_soil12in(mat_soil)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialSoil12in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(12,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_soil)
+	return Material.new(name=Constants.MaterialSoil12in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(12,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_soil)
 end
 
 def get_mat_2x(mat_wood, thickness)
-  constants = Constants.new
-	return Material.new(name=constants.Material2x, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(thickness,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
+	return Material.new(name=Constants.Material2x, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(thickness,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
 end
 
 def get_mat_floor_mass(floor_mass)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialFloorMass, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(floor_mass.FloorMassThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(floor_mass.FloorMassConductivity,"in","ft").get, dens=floor_mass.FloorMassDensity, sh=floor_mass.FloorMassSpecificHeat, tAbs=0.9, sAbs=constants.DefaultSolarAbsFloor)
+	return Material.new(name=Constants.MaterialFloorMass, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(floor_mass.FloorMassThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(floor_mass.FloorMassConductivity,"in","ft").get, dens=floor_mass.FloorMassDensity, sh=floor_mass.FloorMassSpecificHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
 end
 
 def get_mat_partition_wall_mass(partition_wall_mass)
-  constants = Constants.new
-  return Material.new(name=constants.MaterialPartitionWallMass, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(partition_wall_mass.PartitionWallMassThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(partition_wall_mass.PartitionWallMassConductivity,"in","ft").get, dens=partition_wall_mass.PartitionWallMassDensity, sh=partition_wall_mass.PartitionWallMassSpecificHeat, tAbs=0.9, sAbs=constants.DefaultSolarAbsWall, vAbs=0.1)
+  return Material.new(name=Constants.MaterialPartitionWallMass, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(partition_wall_mass.PartitionWallMassThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(partition_wall_mass.PartitionWallMassConductivity,"in","ft").get, dens=partition_wall_mass.PartitionWallMassDensity, sh=partition_wall_mass.PartitionWallMassSpecificHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
 end
 
 def get_mat_concrete
@@ -839,18 +828,15 @@ def get_mat_concrete
 end
 
 def get_mat_concrete8in(mat_concrete)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialConcrete8in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(8,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
+	return Material.new(name=Constants.MaterialConcrete8in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(8,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
 end
 
 def get_mat_concrete4in(mat_concrete)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialConcrete8in, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(4,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
+	return Material.new(name=Constants.MaterialConcrete8in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(4,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
 end
 
 def get_mat_carpet_bare(carpet)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialCarpetBareLayer, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(0.5,"in","ft").get / (carpet.CarpetPadRValue * carpet.CarpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
+	return Material.new(name=Constants.MaterialCarpetBareLayer, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(0.5,"in","ft").get / (carpet.CarpetPadRValue * carpet.CarpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
 end
 
 def get_mat_stud_and_air(model, runner, mat_wood)
@@ -859,28 +845,23 @@ def get_mat_stud_and_air(model, runner, mat_wood)
 end
 
 def get_mat_2x4(mat_wood)
-  constants = Constants.new
-	return Material.new(name=constants.Material2x4, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(3.5,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
+	return Material.new(name=Constants.Material2x4, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(3.5,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
 end
 
 def get_mat_2x6(mat_wood)
-  constants = Constants.new
-  return Material.new(name=constants.Material2x6, type=constants.MaterialTypeProperties, thick=OpenStudio::convert(5.5,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
+  return Material.new(name=Constants.Material2x6, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(5.5,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
 end
 
 def get_stud_and_air_wall(model, runner, mat_wood)
-  constants = Constants.new
-	return Material.new(name=constants.MaterialStudandAirWall, type=constants.MaterialTypeProperties, thick=Sim.stud_and_air_thick, thick_in=nil, width=nil, width_in=nil, mat_base=get_mat_stud_and_air(model, runner, mat_wood))
+	return Material.new(name=Constants.MaterialStudandAirWall, type=Constants.MaterialTypeProperties, thick=Sim.stud_and_air_thick, thick_in=nil, width=nil, width_in=nil, mat_base=get_mat_stud_and_air(model, runner, mat_wood))
 end
 
 def get_mat_roofing_mat(roofing_material)
-  constants = Constants.new
-  return Material.new(name=constants.MaterialRoofingMaterial, type=constants.MaterialTypeProperties, thick=0.031, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofing_material.RoofMatEmissivity, sAbs=roofing_material.RoofMatAbsorptivity, vAbs=roofing_material.RoofMatAbsorptivity)
+  return Material.new(name=Constants.MaterialRoofingMaterial, type=Constants.MaterialTypeProperties, thick=0.031, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofing_material.RoofMatEmissivity, sAbs=roofing_material.RoofMatAbsorptivity, vAbs=roofing_material.RoofMatAbsorptivity)
 end
 
 def get_mat_radiant_barrier
-  constants = Constants.new
-  return Material.new(name=constants.MaterialRadiantBarrier, type=constants.MaterialTypeProperties, thick=0.0007, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=135.8, dens=168.6, sh=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
+  return Material.new(name=Constants.MaterialRadiantBarrier, type=Constants.MaterialTypeProperties, thick=0.0007, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=135.8, dens=168.6, sh=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
 end
 
 class Get_films_constant
@@ -1013,8 +994,6 @@ class Sim
   def _processHeatingCoolingSeasons(misc, schedules)
     # Assigns monthly heating and cooling seasons.
 
-    constants = Constants.new
-
     monthly_temps = @weather.data.MonthlyAvgDrybulbs
     heat_design_db = @weather.design.HeatingDrybulb
 
@@ -1071,19 +1050,19 @@ class Sim
     season_type = []
     (0...12).to_a.each do |month|
       if heating_season[month] == 1.0 and cooling_season[month] == 0.0
-        season_type << constants.SeasonHeating
+        season_type << Constants.SeasonHeating
       elsif heating_season[month] == 0.0 and cooling_season[month] == 1.0
-        season_type << constants.SeasonCooling
+        season_type << Constants.SeasonCooling
       elsif heating_season[month] == 1.0 and cooling_season[month] == 1.0
-        season_type << constants.SeasonOverlap
+        season_type << Constants.SeasonOverlap
       else
-        season_type << constants.SeasonNone
+        season_type << Constants.SeasonNone
       end
     end
 
     # Avoid issues in the minimal building test suite by eliminating
     # cooling and heating seasons
-    if misc.SimTestSuiteBuilding == constants.TestBldgMinimal
+    if misc.SimTestSuiteBuilding == Constants.TestBldgMinimal
       cooling_season = Array.new(12, 1.0)
       heating_season = Array.new(12, 1.0)
     end
@@ -1139,8 +1118,6 @@ class Sim
 
   def _processInteriorShadingSchedule(ish)
     # Assigns window shade multiplier and shading cooling season for each month.
-
-    constants = Constants.new
 
     #if not ish.IntShadeCoolingMonths.nil?
     #  cooling_season = ish.IntShadeCoolingMonths.item # TODO: what is this?
@@ -1204,7 +1181,7 @@ class Sim
 	
     window_shade_multiplier = []
     window_shade_cooling_season = cooling_season
-    (0...constants.MonthNames.length).to_a.each do |i|
+    (0...Constants.MonthNames.length).to_a.each do |i|
       if cooling_season[i] == 1.0
         window_shade_multiplier << ish.IntShadeCoolingMultiplier
       else
@@ -1250,7 +1227,6 @@ class Sim
       spaces << unfinished_attic
     end
 
-    constants = Constants.new
     properties = Properties.new
 
     outside_air_density = (2.719 * local_pressure) / (properties.Air.R * (@weather.data.AnnualAvgDrybulb + 460.0))
@@ -1272,7 +1248,7 @@ class Sim
     if not si.InfiltrationLivingSpaceACH50.nil?
 
       # Living Space Infiltration
-      living_space.inf_method = constants.InfMethodASHRAE
+      living_space.inf_method = Constants.InfMethodASHRAE
 
       # Based on "Field Validation of Algebraic Equations for Stack and
       # Wind Driven Air Infiltration Calculations" by Walker and Wilson (1998)
@@ -1329,7 +1305,7 @@ class Sim
 
       si.f_s = ((1.0 + si.n_i * si.R_i) / (si.n_i + 1.0)) * (0.5 - 0.5 * si.M_i ** (1.2)) ** (si.n_i + 1.0) + si.F_i
 
-      si.stack_coef = si.f_s * (0.005974 * outside_air_density * constants.g * living_space.height / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
+      si.stack_coef = si.f_s * (0.005974 * outside_air_density * Constants.g * living_space.height / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
 
       # Calculate wind coefficient
       if hasCrawl and crawlspace.CrawlACH > 0
@@ -1367,7 +1343,7 @@ class Sim
     elsif not si.InfiltrationLivingSpaceConstantACH.nil?
 
       # Used for constant ACH
-      living_space.inf_method = constants.InfMethodRes
+      living_space.inf_method = Constants.InfMethodRes
       # ACH; Air exchange rate of above-grade conditioned spaces, due to natural ventilation
       living_space.ACH = si.InfiltrationLivingSpaceConstantACH
 
@@ -1378,7 +1354,7 @@ class Sim
 
     if hasGarage
 
-      garage.inf_method = constants.InfMethodSG
+      garage.inf_method = Constants.InfMethodSG
       garage.hor_leak_frac = 0.4 # DOE-2 Default
       garage.neutral_level = 0.5 # DOE-2 Default
       garage.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationGarageACH50, 0.67, garage.area, garage.volume)
@@ -1390,7 +1366,7 @@ class Sim
 
     if hasFinishedBasement
 
-      finished_basement.inf_method = constants.InfMethodRes # Used for constant ACH
+      finished_basement.inf_method = Constants.InfMethodRes # Used for constant ACH
       finished_basement.ACH = finished_basement.FBsmtACH
       # Convert ACH to cfm
       finished_basement.inf_flow = finished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * finished_basement.volume
@@ -1399,7 +1375,7 @@ class Sim
 
     if hasUnfinishedBasement
 
-      space_unfinished_basement.inf_method = constants.InfMethodRes # Used for constant ACH
+      space_unfinished_basement.inf_method = Constants.InfMethodRes # Used for constant ACH
       space_unfinished_basement.ACH = space_unfinished_basement.UFBsmtACH
       # Convert ACH to cfm
       space_unfinished_basement.inf_flow = space_unfinished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * space_unfinished_basement.volume
@@ -1408,7 +1384,7 @@ class Sim
 
     if hasCrawl
 
-      crawlspace.inf_method = constants.InfMethodRes
+      crawlspace.inf_method = Constants.InfMethodRes
 
       crawlspace.ACH = crawlspace.CrawlACH
       # Convert ACH to cfm
@@ -1418,7 +1394,7 @@ class Sim
 
     if hasUnfinAttic
 
-      unfinished_attic.inf_method = constants.InfMethodSG
+      unfinished_attic.inf_method = Constants.InfMethodSG
       unfinished_attic.hor_leak_frac = 0.75 # Same as Energy Gauge USA Attic Model
       unfinished_attic.neutral_level = 0.5 # DOE-2 Default
       unfinished_attic.SLA = unfinished_attic.UASLA
@@ -1430,7 +1406,7 @@ class Sim
 
     end
 
-    ws = Sim._processWindSpeedCorrection(wind_speed, site, constants, si, neighbors, geometry)
+    ws = Sim._processWindSpeedCorrection(wind_speed, site, si, neighbors, geometry)
 
     spaces.each do |space|
 
@@ -1441,15 +1417,15 @@ class Sim
       space.C_w_SG = nil
       space.ELA = nil
 
-      if space.inf_method == constants.InfMethodSG
+      if space.inf_method == Constants.InfMethodSG
 
         space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_leak_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
         space.f_w_SG = ws.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
-        space.C_s_SG = space.f_s_SG ** 2.0 * constants.g * space.height / (si.assumed_inside_temp + 460.0)
+        space.C_s_SG = space.f_s_SG ** 2.0 * Constants.g * space.height / (si.assumed_inside_temp + 460.0)
         space.C_w_SG = space.f_w_SG ** 2.0
         space.ELA = space.SLA * space.area # ft^2
 
-      elsif space.inf_method == constants.InfMethodASHRAE
+      elsif space.inf_method == Constants.InfMethodASHRAE
 
         space.ELA = space.SLA * space.area # ft^2
 
@@ -1674,7 +1650,7 @@ class Sim
 		return local_pressure
   end
 
-  def self._processWindSpeedCorrection(wind_speed, site, constants, infiltration, neighbors, geometry)
+  def self._processWindSpeedCorrection(wind_speed, site, infiltration, neighbors, geometry)
     # Wind speed correction
     wind_speed.height = 32.8 # ft (Standard weather station height)
 
@@ -1683,23 +1659,23 @@ class Sim
     wind_speed.terrain_exponent = 0.15 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
     wind_speed.boundary_layer_thickness = 885.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
 
-    if site.TerrainType == constants.TerrainOcean
+    if site.TerrainType == Constants.TerrainOcean
       wind_speed.site_terrain_multiplier = 1.30 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.10 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
       wind_speed.site_boundary_layer_thickness = 333.9 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == constants.TerrainPlains
+    elsif site.TerrainType == Constants.TerrainPlains
       wind_speed.site_terrain_multiplier = 1.00 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.15 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
       wind_speed.site_boundary_layer_thickness = 885.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == constants.TerrainRural
+    elsif site.TerrainType == Constants.TerrainRural
       wind_speed.site_terrain_multiplier = 0.85 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.20 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
       wind_speed.site_boundary_layer_thickness = 875.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == constants.TerrainSuburban
+    elsif site.TerrainType == Constants.TerrainSuburban
       wind_speed.site_terrain_multiplier = 0.67 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.25 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
       wind_speed.site_boundary_layer_thickness = 1176 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == constants.TerrainCity
+    elsif site.TerrainType == Constants.TerrainCity
       wind_speed.site_terrain_multiplier = 0.47 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.3499 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
       wind_speed.site_boundary_layer_thickness = 1165.0 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
@@ -1708,7 +1684,7 @@ class Sim
     wind_speed.ref_wind_speed = 10.0 # mph
 
     # Local Shielding
-    if infiltration.InfiltrationShelterCoefficient == constants.Auto
+    if infiltration.InfiltrationShelterCoefficient == Constants.Auto
       if neighbors.NeighborOffset.nil?
         # Typical shelter for isolated rural house
         wind_speed.S_wo = 0.90
@@ -1734,9 +1710,6 @@ class Sim
 
   def _processMechanicalVentilation(infil, vent, misc, clothes_dryer, geometry, living_space, schedules)
     # Mechanical Ventilation
-
-    constants = Constants.new
-    psychrometrics = Psychrometrics.new
 
     # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
     ashrae_mv_without_infil_credit = get_mech_vent_whole_house_cfm(1, geometry.num_bedrooms, geometry.finished_floor_area, vent.MechVentASHRAEStandard)	
@@ -1774,7 +1747,7 @@ class Sim
     vent.whole_house_vent_rate = vent.MechVentFractionOfASHRAE * vent.ashrae_vent_rate # cfm	
 
     # Spot Ventilation
-    if misc.SimTestSuiteBuilding != constants.TestBldgMinimal
+    if misc.SimTestSuiteBuilding != Constants.TestBldgMinimal
       vent.MechVentBathroomExhaust = 50.0 # cfm, per HSP
       vent.MechVentRangeHoodExhaust = 100.0 # cfm, per HSP
       vent.MechVentSpotFanPower = 0.3 # W/cfm/fan, per HSP
@@ -1790,11 +1763,11 @@ class Sim
 
     vent.num_vent_fans = get_mech_vent_num_vent_fans(vent.MechVentType)
 
-    if vent.MechVentType == constants.VentTypeExhaust
+    if vent.MechVentType == Constants.VentTypeExhaust
       vent.percent_fan_heat_to_space = 0.0 # Fan heat does not enter space
-    elsif vent.MechVentType == constants.VentTypeSupply
+    elsif vent.MechVentType == Constants.VentTypeSupply
       vent.percent_fan_heat_to_space = 1.0 # Fan heat does enter space
-    elsif vent.MechVentType == constants.VentTypeBalanced
+    elsif vent.MechVentType == Constants.VentTypeBalanced
       vent.percent_fan_heat_to_space = 0.5 # Assumes supply fan heat enters space
     else
       vent.percent_fan_heat_to_space = 0.0
@@ -2018,7 +1991,7 @@ class Sim
     vent.MechVentHXCoreSensibleEffectiveness = 0.0
     vent.MechVentLatentEffectiveness = 0.0
 
-    if vent.MechVentType == constants.VentTypeBalanced and vent.MechVentSensibleEfficiency > 0 and vent.whole_house_vent_rate > 0
+    if vent.MechVentType == Constants.VentTypeBalanced and vent.MechVentSensibleEfficiency > 0 and vent.whole_house_vent_rate > 0
       # Must assume an operating condition (HVI seems to use CSA 439)
       t_sup_in = 0
       w_sup_in = 0.0028
@@ -2027,7 +2000,7 @@ class Sim
       cp_a = 1006
       p_fan = vent.whole_house_vent_rate * vent.MechVentHouseFanPower                                         # Watts
 
-      m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
+      m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * Psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
 
       # The following is derived from (taken from CSA 439):
       #    E_SHR = (m_sup,fan * Cp * (Tsup,out - Tsup,in) - P_sup,fan) / (m_exh,fan * Cp * (Texh,in - Tsup,in) + P_exh,fan)
@@ -2054,16 +2027,16 @@ class Sim
         t_exh_in = 24.0
         w_exh_in = 0.0092
 
-        m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
+        m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * Psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
 
         t_sup_out_gross = t_sup_in - vent.MechVentHXCoreSensibleEffectiveness * (t_sup_in - t_exh_in)
         t_sup_out = t_sup_out_gross + p_fan / (m_fan * cp_a)
 
-        h_sup_in = psychrometrics.h_fT_w_SI(t_sup_in, w_sup_in)
-        h_exh_in = psychrometrics.h_fT_w_SI(t_exh_in, w_exh_in)
+        h_sup_in = Psychrometrics.h_fT_w_SI(t_sup_in, w_sup_in)
+        h_exh_in = Psychrometrics.h_fT_w_SI(t_exh_in, w_exh_in)
         h_sup_out = h_sup_in - (vent.MechVentTotalEfficiency * (m_fan * (h_sup_in - h_exh_in) + p_fan) + p_fan) / m_fan
 
-        w_sup_out = psychrometrics.w_fT_h_SI(t_sup_out, h_sup_out)
+        w_sup_out = Psychrometrics.w_fT_h_SI(t_sup_out, h_sup_out)
         vent.MechVentLatentEffectiveness = [0.0, (w_sup_out - w_sup_in) / (w_exh_in - w_sup_in)].max
 
         if (vent.MechVentLatentEffectiveness < 0.0) or (vent.MechVentLatentEffectiveness > 1.0)
@@ -2087,8 +2060,6 @@ class Sim
 
   def _processNaturalVentilation(nv, living_space, wind_speed, infiltration, schedules, geometry, cooling_set_point, heating_set_point)
     # Natural Ventilation
-
-    constants = Constants.new
 
     # Specify an array of hourly lower-temperature-limits for natural ventilation
     nv.htg_ssn_hourly_temp = Array.new
@@ -2248,13 +2219,13 @@ class Sim
     nv.season_type = []
     (0...12).to_a.each do |month|
       if heating_season[month] == 1.0 and cooling_season[month] == 0.0
-        nv.season_type << constants.SeasonHeating
+        nv.season_type << Constants.SeasonHeating
       elsif heating_season[month] == 0.0 and cooling_season[month] == 1.0
-        nv.season_type << constants.SeasonCooling
+        nv.season_type << Constants.SeasonCooling
       elsif heating_season[month] == 1.0 and cooling_season[month] == 1.0
-        nv.season_type << constants.SeasonOverlap
+        nv.season_type << Constants.SeasonOverlap
       else
-        nv.season_type << constants.SeasonNone
+        nv.season_type << Constants.SeasonNone
       end
     end
 
@@ -2263,9 +2234,9 @@ class Sim
       NatVentTemp,                 !- Name
       TEMPERATURE,                 !- Schedule Type"
     nv.season_type.each_with_index do |ssn_type, month|
-      if ssn_type == constants.SeasonHeating
+      if ssn_type == Constants.SeasonHeating
         week_schedule_name = "NatVentHtgSsnTempWeek"
-      elsif ssn_type == constants.SeasonCooling
+      elsif ssn_type == Constants.SeasonCooling
         week_schedule_name = "NatVentClgSsnTempWeek"
       else
         week_schedule_name = "NatVentOvlpSsnTempWeek"
@@ -2421,7 +2392,7 @@ class Sim
       NatVent,                  !- Name
       FRACTION,                 !- Schedule Type"
     (0...12).to_a.each do |month|
-      if (nv.season_type[month] == constants.SeasonHeating and nv.NatVentHeatingSeason) or (nv.season_type[month] == constants.SeasonCooling and nv.NatVentCoolingSeason) or (nv.season_type[month] == constants.SeasonOverlap and nv.NatVentOverlapSeason)
+      if (nv.season_type[month] == Constants.SeasonHeating and nv.NatVentHeatingSeason) or (nv.season_type[month] == Constants.SeasonCooling and nv.NatVentCoolingSeason) or (nv.season_type[month] == Constants.SeasonOverlap and nv.NatVentOverlapSeason)
         week_schedule_name = "NatVent-Week"
       else
         week_schedule_name = "NatVentOffSeason-Week"
@@ -2528,7 +2499,7 @@ class Sim
     nv.hor_vent_frac = 0.0
     f_s_nv = 2.0 / 3.0 * (1.0 + nv.hor_vent_frac / 2.0) * (2.0 * nv_neutral_level * (1 - nv_neutral_level)) ** 0.5 / (nv_neutral_level ** 0.5 + (1 - nv_neutral_level) ** 0.5)
     f_w_nv = wind_speed.shielding_coef * (1 - nv.hor_vent_frac) ** (1.0 / 3.0) * living_space.f_t_SG
-    nv.C_s = f_s_nv ** 2.0 * constants.g * living_space.height / (infiltration.assumed_inside_temp + 460.0)
+    nv.C_s = f_s_nv ** 2.0 * Constants.g * living_space.height / (infiltration.assumed_inside_temp + 460.0)
     nv.C_w = f_w_nv ** 2.0
 
     return nv, schedules
@@ -3373,8 +3344,6 @@ class Sim
   end
 
   def _processThermalMassFurniture(hasFinishedBasement, hasUnfinishedBasement, hasGarage)
-    constants = Constants.new
-
     has_furniture = true
     furnitureWeight = 8.0
     furnitureAreaFraction = 0.4
@@ -3384,11 +3353,11 @@ class Sim
     furnitureSolarAbsorptance = 0.6
 
     if furnitureDensity < 60.0
-      living_space_furn_type = constants.FurnTypeLight
-      finished_basement_furn_type = constants.FurnTypeLight
+      living_space_furn_type = Constants.FurnTypeLight
+      finished_basement_furn_type = Constants.FurnTypeLight
     else
-      living_space_furn_type = constants.FurnTypeHeavy
-      finished_basement_furn_type = constants.FurnTypeHeavy
+      living_space_furn_type = Constants.FurnTypeHeavy
+      finished_basement_furn_type = Constants.FurnTypeHeavy
     end
 
     # Living Space Furniture
@@ -3416,10 +3385,10 @@ class Sim
     # Unfinished Basement Furniture with hard-coded variables
     if hasUnfinishedBasement
 
-      furn_type_ubsmt = constants.FurnTypeLight
-      if furn_type_ubsmt == constants.FurnTypeLight
+      furn_type_ubsmt = Constants.FurnTypeLight
+      if furn_type_ubsmt == Constants.FurnTypeLight
         ubsmt_furn = Furniture.new(furn_type_ubsmt, 40.0, 0.0667, get_mat_wood.Cp, 0.4, 8.0, nil)
-      elsif furn_type_ubsmt == constants.FurnTypeHeavy
+      elsif furn_type_ubsmt == Constants.FurnTypeHeavy
         ubsmt_furn = Furniture.new(furn_type_ubsmt, 80.0, 0.0939, 0.35, 0.4, 8.0, nil)
       end
 
@@ -3430,10 +3399,10 @@ class Sim
     # Garage Furniture with hard-coded variables
     if hasGarage
 
-      furn_type_grg = constants.FurnTypeLight
-      if furn_type_grg == constants.FurnTypeLight
+      furn_type_grg = Constants.FurnTypeLight
+      if furn_type_grg == Constants.FurnTypeLight
         garage_furn = Furniture.new(furn_type_grg, 40.0, 0.0667, get_mat_wood.Cp, 0.1, 2.0, nil)
-      elsif furn_type_grg == constants.FurnTypeHeavy
+      elsif furn_type_grg == Constants.FurnTypeHeavy
         garage_furn = Furniture.new(furn_type_grg, 80.0, 0.0939, 0.35, 0.1, 2.0, nil)
       end
 
@@ -4270,8 +4239,7 @@ def get_unfinished_attic_perimeter_insulation_derating(uatc, geometry, eaves_dep
   end
 
   # Return value for uatc.UACeilingInsThickness_Rev
-  constants = Constants.new
-  area = get_space_area(getSpace(geometry, constants.SpaceUnfinAttic))
+  area = get_space_area(getSpace(geometry, Constants.SpaceUnfinAttic))
   return uatc.UACeilingInsThickness * area / spaceArea_Rev_UAtc
 
 end
@@ -4419,8 +4387,7 @@ def calc_cfm_ton_rated(rated_airflow_rate, fanspeed_ratios, capacity_ratios)
 end
 
 def get_cooling_coefficients(num_speeds, is_ideal_system, isHeatPump, supply)
-  constants = Constants.new
-  if not [1.0, 2.0, 4.0, constants.Num_Speeds_MSHP].include? num_speeds
+  if not [1.0, 2.0, 4.0, Constants.Num_Speeds_MSHP].include? num_speeds
     runner.registerError("Number_speeds = #{num_speeds} is not supported. Only 1, 2, 4, and 10 cooling equipment can be modeled.")
 	return false
   end
@@ -4463,7 +4430,7 @@ def get_cooling_coefficients(num_speeds, is_ideal_system, isHeatPump, supply)
                                                 [-3.443078025, 0.115186164, -0.000852001, 0.004678056, 0.000134319, -0.000171976]]
         supply.COOL_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
         supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
-      elsif num_speeds == constants.Num_Speeds_MSHP
+      elsif num_speeds == Constants.Num_Speeds_MSHP
         # NOTE: These coefficients are in SI UNITS, which differs from the coefficients for 1, 2, and 4 speed units, which are in IP UNITS
         supply.COOL_CAP_FT_SPEC_coefficients = [[1.008993521905866, 0.006512749025457, 0.0, 0.003917565735935, -0.000222646705889, 0.0]] * num_speeds
         supply.COOL_EIR_FT_SPEC_coefficients = [[0.429214441601141, -0.003604841598515, 0.000045783162727, 0.026490875804937, -0.000159212286878, -0.000159062656483]] * num_speeds
@@ -4855,12 +4822,11 @@ def calc_Cd_from_HSPF_COP_FourSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, 
 end
 
 def get_mech_vent_num_vent_fans(vent_type)
-	constants = Constants.new
-    if vent_type == constants.VentTypeExhaust
+    if vent_type == Constants.VentTypeExhaust
         return 1 # One fan for unbalanced airflow
-    elsif vent_type == constants.VentTypeSupply
+    elsif vent_type == Constants.VentTypeSupply
         return 1 # One fan for unbalanced airflow
-    elsif vent_type == constants.VentTypeBalanced
+    elsif vent_type == Constants.VentTypeBalanced
         return 2 # Two fans for balanced airflow
     end
 	return 1 # Default to one fan

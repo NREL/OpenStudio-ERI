@@ -89,8 +89,14 @@ class Constants
 	def self.CondenserTypeAir
 		return 'aircooled'
 	end
+	def self.DefaultSolarAbsCeiling
+		return 0.3
+	end
 	def self.DefaultSolarAbsFloor
 		return 0.6
+	end
+	def self.DefaultSolarAbsWall
+		return 0.5
 	end
 	def self.DehumidDucted
 		return 'ducted'
@@ -169,6 +175,9 @@ class Constants
 	end
 	def self.FurnTypeHeavy
 		return 'HEAVY'
+	end
+	def self.g
+		return 32.174    # gravity (ft/s2)
 	end
 	def self.HeatTransferMethodCTF
 		return 'ctf'
@@ -470,8 +479,14 @@ class Constants
 	def self.MaterialTypeResistance
 		return 'RESISTANCE'
 	end
+	def self.MonthNames
+		return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+	end
 	def self.MonthNumDays
 		return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+	end
+	def self.Num_Speeds_MSHP
+		return 10
 	end
 	def self.ObjectNameCookingRange
 		return 'residential_range'
