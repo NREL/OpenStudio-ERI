@@ -893,16 +893,6 @@ class Sim
 		@model = model
 	  end
 	  unless runner.nil?
-		begin # Spreadsheet
-		  #former_workflow_arguments = runner.former_workflow_arguments
-		  #weather_file_name = former_workflow_arguments["setdrweatherfile"]["weather_file_name"]
-		  #weather_file_dir = former_workflow_arguments["setdrweatherfile"]["weather_directory_name"]
-		  weather_file_name = "USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3.epw"
-		  weather_file_dir = "weather"
-		  epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
-		  @weather = WeatherProcess.new(epw_path, runner)
-		rescue Exception => e# PAT
-		  runner.registerInfo("Did not set EPW weather path to #{epw_path}: #{e.message}")
 		  if runner.lastEpwFilePath.is_initialized
 			test = runner.lastEpwFilePath.get.to_s
 			if File.exist?(test)
@@ -910,12 +900,6 @@ class Sim
 			  @weather = WeatherProcess.new(epw_path, runner)
 			end
 		  end
-		end
-	  end
-	  unless @weather.nil?
-		runner.registerInfo("EPW weather path set to #{epw_path}")
-	  else
-		runner.registerInfo("EPW weather path NOT set to: #{epw_path}")
 	  end
 	end
 
