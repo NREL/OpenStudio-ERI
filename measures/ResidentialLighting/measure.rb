@@ -173,16 +173,13 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     fbfa = 0
     gfa = 0
 	model.getSpaceTypes.each do |spaceType|
-		spacename = spaceType.name.to_s
 		spacehandle = spaceType.handle.to_s
-		if spacehandle == space_type_r or spacehandle == space_type_fb or spacehandle == space_type_grg
-            if spacehandle == space_type_r
-                lfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-            elsif spacehandle == space_type_fb
-                fbfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-            elsif spacehandle == space_type_grg
-                gfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-            end
+        if spacehandle == space_type_r
+            lfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        elsif spacehandle == space_type_fb
+            fbfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        elsif spacehandle == space_type_grg
+            gfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
         end
     end
     tffa = lfa + fbfa # total finished floor area

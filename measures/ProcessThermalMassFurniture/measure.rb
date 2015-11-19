@@ -121,35 +121,6 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 	selected_garage.setDescription("The garage space type.")
     args << selected_garage
 	
-    # Geometry
-    userdefinedlivingarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedlivingarea", true)
-    userdefinedlivingarea.setDisplayName("Living Space Area")
-	userdefinedlivingarea.setUnits("ft^2")
-	userdefinedlivingarea.setDescription("The area of the living space.")
-    userdefinedlivingarea.setDefaultValue(2700.0)
-    args << userdefinedlivingarea
-
-    userdefinedfbsmtarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtarea", true)
-    userdefinedfbsmtarea.setDisplayName("Finished Basement Area")
-	userdefinedfbsmtarea.setUnits("ft^2")
-	userdefinedfbsmtarea.setDescription("The area of the finished basement.")
-    userdefinedfbsmtarea.setDefaultValue(0.0)
-    args << userdefinedfbsmtarea
-
-	userdefinedufbsmtarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedufbsmtarea", true)
-    userdefinedufbsmtarea.setDisplayName("Unfinished Basement Area")
-	userdefinedufbsmtarea.setUnits("ft^2")
-	userdefinedufbsmtarea.setDescription("The area of the unfinished basement.")
-    userdefinedufbsmtarea.setDefaultValue(0.0)
-    args << userdefinedufbsmtarea
-	
-    userdefinedgaragearea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgaragearea", true)
-    userdefinedgaragearea.setDisplayName("Garage Area")
-	userdefinedgaragearea.setUnits("ft^2")
-	userdefinedgaragearea.setDescription("The area of the garage.")
-    userdefinedgaragearea.setDefaultValue(0.0)
-    args << userdefinedgaragearea	
-
     return args
   end #end the arguments method
 
@@ -167,10 +138,6 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
     selected_ufbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedufbsmt",user_arguments,model)
     selected_garage = runner.getOptionalWorkspaceObjectChoiceValue("selectedgarage",user_arguments,model)
-	living_space_furn_area = runner.getDoubleArgumentValue("userdefinedlivingarea",user_arguments)
-	finished_basement_furn_area = runner.getDoubleArgumentValue("userdefinedfbsmtarea",user_arguments)
-	unfinished_basement_furn_area = runner.getDoubleArgumentValue("userdefinedufbsmtarea",user_arguments)
-	garage_furn_area = runner.getDoubleArgumentValue("userdefinedgaragearea",user_arguments)
 
     # loop thru all the spaces
     hasFinishedBasement = false
@@ -183,7 +150,24 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
       hasUnfinishedBasement = true
     end
     if not selected_garage.empty?
-        hasGarage = true
+      hasGarage = true
+    end
+    
+    living_space_furn_area = 0
+    finished_basement_furn_area = 0
+    unfinished_basement_furn_area = 0
+    garage_furn_area = 0
+	model.getSpaceTypes.each do |spaceType|
+		spacehandle = spaceType.handle.to_s
+        if spacehandle == selected_living.get.handle.to_s
+            living_space_furn_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        elsif hasFinishedBasement and spacehandle == selected_fbsmt.get.handle.to_s
+            finished_basement_furn_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        elsif hasUnfinishedBasement and spacehandle == selected_ufbsmt.get.handle.to_s
+            unfinished_basement_furn_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        elsif hasGarage and spacehandle == selected_garage.get.handle.to_s
+            garage_furn_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        end
     end
 
     # Process the furniture
