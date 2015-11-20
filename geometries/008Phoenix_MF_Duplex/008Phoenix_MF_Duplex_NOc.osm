@@ -5,11 +5,11 @@ OS:Version,
 
 OS:Site,
   {f1158c11-611f-4c41-9d0e-fbfb0405cad2}, !- Handle
-  Phoenix Sky Harbor Intl Ap AZ,          !- Name
+  Phoenix Sky Harbor Intl Ap,             !- Name
   33.45,                                  !- Latitude {deg}
   -111.98,                                !- Longitude {deg}
   -7,                                     !- Time Zone {hr}
-  336.9999864,                            !- Elevation {m}
+  337,                                    !- Elevation {m}
   Suburbs;                                !- Terrain
 
 OS:SimulationControl,
@@ -101,7 +101,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {85e79ddc-b03f-4840-a856-6dab6bf5396e}, !- Handle
   living_1,                               !- Name
-  {b386e6d0-c3b1-470e-8b99-c2159a2aec3a}, !- Space Type Name
+  {ae7c92e4-bd53-46b7-ab72-b33cbeccb115}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -190,7 +190,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {3eca233d-1ca7-491d-83fa-baa4a58f4575}, !- Handle
   living_3,                               !- Name
-  {01262974-3e8d-4a60-8230-4e5f8dbe50f5}, !- Space Type Name
+  {ae7c92e4-bd53-46b7-ab72-b33cbeccb115}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1086,8 +1086,8 @@ OS:Surface,
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
   0, 6.4008, 5.9436,                      !- X,Y,Z Vertex 1 {m}
-  0, 4.84272902342253e-016, 2.7432,       !- X,Y,Z Vertex 2 {m}
-  7.62, 4.84272902342253e-016, 2.7432,    !- X,Y,Z Vertex 3 {m}
+  0, 1.61424300780752e-016, 2.7432,       !- X,Y,Z Vertex 2 {m}
+  7.62, 1.61424300780752e-016, 2.7432,    !- X,Y,Z Vertex 3 {m}
   7.62, 6.4008, 5.9436;                   !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
@@ -1188,8 +1188,8 @@ OS:Surface,
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
   8.2296, 0, 4.4196,                      !- X,Y,Z Vertex 1 {m}
-  16.4592, 0, 0.3048,                     !- X,Y,Z Vertex 2 {m}
-  16.4592, 10.0584, 0.3048,               !- X,Y,Z Vertex 3 {m}
+  16.4592, 0, 0.304799999999999,          !- X,Y,Z Vertex 2 {m}
+  16.4592, 10.0584, 0.304799999999999,    !- X,Y,Z Vertex 3 {m}
   8.2296, 10.0584, 4.4196;                !- X,Y,Z Vertex 4 {m}
 
 OS:ThermalZone,
@@ -2253,8 +2253,8 @@ OS:Surface,
   8.2296, 10.0584, 4.4196,                !- X,Y,Z Vertex 1 {m}
   7.3152, 10.0584, 3.9624,                !- X,Y,Z Vertex 2 {m}
   7.3152, 18.288, 3.9624,                 !- X,Y,Z Vertex 3 {m}
-  2.42136451171127e-016, 18.288, 0.3048,  !- X,Y,Z Vertex 4 {m}
-  2.42136451171127e-016, 0, 0.3048,       !- X,Y,Z Vertex 5 {m}
+  2.82492526366315e-016, 18.288, 0.3048,  !- X,Y,Z Vertex 4 {m}
+  2.82492526366315e-016, 0, 0.3048,       !- X,Y,Z Vertex 5 {m}
   8.2296, 0, 4.4196;                      !- X,Y,Z Vertex 6 {m}
 
 OS:SubSurface,
@@ -2443,9 +2443,9 @@ OS:Surface,
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
   8.2296, 4.572, 6.858,                   !- X,Y,Z Vertex 1 {m}
-  -1.61424300780751e-016, 4.572, 2.7432,  !- X,Y,Z Vertex 2 {m}
-  -4.84272902342253e-016, 3.50961702829281e-032, 2.7432, !- X,Y,Z Vertex 3 {m}
-  7.3152, 0, 6.4008,                      !- X,Y,Z Vertex 4 {m}
+  -4.84272902342253e-016, 4.572, 2.7432,  !- X,Y,Z Vertex 2 {m}
+  -8.07121503903755e-016, 8.18910639934989e-032, 2.7432, !- X,Y,Z Vertex 3 {m}
+  7.3152, 4.67948937105708e-032, 6.4008,  !- X,Y,Z Vertex 4 {m}
   7.3152, -8.2296, 6.4008,                !- X,Y,Z Vertex 5 {m}
   8.2296, -8.2296, 6.858;                 !- X,Y,Z Vertex 6 {m}
 
@@ -2588,7 +2588,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {766cc138-8eb1-4022-a386-b79822baa73b}, !- Handle
-  Space Type 1,                           !- Name
+  garage,                                 !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {1700693f-404b-4fe7-a528-b61df47affb4}; !- Group Rendering Name
@@ -2602,7 +2602,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {b16bf629-cd14-4554-8015-bbdf24c49319}, !- Handle
-  Space Type 2,                           !- Name
+  finishedbasement,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {0fdd4805-8c45-4d9e-aebb-c7804902a0c7}; !- Group Rendering Name
@@ -2616,7 +2616,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {c42d0a77-0986-4837-bc40-cba6a1c1c209}, !- Handle
-  Space Type 3,                           !- Name
+  crawlspace,                             !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {3b7ad637-e8c0-49d4-a512-cf9fadd01415}; !- Group Rendering Name
@@ -2630,7 +2630,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {f9f7b244-aef6-470b-acf6-b65db413101a}, !- Handle
-  Space Type 4,                           !- Name
+  unfinishedattic,                        !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {820fb1a7-ff5f-492b-82af-f1365e9e5b8f}, !- Group Rendering Name
@@ -2650,7 +2650,10 @@ OS:SpaceType,
   Space Type 5,                           !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
-  {a06c119a-b9ac-4cea-af8e-99f871a2e157}; !- Group Rendering Name
+  {a06c119a-b9ac-4cea-af8e-99f871a2e157}, !- Group Rendering Name
+  ,                                       !- Design Specification Outdoor Air Object Name
+  ,                                       !- Standards Building Type
+  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {a06c119a-b9ac-4cea-af8e-99f871a2e157}, !- Handle
@@ -2678,7 +2681,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {25073d7c-f98d-4559-badb-e1edccbbb7be}, !- Handle
-  Space Type 7,                           !- Name
+  unfinishedbasement,                     !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {491908ee-ca3f-4097-b751-6f0dbc46cb5a}, !- Group Rendering Name
@@ -2692,4 +2695,84 @@ OS:Rendering:Color,
   65,                                     !- Rendering Red Value
   105,                                    !- Rendering Green Value
   225;                                    !- Rendering Blue Value
+
+OS:SpaceType,
+  {ae7c92e4-bd53-46b7-ab72-b33cbeccb115}, !- Handle
+  living,                                 !- Name
+  ,                                       !- Default Construction Set Name
+  ,                                       !- Default Schedule Set Name
+  {97f29929-6e9d-4074-9ee2-1fb53a717cb3}, !- Group Rendering Name
+  ,                                       !- Design Specification Outdoor Air Object Name
+  ,                                       !- Standards Building Type
+  ;                                       !- Standards Space Type
+
+OS:Rendering:Color,
+  {97f29929-6e9d-4074-9ee2-1fb53a717cb3}, !- Handle
+  Rendering Color 15,                     !- Name
+  188,                                    !- Rendering Red Value
+  143,                                    !- Rendering Green Value
+  143;                                    !- Rendering Blue Value
+
+OS:YearDescription,
+  {3c932322-cd8c-4659-82cd-9e819bd4e569}, !- Handle
+  ,                                       !- Calendar Year
+  Sunday;                                 !- Day of Week for Start Day
+
+OS:ClimateZones,
+  {c607f89d-3618-4d49-a19a-7a7a0c6b2408}, !- Handle
+  ,                                       !- Active Institution
+  ,                                       !- Active Year
+  ASHRAE,                                 !- Climate Zone Institution Name 1
+  ANSI/ASHRAE Standard 169,               !- Climate Zone Document Name 1
+  2006,                                   !- Climate Zone Document Year 1
+  ,                                       !- Climate Zone Value 1
+  CEC,                                    !- Climate Zone Institution Name 2
+  California Climate Zone Descriptions,   !- Climate Zone Document Name 2
+  1995,                                   !- Climate Zone Document Year 2
+  ;                                       !- Climate Zone Value 2
+
+OS:LifeCycleCost:Parameters,
+  {116ceb53-36c6-40a6-95af-46fa25147ea6}, !- Handle
+  FEMP,                                   !- Analysis Type
+  ,                                       !- Discounting Convention
+  ,                                       !- Inflation Approach
+  ,                                       !- Real Discount Rate
+  ,                                       !- Nominal Discount Rate
+  ,                                       !- Inflation
+  ,                                       !- Base Date Month
+  ,                                       !- Base Date Year
+  ,                                       !- Service Date Month
+  ,                                       !- Service Date Year
+  ,                                       !- Length of Study Period in Years
+  ,                                       !- Tax Rate
+  ,                                       !- Depreciation Method
+  Yes;                                    !- Use NIST Fuel Escalation Rates
+
+OS:WeatherFile,
+  {8a02abee-4ff1-4d7f-b8f7-fecb532da994}, !- Handle
+  Phoenix Sky Harbor Intl Ap,             !- City
+  AZ,                                     !- State Province Region
+  USA,                                    !- Country
+  TMY3,                                   !- Data Source
+  722780,                                 !- WMO Number
+  33.45,                                  !- Latitude {deg}
+  -111.98,                                !- Longitude {deg}
+  -7,                                     !- Time Zone {hr}
+  337,                                    !- Elevation {m}
+  file:files/USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3.epw, !- Url
+  5A17C647;                               !- Checksum
+
+OS:RunPeriod,
+  {312879f9-1f31-4b6c-b2b5-9a9024e5a3ac}, !- Handle
+  Run Period 1,                           !- Name
+  1,                                      !- Begin Month
+  1,                                      !- Begin Day of Month
+  12,                                     !- End Month
+  31,                                     !- End Day of Month
+  ,                                       !- Use Weather File Holidays and Special Days
+  ,                                       !- Use Weather File Daylight Saving Period
+  ,                                       !- Apply Weekend Holiday Rule
+  ,                                       !- Use Weather File Rain Indicators
+  ,                                       !- Use Weather File Snow Indicators
+  ;                                       !- Number of Times Runperiod to be Repeated
 

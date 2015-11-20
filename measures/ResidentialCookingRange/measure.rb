@@ -148,7 +148,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
 	
 	#Convert num bedrooms to appropriate integer
-	num_br = num_br.tr('+','').to_i
+	num_br = num_br.tr('+','').to_f
 	
 	#Electric ignition
 	if range_fuel == Constants.FuelTypeElectric and e_ignition == true
@@ -179,17 +179,18 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     #hard coded convective, radiative, latent, and lost fractions
 	range_lat_e = 0.3
 	range_conv_e = 0.16
-	range_lost_e = 0.3
 	range_rad_e = 0.24
+	range_lost_e = 1 - range_lat_e - range_conv_e - range_rad_e
 	range_lat_g = 0.2
 	range_conv_g = 0.12
-	range_lost_g = 0.5
 	range_rad_g = 0.18
+	range_lost_g = 1 - range_lat_g - range_conv_g - range_rad_g
 
-	obj_name_e = Constants.ObjectNameCookingRange + "_" + Constants.FuelTypeElectric
-	obj_name_g = Constants.ObjectNameCookingRange + "_" + Constants.FuelTypeGas
-	obj_name_i = Constants.ObjectNameCookingRange + "_" + Constants.FuelTypeElectric + "_ignition"
-	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, Constants.ObjectNameCookingRange, runner)
+	obj_name = Constants.ObjectNameCookingRange
+	obj_name_e = obj_name + "_" + Constants.FuelTypeElectric
+	obj_name_g = obj_name + "_" + Constants.FuelTypeGas
+	obj_name_i = obj_name + "_" + Constants.FuelTypeElectric + "_ignition"
+	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
 	if not sch.validated?
 		return false
 	end

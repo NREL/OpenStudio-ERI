@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
@@ -129,8 +130,8 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for furnace fuel type
     fuel_display_names = OpenStudio::StringVector.new
-    fuel_display_names << "gas"
-    fuel_display_names << "electric"
+    fuel_display_names << Constants.FuelTypeGas
+    fuel_display_names << Constants.FuelTypeElectric
 
     #make a string argument for furnace fuel type
     selected_furnacefuel = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfurnacefuel", fuel_display_names, true)
@@ -198,8 +199,6 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     end
     furnaceMaxSupplyTemp = runner.getDoubleArgumentValue("userdefinedmaxtemp",user_arguments)
     furnaceInstalledSupplyFanPower = runner.getDoubleArgumentValue("userdefinedfanpower",user_arguments)
-
-    constants = Constants.new
 
     # Create the material class instances
     furnace = Furnace.new(furnaceInstalledAFUE, furnaceMaxSupplyTemp, furnaceFuelType, furnaceInstalledSupplyFanPower)
@@ -305,7 +304,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     if hasFurnace
 
-      if furnace.FurnaceFuelType == constants.FuelTypeElectric
+      if furnace.FurnaceFuelType == Constants.FuelTypeElectric
 
         htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, heatingseasonschedule)
         htg_coil.setName("Furnace Heating Coil")
@@ -322,7 +321,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
         end
 
-      elsif furnace.FurnaceFuelType != constants.FuelTypeElectric
+      elsif furnace.FurnaceFuelType != Constants.FuelTypeElectric
 
         htg_coil = OpenStudio::Model::CoilHeatingGas.new(model, heatingseasonschedule)
         htg_coil.setName("Furnace Heating Coil")

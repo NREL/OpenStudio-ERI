@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::ModelUserScript
@@ -235,7 +236,6 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     # Constants
     mat_gyp = get_mat_gypsum
     mat_wood = get_mat_wood
-    constants = Constants.new
 
     # Gypsum
     gypsumThickness = userdefined_gypthickness
@@ -271,7 +271,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     saf = sim._processConstructionsInteriorUninsulatedFloors(saf)
 
     # ConcPCMCeilWall
-    if ceiling_mass.CeilingMassPCMType == constants.PCMtypeConcentrated
+    if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
       pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       pcm.setName("ConcPCMCeilWall")
       pcm.setRoughness("Rough")
@@ -343,7 +343,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     layercount = 0
     finuninsfinfloor = OpenStudio::Model::Construction.new(model)
     finuninsfinfloor.setName("FinUninsFinFloor")
-    if ceiling_mass.CeilingMassPCMType == constants.PCMtypeConcentrated
+    if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
       finuninsfinfloor.insertLayer(layercount,pcm)
       layercount += 1
     end

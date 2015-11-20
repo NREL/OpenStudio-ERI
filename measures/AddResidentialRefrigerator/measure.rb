@@ -124,10 +124,11 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     #hard coded convective, radiative, latent, and lost fractions
     fridge_lat = 0
     fridge_rad = 0
-    fridge_lost = 0
     fridge_conv = 1
+    fridge_lost = 1 - fridge_lat - fridge_rad - fridge_conv
 	
-	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, Constants.ObjectNameRefrigerator, runner)
+	obj_name = Constants.ObjectNameRefrigerator
+	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
 	if not sch.validated?
 		return false
 	end
@@ -136,19 +137,17 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	#add refrigerator to the selected space
 	has_fridge = 0
 	replace_fridge = 0
-	num_equip = 1
 	model.getSpaceTypes.each do |spaceType|
 		spacename = spaceType.name.to_s
 		spacehandle = spaceType.handle.to_s
 		if spacehandle == space_type_r #add refrigerator
 			space_equipments = spaceType.electricEquipment
 			space_equipments.each do |space_equipment|
-				if space_equipment.electricEquipmentDefinition.name.get.to_s == Constants.ObjectNameRefrigerator
+				if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
 					has_fridge = 1
 					runner.registerWarning("This space already has a refrigerator, the existing refrigerator will be replaced with the the currently selected option.")
 					space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
 					sch.setSchedule(space_equipment)
-					num_equip += 1
 					replace_fridge = 1
 				end
 			end
@@ -158,9 +157,9 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 				#Add electric equipment for the fridge
 				frg_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
 				frg = OpenStudio::Model::ElectricEquipment.new(frg_def)
-				frg.setName(Constants.ObjectNameRefrigerator)
+				frg.setName(obj_name)
 				frg.setSpaceType(spaceType)
-				frg_def.setName(Constants.ObjectNameRefrigerator)
+				frg_def.setName(obj_name)
 				frg_def.setDesignLevel(design_level)
 				frg_def.setFractionRadiant(fridge_rad)
 				frg_def.setFractionLatent(fridge_lat)
@@ -176,9 +175,9 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
 	if has_fridge == 1
 		if replace_fridge == 1
-			runner.registerFinalCondition("The existing fridge has been replaced by one with #{fridge_ann.round} kWhs annual energy consumption.")
+			runner.registerFinalCondition("The existing fridge has been replaced by one with #{fridge_ann.round} kWh annual energy consumption.")
 		else
-			runner.registerFinalCondition("A fridge has been added with #{fridge_ann.round} kWhs annual energy consumption.")
+			runner.registerFinalCondition("A fridge has been added with #{fridge_ann.round} kWh annual energy consumption.")
 		end
 	else
 		runner.registerFinalCondition("Refrigerator was not added to #{space_type_r}.")

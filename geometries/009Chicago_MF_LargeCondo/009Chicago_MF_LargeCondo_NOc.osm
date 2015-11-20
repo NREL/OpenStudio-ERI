@@ -135,7 +135,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {74b5d1b0-fe7f-4e75-915a-ccc3687786f3}, !- Handle
   living_20,                              !- Name
-  {d7975b1e-adf3-4537-8316-bdc879d35907}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -241,7 +241,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {80fb6742-51b1-4b3a-9d2c-b435fd286494}, !- Handle
   living_44,                              !- Name
-  {e48cf39c-a387-4b22-9577-84792ece47f1}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -347,7 +347,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {d2e8f25e-49e2-4b67-92f9-64f7ff1466e5}, !- Handle
   living_12,                              !- Name
-  {e98720ad-7137-4561-a8e9-d333f5655705}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -470,7 +470,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {bc2a9ba3-154c-45ed-9093-50a1f1ffe7c3}, !- Handle
   living_48,                              !- Name
-  {c5c8dfbe-120f-4a45-8ebc-3ca030e86ba1}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -575,8 +575,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {fef39be3-8ee6-46eb-8e53-f69f7d6970cb}, !- Handle
-  living_6,                               !- Name
-  {67c0b7c1-a984-4efc-a22a-4f25120218d6}, !- Space Type Name
+  living_6,                             !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -682,7 +682,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {5fbc57c3-0bea-4c13-9308-23ad61d43ea1}, !- Handle
   living_37,                              !- Name
-  {970e6aa2-1315-4c66-9a5c-5d0bde008a33}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -804,8 +804,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {f61e814d-b5e4-44bf-b648-99a4b842d03b}, !- Handle
-  living_30,                              !- Name
-  {989f6300-0906-42ef-8317-fea12226f583}, !- Space Type Name
+  living_30,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -927,8 +927,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {ef9b48aa-e327-4116-83e6-71f0f0155c76}, !- Handle
-  living_21,                              !- Name
-  {71a92586-aa95-4357-ac93-b84687059c19}, !- Space Type Name
+  living_21,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1034,7 +1034,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {7da7be27-e600-4016-a225-8201314d218e}, !- Handle
   living_32,                              !- Name
-  {fad1635c-573e-43ab-9add-ea72c56798a6}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1172,8 +1172,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {aa6c058e-c283-4246-a397-cb762b01f9bd}, !- Handle
-  living_55,                              !- Name
-  {9e8a93c0-2aff-43bb-8854-ecdc7cdd5739}, !- Space Type Name
+  living_55,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1278,8 +1278,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {aa444121-97f4-481c-9d6e-6b9f8f90cb2d}, !- Handle
-  living_25,                              !- Name
-  {0891f0d2-20c3-4d9e-ab28-c7f98167eaa2}, !- Space Type Name
+  living_25,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1367,8 +1367,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {995d3090-3237-4254-857b-aafd08cf40b1}, !- Handle
-  living_8,                               !- Name
-  {1465f819-3ad1-4710-8592-ecffefecd565}, !- Space Type Name
+  living_8,                             !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1491,7 +1491,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {4212fa69-6c4c-45c6-a349-b5d8d3cc93b9}, !- Handle
   living_26,                              !- Name
-  {77afa541-bdd1-4eeb-bde5-a0ff985227b4}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1614,7 +1614,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {5cdd3a1f-689a-4059-8eb9-f560114760e3}, !- Handle
   living_11,                              !- Name
-  {d3d73d42-4998-45e3-adb9-1627a3a3625a}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1754,7 +1754,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {36c0b9b4-30e4-457b-852b-020c8463c8b2}, !- Handle
   living_40,                              !- Name
-  {c07d07b6-7e30-4ad4-a5ac-55e6f6359f50}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1860,7 +1860,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {2441390a-e432-4893-ab65-f280bb8a8afa}, !- Handle
   living_33,                              !- Name
-  {fd69e2de-66f8-473c-8847-836846f658f2}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1982,8 +1982,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {b57265ae-5d04-4a00-be03-ca5e9cffde1a}, !- Handle
-  living_5,                               !- Name
-  {9dc6bf60-010a-4854-9dc7-0eab1013bb66}, !- Space Type Name
+  living_5,                             !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2106,7 +2106,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {2278cdca-f705-4d0f-a967-35dee14ba938}, !- Handle
   living_24,                              !- Name
-  {64c802dc-12d5-41a8-9bc4-93d9f496c73b}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2211,8 +2211,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {6cb9e4d6-c22a-4879-9ee0-6cdfc655f880}, !- Handle
-  living_49,                              !- Name
-  {3b9da2a7-08e5-4359-96f9-d9d53e852421}, !- Space Type Name
+  living_49,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2317,8 +2317,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {e8832440-5da3-465e-84c6-5c4a0d8deb33}, !- Handle
-  living_39,                              !- Name
-  {9e39538b-dff7-4530-af64-dcadfafed5ca}, !- Space Type Name
+  living_39,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2406,8 +2406,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {7c4efb88-defe-4634-a9f3-4fe1eedf74b0}, !- Handle
-  living_54,                              !- Name
-  {7543f3be-78e6-4a60-970f-9f95c6f31270}, !- Space Type Name
+  living_54,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2513,7 +2513,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {4316b3b4-79ed-48dd-a17b-e1f93b318b1a}, !- Handle
   living_50,                              !- Name
-  {f3ac889b-d15f-44ad-bb4b-1038ebe0e863}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2618,8 +2618,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {aaa645a0-a439-4207-a4cd-65e26a4e1983}, !- Handle
-  living_34,                              !- Name
-  {223294a3-6b07-486f-bb7e-519f9061c60c}, !- Space Type Name
+  living_34,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2724,8 +2724,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {90180fc2-296a-4913-a6e7-f03ae7d992cb}, !- Handle
-  living_7,                               !- Name
-  {273689cc-5bc1-4687-8454-7c74e8991d88}, !- Space Type Name
+  living_7,                             !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2831,7 +2831,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {21cca596-3e7f-44ff-b396-129895298ee0}, !- Handle
   living_43,                              !- Name
-  {f23b80c0-bd10-4a60-b47e-09006b55ba2a}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3005,7 +3005,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {6500eab7-c527-415a-af89-0a693eee7b6b}, !- Handle
   living_35,                              !- Name
-  {d77d5475-9c4f-43f1-96b2-310f7cb565d5}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3128,7 +3128,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {90eff59a-4f41-4e04-9459-18f5613a5f95}, !- Handle
   living_31,                              !- Name
-  {957ecc69-4eff-4b15-b41a-0e4c3ebd1caf}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3284,8 +3284,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {b0d090db-523e-48c8-b6a1-343181c4c8f0}, !- Handle
-  living_9,                               !- Name
-  {1b2ed9c1-2fef-4206-95c2-b7e2a597676a}, !- Space Type Name
+  living_9,                             !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3425,7 +3425,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {3c481667-e3fd-4ac2-915b-f486353101ac}, !- Handle
   living_36,                              !- Name
-  {f95ba829-75d7-4fc4-88a8-5189130d5829}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3531,7 +3531,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {09bb5bc6-cc9c-4565-85eb-75cb5cc54c7c}, !- Handle
   living_56,                              !- Name
-  {64bc88ef-39b2-40d4-bd0a-35fdc1850e52}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3671,7 +3671,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {48901abd-2a82-426d-9375-545b52304fd7}, !- Handle
   living_51,                              !- Name
-  {64a83d49-2900-47a1-8571-a39509db2941}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3776,8 +3776,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {a763c845-4c04-4d1c-9617-29e4707ca24a}, !- Handle
-  living_38,                              !- Name
-  {2c29f127-cd7a-4c98-966a-6d1d367f0361}, !- Space Type Name
+  living_38,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3866,7 +3866,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {07c71aa4-80ee-4558-bc27-aaaa4f723b4c}, !- Handle
   living_14,                              !- Name
-  {e93520fe-f1d9-4dec-854f-7937e2e3a118}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -3972,7 +3972,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {b85cc6a0-ddb1-448a-a96f-874e2b20508f}, !- Handle
   living_52,                              !- Name
-  {c0615ff5-8b48-4e41-866b-0ab4712acf44}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -4129,7 +4129,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {a2f48b13-ce99-47f9-a859-4e4c69a301d3}, !- Handle
   living_22,                              !- Name
-  {ba54b0c8-2c2c-41e8-b990-894cd0c86eb2}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -4269,7 +4269,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {168fa275-611c-46be-811c-f18dca14b06d}, !- Handle
   living_45,                              !- Name
-  {41b7d51b-4d90-4d1a-9ad2-7669ed0b76d9}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -4391,8 +4391,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {b8523972-1fb2-4170-9b58-3a244b543cd2}, !- Handle
-  living_59,                              !- Name
-  {a51518c7-28c3-4d29-b576-fba3894c4e8a}, !- Space Type Name
+  living_59,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -4531,8 +4531,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {2b1c9866-8249-4f76-a502-d9bbc7fb5ebd}, !- Handle
-  living_18,                              !- Name
-  {19dccdb5-f043-4db4-9256-b4d086514fcf}, !- Space Type Name
+  living_18,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -4637,8 +4637,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {b141d37d-305e-40f8-af21-6bb179d38533}, !- Handle
-  living_2,                               !- Name
-  {14129f19-6700-4815-a254-877c6bed4151}, !- Space Type Name
+  living_2,                             !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -4743,8 +4743,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {84c79c81-e38e-461b-bc85-87ea34c0be09}, !- Handle
-  living_58,                              !- Name
-  {02fd659b-31b5-4185-958f-729f03802fa1}, !- Space Type Name
+  living_58,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -4900,8 +4900,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {a6917ac9-7480-4b92-8306-b2fdb16248b5}, !- Handle
-  living_19,                              !- Name
-  {1c11ae00-3fe6-4c7e-b0a3-f91dd9375123}, !- Space Type Name
+  living_19,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -5092,7 +5092,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {84d1b7b5-01cc-4a7c-8364-b0279c8b9988}, !- Handle
   living_28,                              !- Name
-  {8a653ef1-415d-415d-a187-b7fb08f9674c}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -5316,8 +5316,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {ed43daba-b9cb-4fa2-9161-f9daaa6e3d69}, !- Handle
-  living_15,                              !- Name
-  {53290d10-288a-4237-b2e0-3a421a6fd861}, !- Space Type Name
+  living_15,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -5473,8 +5473,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {a54d61e8-7924-4baf-8598-1cf968c66c28}, !- Handle
-  living_47,                              !- Name
-  {9d34b538-7123-4f48-9607-e850a7aabf68}, !- Space Type Name
+  living_47,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -5579,8 +5579,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {e3d6e473-8e2d-4c1a-adc1-895e0c69b311}, !- Handle
-  living_23,                              !- Name
-  {ce39a6a1-645e-486e-beff-3f6c7eb954ac}, !- Space Type Name
+  living_23,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -5771,7 +5771,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {3ec64080-5e06-4ce7-845c-8c160c8ee7f1}, !- Handle
   living_60,                              !- Name
-  {b24c4a6f-0dbb-4b5d-a650-766128362e09}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -5996,7 +5996,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {13385041-88d5-406c-94aa-48292d40827a}, !- Handle
   living_10,                              !- Name
-  {f27ab67a-28ee-4b6d-9fa5-7737e0767de6}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -6152,8 +6152,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {3740d32d-ebc9-42b3-98cd-0bc1fd01ee47}, !- Handle
-  living_1,                               !- Name
-  {28336b40-b196-4b2c-95b1-ab9fbb5314dc}, !- Space Type Name
+  living_1,                             !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -6241,8 +6241,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {b8f92e78-cad9-48bf-b77d-2a351eb39931}, !- Handle
-  living_4,                               !- Name
-  {afa0e41b-da1c-42ec-bba0-c37172be3e0e}, !- Space Type Name
+  living_4,                             !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -6347,8 +6347,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {f3f25a20-4874-479c-b533-14c1f060c6d3}, !- Handle
-  living_41,                              !- Name
-  {925a038f-c7f1-4381-888e-cdf5ababa4e8}, !- Space Type Name
+  living_41,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -6505,7 +6505,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {5e268f38-187f-46d1-b06f-aecff0179813}, !- Handle
   living_46,                              !- Name
-  {f6216652-caec-46e2-af09-5786b9511753}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -6662,7 +6662,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {802e0cef-a87d-41ba-8e15-f143a379db25}, !- Handle
   living_3,                               !- Name
-  {909fa923-e553-4f49-a163-f7cb425c82e1}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -6818,8 +6818,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {a9e997f8-9196-43a4-a7ee-d81a767b3539}, !- Handle
-  living_16,                              !- Name
-  {07021246-a6c7-418f-98f4-3487a7423f35}, !- Space Type Name
+  living_16,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -6941,8 +6941,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {ff83294c-3e7b-4463-a488-26e62be012c2}, !- Handle
-  living_17,                              !- Name
-  {14643e4c-c9ec-428e-8b5f-f6d87f889163}, !- Space Type Name
+  living_17,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -7591,8 +7591,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {e5a42066-c150-4e76-865c-2b29f03c7e0b}, !- Handle
-  living_57,                              !- Name
-  {ab98ea2c-6c08-43ff-96cf-c5ed187b16be}, !- Space Type Name
+  living_57,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -8020,8 +8020,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {50aec0fc-a66f-410a-8ea9-9c0094c6e2a7}, !- Handle
-  living_42,                              !- Name
-  {2e26dd84-7a37-43f3-8bf2-26244b7ff0d9}, !- Space Type Name
+  living_42,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -8960,8 +8960,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {eebb7956-47a6-4cd4-a264-97dc9eeac390}, !- Handle
-  living_27,                              !- Name
-  {05341a05-9ee9-45d3-9d7c-b7cb8d793420}, !- Space Type Name
+  living_27,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -9459,7 +9459,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {3c8099b8-5dd5-4344-aeca-d439b9059712}, !- Handle
   living_13,                              !- Name
-  {421a1dce-c952-4154-b3c3-5342ddc62e98}, !- Space Type Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -9802,8 +9802,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {659e4aa1-32bc-47ae-89d2-1a7ebb180d79}, !- Handle
-  living_53,                              !- Name
-  {02310011-dc76-42ad-8620-7d12cffc5c29}, !- Space Type Name
+  living_53,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -10282,8 +10282,8 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {d68fdb6d-f426-45c3-81f0-33dbf04ac8db}, !- Handle
-  living_29,                              !- Name
-  {7b0aab52-5d28-46f1-a3c9-a64a0677a5e4}, !- Space Type Name
+  living_29,                            !- Name
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -16077,32 +16077,12 @@ OS:Rendering:Color,
   128,                                    !- Rendering Green Value
   114;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {f27ab67a-28ee-4b6d-9fa5-7737e0767de6}, !- Handle
-  living_10,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {51563d22-eded-4826-a6ab-b3265e9ed422}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {51563d22-eded-4826-a6ab-b3265e9ed422}, !- Handle
   Rendering Color 61,                     !- Name
   255,                                    !- Rendering Red Value
   0,                                      !- Rendering Green Value
   0;                                      !- Rendering Blue Value
-
-OS:SpaceType,
-  {d7975b1e-adf3-4537-8316-bdc879d35907}, !- Handle
-  living_20,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {b9780162-90d7-483e-91bd-27279faa8c64}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {b9780162-90d7-483e-91bd-27279faa8c64}, !- Handle
@@ -16111,32 +16091,12 @@ OS:Rendering:Color,
   255,                                    !- Rendering Green Value
   0;                                      !- Rendering Blue Value
 
-OS:SpaceType,
-  {989f6300-0906-42ef-8317-fea12226f583}, !- Handle
-  living_30,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {f45bd173-db12-47d3-b39c-665ed76f6eed}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {f45bd173-db12-47d3-b39c-665ed76f6eed}, !- Handle
   Rendering Color 63,                     !- Name
   240,                                    !- Rendering Red Value
   128,                                    !- Rendering Green Value
   128;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {c07d07b6-7e30-4ad4-a5ac-55e6f6359f50}, !- Handle
-  living_40,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {554e0133-ae85-40e7-87e7-ca6a675afd8f}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {554e0133-ae85-40e7-87e7-ca6a675afd8f}, !- Handle
@@ -16145,32 +16105,12 @@ OS:Rendering:Color,
   21,                                     !- Rendering Green Value
   133;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {f3ac889b-d15f-44ad-bb4b-1038ebe0e863}, !- Handle
-  living_50,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {693600a8-60eb-42ab-8a01-7853549c5e86}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {693600a8-60eb-42ab-8a01-7853549c5e86}, !- Handle
   Rendering Color 65,                     !- Name
   220,                                    !- Rendering Red Value
   20,                                     !- Rendering Green Value
   60;                                     !- Rendering Blue Value
-
-OS:SpaceType,
-  {b24c4a6f-0dbb-4b5d-a650-766128362e09}, !- Handle
-  living_60,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {2e81c387-ddcb-4db3-adf2-40312015ae9a}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {2e81c387-ddcb-4db3-adf2-40312015ae9a}, !- Handle
@@ -16179,32 +16119,12 @@ OS:Rendering:Color,
   180,                                    !- Rendering Green Value
   140;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {1b2ed9c1-2fef-4206-95c2-b7e2a597676a}, !- Handle
-  living_9,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {483d1acc-ea8f-4202-b8ba-735a4ceb23e9}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {483d1acc-ea8f-4202-b8ba-735a4ceb23e9}, !- Handle
   Rendering Color 67,                     !- Name
   95,                                     !- Rendering Red Value
   158,                                    !- Rendering Green Value
   160;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {1c11ae00-3fe6-4c7e-b0a3-f91dd9375123}, !- Handle
-  living_19,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {d2859dce-250a-4440-8c31-f4f0906ddf52}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {d2859dce-250a-4440-8c31-f4f0906ddf52}, !- Handle
@@ -16213,32 +16133,12 @@ OS:Rendering:Color,
   112,                                    !- Rendering Green Value
   219;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {7b0aab52-5d28-46f1-a3c9-a64a0677a5e4}, !- Handle
-  living_29,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {92e8e77e-1e2f-4c4b-b894-e8c23b111f00}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {92e8e77e-1e2f-4c4b-b894-e8c23b111f00}, !- Handle
   Rendering Color 69,                     !- Name
   0,                                      !- Rendering Red Value
   0,                                      !- Rendering Green Value
   128;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {9e39538b-dff7-4530-af64-dcadfafed5ca}, !- Handle
-  living_39,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {585cc08f-8c8f-4a6f-9313-8232c8a26783}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {585cc08f-8c8f-4a6f-9313-8232c8a26783}, !- Handle
@@ -16247,32 +16147,12 @@ OS:Rendering:Color,
   0,                                      !- Rendering Green Value
   255;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {3b9da2a7-08e5-4359-96f9-d9d53e852421}, !- Handle
-  living_49,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {eeb92255-c8a4-4735-a8df-75d1dbdf95ac}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {eeb92255-c8a4-4735-a8df-75d1dbdf95ac}, !- Handle
   Rendering Color 71,                     !- Name
   169,                                    !- Rendering Red Value
   169,                                    !- Rendering Green Value
   169;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {a51518c7-28c3-4d29-b576-fba3894c4e8a}, !- Handle
-  living_59,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {b4bce839-bc99-4015-a5b6-93d4c914177c}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {b4bce839-bc99-4015-a5b6-93d4c914177c}, !- Handle
@@ -16281,16 +16161,6 @@ OS:Rendering:Color,
   150,                                    !- Rendering Green Value
   122;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {1465f819-3ad1-4710-8592-ecffefecd565}, !- Handle
-  living_8,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {daf4e04a-b9b4-4a5b-9abf-f6f75ab8d2c3}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {daf4e04a-b9b4-4a5b-9abf-f6f75ab8d2c3}, !- Handle
   Rendering Color 73,                     !- Name
@@ -16298,32 +16168,12 @@ OS:Rendering:Color,
   248,                                    !- Rendering Green Value
   255;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {19dccdb5-f043-4db4-9256-b4d086514fcf}, !- Handle
-  living_18,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {0e68966c-8e87-41b6-b43e-4cec96c8e0d4}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {0e68966c-8e87-41b6-b43e-4cec96c8e0d4}, !- Handle
   Rendering Color 74,                     !- Name
   30,                                     !- Rendering Red Value
   144,                                    !- Rendering Green Value
-  255;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {8a653ef1-415d-415d-a187-b7fb08f9674c}, !- Handle
-  living_28,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {82d91069-12d2-4f8c-baf3-3b9a5f6f2e82}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
+  255;                                    !- Rendering Blue 
 
 OS:Rendering:Color,
   {82d91069-12d2-4f8c-baf3-3b9a5f6f2e82}, !- Handle
@@ -16332,32 +16182,12 @@ OS:Rendering:Color,
   0,                                      !- Rendering Green Value
   130;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {2c29f127-cd7a-4c98-966a-6d1d367f0361}, !- Handle
-  living_38,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {26301d00-4411-4556-b86e-c3ec9d3a151e}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {26301d00-4411-4556-b86e-c3ec9d3a151e}, !- Handle
   Rendering Color 76,                     !- Name
   153,                                    !- Rendering Red Value
   50,                                     !- Rendering Green Value
   204;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {c5c8dfbe-120f-4a45-8ebc-3ca030e86ba1}, !- Handle
-  living_48,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {70bf5808-cfbc-4547-8d0a-2f9fc6601f23}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {70bf5808-cfbc-4547-8d0a-2f9fc6601f23}, !- Handle
@@ -16366,32 +16196,12 @@ OS:Rendering:Color,
   105,                                    !- Rendering Green Value
   180;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {02fd659b-31b5-4185-958f-729f03802fa1}, !- Handle
-  living_58,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {3d15d4af-9cc6-46f1-9fb5-8ef3e8801611}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {3d15d4af-9cc6-46f1-9fb5-8ef3e8801611}, !- Handle
   Rendering Color 78,                     !- Name
   34,                                     !- Rendering Red Value
   139,                                    !- Rendering Green Value
   34;                                     !- Rendering Blue Value
-
-OS:SpaceType,
-  {273689cc-5bc1-4687-8454-7c74e8991d88}, !- Handle
-  living_7,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {ba20799b-c096-47da-8ced-952c3e8cd4a2}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {ba20799b-c096-47da-8ced-952c3e8cd4a2}, !- Handle
@@ -16400,32 +16210,12 @@ OS:Rendering:Color,
   230,                                    !- Rendering Green Value
   250;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {14643e4c-c9ec-428e-8b5f-f6d87f889163}, !- Handle
-  living_17,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {cecfb747-1cb5-442a-b602-ca89613454b7}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {cecfb747-1cb5-442a-b602-ca89613454b7}, !- Handle
   Rendering Color 80,                     !- Name
   72,                                     !- Rendering Red Value
   61,                                     !- Rendering Green Value
   139;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {05341a05-9ee9-45d3-9d7c-b7cb8d793420}, !- Handle
-  living_27,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {df1187a6-4da2-4fe3-8032-7d77d2095a4c}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {df1187a6-4da2-4fe3-8032-7d77d2095a4c}, !- Handle
@@ -16434,32 +16224,12 @@ OS:Rendering:Color,
   105,                                    !- Rendering Green Value
   225;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {970e6aa2-1315-4c66-9a5c-5d0bde008a33}, !- Handle
-  living_37,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {d7c97af8-aa8d-4ab1-96a3-dd09706ff38f}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {d7c97af8-aa8d-4ab1-96a3-dd09706ff38f}, !- Handle
   Rendering Color 82,                     !- Name
   152,                                    !- Rendering Red Value
   251,                                    !- Rendering Green Value
   152;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {9d34b538-7123-4f48-9607-e850a7aabf68}, !- Handle
-  living_47,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {2f689cca-3365-4189-ac07-a20cc47bbfc2}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {2f689cca-3365-4189-ac07-a20cc47bbfc2}, !- Handle
@@ -16468,32 +16238,12 @@ OS:Rendering:Color,
   250,                                    !- Rendering Green Value
   205;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {ab98ea2c-6c08-43ff-96cf-c5ed187b16be}, !- Handle
-  living_57,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {b7d605ed-6f18-4dce-94f5-4bf26e4ec31f}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {b7d605ed-6f18-4dce-94f5-4bf26e4ec31f}, !- Handle
   Rendering Color 84,                     !- Name
   169,                                    !- Rendering Red Value
   169,                                    !- Rendering Green Value
   169;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {67c0b7c1-a984-4efc-a22a-4f25120218d6}, !- Handle
-  living_6,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {039bf882-94c4-44bf-a147-28f1f6e322d1}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {039bf882-94c4-44bf-a147-28f1f6e322d1}, !- Handle
@@ -16502,32 +16252,12 @@ OS:Rendering:Color,
   240,                                    !- Rendering Green Value
   230;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {07021246-a6c7-418f-98f4-3487a7423f35}, !- Handle
-  living_16,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {9cdc450a-296b-4d6b-9ee9-b8ba531a1d20}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {9cdc450a-296b-4d6b-9ee9-b8ba531a1d20}, !- Handle
   Rendering Color 86,                     !- Name
   0,                                      !- Rendering Red Value
   128,                                    !- Rendering Green Value
   0;                                      !- Rendering Blue Value
-
-OS:SpaceType,
-  {77afa541-bdd1-4eeb-bde5-a0ff985227b4}, !- Handle
-  living_26,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {6e6ef51e-3d69-4456-8159-36ad845fde01}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {6e6ef51e-3d69-4456-8159-36ad845fde01}, !- Handle
@@ -16536,32 +16266,12 @@ OS:Rendering:Color,
   248,                                    !- Rendering Green Value
   255;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {f95ba829-75d7-4fc4-88a8-5189130d5829}, !- Handle
-  living_36,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {7a6befd9-8652-41a6-9467-741c54734d2b}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {7a6befd9-8652-41a6-9467-741c54734d2b}, !- Handle
   Rendering Color 88,                     !- Name
   148,                                    !- Rendering Red Value
   0,                                      !- Rendering Green Value
   211;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {f6216652-caec-46e2-af09-5786b9511753}, !- Handle
-  living_46,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {3ad5c98a-bd06-4f5a-96ed-18f6f81c27a9}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {3ad5c98a-bd06-4f5a-96ed-18f6f81c27a9}, !- Handle
@@ -16570,32 +16280,12 @@ OS:Rendering:Color,
   250,                                    !- Rendering Green Value
   154;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {64bc88ef-39b2-40d4-bd0a-35fdc1850e52}, !- Handle
-  living_56,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {2bec349d-6cb4-4d60-9dbe-d8e04b146ba4}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {2bec349d-6cb4-4d60-9dbe-d8e04b146ba4}, !- Handle
   Rendering Color 90,                     !- Name
   245,                                    !- Rendering Red Value
   245,                                    !- Rendering Green Value
   245;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {28336b40-b196-4b2c-95b1-ab9fbb5314dc}, !- Handle
-  living_1,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {5cdf0ac4-b45b-4c00-8fce-584d534bfe9f}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {5cdf0ac4-b45b-4c00-8fce-584d534bfe9f}, !- Handle
@@ -16604,32 +16294,12 @@ OS:Rendering:Color,
   224,                                    !- Rendering Green Value
   208;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {d3d73d42-4998-45e3-adb9-1627a3a3625a}, !- Handle
-  living_11,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {b1daab54-98fe-4caa-b11b-8fad7867f4e0}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {b1daab54-98fe-4caa-b11b-8fad7867f4e0}, !- Handle
   Rendering Color 92,                     !- Name
   233,                                    !- Rendering Red Value
   150,                                    !- Rendering Green Value
   122;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {71a92586-aa95-4357-ac93-b84687059c19}, !- Handle
-  living_21,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {1ed8f4c7-4cb0-4317-b31d-84a929ac0ffa}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {1ed8f4c7-4cb0-4317-b31d-84a929ac0ffa}, !- Handle
@@ -16638,32 +16308,12 @@ OS:Rendering:Color,
   99,                                     !- Rendering Green Value
   71;                                     !- Rendering Blue Value
 
-OS:SpaceType,
-  {957ecc69-4eff-4b15-b41a-0e4c3ebd1caf}, !- Handle
-  living_31,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {bb740f74-1a1b-4979-a147-09e2d70ea329}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {bb740f74-1a1b-4979-a147-09e2d70ea329}, !- Handle
   Rendering Color 94,                     !- Name
   0,                                      !- Rendering Red Value
   100,                                    !- Rendering Green Value
   0;                                      !- Rendering Blue Value
-
-OS:SpaceType,
-  {925a038f-c7f1-4381-888e-cdf5ababa4e8}, !- Handle
-  living_41,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {3cef2111-f6e5-4680-8ca3-5b8d4eb0601c}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {3cef2111-f6e5-4680-8ca3-5b8d4eb0601c}, !- Handle
@@ -16672,32 +16322,12 @@ OS:Rendering:Color,
   255,                                    !- Rendering Green Value
   47;                                     !- Rendering Blue Value
 
-OS:SpaceType,
-  {64a83d49-2900-47a1-8571-a39509db2941}, !- Handle
-  living_51,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {48f50ea9-840a-4b41-840d-9e7b68b2bed5}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {48f50ea9-840a-4b41-840d-9e7b68b2bed5}, !- Handle
   Rendering Color 96,                     !- Name
   0,                                      !- Rendering Red Value
   0,                                      !- Rendering Green Value
   205;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {14129f19-6700-4815-a254-877c6bed4151}, !- Handle
-  living_2,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {2b2e8111-1ab0-4504-8f21-4a12565e902a}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {2b2e8111-1ab0-4504-8f21-4a12565e902a}, !- Handle
@@ -16706,32 +16336,12 @@ OS:Rendering:Color,
   205,                                    !- Rendering Green Value
   50;                                     !- Rendering Blue Value
 
-OS:SpaceType,
-  {e98720ad-7137-4561-a8e9-d333f5655705}, !- Handle
-  living_12,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {a8091b49-75ac-49d3-b88b-66743106c28b}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {a8091b49-75ac-49d3-b88b-66743106c28b}, !- Handle
   Rendering Color 98,                     !- Name
   255,                                    !- Rendering Red Value
   255,                                    !- Rendering Green Value
   240;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {ba54b0c8-2c2c-41e8-b990-894cd0c86eb2}, !- Handle
-  living_22,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {feb8e5bd-eb53-4a8f-a84a-bac2ab208031}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {feb8e5bd-eb53-4a8f-a84a-bac2ab208031}, !- Handle
@@ -16740,16 +16350,6 @@ OS:Rendering:Color,
   255,                                    !- Rendering Green Value
   255;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {fad1635c-573e-43ab-9add-ea72c56798a6}, !- Handle
-  living_32,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {e3ef84d2-3a2e-4b4e-b70e-94ee62b885b9}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {e3ef84d2-3a2e-4b4e-b70e-94ee62b885b9}, !- Handle
   Rendering Color 100,                    !- Name
@@ -16757,49 +16357,19 @@ OS:Rendering:Color,
   206,                                    !- Rendering Green Value
   250;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {2e26dd84-7a37-43f3-8bf2-26244b7ff0d9}, !- Handle
-  living_42,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {1cbc6a8c-dd90-47bc-805f-d8be60d7dc14}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {1cbc6a8c-dd90-47bc-805f-d8be60d7dc14}, !- Handle
   Rendering Color 101,                    !- Name
   255,                                    !- Rendering Red Value
   165,                                    !- Rendering Green Value
   0;                                      !- Rendering Blue Value
-
-OS:SpaceType,
-  {c0615ff5-8b48-4e41-866b-0ab4712acf44}, !- Handle
-  living_52,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {85015156-0ef4-40a6-bdfd-8b081ec6ff79}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
+  
 OS:Rendering:Color,
   {85015156-0ef4-40a6-bdfd-8b081ec6ff79}, !- Handle
   Rendering Color 102,                    !- Name
   219,                                    !- Rendering Red Value
   112,                                    !- Rendering Green Value
   147;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {909fa923-e553-4f49-a163-f7cb425c82e1}, !- Handle
-  living_3,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {e4b68d6f-da12-4434-a3ec-d9f44ef661cb}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {e4b68d6f-da12-4434-a3ec-d9f44ef661cb}, !- Handle
@@ -16808,32 +16378,12 @@ OS:Rendering:Color,
   209,                                    !- Rendering Green Value
   204;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {421a1dce-c952-4154-b3c3-5342ddc62e98}, !- Handle
-  living_13,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {736ef7ea-7fe8-400a-9d05-8c548d20ccc7}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {736ef7ea-7fe8-400a-9d05-8c548d20ccc7}, !- Handle
   Rendering Color 104,                    !- Name
   255,                                    !- Rendering Red Value
   235,                                    !- Rendering Green Value
   205;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {ce39a6a1-645e-486e-beff-3f6c7eb954ac}, !- Handle
-  living_23,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {8059e09c-91bf-492b-8851-a80a7311e35a}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {8059e09c-91bf-492b-8851-a80a7311e35a}, !- Handle
@@ -16842,32 +16392,12 @@ OS:Rendering:Color,
   255,                                    !- Rendering Green Value
   0;                                      !- Rendering Blue Value
 
-OS:SpaceType,
-  {fd69e2de-66f8-473c-8847-836846f658f2}, !- Handle
-  living_33,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {d0a62175-0df3-4624-a93a-0ece97b8e1a7}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {d0a62175-0df3-4624-a93a-0ece97b8e1a7}, !- Handle
   Rendering Color 106,                    !- Name
   255,                                    !- Rendering Red Value
   228,                                    !- Rendering Green Value
   196;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {f23b80c0-bd10-4a60-b47e-09006b55ba2a}, !- Handle
-  living_43,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {495f3677-5345-4beb-a7ba-7c8ba574e455}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {495f3677-5345-4beb-a7ba-7c8ba574e455}, !- Handle
@@ -16876,32 +16406,12 @@ OS:Rendering:Color,
   206,                                    !- Rendering Green Value
   209;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {02310011-dc76-42ad-8620-7d12cffc5c29}, !- Handle
-  living_53,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {f90542e3-4a55-40d0-9479-3d71fe5bfb19}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {f90542e3-4a55-40d0-9479-3d71fe5bfb19}, !- Handle
   Rendering Color 108,                    !- Name
   238,                                    !- Rendering Red Value
   232,                                    !- Rendering Green Value
   170;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {afa0e41b-da1c-42ec-bba0-c37172be3e0e}, !- Handle
-  living_4,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {49b6dcb4-68f7-415f-8099-d660f83942e5}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {49b6dcb4-68f7-415f-8099-d660f83942e5}, !- Handle
@@ -16910,32 +16420,12 @@ OS:Rendering:Color,
   255,                                    !- Rendering Green Value
   255;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {e93520fe-f1d9-4dec-854f-7937e2e3a118}, !- Handle
-  living_14,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {4c671c3e-40eb-4f6e-8347-a88cfa792042}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {4c671c3e-40eb-4f6e-8347-a88cfa792042}, !- Handle
   Rendering Color 110,                    !- Name
   47,                                     !- Rendering Red Value
   79,                                     !- Rendering Green Value
   79;                                     !- Rendering Blue Value
-
-OS:SpaceType,
-  {64c802dc-12d5-41a8-9bc4-93d9f496c73b}, !- Handle
-  living_24,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {d75b7647-2762-4e42-bf50-9eedde6d134b}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {d75b7647-2762-4e42-bf50-9eedde6d134b}, !- Handle
@@ -16944,32 +16434,12 @@ OS:Rendering:Color,
   209,                                    !- Rendering Green Value
   204;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {223294a3-6b07-486f-bb7e-519f9061c60c}, !- Handle
-  living_34,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {0148a05f-5f47-4f2c-b6da-2fd97b2056f3}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {0148a05f-5f47-4f2c-b6da-2fd97b2056f3}, !- Handle
   Rendering Color 112,                    !- Name
   106,                                    !- Rendering Red Value
   90,                                     !- Rendering Green Value
   205;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {e48cf39c-a387-4b22-9577-84792ece47f1}, !- Handle
-  living_44,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {cdd6bbae-bb37-4f07-a027-3a85c972714f}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {cdd6bbae-bb37-4f07-a027-3a85c972714f}, !- Handle
@@ -16978,32 +16448,12 @@ OS:Rendering:Color,
   196,                                    !- Rendering Green Value
   222;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {7543f3be-78e6-4a60-970f-9f95c6f31270}, !- Handle
-  living_54,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {ac1a5a7d-aa26-4d7e-891b-60df2e467204}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {ac1a5a7d-aa26-4d7e-891b-60df2e467204}, !- Handle
   Rendering Color 114,                    !- Name
   119,                                    !- Rendering Red Value
   136,                                    !- Rendering Green Value
   153;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {9dc6bf60-010a-4854-9dc7-0eab1013bb66}, !- Handle
-  living_5,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {f002fe95-1eb7-4950-ae97-9508cbf32fb3}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {f002fe95-1eb7-4950-ae97-9508cbf32fb3}, !- Handle
@@ -17012,49 +16462,19 @@ OS:Rendering:Color,
   136,                                    !- Rendering Green Value
   153;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {53290d10-288a-4237-b2e0-3a421a6fd861}, !- Handle
-  living_15,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {e44698c7-712c-465b-af36-07fe19a5dc9a}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {e44698c7-712c-465b-af36-07fe19a5dc9a}, !- Handle
   Rendering Color 116,                    !- Name
   245,                                    !- Rendering Red Value
   245,                                    !- Rendering Green Value
   245;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {0891f0d2-20c3-4d9e-ab28-c7f98167eaa2}, !- Handle
-  living_25,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {08a3ac88-3f9a-4dbf-a493-c3845807ff58}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
+  
 OS:Rendering:Color,
   {08a3ac88-3f9a-4dbf-a493-c3845807ff58}, !- Handle
   Rendering Color 117,                    !- Name
   175,                                    !- Rendering Red Value
   238,                                    !- Rendering Green Value
   238;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {d77d5475-9c4f-43f1-96b2-310f7cb565d5}, !- Handle
-  living_35,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {11445e46-fee3-427e-9509-2d102b6901bd}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {11445e46-fee3-427e-9509-2d102b6901bd}, !- Handle
@@ -17063,32 +16483,12 @@ OS:Rendering:Color,
   158,                                    !- Rendering Green Value
   160;                                    !- Rendering Blue Value
 
-OS:SpaceType,
-  {41b7d51b-4d90-4d1a-9ad2-7669ed0b76d9}, !- Handle
-  living_45,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {e1edeb33-50cc-4709-9a4c-4e54879da93b}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
-
 OS:Rendering:Color,
   {e1edeb33-50cc-4709-9a4c-4e54879da93b}, !- Handle
   Rendering Color 119,                    !- Name
   135,                                    !- Rendering Red Value
   206,                                    !- Rendering Green Value
   235;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {9e8a93c0-2aff-43bb-8854-ecdc7cdd5739}, !- Handle
-  living_55,                              !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {f07a428d-fd91-4142-ba86-4d2594256245}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {f07a428d-fd91-4142-ba86-4d2594256245}, !- Handle
@@ -17159,4 +16559,21 @@ OS:RunPeriod,
   ,                                       !- Use Weather File Rain Indicators
   ,                                       !- Use Weather File Snow Indicators
   ;                                       !- Number of Times Runperiod to be Repeated
+
+OS:SpaceType,
+  {6124d5c1-7a26-4186-9581-89bb4dc2ef29}, !- Handle
+  Living,                                 !- Name
+  ,                                       !- Default Construction Set Name
+  ,                                       !- Default Schedule Set Name
+  {64303192-99b5-4e65-8e4e-b245badb7407}, !- Group Rendering Name
+  ,                                       !- Design Specification Outdoor Air Object Name
+  ,                                       !- Standards Building Type
+  ;                                       !- Standards Space Type
+
+OS:Rendering:Color,
+  {64303192-99b5-4e65-8e4e-b245badb7407}, !- Handle
+  Rendering Color 121,                    !- Name
+  128,                                    !- Rendering Red Value
+  128,                                    !- Rendering Green Value
+  0;                                      !- Rendering Blue Value
 

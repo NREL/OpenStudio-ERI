@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelUserScript
@@ -141,7 +142,6 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
 
     # Constants
-    constants = Constants.new
     mat_wood = get_mat_wood
 
     # Partition Wall Mass
@@ -166,7 +166,7 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     pwm.setVisibleAbsorptance(get_mat_partition_wall_mass(partition_wall_mass).VAbs)
 
     # ConcPCMPartWall
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       pcm.setName("ConcPCMPartWall")
       pcm.setRoughness("Rough")
@@ -200,13 +200,13 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     fufw.setName("FinUninsFinWall")
     fufw.insertLayer(layercount,pwm)
     layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       fufw.insertLayer(layercount,pcm)
       layercount += 1
     end
     fufw.insertLayer(layercount,saw)
     layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       fufw.insertLayer(layercount,pcm)
       layercount += 1
     end
@@ -227,7 +227,7 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     uufw.setName("UnfinUninsFinWall")
     uufw.insertLayer(layercount,saw)
     layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       uufw.insertLayer(layercount,pcm)
       layercount += 1
     end

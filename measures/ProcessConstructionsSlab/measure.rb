@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
@@ -252,9 +253,6 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
 	userdefined_carpetfrac = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
-  # Constants
-  constants = Constants.new
-	
 	# Insulation
 	if selected_slabins == "Perimeter"
 		slabPerimeterRvalue = userdefined_slabperiextr
@@ -313,7 +311,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	sm.setDensity(OpenStudio::convert(slab.SlabMassDensity,"lb/ft^3","kg/m^3").get)
 	sm.setSpecificHeat(OpenStudio::convert(slab.SlabMassSpecificHeat,"Btu/lb*R","J/kg*K").get)
 	sm.setThermalAbsorptance(0.9)
-	sm.setSolarAbsorptance(constants.DefaultSolarAbsFloor)
+	sm.setSolarAbsorptance(Constants.DefaultSolarAbsFloor)
 	
 	if carpet.CarpetFloorFraction > 0
 		# Equivalent carpeted/bare material
@@ -325,7 +323,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 		scbem.setDensity(OpenStudio::convert(2.5,"lb/ft^3","kg/m^3").get)
 		scbem.setSpecificHeat(OpenStudio::convert(0.29,"Btu/lb*R","J/kg*K").get)
 		scbem.setThermalAbsorptance(0.9)
-		scbem.setSolarAbsorptance(constants.DefaultSolarAbsFloor)
+		scbem.setSolarAbsorptance(Constants.DefaultSolarAbsFloor)
 	end
 		
 	# Soil layer for simulated slab, copied from Winkelmann article

@@ -5,11 +5,11 @@ OS:Version,
 
 OS:Site,
   {9cf89b0b-27ff-47ec-9cb2-ee90b747b254}, !- Handle
-  Atlanta Hartsfield Intl Ap GA,          !- Name
+  Atlanta Hartsfield Intl Ap,             !- Name
   33.63,                                  !- Latitude {deg}
   -84.43,                                 !- Longitude {deg}
-  -7,                                     !- Time Zone {hr}
-  308.000009856,                          !- Elevation {m}
+  -5,                                     !- Time Zone {hr}
+  308,                                    !- Elevation {m}
   Suburbs;                                !- Terrain
 
 OS:SimulationControl,
@@ -135,7 +135,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {cbcf286f-5043-4e49-b815-f2227f8cc72f}, !- Handle
   living_3,                               !- Name
-  {85ae3061-1352-4bf6-a0ad-a8c284d1074f}, !- Space Type Name
+  {38aaf35e-bb92-4972-ba8b-dd02ef43011c}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -398,7 +398,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {6bf427dc-6ac3-4745-b308-b0eb24087671}, !- Handle
   living_5,                               !- Name
-  {dd098bd3-5cf4-436f-a406-823fcba973b9}, !- Space Type Name
+  {38aaf35e-bb92-4972-ba8b-dd02ef43011c}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -673,7 +673,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {325ec547-f65f-4d03-abbe-0d3feffb6061}, !- Handle
   living_4,                               !- Name
-  {24df0ba0-2536-4f41-9a42-0765f66bec30}, !- Space Type Name
+  {38aaf35e-bb92-4972-ba8b-dd02ef43011c}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -2843,10 +2843,13 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {38aaf35e-bb92-4972-ba8b-dd02ef43011c}, !- Handle
-  Space Type 1,                           !- Name
+  living,                                 !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
-  {f14cbdba-1216-4311-a2e4-b4713ed3e894}; !- Group Rendering Name
+  {f14cbdba-1216-4311-a2e4-b4713ed3e894}, !- Group Rendering Name
+  ,                                       !- Design Specification Outdoor Air Object Name
+  ,                                       !- Standards Building Type
+  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {f14cbdba-1216-4311-a2e4-b4713ed3e894}, !- Handle
@@ -2874,7 +2877,10 @@ OS:SpaceType,
   Space Type 3,                           !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
-  {465e9753-8d4e-4479-abc8-502811ccd1a8}; !- Group Rendering Name
+  {465e9753-8d4e-4479-abc8-502811ccd1a8}, !- Group Rendering Name
+  ,                                       !- Design Specification Outdoor Air Object Name
+  ,                                       !- Standards Building Type
+  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {465e9753-8d4e-4479-abc8-502811ccd1a8}, !- Handle
@@ -2888,7 +2894,10 @@ OS:SpaceType,
   Space Type 4,                           !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
-  {1a3a10c5-814a-4475-bdcd-562b9adffa63}; !- Group Rendering Name
+  {1a3a10c5-814a-4475-bdcd-562b9adffa63}, !- Group Rendering Name
+  ,                                       !- Design Specification Outdoor Air Object Name
+  ,                                       !- Standards Building Type
+  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {1a3a10c5-814a-4475-bdcd-562b9adffa63}, !- Handle
@@ -2896,4 +2905,67 @@ OS:Rendering:Color,
   128,                                    !- Rendering Red Value
   128,                                    !- Rendering Green Value
   0;                                      !- Rendering Blue Value
+
+OS:YearDescription,
+  {58fdaea2-ee42-46d5-8844-b319f21681d4}, !- Handle
+  ,                                       !- Calendar Year
+  Sunday;                                 !- Day of Week for Start Day
+
+OS:ClimateZones,
+  {49a98840-8d1d-4bad-8cfc-c76afe73976e}, !- Handle
+  ,                                       !- Active Institution
+  ,                                       !- Active Year
+  ASHRAE,                                 !- Climate Zone Institution Name 1
+  ANSI/ASHRAE Standard 169,               !- Climate Zone Document Name 1
+  2006,                                   !- Climate Zone Document Year 1
+  ,                                       !- Climate Zone Value 1
+  CEC,                                    !- Climate Zone Institution Name 2
+  California Climate Zone Descriptions,   !- Climate Zone Document Name 2
+  1995,                                   !- Climate Zone Document Year 2
+  ;                                       !- Climate Zone Value 2
+
+OS:LifeCycleCost:Parameters,
+  {7850290c-61ee-48a2-a18c-3318c5f8693e}, !- Handle
+  FEMP,                                   !- Analysis Type
+  ,                                       !- Discounting Convention
+  ,                                       !- Inflation Approach
+  ,                                       !- Real Discount Rate
+  ,                                       !- Nominal Discount Rate
+  ,                                       !- Inflation
+  ,                                       !- Base Date Month
+  ,                                       !- Base Date Year
+  ,                                       !- Service Date Month
+  ,                                       !- Service Date Year
+  ,                                       !- Length of Study Period in Years
+  ,                                       !- Tax Rate
+  ,                                       !- Depreciation Method
+  Yes;                                    !- Use NIST Fuel Escalation Rates
+
+OS:WeatherFile,
+  {f44b101d-9573-4c70-9428-3c511d5adb9e}, !- Handle
+  Atlanta Hartsfield Intl Ap,             !- City
+  GA,                                     !- State Province Region
+  USA,                                    !- Country
+  TMY3,                                   !- Data Source
+  722190,                                 !- WMO Number
+  33.63,                                  !- Latitude {deg}
+  -84.43,                                 !- Longitude {deg}
+  -5,                                     !- Time Zone {hr}
+  308,                                    !- Elevation {m}
+  file:files/USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMY3.epw, !- Url
+  813B1688;                               !- Checksum
+
+OS:RunPeriod,
+  {2fb8ea57-14fb-4453-ad11-1c04bcd18370}, !- Handle
+  Run Period 1,                           !- Name
+  1,                                      !- Begin Month
+  1,                                      !- Begin Day of Month
+  12,                                     !- End Month
+  31,                                     !- End Day of Month
+  ,                                       !- Use Weather File Holidays and Special Days
+  ,                                       !- Use Weather File Daylight Saving Period
+  ,                                       !- Apply Weekend Holiday Rule
+  ,                                       !- Use Weather File Rain Indicators
+  ,                                       !- Use Weather File Snow Indicators
+  ;                                       !- Number of Times Runperiod to be Repeated
 

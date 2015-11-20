@@ -158,7 +158,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {bfe836b7-91e3-4d50-9f77-e8dc9034b17e}, !- Handle
   living_1,                               !- Name
-  {a2b53254-9589-4c97-a79b-db8f99ae9747}, !- Space Type Name
+  {b2b0f16b-6d32-45e9-987c-af52e08c1db4}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -278,7 +278,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {7d6f1a4f-bd31-49e4-81ab-8fe6050f645a}, !- Handle
-  crawlspace,                             !- Name
+  crawlspace 1,                           !- Name
   {376a2808-e881-4c41-b5d2-7715e01b3603}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -696,7 +696,7 @@ OS:ZoneHVAC:EquipmentList,
 OS:Space,
   {b7d50d21-88af-4152-aa78-7efa659c09f0}, !- Handle
   living_3,                               !- Name
-  {29255d0f-282f-4bb8-a6a8-93174eac78ca}, !- Space Type Name
+  {b2b0f16b-6d32-45e9-987c-af52e08c1db4}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   0,                                      !- Direction of Relative North {deg}
@@ -1136,7 +1136,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {be7f31b0-589a-4164-9d0f-9d34e2d7fe42}, !- Handle
-  finishedbasement_3,                     !- Name
+  finishedbasement_3 1,                   !- Name
   {6b1da06f-cd00-467c-8a75-ee1859f38cf7}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -1580,7 +1580,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {b5e574f9-0994-4849-baef-006b5f7d5323}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinishedattic 1,                      !- Name
   {2b7bdb7e-c1e3-4c9b-b709-42e2e2ea670e}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -1750,7 +1750,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {6e3002b1-a135-483a-9485-0b11f1bb9139}, !- Handle
-  unfinishedbasement,                     !- Name
+  unfinishedbasement 1,                   !- Name
   {0d60a99a-8ca0-471b-9e59-bcdda75227ab}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -2951,12 +2951,12 @@ OS:Surface,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  8.2296, 4.572, 6.858,                   !- X,Y,Z Vertex 1 {m}
-  -1.61424300780751e-016, 4.572, 2.7432,  !- X,Y,Z Vertex 2 {m}
-  -4.84272902342253e-016, 3.50961702829281e-032, 2.7432, !- X,Y,Z Vertex 3 {m}
-  7.3152, 0, 6.4008,                      !- X,Y,Z Vertex 4 {m}
-  7.3152, -8.2296, 6.4008,                !- X,Y,Z Vertex 5 {m}
-  8.2296, -8.2296, 6.858;                 !- X,Y,Z Vertex 6 {m}
+  8.2296, -8.2296, 6.858,                 !- X,Y,Z Vertex 1 {m}
+  8.2296, 4.572, 6.858,                   !- X,Y,Z Vertex 2 {m}
+  -6.45697203123004e-016, 4.572, 2.7432,  !- X,Y,Z Vertex 3 {m}
+  -9.68545804684506e-016, 9.35897874211416e-032, 2.7432, !- X,Y,Z Vertex 4 {m}
+  7.3152, 5.84936171382135e-032, 6.4008,  !- X,Y,Z Vertex 5 {m}
+  7.3152, -8.2296, 6.4008;                !- X,Y,Z Vertex 6 {m}
 
 OS:Construction,
   {336a83e2-19a3-43f9-bd94-cb16592c9197}, !- Handle
@@ -3219,8 +3219,8 @@ OS:Surface,
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
   0, 6.4008, 5.9436,                      !- X,Y,Z Vertex 1 {m}
-  0, 4.84272902342253e-016, 2.7432,       !- X,Y,Z Vertex 2 {m}
-  7.62, 4.84272902342253e-016, 2.7432,    !- X,Y,Z Vertex 3 {m}
+  0, 1.61424300780752e-016, 2.7432,       !- X,Y,Z Vertex 2 {m}
+  7.62, 1.61424300780752e-016, 2.7432,    !- X,Y,Z Vertex 3 {m}
   7.62, 6.4008, 5.9436;                   !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
@@ -3271,8 +3271,8 @@ OS:Surface,
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
   8.2296, 0, 4.4196,                      !- X,Y,Z Vertex 1 {m}
-  16.4592, 0, 0.304799999999999,          !- X,Y,Z Vertex 2 {m}
-  16.4592, 10.0584, 0.304799999999999,    !- X,Y,Z Vertex 3 {m}
+  16.4592, 0, 0.3048,                     !- X,Y,Z Vertex 2 {m}
+  16.4592, 10.0584, 0.3048,               !- X,Y,Z Vertex 3 {m}
   8.2296, 10.0584, 4.4196;                !- X,Y,Z Vertex 4 {m}
 
 OS:SubSurface,
@@ -3307,8 +3307,8 @@ OS:Surface,
   8.2296, 10.0584, 4.4196,                !- X,Y,Z Vertex 1 {m}
   7.3152, 10.0584, 3.9624,                !- X,Y,Z Vertex 2 {m}
   7.3152, 18.288, 3.9624,                 !- X,Y,Z Vertex 3 {m}
-  2.01780375975939e-016, 18.288, 0.3048,  !- X,Y,Z Vertex 4 {m}
-  2.01780375975939e-016, 0, 0.3048,       !- X,Y,Z Vertex 5 {m}
+  2.42136451171127e-016, 18.288, 0.3048,  !- X,Y,Z Vertex 4 {m}
+  2.42136451171127e-016, 0, 0.3048,       !- X,Y,Z Vertex 5 {m}
   8.2296, 0, 4.4196;                      !- X,Y,Z Vertex 6 {m}
 
 OS:Surface,
@@ -3775,7 +3775,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {58e9fd2b-5ea1-4125-aa3f-8eb65fd29962}, !- Handle
-  garage,                                 !- Name
+  garage 1,                               !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {77fc6382-89bd-4d16-a532-23ca511ea066}; !- Group Rendering Name
@@ -3789,7 +3789,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {6b1da06f-cd00-467c-8a75-ee1859f38cf7}, !- Handle
-  finishedbasement_3,                     !- Name
+  finishedbasement,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {1aec7b5b-2e31-4aae-913b-f0b760418718}; !- Group Rendering Name
@@ -3800,16 +3800,6 @@ OS:Rendering:Color,
   178,                                    !- Rendering Red Value
   34,                                     !- Rendering Green Value
   34;                                     !- Rendering Blue Value
-
-OS:SpaceType,
-  {29255d0f-282f-4bb8-a6a8-93174eac78ca}, !- Handle
-  living_3,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {9d6a1e11-0812-4529-8c91-0f42b28a2326}, !- Group Rendering Name
-  ,                                       !- Design Specification Outdoor Air Object Name
-  ,                                       !- Standards Building Type
-  ;                                       !- Standards Space Type
 
 OS:Rendering:Color,
   {9d6a1e11-0812-4529-8c91-0f42b28a2326}, !- Handle
@@ -3831,13 +3821,6 @@ OS:Rendering:Color,
   238,                                    !- Rendering Red Value
   130,                                    !- Rendering Green Value
   238;                                    !- Rendering Blue Value
-
-OS:SpaceType,
-  {a2b53254-9589-4c97-a79b-db8f99ae9747}, !- Handle
-  living_1,                               !- Name
-  ,                                       !- Default Construction Set Name
-  ,                                       !- Default Schedule Set Name
-  {7ca2d0e4-b91f-4f70-b2cf-0a128641bff0}; !- Group Rendering Name
 
 OS:Rendering:Color,
   {7ca2d0e4-b91f-4f70-b2cf-0a128641bff0}, !- Handle
@@ -3939,4 +3922,21 @@ OS:RunPeriod,
   ,                                       !- Use Weather File Rain Indicators
   ,                                       !- Use Weather File Snow Indicators
   ;                                       !- Number of Times Runperiod to be Repeated
+
+OS:SpaceType,
+  {b2b0f16b-6d32-45e9-987c-af52e08c1db4}, !- Handle
+  living,                                 !- Name
+  ,                                       !- Default Construction Set Name
+  ,                                       !- Default Schedule Set Name
+  {48ebca7b-67a6-4a47-9584-8e4dddb65c72}, !- Group Rendering Name
+  ,                                       !- Design Specification Outdoor Air Object Name
+  ,                                       !- Standards Building Type
+  ;                                       !- Standards Space Type
+
+OS:Rendering:Color,
+  {48ebca7b-67a6-4a47-9584-8e4dddb65c72}, !- Handle
+  Rendering Color 65,                     !- Name
+  0,                                      !- Rendering Red Value
+  191,                                    !- Rendering Green Value
+  255;                                    !- Rendering Blue Value
 

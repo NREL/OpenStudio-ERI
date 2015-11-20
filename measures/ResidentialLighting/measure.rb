@@ -7,9 +7,6 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
-
 #start the measure
 class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
   
@@ -41,42 +38,6 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	ltg_E.setDisplayName("Simple Interior Lighting Annual Energy Consumption (kWh/yr)")
 	ltg_E.setDefaultValue(0)
 	args << ltg_E
-	
-	#make a boolean argument for has outside lighting
-	outside_ltg = OpenStudio::Ruleset::OSArgument::makeBoolArgument("outside_ltg",true)
-	outside_ltg.setDisplayName("Building has exterior lighting")
-	outside_ltg.setDefaultValue(true)
-	args << outside_ltg
-	
-	#make a boolean argument for has garage
-	garage_ltg = OpenStudio::Ruleset::OSArgument::makeBoolArgument("garage_ltg",true)
-	garage_ltg.setDisplayName("Building has a garage?")
-	garage_ltg.setDefaultValue(true)
-	args << garage_ltg
-	
-	#make a boolean argument for has finished basement
-	fb_ltg = OpenStudio::Ruleset::OSArgument::makeBoolArgument("fb_ltg",true)
-	fb_ltg.setDisplayName("Building has a finished basement?")
-	fb_ltg.setDefaultValue(true)
-	args << fb_ltg
-	
-	#make a double argument for finished floor area
-	cfa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cfa",true)
-	cfa.setDisplayName("Conditioned Floor Area (including basement if finished) (ft^2)")
-	cfa.setDefaultValue(1800)
-	args << cfa
-	
-	#make a double argument for garage floor area
-	gfa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gfa",true)
-	gfa.setDisplayName("Garage Floor Area (ft^2)")
-	gfa.setDefaultValue(240)
-	args << gfa
-	
-	#make a double argument for basement floor area
-	fbfa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fbfa",true)
-	fbfa.setDisplayName("Finished Basement Floor Area (ft^2)")
-	fbfa.setDefaultValue(900)
-	args << fbfa
 	
 	#make a double argument for hardwired CFL fraction
 	hw_cfl = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("hw_cfl",true)
@@ -161,19 +122,16 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	#make a choice argument for space type
     space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
     space_type.setDisplayName("Select the space where the interior lighting is located")
-    space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
 	
 	#make a choice argument for space type
     grg_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("grg_space_type", space_type_handles, space_type_display_names, false)
     grg_space_type.setDisplayName("Select the garage space")
-    grg_space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << grg_space_type
 	
 	#make a choice argument for space type
     fb_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fb_space_type", space_type_handles, space_type_display_names, false)
     fb_space_type.setDisplayName("Select the finished basement space")
-    fb_space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << fb_space_type
     
     return args
@@ -189,23 +147,16 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     end
 
     #assign the user inputs to variables
-    fb_ltg = runner.getBoolArgumentValue("fb_ltg",user_arguments)
-	outside_ltg = runner.getBoolArgumentValue("outside_ltg",user_arguments)
-	garage_ltg = runner.getBoolArgumentValue("garage_ltg",user_arguments)
 	selected_ltg = runner.getStringArgumentValue("selected_ltg",user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
-	
-	if fb_ltg
-		space_type_fb = runner.getStringArgumentValue("fb_space_type",user_arguments)
-	else
-		space_type_fb = "none"
-	end
-	if garage_ltg
-		space_type_grg = runner.getStringArgumentValue("grg_space_type",user_arguments)
-	else
-		space_type_grg = "none"
-	end
-	
+    space_type_fb = runner.getOptionalStringArgumentValue("fb_space_type",user_arguments)
+    if not space_type_fb.empty?
+        space_type_fb = space_type_fb.get
+    end
+    space_type_grg = runner.getOptionalStringArgumentValue("grg_space_type",user_arguments)
+    if not space_type_grg.empty?
+        space_type_grg = space_type_grg.get
+    end
     ltg_E = runner.getDoubleArgumentValue("ltg_E",user_arguments)
 	hw_cfl = runner.getDoubleArgumentValue("hw_cfl",user_arguments)
 	hw_led = runner.getDoubleArgumentValue("hw_led",user_arguments)
@@ -217,22 +168,21 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	cfl_eff = runner.getDoubleArgumentValue("cfl_eff",user_arguments)
 	led_eff = runner.getDoubleArgumentValue("led_eff",user_arguments)
 	lfl_eff = runner.getDoubleArgumentValue("lfl_eff",user_arguments)
-	cfa = runner.getDoubleArgumentValue("cfa",user_arguments)
-	gfa = runner.getDoubleArgumentValue("gfa",user_arguments)
-	fbfa = runner.getDoubleArgumentValue("fbfa",user_arguments)
-	fb_ltg = runner.getBoolArgumentValue("fb_ltg",user_arguments)
-	outside_ltg = runner.getBoolArgumentValue("outside_ltg",user_arguments)
-	garage_ltg = runner.getBoolArgumentValue("garage_ltg",user_arguments)
 	
-	#Error if fb but no area
-	if fb_ltg and fbfa <= 0
-		runner.registerError("Finished basement is selected but floor area is <= 0. Double check inputs")
-	end
-	
-	#error if garage but no area
-	if garage_ltg and gfa <= 0
-		runner.registerError("Garage is selected but floor area is <= 0. Double check inputs")
-	end
+    lfa = 0
+    fbfa = 0
+    gfa = 0
+	model.getSpaceTypes.each do |spaceType|
+		spacehandle = spaceType.handle.to_s
+        if spacehandle == space_type_r
+            lfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        elsif spacehandle == space_type_fb
+            fbfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        elsif spacehandle == space_type_grg
+            gfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        end
+    end
+    tffa = lfa + fbfa # total finished floor area
 	
 	#warning if things are specified that will not be used (ie. BAB mult when detailed lighting is modeled)
 	#Benchmark and other values specified
@@ -267,11 +217,6 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		
 	end
 	
-	#Check that the CFA > 0
-	if cfa < 0
-		runner.registerError("Conditioned floor area must be > 0")
-	end
-	
 	#if lighting energy consumption is defined, check for reasonable energy consumption
 	if selected_ltg == "Simple" 
 		if ltg_E < 0
@@ -282,15 +227,14 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	#Calculate electric lighting daily energy use
-	lightval = Process_lighting.new
 	
-	bab_er_cfl = lightval.Bab_er_cfl
-	bab_er_led = lightval.Bab_er_led
-	bab_er_lfl = lightval.Bab_er_lfl
-	bab_frac_inc = lightval.Bab_frac_inc
-	bab_frac_cfl = lightval.Bab_frac_cfl
-	bab_frac_led = lightval.Bab_frac_led
-	bab_frac_lfl = lightval.Bab_frac_lfl
+	bab_er_cfl = 0.27
+	bab_er_led = 0.30
+	bab_er_lfl = 0.17
+	bab_frac_inc = 0.66
+	bab_frac_cfl = 0.21
+	bab_frac_led = 0.00
+	bab_frac_lfl = 0.13
 	
 	frac_hw = 0.8
     frac_pg = 0.2
@@ -319,8 +263,8 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		
 	hw_inc = 1 - hw_cfl - hw_led - hw_lfl
 	pg_inc = 1 - pg_cfl - pg_led - pg_lfl
-	bm_hw_e = frac_hw * (cfa * 0.542 + 334)
-	bm_pg_e = frac_pg * (cfa * 0.542 + 334)
+	bm_hw_e = frac_hw * (tffa * 0.542 + 334)
+	bm_pg_e = frac_pg * (tffa * 0.542 + 334)
 	smrt_replce_f = (1.29 * hw_inc ** 4 - 2.23 * hw_inc ** 3 + 1.76 * hw_inc ** 2 - 0.82 * hw_inc + 1.170886)
 	er_cfl = in_eff / cfl_eff
 	er_led = in_eff / led_eff
@@ -330,7 +274,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	if selected_ltg != "Simple"
 		ltg_ann = int_hw_e + int_pg_e
 	end
-	if garage_ltg
+	if gfa > 0
 		bm_garage_e =  0.08 * gfa + 8
 		garage_ann = (bm_garage_e * (((hw_inc + (1 - bab_frac_inc)) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
 		garage_daily = garage_ann / 365.0
@@ -339,14 +283,9 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		garage_daily = 0.0
 	end
 		
-	if outside_ltg
-		bm_outside_e = 0.145 * cfa
-		outside_ann = (bm_outside_e * (((hw_inc + (1 - bab_frac_inc)) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
-		outside_daily = outside_ann / 365.0
-	else
-		outside_ann = 0.0 
-		outside_daily = 0.0
-	end
+    bm_outside_e = 0.145 * tffa
+    outside_ann = (bm_outside_e * (((hw_inc + (1 - bab_frac_inc)) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
+    outside_daily = outside_ann / 365.0
 
 	ltg_daily = ltg_ann / 365.0
 	
@@ -391,15 +330,15 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 		end
 	end
 				
-	dec_kws = lightval.Dec_kws
-	june_kws = lightval.June_kws
+	dec_kws = [0.075, 0.055, 0.040, 0.035, 0.030, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.030, 0.045, 0.075, 0.130, 0.160, 0.140, 0.100, 0.075, 0.065, 0.060, 0.050, 0.045, 0.045, 0.045, 0.045, 0.045, 0.045, 0.050, 0.060, 0.080, 0.130, 0.190, 0.230, 0.250, 0.260, 0.260, 0.250, 0.240, 0.225, 0.225, 0.220, 0.210, 0.200, 0.180, 0.155, 0.125, 0.100]
+	june_kws = [0.060, 0.040, 0.035, 0.025, 0.020, 0.020, 0.020, 0.020, 0.020, 0.020, 0.020, 0.020, 0.020, 0.025, 0.030, 0.030, 0.025, 0.020, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.020, 0.020, 0.020, 0.025, 0.025, 0.030, 0.030, 0.035, 0.045, 0.060, 0.085, 0.125, 0.145, 0.130, 0.105, 0.080]
 						
-	amplConst1 = lightval.AmplConst1
-	sunsetLag1 = lightval.SunsetLag1
-	stdDevCons1 = lightval.StdDevCons1
-	amplConst2 = lightval.AmplConst2
-	sunsetLag2 = lightval.SunsetLag2
-	stdDevCons2 = lightval.StdDevCons2
+	amplConst1 = 0.929707907917098
+	sunsetLag1 = 2.45016230615269
+	stdDevCons1 = 1.58679810983444
+	amplConst2 = 1.1372291802273
+	sunsetLag2 = 20.1501965859073
+	stdDevCons2 = 2.36567663279954
 	monthly_kwh_per_day = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0']
 	days_m = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 	wtd_avg_monthly_kwh_per_day = 0
@@ -473,20 +412,18 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 			light_val = lighting_sch[month][hour].to_f
 			if light_val > ltg_max
 				ltg_max = light_val
-				if garage_ltg
+				if gfa > 0
 					grg_max = normalized_monthly_lighting[month]*normalized_hourly_lighting[month][hour]*garage_ann/days_m[month]
 				end
-				if outside_ltg 
-					outside_max = normalized_monthly_lighting[month]*normalized_hourly_lighting[month][hour]*outside_ann/days_m[month]
-				end
+                outside_max = normalized_monthly_lighting[month]*normalized_hourly_lighting[month][hour]*outside_ann/days_m[month]
 			end
 		end
 	end
 	
 	
-	if fb_ltg
+	if fbfa > 0
 		ltg_tot = ltg_max
-		fb_max = ltg_max * (fbfa/cfa)
+		fb_max = ltg_max * (fbfa/tffa)
 		ltg_max = ltg_tot-fb_max
 	else
 		fb_max = 0.0
@@ -494,10 +431,10 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	#pull schedule values and gain fractions from sim
-	ltg_rad = lightval.Ltg_rad
-	ltg_rep = lightval.Ltg_rep
-	ltg_vis = lightval.Ltg_vis
-	ltg_raf = lightval.Ltg_raf
+	ltg_rad = 0.6
+	ltg_rep = 0.0
+	ltg_vis = 0.2
+	ltg_raf = 0.00
 	
 	#get ltg max power
 	#ltg_max = ltg_daily * maxval * 1000 * sch_adjust
@@ -683,9 +620,9 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
 	if has_ltg == 1
 		if replace_ltg == 1
-			runner.registerFinalCondition("The existing lighting has been replaced by one with #{ltg_total} kWh annual energy consumption.")
+			runner.registerFinalCondition("The existing lighting has been replaced by one with #{ltg_total.round} kWh annual energy consumption.")
 		else
-			runner.registerFinalCondition("Lighting has been added with #{ltg_total} kWh annual energy consumption.")
+			runner.registerFinalCondition("Lighting has been added with #{ltg_total.round} kWh annual energy consumption.")
 		end
 	else
 		runner.registerFinalCondition("Lighting was not added to #{space_type_r}.")
