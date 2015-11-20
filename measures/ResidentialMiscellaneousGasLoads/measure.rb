@@ -39,12 +39,6 @@ class ResidentialMiscellaneousGasLoads < OpenStudio::Ruleset::ModelUserScript
 	mgl_E.setDefaultValue(0)
 	args << mgl_E
 	
-	#make a double argument for the total conditioned floor area
-	cfa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CondFA")
-	cfa.setDisplayName("Living Space Floor Area (ft^2)")
-	cfa.setDefaultValue(1800)
-	args << cfa
-	
 	#make a double argument for BA Benchamrk multiplier
 	bab_mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("BAB_mult")
 	bab_mult.setDisplayName("Building America Benchmark Multipler")
@@ -104,12 +98,19 @@ class ResidentialMiscellaneousGasLoads < OpenStudio::Ruleset::ModelUserScript
 
     #assign the user inputs to variables
     selected_mgl = runner.getStringArgumentValue("selected_mgl",user_arguments)
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("space_type",user_arguments,model)
     mgl_E = runner.getDoubleArgumentValue("mgl_E",user_arguments)
-	cfa = runner.getDoubleArgumentValue("CondFA",user_arguments)
 	bab_mult = runner.getDoubleArgumentValue("BAB_mult",user_arguments)
 	num_br = runner.getIntegerArgumentValue("Num_Br", user_arguments)
 	
+    cfa = 0
+	model.getSpaceTypes.each do |spaceType|
+		spacehandle = spaceType.handle.to_s
+        if spacehandle == selected_living.get.handle.to_s
+            cfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        end
+    end
+    
 	#warning if things are specified that will not be used (ie. BAB mult when detailed mgl is modeled)
 	#Benchmark and other values specified
 	if selected_mgl == "Benchmark" and mgl_E != 0
@@ -188,7 +189,7 @@ class ResidentialMiscellaneousGasLoads < OpenStudio::Ruleset::ModelUserScript
 	model.getSpaceTypes.each do |spaceType|
 		spacename = spaceType.name.to_s
 		spacehandle = spaceType.handle.to_s
-		if spacehandle == space_type_r #add mgl
+		if spacehandle == selected_living.get.handle.to_s #add mgl
 			space_equipments = spaceType.gasEquipment
 			space_equipments.each do |space_equipment|
 				if space_equipment.gasEquipmentDefinition.name.get.to_s == "residential_mgl"
@@ -290,12 +291,12 @@ class ResidentialMiscellaneousGasLoads < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
 	if has_mgl == 1
 		if replace_mgl == 1
-			runner.registerFinalCondition("The existing MGLS has been replaced by one with #{mgl_ann} therm annual energy consumption.")
+			runner.registerFinalCondition("The existing misc gas loads have been replaced with #{mgl_ann.round} therm annual energy consumption.")
 		else
-			runner.registerFinalCondition("MGLs has been added with #{mgl_ann} therm annual energy consumption.")
+			runner.registerFinalCondition("Misc gas loads have been added with #{mgl_ann.round} therm annual energy consumption.")
 		end
 	else
-		runner.registerFinalCondition("No MGL was not added to #{space_type_r}.")
+		runner.registerFinalCondition("Misc gas loads were not added to #{selected_living.get.name.to_s}.")
     end
 	
     return true

@@ -39,12 +39,6 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
 	mel_E.setDefaultValue(0)
 	args << mel_E
 	
-	#make a double argument for the total conditioned floor area
-	cfa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("CondFA")
-	cfa.setDisplayName("Living Space Floor Area (ft^2)")
-	cfa.setDefaultValue(1800)
-	args << cfa
-	
 	#make a double argument for BA Benchamrk multiplier
 	bab_mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("BAB_mult")
 	bab_mult.setDisplayName("Building America Benchmark Multipler")
@@ -104,12 +98,19 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
 
     #assign the user inputs to variables
     selected_mel = runner.getStringArgumentValue("selected_mel",user_arguments)
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+	selected_living = runner.getOptionalWorkspaceObjectChoiceValue("space_type",user_arguments,model)
     mel_E = runner.getDoubleArgumentValue("mel_E",user_arguments)
-	cfa = runner.getDoubleArgumentValue("CondFA",user_arguments)
 	bab_mult = runner.getDoubleArgumentValue("BAB_mult",user_arguments)
 	num_br = runner.getIntegerArgumentValue("Num_Br", user_arguments)
 	
+    cfa = 0
+	model.getSpaceTypes.each do |spaceType|
+		spacehandle = spaceType.handle.to_s
+        if spacehandle == selected_living.get.handle.to_s
+            cfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        end
+    end
+    
 	#warning if things are specified that will not be used (ie. BAB mult when detailed mel is modeled)
 	#Benchmark and other values specified
 	if selected_mel == "Benchmark" and mel_E != 0
@@ -188,7 +189,7 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
 	model.getSpaceTypes.each do |spaceType|
 		spacename = spaceType.name.to_s
 		spacehandle = spaceType.handle.to_s
-		if spacehandle == space_type_r #add mel
+		if spacehandle == selected_living.get.handle.to_s        #add mel
 			space_equipments = spaceType.electricEquipment
 			space_equipments.each do |space_equipment|
 				if space_equipment.electricEquipmentDefinition.name.get.to_s == "residential_electric_mel"
@@ -290,12 +291,12 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
     #reporting final condition of model
 	if has_elec_mel == 1
 		if replace_mel == 1
-			runner.registerFinalCondition("The existing electric MELS has been replaced by one with #{mel_ann} kWh annual energy consumption.")
+			runner.registerFinalCondition("The existing misc electric loads have been replaced with #{mel_ann.round} kWh annual energy consumption.")
 		else
-			runner.registerFinalCondition("An electric mel has been added with #{mel_ann} kWh annual energy consumption.")
+			runner.registerFinalCondition("Misc electric loads have been added with #{mel_ann.round} kWh annual energy consumption.")
 		end
 	else
-		runner.registerFinalCondition("Electric mel was not added to #{space_type_r}.")
+		runner.registerFinalCondition("Misc electric loads were not added to #{selected_living.get.name.to_s}.")
     end
 	
     return true
