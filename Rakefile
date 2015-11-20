@@ -233,21 +233,37 @@ task default: 'test:unit:all'
 desc 'update all resources'
 task :update_resources do
 
-  resources_to_update = Dir[File.expand_path("../resources/*.*", __FILE__)].map { |f| File.basename(f) }
+  resources_to_update = Hash.new
+  File.open(File.expand_path("../resources/resources.csv", __FILE__)) do |file|
+	file.each do |line|
+	  line = line.chomp.split(',').reject { |l| l.empty? }
+	  measure = line.delete_at(0)
+	  resources_to_update[measure] = line
+	end
+  end  
+  
   measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry =='.' || entry == '..') }
   measures.each do |m|
-    subfolders = Dir.entries(File.expand_path("../measures/#{m}", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/#{m}", __FILE__), entry) and !(entry =='.' || entry == '..') }
-	if subfolders.include? "resources"
-	  resources = Dir[File.expand_path("../measures/#{m}/resources/*.*", __FILE__)]
-	  resources.each do |r|
-	    r = File.basename(r)
-		if resources_to_update.include? r
-		  if not FileUtils.compare_file(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/#{r}", __FILE__)) 
-		    FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
-			puts "Updated #{r} in #{m}/resources/."
+	resources = resources_to_update[m]
+	unless resources.nil?
+		unless resources.empty?
+		  unless File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
+			FileUtils.mkdir_p(File.expand_path("../measures/#{m}/resources", __FILE__))
+		  end
+		  resources.each do |r|
+			unless File.file?(File.expand_path("../measures/#{m}/resources/#{r}", __FILE__))
+			  FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
+			  puts "Added #{r} to #{m}/resources."
+			else 
+			  if not FileUtils.compare_file(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/#{r}", __FILE__))
+				FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
+				puts "Updated #{r} in #{m}/resources."
+			  end
+			end
 		  end
 		end
-	  end	
+	else
+	  puts "You haven't added an entry for #{m} in resources.csv."
 	end
   end
 

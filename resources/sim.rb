@@ -2772,11 +2772,7 @@ class Sim
                 # crawlspace_wall_area += wall.area  # ft^2
             # if space_int.spacetype == Constants.SpaceCrawl:
                 # cs.ext_perimeter += wall.foundation_ext_perimeter
-		
-		# temp
-		crawlspace_wall_area = cs.crawlspace_wall_area
-		# cs.ext_perimeter = 156.0
-		#
+		crawlspace_wall_area = cs.ext_perimeter * cs.height
 		
 		if cs.ext_perimeter > 0
 			crawlspace_effective_Rvalue = crawlspace_wall_area / (crawlspace_conduction * cs.ext_perimeter) # hr*ft^2*F/Btu
@@ -2802,10 +2798,8 @@ class Sim
 		crawlspace_wall_UA = crawlspace_wall_area / crawlspace_wall_Rvalue
 		
 		if crawlspace_fictitious_Rvalue < 0
-			#temp
-			area = 1505.0
-			#
-			crawlspace_floor_Rvalue = area / (crawlspace_total_UA - crawlspace_wall_area / (crawlspace_US_Rvalue + get_mat_soil12in(get_mat_soil).Rvalue)) - get_mat_soil12in(get_mat_soil).Rvalue # hr*ft^2*F/Btu
+			cs.crawlspace_area
+			crawlspace_floor_Rvalue = cs.crawlspace_area / (crawlspace_total_UA - crawlspace_wall_area / (crawlspace_US_Rvalue + get_mat_soil12in(get_mat_soil).Rvalue)) - get_mat_soil12in(get_mat_soil).Rvalue # hr*ft^2*F/Btu
 			 # (assumes crawlspace floor is dirt with no concrete slab)
 		else
 			crawlspace_floor_Rvalue = 1000 # hr*ft^2*F/Btu

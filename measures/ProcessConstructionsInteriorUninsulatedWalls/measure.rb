@@ -51,17 +51,40 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
   end
   
   def description
-    return "This measure is incomplete, but it should create constructions for interior partition walls."
+    return "This measure creates uninsulated constructions for the walls between living spaces."
   end
   
   def modeler_description
-    return ""
+    return "Calculates material layer properties of uninsulated constructions for the walls between living spaces. Finds surfaces adjacent to the living space and sets applicable constructions."
   end    
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
+    #make a choice argument for model objects
+    spacetype_handles = OpenStudio::StringVector.new
+    spacetype_display_names = OpenStudio::StringVector.new
+
+    #putting model object and names into hash
+    spacetype_args = model.getSpaceTypes
+    spacetype_args_hash = {}
+    spacetype_args.each do |spacetype_arg|
+      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
+    end
+
+    #looping through sorted hash of model objects
+    spacetype_args_hash.sort.map do |key,value|
+      spacetype_handles << value.handle.to_s
+      spacetype_display_names << key
+    end
+
+    #make a choice argument for crawlspace
+    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
+    selected_living.setDisplayName("Living Space")
+	selected_living.setDescription("The living space type.")
+    args << selected_living	
+	
     #make a double argument for partition wall mass thickness
     userdefined_partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassth", false)
     userdefined_partitionwallmassth.setDisplayName("Partition Wall Mass: Thickness")
@@ -108,6 +131,9 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 
     partitionWallMassPCMType = nil
 
+    # Space Type
+    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)	
+	
     # Partition Wall Mass
     userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
     userdefined_partitionwallmasscond = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
@@ -154,10 +180,10 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saw.setName("StudandAirWall")
     saw.setRoughness("Rough")
-    saw.setThickness(OpenStudio::convert(get_stud_and_air_wall(model, mat_wood).thick,"ft","m").get)
-    saw.setConductivity(OpenStudio::convert(get_stud_and_air_wall(model, mat_wood).k,"Btu/hr*ft*R","W/m*K").get)
-    saw.setDensity(OpenStudio::convert(get_stud_and_air_wall(model, mat_wood).rho,"lb/ft^3","kg/m^3").get)
-    saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, mat_wood).Cp,"Btu/lb*R","J/kg*K").get)
+    saw.setThickness(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).thick,"ft","m").get)
+    saw.setConductivity(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).k,"Btu/hr*ft*R","W/m*K").get)
+    saw.setDensity(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).rho,"lb/ft^3","kg/m^3").get)
+    saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).Cp,"Btu/lb*R","J/kg*K").get)
 
     # Plywood-1_2in
     ply1_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -233,6 +259,26 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
       layercount += 1
     end
 
+    # loop thru all the spaces
+    spaces = model.getSpaces
+    spaces.each do |space|
+      constructions_hash = {}
+      if selected_living.get.handle.to_s == space.spaceType.get.handle.to_s
+        # loop thru all surfaces attached to the space
+        surfaces = space.surfaces
+        surfaces.each do |surface|
+          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Adiabatic"
+            surface.resetConstruction
+            surface.setConstruction(fufw)
+            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"FinUninsFinWall"]
+          end
+        end
+      end
+      constructions_hash.map do |key,value|
+        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
+      end
+    end	
+	
     return true
  
   end #end the run method

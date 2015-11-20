@@ -194,7 +194,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     #make a choice argument for wood stud spacing
     selected_spacing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedspacing", spacing_display_names, true)
-    selected_spacing.setDisplayName("Wood stud spacing of wall cavity.")
+    selected_spacing.setDisplayName("Interzonal Walls: Stud Spacing")
 	selected_spacing.setUnits("in")
 	selected_spacing.setDescription("The on-center spacing between studs in a wall assembly.")
 	selected_spacing.setDefaultValue("16 in o.c.")
@@ -216,7 +216,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
 	#make a choice argument for wall cavity insulation installation grade
 	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
-	selected_installgrade.setDisplayName("Wood Stud: Cavity Install Grade")
+	selected_installgrade.setDisplayName("Interzonal Walls: Cavity Install Grade")
 	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     selected_installgrade.setDefaultValue("I")
 	args << selected_installgrade
@@ -290,7 +290,6 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     # Rigid
     rigidInsRvalue = userdefined_rigidinsr
-    rigidInsRoughness = "Rough"
     rigidInsThickness = userdefined_rigidinsthickness
     rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
     rigidInsDensity = mat_rigid.rho

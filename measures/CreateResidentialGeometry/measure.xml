@@ -1,0 +1,287 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>create_basic_geometry</name>
+  <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
+  <version_id>b7b4bdc0-4908-4b09-b4d2-2517a0bd7737</version_id>
+  <xml_checksum>2AF3A68E</xml_checksum>
+  <class_name>CreateBasicGeometry</class_name>
+  <display_name>Create Residential Geometry</display_name>
+  <description></description>
+  <modeler_description></modeler_description>
+  <arguments>
+    <argument>
+      <name>total_bldg_area</name>
+      <display_name>Living Space Area</display_name>
+      <description>The total area of the living space above grade.</description>
+      <type>Double</type>
+      <units>ft^2</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2000</default_value>
+    </argument>
+    <argument>
+      <name>living_height</name>
+      <display_name>Living Space Wall Height (Per Floor)</display_name>
+      <description>The height of the living space walls.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>8</default_value>
+    </argument>
+    <argument>
+      <name>num_floors</name>
+      <display_name>Num Floors</display_name>
+      <description>The number of living space floors above grade.</description>
+      <type>Integer</type>
+      <units>#</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2</default_value>
+    </argument>
+    <argument>
+      <name>aspect_ratio</name>
+      <display_name>Aspect Ratio</display_name>
+      <description>The ratio of the north/south wall length to the east/west wall length</description>
+      <type>Double</type>
+      <units>NS/EW</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2</default_value>
+    </argument>
+    <argument>
+      <name>garage_area</name>
+      <display_name>Garage Area</display_name>
+      <description>The total area of the garage.</description>
+      <type>Double</type>
+      <units>ft^2</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>400</default_value>
+    </argument>
+    <argument>
+      <name>garage_height</name>
+      <display_name>Garage Height</display_name>
+      <description>The height of the garage walls.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>8</default_value>
+    </argument>
+    <argument>
+      <name>garage_pos</name>
+      <display_name>Garage Position</display_name>
+      <description>The position of the garage.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Right</default_value>
+      <choices>
+        <choice>
+          <value>Right</value>
+          <display_name>Right</display_name>
+        </choice>
+        <choice>
+          <value>Left</value>
+          <display_name>Left</display_name>
+        </choice>
+        <choice>
+          <value>Front</value>
+          <display_name>Front</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>garage_protrusion</name>
+      <display_name>Garage Protrusion</display_name>
+      <description>The percentage that the garage protrudes from the living space.</description>
+      <type>Double</type>
+      <units>%</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>100</default_value>
+    </argument>
+    <argument>
+      <name>foundation_type</name>
+      <display_name>Foundation Type</display_name>
+      <description>The foundation type of the building.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>slab</default_value>
+      <choices>
+        <choice>
+          <value>slab</value>
+          <display_name>slab</display_name>
+        </choice>
+        <choice>
+          <value>crawlspace</value>
+          <display_name>crawlspace</display_name>
+        </choice>
+        <choice>
+          <value>unfinished_basement</value>
+          <display_name>unfinished_basement</display_name>
+        </choice>
+        <choice>
+          <value>finished_basement</value>
+          <display_name>finished_basement</display_name>
+        </choice>
+        <choice>
+          <value>pier_and_beam</value>
+          <display_name>pier_and_beam</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>foundation_height</name>
+      <display_name>Foundation Height</display_name>
+      <description>The height of the foundation walls.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>attic_type</name>
+      <display_name>Attic Type</display_name>
+      <description>The attic type of the building.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>unfinished_attic</default_value>
+      <choices>
+        <choice>
+          <value>unfinished_attic</value>
+          <display_name>unfinished_attic</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>roof_type</name>
+      <display_name>Roof Type</display_name>
+      <description>The roof type of the building.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Gable</default_value>
+      <choices>
+        <choice>
+          <value>Gable</value>
+          <display_name>Gable</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>roof_pitch</name>
+      <display_name>Roof Pitch</display_name>
+      <description>The roof pitch of the unfinished attic.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>6:12</default_value>
+      <choices>
+        <choice>
+          <value>1:12</value>
+          <display_name>1:12</display_name>
+        </choice>
+        <choice>
+          <value>2:12</value>
+          <display_name>2:12</display_name>
+        </choice>
+        <choice>
+          <value>3:12</value>
+          <display_name>3:12</display_name>
+        </choice>
+        <choice>
+          <value>4:12</value>
+          <display_name>4:12</display_name>
+        </choice>
+        <choice>
+          <value>5:12</value>
+          <display_name>5:12</display_name>
+        </choice>
+        <choice>
+          <value>6:12</value>
+          <display_name>6:12</display_name>
+        </choice>
+        <choice>
+          <value>7:12</value>
+          <display_name>7:12</display_name>
+        </choice>
+        <choice>
+          <value>8:12</value>
+          <display_name>8:12</display_name>
+        </choice>
+        <choice>
+          <value>9:12</value>
+          <display_name>9:12</display_name>
+        </choice>
+        <choice>
+          <value>10:12</value>
+          <display_name>10:12</display_name>
+        </choice>
+        <choice>
+          <value>11:12</value>
+          <display_name>11:12</display_name>
+        </choice>
+        <choice>
+          <value>12:12</value>
+          <display_name>12:12</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Form</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>create_basic_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>77ECDDF1</checksum>
+    </file>
+    <file>
+      <filename>example_model.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4F35230</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B4B7B1BF</checksum>
+    </file>
+  </files>
+</measure>
