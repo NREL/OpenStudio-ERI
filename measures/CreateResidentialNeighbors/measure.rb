@@ -22,23 +22,6 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
   # define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
-    end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
-    end
 	
 	#make a double argument for left neighbor offset
 	left_neighbor_offset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("left_neighbor_offset", false)
@@ -139,18 +122,11 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
 				m[3,3] = 1
 				m[0,3] = x_offset
 				m[1,3] = y_offset
-				m[2,3] = 0
 				new_space.changeTransformation(OpenStudio::Transformation.new(m))
-				space.changeTransformation(OpenStudio::Transformation.new(m))
 				runner.registerInfo("Translated space #{space.name} by #{OpenStudio::convert((x_offset+y_offset).abs,"m","ft").get.round(2)} ft to the #{dir} into neighbor space #{new_space.name}.")
 				new_space.surfaces.each do |surface|
 					if surface.outsideBoundaryCondition == "Outdoors"
-						shading_polygon = OpenStudio::Point3dVector.new
-						vertices = surface.vertices
-						vertices.each do |vertex|
-							shading_polygon << OpenStudio::Point3d.new(vertex.x, vertex.y, vertex.z)
-						end
-						shading_surface = OpenStudio::Model::ShadingSurface.new(shading_polygon, model)
+						shading_surface = OpenStudio::Model::ShadingSurface.new(surface.vertices, model)
 						shading_surface.setName("#{dir} neighbor shading")
 						shading_surface.setShadingSurfaceGroup(shading_surface_group)
 						runner.registerInfo("Created shading surface #{shading_surface.name} from surface #{surface.name}.")				

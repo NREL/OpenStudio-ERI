@@ -3234,7 +3234,7 @@ class Sim
 
     films = Get_films_constant.new
 
-    door_Uvalue_air_to_air = 0.2 # Btu/hr*ft^2*F, As per 2010 BA Benchmark
+    door_Uvalue_air_to_air = d.DoorUvalue
     garage_door_Uvalue_air_to_air = 0.2 # Btu/hr*ft^2*F, R-values typically vary from R5 to R10, from the Home Depot website
 
     door_Rvalue_air_to_air = 1.0 / door_Uvalue_air_to_air

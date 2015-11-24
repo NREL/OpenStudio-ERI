@@ -48,3 +48,4 @@ ResidentialMiscellaneousElectricLoads,sim.rb,util.rb,weather.rb,constants.rb,psy
 ResidentialMiscellaneousGasLoads,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,,,,
 CreateResidentialEaves,,,,,,,,,
 CreateResidentialNeighbors,,,,,,,,,
+CreateResidentialDoorArea,,,,,,,,,

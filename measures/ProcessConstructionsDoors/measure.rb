@@ -14,9 +14,15 @@ require "#{File.dirname(__FILE__)}/resources/sim"
 class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
 
   class Door
-    def initialize
+    def initialize(doorUvalue)
+		@doorUvalue = doorUvalue
     end
-    attr_accessor(:mat_door_Uvalue, :door_thickness)
+    
+	attr_accessor(:mat_door_Uvalue, :door_thickness)
+	
+	def DoorUvalue
+		return @doorUvalue
+	end
   end
 
   class GarageDoor
@@ -72,6 +78,19 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
 	selected_garage.setDescription("The garage space type.")
     args << selected_garage
 
+	#make a choice argument for model objects
+	doors_display_names = OpenStudio::StringVector.new
+	doors_display_names << "Wood"
+	doors_display_names << "Steel"
+	doors_display_names << "Fiberglass"
+	
+    #make a string argument for wood stud size of wall cavity
+    selected_door = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selecteddoor", doors_display_names, true)
+    selected_door.setDisplayName("Door Type")
+	selected_door.setDescription("The front door type.")
+	selected_door.setDefaultValue("Fiberglass")
+    args << selected_door	
+	
     return args
   end #end the arguments method
 
@@ -87,9 +106,12 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     # Space Type
     selected_garage = runner.getOptionalWorkspaceObjectChoiceValue("selectedgarage",user_arguments,model)
     selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
+	selected_door = runner.getStringArgumentValue("selecteddoor",user_arguments)
+	
+	doorUvalue = {"Wood"=>0.48, "Steel"=>0.2, "Fiberglass"=>0.2}[selected_door]
 
     # Create the material class instances
-    d = Door.new
+    d = Door.new(doorUvalue)
     gd = GarageDoor.new
 
     # Create the sim object

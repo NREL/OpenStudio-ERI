@@ -1,0 +1,82 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>create_residential_door_area</name>
+  <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
+  <version_id>eb2eb2dd-00b7-484f-8aef-c8580f2d2715</version_id>
+  <xml_checksum>9C8A26EB</xml_checksum>
+  <class_name>CreateResidentialDoorArea</class_name>
+  <display_name>Create Residential Door Area</display_name>
+  <description></description>
+  <modeler_description></modeler_description>
+  <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>userdefineddoorarea</name>
+      <display_name>Door Area</display_name>
+      <description>The area of the front door.</description>
+      <type>Double</type>
+      <units>ft^2/unit</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>20</default_value>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Fenestration</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>create_residential_door_area_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>46E40074</checksum>
+    </file>
+    <file>
+      <filename>example_model.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4F35230</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>7C01A07A</checksum>
+    </file>
+  </files>
+</measure>
