@@ -32,7 +32,7 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
 
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-  
+	
 	@model = nil
 	@weather = nil
 	unless model.nil?
@@ -40,9 +40,6 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
 	end
 	unless runner.nil?
 	  begin # Spreadsheet
-		#former_workflow_arguments = runner.former_workflow_arguments
-		#weather_file_name = former_workflow_arguments["setdrweatherfile"]["weather_file_name"]
-		#weather_file_dir = former_workflow_arguments["setdrweatherfile"]["weather_directory_name"]
 		weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
 		weather_file_dir = "weather"
 		epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
@@ -70,6 +67,9 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
 	max_temp = monthlyOAT.max
 	
 	maxDiffOAT = OpenStudio::convert(max_temp,"F","C").get - OpenStudio::convert(min_temp,"F","C").get
+	
+	#Calc annual average mains temperature to report
+	daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(@weather.data, @weather.header)
 		
     swmt = model.getSiteWaterMainsTemperature
         
@@ -77,9 +77,8 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
     swmt.setAnnualAverageOutdoorAirTemperature avgOAT
     swmt.setMaximumDifferenceInMonthlyAverageOutdoorAirTemperatures  maxDiffOAT
         
-    runner.registerFinalCondition("SiteWaterMainsTemperature has been updated with"+
-                                  "an average temperature of #{avgOAT.round(1)} C "+
-                                  " and a range of #{maxDiffOAT.round(1)} C")
+    runner.registerFinalCondition("SiteWaterMainsTemperature has been updated with an average temperature of #{annual_mains.round(1)} F ")
+                                  
 
 	return true
 	

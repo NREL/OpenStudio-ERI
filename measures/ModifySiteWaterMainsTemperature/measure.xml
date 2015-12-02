@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>modify_site_water_mains_temperature</name>
   <uid>f15e8163-22f4-4336-8257-338e1ab63a16</uid>
-  <version_id>552f5b0e-a453-4699-b57f-4280c353e515</version_id>
+  <version_id>f44c9fd2-2cee-459e-a298-8b738ecf92fb</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ModifySiteWaterMainsTemperature</class_name>
   <display_name>ModifySiteWaterMainsTemperature</display_name>
-  <description>This measure updates the object representing the cold water temperatures delivered by underground water main pipes to the building. Water mains temperatures are a function of outdoor climate conditions and vary with time of year. No user arguments are required, as mains temperature is calculated based on information in the weather file.</description>
-  <modeler_description>The measure will update the OS:Site:WaterMainsTemperature object. The object is currently configured to use the correlation method, but should be updated to a daily schedule to avoid issues with simulations in the southern hemisphere. </modeler_description>
+  <description>This measure calculates mains water temperatures using weather data.</description>
+  <modeler_description>This measure creates or modifies the Site:MainsWaterTemperature object. It currently uses the correlation method, but should be updated to write daily schedules to avoid issues in the southern hemisphere.</modeler_description>
   <arguments/>
   <provenances/>
   <tags>
@@ -39,6 +39,24 @@
       <checksum>3DD9D444</checksum>
     </file>
     <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>733EFF82</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>39852CD3</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>276E3F49</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -47,13 +65,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>846C288A</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A38F0058</checksum>
+      <checksum>BF5300A7</checksum>
     </file>
   </files>
 </measure>

@@ -266,6 +266,43 @@ class WeatherProcess
 
   end
 
+  def self._calc_mains_temperature(data, header)
+    #Calculates and returns the annual average, daily, and monthly mains water temperature
+  	avgOAT = data.AnnualAvgDrybulb
+	monthlyOAT = data.MonthlyAvgDrybulbs
+	
+	min_temp = monthlyOAT.min
+	max_temp = monthlyOAT.max
+
+	pi = Math::PI
+	deg_rad = pi/180
+	mains_daily_temp = Array.new(365, 0)
+	mains_monthly_temp = Array.new(12, 0)
+	tmains_ratio = 0.4 + 0.01*(avgOAT - 44)
+	tmains_lag = 35 - (avgOAT - 44)
+	lat = header.Latitude
+	if lat < 0
+		sign = 1
+	else
+		sign = -1
+	end
+	
+	mains_avg_temp = 0
+	#Calculate daily and annual
+	for d in 1..365
+		mains_daily_temp[d] = avgOAT + 6 + tmains_ratio * (max_temp - min_temp) / 2 * Math.sin(deg_rad * (0.986 * (d - 15 - tmains_lag) + sign * 90))
+		mains_avg_temp += mains_daily_temp[d] / 365.0
+	end
+	#Calculate monthly
+	for m in 1..12
+		mains_monthly_temp[m] = avgOAT + 6 + tmains_ratio * (max_temp - min_temp) / 2 * Math.sin(deg_rad * (0.986 * ((m * 30 - 15) - 15 - tmains_lag) + sign * 90))
+	end
+	
+	return mains_daily_temp, mains_monthly_temp, mains_avg_temp
+	
+  end
+
+  
   def _calc_avg_highs_lows
 
   end
