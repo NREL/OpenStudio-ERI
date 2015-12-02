@@ -12,6 +12,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
@@ -756,9 +757,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end
 
-    # Constants
-    constants = Constants.new
-
     # Space Type
     selected_living = runner.getStringArgumentValue("selectedliving",user_arguments)
     selected_garage = runner.getStringArgumentValue("selectedgarage",user_arguments)
@@ -829,7 +827,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     if infiltrationGarageACH50 == nil
       infiltrationLivingSpaceACH50 = 0.0
       infiltrationGarageACH50 = 0.0
-      infiltrationShelterCoefficient = constants.Auto
+      infiltrationShelterCoefficient = Constants.Auto
     end
     if neighborOffset == 0
       neighborOffset = nil
@@ -1185,7 +1183,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     EnergyManagementSystem:Program,
       InfiltrationProgram,                                        !- Name"
 
-    if living_space.inf_method == constants.InfMethodASHRAE
+    if living_space.inf_method == Constants.InfMethodASHRAE
       if living_space.SLA > 0
         inf = si
         ems_program += "
@@ -1201,7 +1199,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         ems_program += "
           Set Qn = 0,"
       end
-    elsif living_space.inf_method == constants.InfMethodRes
+    elsif living_space.inf_method == Constants.InfMethodRes
       ems_program += "
       Set Qn = #{living_space.ACH * OpenStudio::convert(living_space.volume,"ft^3","m^3").get / OpenStudio::convert(1.0,"hr","s").get},"
     end
@@ -1220,14 +1218,14 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       Set QductsOut = DuctLeakExhaustFanEquivalent,
       Set QductsIn = DuctLeakSupplyFanEquivalent,"
 
-    if vent.MechVentType == constants.VentTypeBalanced
+    if vent.MechVentType == Constants.VentTypeBalanced
       ems_program += "
         Set Qout = Qrange+Qbath+Qdryer+QhpwhOut+QductsOut,          !- Exhaust flows
         Set Qin = QhpwhIn+QductsIn,                                 !- Supply flows
         Set Qu = @Abs (Qout - Qin),                                 !- Unbalanced flow
         Set Qb = QWH + @Min Qout Qin,                               !- Balanced flow"
     else
-      if vent.MechVentType == constants.VentTypeExhaust
+      if vent.MechVentType == Constants.VentTypeExhaust
         ems_program += "
           Set Qout = QWH+Qrange+Qbath+Qdryer+QhpwhOut+QductsOut,      !- Exhaust flows
           Set Qin = QhpwhIn+QductsIn,                                 !- Supply flows
@@ -1388,7 +1386,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       LocalWindSpeedProgram;                                          !- Program Name 3"
 
     # Mechanical Ventilation
-    if vent.MechVentType == constants.VentTypeBalanced # tk will need to complete _processSystemVentilationNodes for this to work
+    if vent.MechVentType == Constants.VentTypeBalanced # tk will need to complete _processSystemVentilationNodes for this to work
 
       ems << "
       Fan:OnOff,
@@ -1512,7 +1510,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     # _processZoneFinishedBasement
     if hasFinishedBasement
       #--- Infiltration
-      if fb.inf_method == constants.InfMethodRes
+      if fb.inf_method == Constants.InfMethodRes
         if fb.ACH > 0
           ems << "
           ZoneInfiltration:DesignFlowRate,
@@ -1535,7 +1533,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     # _processZoneUnfinishedBasement
     if hasUnfinishedBasement
       #--- Infiltration
-      if ub.inf_method == constants.InfMethodRes
+      if ub.inf_method == Constants.InfMethodRes
         if ub.ACH > 0
           ems << "
           ZoneInfiltration:DesignFlowRate,

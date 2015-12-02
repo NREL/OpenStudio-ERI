@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
@@ -231,8 +232,6 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     acCrankcase = {"SEER 8"=>0.0, "SEER 10"=>0.0, "SEER 13"=>0.0, "SEER 14"=>0.0, "SEER 15"=>0.0, "SEER 16"=>0.0, "SEER 16 (2 Stage)"=>0.0, "SEER 17"=>0.0, "SEER 18"=>0.0, "SEER 21"=>0.0, "SEER 24.5"=>0.0}[selected_ac]
     acCrankcaseMaxT = {"SEER 8"=>55.0, "SEER 10"=>55.0, "SEER 13"=>55.0, "SEER 14"=>55.0, "SEER 15"=>55.0, "SEER 16"=>55.0, "SEER 16 (2 Stage)"=>55.0, "SEER 17"=>55.0, "SEER 18"=>55.0, "SEER 21"=>55.0, "SEER 24.5"=>55.0}[selected_ac]
     acEERCapacityDerateFactor = {"SEER 8"=>1.0, "SEER 10"=>1.0, "SEER 13"=>1.0, "SEER 14"=>1.0, "SEER 15"=>1.0, "SEER 16"=>1.0, "SEER 16 (2 Stage)"=>1.0, "SEER 17"=>1.0, "SEER 18"=>1.0, "SEER 21"=>1.0, "SEER 24.5"=>1.0}[selected_ac]
-
-    constants = Constants.new
 
     # Create the material class instances
     air_conditioner = AirConditioner.new(acCoolingInstalledSEER, acNumberSpeeds, acRatedAirFlowRate, acFanspeedRatio, acCapacityRatio, acCoolingEER, acSupplyFanPowerInstalled, acSupplyFanPowerRated, acSHRRated, acCondenserType, acCrankcase, acCrankcaseMaxT, acEERCapacityDerateFactor)
@@ -485,7 +484,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         end
         clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(supply.fan_power / OpenStudio::convert(1.0,"cfm","m^3/s").get))
 
-        if misc.SimTestSuiteBuilding == constants.TestBldgMinimal or air_conditioner.IsIdealAC
+        if misc.SimTestSuiteBuilding == Constants.TestBldgMinimal or air_conditioner.IsIdealAC
           clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(0))
           clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(0))
           clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(0))
@@ -497,7 +496,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
           clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(45.0))
         end
 
-        if supply.CondenserType == constants.CondenserTypeAir
+        if supply.CondenserType == Constants.CondenserTypeAir
           clg_coil.setCondenserType("AirCooled")
         else
           clg_coil.setCondenserType("EvaporativelyCooled")
@@ -552,7 +551,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
           # stuff
 
-          if supply.CondenserType == constants.CondenserTypeAir
+          if supply.CondenserType == Constants.CondenserTypeAir
 
           else
 

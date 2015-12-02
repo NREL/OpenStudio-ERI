@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUserScript
@@ -194,7 +195,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     #make a choice argument for wood stud spacing
     selected_spacing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedspacing", spacing_display_names, true)
-    selected_spacing.setDisplayName("Wood stud spacing of wall cavity.")
+    selected_spacing.setDisplayName("Interzonal Walls: Stud Spacing")
 	selected_spacing.setUnits("in")
 	selected_spacing.setDescription("The on-center spacing between studs in a wall assembly.")
 	selected_spacing.setDefaultValue("16 in o.c.")
@@ -216,7 +217,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
 	#make a choice argument for wall cavity insulation installation grade
 	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
-	selected_installgrade.setDisplayName("Wood Stud: Cavity Install Grade")
+	selected_installgrade.setDisplayName("Interzonal Walls: Cavity Install Grade")
 	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     selected_installgrade.setDefaultValue("I")
 	args << selected_installgrade
@@ -280,7 +281,6 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     # Constants
     mat_gyp = get_mat_gypsum
     mat_rigid = get_mat_rigid_ins
-    constants = Constants.new
 
     # Partition Wall Mass
     partitionWallMassThickness = userdefined_partitionwallmassth
@@ -290,7 +290,6 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     # Rigid
     rigidInsRvalue = userdefined_rigidinsr
-    rigidInsRoughness = "Rough"
     rigidInsThickness = userdefined_rigidinsthickness
     rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
     rigidInsDensity = mat_rigid.rho
@@ -320,7 +319,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     # Create the material layers
 
     # ConcPCMPartWall
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       pcm.setName("ConcPCMPartWall")
       pcm.setRoughness("Rough")
@@ -374,7 +373,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       layercount += 1
       unfininsfinwall.insertLayer(layercount,iwi)
       layercount += 1
-      if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+      if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
         unfininsfinwall.insertLayer(layercount,pcm)
         layercount += 1
       end
@@ -396,7 +395,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       unfininsfinwall.setName("UnfinInsFinWall")
       unfininsfinwall.insertLayer(layercount,iwi)
       layercount += 1
-      if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+      if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
         unfininsfinwall.insertLayer(layercount,pcm)
         layercount += 1
       end

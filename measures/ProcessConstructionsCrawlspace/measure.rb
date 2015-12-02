@@ -22,7 +22,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 			@crawlCeilingInstallGrade = crawlCeilingInstallGrade
 		end
 		
-		attr_accessor(:CrawlRimJoistInsRvalue, :ext_perimeter, :height, :crawlspace_wall_area)
+		attr_accessor(:CrawlRimJoistInsRvalue, :ext_perimeter, :height, :crawlspace_area)
 		
 		def CrawlWallContInsRvalueNominal
 			return @crawlWallContInsRvalueNominal
@@ -309,6 +309,13 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     args << userdefined_carpetfrac
 
     # Geometry
+    userdefinedcsarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsarea", false)
+    userdefinedcsarea.setDisplayName("Crawlspace Area")
+	userdefinedcsarea.setUnits("ft^2")
+	userdefinedcsarea.setDescription("The area of the crawlspace.")
+    userdefinedcsarea.setDefaultValue(1200.0)
+    args << userdefinedcsarea	
+	
     userdefinedcsheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsheight", false)
     userdefinedcsheight.setDisplayName("Crawlspace Height")
 	userdefinedcsheight.setUnits("ft")
@@ -322,13 +329,6 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	userdefinedcsextperim.setDescription("The perimeter of the crawlspace.")
     userdefinedcsextperim.setDefaultValue(140.0)
     args << userdefinedcsextperim
-
-    userdefinedcswallarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcswallarea", false)
-    userdefinedcswallarea.setDisplayName("Crawlspace Wall Area")
-	userdefinedcswallarea.setUnits("ft^2")
-	userdefinedcswallarea.setDescription("The wall area of the crawlspace.")
-    userdefinedcswallarea.setDefaultValue(560.0)
-    args << userdefinedcswallarea
 	
     return args
   end #end the arguments method
@@ -476,7 +476,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	sim = Sim.new(model, runner)
 
     cs.height = runner.getDoubleArgumentValue("userdefinedcsheight",user_arguments)
-    cs.crawlspace_wall_area = runner.getDoubleArgumentValue("userdefinedcswallarea",user_arguments)
+    cs.crawlspace_area = runner.getDoubleArgumentValue("userdefinedcsarea",user_arguments)
     cs.ext_perimeter = runner.getDoubleArgumentValue("userdefinedcsextperim",user_arguments)
 	
 	# Process the crawlspace

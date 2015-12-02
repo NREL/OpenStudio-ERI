@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
@@ -105,58 +106,43 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     args << selected_fbsmt
 
     #make a double argument for partition wall mass thickness
-    userdefined_partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassth", false)
-    userdefined_partitionwallmassth.setDisplayName("Partition Wall Mass: Thickness")
-	userdefined_partitionwallmassth.setUnits("in")
-	userdefined_partitionwallmassth.setDescription("Thickness of the layer.")
-    userdefined_partitionwallmassth.setDefaultValue(0.5)
-    args << userdefined_partitionwallmassth
+    partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmassth", false)
+    partitionwallmassth.setDisplayName("Partition Wall Mass: Thickness")
+	partitionwallmassth.setUnits("in")
+	partitionwallmassth.setDescription("Thickness of the layer.")
+    partitionwallmassth.setDefaultValue(0.5)
+    args << partitionwallmassth
 
     #make a double argument for partition wall mass conductivity
-    userdefined_partitionwallmasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmasscond", false)
-    userdefined_partitionwallmasscond.setDisplayName("Partition Wall Mass: Conductivity")
-	userdefined_partitionwallmasscond.setUnits("Btu-in/h-ft^2-R")
-	userdefined_partitionwallmasscond.setDescription("Conductivity of the layer.")
-    userdefined_partitionwallmasscond.setDefaultValue(1.1112)
-    args << userdefined_partitionwallmasscond
+    partitionwallmasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmasscond", false)
+    partitionwallmasscond.setDisplayName("Partition Wall Mass: Conductivity")
+	partitionwallmasscond.setUnits("Btu-in/h-ft^2-R")
+	partitionwallmasscond.setDescription("Conductivity of the layer.")
+    partitionwallmasscond.setDefaultValue(1.1112)
+    args << partitionwallmasscond
 
     #make a double argument for partition wall mass density
-    userdefined_partitionwallmassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmassdens", false)
-    userdefined_partitionwallmassdens.setDisplayName("Partition Wall Mass: Density")
-	userdefined_partitionwallmassdens.setUnits("lb/ft^3")
-	userdefined_partitionwallmassdens.setDescription("Density of the layer.")
-    userdefined_partitionwallmassdens.setDefaultValue(50.0)
-    args << userdefined_partitionwallmassdens
+    partitionwallmassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmassdens", false)
+    partitionwallmassdens.setDisplayName("Partition Wall Mass: Density")
+	partitionwallmassdens.setUnits("lb/ft^3")
+	partitionwallmassdens.setDescription("Density of the layer.")
+    partitionwallmassdens.setDefaultValue(50.0)
+    args << partitionwallmassdens
 
     #make a double argument for partition wall mass specific heat
-    userdefined_partitionwallmasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallmasssh", false)
-    userdefined_partitionwallmasssh.setDisplayName("Partition Wall Mass: Specific Heat")
-	userdefined_partitionwallmasssh.setUnits("Btu/lb-R")
-	userdefined_partitionwallmasssh.setDescription("Specific heat of the layer.")
-    userdefined_partitionwallmasssh.setDefaultValue(0.2)
-    args << userdefined_partitionwallmasssh
+    partitionwallmasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmasssh", false)
+    partitionwallmasssh.setDisplayName("Partition Wall Mass: Specific Heat")
+	partitionwallmasssh.setUnits("Btu/lb-R")
+	partitionwallmasssh.setDescription("Specific heat of the layer.")
+    partitionwallmasssh.setDefaultValue(0.2)
+    args << partitionwallmasssh
 
     #make a double argument for partition wall fraction of floor area
-    userdefined_partitionwallfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedpartitionwallfrac", false)
-    userdefined_partitionwallfrac.setDisplayName("Partition Wall Mass: Fraction of Floor Area")
-	userdefined_partitionwallfrac.setDescription("Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.")
-    userdefined_partitionwallfrac.setDefaultValue(1.0)
-    args << userdefined_partitionwallfrac
-
-    # Geometry
-    userdefinedlivingarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedlivingarea", true)
-    userdefinedlivingarea.setDisplayName("Living Space Area")
-	userdefinedlivingarea.setUnits("ft^2")
-	userdefinedlivingarea.setDescription("The area of the living space.")
-    userdefinedlivingarea.setDefaultValue(2700.0)
-    args << userdefinedlivingarea
-
-    userdefinedfbsmtarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtarea", true)
-    userdefinedfbsmtarea.setDisplayName("Finished Basement Area")
-	userdefinedfbsmtarea.setUnits("ft^2")
-	userdefinedfbsmtarea.setDescription("The area of the finished basement.")
-    userdefinedfbsmtarea.setDefaultValue(0.0)
-    args << userdefinedfbsmtarea
+    partitionwallfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallfrac", false)
+    partitionwallfrac.setDisplayName("Partition Wall Mass: Fraction of Floor Area")
+	partitionwallfrac.setDescription("Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.")
+    partitionwallfrac.setDefaultValue(1.0)
+    args << partitionwallfrac
 
     return args
   end #end the arguments method
@@ -173,41 +159,32 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     # Space Type
     selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
     selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
+    partitionWallMassThickness = runner.getDoubleArgumentValue("partitionwallmassth",user_arguments)
+    partitionWallMassConductivity = runner.getDoubleArgumentValue("partitionwallmasscond",user_arguments)
+    partitionWallMassDensity = runner.getDoubleArgumentValue("partitionwallmassdens",user_arguments)
+    partitionWallMassSpecificHeat = runner.getDoubleArgumentValue("partitionwallmasssh",user_arguments)
+    partitionWallMassFractionOfFloorArea = runner.getDoubleArgumentValue("partitionwallfrac",user_arguments)
 
     # loop thru all the spaces
     hasFinishedBasement = false
     if not selected_fbsmt.empty?
       hasFinishedBasement = true
     end
-
-    # Partition Wall Mass
-    selected_partitionwallmass = runner.getOptionalWorkspaceObjectChoiceValue("selectedpartitionwallmass",user_arguments,model)
-    if selected_partitionwallmass.empty?
-      userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
-      userdefined_partitionwallmasscond = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
-      userdefined_partitionwallmassdens = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
-      userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
+    
+    living_space_area = 0
+    finished_basement_area = 0
+	model.getSpaceTypes.each do |spaceType|
+		spacehandle = spaceType.handle.to_s
+        if spacehandle == selected_living.get.handle.to_s
+            living_space_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        elsif hasFinishedBasement and spacehandle == selected_fbsmt.get.handle.to_s
+            finished_basement_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+        end
     end
 
     # Constants
-    constants = Constants.new
     mat_wood = get_mat_wood
-
-    # Partition Wall Mass
-    if userdefined_partitionwallmassth.nil?
-      partitionWallMassThickness = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getThickness.value,"m","in").get
-      partitionWallMassConductivity = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getConductivity.value,"W/m*K","Btu/hr*ft*R").get
-      partitionWallMassDensity = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getDensity.value,"kg/m^3","lb/ft^3").get
-      partitionWallMassSpecificHeat = OpenStudio::convert(selected_partitionwallmass.get.to_StandardOpaqueMaterial.get.getSpecificHeat.value,"J/kg*K","Btu/lb*R").get
-    else
-      partitionWallMassThickness = userdefined_partitionwallmassth
-      partitionWallMassConductivity = userdefined_partitionwallmasscond
-      partitionWallMassDensity = userdefined_partitionwallmassdens
-      partitionWallMassSpecificHeat = userdefined_partitionwallmasssh
-    end
-
-    partitionWallMassFractionOfFloorArea = runner.getDoubleArgumentValue("userdefinedpartitionwallfrac",user_arguments)
-
+ 
     partitionWallMassPCMType = nil
 
     # Create the material class instances
@@ -218,8 +195,8 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     living_space = LivingSpace.new
     finished_basement = FinishedBasement.new
 
-    living_space.area = runner.getDoubleArgumentValue("userdefinedlivingarea",user_arguments)
-    finished_basement.area = runner.getDoubleArgumentValue("userdefinedfbsmtarea",user_arguments)
+    living_space.area = living_space_area
+    finished_basement.area = finished_basement_area
 
     # Process the partition wall
     partition_wall_mass = sim._processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
@@ -238,7 +215,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     #       # End drawn partition wall area sumation loop
 
     # ConcPCMPartWall
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       pcm.setName("ConcPCMPartWall")
       pcm.setRoughness("Rough")
@@ -275,13 +252,13 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     fufw.setName("FinUninsFinWall")
     fufw.insertLayer(layercount,pwm)
     layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       fufw.insertLayer(layercount,pcm)
       layercount += 1
     end
     fufw.insertLayer(layercount,saw)
     layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == constants.PCMtypeConcentrated
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
       fufw.insertLayer(layercount,pcm)
       layercount += 1
     end

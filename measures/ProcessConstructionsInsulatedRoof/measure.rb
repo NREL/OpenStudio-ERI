@@ -9,6 +9,7 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
@@ -321,7 +322,6 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     ri = RoofIns.new
     rri = RigidRoofIns.new
     roofing_material = RoofingMaterial.new(roofMatEmissivity, roofMatAbsorptivity)
-	constants = Constants.new
 
     # Create the sim object
     sim = Sim.new(model, runner)
@@ -380,7 +380,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     ri.setSpecificHeat(OpenStudio::convert(riSpecificHeat,"Btu/lb*R","J/kg*K").get)
 
     # ConcPCMCeilWall
-    if ceiling_mass.CeilingMassPCMType == constants.PCMtypeConcentrated
+    if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
       ceil_pcm_mat_base = get_mat_ceil_pcm(ceiling_mass)
       pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       pcm.setName("ConcPCMCeilWall")
@@ -419,7 +419,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     end
     fininsextroof.insertLayer(layercount,ri)
     layercount += 1
-    if ceiling_mass.CeilingMassPCMType == constants.PCMtypeConcentrated
+    if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
       fininsunfinuafloor.insertLayer(layercount,pcm)
       layercount += 1
     end

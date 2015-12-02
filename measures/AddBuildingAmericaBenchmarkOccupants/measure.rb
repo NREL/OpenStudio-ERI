@@ -7,8 +7,6 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-require "#{File.dirname(__FILE__)}/resources/sim"
-
 #start the measure
 class AddBuildingAmericaBenchmarkOccupants < OpenStudio::Ruleset::ModelUserScript
   
@@ -84,18 +82,18 @@ class AddBuildingAmericaBenchmarkOccupants < OpenStudio::Ruleset::ModelUserScrip
 	occupant_activity.defaultDaySchedule().setName("DefaultDay")
 	occupant_activity.defaultDaySchedule().addValue(OpenStudio::Time.new(0,24,0,0),activity_per_person)
 	
-	
 	#get occupant gains fractions and schedule from sim
-	occupantval = Process_occupants.new
-	occ_lat = occupantval.Occ_lat
-	occ_conv = occupantval.Occ_conv
-	occ_rad = occupantval.Occ_rad
-	occ_lost = occupantval.Occ_lost
+	occ_lat = 0.427
+	occ_conv = 0.253
+	occ_rad = 0.32
+	occ_lost = 1 - occ_lat - occ_conv - occ_rad
 	occ_sens = occ_rad + occ_conv
 	
-	monthly_mult = occupantval.Monthly_mult_occ
-	weekday_hourly = occupantval.Weekday_hourly_occ
-	weekend_hourly = occupantval.Weekend_hourly_occ
+	#Right now hard coded simple schedules
+	#TODO: Schedule inputs. Should be 24 or 48 hourly + 12 monthly, is 36-60 inputs too much? how to handle 8760 schedules (from a file?)
+	monthly_mult = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+	weekday_hourly = [1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000]
+	weekend_hourly = weekday_hourly
 	
 	#add occupants to the selected space
 	has_occ = 0

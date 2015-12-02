@@ -14,3 +14,10 @@ To be able to use the rakefile, follow these steps:
 5. Run ```bundler```
 
 Now you can run ```rake -T``` from the repo to see the list of possible rake tasks.
+
+### Using rake task: update_resources
+
+Use this task to update each measure's resource file to the corresponding resource file found in the top-level resources directory:
+
+1. Update resources.csv found in the top-level resources directory
+2. Run ```rake update_resources```

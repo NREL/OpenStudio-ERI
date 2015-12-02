@@ -354,8 +354,8 @@
           "measure_definition_display_name": "ProcessConstructionsExteriorInsulatedWallsWoodStud",
           "measure_definition_name": "processconstructionsexteriorinsulatedwallswoodstud",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "0c884307-3abd-4390-9206-874865c296a8",
-          "measure_definition_version_uuid": "71f0b590-5d5d-474f-aab3-4c8522166db2",
+          "measure_definition_uuid": "a40bf180-18d1-4423-93b3-015849bd61b1",
+          "measure_definition_version_uuid": "ab6f4df1-f28f-4745-b67b-879efa275728",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -496,8 +496,8 @@
               "maximum": 0.5,
               "relation_to_output": null,
               "static_value": 0.5,
-              "uuid": "84230f00-cde7-431c-9d13-0de38671efda",
-              "version_uuid": "e8d3679e-c01c-44ab-8d07-4a8e6f145006",
+              "uuid": "720eabf5-0a7f-4fbf-ae52-e547691b6acf",
+              "version_uuid": "6190c6a1-dac3-442c-855b-a19d4162ef88",
               "variable": true,
               "uncertainty_description": {
                 "type": "discrete_uncertain",
@@ -556,8 +556,8 @@
               "maximum": 1.0,
               "relation_to_output": null,
               "static_value": 1.0,
-              "uuid": "12a09e04-9931-453d-9709-39c46893509f",
-              "version_uuid": "b080fd6f-ac62-4011-b42e-37a1ecabad02",
+              "uuid": "aa206424-7dae-4a5e-8766-8707217250f7",
+              "version_uuid": "c4ecf1d5-a8b9-496c-930b-ce6bbc0451e4",
               "variable": true,
               "uncertainty_description": {
                 "type": "discrete_uncertain",
@@ -612,8 +612,8 @@
           "measure_definition_display_name": "ProcessConstructionsExteriorUninsulatedWalls",
           "measure_definition_name": "processconstructionsexterioruninsulatedwalls",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "6ba30ce5-7638-453a-a8a2-29419d19f5de",
-          "measure_definition_version_uuid": "10f96474-69d8-411a-84e2-54fe754be352",
+          "measure_definition_uuid": "1f2574e8-c867-4b9d-b1a5-425df0b34a83",
+          "measure_definition_version_uuid": "19214229-8c05-4491-a9ed-72f27da8aa13",
           "arguments": [
             {
               "display_name": "Attic Space",
@@ -647,8 +647,8 @@
           "measure_definition_display_name": "ProcessConstructionsUnfinishedAttic",
           "measure_definition_name": "processconstructionsunfinishedattic",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "483ef6e2-82ff-46e7-bc14-8798c082bed7",
-          "measure_definition_version_uuid": "a4b3f1e2-a431-4635-806a-e26d8cee7f34",
+          "measure_definition_uuid": "42809896-9b98-4990-89d8-2754f68daf5e",
+          "measure_definition_version_uuid": "41edf863-82d4-45ab-af70-da528195df63",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -794,8 +794,8 @@
           "measure_definition_display_name": "ProcessConstructionsInteriorInsulatedWalls",
           "measure_definition_name": "processconstructionsinteriorinsulatedwalls",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "2b658868-a507-4ada-9917-f4f22c3bc8db",
-          "measure_definition_version_uuid": "d6b9cf38-b605-43f8-9a1e-b993686740b8",
+          "measure_definition_uuid": "bf435632-474d-48d4-b0d0-31ce91410494",
+          "measure_definition_version_uuid": "c55b83a3-1248-49b7-a2ba-a129dd626dd8",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -917,8 +917,8 @@
           "measure_definition_display_name": "ProcessConstructionsDoors",
           "measure_definition_name": "processconstructionsdoors",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "56f53b34-a06b-4a2c-add5-899d1194e294",
-          "measure_definition_version_uuid": "88373dd3-fca8-45b7-a1f6-a9b63789153c",
+          "measure_definition_uuid": "8c3e6239-94ae-4499-9bf1-de3277267b4d",
+          "measure_definition_version_uuid": "95cddace-be4c-4cbc-93bf-b3f74755619c",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -952,8 +952,8 @@
           "measure_definition_display_name": "ProcessThermalMassFurniture",
           "measure_definition_name": "processthermalmassfurniture",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "84b4badd-6049-42cf-928f-a23052812150",
-          "measure_definition_version_uuid": "ce038ad9-fce2-4ee1-ad83-609f6587515a",
+          "measure_definition_uuid": "03921893-b235-4b58-b234-b74b31532eb2",
+          "measure_definition_version_uuid": "a0108fe3-58f0-44ea-9a03-f6d0d4b2fee3",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -1035,8 +1035,8 @@
           "measure_definition_display_name": "ResidentialClothesWasherandDryer",
           "measure_definition_name": "residentialclotheswasheranddryer",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "f0904f6a-e58a-4f1d-a3a7-15ca7d29139f",
-          "measure_definition_version_uuid": "dc80f69a-02d0-49c3-803c-bdbb0578949c",
+          "measure_definition_uuid": "8877feb4-639b-4ccf-bd05-b797d3cf8632",
+          "measure_definition_version_uuid": "a8029ff6-ffda-42c0-821c-2fee21f92a08",
           "arguments": [
             {
               "display_name": "Clothes Dryer Energy Consumption Option",
@@ -1142,8 +1142,8 @@
           "measure_definition_display_name": "ResidentialCookingRange",
           "measure_definition_name": "residentialcookingrange",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "9ef5221e-3a83-41b7-a3fb-66aa1929520f",
-          "measure_definition_version_uuid": "58efb37c-1b9e-4c5b-95aa-313fbaf4fe13",
+          "measure_definition_uuid": "b6c89d72-ea89-4b4f-b783-af53fadd2528",
+          "measure_definition_version_uuid": "fc5a1dae-fcce-479b-8ed6-b5fcb83f5179",
           "arguments": [
             {
               "display_name": "Number of Bedrooms",
@@ -1241,8 +1241,8 @@
           "measure_definition_display_name": "ResidentialDishwasher",
           "measure_definition_name": "residentialdishwasher",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "e0f38828-7dca-4de7-97cf-1b2e79e05853",
-          "measure_definition_version_uuid": "efe65204-af0e-4666-aed8-57d723028d4d",
+          "measure_definition_uuid": "de83b1f4-d5e1-49d1-bac5-13e25512f5ff",
+          "measure_definition_version_uuid": "a75b8d17-5ef7-4488-8c9b-6896442347bf",
           "arguments": [
             {
               "display_name": "Dishwasher Energy Consumption Option",
@@ -1300,8 +1300,8 @@
           "measure_definition_display_name": "ResidentialMiscellaneousElectricLoads",
           "measure_definition_name": "residentialmiscellaneouselectricloads",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "20663030-a5eb-42a0-8456-d14c0f03250e",
-          "measure_definition_version_uuid": "72b47f6d-3109-4e59-9392-e6ad417503aa",
+          "measure_definition_uuid": "aa9dd4d3-c387-43eb-964e-3ce4281792b1",
+          "measure_definition_version_uuid": "e7a774ac-c079-4ccb-97fe-b15573003a27",
           "arguments": [
             {
               "display_name": "MEL Energy Consumption Option",
@@ -1367,8 +1367,8 @@
           "measure_definition_display_name": "AddResidentialRefrigerator",
           "measure_definition_name": "addresidentialrefrigerator",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "5cf51553-7239-46ee-a365-9c0bee84eb80",
-          "measure_definition_version_uuid": "d6eb4914-8ff1-4e1c-a039-e7fe5c47835f",
+          "measure_definition_uuid": "7b76eefc-9679-44f6-b4fc-acfb9f05e377",
+          "measure_definition_version_uuid": "9785634f-c422-4789-be1f-6f1db2362995",
           "arguments": [
             {
               "display_name": "Rated Annual Consumption",
@@ -1434,8 +1434,8 @@
           "measure_definition_display_name": "ResidentialMiscellaneousGasLoads",
           "measure_definition_name": "residentialmiscellaneousgasloads",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "d676f208-ffe1-4b17-abd1-65d551ced279",
-          "measure_definition_version_uuid": "f599e656-0df8-45db-87df-4541cea8a267",
+          "measure_definition_uuid": "fa8854aa-0b6d-4353-a98c-0f363b45f0bd",
+          "measure_definition_version_uuid": "d47efdc7-7cc7-421b-90c6-4a4499ecf31d",
           "arguments": [
             {
               "display_name": "MGL Energy Consumption Option",
@@ -1501,8 +1501,8 @@
           "measure_definition_display_name": "AddBuildingAmericaBenchmarkOccupants",
           "measure_definition_name": "addbuildingamericabenchmarkoccupants",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "6848e758-72b3-4c7f-91bd-3f73db0742a6",
-          "measure_definition_version_uuid": "51b12d3a-f147-444c-8165-1e43b9610fa8",
+          "measure_definition_uuid": "e911ed29-7869-49ac-9bf8-7b297204e75e",
+          "measure_definition_version_uuid": "e4aff80c-fcad-4d0b-bbd8-288054f77e97",
           "arguments": [
             {
               "display_name": "Number of Bedrooms",
@@ -1536,8 +1536,8 @@
           "measure_definition_display_name": "ProcessHeatingandCoolingSetpoints",
           "measure_definition_name": "processheatingandcoolingsetpoints",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "757aa14a-8029-4d7a-894f-de01cd74737e",
-          "measure_definition_version_uuid": "af3ceb08-8d82-470c-b7bc-bd0e7817ce86",
+          "measure_definition_uuid": "a437986e-533a-4804-b6af-45a17f4d30f0",
+          "measure_definition_version_uuid": "e376c082-e936-4fdf-8953-3b113b2c6f6f",
           "arguments": [
             {
               "display_name": "Living Zone",
@@ -1595,8 +1595,8 @@
           "measure_definition_display_name": "ResidentialLighting",
           "measure_definition_name": "residentiallighting",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "de21c7a9-b5be-42c8-97c5-cbe1cb482a3c",
-          "measure_definition_version_uuid": "b70f566b-d7ee-41e5-b908-70842a9b5be4",
+          "measure_definition_uuid": "552765b5-bed7-4297-b138-db32968a84a1",
+          "measure_definition_version_uuid": "353009bc-84cf-4637-861f-4f9a105b324a",
           "arguments": [
             {
               "display_name": "Lighting Energy Consumption Option",
@@ -1782,8 +1782,8 @@
           "measure_definition_display_name": "ProcessThermalMassPartitionWall",
           "measure_definition_name": "processthermalmasspartitionwall",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "1022a217-5fdf-45d4-9c40-8ba925b300ed",
-          "measure_definition_version_uuid": "d6583788-8b2c-4877-8a26-25dc097e0c03",
+          "measure_definition_uuid": "1c22630a-96e6-4074-b84e-1c5b2169eabe",
+          "measure_definition_version_uuid": "d5607361-5316-4448-b338-777a49ee36e0",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -1873,8 +1873,8 @@
           "measure_definition_display_name": "ProcessConstructionsInteriorInsulatedFloors",
           "measure_definition_name": "processconstructionsinteriorinsulatedfloors",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "9b538fc9-bd6e-458c-987e-40c4f0884b94",
-          "measure_definition_version_uuid": "da903756-2320-410a-9119-a864880451c5",
+          "measure_definition_uuid": "15148deb-e756-491a-a74f-1f624d5a7e50",
+          "measure_definition_version_uuid": "39f8d059-4e6b-44d2-a076-627070017c3b",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -1980,8 +1980,8 @@
           "measure_definition_display_name": "ProcessConstructionsSlab",
           "measure_definition_name": "processconstructionsslab",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "7a352004-10a2-4b6f-bc4d-0275d73d7b9f",
-          "measure_definition_version_uuid": "05b6d12c-13b1-42d3-b691-440187b9de48",
+          "measure_definition_uuid": "0f672129-59af-4ac1-90db-e54eb28718fd",
+          "measure_definition_version_uuid": "65ee97bc-e933-4742-9bbc-9f575acf62bf",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -2079,8 +2079,8 @@
           "measure_definition_display_name": "ProcessConstructionsInteriorUninsulatedFloors",
           "measure_definition_name": "processconstructionsinterioruninsulatedfloors",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "a2fd96fa-d21e-44db-8f86-a569d1bf3c3d",
-          "measure_definition_version_uuid": "8788bf13-e9fd-4049-925f-6048e83157e0",
+          "measure_definition_uuid": "ed93964e-b3ac-4ff9-9730-52b0b3630131",
+          "measure_definition_version_uuid": "888f58e3-2748-4020-8cfb-24bdd2330af4",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -2099,16 +2099,16 @@
               "value": null
             },
             {
-              "display_name": "Partition Wall Mass: Thickness",
-              "display_name_short": "Partition Wall Mass: Thickness",
+              "display_name": "Ceiling Mass: Thickness",
+              "display_name_short": "Ceiling Mass: Thickness",
               "name": "userdefinedgypthickness",
               "value_type": "double",
               "default_value": 0.5,
               "value": 0.5
             },
             {
-              "display_name": "Partition Wall Mass: Num Layers",
-              "display_name_short": "Partition Wall Mass: Num Layers",
+              "display_name": "Ceiling Mass: Num Layers",
+              "display_name_short": "Ceiling Mass: Num Layers",
               "name": "userdefinedgyplayers",
               "value_type": "double",
               "default_value": 1.0,
@@ -2169,6 +2169,65 @@
           "workflow_index": 18
         },
         {
+          "name": "processconstructionsinterioruninsulatedwalls",
+          "display_name": "ProcessConstructionsInteriorUninsulatedWalls",
+          "measure_type": "RubyMeasure",
+          "measure_definition_class_name": "ProcessConstructionsInteriorUninsulatedWalls",
+          "measure_definition_directory": "./measures/ProcessConstructionsInteriorUninsulatedWalls",
+          "measure_definition_directory_local": "c:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsInteriorUninsulatedWalls",
+          "measure_definition_display_name": "ProcessConstructionsInteriorUninsulatedWalls",
+          "measure_definition_name": "processconstructionsinterioruninsulatedwalls",
+          "measure_definition_name_xml": null,
+          "measure_definition_uuid": "3a9b3427-e767-4e01-8abe-d67058c5d1e5",
+          "measure_definition_version_uuid": "cd0b7bfe-7831-4ecf-a731-c5b7c3d621ae",
+          "arguments": [
+            {
+              "display_name": "Living Space",
+              "display_name_short": "Living Space",
+              "name": "selectedliving",
+              "value_type": "string",
+              "default_value": "living_1",
+              "value": "living_1"
+            },
+            {
+              "display_name": "Partition Wall Mass: Thickness",
+              "display_name_short": "Partition Wall Mass: Thickness",
+              "name": "userdefinedpartitionwallmassth",
+              "value_type": "double",
+              "default_value": 0.5,
+              "value": 0.5
+            },
+            {
+              "display_name": "Partition Wall Mass: Conductivity",
+              "display_name_short": "Partition Wall Mass: Conductivity",
+              "name": "userdefinedpartitionwallmasscond",
+              "value_type": "double",
+              "default_value": 1.1112,
+              "value": 1.1112
+            },
+            {
+              "display_name": "Partition Wall Mass: Density",
+              "display_name_short": "Partition Wall Mass: Density",
+              "name": "userdefinedpartitionwallmassdens",
+              "value_type": "double",
+              "default_value": 50.0,
+              "value": 50.0
+            },
+            {
+              "display_name": "Partition Wall Mass: Specific Heat",
+              "display_name_short": "Partition Wall Mass: Specific Heat",
+              "name": "userdefinedpartitionwallmasssh",
+              "value_type": "double",
+              "default_value": 0.2,
+              "value": 0.2
+            }
+          ],
+          "variables": [
+
+          ],
+          "workflow_index": 19
+        },
+        {
           "name": "processconstructionsgarageslab",
           "display_name": "ProcessConstructionsGarageSlab",
           "measure_type": "RubyMeasure",
@@ -2178,8 +2237,8 @@
           "measure_definition_display_name": "ProcessConstructionsGarageSlab",
           "measure_definition_name": "processconstructionsgarageslab",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "bada3ddc-0ff7-40ee-879b-c7499b539aa9",
-          "measure_definition_version_uuid": "62befb03-90b0-4768-b2be-d26687244665",
+          "measure_definition_uuid": "5f63e3ba-d87b-4990-98fa-480b0cca5e5b",
+          "measure_definition_version_uuid": "395d46e3-3f5b-4998-a437-0d5fb4e71f45",
           "arguments": [
             {
               "display_name": "Garage Space",
@@ -2193,7 +2252,7 @@
           "variables": [
 
           ],
-          "workflow_index": 19
+          "workflow_index": 20
         },
         {
           "name": "processconstructionsgarageroof",
@@ -2205,8 +2264,8 @@
           "measure_definition_display_name": "ProcessConstructionsGarageRoof",
           "measure_definition_name": "processconstructionsgarageroof",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "e3922f7d-1759-4bee-84ef-d5cd1b3aee6f",
-          "measure_definition_version_uuid": "480f2163-7891-48ed-bee9-50dddbacc2ff",
+          "measure_definition_uuid": "0ad9fd77-b892-4d02-af14-4b7da6b867a6",
+          "measure_definition_version_uuid": "8772acf7-8d22-406e-bcea-54e1ab7e7c2e",
           "arguments": [
             {
               "display_name": "Garage Space",
@@ -2244,7 +2303,7 @@
           "variables": [
 
           ],
-          "workflow_index": 20
+          "workflow_index": 21
         },
         {
           "name": "processconstructionswindows",
@@ -2256,8 +2315,8 @@
           "measure_definition_display_name": "ProcessConstructionsWindows",
           "measure_definition_name": "processconstructionswindows",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "6e54892c-ea67-4ac6-bd56-5d5cc9fcc5d9",
-          "measure_definition_version_uuid": "b6e54bb2-c82b-436a-9956-c8c00cd9f088",
+          "measure_definition_uuid": "1366c8ca-99f9-49fc-bb7b-8766dda526fa",
+          "measure_definition_version_uuid": "240f2b8c-bde7-479f-9f88-88c9001da7a1",
           "arguments": [
             {
               "display_name": "U-Value",
@@ -2295,7 +2354,7 @@
           "variables": [
 
           ],
-          "workflow_index": 21
+          "workflow_index": 22
         },
         {
           "name": "processgroundtemperature",
@@ -2307,15 +2366,15 @@
           "measure_definition_display_name": "ProcessGroundTemperature",
           "measure_definition_name": "processgroundtemperature",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "21e59dd8-3278-4ae6-afb7-149bd9237746",
-          "measure_definition_version_uuid": "97d24731-056c-4fee-84a3-3734a0d7d7a4",
+          "measure_definition_uuid": "0b24de8f-a83f-4ca8-982b-842aebf9c7c7",
+          "measure_definition_version_uuid": "74a8dc3b-bc4c-4068-9d43-fe7650987ee5",
           "arguments": [
 
           ],
           "variables": [
 
           ],
-          "workflow_index": 22
+          "workflow_index": 23
         },
         {
           "name": "processairflow",
@@ -2327,8 +2386,8 @@
           "measure_definition_display_name": "ProcessAirflow",
           "measure_definition_name": "processairflow",
           "measure_definition_name_xml": null,
-          "measure_definition_uuid": "5cc6540d-2314-449f-bc18-3e0e28fce785",
-          "measure_definition_version_uuid": "8fd2e2f1-7cf4-43d0-93a7-8369f2ca054c",
+          "measure_definition_uuid": "177d8cf3-2200-4e1a-b30e-a71fdd395ec2",
+          "measure_definition_version_uuid": "cf13a3ad-55d6-4a63-8672-13a21fa719f5",
           "arguments": [
             {
               "display_name": "Living Space",
@@ -2822,7 +2881,7 @@
           "variables": [
 
           ],
-          "workflow_index": 23
+          "workflow_index": 24
         }
       ]
     },
