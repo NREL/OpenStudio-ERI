@@ -1,5 +1,14 @@
-# developed for use with Ruby 2.0.0 (have your Ruby evaluate RUBY_VERSION)
-require 'cgi'
+#see the URL below for information on how to write OpenStudio measures
+# http://openstudio.nrel.gov/openstudio-measure-writing-guide
+
+#see the URL below for information on using life cycle cost objects in OpenStudio
+# http://openstudio.nrel.gov/openstudio-life-cycle-examples
+
+#see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
+# http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
+
+#load weather.rb
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
   
@@ -7,124 +16,73 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
     return "ModifySiteWaterMainsTemperature"
   end
   
-  # sets @avgOATarg and @maxDiffOATarg to our new arguments
+  def description
+    return "This measure calculates mains water temperatures using weather data."
+  end
+  
+  def modeler_description
+    return "This measure creates or modifies the Site:MainsWaterTemperature object. It currently uses the correlation method, but should be updated to write daily schedules to avoid issues in the southern hemisphere."
+  end   
+  
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #Average Annual Outdoor Air Temp
-    @avgOATarg = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("avgOAT",true) # true means required
-    @avgOATarg.setDisplayName("Avg Annual Outdoor Air Temperature (?F)")
-    @avgOATarg.setDefaultValue(50)
-    args << @avgOATarg
-    
-    #Maximum Difference in Monthly Outdoor Air Temp
-    @maxDiffOATarg = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("maxDiffOAT",true)
-    @maxDiffOATarg.setDisplayName("Max Difference in Monthly Outdoor Air Temp (?F)")
-    @maxDiffOATarg.setDefaultValue(30)
-    args << @maxDiffOATarg
     
     return args
   end # arguments 
 
-  #Put argument values in @avgOAT and @maxDiffOAT, returning true if they validate, false otherwise
-  #(UserScript should exit(return false) if false is returned, like with registerWarning)
-  def prevalidate(model, runner, user_arguments)
-
-    modelArgs = arguments(model)
-  
-    #use the built-in error checking 
-    return false unless runner.validateUserArguments(modelArgs, user_arguments)
-
-    #isolate relevant user argument values
-    @avgOAT = runner.getDoubleArgumentValue("avgOAT",user_arguments)
-    @maxDiffOAT = runner.getDoubleArgumentValue("maxDiffOAT",user_arguments)
-
-    
-    #CHECK for INVALID arguments
-    
-    #"UserScripts should return false after calling [registerError]" see http://openstudio.nrel.gov/c-sdk-documentation/ruleset
-    emit = lambda{|msg| runner.registerError(CGI.escapeHTML(msg +" -- please resubmit")) ;  false  }
-    
-    avgOATMax = 85;
-    return false unless @avgOAT <= avgOATMax or emit["Temperature #{@avgOAT}F too high (>#{avgOATMax})"]
-    
-    avgOATMin = -70;
-    return false unless avgOATMin <= @avgOAT or emit["Temperature #{@avgOAT}F too low (<#{avgOATMin})"]
-    
-    maxDiffOATMax = 60;
-    return false unless @maxDiffOAT <= maxDiffOATMax or emit["Temperature Diff #{@maxDiffOAT}F too high (>#{maxDiffOATMax})"]
-
-    return false unless 0 <= @maxDiffOAT or emit["Temperature Diff #{@maxDiffOAT}F must not be negative"]
-
-    
-    #CHECK for VALID-BUT-IFFY arguments
-    
-    #"The UserScript should exit (return false) if false is returned [from registerWarning]" see http://openstudio.nrel.gov/c-sdk-documentation/ruleset
-    emit = lambda{|msg| runner.registerWarning(CGI.escapeHTML(msg)) } 
-    
-    return false unless @avgOAT != @avgOATarg.defaultValueAsDouble or emit["Using default Average temp (#{@avgOAT}F)"]
-   
-    avgOATRatherHigh = 70
-    return false unless @avgOAT <= avgOATRatherHigh or emit["Temperature #{@avgOAT}F is rather high (>#{avgOATRatherHigh})"]
-    
-    avgOATRatherLow = -40
-    return false unless avgOATRatherLow <= @avgOAT or emit["Temperature #{@avgOAT}F is rather low (<#{avgOATRatherLow})"]
-    
-    maxDiffOATRatherHigh = 30
-    return false unless @maxDiffOAT <= maxDiffOATRatherHigh or emit["Temperature Diff #{@maxDiffOAT}F is rather high (>#{maxDiffOATRatherHigh})"]
-    
-    true
-  end # prevalidate
-
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
+	
+	@model = nil
+	@weather = nil
+	unless model.nil?
+	  @model = model
+	end
+	unless runner.nil?
+	  begin # Spreadsheet
+		weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
+		weather_file_dir = "weather"
+		epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
+		@weather = WeatherProcess.new(epw_path)
+	  rescue # PAT
+		if runner.lastEpwFilePath.is_initialized
+		  test = runner.lastEpwFilePath.get.to_s
+		  if File.exist?(test)
+			epw_path = test
+			@weather = WeatherProcess.new(epw_path)
+		  end
+		end
+	  end
+	end
+	unless @weather.nil?
+	  runner.registerInfo("EPW weather path set to #{epw_path}")
+	else
+	  runner.registerInfo("EPW weather path was NOT set")
+	end
   
-    return false unless prevalidate(model, runner, user_arguments)
-    
-    waterUseEquipment  = Hash[:count=> model.getWaterUseEquipments.length   , :display=> "Water Use Equipment" ]
-    waterUseConnection = Hash[:count=> model.getWaterUseConnectionss.length , :display=> "Water Use Connections"]
-    waterHeaterMixed   = Hash[:count=> model.getWaterHeaterMixeds.length    , :display=> "Water Heaters (Mixed)"]
-    
-    displayCount = lambda{|x| "#{x[:count]} #{x[:display]}"}
-    
-    runner.registerInitialCondition CGI.escapeHTML(
-                                    "Initially there were #{displayCount[waterUseEquipment]}"+
-                                    ", #{displayCount[waterHeaterMixed]}"+
-                                    ", and #{displayCount[waterUseConnection]}" 
-                                    )
-     
-    if (0== waterUseEquipment[:count] +waterUseConnection[:count] +waterHeaterMixed[:count])
-        runner.registerAsNotApplicable CGI.escapeHTML(
-                                       "SiteWaterMainsTemperature was not updated, since there was"+
-                                       " no #{waterUseEquipment[:display]}"+
-                                       ", no #{waterHeaterMixed[:display]}"+
-                                       ", and no #{waterUseConnection[:display]}"
-                                       )
-    else
+	avgOAT = OpenStudio::convert(@weather.data.AnnualAvgDrybulb,"F","C").get
+	monthlyOAT = @weather.data.MonthlyAvgDrybulbs
+	
+	min_temp = monthlyOAT.min
+	max_temp = monthlyOAT.max
+	
+	maxDiffOAT = OpenStudio::convert(max_temp,"F","C").get - OpenStudio::convert(min_temp,"F","C").get
+	
+	#Calc annual average mains temperature to report
+	daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(@weather.data, @weather.header)
+		
+    swmt = model.getSiteWaterMainsTemperature
+        
+    swmt.setCalculationMethod "Correlation"
+    swmt.setAnnualAverageOutdoorAirTemperature avgOAT
+    swmt.setMaximumDifferenceInMonthlyAverageOutdoorAirTemperatures  maxDiffOAT
+        
+    runner.registerFinalCondition("SiteWaterMainsTemperature has been updated with an average temperature of #{annual_mains.round(1)} F ")
+                                  
 
-        swmt = model.getSiteWaterMainsTemperature
-        
-        swmt.setCalculationMethod "Correlation"
-        swmt.setAnnualAverageOutdoorAirTemperature tempCfromF(@avgOAT)
-        swmt.setMaximumDifferenceInMonthlyAverageOutdoorAirTemperatures  tempDiffCfromF(@maxDiffOAT)
-        
-        runner.registerFinalCondition CGI.escapeHTML(
-                                      "SiteWaterMainsTemperature has been updated with"+
-                                      " Avg Temperature #{@avgOAT}F (#{swmt.annualAverageOutdoorAirTemperature.get.round(1)}C)"+
-                                      " and Max Diff #{@maxDiffOAT}F (#{swmt.maximumDifferenceInMonthlyAverageOutdoorAirTemperatures.get.round(1)}C)"
-                                      )
-    end
-    
-    true
+	return true
+	
   end # run 
-
-  def tempCfromF(x)
-    OpenStudio::convert(x*1.0,"F","C").get
-  end
-  
-  def tempDiffCfromF(d) #if d is the difference between two temps in F, then tempDiffCfromF(d) is the difference between the temps in C
-    tempCfromF(d) -tempCfromF(0)
-  end
   
 end # ModifySiteWaterMainsTemperature
 

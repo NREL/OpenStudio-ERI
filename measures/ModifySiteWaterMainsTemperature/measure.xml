@@ -2,30 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>modify_site_water_mains_temperature</name>
   <uid>f15e8163-22f4-4336-8257-338e1ab63a16</uid>
-  <version_id>eb764c9f-70df-4f1b-b274-bf202c4ff131</version_id>
+  <version_id>f44c9fd2-2cee-459e-a298-8b738ecf92fb</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ModifySiteWaterMainsTemperature</class_name>
   <display_name>ModifySiteWaterMainsTemperature</display_name>
-  <description>This measure updates the object representing the cold water temperatures delivered by underground water main pipes to the building. Water mains temperatures are a function of outdoor climate conditions and vary with time of year. Users input two arguments: 1) The average annual outdoor air temperature (dry bulb, deg F) and 2) The maximum difference in monthly average outdoor air temperatures (dry bulb, deg F). The arguments are used in a correlation formulated to predict the water mains temperatures. All OS:WaterUse:Equipment, OS:WaterHeater:Mixed, OS:WaterHeater:Stratified (not supported as of OS1.4.0) or OS WaterUse:Connections objects included in your model will use this temperature as the cold water inlet temperature. See the EnergyPlus Engineering Reference for correlation details.</description>
-  <modeler_description>The measure will update the OS:Site:WaterMainsTemperature object. The object will be configured to use the correlation method and will accept two user arguments 1) The average annual outdoor air temperature (dry bulb, deg F) and 2) The maximum difference in monthly average outdoor air temperatures (dry bulb, deg F). </modeler_description>
-  <arguments>
-    <argument>
-      <name>avgOAT</name>
-      <display_name>Avg Annual Outdoor Air Temperature (?F)</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>50</default_value>
-    </argument>
-    <argument>
-      <name>maxDiffOAT</name>
-      <display_name>Max Difference in Monthly Outdoor Air Temp (?F)</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>30</default_value>
-    </argument>
-  </arguments>
+  <description>This measure calculates mains water temperatures using weather data.</description>
+  <modeler_description>This measure creates or modifies the Site:MainsWaterTemperature object. It currently uses the correlation method, but should be updated to write daily schedules to avoid issues in the southern hemisphere.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Water Heating</tag>
@@ -56,6 +39,24 @@
       <checksum>3DD9D444</checksum>
     </file>
     <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>733EFF82</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>39852CD3</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>276E3F49</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -64,7 +65,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>11B953D7</checksum>
+      <checksum>BF5300A7</checksum>
     </file>
   </files>
 </measure>
