@@ -223,6 +223,10 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 		runner.registerError("The pier & beam height can be set between 0.5 and 8 ft.")
 		return false
 	end
+	if num_floors > 6
+		runner.registetError("Too many floors.")
+		return false
+	end
 	
 	# calculate the footprint of the building
 	garage_area = garage_width * garage_depth
@@ -255,6 +259,10 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 		foundation_type = "crawlspace"
 		foundation_offset = foundation_height
 	end
+	
+	# stories
+	story_hash = Hash.new
+	story_hash = {0=>"First", 1=>"Second", 2=>"Third", 3=>"Fourth", 4=>"Fifth", 5=>"Sixth"}
 	
     # loop through the number of floors
     for floor in (0..num_floors-1)
@@ -342,11 +350,16 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 			living_polygon = make_rectangle(sw_point, nw_point, ne_point, se_point)				
 		end		
 		
+		# make story
+		story = OpenStudio::Model::BuildingStory.new(model)
+		story.setName(story_hash[floor])
+		
 		# make space
         living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
         living_space = living_space.get
 		living_space_name = "living_floor_#{floor+1}"
         living_space.setName(living_space_name)
+		living_space.setBuildingStory(story)
 		runner.registerInfo("Set #{living_space_name}.")
 		
 		# set these to the living zone
@@ -451,7 +464,6 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 		surface_w_wall.setSpace(attic_space)
 		surface_e_wall.setSpace(attic_space)
 		
-		# attic_space.setBuildingStory(story)
 		attic_space.setName(attic_type)
 		runner.registerInfo("Set #{attic_type}.")
 
