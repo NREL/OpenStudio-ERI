@@ -1,13 +1,13 @@
 <measure>
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
-  <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>bffb8735-64fe-435f-9b2a-586273a4fcc2</version_id>
-  <xml_checksum>126F1C43</xml_checksum>
+  <uid>33d8c300-8f2b-4d36-b6cc-545422c7b407</uid>
+  <version_id>c94bd814-88ed-4f1f-a504-9a31031ab14a</version_id>
+  <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
-  <display_name>Add/Replace Residential Electric Cooking Range</display_name>
+  <display_name>Add/Replace Residential Gas Cooking Range</display_name>
   <description>Adds (or replaces) a residential cooking range with the specified efficiency, operation, and schedule.</description>
-  <modeler_description>Since there is no Cooking Range object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential cooking range. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
+  <modeler_description>Since there is no Cooking Range object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential cooking range. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
     <argument>
       <name>Num_Br</name>
@@ -58,6 +58,25 @@
       <default_value>0.11</default_value>
     </argument>
     <argument>
+      <name>e_ignition</name>
+      <display_name>Has Electronic Ignition</display_name>
+      <description>For gas/propane cooking ranges with electronic ignition, an extra (40 + 13.3x(#BR)) kWh/yr of electricity will be included.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
       <name>mult</name>
       <display_name>Occupancy Energy Multiplier</display_name>
       <description>Appliance energy use is multiplied by this factor to account for occupancy usage that differs from the national average.</description>
@@ -104,7 +123,7 @@
   </arguments>
   <provenances/>
   <tags>
-    <tag>Equipment.Electric Equipment</tag>
+    <tag>Equipment.Gas Equipment</tag>
   </tags>
   <attributes>
     <attribute>
@@ -146,7 +165,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3631C954</checksum>
+      <checksum>155BBD32</checksum>
     </file>
   </files>
 </measure>

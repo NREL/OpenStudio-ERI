@@ -43,13 +43,13 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
 		weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
 		weather_file_dir = "weather"
 		epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
-		@weather = WeatherProcess.new(epw_path)
+		@weather = WeatherProcess.new(epw_path,runner)
 	  rescue # PAT
 		if runner.lastEpwFilePath.is_initialized
 		  test = runner.lastEpwFilePath.get.to_s
 		  if File.exist?(test)
 			epw_path = test
-			@weather = WeatherProcess.new(epw_path)
+			@weather = WeatherProcess.new(epw_path,runner)
 		  end
 		end
 	  end
