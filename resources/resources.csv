@@ -49,3 +49,6 @@ ResidentialMiscellaneousGasLoads,sim.rb,util.rb,weather.rb,constants.rb,psychrom
 CreateResidentialEaves,,,,,,,,,
 CreateResidentialNeighbors,,,,,,,,,
 CreateResidentialDoorArea,,,,,,,,,
+CreateResidentialOrientation,,,,,,,,,
+CreateResidentialOverhangs,,,,,,,,,
+SetResidentialEPWFile,,,,,,,,,

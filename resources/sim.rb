@@ -1192,100 +1192,128 @@ class Sim
     end
 
     if not si.InfiltrationLivingSpaceACH50.nil?
+	  if living_space.volume == 0
+		  living_space.SLA = 0
+		  living_space.ELA = 0
+		  living_space.ACH = 0
+	 	  living_space.inf_flow = 0
+	  else
+		  # Living Space Infiltration
+		  living_space.inf_method = Constants.InfMethodASHRAE
 
-      # Living Space Infiltration
-      living_space.inf_method = Constants.InfMethodASHRAE
+		  # Based on "Field Validation of Algebraic Equations for Stack and
+		  # Wind Driven Air Infiltration Calculations" by Walker and Wilson (1998)
 
-      # Based on "Field Validation of Algebraic Equations for Stack and
-      # Wind Driven Air Infiltration Calculations" by Walker and Wilson (1998)
+		  # Pressure Exponent
+		  si.n_i = 0.67
+		  
+		  # Calculate SLA for above-grade portion of the building
+		  living_space.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationLivingSpaceACH50, si.n_i, geometry.above_grade_finished_floor_area, living_space.volume)
 
-      # Pressure Exponent
-      si.n_i = 0.67
-      living_space.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationLivingSpaceACH50, si.n_i, geometry.above_grade_finished_floor_area, living_space.volume)
+		  # Effective Leakage Area (ft^2)
+		  si.A_o = living_space.SLA * geometry.above_grade_finished_floor_area
 
-      # Effective Leakage Area (ft^2)
-      si.A_o = living_space.SLA * geometry.above_grade_finished_floor_area
+		  # Flow Coefficient (cfm/inH2O^n) (based on ASHRAE HoF)
+		  si.C_i = si.A_o * (2.0 / outside_air_density) ** 0.5 * delta_pref ** (0.5 - si.n_i) * inf_conv_factor
+		  has_flue = false
 
-      # Flow Coefficient (cfm/inH2O^n) (based on ASHRAE HoF)
-      si.C_i = si.A_o * (2.0 / outside_air_density) ** 0.5 * delta_pref ** (0.5 - si.n_i) * inf_conv_factor
-      has_flue = false
+		  if has_flue
+			# for future use
+			flue_diameter = 0.5 # after() do
+			si.Y_i = flue_diameter ** 2.0 / 4.0 / si.A_o # Fraction of leakage through the flu
+			si.flue_height = geometry.building_height + 2.0 # ft
+			si.S_wflue = 1.0 # Flue Shelter Coefficient
+		  else
+			si.Y_i = 0.0 # Fraction of leakage through the flu
+			si.flue_height = 0.0 # ft
+			si.S_wflue = 0.0 # Flue Shelter Coefficient
+		  end
 
-      if has_flue
-        # for future use
-        flue_diameter = 0.5 # after() do
-        si.Y_i = flue_diameter ** 2.0 / 4.0 / si.A_o # Fraction of leakage through the flu
-        si.flue_height = geometry.building_height + 2.0 # ft
-        si.S_wflue = 1.0 # Flue Shelter Coefficient
-      else
-        si.Y_i = 0.0 # Fraction of leakage through the flu
-        si.flue_height = 0.0 # ft
-        si.S_wflue = 0.0 # Flue Shelter Coefficient
-      end
+		  # Leakage distributions per Iain Walker (LBL) recommendations
+		  if hasCrawl and crawlspace.CrawlACH > 0
+			# 15% ceiling, 35% walls, 50% floor leakage distribution for vented crawl
+			leakage_ceiling = 0.15
+			leakage_walls = 0.35
+			leakage_floor = 0.50
+		  else
+			# 25% ceiling, 50% walls, 25% floor leakage distribution for slab/basement/unvented crawl
+			leakage_ceiling = 0.25
+			leakage_walls = 0.50
+			leakage_floor = 0.25		  
+		  end
+		  if leakage_ceiling + leakage_walls + leakage_floor != 1
+			runner.registerError("Invalid air leakage distribution specified (#{leakage_ceiling}, #{leakage_walls}, #{leakage_floor}); does not add up to 1.")
+			return false
+		  end
+		  si.R_i = (leakage_ceiling + leakage_floor)
+		  si.X_i = (leakage_ceiling - leakage_floor)
+		  si.R_i = si.R_i * (1 - si.Y_i)
+		  si.X_i = si.X_i * (1 - si.Y_i)		 
+		  
+		  living_space.hor_leak_frac = si.R_i
+		  si.Z_f = si.flue_height / (living_space.height + living_space.coord_z)
 
-      si.R_i = 0.5 * (1.0 - si.Y_i)
-      living_space.hor_leak_frac = si.R_i
-      si.X_i = 0.0
-      si.Z_f = si.flue_height / (living_space.height + living_space.coord_z)
+		  # Calculate Stack Coefficient
+		  si.M_o = (si.X_i + (2.0 * si.n_i + 1.0) * si.Y_i) ** 2.0 / (2 - si.R_i)
 
-      # Calculate Stack Coefficient
-      si.M_o = (si.X_i + (2.0 * si.n_i + 1.0) * si.Y_i) ** 2.0 / (2 - si.R_i)
+		  if si.M_o <= 1.0
+			si.M_i = si.M_o # eq. 10
+		  else
+			si.M_i = 1.0 # eq. 11
+		  end
 
-      if si.M_o <= 1.0
-        si.M_i = si.M_o # eq. 10
-      else
-        si.M_i = 1.0 # eq. 11
-      end
+		  if has_flue
+			# Eq. 13
+			si.X_c = si.R_i + (2.0 * (1.0 - si.R_i - si.Y_i)) / (si.n_i + 1.0) - 2.0 * si.Y_i * (si.Z_f - 1.0) ** si.n_i
+			# Additive flue function, Eq. 12
+			si.F_i = si.n_i * si.Y_y * (si.Z_f - 1.0) ** ((3.0 * si.n_i - 1.0) / 3.0) * (1.0 - (3.0 * (si.X_c - si.X_i) ** 2.0 * si.R_i ** (1 - si.n_i)) / (2.0 * (si.Z_f + 1.0)))
+		  else
+			# Critical value of ceiling-floor leakage difference where the
+			# neutral level is located at the ceiling (eq. 13)
+			si.X_c = si.R_i + (2.0 * (1.0 - si.R_i - si.Y_i)) / (si.n_i + 1.0)
+			# Additive flue function (eq. 12)
+			si.F_i = 0.0
+		  end
 
-      if has_flue
-        # Eq. 13
-        si.X_c = si.R_i + (2.0 * (1.0 - si.R_i - si.Y_i)) / (si.n_i + 1.0) - 2.0 * si.Y_i * (si.Z_f - 1.0) ** si.n_i
-        # Additive flue function, Eq. 12
-        si.F_i = si.n_i * si.Y_y * (si.Z_f - 1.0) ** ((3.0 * si.n_i - 1.0) / 3.0) * (1.0 - (3.0 * (si.X_c - si.X_i) ** 2.0 * si.R_i ** (1 - si.n_i)) / (2.0 * (si.Z_f + 1.0)))
-      else
-        # Critical value of ceiling-floor leakage difference where the
-        # neutral level is located at the ceiling (eq. 13)
-        si.X_c = si.R_i + (2.0 * (1.0 - si.R_i - si.Y_i)) / (si.n_i + 1.0)
-        # Additive flue function (eq. 12)
-        si.F_i = 0.0
-      end
+		  si.f_s = ((1.0 + si.n_i * si.R_i) / (si.n_i + 1.0)) * (0.5 - 0.5 * si.M_i ** (1.2)) ** (si.n_i + 1.0) + si.F_i
 
-      si.f_s = ((1.0 + si.n_i * si.R_i) / (si.n_i + 1.0)) * (0.5 - 0.5 * si.M_i ** (1.2)) ** (si.n_i + 1.0) + si.F_i
+		  si.stack_coef = si.f_s * (0.005974 * outside_air_density * Constants.g * living_space.height / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
 
-      si.stack_coef = si.f_s * (0.005974 * outside_air_density * Constants.g * living_space.height / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
+		  # Calculate wind coefficient
+		  if hasCrawl and crawlspace.CrawlACH > 0
 
-      # Calculate wind coefficient
-      if hasCrawl and crawlspace.CrawlACH > 0
+			if si.X_i > 1.0 - 2.0 * si.Y_i
+			  # Critical floor to ceiling difference above which f_w does not change (eq. 25)
+			  si.X_i = 1.0 - 2.0 * si.Y_i
+			end
 
-        if si.X_i > 1.0 - 2.0 * si.Y_i
-          # Critical floor to ceiling difference above which f_w does not change (eq. 25)
-          si.X_i = 1.0 - 2.0 * si.Y_i
-        end
+			# Redefined R for wind calculations for houses with crawlspaces (eq. 21)
+			si.R_x = 1.0 - si.R_i * (si.n_i / 2.0 + 0.2)
+			# Redefined Y for wind calculations for houses with crawlspaces (eq. 22)
+			si.Y_x = 1.0 - si.Y_i / 4.0
+			# Used to calculate X_x (eq.24)
+			si.X_s = (1.0 - si.R_i) / 5.0 - 1.5 * si.Y_i
+			# Redefined X for wind calculations for houses with crawlspaces (eq. 23)
+			si.X_x = 1.0 - (((si.X_i - si.X_s) / (2.0 - si.R_i)) ** 2.0) ** 0.75
+			# Wind factor (eq. 20)
+			si.f_w = 0.19 * (2.0 - si.n_i) * si.X_x * si.R_x * si.Y_x
 
-        # Redefined R for wind calculations for houses with crawlspaces (eq. 21)
-        si.R_x = 1.0 - si.R_i * (si.n_i / 2.0 + 0.2)
-        # Redefined Y for wind calculations for houses with crawlspaces (eq. 22)
-        si.Y_x = 1.0 - si.Y_i / 4.0
-        # Used to calculate X_x (eq.24)
-        si.X_s = (1.0 - si.R_i) / 5.0 - 1.5 * si.Y_i
-        # Redefined X for wind calculations for houses with crawlspaces (eq. 23)
-        si.X_x = 1.0 - (((si.X_i - si.X_s) / (2.0 - si.R_i)) ** 2.0) ** 0.75
-        # Wind factor (eq. 20)
-        si.f_w = 0.19 * (2.0 - si.n_i) * si.X_x * si.R_x * si.Y_x
+		  else
 
-      else
+			si.J_i = (si.X_i + si.R_i + 2.0 * si.Y_i) / 2.0
+			si.f_w = 0.19 * (2.0 - si.n_i) * (1.0 - ((si.X_i + si.R_i) / 2.0) ** (1.5 - si.Y_i)) - si.Y_i / 4.0 * (si.J_i - 2.0 * si.Y_i * si.J_i ** 4.0)
 
-        si.J_i = (si.X_i + si.R_i + 2.0 * si.Y_i) / 2.0
-        si.f_w = 0.19 * (2.0 - si.n_i) * (1.0 - ((si.X_i + si.R_i) / 2.0) ** (1.5 - si.Y_i)) - si.Y_i / 4.0 * (si.J_i - 2.0 * si.Y_i * si.J_i ** 4.0)
+		  end
 
-      end
+		  si.wind_coef = si.f_w * ( 0.01285 * outside_air_density / 2.0 ) ** si.n_i # inH2O^n/mph^2n
 
-      si.wind_coef = si.f_w * ( 0.01285 * outside_air_density / 2.0 ) ** si.n_i # inH2O^n/mph^2n
+		  living_space.ACH = get_infiltration_ACH_from_SLA(living_space.SLA, geometry.stories, @weather)
 
-      living_space.ACH = get_infiltration_ACH_from_SLA(living_space.SLA, geometry.stories, @weather)
-
-      # Convert living space ACH to cfm:
-      living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * living_space.volume # cfm
-
+		  # Convert living space ACH to cfm:
+		  living_space.inf_flow = living_space.ACH / OpenStudio::convert(1.0,"hr","min").get * living_space.volume # cfm
+		  
+	  end
+		  
     elsif not si.InfiltrationLivingSpaceConstantACH.nil?
 
       # Used for constant ACH
@@ -1355,6 +1383,10 @@ class Sim
     ws = Sim._processWindSpeedCorrection(wind_speed, site, si, neighbors, geometry)
 
     spaces.each do |space|
+	
+	  if space.volume == 0
+	    next
+	  end
 
       space.f_t_SG = ws.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** ws.site_terrain_exponent / (ws.terrain_multiplier * (ws.height / 32.8) ** ws.terrain_exponent)
       space.f_s_SG = nil
@@ -1599,45 +1631,60 @@ class Sim
   def self._processWindSpeedCorrection(wind_speed, site, infiltration, neighbors, geometry)
     # Wind speed correction
     wind_speed.height = 32.8 # ft (Standard weather station height)
-
-    # Open, Unrestricted at Weather Station
-    wind_speed.terrain_multiplier = 1.0 # Used for DOE-2's correlation
-    wind_speed.terrain_exponent = 0.15 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-    wind_speed.boundary_layer_thickness = 885.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-
-    if site.TerrainType == Constants.TerrainOcean
-      wind_speed.site_terrain_multiplier = 1.30 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.10 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 333.9 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == Constants.TerrainPlains
-      wind_speed.site_terrain_multiplier = 1.00 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.15 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 885.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == Constants.TerrainRural
-      wind_speed.site_terrain_multiplier = 0.85 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.20 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 875.8 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == Constants.TerrainSuburban
-      wind_speed.site_terrain_multiplier = 0.67 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.25 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 1176 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    elsif site.TerrainType == Constants.TerrainCity
-      wind_speed.site_terrain_multiplier = 0.47 # Used for DOE-2's correlation
-      wind_speed.site_terrain_exponent = 0.3499 # Used in both DOE-2 and E+ (E+ value adjusted for agreement with DOE-2)
-      wind_speed.site_boundary_layer_thickness = 1165.0 # ft (Used for E+'s correlation (E+ value adjusted for agreement with DOE-2))
-    end
-
-    wind_speed.ref_wind_speed = 10.0 # mph
-
+	
+	# Open, Unrestricted at Weather Station
+	wind_speed.terrain_multiplier = 1.0 # Used for DOE-2's correlation
+	wind_speed.terrain_exponent = 0.15 # Used for DOE-2's correlation
+	wind_speed.ashrae_terrain_thickness = 270
+	wind_speed.ashrae_terrain_exponent = 0.14
+	
+	if site.TerrainType == Constants.TerrainOcean
+	  wind_speed.site_terrain_multiplier = 1.30 # Used for DOE-2's correlation
+	  wind_speed.site_terrain_exponent = 0.10 # Used for DOE-2's correlation
+	  wind_speed.ashrae_site_terrain_thickness = 210 # Ocean, Bayou flat country
+	  wind_speed.ashrae_site_terrain_exponent = 0.10 # Ocean, Bayou flat country
+	elsif site.TerrainType == Constants.TerrainPlains
+	  wind_speed.site_terrain_multiplier = 1.00 # Used for DOE-2's correlation
+	  wind_speed.site_terrain_exponent = 0.15 # Used for DOE-2's correlation
+	  wind_speed.ashrae_site_terrain_thickness = 270 # Flat, open country
+	  wind_speed.ashrae_site_terrain_exponent = 0.14 # Flat, open country
+	elsif site.TerrainType == Constants.TerrainRural
+	  wind_speed.site_terrain_multiplier = 0.85 # Used for DOE-2's correlation
+	  wind_speed.site_terrain_exponent = 0.20 # Used for DOE-2's correlation
+	  wind_speed.ashrae_site_terrain_thickness = 270 # Flat, open country
+	  wind_speed.ashrae_site_terrain_exponent = 0.14 # Flat, open country
+	elsif site.TerrainType == Constants.TerrainSuburban
+	  wind_speed.site_terrain_multiplier = 0.67 # Used for DOE-2's correlation
+	  wind_speed.site_terrain_exponent = 0.25 # Used for DOE-2's correlation
+	  wind_speed.ashrae_site_terrain_thickness = 370 # Rough, wooded country, suburbs
+	  wind_speed.ashrae_site_terrain_exponent = 0.22 # Rough, wooded country, suburbs
+	elsif site.TerrainType == Constants.TerrainCity
+	  wind_speed.site_terrain_multiplier = 0.47 # Used for DOE-2's correlation
+	  wind_speed.site_terrain_exponent = 0.35 # Used for DOE-2's correlation
+	  wind_speed.ashrae_site_terrain_thickness = 460 # Towns, city outskirs, center of large cities
+	  wind_speed.ashrae_site_terrain_exponent = 0.33 # Towns, city outskirs, center of large cities	
+	end
+	
     # Local Shielding
     if infiltration.InfiltrationShelterCoefficient == Constants.Auto
-      if neighbors.NeighborOffset.nil?
+      n_offsets = [neighbors.NeighborOffsetLeft, neighbors.NeighborOffsetRight, neighbors.NeighborOffsetFront, neighbors.NeighborOffsetBack]
+	  nonzero_offsets = []
+	  n_offsets.each do |n_offset|
+	    if n_offset != 0
+		  nonzero_offsets << n_offset
+		end
+	  end
+	  min_nonzero_offset = 0
+	  if nonzero_offsets.length > 0
+		min_nonzero_offset = nonzero_offsets.min
+	  end
+	  if min_nonzero_offset == 0
         # Typical shelter for isolated rural house
         wind_speed.S_wo = 0.90
-      elsif neighbors.NeighborOffset > geometry.building_height
+      elsif min_nonzero_offset > geometry.building_height
         # Typical shelter caused by other building across the street
         wind_speed.S_wo = 0.70
-      elsif neighbors.NeighborOffset <= geometry.building_height
+      else
         # Typical shelter for urban buildings where sheltering obstacles
         # are less than one building height away.
         # Recommended by C.Christensen.

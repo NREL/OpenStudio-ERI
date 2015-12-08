@@ -108,17 +108,32 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
   class WindSpeed
     def initialize
     end
-    attr_accessor(:height, :terrain_multiplier, :terrain_exponent, :boundary_layer_thickness, :site_terrain_multiplier, :site_terrain_exponent, :site_boundary_layer_thickness, :ref_wind_speed, :S_wo, :shielding_coef)
+    attr_accessor(:height, :terrain_multiplier, :terrain_exponent, :ashrae_terrain_thickness, :ashrae_terrain_exponent, :site_terrain_multiplier, :site_terrain_exponent, :ashrae_site_terrain_thickness, :ashrae_site_terrain_exponent, :S_wo, :shielding_coef)
   end
 
   class Neighbors
-    def initialize(neighborOffset)
-      @neighborOffset = neighborOffset
+    def initialize(neighborOffsetLeft, neighborOffsetRight, neighborOffsetFront, neighborOffsetBack)
+      @neighborOffsetLeft = neighborOffsetLeft
+	  @neighborOffsetRight = neighborOffsetRight
+	  @neighborOffsetFront = neighborOffsetFront
+	  @neighborOffsetBack = neighborOffsetBack
     end
 
-    def NeighborOffset
-      return @neighborOffset
+    def NeighborOffsetLeft
+      return @neighborOffsetLeft
     end
+	
+    def NeighborOffsetRight
+      return @neighborOffsetRight
+    end
+
+    def NeighborOffsetFront
+      return @neighborOffsetFront
+    end
+
+    def NeighborOffsetBack
+      return @neighborOffsetBack
+    end	
   end
 
   class Site
@@ -313,17 +328,17 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     zone_display_names = OpenStudio::StringVector.new
 	
     #get all thermal zones in model
-    # zone_args = workspace.getObjectsByType("Zone".to_IddObjectType)
-    # zone_args.each do |zone_arg|
-      # zone_arg_name = zone_arg.getString(0) # Name
-      # zone_display_names << zone_arg_name.to_s
-    # end
+    zone_args = workspace.getObjectsByType("Zone".to_IddObjectType)
+    zone_args.each do |zone_arg|
+      zone_arg_name = zone_arg.getString(0) # Name
+      zone_display_names << zone_arg_name.to_s
+    end
 	# TODO: figure out why in spreadsheet workspace.getObjectsByType returns an empty list
-    zone_display_names << "living_1 Thermal Zone"
+    # zone_display_names << "living_1 Thermal Zone"
 	# zone_display_names << "basement"
 	# zone_display_names << "crawl"
-	zone_display_names << "unfinishedattic Thermal Zone"
-	zone_display_names << "garage Thermal Zone"
+	# zone_display_names << "unfinishedattic Thermal Zone"
+	# zone_display_names << "garage Thermal Zone"
 	zone_display_names << "NA"
 
     #make a choice argument for living space
@@ -424,12 +439,36 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     # Neighbors
 
     #make a double argument for neighbor offset
-    userdefined_neighboroffset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffset", false)
-    userdefined_neighboroffset.setDisplayName("Neighbors: Neighbor Offset")
-	userdefined_neighboroffset.setUnits("ft")
-	userdefined_neighboroffset.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
-    userdefined_neighboroffset.setDefaultValue(0)
-    args << userdefined_neighboroffset
+    userdefined_neighboroffsetleft = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffsetleft", false)
+    userdefined_neighboroffsetleft.setDisplayName("Neighbors: Left Neighbor Offset")
+	userdefined_neighboroffsetleft.setUnits("ft")
+	userdefined_neighboroffsetleft.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
+    userdefined_neighboroffsetleft.setDefaultValue(0)
+    args << userdefined_neighboroffsetleft
+	
+    #make a double argument for neighbor offset
+    userdefined_neighboroffsetright = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffsetright", false)
+    userdefined_neighboroffsetright.setDisplayName("Neighbors: Right Neighbor Offset")
+	userdefined_neighboroffsetright.setUnits("ft")
+	userdefined_neighboroffsetright.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
+    userdefined_neighboroffsetright.setDefaultValue(0)
+    args << userdefined_neighboroffsetright
+
+    #make a double argument for neighbor offset
+    userdefined_neighboroffsetfront = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffsetfront", false)
+    userdefined_neighboroffsetfront.setDisplayName("Neighbors: Front Neighbor Offset")
+	userdefined_neighboroffsetfront.setUnits("ft")
+	userdefined_neighboroffsetfront.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
+    userdefined_neighboroffsetfront.setDefaultValue(0)
+    args << userdefined_neighboroffsetfront
+
+    #make a double argument for neighbor offset
+    userdefined_neighboroffsetback = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffsetback", false)
+    userdefined_neighboroffsetback.setDisplayName("Neighbors: Back Neighbor Offset")
+	userdefined_neighboroffsetback.setUnits("ft")
+	userdefined_neighboroffsetback.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
+    userdefined_neighboroffsetback.setDefaultValue(0)
+    args << userdefined_neighboroffsetback	
 
     # Age of Home
 
@@ -772,7 +811,10 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     fbsmtACH = runner.getDoubleArgumentValue("userdefinedinffbsmt",user_arguments)
     ufbsmtACH = runner.getDoubleArgumentValue("userdefinedinfufbsmt",user_arguments)
     uaSLA = runner.getDoubleArgumentValue("userdefinedinfunfinattic",user_arguments)
-    neighborOffset = runner.getDoubleArgumentValue("userdefinedneighboroffset",user_arguments)
+    neighborOffsetLeft = runner.getDoubleArgumentValue("userdefinedneighboroffsetleft",user_arguments)
+	neighborOffsetRight = runner.getDoubleArgumentValue("userdefinedneighboroffsetright",user_arguments)
+	neighborOffsetFront = runner.getDoubleArgumentValue("userdefinedneighboroffsetfront",user_arguments)
+	neighborOffsetBack = runner.getDoubleArgumentValue("userdefinedneighboroffsetback",user_arguments)
     terrainType = runner.getStringArgumentValue("selectedterraintype",user_arguments)
     mechVentType = runner.getStringArgumentValue("selectedventtype",user_arguments)
     mechVentInfilCreditForExistingHomes = runner.getBoolArgumentValue("selectedinfilcredit",user_arguments)
@@ -829,9 +871,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       infiltrationGarageACH50 = 0.0
       infiltrationShelterCoefficient = Constants.Auto
     end
-    if neighborOffset == 0
-      neighborOffset = nil
-    end
     simTestSuiteBuilding = nil
 
     # Create the material class instances
@@ -843,7 +882,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     crawlspace = Crawl.new(crawlACH)
     unfinished_attic = UnfinAttic.new(uaSLA)
     wind_speed = WindSpeed.new
-    neighbors = Neighbors.new(neighborOffset)
+    neighbors = Neighbors.new(neighborOffsetLeft, neighborOffsetRight, neighborOffsetFront, neighborOffsetBack)
     site = Site.new(terrainType)
     vent = MechanicalVentilation.new(mechVentType, mechVentInfilCreditForExistingHomes, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
     misc = Misc.new(ageOfHome, simTestSuiteBuilding)
@@ -1095,10 +1134,17 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       #{selected_living},                                         !- Output:Variable or Output:Meter Index Key Name
       Zone Mean Air Temperature;                                  !- Output:Variable or Output:Meter Index Key Name"
 
+    # Phiin
+    ems << "
+    EnergyManagementSystem:Sensor,
+      Phiin,                                                      !- Name
+      #{selected_living},                                         !- Output:Variable or Output:Meter Index Key Name
+      Zone Air Relative Humidity;                                 !- Output:Variable or Output:Meter Index Key Name"	  
+	  
     # Win
     ems << "
     EnergyManagementSystem:Sensor,
-      TWin,                                                       !- Name
+      Win,                                                        !- Name
       #{selected_living},                                         !- Output:Variable or Output:Meter Index Key Name
       Zone Mean Air Humidity Ratio;                               !- Output:Variable or Output:Meter Index Key Name"
 
@@ -1181,8 +1227,15 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     # InfiltrationProgram
     ems_program = "
     EnergyManagementSystem:Program,
-      InfiltrationProgram,                                        !- Name"
-
+      InfiltrationProgram,                                        !- Name
+	    Set p_m = #{wind_speed.ashrae_terrain_exponent},
+		Set p_s = #{wind_speed.ashrae_site_terrain_exponent},
+		Set s_m = #{wind_speed.ashrae_terrain_thickness},
+		Set s_s = #{wind_speed.ashrae_site_terrain_thickness},
+		Set z_m = #{OpenStudio::convert(wind_speed.height,"ft","m").get},
+		Set z_s = #{OpenStudio::convert(living_space.height,"ft","m").get},
+		Set f_t = (((s_m/z_m)^p_m)*((z_s/s_s)^p_s)),
+		Set VwindL = (f_t*Vwind),"
     if living_space.inf_method == Constants.InfMethodASHRAE
       if living_space.SLA > 0
         inf = si
@@ -1193,7 +1246,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
           Set Cs = #{inf.stack_coef * (448.4 ** inf.n_i)},
           Set Cw = #{inf.wind_coef * (1246.0 ** inf.n_i)},
           Set n = #{inf.n_i},
-          Set sft = #{((wind_speed.S_wo * (1.0 - inf.Y_i)) + (inf.S_wflue * (1.5 * inf.Y_i))) * living_space.f_t_SG},
+          Set sft = (f_t*#{(((wind_speed.S_wo * (1.0 - inf.Y_i)) + (inf.S_wflue * (1.5 * inf.Y_i))))}),
           Set Qn = (((c*Cs*(DeltaT^n))^2)+(((c*Cw)*((sft*Vwind)^(2*n)))^2))^0.5,"
       else
         ems_program += "
@@ -1209,7 +1262,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       Set DeltaT = @Abs Tdiff,"
 
     ems_program += "
-      Set QWH = WH_sch*#{OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get},
+      Set QWHV = WH_sch*#{OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get},
       Set Qrange = Range_sch*#{OpenStudio::convert(vent.range_hood_hour_avg_exhaust,"cfm","m^3/s").get},
       Set Qdryer = Clothes_dryer_sch*#{OpenStudio::convert(vent.clothes_dryer_hour_avg_exhaust,"cfm","m^3/s").get},
       Set Qbath = Bath_sch*#{OpenStudio::convert(vent.bathroom_hour_avg_exhaust,"cfm","m^3/s").get},
@@ -1222,21 +1275,21 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       ems_program += "
         Set Qout = Qrange+Qbath+Qdryer+QhpwhOut+QductsOut,          !- Exhaust flows
         Set Qin = QhpwhIn+QductsIn,                                 !- Supply flows
-        Set Qu = @Abs (Qout - Qin),                                 !- Unbalanced flow
-        Set Qb = QWH + @Min Qout Qin,                               !- Balanced flow"
+        Set Qu = (@Abs (Qout - Qin)),                               !- Unbalanced flow
+        Set Qb = QWHV + (@Min Qout Qin),                            !- Balanced flow"
     else
       if vent.MechVentType == Constants.VentTypeExhaust
         ems_program += "
-          Set Qout = QWH+Qrange+Qbath+Qdryer+QhpwhOut+QductsOut,      !- Exhaust flows
-          Set Qin = QhpwhIn+QductsIn,                                 !- Supply flows
-          Set Qu = @Abs (Qout - Qin),                                 !- Unbalanced flow
-          Set Qb = QWH + @Min Qout Qin,                               !- Balanced flow"
+          Set Qout = QWHV+Qrange+Qbath+Qdryer+QhpwhOut+QductsOut,    !- Exhaust flows
+          Set Qin = QhpwhIn+QductsIn,                                !- Supply flows
+          Set Qu = (@Abs (Qout - Qin)),                              !- Unbalanced flow
+          Set Qb = (@Min Qout Qin),                                  !- Balanced flow"
       else #vent.MechVentType == Constants.VentTypeSupply:
         ems_program += "
-          Set Qout = Qrange+Qbath+Qdryer+QhpwhOut+QductsOut,          !- Exhaust flows
-          Set Qin = QWH+QhpwhIn+QductsIn,                             !- Supply flows
-          Set Qu = @Abs (Qout - Qin),                                 !- QductOA
-          Set Qb = QWH + @Min Qout Qin,                               !- Balanced flow"
+          Set Qout = Qrange+Qbath+Qdryer+QhpwhOut+QductsOut,         !- Exhaust flows
+          Set Qin = QWHV+QhpwhIn+QductsIn,                            !- Supply flows
+          Set Qu = @Abs (Qout - Qin),                                !- QductOA
+          Set Qb = (@Min Qout Qin),                                  !- Balanced flow"
       end
 
       if vent.MechVentHouseFanPower != 0
@@ -1247,7 +1300,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
           Set faneff_wh = 1,"
       end
       ems_program += "
-        Set WholeHouseFanPowerOverride= (QWH*300)/faneff_wh,"
+        Set WholeHouseFanPowerOverride= (QWHV*300)/faneff_wh,"
     end
     if vent.MechVentSpotFanPower != 0
       ems_program += "
@@ -1260,10 +1313,11 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ems_program += "
       Set RangeHoodFanPowerOverride = (Qrange*300)/faneff_sp,
       Set BathExhaustFanPowerOverride = (Qbath*300)/faneff_sp,
-      Set Infilflow = ((Qu^2) + (Qn^2))^0.5,
-      Set Q_acctd_for_elsewhere = QhpwhOut + QhpwhIn + QductsOut + QductsIn," # These flows are accounted for with actuators in other EMS programs.
-    ems_program += "
-      Set InfMechVent = Qb + Infilflow - Q_acctd_for_elsewhere;" # so subtract them out here
+      Set Q_acctd_for_elsewhere = QhpwhOut + QhpwhIn + QductsOut + QductsIn,
+	  Set InfilFlow = (((Qu^2) + (Qn^2))^0.5) - Q_acctd_for_elsewhere,
+	  Set InfilFlow = (@Max InfilFlow 0),
+	  Set InfilFlow_display = ((((Qu^2) + (Qn^2))^0.5) - Qu,
+      Set InfMechVent = Qb + InfilFlow;"
 
     ems << ems_program
 
@@ -1283,7 +1337,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ems << "
     EnergyManagementSystem:OutputVariable,
       Whole House Fan Vent Flow Rate,                                 !- Name
-      QWH,                                                            !- EMS Variable Name
+      QWHV,                                                           !- EMS Variable Name
       Averaged,                                                       !- Type of Data in Variable
       ZoneTimestep,                                                   !- Update Frequency
       InfiltrationProgram,                                            !- EMS Program or Subroutine Name
@@ -1326,25 +1380,19 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       VwindL,                                                         !- EMS Variable Name
       Averaged,                                                       !- Type of Data in Variable
       ZoneTimestep,                                                   !- Update Frequency
-      LocalWindSpeedProgram,                                          !- EMS Program or Subroutine Name
-      m3/s;                                                           !- Units"
+      InfiltrationProgram,                                            !- EMS Program or Subroutine Name
+      m/s;                                                            !- Units"
 
     # Program
-
-    # LocalWindSpeedProgram
-    ems <<  "
-    EnergyManagementSystem:Program,
-      LocalWindSpeedProgram,                                          !- Name
-      Set VwindL = Vwind*#{living_space.f_t_SG};"
 
     # NaturalVentilationProgram
     ems << "
     EnergyManagementSystem:Program,
       NaturalVentilationProgram,                                      !- Name
       Set Tdiff = Tin - Tout,
-      Set DeltaT = @Abs Tdiff,
-      Set Phiout = @RhFnTdbWPb Tout Wout Pbar,
-      Set Hin = @HFnTdbRhPb Tin Phiin Pbar,
+      Set DeltaT = (@Abs Tdiff),
+      Set Phiout = (@RhFnTdbWPb Tout Wout Pbar),
+      Set Hin = (@HFnTdbRhPb Tin Phiin Pbar),
       Set NVArea = #{929.0304 * nv.area},
       Set Cs = #{0.001672 * nv.C_s},
       Set Cw = #{0.01 * nv.C_w},
@@ -1352,12 +1400,12 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       Set MaxHR = #{nv.NatVentMaxOAHumidityRatio},
       Set MaxRH = #{nv.NatVentMaxOARelativeHumidity},
       Set SGNV = (NVAvail*NVArea)*((((Cs*DeltaT)+(Cw*(Vwind^2)))^0.5)/1000),
-      If Wout < MaxHR && Phiout < MaxRH && Tin > NVSP,
+      If (Wout < MaxHR) && (Phiout < MaxRH) && (Tin > NVSP),
         Set NVadj1 = (Tin - NVSP)/(Tin - Tout),
-        Set NVadj2 = @Min NVadj1 1,
-        Set NVadj3 = @Max NVadj2 0,
+        Set NVadj2 = (@Min NVadj1 1),
+        Set NVadj3 = (@Max NVadj2 0),
         Set NVadj = SGNV*NVadj3,
-        Set NatVentFlow = @Min NVadj MaxNV,
+        Set NatVentFlow = (@Min NVadj MaxNV),
       Else,
         Set NatVentFlow = 0,
       EndIf;"
@@ -1382,8 +1430,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       AirflowCalculator,                                              !- Name
       BeginTimestepBeforePredictor,                                   !- EnergyPlus Model Calling Point
       InfiltrationProgram,                                            !- Program Name 1
-      NaturalVentilationProgram,                                      !- Program Name 2
-      LocalWindSpeedProgram;                                          !- Program Name 3"
+      NaturalVentilationProgram;                                      !- Program Name 2"
 
     # Mechanical Ventilation
     if vent.MechVentType == Constants.VentTypeBalanced # tk will need to complete _processSystemVentilationNodes for this to work
@@ -1586,20 +1633,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         #{0.01 * ua.C_w_SG};                                                          !- Wind Coefficient {(L/s)/(cm^4-(m/s))}"
       end
     end
-
-    # _processSiteDescription
-    ems << "
-    Site:WeatherStation,
-      #{OpenStudio::convert(wind_speed.height,"ft","m").get},                         !- Wind Sensor Height Above Ground {m}
-      #{wind_speed.terrain_exponent},                                                 !- Wind Speed Profile Exponent
-      #{OpenStudio::convert(wind_speed.boundary_layer_thickness,"ft","m").get},       !- Wind Speed Profile Boundary Layer Thickness {m}
-      #{1.5};                                                                         !- Air Temperature Sensor Height Above Ground {m}"
-
-    ems << "
-    Site:HeightVariation,
-      #{wind_speed.site_terrain_exponent},                                            !- Wind Speed Profile Exponent
-      #{OpenStudio::convert(wind_speed.site_boundary_layer_thickness,"ft","m").get},  !- Wind Speed Profile Boundary Layer Thickness {m}
-      #{0.0065};                                                                      !- Air Temperature Gradient Coefficient {K/m}"
 
     ems.each do |str|
       idfObject = OpenStudio::IdfObject::load(str)
