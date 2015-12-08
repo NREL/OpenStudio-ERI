@@ -1,6 +1,7 @@
 require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
@@ -321,32 +322,54 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		# Dishwasher uses only hot water so total water usage = DHW usage.
 		daily_dishwasher_water = daily_dishwasher_dhw # gal/day
 	end
-		
+    
 	# Calculate actual electricity use per cycle by adjusting test
 	# electricity use per cycle (up or down) to account for differences
 	# between actual water supply temperatures and test conditions.
 	# Also convert from per-cycle to daily electricity usage amounts.
 	if dw_is_cold_water_inlet_only
 
-		monthly_dishwasher_energy = Array[]
-		# FIXME: Need to obtain tmains from Jeff
-		tmains_temps = Array[55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55]
+        # Get mains temperature
+        @model = nil
+        @weather = nil
+        unless model.nil?
+          @model = model
+        end
+        unless runner.nil?
+          begin # Spreadsheet
+            weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
+            weather_file_dir = "weather"
+            epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
+            @weather = WeatherProcess.new(epw_path,runner)
+          rescue # PAT
+            if runner.lastEpwFilePath.is_initialized
+              test = runner.lastEpwFilePath.get.to_s
+              if File.exist?(test)
+                epw_path = test
+                @weather = WeatherProcess.new(epw_path,runner)
+              end
+            end
+          end
+        end
+        daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(@weather.data, @weather.header)
+
+        monthly_dishwasher_energy = Array.new(12, 0)
 		i = 0
-		tmains_temps.each do |tmains|
+		monthly_mains.each do |tmain|
 			# Adjust for monthly variation in Tmains vs. test cold
 			# water supply temperature.
 			actual_dw_elec_use_per_cycle = test_dw_elec_use_per_cycle + \
-					(test_dw_mains_temp - tmain) * \
-					dw_cold_water_conn_use_per_cycle * \
-					(water_dens * water_sh * OpenStudio.convert(1, "Btu", "kWh").get / ft32gal) # kWh/cycle
-			monthly_dishwasher_energy.push(actual_dw_elec_use_per_cycle * \
-											 Constants.MonthNumDays[i] * \
-											 actual_dw_cycles_per_year / \
-											 365) # kWh/month
+                                           (test_dw_mains_temp - tmain) * \
+                                           dw_cold_water_conn_use_per_cycle * \
+                                           (water_dens * water_sh * OpenStudio.convert(1, "Btu", "kWh").get / ft32gal) # kWh/cycle
+			monthly_dishwasher_energy[i] = (actual_dw_elec_use_per_cycle * \
+										    Constants.MonthNumDays[i] * \
+											actual_dw_cycles_per_year / \
+											365) # kWh/month
 			i = i + 1
 		end
 
-		daily_energy = sum(monthly_dishwasher_energy) / 365 # kWh/day
+		daily_energy = monthly_dishwasher_energy.inject(:+) / 365 # kWh/day
 
 	elsif dw_internal_heater_adjustment
 
