@@ -1,4 +1,4 @@
-class Units
+class UnitConversion
 
 	# Contains unit conversions not available in OpenStudio.convert.
 	
