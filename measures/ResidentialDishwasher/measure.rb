@@ -128,6 +128,15 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     space_type.setDisplayName("Select the space where the dishwasher is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
+    
+    #make a double argument for water heater setpoint
+    #FIXE: remove this some day and require water heater to be set first
+	wh_setpoint = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wh_setpoint",true)
+	wh_setpoint.setDisplayName("Water Heater Setpoint")
+	wh_setpoint.setDescription("Water heater setpoint temperature.")
+	wh_setpoint.setDefaultValue(125.0)
+    wh_setpoint.setUnits("degrees F")
+	args << wh_setpoint
 
     return args
   end #end the arguments method
@@ -153,6 +162,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	dw_hot_water_multiplier = runner.getDoubleArgumentValue("mult_hw", user_arguments)
 	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+    wh_setpoint = runner.getDoubleArgumentValue("wh_setpoint", user_arguments)
 	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f
@@ -313,27 +323,12 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	# Also convert from per-cycle to daily electricity usage amounts.
 	if dw_is_cold_water_inlet_only
 
-        # Get mains temperature
-        @model = nil
-        @weather = nil
-        unless model.nil?
-          @model = model
-        end
-        unless runner.nil?
-          begin # Spreadsheet
-            weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
-            weather_file_dir = "weather"
-            epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
+        epw_path = runner.lastEpwFilePath.get.to_s
+        if File.exist?(epw_path)
             @weather = WeatherProcess.new(epw_path,runner)
-          rescue # PAT
-            if runner.lastEpwFilePath.is_initialized
-              test = runner.lastEpwFilePath.get.to_s
-              if File.exist?(test)
-                epw_path = test
-                @weather = WeatherProcess.new(epw_path,runner)
-              end
-            end
-          end
+        else
+           runner.registerError("Cannot find weather file: #{epw_path}")
+           return false
         end
         daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(@weather.data, @weather.header)
 
@@ -359,9 +354,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 
 		# Adjust for difference in water heater supply temperature vs.
 		# test hot water supply temperature.
-		water_heater_setpoint = 125 # FIXME: Need to get from water heater...
 		actual_dw_elec_use_per_cycle = test_dw_elec_use_per_cycle + \
-				(test_dw_dhw_temp - water_heater_setpoint) * \
+				(test_dw_dhw_temp - wh_setpoint) * \
 				test_dw_dhw_use_per_cycle * \
 				(water_dens * water_sh * \
 				 OpenStudio.convert(1, "Btu", "kWh").get / ft32gal) # kWh/cycle
@@ -381,14 +375,13 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		return false
 	end
 	
-	monthly_sch = "1,1,1,1,1,1,1,1,1,1,1,1"
-	
 	obj_name = Constants.ObjectNameDishwasher
-    sch = HotWaterSchedule.new(runner, model, num_br, 0, "DW", obj_name)
+    sch = HotWaterSchedule.new(runner, model, num_br, 0, "DW", obj_name, wh_setpoint)
 	if not sch.validated?
 		return false
 	end
 	design_level = sch.calcDesignLevelElec(daily_energy)
+    peak_flow = sch.calcPeakFlow(daily_energy)
 
 	#add dw to the selected space
 	has_elec_dw = 0
@@ -405,10 +398,18 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 					space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
 					sch.setSchedule(space_equipment)
 					replace_dw = 1
-					
-					# FIXME: Need to handle hot water consumption
 				end
 			end
+            if replace_dw == 1
+                # Also update water use equipment
+                space_equipments = spaceType.waterUseEquipment
+                space_equipments.each do |space_equipment|
+                    if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
+                        space_equipment.waterUseEquipmentDefinition.setPeakFlowRate(peak_flow)
+                        sch.setWaterSchedule(space_equipment)
+                    end
+                end
+            end
 			if has_elec_dw == 0 
 				has_elec_dw = 1
 
@@ -424,8 +425,22 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 				dw_def.setFractionLost(dw_lost)
 				sch.setSchedule(dw)
 				
-				# FIXME: Need to handle hot water consumption
-				
+                #Add water use equipment for the dw
+				dw_def2 = OpenStudio::Model::WaterUseEquipmentDefinition.new(model)
+                dw2 = OpenStudio::Model::WaterUseEquipment.new(dw_def2)
+                dw2.setName(obj_name)
+                dw2.setSpaceType(spaceType)
+                dw_def2.setName(obj_name)
+                dw_def2.setPeakFlowRate(peak_flow)
+                dw_def2.setEndUseSubcategory("Domestic Hot Water")
+				sch.setWaterSchedule(dw2)
+                
+                #FIXME: Need to have water use connections, plant loop?
+                #Code adapted from https://github.com/NREL/OpenStudio/issues/1635
+                water_use_connection = OpenStudio::Model::WaterUseConnections.new(model)
+                water_use_connection.addWaterUseEquipment(dw2)
+                plant_loop = OpenStudio::Model::PlantLoop.new(model)
+                plant_loop.addDemandBranchForComponent(water_use_connection)
 			end
 		end
 	end

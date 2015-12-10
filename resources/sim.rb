@@ -3,6 +3,7 @@ require "#{File.dirname(__FILE__)}/util"
 require "#{File.dirname(__FILE__)}/weather"
 require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/psychrometrics"
+require "#{File.dirname(__FILE__)}/unit_conversions"
 
 class Construction
 
@@ -899,10 +900,18 @@ class Sim
 			  epw_path = test
 			  @weather = WeatherProcess.new(epw_path, runner)
 			end
+		  elsif model.weatherFile.is_initialized
+			test = model.weatherFile.get.path
+			if test.is_initialized
+			  if File.exist?(test.get.to_s)
+				epw_path = test.get.to_s
+				@weather = WeatherProcess.new(epw_path, runner)
+			  end
+			end
 		  end
 	  end
 	end
-
+	
   def _getGroundTemperatures
     # Return monthly ground temperatures.
 
@@ -1175,7 +1184,7 @@ class Sim
 
     properties = Properties.new
 
-    outside_air_density = (2.719 * local_pressure) / (properties.Air.R * (@weather.data.AnnualAvgDrybulb + 460.0))
+    outside_air_density = UnitConversion.atm2Btu_ft3(local_pressure) / (properties.Air.R * (@weather.data.AnnualAvgDrybulb + 460.0))
     inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
     delta_pref = 0.016 # inH2O
 
@@ -1277,7 +1286,7 @@ class Sim
 
 		  si.f_s = ((1.0 + si.n_i * si.R_i) / (si.n_i + 1.0)) * (0.5 - 0.5 * si.M_i ** (1.2)) ** (si.n_i + 1.0) + si.F_i
 
-		  si.stack_coef = si.f_s * (0.005974 * outside_air_density * Constants.g * living_space.height / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
+		  si.stack_coef = si.f_s * (UnitConversion.lbm_fts22inH2O(outside_air_density * Constants.g * living_space.height) / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
 
 		  # Calculate wind coefficient
 		  if hasCrawl and crawlspace.CrawlACH > 0
@@ -1305,7 +1314,7 @@ class Sim
 
 		  end
 
-		  si.wind_coef = si.f_w * ( 0.01285 * outside_air_density / 2.0 ) ** si.n_i # inH2O^n/mph^2n
+		  si.wind_coef = si.f_w * UnitConversion.lbm_ft32inH2O_mph2(outside_air_density / 2.0) ** si.n_i # inH2O^n/mph^2n
 
 		  living_space.ACH = get_infiltration_ACH_from_SLA(living_space.SLA, geometry.stories, @weather)
 
@@ -1621,11 +1630,11 @@ class Sim
   end
 	
 	# _processLocationInfo
-	def local_pressure
+  def local_pressure
     # Location Info
-    local_pressure = 2.7128 ** (-0.0000368 * @weather.header.Altitude) # atm
+    local_pressure = Math::exp(-0.0000368 * @weather.header.Altitude) # atm
 
-		return local_pressure
+	return local_pressure
   end
 
   def self._processWindSpeedCorrection(wind_speed, site, infiltration, neighbors, geometry)
@@ -1667,21 +1676,10 @@ class Sim
 	
     # Local Shielding
     if infiltration.InfiltrationShelterCoefficient == Constants.Auto
-      n_offsets = [neighbors.NeighborOffsetLeft, neighbors.NeighborOffsetRight, neighbors.NeighborOffsetFront, neighbors.NeighborOffsetBack]
-	  nonzero_offsets = []
-	  n_offsets.each do |n_offset|
-	    if n_offset != 0
-		  nonzero_offsets << n_offset
-		end
-	  end
-	  min_nonzero_offset = 0
-	  if nonzero_offsets.length > 0
-		min_nonzero_offset = nonzero_offsets.min
-	  end
-	  if min_nonzero_offset == 0
+	  if neighbors.min_nonzero_offset == 0
         # Typical shelter for isolated rural house
         wind_speed.S_wo = 0.90
-      elsif min_nonzero_offset > geometry.building_height
+      elsif neighbors.min_nonzero_offset > geometry.building_height
         # Typical shelter caused by other building across the street
         wind_speed.S_wo = 0.70
       else
@@ -1696,7 +1694,7 @@ class Sim
 
     # S-G Shielding Coefficients are roughly 1/3 of AIM2 Shelter Coefficients
     wind_speed.shielding_coef = wind_speed.S_wo / 3.0
-
+	
     return wind_speed
 
   end
@@ -2020,7 +2018,7 @@ class Sim
         t_exh_in = 24.0
         w_exh_in = 0.0092
 
-        m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * Psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
+        m_fan = OpenStudio::convert(vent.whole_house_vent_rate,"cfm","m^3/s").get * UnitConversion.lbm_ft32kg_m3(Psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7)) # kg/s
 
         t_sup_out_gross = t_sup_in - vent.MechVentHXCoreSensibleEffectiveness * (t_sup_in - t_exh_in)
         t_sup_out = t_sup_out_gross + p_fan / (m_fan * cp_a)
@@ -2525,9 +2523,8 @@ class Sim
 	def inside_air_dens
 		# Air properties
 		mat_air = get_mat_air
-    properties = Properties.new
-		mat_air.inside_air_dens = 2.719 * local_pressure / (properties.Air.R * (assumed_inside_temp + 460)) # lb/ft^3
-		# tk OpenStudio::convert(local_pressure,"atm","Btu/ft^3").get doesn't work to get the 2.719
+		properties = Properties.new
+		mat_air.inside_air_dens = UnitConversion.atm2Btu_ft3(local_pressure) / (properties.Air.R * (assumed_inside_temp + 460)) # lbm/ft^3
 		return mat_air.inside_air_dens
 	end
 	
@@ -3382,7 +3379,7 @@ class Sim
       air_conditioner.IsIdealAC = false
     end
 
-    supply.static = 249.1 * 0.5 # Pascal
+    supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
     # Flow rate through AC units - hardcoded assumption of 400 cfm/ton
     supply.cfm_ton = 400 # cfm / ton

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>3c9ef52a-208b-4be3-97a0-0ee4bad3a78e</version_id>
+  <version_id>ed89e12a-69cb-4a4f-b224-95c207191885</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessElectric</class_name>
   <display_name>AddOSWaterHeaterMixedTanklessElectric</display_name>
@@ -76,12 +76,6 @@
   </attributes>
   <files>
     <file>
-      <filename>ba_protocol_table_8_page_13.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>25F3B82F</checksum>
-    </file>
-    <file>
       <filename>AddOSWaterHeaterMixedTanklessElectric_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -97,6 +91,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>8EB3AB16</checksum>
+    </file>
+    <file>
+      <filename>ba_protocol_table_8_page_13.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>61747C72</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>7ef04245-9599-493a-bff3-1c18a2f36c19</version_id>
+  <version_id>7615b94a-bcdb-4863-a512-e888e4eb7579</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Add/Replace Residential Furniture Thermal Mass</display_name>
@@ -66,12 +66,6 @@
       <checksum>A956F71E</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -80,19 +74,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1CC23085</checksum>
+      <checksum>864D5F33</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>87D5E9E1</checksum>
     </file>
   </files>
 </measure>

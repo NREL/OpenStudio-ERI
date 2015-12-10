@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>b7b4bdc0-4908-4b09-b4d2-2517a0bd7737</version_id>
+  <version_id>d1908345-4481-4271-896e-63c59da322d1</version_id>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -21,8 +21,8 @@
     </argument>
     <argument>
       <name>living_height</name>
-      <display_name>Living Space Wall Height (Per Floor)</display_name>
-      <description>The height of the living space walls.</description>
+      <display_name>Wall Height (Per Floor)</display_name>
+      <description>The height of the living space (and garage) walls.</description>
       <type>Double</type>
       <units>ft</units>
       <required>true</required>
@@ -42,32 +42,32 @@
     <argument>
       <name>aspect_ratio</name>
       <display_name>Aspect Ratio</display_name>
-      <description>The ratio of the north/south wall length to the east/west wall length</description>
+      <description>The ratio of the front/back wall length to the left/right wall length.</description>
       <type>Double</type>
-      <units>NS/EW</units>
+      <units>FB/LR</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>2</default_value>
     </argument>
     <argument>
-      <name>garage_area</name>
-      <display_name>Garage Area</display_name>
-      <description>The total area of the garage.</description>
-      <type>Double</type>
-      <units>ft^2</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>400</default_value>
-    </argument>
-    <argument>
-      <name>garage_height</name>
-      <display_name>Garage Height</display_name>
-      <description>The height of the garage walls.</description>
+      <name>garage_width</name>
+      <display_name>Garage Width</display_name>
+      <description>The width of the garage.</description>
       <type>Double</type>
       <units>ft</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>8</default_value>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>garage_depth</name>
+      <display_name>Garage Depth</display_name>
+      <description>The depth of the garage.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>20</default_value>
     </argument>
     <argument>
       <name>garage_pos</name>
@@ -86,21 +86,7 @@
           <value>Left</value>
           <display_name>Left</display_name>
         </choice>
-        <choice>
-          <value>Front</value>
-          <display_name>Front</display_name>
-        </choice>
       </choices>
-    </argument>
-    <argument>
-      <name>garage_protrusion</name>
-      <display_name>Garage Protrusion</display_name>
-      <description>The percentage that the garage protrudes from the living space.</description>
-      <type>Double</type>
-      <units>%</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>100</default_value>
     </argument>
     <argument>
       <name>foundation_type</name>
@@ -120,12 +106,12 @@
           <display_name>crawlspace</display_name>
         </choice>
         <choice>
-          <value>unfinished_basement</value>
-          <display_name>unfinished_basement</display_name>
+          <value>unfinishedbasement</value>
+          <display_name>unfinishedbasement</display_name>
         </choice>
         <choice>
-          <value>finished_basement</value>
-          <display_name>finished_basement</display_name>
+          <value>finishedbasement</value>
+          <display_name>finishedbasement</display_name>
         </choice>
         <choice>
           <value>pier_and_beam</value>
@@ -150,11 +136,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>unfinished_attic</default_value>
+      <default_value>unfinishedattic</default_value>
       <choices>
         <choice>
-          <value>unfinished_attic</value>
-          <display_name>unfinished_attic</display_name>
+          <value>unfinishedattic</value>
+          <display_name>unfinishedattic</display_name>
+        </choice>
+        <choice>
+          <value>finishedattic</value>
+          <display_name>finishedattic</display_name>
         </choice>
       </choices>
     </argument>
@@ -171,12 +161,20 @@
           <value>Gable</value>
           <display_name>Gable</display_name>
         </choice>
+        <choice>
+          <value>Hip</value>
+          <display_name>Hip</display_name>
+        </choice>
+        <choice>
+          <value>Flat</value>
+          <display_name>Flat</display_name>
+        </choice>
       </choices>
     </argument>
     <argument>
       <name>roof_pitch</name>
       <display_name>Roof Pitch</display_name>
-      <description>The roof pitch of the unfinished attic.</description>
+      <description>The roof pitch of the attic.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -281,7 +279,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B4B7B1BF</checksum>
+      <checksum>1BEFF11C</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>d92d9868-a04f-4991-b867-159bb946d53c</version_id>
+  <version_id>bd9f02de-3850-45c2-94e9-eb206ad53227</version_id>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Create Residential Overhangs</display_name>
@@ -28,16 +28,6 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
-    </argument>
-    <argument>
-      <name>width_extension</name>
-      <display_name>Width Extension</display_name>
-      <description>[TODO: addOverhang() sets WidthExtension=Offset*2.]Length that the overhang extends beyond the window width, relative to the outside of the window framing.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1</default_value>
     </argument>
     <argument>
       <name>first_story_front</name>
@@ -544,7 +534,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8E326E8A</checksum>
+      <checksum>36FF37FD</checksum>
     </file>
   </files>
 </measure>

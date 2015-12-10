@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>109d068b-4122-4b9a-9dd4-3e23e8ab21c8</version_id>
+  <version_id>4b305676-b71e-4605-b3e8-01d404b01600</version_id>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Add Residential Airflow Properties</display_name>
@@ -167,16 +167,6 @@
       <default_value>0.00333</default_value>
     </argument>
     <argument>
-      <name>userdefinedneighboroffset</name>
-      <display_name>Neighbors: Neighbor Offset</display_name>
-      <description>The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
       <name>userdefinedhomeage</name>
       <display_name>Age of Home</display_name>
       <description>Age of home [Enter 0 for New Construction].</description>
@@ -219,7 +209,7 @@
     </argument>
     <argument>
       <name>selectedventtype</name>
-      <display_name>Ventilation strategy used (none, exhaust, supply, or balanced).</display_name>
+      <display_name>Mechanical Ventilation: Ventilation Type</display_name>
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -702,25 +692,31 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
-      <filename>ASHRAE622WSF.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1C1BB835</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CD6B0BDF</checksum>
+      <checksum>159FAC2A</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>61F7758E</checksum>
+      <checksum>F49094C3</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
     <file>
       <version>
@@ -731,7 +727,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A3F74578</checksum>
+      <checksum>8DF3CBDF</checksum>
     </file>
   </files>
 </measure>

@@ -173,7 +173,7 @@ end
 
 class HotWaterSchedule
 
-    def initialize(runner, model, num_bedrooms, unit_num, column_header, sch_name)
+    def initialize(runner, model, num_bedrooms, unit_num, column_header, sch_name, target_water_temperature)
         @validated = true
         @model = model
         @runner = runner
@@ -181,6 +181,7 @@ class HotWaterSchedule
         @num_bedrooms = num_bedrooms.to_i
         @unit_index = unit_num % 10
         @column_header = column_header
+        @target_water_temperature = OpenStudio.convert(target_water_temperature, "F", "C").get
         
         timestep_minutes = (60/@model.getTimestep.numberOfTimestepsPerHour).to_i
         
@@ -200,15 +201,39 @@ class HotWaterSchedule
     def calcDesignLevelElec(kWh_day)
         return OpenStudio.convert(kWh_day*365*60/(365*@totflow/@maxflow), "kW", "W").get
     end
+    
+    def calcPeakFlow(kWh_day)
+        return @maxflow * kWh_day / @totflow
+    end
 
 	def setSchedule(obj)
-		# Helper method to set (or replace) the object's schedule
+		# Helper method to set (or replace) the object's electric equipment schedule
 		if not obj.schedule.empty?
 			sch = obj.schedule.get
 			sch.remove
 		end
 		obj.setSchedule(@schedule)
 	end
+    
+    def setWaterSchedule(obj)
+        # Helper method to set (or replace) the object's water use equipment schedule
+        
+        # Flow rate fraction schedule
+        if not obj.flowRateFractionSchedule.empty?
+            sch = obj.flowRateFractionSchedule.get
+            sch.remove
+        end
+        obj.setFlowRateFractionSchedule(@schedule)
+        
+        if not obj.waterUseEquipmentDefinition.targetTemperatureSchedule.empty?
+            sch = obj.waterUseEquipmentDefinition.targetTemperatureSchedule.get
+            sch.remove
+        end
+        temperature_sch = OpenStudio::Model::ScheduleConstant.new(@model)
+        temperature_sch.setValue(@target_water_temperature)
+        temperature_sch.setName(@sch_name + "_temperature_schedule")
+        obj.waterUseEquipmentDefinition.setTargetTemperatureSchedule(temperature_sch)
+    end
     
     private
     

@@ -2,13 +2,21 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_walls</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>5223ddca-7196-45ab-b7cf-dd831739445a</version_id>
+  <version_id>fcdf1d8a-1e4f-46c2-a06c-912e38f51817</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedWalls</class_name>
   <display_name>Add/Replace Residential Uninsulated Walls</display_name>
-  <description>This measure is incomplete, but it should create constructions for interior partition walls.</description>
-  <modeler_description></modeler_description>
+  <description>This measure creates uninsulated constructions for the walls between living spaces.</description>
+  <modeler_description>Calculates material layer properties of uninsulated constructions for the walls between living spaces. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
   <arguments>
+    <argument>
+      <name>selectedliving</name>
+      <display_name>Living Space</display_name>
+      <description>The living space type.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
     <argument>
       <name>userdefinedpartitionwallmassth</name>
       <display_name>Partition Wall Mass: Thickness</display_name>
@@ -77,7 +85,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -88,19 +96,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FB8F9E30</checksum>
+      <checksum>430491D0</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>
