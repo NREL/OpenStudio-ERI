@@ -37,12 +37,13 @@ class CreateResidentialOverhangs < OpenStudio::Ruleset::ModelUserScript
     offset.setDefaultValue(0.5)
     args << offset
 
-    width_extension = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("width_extension", true)
-    width_extension.setDisplayName("Width Extension")
-	width_extension.setUnits("ft")
-    width_extension.setDescription("[TODO: addOverhang() sets WidthExtension=Offset*2.]Length that the overhang extends beyond the window width, relative to the outside of the window framing.")
-    width_extension.setDefaultValue(1.0)
-    args << width_extension
+	# TODO: addOverhang() sets WidthExtension=Offset*2.
+    # width_extension = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("width_extension", true)
+    # width_extension.setDisplayName("Width Extension")
+	# width_extension.setUnits("ft")
+    # width_extension.setDescription("Length that the overhang extends beyond the window width, relative to the outside of the window framing.")
+    # width_extension.setDefaultValue(1.0)
+    # args << width_extension
 
 	facade_bools = OpenStudio::StringVector.new
 	facade_bools << "First Story, Front"
@@ -93,7 +94,7 @@ class CreateResidentialOverhangs < OpenStudio::Ruleset::ModelUserScript
 	
 	depth = OpenStudio.convert(runner.getDoubleArgumentValue("depth",user_arguments), "ft", "m").get
 	offset = OpenStudio.convert(runner.getDoubleArgumentValue("offset",user_arguments), "ft", "m").get
-	width_extension = OpenStudio.convert(runner.getDoubleArgumentValue("width_extension",user_arguments), "ft", "m").get
+	# width_extension = OpenStudio.convert(runner.getDoubleArgumentValue("width_extension",user_arguments), "ft", "m").get
 	facade_bools = OpenStudio::StringVector.new
 	facade_bools << "First Story, Front"
 	facade_bools << "First Story, Back"
@@ -133,10 +134,10 @@ class CreateResidentialOverhangs < OpenStudio::Ruleset::ModelUserScript
 		runner.registerError("Overhang offset too small.")
 		return false
 	end
-	if width_extension < 0 
-		runner.registerError("Overhang width extension too small.")
-		return false
-	end
+	# if width_extension < 0 
+		# runner.registerError("Overhang width extension too small.")
+		# return false
+	# end
 	
 	# get building orientation
 	building_orientation = model.getBuilding.northAxis.round
@@ -188,6 +189,8 @@ class CreateResidentialOverhangs < OpenStudio::Ruleset::ModelUserScript
 		runner.registerInfo("#{overhang.get.name.to_s} added.")
 
 	end
+	
+	return true
 	
   end
   

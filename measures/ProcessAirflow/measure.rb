@@ -112,28 +112,13 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
   end
 
   class Neighbors
-    def initialize(neighborOffsetLeft, neighborOffsetRight, neighborOffsetFront, neighborOffsetBack)
-      @neighborOffsetLeft = neighborOffsetLeft
-	  @neighborOffsetRight = neighborOffsetRight
-	  @neighborOffsetFront = neighborOffsetFront
-	  @neighborOffsetBack = neighborOffsetBack
+    def initialize(min_nonzero_offset)
+      @min_nonzero_offset = min_nonzero_offset
     end
 
-    def NeighborOffsetLeft
-      return @neighborOffsetLeft
+    def min_nonzero_offset
+      return @min_nonzero_offset
     end
-	
-    def NeighborOffsetRight
-      return @neighborOffsetRight
-    end
-
-    def NeighborOffsetFront
-      return @neighborOffsetFront
-    end
-
-    def NeighborOffsetBack
-      return @neighborOffsetBack
-    end	
   end
 
   class Site
@@ -318,6 +303,42 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     return "Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation)."
   end     
   
+  def get_least_neighbor_offset(workspace)
+	neighborOffset = 10000
+	surfaces = workspace.getObjectsByType("BuildingSurface:Detailed".to_IddObjectType)
+	surfaces.each do |surface|
+		next unless surface.getString(1).to_s == "Wall"
+		vertices1 = []
+		vertices1 << [surface.getString(10).get.to_f, surface.getString(11).get.to_f, surface.getString(12).get.to_f]
+		vertices1 << [surface.getString(13).get.to_f, surface.getString(14).get.to_f, surface.getString(15).get.to_f]
+		vertices1 << [surface.getString(16).get.to_f, surface.getString(17).get.to_f, surface.getString(18).get.to_f]
+		vertices1 << [surface.getString(19).get.to_f, surface.getString(20).get.to_f, surface.getString(21).get.to_f]
+		vertices1.each do |vertex1|
+			shading_surfaces = workspace.getObjectsByType("Shading:Building:Detailed".to_IddObjectType)
+			shading_surfaces.each do |shading_surface|
+				next unless shading_surface.getString(0).to_s.downcase.include? "neighbor"
+				vertices2 = []
+				vertices2 << [shading_surface.getString(3).get.to_f, shading_surface.getString(4).get.to_f, shading_surface.getString(5).get.to_f]
+				vertices2 << [shading_surface.getString(6).get.to_f, shading_surface.getString(7).get.to_f, shading_surface.getString(8).get.to_f]
+				vertices2 << [shading_surface.getString(9).get.to_f, shading_surface.getString(10).get.to_f, shading_surface.getString(11).get.to_f]
+				begin
+					vertices2 << [shading_surface.getString(12).get.to_f, shading_surface.getString(13).get.to_f, shading_surface.getString(14).get.to_f]
+				rescue
+				end
+				vertices2.each do |vertex2|
+					if Math.sqrt((vertex2[0] - vertex1[0]) ** 2 + (vertex2[1] - vertex1[1]) ** 2 + (vertex2[2] - vertex1[2]) ** 2) < neighborOffset
+						neighborOffset = Math.sqrt((vertex2[0] - vertex1[0]) ** 2 + (vertex2[1] - vertex1[1]) ** 2 + (vertex2[2] - vertex1[2]) ** 2)
+					end								
+				end
+			end
+		end
+	end
+	if neighborOffset == 10000
+		neighborOffset = 0
+	end
+	return OpenStudio::convert(neighborOffset,"m","ft").get
+  end
+  
   #define the arguments that the user will input
   def arguments(workspace)
     args = OpenStudio::Ruleset::OSArgumentVector.new
@@ -435,40 +456,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	userdefined_infunfinattic.setDescription("Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.")
     userdefined_infunfinattic.setDefaultValue(0.00333)
     args << userdefined_infunfinattic
-
-    # Neighbors
-
-    #make a double argument for neighbor offset
-    userdefined_neighboroffsetleft = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffsetleft", false)
-    userdefined_neighboroffsetleft.setDisplayName("Neighbors: Left Neighbor Offset")
-	userdefined_neighboroffsetleft.setUnits("ft")
-	userdefined_neighboroffsetleft.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
-    userdefined_neighboroffsetleft.setDefaultValue(0)
-    args << userdefined_neighboroffsetleft
-	
-    #make a double argument for neighbor offset
-    userdefined_neighboroffsetright = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffsetright", false)
-    userdefined_neighboroffsetright.setDisplayName("Neighbors: Right Neighbor Offset")
-	userdefined_neighboroffsetright.setUnits("ft")
-	userdefined_neighboroffsetright.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
-    userdefined_neighboroffsetright.setDefaultValue(0)
-    args << userdefined_neighboroffsetright
-
-    #make a double argument for neighbor offset
-    userdefined_neighboroffsetfront = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffsetfront", false)
-    userdefined_neighboroffsetfront.setDisplayName("Neighbors: Front Neighbor Offset")
-	userdefined_neighboroffsetfront.setUnits("ft")
-	userdefined_neighboroffsetfront.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
-    userdefined_neighboroffsetfront.setDefaultValue(0)
-    args << userdefined_neighboroffsetfront
-
-    #make a double argument for neighbor offset
-    userdefined_neighboroffsetback = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedneighboroffsetback", false)
-    userdefined_neighboroffsetback.setDisplayName("Neighbors: Back Neighbor Offset")
-	userdefined_neighboroffsetback.setUnits("ft")
-	userdefined_neighboroffsetback.setDescription("The minimum distance between the simulated house and the neighboring houses (not including eaves) [ft].")
-    userdefined_neighboroffsetback.setDefaultValue(0)
-    args << userdefined_neighboroffsetback	
 
     # Age of Home
 
@@ -811,10 +798,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     fbsmtACH = runner.getDoubleArgumentValue("userdefinedinffbsmt",user_arguments)
     ufbsmtACH = runner.getDoubleArgumentValue("userdefinedinfufbsmt",user_arguments)
     uaSLA = runner.getDoubleArgumentValue("userdefinedinfunfinattic",user_arguments)
-    neighborOffsetLeft = runner.getDoubleArgumentValue("userdefinedneighboroffsetleft",user_arguments)
-	neighborOffsetRight = runner.getDoubleArgumentValue("userdefinedneighboroffsetright",user_arguments)
-	neighborOffsetFront = runner.getDoubleArgumentValue("userdefinedneighboroffsetfront",user_arguments)
-	neighborOffsetBack = runner.getDoubleArgumentValue("userdefinedneighboroffsetback",user_arguments)
     terrainType = runner.getStringArgumentValue("selectedterraintype",user_arguments)
     mechVentType = runner.getStringArgumentValue("selectedventtype",user_arguments)
     mechVentInfilCreditForExistingHomes = runner.getBoolArgumentValue("selectedinfilcredit",user_arguments)
@@ -872,7 +855,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       infiltrationShelterCoefficient = Constants.Auto
     end
     simTestSuiteBuilding = nil
-
+	
     # Create the material class instances
     si = Infiltration.new(infiltrationLivingSpaceACH50, infiltrationShelterCoefficient, infiltrationLivingSpaceConstantACH, infiltrationGarageACH50)
     living_space = LivingSpace.new
@@ -882,7 +865,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     crawlspace = Crawl.new(crawlACH)
     unfinished_attic = UnfinAttic.new(uaSLA)
     wind_speed = WindSpeed.new
-    neighbors = Neighbors.new(neighborOffsetLeft, neighborOffsetRight, neighborOffsetFront, neighborOffsetBack)
+	puts get_least_neighbor_offset(workspace).to_s
+    neighbors = Neighbors.new(get_least_neighbor_offset(workspace))
     site = Site.new(terrainType)
     vent = MechanicalVentilation.new(mechVentType, mechVentInfilCreditForExistingHomes, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
     misc = Misc.new(ageOfHome, simTestSuiteBuilding)

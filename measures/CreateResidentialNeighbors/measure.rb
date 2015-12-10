@@ -112,7 +112,7 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     spaces = model.getSpaces
     spaces.each do |space|
 		shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
-		[["left", left_neighbor_offset, left_offset, 0], ["right", right_neighbor_offset, right_offset, 0], ["back", back_neighbor_offset, 0, back_offset], ["front", front_neighbor_offset, 0, front_offset]].each do |dir, neighbor_offset, x_offset, y_offset|
+		[["Left", left_neighbor_offset, left_offset, 0], ["Right", right_neighbor_offset, right_offset, 0], ["Back", back_neighbor_offset, 0, back_offset], ["Front", front_neighbor_offset, 0, front_offset]].each do |dir, neighbor_offset, x_offset, y_offset|
 			if neighbor_offset != 0
 				new_space = space.clone.to_Space.get
 				m = OpenStudio::Matrix.new(4,4,0)
@@ -127,30 +127,30 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
 				new_space.surfaces.each do |surface|
 					if surface.outsideBoundaryCondition == "Outdoors"
 						shading_surface = OpenStudio::Model::ShadingSurface.new(surface.vertices, model)
-						shading_surface.setName("#{dir} neighbor shading")
+						shading_surface.setName("#{dir} Neighbor")
 						shading_surface.setShadingSurfaceGroup(shading_surface_group)
 						runner.registerInfo("Created shading surface #{shading_surface.name} from surface #{surface.name}.")				
 					end
 					surface.remove
 				end
-				m = OpenStudio::Matrix.new(4,4,0)
-				m[0,0] = 1
-				m[1,1] = 1
-				m[2,2] = 1
-				m[3,3] = 1
-				m[0,3] = -x_offset # TODO: figure out why this must be opposite the regular surfaces
-				m[1,3] = -y_offset # TODO: figure out why this must be opposite the regular surfaces			
-				m[2,3] = space.zOrigin # TODO: figure out why shading surfaces don't transform in the z-direction like regular surfaces (the clone has them all going back to z=0)
-				new_space.shadingSurfaceGroups.each do |shadingSurfaceGroup|
-					shadingSurfaceGroup.shadingSurfaces.each do |shadingSurface|					
-						shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Transformation.new(m) * shadingSurface.vertices, model)
-						shading_surface.setName("#{dir} neighbor shading")
-						shading_surface.setShadingSurfaceGroup(shading_surface_group)
-						runner.registerInfo("Created shading surface #{shading_surface.name} from surface #{shadingSurface.name}.")
-						shadingSurface.remove
-					end
-					shadingSurfaceGroup.remove
-				end
+				# m = OpenStudio::Matrix.new(4,4,0)
+				# m[0,0] = 1
+				# m[1,1] = 1
+				# m[2,2] = 1
+				# m[3,3] = 1
+				# m[0,3] = -x_offset # TODO: figure out why this must be opposite the regular surfaces
+				# m[1,3] = -y_offset # TODO: figure out why this must be opposite the regular surfaces			
+				# m[2,3] = space.zOrigin # TODO: figure out why shading surfaces don't transform in the z-direction like regular surfaces (the clone has them all going back to z=0)
+				# new_space.shadingSurfaceGroups.each do |shadingSurfaceGroup|
+					# shadingSurfaceGroup.shadingSurfaces.each do |shadingSurface|					
+						# shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Transformation.new(m) * shadingSurface.vertices, model)
+						# shading_surface.setName("#{dir} Neighbor")
+						# shading_surface.setShadingSurfaceGroup(shading_surface_group)
+						# runner.registerInfo("Created shading surface #{shading_surface.name} from surface #{shadingSurface.name}.")
+						# shadingSurface.remove
+					# end
+					# shadingSurfaceGroup.remove
+				# end
 				new_space.remove
 			end
 		end

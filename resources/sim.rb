@@ -899,10 +899,18 @@ class Sim
 			  epw_path = test
 			  @weather = WeatherProcess.new(epw_path, runner)
 			end
+		  elsif model.weatherFile.is_initialized
+			test = model.weatherFile.get.path
+			if test.is_initialized
+			  if File.exist?(test.get.to_s)
+				epw_path = test.get.to_s
+				@weather = WeatherProcess.new(epw_path, runner)
+			  end
+			end
 		  end
 	  end
 	end
-
+	
   def _getGroundTemperatures
     # Return monthly ground temperatures.
 
@@ -1667,21 +1675,10 @@ class Sim
 	
     # Local Shielding
     if infiltration.InfiltrationShelterCoefficient == Constants.Auto
-      n_offsets = [neighbors.NeighborOffsetLeft, neighbors.NeighborOffsetRight, neighbors.NeighborOffsetFront, neighbors.NeighborOffsetBack]
-	  nonzero_offsets = []
-	  n_offsets.each do |n_offset|
-	    if n_offset != 0
-		  nonzero_offsets << n_offset
-		end
-	  end
-	  min_nonzero_offset = 0
-	  if nonzero_offsets.length > 0
-		min_nonzero_offset = nonzero_offsets.min
-	  end
-	  if min_nonzero_offset == 0
+	  if neighbors.min_nonzero_offset == 0
         # Typical shelter for isolated rural house
         wind_speed.S_wo = 0.90
-      elsif min_nonzero_offset > geometry.building_height
+      elsif neighbors.min_nonzero_offset > geometry.building_height
         # Typical shelter caused by other building across the street
         wind_speed.S_wo = 0.70
       else
@@ -1696,7 +1693,7 @@ class Sim
 
     # S-G Shielding Coefficients are roughly 1/3 of AIM2 Shelter Coefficients
     wind_speed.shielding_coef = wind_speed.S_wo / 3.0
-
+	
     return wind_speed
 
   end
