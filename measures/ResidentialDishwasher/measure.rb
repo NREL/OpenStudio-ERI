@@ -129,20 +129,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
 
-	#Make a string argument for 24 weekday schedule values
-	weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch")
-	weekday_sch.setDisplayName("Weekday schedule")
-	weekday_sch.setDescription("Specify the 24-hour weekday schedule.")
-	weekday_sch.setDefaultValue("0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.041, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031")
-	args << weekday_sch
-    
-	#Make a string argument for 24 weekend schedule values
-	weekend_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekend_sch")
-	weekend_sch.setDisplayName("Weekend schedule")
-	weekend_sch.setDescription("Specify the 24-hour weekend schedule.")
-	weekend_sch.setDefaultValue("0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.041, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031")
-	args << weekend_sch
-
     return args
   end #end the arguments method
 
@@ -167,8 +153,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	dw_hot_water_multiplier = runner.getDoubleArgumentValue("mult_hw", user_arguments)
 	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
-	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
-	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
 	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f
@@ -267,7 +251,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 									 dw_energy_guide_gas_cost) / 
 									test_dw_cycles_per_year) # Therns/cycle
 	end
-									
+    
 	# Use additional EnergyGuide Label information to determine how much
 	# electricity was used in the test to power the dishwasher's
 	# internal machinery (eq. 2 Eastment and Hendron, NREL/CP-550-39769,
@@ -400,7 +384,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch = "1,1,1,1,1,1,1,1,1,1,1,1"
 	
 	obj_name = Constants.ObjectNameDishwasher
-	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
+    sch = HotWaterSchedule.new(runner, model, num_br, 0, "DW", obj_name)
 	if not sch.validated?
 		return false
 	end

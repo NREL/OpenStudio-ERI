@@ -251,11 +251,12 @@ task :update_resources do
 			FileUtils.mkdir_p(File.expand_path("../measures/#{m}/resources", __FILE__))
 		  end
 		  resources.each do |r|
-			unless File.file?(File.expand_path("../measures/#{m}/resources/#{r}", __FILE__))
+            r_filename = File.split(r)[1] # Remove directory name if it exists
+			unless File.file?(File.expand_path("../measures/#{m}/resources/#{r_filename}", __FILE__))
 			  FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
 			  puts "Added #{r} to #{m}/resources."
 			else 
-			  if not FileUtils.compare_file(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/#{r}", __FILE__))
+			  if not FileUtils.compare_file(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/#{r_filename}", __FILE__))
 				FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
 				puts "Updated #{r} in #{m}/resources."
 			  end

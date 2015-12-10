@@ -168,7 +168,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	obj_name_e = obj_name + "_" + Constants.FuelTypeElectric
 	obj_name_g = obj_name + "_" + Constants.FuelTypeGas
 	obj_name_i = obj_name + "_" + Constants.FuelTypeElectric + "_ignition"
-	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
+	sch = MonthHourSchedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
 	if not sch.validated?
 		return false
 	end
