@@ -43,7 +43,7 @@ ProcessThermalMassPartitionWall,sim.rb,util.rb,weather.rb,constants.rb,psychrome
 ResidentialClothesWasherandDryer,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,,,,
 ResidentialCookingRange,constants.rb,schedules.rb,,,,,,,
 ResidentialCookingRangeGas,constants.rb,schedules.rb,,,,,,,
-ResidentialDishwasher,schedules.rb,constants.rb,util.rb,,,,,,
+ResidentialDishwasher,schedules.rb,constants.rb,util.rb,weather.rb,psychrometrics.rb,,,,
 ResidentialLighting,,,,,,,,,
 ResidentialMiscellaneousElectricLoads,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,,,,
 ResidentialMiscellaneousGasLoads,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,,,,

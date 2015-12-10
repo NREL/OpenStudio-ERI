@@ -290,12 +290,12 @@ class WeatherProcess
 	mains_avg_temp = 0
 	#Calculate daily and annual
 	for d in 1..365
-		mains_daily_temp[d] = avgOAT + 6 + tmains_ratio * (max_temp - min_temp) / 2 * Math.sin(deg_rad * (0.986 * (d - 15 - tmains_lag) + sign * 90))
-		mains_avg_temp += mains_daily_temp[d] / 365.0
+		mains_daily_temp[d-1] = avgOAT + 6 + tmains_ratio * (max_temp - min_temp) / 2 * Math.sin(deg_rad * (0.986 * (d - 15 - tmains_lag) + sign * 90))
+		mains_avg_temp += mains_daily_temp[d-1] / 365.0
 	end
 	#Calculate monthly
 	for m in 1..12
-		mains_monthly_temp[m] = avgOAT + 6 + tmains_ratio * (max_temp - min_temp) / 2 * Math.sin(deg_rad * (0.986 * ((m * 30 - 15) - 15 - tmains_lag) + sign * 90))
+		mains_monthly_temp[m-1] = avgOAT + 6 + tmains_ratio * (max_temp - min_temp) / 2 * Math.sin(deg_rad * (0.986 * ((m * 30 - 15) - 15 - tmains_lag) + sign * 90))
 	end
 	
 	return mains_daily_temp, mains_monthly_temp, mains_avg_temp
