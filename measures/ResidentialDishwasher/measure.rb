@@ -437,10 +437,10 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
                 
                 #FIXME: Need to have water use connections, plant loop?
                 #Code adapted from https://github.com/NREL/OpenStudio/issues/1635
-                water_use_connection = OpenStudio::Model::WaterUseConnections.new(model)
-                water_use_connection.addWaterUseEquipment(dw2)
-                plant_loop = OpenStudio::Model::PlantLoop.new(model)
-                plant_loop.addDemandBranchForComponent(water_use_connection)
+                #water_use_connection = OpenStudio::Model::WaterUseConnections.new(model)
+                #water_use_connection.addWaterUseEquipment(dw2)
+                #plant_loop = OpenStudio::Model::PlantLoop.new(model)
+                #plant_loop.addDemandBranchForComponent(water_use_connection)
 			end
 		end
 	end
