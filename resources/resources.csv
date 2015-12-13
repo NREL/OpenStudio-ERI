@@ -43,7 +43,7 @@ ProcessThermalMassPartitionWall,sim.rb,util.rb,weather.rb,constants.rb,psychrome
 ResidentialClothesWasherandDryer,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,unit_conversions.rb,,,,,
 ResidentialCookingRange,constants.rb,schedules.rb,,,,,,,,,
 ResidentialCookingRangeGas,constants.rb,schedules.rb,,,,,,,,,
-ResidentialDishwasher,schedules.rb,constants.rb,util.rb,weather.rb,psychrometrics.rb,DrawProfiles/DHWDrawSchedule_1bed_unit0_1min_fraction.csv,DrawProfiles/DHWDrawSchedule_2bed_unit0_1min_fraction.csv,DrawProfiles/DHWDrawSchedule_3bed_unit0_1min_fraction.csv,DrawProfiles/DHWDrawSchedule_4bed_unit0_1min_fraction.csv,DrawProfiles/DHWDrawSchedule_5bed_unit0_1min_fraction.csv,DrawProfiles/MinuteDrawProfilesMaxFlows.csv
+ResidentialDishwasher,schedules.rb,constants.rb,util.rb,weather.rb,psychrometrics.rb,DrawProfiles/DishwasherSchedule_1bed_unit0.csv,DrawProfiles/DishwasherSchedule_2bed_unit0.csv,DrawProfiles/DishwasherSchedule_3bed_unit0.csv,DrawProfiles/DishwasherSchedule_4bed_unit0.csv,DrawProfiles/DishwasherSchedule_5bed_unit0.csv,DrawProfiles/MinuteDrawProfilesMaxFlows.csv
 ResidentialLighting,,,,,,,,,,,
 ResidentialMiscellaneousElectricLoads,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,unit_conversions.rb,,,,,
 ResidentialMiscellaneousGasLoads,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,unit_conversions.rb,,,,,

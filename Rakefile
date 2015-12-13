@@ -245,6 +245,7 @@ task :update_resources do
   measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry =='.' || entry == '..') }
   measures.each do |m|
 	resources = resources_to_update[m]
+    # Add/update any resource files
 	unless resources.nil?
 		unless resources.empty?
 		  unless File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
@@ -264,8 +265,27 @@ task :update_resources do
 		  end
 		end
 	else
-	  puts "You haven't added an entry for #{m} in resources.csv."
+	  puts "No entry for #{m} in resources.csv."
 	end
+    # Any extra resource files?
+    if File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
+      Dir.foreach(File.expand_path("../measures/#{m}/resources", __FILE__)) do |item|
+        next if item == '.' or item == '..'
+        if not resources.nil?
+          found = false
+          resources.each do |r|
+            r_filename = File.split(r)[1] # Remove directory name if it exists
+            if r_filename == item
+              found = true
+              break
+            end
+          end
+          if not found
+            puts "Extra file #{item} found in #{m}/resources. Either delete it or add it to resources.csv."
+          end
+        end
+      end
+    end
   end
 
 end

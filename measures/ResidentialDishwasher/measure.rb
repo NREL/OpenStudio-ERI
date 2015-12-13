@@ -376,7 +376,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	obj_name = Constants.ObjectNameDishwasher
-    sch = HotWaterSchedule.new(runner, model, num_br, 0, "DW", obj_name, wh_setpoint)
+    sch = HotWaterSchedule.new(runner, model, num_br, 0, "Dishwasher", obj_name, wh_setpoint)
 	if not sch.validated?
 		return false
 	end

@@ -173,14 +173,14 @@ end
 
 class HotWaterSchedule
 
-    def initialize(runner, model, num_bedrooms, unit_num, column_header, sch_name, target_water_temperature)
+    def initialize(runner, model, num_bedrooms, unit_num, file_prefix, sch_name, target_water_temperature)
         @validated = true
         @model = model
         @runner = runner
         @sch_name = sch_name
         @num_bedrooms = num_bedrooms.to_i
         @unit_index = unit_num % 10
-        @column_header = column_header
+        @file_prefix = file_prefix
         @target_water_temperature = OpenStudio.convert(target_water_temperature, "F", "C").get
         
         timestep_minutes = (60/@model.getTimestep.numberOfTimestepsPerHour).to_i
@@ -241,40 +241,34 @@ class HotWaterSchedule
             data = []
             
             # Get appropriate file
-            minute_draw_profile = "#{File.dirname(__FILE__)}/DHWDrawSchedule_#{@num_bedrooms}bed_unit#{@unit_index}_1min_fraction.csv"
+            minute_draw_profile = "#{File.dirname(__FILE__)}/#{@file_prefix}Schedule_#{@num_bedrooms}bed_unit#{@unit_index}.csv"
             if not File.file?(minute_draw_profile)
                 @runner.registerError("Unable to find file: #{minute_draw_profile}")
                 return nil
             end
             
+            minutes_in_year = 8760*60
+            
+            # Read data into minute array
             skippedheader = false
-            items = []
-            col_num = nil
+            items = [0]*minutes_in_year
             File.open(minute_draw_profile).each do |line|
                 linedata = line.strip.split(',')
                 if not skippedheader
                     skippedheader = true
-                    # Which column to read?
-                    col_num = linedata.index(@column_header)
                     next
                 end
-                if col_num.nil?
-                    @runner.registerError("Unable to find column header: #{@column_header}")
-                    return nil
-                end
-                item = linedata[col_num]
-                if not item.nil?
-                    items.push(item.to_f)
-                else
-                    items.push(0.0)
-                end
-                if items.size == timestep_minutes
-                    # Aggregate minute schedule up to the timestep level to reduce the size 
-                    # and speed of processing.
-                    avgitem = items.reduce(:+).to_f/items.size
-                    data.push(avgitem)
-                    items.clear
-                end
+                minute = linedata[0].to_i
+                value = linedata[1].to_f
+                items[minute] = value
+            end
+            
+            # Aggregate minute schedule up to the timestep level to reduce the size 
+            # and speed of processing.
+            for tstep in 0..(minutes_in_year/timestep_minutes).to_i-1
+                timestep_items = items[tstep*timestep_minutes,timestep_minutes]
+                avgitem = timestep_items.reduce(:+).to_f/timestep_items.size
+                data.push(avgitem)
             end
             
             return data
@@ -284,8 +278,10 @@ class HotWaterSchedule
             totflow = 0 # daily gal/day
             maxflow = 0
             
-            totflow_column_header = "#{@column_header} Sum"
-            maxflow_column_header = "#{@column_header} Max"
+            column_header = @file_prefix
+            
+            totflow_column_header = "#{column_header} Sum"
+            maxflow_column_header = "#{column_header} Max"
             
             draw_file = "#{File.dirname(__FILE__)}/MinuteDrawProfilesMaxFlows.csv"
             
