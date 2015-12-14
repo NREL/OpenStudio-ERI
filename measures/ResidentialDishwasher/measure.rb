@@ -128,15 +128,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     space_type.setDisplayName("Select the space where the dishwasher is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
-    
-    #make a double argument for water heater setpoint
-    #FIXE: remove this some day and require water heater to be set first
-	wh_setpoint = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wh_setpoint",true)
-	wh_setpoint.setDisplayName("Water Heater Setpoint")
-	wh_setpoint.setDescription("Water heater setpoint temperature.")
-	wh_setpoint.setDefaultValue(125.0)
-    wh_setpoint.setUnits("degrees F")
-	args << wh_setpoint
 
     return args
   end #end the arguments method
@@ -162,7 +153,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	dw_hot_water_multiplier = runner.getDoubleArgumentValue("mult_hw", user_arguments)
 	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
-    wh_setpoint = runner.getDoubleArgumentValue("wh_setpoint", user_arguments)
 	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f
@@ -196,6 +186,37 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		runner.registerError("Occupancy hot water multiplier must be greater than or equal to 0.")
 		return false
 	end
+
+    #Get plant loop
+    plantLoops = model.getPlantLoops
+    if plantLoops.size == 0
+        runner.registerError("No plant loop found; add a residential water heater first.")
+        return false
+    elsif plantLoops.size > 1
+        #FIXME: How do we determine which plant loop?
+        runner.registerWarning("Multiple plant loops found. Arbitrarily using first plant loop.")
+    end
+    plantLoop = plantLoops[0]
+    
+    #Get water heater
+    waterHeater = nil
+    plantLoop.supplyComponents.each do |wh|
+        if wh.to_WaterHeaterMixed.is_initialized
+            waterHeater = wh.to_WaterHeaterMixed.get
+        elsif wh.to_WaterHeaterStratified.is_initialized
+            waterHeater = wh.to_WaterHeaterStratified.get
+        else
+            next
+        end
+        if waterHeater.setpointTemperatureSchedule.nil?
+            runner.registerError("Water heater found without a setpoint temperature schedule.")
+            return false
+        end
+    end
+    if waterHeater.nil?
+        runner.registerError("No water heater found; add a residential water heater first.")
+        return false
+    end
 
 	properties = Properties.new
 
@@ -352,7 +373,12 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 
 	elsif dw_internal_heater_adjustment
 
-		# Adjust for difference in water heater supply temperature vs.
+        # Get average water heater setpoint
+        wh_sched = waterHeater.setpointTemperatureSchedule.get
+        wh_daysched = wh_sched.defaultDaySchedule # FIXME: Why doesn't this work?
+        wh_setpoint = wh_daysched.values[0]
+
+        # Adjust for difference in water heater supply temperature vs.
 		# test hot water supply temperature.
 		actual_dw_elec_use_per_cycle = test_dw_elec_use_per_cycle + \
 				(test_dw_dhw_temp - wh_setpoint) * \
@@ -410,7 +436,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
                     end
                 end
             end
-			if has_elec_dw == 0 
+			if has_elec_dw == 0
 				has_elec_dw = 1
 
 				#Add electric equipment for the dw
@@ -435,12 +461,22 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
                 dw_def2.setEndUseSubcategory("Domestic Hot Water")
 				sch.setWaterSchedule(dw2)
                 
-                #FIXME: Need to have water use connections, plant loop?
-                #Code adapted from https://github.com/NREL/OpenStudio/issues/1635
-                #water_use_connection = OpenStudio::Model::WaterUseConnections.new(model)
-                #water_use_connection.addWaterUseEquipment(dw2)
-                #plant_loop = OpenStudio::Model::PlantLoop.new(model)
-                #plant_loop.addDemandBranchForComponent(water_use_connection)
+                #Reuse existing water use connection if possible
+                equip_added = false
+                plantLoop.demandComponents.each do |component|
+                    next unless component.to_WaterUseConnections.is_initialized
+                    connection = component.to_WaterUseConnections.get
+                    connection.addWaterUseEquipment(dw2)
+                    equip_added = true
+                    break
+                end
+                if not equip_added
+                    #Need new water heater connection
+                    connection = OpenStudio::Model::WaterUseConnections.new(model)
+                    connection.addWaterUseEquipment(dw2)
+                    plantLoop.addDemandBranchForComponent(connection)
+                end
+                
 			end
 		end
 	end
@@ -451,7 +487,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		if replace_dw == 1
 			runner.registerFinalCondition("The existing dishwasher has been replaced by one with #{dw_ann.round} kWh annual energy consumption.")
 		else
-			runner.registerFinalCondition("A dishwasher has been added with #{dw_ann.round} kWh annual energy consumption.")
+			runner.registerFinalCondition("A dishwasher with #{dw_ann.round} kWh annual energy consumption has been added to plant loop '#{plantLoop.name}'.")
 		end
 	else
 		runner.registerFinalCondition("Dishwasher was not added to #{space_type_r}.")
