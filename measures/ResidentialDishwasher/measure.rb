@@ -128,6 +128,20 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     space_type.setDisplayName("Select the space where the dishwasher is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
+    
+    #make a choice argument for plant loop
+    plant_loops = model.getPlantLoops
+    plant_loop_args = OpenStudio::StringVector.new
+    plant_loops.each do |plant_loop|
+        plant_loop_args << plant_loop.name.to_s
+    end
+    if not plant_loop_args.include?(Constants.PlantLoopServiceWater)
+        plant_loop_args << Constants.PlantLoopServiceWater
+    end
+	pl = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("pl", plant_loop_args, true)
+	pl.setDisplayName("Plant Loop")
+	pl.setDefaultValue(Constants.PlantLoopServiceWater)
+	args << pl
 
     return args
   end #end the arguments method
@@ -153,6 +167,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	dw_hot_water_multiplier = runner.getDoubleArgumentValue("mult_hw", user_arguments)
 	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+    plant_loop_s = runner.getStringArgumentValue("pl", user_arguments)
 	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f
@@ -188,17 +203,19 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	end
 
     #Get plant loop
-    plantLoops = model.getPlantLoops
-    if plantLoops.size == 0
-        runner.registerError("No plant loop found; add a residential water heater first.")
-        return false
-    elsif plantLoops.size > 1
-        #FIXME: How do we determine which plant loop?
-        runner.registerWarning("Multiple plant loops found. Arbitrarily using first plant loop.")
+    plantLoop = nil
+    model.getPlantLoops.each do |pl|
+        if pl.name.to_s == plant_loop_s
+            plantLoop = pl
+            break
+        end
     end
-    plantLoop = plantLoops[0]
-    
-    #Get water heater
+    if plantLoop.nil?
+        runner.registerError("Could not find plant loop with name #{plant_loop_s}.")
+        return false
+    end
+
+    # Get water heater setpoint
     waterHeater = nil
     plantLoop.supplyComponents.each do |wh|
         if wh.to_WaterHeaterMixed.is_initialized
@@ -217,7 +234,12 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
         runner.registerError("No water heater found; add a residential water heater first.")
         return false
     end
-
+    min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.setpointTemperatureSchedule.get)
+    wh_setpoint = OpenStudio.convert((min_max_result['min'] + min_max_result['max'])/2.0, "C", "F").get
+    if min_max_result['min'] != min_max_result['max']
+        runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
+    end
+    
 	properties = Properties.new
 
 	#hard coded convective, radiative, latent, and lost fractions for dishwashers
@@ -373,11 +395,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 
 	elsif dw_internal_heater_adjustment
 
-        # Get average water heater setpoint
-        wh_sched = waterHeater.setpointTemperatureSchedule.get
-        wh_daysched = wh_sched.defaultDaySchedule # FIXME: Why doesn't this work?
-        wh_setpoint = wh_daysched.values[0]
-
         # Adjust for difference in water heater supply temperature vs.
 		# test hot water supply temperature.
 		actual_dw_elec_use_per_cycle = test_dw_elec_use_per_cycle + \
@@ -395,7 +412,10 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 				actual_dw_cycles_per_year / 365 # kWh/day
 	
 	end
-	
+
+    daily_energy = daily_energy * dw_energy_multiplier
+    daily_dishwasher_water = daily_dishwasher_water * dw_hot_water_multiplier
+    
 	if daily_energy < 0
 		runner.registerError("The inputs for the dishwasher resulted in a negative amount of energy consumption.")
 		return false
@@ -407,7 +427,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		return false
 	end
 	design_level = sch.calcDesignLevelElec(daily_energy)
-    peak_flow = sch.calcPeakFlow(daily_energy)
+    peak_flow = sch.calcPeakFlow(daily_dishwasher_water)
 
 	#add dw to the selected space
 	has_elec_dw = 0

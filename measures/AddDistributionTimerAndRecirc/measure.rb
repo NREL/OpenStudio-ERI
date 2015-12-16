@@ -14,6 +14,7 @@ require "#{File.dirname(__FILE__)}/scheduledraws"
 require "#{File.dirname(__FILE__)}/dailyusage"
 require "#{File.dirname(__FILE__)}/internalgains"
 require "#{File.dirname(__FILE__)}/recirculation"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 
 #start the measure
@@ -480,7 +481,7 @@ class AddWaterUseEquipmentObject < OpenStudio::Ruleset::ModelUserScript
 	
 	def create_new_loop
 		loop = OSM::PlantLoop.new(@model)
-		loop.setName("Service Hot Water Loop")
+		loop.setName(Constants.PlantLoopServiceWater)
 		loop.sizingPlant.setDesignLoopExitTemperature(60)
 		loop.sizingPlant.setLoopDesignTemperatureDifference(50)
 		bypass_pipe = OSM::PipeAdiabatic.new(@model)

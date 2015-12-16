@@ -202,8 +202,8 @@ class HotWaterSchedule
         return OpenStudio.convert(kWh_day*365*60/(365*@totflow/@maxflow), "kW", "W").get
     end
     
-    def calcPeakFlow(kWh_day)
-        return @maxflow * kWh_day / @totflow
+    def calcPeakFlow(daily_water)
+        return OpenStudio.convert(@maxflow * daily_water / @totflow, "gal/min", "m^3/s").get
     end
 
 	def setSchedule(obj)
@@ -318,7 +318,6 @@ class HotWaterSchedule
                 @runner.registerError("Unable to find data for bedrooms = #{@num_bedrooms} and unit index = #{@unit_index}.")
                 return nil, nil
             end
-            
             return totflow, maxflow
             
         end
@@ -340,4 +339,48 @@ class HotWaterSchedule
             return schedule
         end
 
+end
+
+class Schedule
+
+  # find the maximum profile value for a schedule
+  def self.getMinMaxAnnualProfileValue(model, schedule)
+    # validate schedule
+    if schedule.to_ScheduleRuleset.is_initialized
+      schedule = schedule.to_ScheduleRuleset.get
+
+      # gather profiles
+      profiles = []
+      defaultProfile = schedule.to_ScheduleRuleset.get.defaultDaySchedule
+      profiles << defaultProfile
+      rules = schedule.scheduleRules
+      rules.each do |rule|
+        profiles << rule.daySchedule
+      end
+
+      # test profiles
+      min = nil
+      max = nil
+      profiles.each do |profile|
+        profile.values.each do |value|
+          if min.nil?
+            min = value
+          else
+            if min > value then min = value end
+          end
+          if max.nil?
+            max = value
+          else
+            if max < value then max = value end
+          end
+        end
+      end
+      result = { 'min' => min, 'max' => max } # this doesn't include summer and winter design day
+    else
+      result =  nil
+    end
+
+    return result
+  end # end of OsLib_Schedules.getMaxAnnualProfileValue
+  
 end

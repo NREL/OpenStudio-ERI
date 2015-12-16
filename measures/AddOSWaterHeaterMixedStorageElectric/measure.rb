@@ -9,6 +9,7 @@
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
 require 'OpenStudio'
+require "#{File.dirname(__FILE__)}/resources/constants"
 require_relative "resources/ba_protocol_table_8_page_13.rb"
 
 #start the measure
@@ -178,7 +179,7 @@ class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScrip
 
   def create_new_loop
     loop = OSM::PlantLoop.new(@model)
-    loop.setName("Service Hot Water Loop")
+    loop.setName(Constants.PlantLoopServiceWater)
     loop.sizingPlant.setDesignLoopExitTemperature(60)
     loop.sizingPlant.setLoopDesignTemperatureDifference(50)
         
