@@ -124,48 +124,38 @@ class Mat_gas
 end
 
 class Properties
-  def initialize
+  def self.Air
     # From EES at STP
-    @air = Mat_gas.new(0.07518,0.2399,0.01452,0.04415,28.97)
-    @h2O_l = Mat_liq.new(62.32,0.9991,0.3386,2.424,1055,32.0,212.0,nil)
-    @h2O_v = Mat_gas.new(nil,0.4495,nil,nil,18.02)
+    return Mat_gas.new(0.07518,0.2399,0.01452,0.04415,28.97)
+  end
 
+  def self.H2O_l
+    # From EES at STP
+    return Mat_liq.new(62.32,0.9991,0.3386,2.424,1055,32.0,212.0,nil)
+  end
+
+  def self.H2O_v
+    # From EES at STP
+    return Mat_gas.new(nil,0.4495,nil,nil,18.02)
+  end
+
+  def self.R22_l
     # Converted from EnthDR22 f77 in ResAC (Brandemuehl)
-    @r22_l = Mat_liq.new(nil,0.2732,nil,nil,100.5,nil,-41.35,204.9)
-    @r22_v = Mat_gas.new(nil,0.1697,nil,nil,nil)
+    return Mat_liq.new(nil,0.2732,nil,nil,100.5,nil,-41.35,204.9)
+  end
 
+  def self.R22_v
+    # Converted from EnthDR22 f77 in ResAC (Brandemuehl)
+    return Mat_gas.new(nil,0.1697,nil,nil,nil)
+  end
+
+  def self.Wood
     # From wolframalpha.com
-    @wood = Mat_solid.new(630,2500,0.14)
-
-    @psychMassRat = @h2O_v.M / @air.M
+    return Mat_solid.new(630,2500,0.14)
   end
 
-  def Air
-    return @air
-  end
-
-  def H2O_l
-    return @h2O_l
-  end
-
-  def H2O_v
-    return @h2O_v
-  end
-
-  def R22_l
-    return @r22_l
-  end
-
-  def R22_v
-    return @r22_v
-  end
-
-  def Wood
-    return @wood
-  end
-
-  def PsychMassRat
-    return @psychMassRat
+  def self.PsychMassRat
+    return Properties.H2O_v.M / Properties.Air.M
   end
 end
 

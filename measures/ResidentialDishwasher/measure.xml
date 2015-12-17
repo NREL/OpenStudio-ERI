@@ -2,41 +2,113 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>4ac822a6-c771-407f-b6e8-4acd284b80ba</version_id>
+  <version_id>40169802-0d58-43b6-8f47-8a89537eb40b</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
-  <display_name>ResidentialDishwasher</display_name>
-  <description>Adds a dishwasher to the user selected space. The energy consumption can either be defined based on the Building America Benchmark dishwasher (which consumes 87.6 + 29.2 * Num_bedrooms kWh/yr and 2.26 + 0.75 * Num_bedrooms gal/day) or a user defined annual energy and hot water consumption. </description>
-  <modeler_description>Adds an electric equipment object. TODO: SHould this add a hot water consumption object (once water heaters are added), or should the water heater measure have objects for has_dishwasher, etc.</modeler_description>
+  <display_name>Add/Replace Residential Dishwasher</display_name>
+  <description>Adds (or replaces) a residential dishwasher with the specified efficiency, operation, and schedule.</description>
+  <modeler_description>Since there is no Dishwasher object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential dishwasher. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
     <argument>
-      <name>selected_dw</name>
-      <display_name>Dishwasher Energy Consumption Option</display_name>
-      <type>Choice</type>
+      <name>num_settings</name>
+      <display_name>Number of Place Settings</display_name>
+      <description>The number of place settings for the unit. Data obtained from manufacturer's literature.</description>
+      <type>Integer</type>
+      <units>#</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>12</default_value>
+    </argument>
+    <argument>
+      <name>dw_E</name>
+      <display_name>Rated Annual Consumption</display_name>
+      <description>The annual energy consumed by the dishwasher, as rated, obtained from the EnergyGuide label. This includes both the appliance electricity consumption and the energy required for water heating.</description>
+      <type>Double</type>
+      <units>kWh</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>290</default_value>
+    </argument>
+    <argument>
+      <name>int_htr</name>
+      <display_name>Internal Heater Adjustment</display_name>
+      <description>Does the system use an internal electric heater to adjust water temperature?   Input obtained from manufacturer's literature.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
       <choices>
         <choice>
-          <value>Benchmark</value>
-          <display_name>Benchmark</display_name>
+          <value>true</value>
+          <display_name>true</display_name>
         </choice>
         <choice>
-          <value>Simple</value>
-          <display_name>Simple</display_name>
+          <value>false</value>
+          <display_name>false</display_name>
         </choice>
       </choices>
     </argument>
     <argument>
-      <name>dw_E</name>
-      <display_name>Simple Dishwasher Annual Energy Consumption (kWh/yr)</display_name>
+      <name>cold_inlet</name>
+      <display_name>Cold Water Inlet Only</display_name>
+      <description>Does the dishwasher use a cold water connection only.   Input obtained from manufacturer's literature.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>cold_use</name>
+      <display_name>Cold Water Conn Use Per Cycle</display_name>
+      <description>Volume of water per cycle used if there is only a cold water inlet connection, for the dishwasher.   Input obtained from manufacturer's literature.</description>
       <type>Double</type>
+      <units>gal/cycle</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
-      <name>BAB_mult</name>
-      <display_name>Building America Benchmark Multipler</display_name>
+      <name>eg_date</name>
+      <display_name>Energy Guide Date</display_name>
+      <description>Energy Guide test date.</description>
+      <type>Integer</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2007</default_value>
+    </argument>
+    <argument>
+      <name>eg_gas_cost</name>
+      <display_name>Energy Guide Annual Gas Cost</display_name>
+      <description>Annual cost of gas, as rated.  Obtained from the EnergyGuide label.</description>
+      <type>Double</type>
+      <units>$/yr</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>23</default_value>
+    </argument>
+    <argument>
+      <name>mult_e</name>
+      <display_name>Occupancy Energy Multiplier</display_name>
+      <description>Appliance energy use is multiplied by this factor to account for occupancy usage that differs from the national average.</description>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>mult_hw</name>
+      <display_name>Occupancy Hot Water Multiplier</display_name>
+      <description>Appliance hot water use is multiplied by this factor to account for occupancy usage that differs from the national average. This should generally be equal to the Occupancy Energy Multiplier.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -45,10 +117,32 @@
     <argument>
       <name>Num_Br</name>
       <display_name>Number of Bedrooms</display_name>
-      <type>Integer</type>
+      <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>1</default_value>
+      <default_value>3</default_value>
+      <choices>
+        <choice>
+          <value>1</value>
+          <display_name>1</display_name>
+        </choice>
+        <choice>
+          <value>2</value>
+          <display_name>2</display_name>
+        </choice>
+        <choice>
+          <value>3</value>
+          <display_name>3</display_name>
+        </choice>
+        <choice>
+          <value>4</value>
+          <display_name>4</display_name>
+        </choice>
+        <choice>
+          <value>5+</value>
+          <display_name>5+</display_name>
+        </choice>
+      </choices>
     </argument>
     <argument>
       <name>space_type</name>
@@ -56,6 +150,16 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>wh_setpoint</name>
+      <display_name>Water Heater Setpoint</display_name>
+      <description>Water heater setpoint temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>125</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -85,7 +189,67 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>DHWDrawSchedule_1bed_unit0_1min_fraction.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>206447FF</checksum>
+    </file>
+    <file>
+      <filename>DHWDrawSchedule_2bed_unit0_1min_fraction.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C4CF8175</checksum>
+    </file>
+    <file>
+      <filename>DHWDrawSchedule_3bed_unit0_1min_fraction.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>85F0D888</checksum>
+    </file>
+    <file>
+      <filename>DHWDrawSchedule_4bed_unit0_1min_fraction.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>61B80AE0</checksum>
+    </file>
+    <file>
+      <filename>DHWDrawSchedule_5bed_unit0_1min_fraction.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>567F283D</checksum>
+    </file>
+    <file>
+      <filename>MinuteDrawProfilesMaxFlows.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0FC139C0</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>42C35E6E</checksum>
     </file>
     <file>
       <version>
@@ -96,19 +260,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6C569EE2</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>51458A66</checksum>
     </file>
   </files>
 </measure>

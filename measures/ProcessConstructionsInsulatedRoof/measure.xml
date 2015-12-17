@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_insulated_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>408578a3-a5e1-4ba9-b5d2-4e56cfa76927</version_id>
+  <version_id>29d4ff8e-98e8-4a63-8f35-ebd58c2e4ec2</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInsulatedRoof</class_name>
   <display_name>Add/Replace Residential Finished Roof</display_name>
@@ -178,7 +178,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -189,19 +189,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5FAA52A5</checksum>
+      <checksum>C86EA5FB</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_orientation</name>
   <uid>4bf5a7c5-bce4-404a-bc7b-72dc02b379f8</uid>
-  <version_id>1e4fc749-3235-444c-9667-83626acb81ef</version_id>
+  <version_id>220b29ac-84b8-42a5-8295-7064426bcb86</version_id>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialOrientation</class_name>
   <display_name>Create Residential Orientation</display_name>
@@ -68,7 +68,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>250726E8</checksum>
+      <checksum>655DAE79</checksum>
     </file>
   </files>
 </measure>

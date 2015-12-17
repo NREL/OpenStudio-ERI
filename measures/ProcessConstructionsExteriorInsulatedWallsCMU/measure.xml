@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>f97a5b44-4842-4ee9-8bc7-e77077b0eb96</version_id>
+  <version_id>31115c82-f1ed-442e-9bf1-7d4152d49c1f</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsCMU</class_name>
   <display_name>Add/Replace Residential CMU Walls</display_name>
@@ -245,12 +245,6 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
-      <filename>ASHRAE622WSF.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1C1BB835</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -259,25 +253,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E1BABF3B</checksum>
+      <checksum>8B0BA962</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>39852CD3</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>72EDEC43</checksum>
+      <checksum>159FAC2A</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CB3EAC1E</checksum>
+      <checksum>F49094C3</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

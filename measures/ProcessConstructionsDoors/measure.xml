@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>1ea50ee0-0f6e-4296-87dd-dbaa4769b05f</version_id>
+  <version_id>7622dc29-a314-4092-8abf-43852c51c8a5</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>Add/Replace Residential Exterior Doors</display_name>
@@ -24,6 +24,29 @@
       <type>Choice</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>selecteddoor</name>
+      <display_name>Door Type</display_name>
+      <description>The front door type.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Fiberglass</default_value>
+      <choices>
+        <choice>
+          <value>Wood</value>
+          <display_name>Wood</display_name>
+        </choice>
+        <choice>
+          <value>Steel</value>
+          <display_name>Steel</display_name>
+        </choice>
+        <choice>
+          <value>Fiberglass</value>
+          <display_name>Fiberglass</display_name>
+        </choice>
+      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -53,7 +76,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -64,19 +87,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B3EA748F</checksum>
+      <checksum>70BD5562</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

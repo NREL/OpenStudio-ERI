@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_partition_wall</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>d64a9375-a194-49d8-bbd2-ae25bd19ff1a</version_id>
+  <version_id>c7b4295a-cefd-4aad-9945-95c61b49bb7c</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassPartitionWall</class_name>
   <display_name>Add/Replace Residential Partition Wall Thermal Mass</display_name>
@@ -26,7 +26,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>userdefinedpartitionwallmassth</name>
+      <name>partitionwallmassth</name>
       <display_name>Partition Wall Mass: Thickness</display_name>
       <description>Thickness of the layer.</description>
       <type>Double</type>
@@ -36,7 +36,7 @@
       <default_value>0.5</default_value>
     </argument>
     <argument>
-      <name>userdefinedpartitionwallmasscond</name>
+      <name>partitionwallmasscond</name>
       <display_name>Partition Wall Mass: Conductivity</display_name>
       <description>Conductivity of the layer.</description>
       <type>Double</type>
@@ -46,7 +46,7 @@
       <default_value>1.1112</default_value>
     </argument>
     <argument>
-      <name>userdefinedpartitionwallmassdens</name>
+      <name>partitionwallmassdens</name>
       <display_name>Partition Wall Mass: Density</display_name>
       <description>Density of the layer.</description>
       <type>Double</type>
@@ -56,7 +56,7 @@
       <default_value>50</default_value>
     </argument>
     <argument>
-      <name>userdefinedpartitionwallmasssh</name>
+      <name>partitionwallmasssh</name>
       <display_name>Partition Wall Mass: Specific Heat</display_name>
       <description>Specific heat of the layer.</description>
       <type>Double</type>
@@ -66,33 +66,13 @@
       <default_value>0.2</default_value>
     </argument>
     <argument>
-      <name>userdefinedpartitionwallfrac</name>
+      <name>partitionwallfrac</name>
       <display_name>Partition Wall Mass: Fraction of Floor Area</display_name>
       <description>Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedlivingarea</name>
-      <display_name>Living Space Area</display_name>
-      <description>The area of the living space.</description>
-      <type>Double</type>
-      <units>ft^2</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2700</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfbsmtarea</name>
-      <display_name>Finished Basement Area</display_name>
-      <description>The area of the finished basement.</description>
-      <type>Double</type>
-      <units>ft^2</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1200</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -122,7 +102,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -133,19 +113,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>47549EFE</checksum>
+      <checksum>F87391B2</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

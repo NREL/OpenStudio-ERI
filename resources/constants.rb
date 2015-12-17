@@ -509,6 +509,9 @@ class Constants
 	def self.PCMtypeConcentrated
 		return 'concentrated'
 	end
+    def self.PlantLoopServiceWater
+        return 'Service Hot Water Loop'
+    end
 	def self.RecircTypeTimer
 		return 'timer'
 	end

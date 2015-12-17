@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>6f8b3e13-d795-4040-9abb-29d72d023a05</version_id>
+  <version_id>f84c6e0b-fd41-4746-976b-8c0c7deae56b</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsSlab</class_name>
   <display_name>Add/Replace Residential Slab Constructions</display_name>
@@ -152,7 +152,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -163,19 +163,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EDBDEF12</checksum>
+      <checksum>199D48CF</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

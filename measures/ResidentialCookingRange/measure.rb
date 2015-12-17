@@ -79,7 +79,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	#make a choice argument for space type
     space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
 	space_type.setDisplayName("Location")
-    space_type.setDescription("Select the space where the cooking range is located")
+    space_type.setDescription("Select the space type where the cooking range is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
 
@@ -151,7 +151,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	obj_name_e = obj_name + "_" + Constants.FuelTypeElectric
 	obj_name_g = obj_name + "_" + Constants.FuelTypeGas
 	obj_name_i = obj_name + "_" + Constants.FuelTypeElectric + "_ignition"
-	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
+	sch = MonthHourSchedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
 	if not sch.validated?
 		return false
 	end

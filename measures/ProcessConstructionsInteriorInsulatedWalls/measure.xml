@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_walls</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>5b218cb2-3846-4923-9518-be089794f4db</version_id>
+  <version_id>36176210-801f-409c-9238-8bc80aefee0c</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedWalls</class_name>
   <display_name>Add/Replace Residential Interzonal Walls</display_name>
@@ -103,7 +103,7 @@
     </argument>
     <argument>
       <name>selectedspacing</name>
-      <display_name>Wood stud spacing of wall cavity.</display_name>
+      <display_name>Interzonal Walls: Stud Spacing</display_name>
       <description>The on-center spacing between studs in a wall assembly.</description>
       <type>Choice</type>
       <units>in</units>
@@ -133,7 +133,7 @@
     </argument>
     <argument>
       <name>selectedinstallgrade</name>
-      <display_name>Wood Stud: Cavity Install Grade</display_name>
+      <display_name>Interzonal Walls: Cavity Install Grade</display_name>
       <description>5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
       <required>true</required>
@@ -221,7 +221,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -232,19 +232,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>55113C22</checksum>
+      <checksum>9A8EF15A</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>c0c2fa0a-2c06-40b8-a1de-8883f3d3e2a8</version_id>
+  <version_id>48a754dd-3ce1-4b48-b502-f32c46dd4d7c</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCrawlspace</class_name>
   <display_name>Add/Replace Residential Crawlspace Constructions</display_name>
@@ -178,6 +178,16 @@
       <default_value>0.8</default_value>
     </argument>
     <argument>
+      <name>userdefinedcsarea</name>
+      <display_name>Crawlspace Area</display_name>
+      <description>The area of the crawlspace.</description>
+      <type>Double</type>
+      <units>ft^2</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1200</default_value>
+    </argument>
+    <argument>
       <name>userdefinedcsheight</name>
       <display_name>Crawlspace Height</display_name>
       <description>The height of the crawlspace.</description>
@@ -196,16 +206,6 @@
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>140</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcswallarea</name>
-      <display_name>Crawlspace Wall Area</display_name>
-      <description>The wall area of the crawlspace.</description>
-      <type>Double</type>
-      <units>ft^2</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>560</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -235,7 +235,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -246,19 +246,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>482FB428</checksum>
+      <checksum>627326A4</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

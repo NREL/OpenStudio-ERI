@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_floors</name>
   <uid>477cfef1-0c37-4b16-9cfd-82d617472e43</uid>
-  <version_id>5985a5fe-92b1-48a7-a6ef-e30d9a52446f</version_id>
+  <version_id>72b6b122-a6a9-471a-9524-d0bed2c23ff2</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedFloors</class_name>
   <display_name>Add/Replace Residential Uninsulated Floors</display_name>
@@ -27,7 +27,7 @@
     </argument>
     <argument>
       <name>userdefinedgypthickness</name>
-      <display_name>Partition Wall Mass: Thickness</display_name>
+      <display_name>Ceiling Mass: Thickness</display_name>
       <description>Gypsum layer thickness.</description>
       <type>Double</type>
       <units>in</units>
@@ -37,7 +37,7 @@
     </argument>
     <argument>
       <name>userdefinedgyplayers</name>
-      <display_name>Partition Wall Mass: Num Layers</display_name>
+      <display_name>Ceiling Mass: Num Layers</display_name>
       <description>Integer number of layers of gypsum.</description>
       <type>Double</type>
       <units>#</units>
@@ -133,7 +133,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -144,19 +144,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A6B6FBDB</checksum>
+      <checksum>3A341079</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

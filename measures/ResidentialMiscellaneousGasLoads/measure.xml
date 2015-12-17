@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_gas_loads</name>
   <uid>0ba8d5d6-6fc1-4822-b9dd-42410a5b9017</uid>
-  <version_id>30c2fbb0-252c-4e3d-9581-efef69f2250d</version_id>
+  <version_id>3550f345-eb03-4afa-9d91-769b51aae8f9</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialMiscellaneousGasLoads</class_name>
   <display_name>ResidentialMiscellaneousGasLoads</display_name>
@@ -33,14 +33,6 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>CondFA</name>
-      <display_name>Living Space Floor Area (ft^2)</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1800</default_value>
     </argument>
     <argument>
       <name>BAB_mult</name>
@@ -93,7 +85,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
+      <checksum>1A15B5AD</checksum>
     </file>
     <file>
       <version>
@@ -104,19 +96,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3E809587</checksum>
+      <checksum>6D50F709</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
+      <checksum>F49094C3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>159FAC2A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87D5E9E1</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E66401CA</checksum>
     </file>
   </files>
 </measure>

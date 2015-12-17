@@ -61,7 +61,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	#make a choice argument for space type
     space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
     space_type.setDisplayName("Location")
-	space_type.setDescription("Select the space where the refrigerator is located")
+	space_type.setDescription("Select the space type where the refrigerator is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
 	
@@ -128,7 +128,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     fridge_lost = 1 - fridge_lat - fridge_rad - fridge_conv
 	
 	obj_name = Constants.ObjectNameRefrigerator
-	sch = Schedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
+	sch = MonthHourSchedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
 	if not sch.validated?
 		return false
 	end

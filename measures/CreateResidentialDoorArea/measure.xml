@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>eb2eb2dd-00b7-484f-8aef-c8580f2d2715</version_id>
+  <version_id>7da29753-059d-42fd-930c-7aa1bda24eb5</version_id>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Create Residential Door Area</display_name>
@@ -76,7 +76,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7C01A07A</checksum>
+      <checksum>1BF8E513</checksum>
     </file>
   </files>
 </measure>

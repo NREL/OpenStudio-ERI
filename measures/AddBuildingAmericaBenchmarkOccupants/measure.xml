@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_building_america_benchmark_occupants</name>
   <uid>922fce56-377a-439d-8b3d-19f9c8bb91f5</uid>
-  <version_id>e175408b-bd82-4311-b83b-923ad757612f</version_id>
+  <version_id>08d235d8-cc48-4ef2-86d0-4705e85f2078</version_id>
   <xml_checksum>5639FE46</xml_checksum>
   <class_name>AddBuildingAmericaBenchmarkOccupants</class_name>
   <display_name>AddBuildingAmericaBenchmarkOccupants</display_name>
@@ -57,25 +57,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D9CFA6B4</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D1ABA94</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>10000549</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C234D390</checksum>
+      <checksum>2CBA283C</checksum>
     </file>
   </files>
 </measure>

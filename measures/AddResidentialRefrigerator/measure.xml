@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>fe8e7f9c-d68c-4e03-8757-ecdf16837927</version_id>
+  <version_id>816f1032-60f4-4252-9b2a-7424821bacbc</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Add/Replace Residential Refrigerator</display_name>
@@ -88,16 +88,10 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
-      <filename>units.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E62B461B</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4EE56212</checksum>
+      <checksum>87D5E9E1</checksum>
     </file>
     <file>
       <version>
@@ -108,17 +102,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-<<<<<<< HEAD
-      <checksum>FB449627</checksum>
-=======
-      <checksum>A60FCFB6</checksum>
+      <checksum>21564647</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>65A7FC83</checksum>
->>>>>>> 8a0354c79dbdd4060eabdc0d4fcdd002260f5042
+      <checksum>42C35E6E</checksum>
     </file>
   </files>
 </measure>
