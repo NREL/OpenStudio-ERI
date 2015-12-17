@@ -151,7 +151,7 @@ OS:Material,
 
 OS:ThermalZone,
   {47aac38c-d855-4908-9961-ce69ac82e380}, !- Handle
-  living_1 Thermal Zone,                  !- Name
+  living Thermal Zone,                    !- Name
   1,                                      !- Multiplier
   4.8768,                                 !- Ceiling Height {m}
   543.6834624,                            !- Volume {m3}
@@ -225,7 +225,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {058d29d7-5aab-4fe6-88b6-fcb1e25e7c2f}, !- Handle
-  living_1,                               !- Name
+  living,                                 !- Name
   {dda13c27-bd07-4e69-83b1-ab60f7c251ca}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -2380,7 +2380,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {dda13c27-bd07-4e69-83b1-ab60f7c251ca}, !- Handle
-  living_1,                               !- Name
+  living,                                 !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {d92d48bd-41e0-47b6-8917-bc0d07f2bcb8}; !- Group Rendering Name
