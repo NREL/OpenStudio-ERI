@@ -20,9 +20,8 @@ class Psychrometrics
         --------
             rhoD    float      density of dry air    (lbm/ft3)
         '''
-    properties = Properties.new
-    pair = properties.PsychMassRat * p / (properties.PsychMassRat + w) # (psia)
-    rhoD = OpenStudio::convert(pair,"psi","Btu/ft^3").get / properties.Air.R / (OpenStudio::convert(tdb,"F","R").get) # (lbm/ft3)
+    pair = Properties.PsychMassRat * p / (Properties.PsychMassRat + w) # (psia)
+    rhoD = OpenStudio::convert(pair,"psi","Btu/ft^3").get / Properties.Air.R / (OpenStudio::convert(tdb,"F","R").get) # (lbm/ft3)
 
     return rhoD
 
@@ -120,10 +119,9 @@ class Psychrometrics
         --------
             w       float      humidity ratio        (lbm/lbm)
         '''
-    properties = Properties.new
     w_star = Psychrometrics.w_fP(p, Psychrometrics.Psat_fT(twb))
 
-    w = ((properties.H2O_l.H_fg - (properties.H2O_l.Cp - properties.H2O_v.Cp) * twb) * w_star - properties.Air.Cp * (tdb - twb)) / (properties.H2O_l.H_fg + properties.H2O_v.Cp * tdb - properties.H2O_l.Cp * twb) # (lbm/lbm)
+    w = ((Properties.H2O_l.H_fg - (Properties.H2O_l.Cp - Properties.H2O_v.Cp) * twb) * w_star - Properties.Air.Cp * (tdb - twb)) / (Properties.H2O_l.H_fg + Properties.H2O_v.Cp * tdb - Properties.H2O_l.Cp * twb) # (lbm/lbm)
     return w
   end
 
@@ -146,8 +144,7 @@ class Psychrometrics
         --------
             w       float      humidity ratio        (lbm/lbm)
         '''
-    properties = Properties.new
-    w = properties.PsychMassRat * pw / (p - pw)
+    w = Properties.PsychMassRat * pw / (p - pw)
     return w
   end
 
@@ -169,7 +166,6 @@ class Psychrometrics
         --------
             Psat    float      saturated vapor pressure (psia)
         '''
-    properties = Properties.new
     c1 = -1.0214165e4
     c2 = -4.8932428
     c3 = -5.3765794e-3
@@ -185,7 +181,7 @@ class Psychrometrics
     c13 = 6.5459673
 
     t_abs = OpenStudio::convert(tdb,"F","R").get
-    t_frz_abs = OpenStudio::convert(properties.H2O_l.T_frz)
+    t_frz_abs = OpenStudio::convert(Properties.H2O_l.T_frz)
 
     # If below freezing, calculate saturation pressure over ice
     if t_abs < t_frz_abs

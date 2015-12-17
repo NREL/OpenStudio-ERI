@@ -125,7 +125,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a choice argument for space type
     space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
-    space_type.setDisplayName("Select the space where the dishwasher is located")
+    space_type.setDisplayName("Location")
+    space_type.setDisplayName("Select the space type where the dishwasher is located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
     
@@ -240,8 +241,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
         runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
     end
     
-	properties = Properties.new
-
 	#hard coded convective, radiative, latent, and lost fractions for dishwashers
     dw_lat = 0.15
     dw_rad = 0.36
@@ -256,8 +255,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	# detergent, cleaning of dishes).
 	dw_operating_water_temp = 140 # degF
 	
-	water_dens = properties.H2O_l.rho # lbm/ft^3
-	water_sh = properties.H2O_l.Cp  # Btu/lbm-R
+	water_dens = Properties.H2O_l.rho # lbm/ft^3
+	water_sh = Properties.H2O_l.Cp  # Btu/lbm-R
 
 	# Use EnergyGuide Label test data to calculate per-cycle energy and
 	# water consumption. Calculations are based on "Method for
