@@ -35,5 +35,10 @@ class UnitConversion
 		# inH2O -> Pa
 		return 249.1*inH2O
 	end
+    
+    def self.ft32gal(ft3)
+        # ft^3 -> gal
+        return 7.4805195*ft3
+    end
   
 end

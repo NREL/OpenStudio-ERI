@@ -1,9 +1,15 @@
 class MonthHourSchedule
-    def initialize(weekday_hourly_values, weekend_hourly_values, monthly_values, model, sch_name, runner)
+
+    # FIXME: Need to handle vacation multiplier
+
+    def initialize(weekday_hourly_values, weekend_hourly_values, monthly_values, model, sch_name, runner,
+                   mult_weekday=1.0, mult_weekend=1.0)
 		@validated = true
 		@model = model
         @runner = runner
 		@sch_name = sch_name
+        @mult_weekday = mult_weekday
+        @mult_weekend = mult_weekend
         @weekday_hourly_values = validateValues(weekday_hourly_values, 24, "weekday")
 	    @weekend_hourly_values = validateValues(weekend_hourly_values, 24, "weekend")
 	    @monthly_values = validateValues(monthly_values, 12, "monthly")
@@ -78,9 +84,9 @@ class MonthHourSchedule
 
 		def calcMaxval()
 			if @weekday_hourly_values.max > @weekend_hourly_values.max
-			  return @monthly_values.max * @weekday_hourly_values.max
+			  return @monthly_values.max * @weekday_hourly_values.max * @mult_weekday
 			else
-			  return @monthly_values.max * @weekend_hourly_values.max
+			  return @monthly_values.max * @weekend_hourly_values.max * @mult_weekend
 			end
 		end
 		
@@ -124,7 +130,7 @@ class MonthHourSchedule
 						wkdy[m] = wkdy_rule.daySchedule
 						wkdy[m].setName(@sch_name + "_weekday#{m}")
 						for h in 1..24
-							val = (@monthly_values[m-1].to_f*@weekday_hourly_values[h-1].to_f)/@maxval
+							val = (@monthly_values[m-1].to_f*@weekday_hourly_values[h-1].to_f*@mult_weekday)/@maxval
 							wkdy[m].addValue(time[h],val)
 						end
 						wkdy_rule.setApplySunday(false)
@@ -143,7 +149,7 @@ class MonthHourSchedule
 						wknd[m] = wknd_rule.daySchedule
 						wknd[m].setName(@sch_name + "_weekend#{m}")
 						for h in 1..24
-							val = (@monthly_values[m-1].to_f*@weekend_hourly_values[h-1].to_f)/@maxval
+							val = (@monthly_values[m-1].to_f*@weekend_hourly_values[h-1].to_f*@mult_weekend)/@maxval
 							wknd[m].addValue(time[h],val)
 						end
 						wknd_rule.setApplySunday(true)

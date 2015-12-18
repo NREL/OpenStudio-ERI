@@ -35,28 +35,28 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	args << num_br
 
 	#make a double argument for cooktop EF
-	c_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("C_ef")
+	c_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("C_ef", true)
 	c_ef.setDisplayName("Cooktop Energy Factor")
 	c_ef.setDescription("Cooktop energy factor determined by DOE test procedures for cooking appliances (DOE 1997).")
 	c_ef.setDefaultValue(0.74)
 	args << c_ef
 
 	#make a double argument for oven EF
-	o_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("O_ef")
+	o_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("O_ef", true)
 	o_ef.setDisplayName("Oven Energy Factor")
 	o_ef.setDescription("Oven energy factor determined by DOE test procedures for cooking appliances (DOE 1997).")
 	o_ef.setDefaultValue(0.11)
 	args << o_ef
 	
 	#make a boolean argument for has electric ignition
-	e_ignition = OpenStudio::Ruleset::OSArgument::makeBoolArgument("e_ignition")
+	e_ignition = OpenStudio::Ruleset::OSArgument::makeBoolArgument("e_ignition", true)
 	e_ignition.setDisplayName("Has Electronic Ignition")
 	e_ignition.setDescription("For gas/propane cooking ranges with electronic ignition, an extra (40 + 13.3x(#BR)) kWh/yr of electricity will be included.")
 	e_ignition.setDefaultValue(false)
 	args << e_ignition
 
 	#make a double argument for Occupancy Energy Multiplier
-	mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mult")
+	mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mult", true)
 	mult.setDisplayName("Occupancy Energy Multiplier")
 	mult.setDescription("Appliance energy use is multiplied by this factor to account for occupancy usage that differs from the national average.")
 	mult.setDefaultValue(1)
@@ -91,21 +91,21 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     args << space_type
 
 	#Make a string argument for 24 weekday schedule values
-	weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch")
+	weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch", true)
 	weekday_sch.setDisplayName("Weekday schedule")
 	weekday_sch.setDescription("Specify the 24-hour weekday schedule.")
 	weekday_sch.setDefaultValue("0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011")
 	args << weekday_sch
     
 	#Make a string argument for 24 weekend schedule values
-	weekend_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekend_sch")
+	weekend_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekend_sch", true)
 	weekend_sch.setDisplayName("Weekend schedule")
 	weekend_sch.setDescription("Specify the 24-hour weekend schedule.")
 	weekend_sch.setDefaultValue("0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011")
 	args << weekend_sch
 
 	#Make a string argument for 12 monthly schedule values
-	monthly_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("monthly_sch")
+	monthly_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("monthly_sch", true)
 	monthly_sch.setDisplayName("Month schedule")
 	monthly_sch.setDescription("Specify the 12-month schedule.")
 	monthly_sch.setDefaultValue("1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097")
