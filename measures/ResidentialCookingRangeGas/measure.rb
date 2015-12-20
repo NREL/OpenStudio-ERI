@@ -22,18 +22,6 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     
 	#TODO: New argument for demand response for rangess (alternate schedules if automatic DR control is specified)
 	
-	#make a choice argument for number of bedrooms
-	chs = OpenStudio::StringVector.new
-	chs << "1"
-	chs << "2" 
-	chs << "3"
-	chs << "4"
-	chs << "5+"
-	num_br = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("Num_Br", chs, true)
-	num_br.setDisplayName("Number of Bedrooms")
-	num_br.setDefaultValue("3")
-	args << num_br
-
 	#make a double argument for cooktop EF
 	c_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("C_ef", true)
 	c_ef.setDisplayName("Cooktop Energy Factor")
@@ -124,7 +112,6 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     end
 
     #assign the user inputs to variables
-	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	c_ef = runner.getDoubleArgumentValue("C_ef",user_arguments)
 	o_ef = runner.getDoubleArgumentValue("O_ef",user_arguments)
 	e_ignition = runner.getBoolArgumentValue("e_ignition",user_arguments)
@@ -134,8 +121,11 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
 	
-	#Convert num bedrooms to appropriate integer
-	num_br = num_br.tr('+','').to_f
+    # Get number of bedrooms/bathrooms
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type_r, runner)
+    if nbeds.nil? or nbaths.nil?
+        return false
+    end
 	
 	#if oef or cef is defined, must be > 0
 	if o_ef <= 0
@@ -147,9 +137,9 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	#Calculate gas range daily energy use
-    range_ann_g = ((2.64 + 0.88 * num_br) / c_ef + (0.44 + 0.15 * num_br) / o_ef)*mult # therm/yr
+    range_ann_g = ((2.64 + 0.88 * nbeds) / c_ef + (0.44 + 0.15 * nbeds) / o_ef)*mult # therm/yr
     if e_ignition == true
-        range_ann_i = (40 + 13.3 * num_br)*mult #kWh/yr
+        range_ann_i = (40 + 13.3 * nbeds)*mult #kWh/yr
     else
         range_ann_i = 0
     end

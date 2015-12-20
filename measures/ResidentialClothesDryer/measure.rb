@@ -74,18 +74,6 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
 	cw_drum_volume.setDefaultValue(3.5)
 	args << cw_drum_volume
     
-	#make an integer argument for number of bedrooms
-	chs = OpenStudio::StringVector.new
-	chs << "1"
-	chs << "2" 
-	chs << "3"
-	chs << "4"
-	chs << "5+"
-	num_br = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("Num_Br", chs, true)
-	num_br.setDisplayName("Number of Bedrooms")
-	num_br.setDefaultValue("3")
-	args << num_br
-
 	#make a choice argument for which zone to put the space in
 	#make a choice argument for model objects
     space_type_handles = OpenStudio::StringVector.new
@@ -135,11 +123,13 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
 	cw_mef = runner.getDoubleArgumentValue("cw_mef",user_arguments)
     cw_rated_annual_energy = runner.getDoubleArgumentValue("cw_rated_annual_energy",user_arguments)
 	cw_drum_volume = runner.getDoubleArgumentValue("cw_drum_volume",user_arguments)
-	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 
-    #Convert num bedrooms to appropriate integer
-	num_br = num_br.tr('+','').to_f
+    # Get number of bedrooms/bathrooms
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type_r, runner)
+    if nbeds.nil? or nbaths.nil?
+        return false
+    end
 
     #Check for valid inputs
 	if cd_ef <= 0
@@ -213,7 +203,7 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
     actual_cd_elec_use_per_cycle = actual_cd_energy_use_per_cycle # kWh/cycle
 
     # (eq. 14 Eastment and Hendron, NREL/CP-550-39769, 2006)
-    actual_cw_cycles_per_year = (cw_cycles_per_year_test * (0.5 + num_br / 6) * 
+    actual_cw_cycles_per_year = (cw_cycles_per_year_test * (0.5 + nbeds / 6) * 
                                 (12.5 / cw_test_load)) # cycles/year
 
     # eq. 15 of Eastment and Hendron, NREL/CP-550-39769, 2006

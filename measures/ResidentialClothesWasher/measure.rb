@@ -98,18 +98,6 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
 	cw_mult_hw.setDefaultValue(1)
 	args << cw_mult_hw
 
-	#make an integer argument for number of bedrooms
-	chs = OpenStudio::StringVector.new
-	chs << "1"
-	chs << "2" 
-	chs << "3"
-	chs << "4"
-	chs << "5+"
-	num_br = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("Num_Br", chs, true)
-	num_br.setDisplayName("Number of Bedrooms")
-	num_br.setDefaultValue("3")
-	args << num_br
-
 	#make a choice argument for which zone to put the space in
 	#make a choice argument for model objects
     space_type_handles = OpenStudio::StringVector.new
@@ -176,12 +164,14 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     cw_fill_sensor = runner.getBoolArgumentValue("cw_fill_sensor",user_arguments)
 	cw_mult_e = runner.getDoubleArgumentValue("cw_mult_e",user_arguments)
     cw_mult_hw = runner.getDoubleArgumentValue("cw_mult_hw",user_arguments)
-	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
     plant_loop_s = runner.getStringArgumentValue("pl", user_arguments)
 
-	#Convert num bedrooms to appropriate integer
-	num_br = num_br.tr('+','').to_f
+    # Get number of bedrooms/bathrooms
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type_r, runner)
+    if nbeds.nil? or nbaths.nil?
+        return false
+    end
 	
     #Check for valid inputs
     if cw_mef <= 0
@@ -379,7 +369,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     end
 
     # (eq. 14 Eastment and Hendron, NREL/CP-550-39769, 2006)
-    actual_cw_cycles_per_year = (cw_cycles_per_year_test * (0.5 + num_br / 6) * 
+    actual_cw_cycles_per_year = (cw_cycles_per_year_test * (0.5 + nbeds / 6) * 
                                 (12.5 / cw_test_load)) # cycles/year
 
     cw_total_daily_water_use = (actual_cw_total_per_cycle_water_use * actual_cw_cycles_per_year / 
@@ -521,7 +511,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     cw_ann_e = daily_energy * 365
     
     obj_name = Constants.ObjectNameClothesWasher
-    sch = HotWaterSchedule.new(runner, model, num_br, 0, "ClothesWasher", obj_name, cw_water_temp)
+    sch = HotWaterSchedule.new(runner, model, nbeds, 0, "ClothesWasher", obj_name, cw_water_temp)
 	if not sch.validated?
 		return false
 	end

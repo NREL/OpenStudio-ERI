@@ -1,6 +1,37 @@
 
 # Add classes or functions here than can be used across a variety of our python classes and modules.
 
+class HelperMethods
+
+    # Retrieves the number of bedrooms and bathrooms from the space type
+    # They are assigned in the SetResidentialBedroomsAndBathrooms measure.
+    def self.get_bedrooms_bathrooms(model, spacetype_handle, runner=nil)
+        nbeds = nil
+        nbaths = nil
+        model.getSpaceTypes.each do |spaceType|
+            if spaceType.handle.to_s == spacetype_handle.to_s
+                space_equipments = spaceType.electricEquipment
+                space_equipments.each do |space_equipment|
+                    name = space_equipment.electricEquipmentDefinition.name.get.to_s
+                    br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
+                    ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)	
+                    if br_regexpr
+                        nbeds = br_regexpr[:br].to_f
+                    elsif ba_regexpr
+                        nbaths = ba_regexpr[:ba].to_f
+                    end
+                end
+            end
+        end
+        if nbeds.nil? or nbaths.nil?
+            if not runner.nil?
+                runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+            end
+        end
+        return [nbeds, nbaths]
+    end
+end
+
 class Mat_solid
 	def initialize(rho, cp, k)
 		@rho = rho

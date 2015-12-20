@@ -1,12 +1,14 @@
 # see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
+require "#{File.dirname(__FILE__)}/resources/util"
+
 # start the measure
 class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "AddResidentialBedroomsAndBathrooms"
+    return "Add/Replace Residential Bedrooms And Bathrooms"
   end
 
   # human readable description
@@ -16,7 +18,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description of modeling approach
   def modeler_description
-    return ""
+    return "Creates dummy ElectricEquipment objects to store the number of bedrooms and bathrooms associated with the model."
   end
 
   # define the arguments that the user will input
@@ -115,21 +117,13 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	end		
 	
 	# Test retrieving
-	model.getSpaceTypes.each do |spaceType|
-		if spaceType.handle.to_s == selected_living.get.handle.to_s
-			space_equipments = spaceType.electricEquipment
-			space_equipments.each do |space_equipment|
-				name = space_equipment.electricEquipmentDefinition.name.get.to_s
-				br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
-				ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)			
-				if br_regexpr
-					runner.registerInfo("Number of bedrooms set to #{br_regexpr[:br]} for the '#{selected_living.get.name}' space type.")
-				elsif ba_regexpr
-					runner.registerInfo("Number of bathrooms set to #{ba_regexpr[:ba]} for the '#{selected_living.get.name}' space type.")
-				end
-			end
-		end
-	end
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, selected_living.get.handle)
+    if not nbeds.nil?
+        runner.registerInfo("Number of bedrooms set to #{nbeds} for the '#{selected_living.get.name}' space type.")
+    end
+    if not nbaths.nil?
+        runner.registerInfo("Number of bathrooms set to #{nbaths} for the '#{selected_living.get.name}' space type.")
+    end
 	
     return true
 
