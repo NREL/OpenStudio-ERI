@@ -93,18 +93,22 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 
 	#Convert num bathrooms to appropriate float
 	num_ba = num_ba.tr('+','').to_f
+    
+    sch = OpenStudio::Model::ScheduleRuleset.new(model, 0)
 	
 	# Bedrooms
 	br_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
 	br_def.setName("#{num_br} Bedrooms")
 	br = OpenStudio::Model::ElectricEquipment.new(br_def)
 	br.setName("#{num_br} Bedrooms")
+    br.setSchedule(sch)
 	
 	# Bathrooms
 	ba_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
 	ba_def.setName("#{num_ba} Bathrooms")
 	ba = OpenStudio::Model::ElectricEquipment.new(ba_def)
 	ba.setName("#{num_ba} Bathrooms")
+    ba.setSchedule(sch)
 	
 	# Set the space type
 	model.getSpaceTypes.each do |spaceType|
