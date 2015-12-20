@@ -30,6 +30,18 @@ class HelperMethods
         end
         return [nbeds, nbaths]
     end
+    
+    # Retrieves the floor area of the specified space type
+    def self.get_floor_area(model, spacetype_handle, runner=nil)
+        floor_area = 0
+        model.getSpaceTypes.each do |spaceType|
+            if spaceType.handle.to_s == spacetype_handle.to_s
+                floor_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
+            end
+        end
+        return floor_area
+    end
+    
 end
 
 class Mat_solid

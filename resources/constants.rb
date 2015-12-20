@@ -500,6 +500,9 @@ class Constants
 	def self.ObjectNameDishwasher
 		return 'residential_dishwasher'
 	end
+    def self.ObjectNameMiscPlugLoads
+        return 'residential_misc_plug_loads'
+    end
 	def self.ObjectNameRefrigerator
 		return 'residential_refrigerator'
 	end

@@ -95,6 +95,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	num_ba = num_ba.tr('+','').to_f
     
     sch = OpenStudio::Model::ScheduleRuleset.new(model, 0)
+    sch.setName('empty_schedule')
 	
 	# Bedrooms
 	br_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
