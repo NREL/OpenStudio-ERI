@@ -30,9 +30,39 @@ class HelperMethods
         end
         return [nbeds, nbaths]
     end
+	
+    def self.get_bedrooms_bathrooms_from_idf(workspace, zone_name, runner=nil)
+        nbeds = nil
+        nbaths = nil
+		electricEquipments = workspace.getObjectsByType("ElectricEquipment".to_IddObjectType)
+        electricEquipments.each do |electricEquipment|
+			zone_list_name = electricEquipment.getString(1).to_s
+			zone_lists = workspace.getObjectsByType("ZoneList".to_IddObjectType)
+			zone_lists.each do |zone_list|
+				if zone_list.getString(0).to_s == zone_list_name
+					zone = zone_list.getString(1).to_s
+					if zone == zone_name.to_s
+						br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(electricEquipment.getString(0).to_s)
+						ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(electricEquipment.getString(0).to_s)	
+						if br_regexpr
+							nbeds = br_regexpr[:br].to_f
+						elsif ba_regexpr
+							nbaths = ba_regexpr[:ba].to_f
+						end
+					end
+				end
+			end
+        end
+        if nbeds.nil? or nbaths.nil?
+            if not runner.nil?
+                runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+            end
+        end
+        return [nbeds, nbaths]
+    end	
     
 	# Removes the number of bedrooms and bathrooms from the space type
-    def self.remove_bedrooms_bathrooms(model, spacetype_handle, runner=nil)
+    def self.remove_bedrooms_bathrooms(model, spacetype_handle)
         model.getSpaceTypes.each do |spaceType|
             if spaceType.handle.to_s == spacetype_handle.to_s
                 space_equipments = spaceType.electricEquipment

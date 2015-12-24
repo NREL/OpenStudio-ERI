@@ -199,9 +199,21 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
   end
 
   class Geometry
-    def initialize
+    def initialize(nbeds, nbaths)
+	  @nbeds = nbeds
+	  @nbaths = nbaths
     end
-    attr_accessor(:num_bedrooms, :finished_floor_area, :num_bathrooms, :above_grade_finished_floor_area, :building_height, :stories, :window_area, :num_units)
+	
+	attr_accessor(:finished_floor_area, :above_grade_finished_floor_area, :building_height, :stories, :window_area, :num_units)
+	
+	def num_bedrooms
+	  return @nbeds
+	end
+	
+	def num_bathrooms
+	  return @nbaths
+	end
+    
   end
 
   class NaturalVentilation
@@ -646,16 +658,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     args << userdefined_relhumratio
 
     # Geometry
-    num_bedrooms = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("num_bedrooms",true)
-    num_bedrooms.setDisplayName("Number of bedrooms.")
-    num_bedrooms.setDefaultValue(3.0)
-    args << num_bedrooms
-
-    num_bathrooms = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("num_bathrooms",true)
-    num_bathrooms.setDisplayName("Number of bathrooms.")
-    num_bathrooms.setDefaultValue(2.0)
-    args << num_bathrooms
-
     finished_floor_area = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("finished_floor_area",true)
     finished_floor_area.setDisplayName("Finished floor area [ft^2].")
     finished_floor_area.setDefaultValue(2700.0)
@@ -783,7 +785,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end
 
-    # Space Type
+    # Zones
     selected_living = runner.getStringArgumentValue("selectedliving",user_arguments)
     selected_garage = runner.getStringArgumentValue("selectedgarage",user_arguments)
     selected_fbsmt = runner.getStringArgumentValue("selectedfbsmt",user_arguments)
@@ -841,6 +843,12 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentMaxOAHumidityRatio = runner.getDoubleArgumentValue("userdefinedhumratio",user_arguments)
     natVentMaxOARelativeHumidity = runner.getDoubleArgumentValue("userdefinedrelhumratio",user_arguments)
 
+    # Get number of bedrooms/bathrooms
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, selected_living, runner)
+    if nbeds.nil? or nbaths.nil?
+        return false
+    end
+	
     if infiltrationLivingSpaceACH50 == 0
       infiltrationLivingSpaceACH50 = nil
       infiltrationGarageACH50 = 15.0
@@ -865,13 +873,12 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     crawlspace = Crawl.new(crawlACH)
     unfinished_attic = UnfinAttic.new(uaSLA)
     wind_speed = WindSpeed.new
-	puts get_least_neighbor_offset(workspace).to_s
     neighbors = Neighbors.new(get_least_neighbor_offset(workspace))
     site = Site.new(terrainType)
     vent = MechanicalVentilation.new(mechVentType, mechVentInfilCreditForExistingHomes, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
     misc = Misc.new(ageOfHome, simTestSuiteBuilding)
     clothes_dryer = ClothesDryer.new(dryerExhaust)
-    geometry = Geometry.new
+    geometry = Geometry.new(nbeds, nbaths)
     nv = NaturalVentilation.new(natVentHtgSsnSetpointOffset, natVentClgSsnSetpointOffset, natVentOvlpSsnSetpointOffset, natVentHeatingSeason, natVentCoolingSeason, natVentOverlapSeason, natVentNumberWeekdays, natVentNumberWeekendDays, natVentFractionWindowsOpen, natVentFractionWindowAreaOpen, natVentMaxOAHumidityRatio, natVentMaxOARelativeHumidity)
     schedules = Schedules.new
     cooling_set_point = CoolingSetpoint.new
@@ -957,8 +964,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     cooling_set_point.CoolingSetpointWeekend = cooling_set_point.CoolingSetpointWeekday
 
     # temp code for testing
-    geometry.num_bedrooms = runner.getDoubleArgumentValue("num_bedrooms",user_arguments)
-    geometry.num_bathrooms = runner.getDoubleArgumentValue("num_bathrooms",user_arguments)
     geometry.finished_floor_area = runner.getDoubleArgumentValue("finished_floor_area",user_arguments)
     geometry.above_grade_finished_floor_area = runner.getDoubleArgumentValue("above_grade_finished_floor_area",user_arguments)
     geometry.building_height = runner.getDoubleArgumentValue("building_height",user_arguments)
