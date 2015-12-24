@@ -83,10 +83,13 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     if !runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-
+	
 	selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
 	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments)
+	
+	# Remove any existing bedrooms and bathrooms
+	HelperMethods.remove_bedrooms_bathrooms(model, selected_living.get.handle)
 	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f

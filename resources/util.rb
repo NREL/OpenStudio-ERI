@@ -31,6 +31,25 @@ class HelperMethods
         return [nbeds, nbaths]
     end
     
+	# Removes the number of bedrooms and bathrooms from the space type
+    def self.remove_bedrooms_bathrooms(model, spacetype_handle, runner=nil)
+        model.getSpaceTypes.each do |spaceType|
+            if spaceType.handle.to_s == spacetype_handle.to_s
+                space_equipments = spaceType.electricEquipment
+                space_equipments.each do |space_equipment|
+                    name = space_equipment.electricEquipmentDefinition.name.get.to_s
+                    br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
+                    ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)	
+                    if br_regexpr
+                        space_equipment.electricEquipmentDefinition.remove
+                    elsif ba_regexpr
+                        space_equipment.electricEquipmentDefinition.remove
+                    end
+                end
+            end
+        end
+    end	
+	
     # Retrieves the floor area of the specified space type
     def self.get_floor_area(model, spacetype_handle, runner=nil)
         floor_area = 0
