@@ -109,7 +109,6 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 		if spaceType.handle.to_s == selected_living.get.handle.to_s
 			br.setSpaceType(spaceType)
 			ba.setSpaceType(spaceType)
-			name = br.name.to_s		
 			break
 		end
 	end		
