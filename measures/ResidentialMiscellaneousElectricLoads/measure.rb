@@ -7,8 +7,9 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/schedules"
 
 #start the measure
 class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScript
@@ -16,7 +17,7 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ResidentialMiscellaneousElectricLoads"
+    return "Add/Replace Residential Plug Loads"
   end
   
   def arguments(model)
@@ -24,39 +25,11 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
     
 	#TODO: New argument for demand response for mels (alternate schedules if automatic DR control is specified)
 	
-	#make a choice argument for whether Benchmark fraction or annual energy consumption is specified
-	chs = OpenStudio::StringVector.new
-	chs << "Benchmark" 
-	chs << "Simple"
-	
-	selected_mel = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selected_mel", chs, true)
-	selected_mel.setDisplayName("MEL Energy Consumption Option")
-	args << selected_mel
-	
-	#make a double argument for user defined mel options
-	mel_E = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mel_E",true)
-	mel_E.setDisplayName("Simple MEL Annual Energy Consumption (kWh/yr)")
-	mel_E.setDefaultValue(0)
-	args << mel_E
-	
 	#make a double argument for BA Benchamrk multiplier
-	bab_mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("BAB_mult")
-	bab_mult.setDisplayName("Building America Benchmark Multipler")
-	bab_mult.setDefaultValue(1)
-	args << bab_mult
-	
-	#make an integer argument for number of bedrooms
-	num_br = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("Num_Br")
-	num_br.setDisplayName("Number of Bedrooms")
-	num_br.setDefaultValue(1)
-	args << num_br
-
-	#TODO: Account for ceiling fan/thermostat setpoint interaction within this measure
-	#make a bool argument for has ceiling fan
-	#has_cf = OpenStudio::Ruleset::OSArgument::makeBoolArgument("Has_fan")
-	#has_cf.setDisplayName("Has a ceiling fan")
-	#has_cf.setDefaultValue(false)
-	#args << has_cf
+	mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mult")
+	mult.setDisplayName("Building America Benchmark Multipler")
+	mult.setDefaultValue(1)
+	args << mult
 	
 	#make a choice argument for which zone to put the space in
     space_type_handles = OpenStudio::StringVector.new
@@ -80,10 +53,31 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
 	
 	#make a choice argument for space type
     space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
-    space_type.setDisplayName("Select the space where the miscellaneous electric loads are located")
+    space_type.setDisplayName("Select the space where the miscellaneous electric plug loads are located")
     space_type.setDefaultValue("*None*") #if none is chosen this will error out
     args << space_type
     
+	#Make a string argument for 24 weekday schedule values
+	weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch", true)
+	weekday_sch.setDisplayName("Weekday schedule")
+	weekday_sch.setDescription("Specify the 24-hour weekday schedule.")
+	weekday_sch.setDefaultValue("0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05")
+	args << weekday_sch
+    
+	#Make a string argument for 24 weekend schedule values
+	weekend_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekend_sch", true)
+	weekend_sch.setDisplayName("Weekend schedule")
+	weekend_sch.setDescription("Specify the 24-hour weekend schedule.")
+	weekend_sch.setDefaultValue("0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05")
+	args << weekend_sch
+
+	#Make a string argument for 12 monthly schedule values
+	monthly_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("monthly_sch", true)
+	monthly_sch.setDisplayName("Month schedule")
+	monthly_sch.setDescription("Specify the 12-month schedule.")
+	monthly_sch.setDefaultValue("1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248")
+	args << monthly_sch
+
     return args
   end #end the arguments method
 
@@ -97,91 +91,42 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
     end
 
     #assign the user inputs to variables
-    selected_mel = runner.getStringArgumentValue("selected_mel",user_arguments)
-	selected_living = runner.getOptionalWorkspaceObjectChoiceValue("space_type",user_arguments,model)
-    mel_E = runner.getDoubleArgumentValue("mel_E",user_arguments)
-	bab_mult = runner.getDoubleArgumentValue("BAB_mult",user_arguments)
-	num_br = runner.getIntegerArgumentValue("Num_Br", user_arguments)
-	
-    cfa = 0
-	model.getSpaceTypes.each do |spaceType|
-		spacehandle = spaceType.handle.to_s
-        if spacehandle == selected_living.get.handle.to_s
-            cfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        end
+	space_type_r = runner.getOptionalWorkspaceObjectChoiceValue("space_type",user_arguments,model)
+	mult = runner.getDoubleArgumentValue("mult",user_arguments)
+	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
+	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
+	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
+
+    # Get number of bedrooms/bathrooms
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type_r.get.handle, runner)
+    if nbeds.nil? or nbaths.nil?
+        return false
     end
+	
+    cfa = HelperMethods.get_floor_area(model, space_type_r.get.handle, runner)
     
-	#warning if things are specified that will not be used (ie. BAB mult when detailed mel is modeled)
-	#Benchmark and other values specified
-	if selected_mel == "Benchmark" and mel_E != 0
-		runner.registerWarning("Benchmark is specified with a non-zero MEL energy. This value will not be used")
+	#if multiplier is defined, make sure it is positive
+	if mult <= 0
+		runner.registerError("Multiplier must be greater than or equal to 0.0.")
+        return false
 	end
-	
-	#Simple but BAB mult or detailed options specified
-	
-	if selected_mel == "Simple" and bab_mult != 1
-		runner.registerWarning("Simple is specified with a user specified benchmark multiplier. This value will not be used")
-	elsif selected_mel == "Simple" and num_br != 1
-		runner.registerWarning("Simple is specified with a user specified number of bedrooms. This value will not be used")
-	elsif selected_mel == "Simple" and cfa != 1800
-		runner.registerWarning("Simple is specified with a user specified floor area. This value will not be used") 
-	end
-	
-	#if mel energy consumption is defined, check for reasonable energy consumption
-	if selected_mel == "Simple" 
-		if mel_E < 0
-			runner.registerError("Electric MEL energy consumption must be greater than 0")
-		elsif mel_E > 3000
-			runner.registerError("Electric MEL energy consumption seems high, double check inputs") 
-		end
-	end
-	
-	#if BAB multiplier is defined, make sure it is positive and nonzero
-	if selected_mel == "Benchmark" and bab_mult <= 0
-		runner.registerError("Benchmark multiplier must be positive and greater than zero, double check inputs")
-	end
-	
-	#if num bedrooms is defined, must be between 1-5
-	if selected_mel == "Benchmark" or selected_mel == "Detailed"
-		if num_br < 1 or num_br > 5
-			runner.registerError("Number of bedrooms must be between 1 and 5 (inclusive)")
-		end
-	end
-	
-	#if floor area is entered, must be > 0
-	if selected_mel == "Benchmark" and cfa <= 0
-		runner.registerError("Conditioned floor area must be positive and greater than zero, double check inputs")
-	end
-	
-	#Get space floor area for MEL calculation
 	
 	#Calculate electric mel daily energy use
-	
-	if selected_mel == "Simple"
-		mel_ann = mel_E
-	elsif selected_mel == "Benchmark"
-		mel_ann = (1108.1 +180.2 * num_br + 0.278 * cfa) * bab_mult
-	end
-
+    mel_ann = (1108.1 + 180.2 * nbeds + 0.2785 * cfa) * mult
 	mel_daily = mel_ann / 365.0
 	
-	melval = Process_mels.new
-	
-	#pull schedule values and gain fractions from sim
-	mel_lat = melval.Mel_lat
-	mel_conv = melval.Mel_conv
-	mel_lost = melval.Mel_lost
-	mel_rad = melval.Mel_rad
+	#hard coded convective, radiative, latent, and lost fractions
+	mel_lat = 0.021
+	mel_rad = 0.558
+	mel_conv = 0.372
+	mel_lost = 1 - mel_lat - mel_rad - mel_conv
 
-	monthly_mult = melval.Monthly_mult_mel
-	weekday_hourly = melval.Weekday_hourly_mel
-	weekend_hourly = melval.Weekend_hourly_mel
-	maxval = melval.Maxval_mel
-	sum_max = melval.Sum_mel_max
-	sch_adjust = 1/sum_max
-	
-	#get mel max power
-	mel_max = mel_daily * maxval * 1000 * sch_adjust
+    obj_name = Constants.ObjectNameMiscPlugLoads
+	sch = MonthHourSchedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
+	if not sch.validated?
+		return false
+	end
+    design_level = sch.calcDesignLevelElec(mel_daily)    
 	
 	#add mel to the selected space
 	has_elec_mel = 0
@@ -189,100 +134,31 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
 	model.getSpaceTypes.each do |spaceType|
 		spacename = spaceType.name.to_s
 		spacehandle = spaceType.handle.to_s
-		if spacehandle == selected_living.get.handle.to_s        #add mel
+		if spacehandle == space_type_r.get.handle.to_s #add mel
 			space_equipments = spaceType.electricEquipment
 			space_equipments.each do |space_equipment|
-				if space_equipment.electricEquipmentDefinition.name.get.to_s == "residential_electric_mel"
+				if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
 					has_elec_mel = 1
+					runner.registerWarning("This space already has misc plug loads, the existing plug loads will be replaced with the the currently selected option")
+					space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
+                    sch.setSchedule(space_equipment)
 					replace_mel = 1
-					runner.registerWarning("This space already has an electric MELs, the existing MELs will be replaced with the the currently selected option")
-					space_equipment.electricEquipmentDefinition.setDesignLevel(mel_max)
 				end
 			end
 			if has_elec_mel == 0 
+                has_elec_mel = 1
 
-				#add mel schedule
-				has_elec_mel = 1
-				mel_wkdy = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				mel_wknd = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				mel_wk = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				time = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0']
-				wkdy_mel_rule = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				wknd_mel_rule = ['0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' '0' ]
-				day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
-				day_startm = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
-				
-				mel_ruleset = OpenStudio::Model::ScheduleRuleset.new(model)
-				mel_ruleset.setName("Elcetric_mel_annual_schedule")
-				
-				
-				for m in 1..12
-					date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
-					date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
-					for w in 1..2
-						if w == 1
-							wkdy_mel_rule[m] = OpenStudio::Model::ScheduleRule.new(mel_ruleset)
-							wkdy_mel_rule[m].setName("elec_mel_weekday_ruleset#{m}")
-							wkdy_mel_rule
-							mel_wkdy[m] = wkdy_mel_rule[m].daySchedule
-							mel_wkdy[m].setName("ElectricmelWeekday#{m}")
-							for h in 1..24
-								time[h] = OpenStudio::Time.new(0,h,0,0)
-								val = (monthly_mult[m-1].to_f*weekday_hourly[h-1].to_f)/maxval
-								mel_wkdy[m].addValue(time[h],val)
-							end
-							wkdy_mel_rule[m].setApplySunday(false)
-							wkdy_mel_rule[m].setApplyMonday(true)
-							wkdy_mel_rule[m].setApplyTuesday(true)
-							wkdy_mel_rule[m].setApplyWednesday(true)
-							wkdy_mel_rule[m].setApplyThursday(true)
-							wkdy_mel_rule[m].setApplyFriday(true)
-							wkdy_mel_rule[m].setApplySaturday(false)
-							wkdy_mel_rule[m].setStartDate(date_s)
-							wkdy_mel_rule[m].setEndDate(date_e)
-							
-						elsif w == 2
-							wknd_mel_rule[m] = OpenStudio::Model::ScheduleRule.new(mel_ruleset)
-							wknd_mel_rule[m].setName("elc_mel_weekend_ruleset#{m}")
-							mel_wknd[m] = wknd_mel_rule[m].daySchedule
-							mel_wknd[m].setName("ElectricmelWeekend#{m}")
-							for h in 1..24
-								time[h] = OpenStudio::Time.new(0,h,0,0)
-								val = (monthly_mult[m-1].to_f*weekend_hourly[h-1].to_f)/maxval
-								mel_wknd[m].addValue(time[h],val)
-							end
-							wknd_mel_rule[m].setApplySunday(true)
-							wknd_mel_rule[m].setApplyMonday(false)
-							wknd_mel_rule[m].setApplyTuesday(false)
-							wknd_mel_rule[m].setApplyWednesday(false)
-							wknd_mel_rule[m].setApplyThursday(false)
-							wknd_mel_rule[m].setApplyFriday(false)
-							wknd_mel_rule[m].setApplySaturday(true)
-							wknd_mel_rule[m].setStartDate(date_s)
-							wknd_mel_rule[m].setEndDate(date_e)
-						end
-					end
-				end
-				
-				sumDesSch = mel_wkdy[6]
-				sumDesSch.setName("ElectricmelSummer")
-				winDesSch = mel_wkdy[1]
-				winDesSch.setName("ElectricmelWinter")
-				mel_ruleset.setSummerDesignDaySchedule(sumDesSch)
-				mel_ruleset.setWinterDesignDaySchedule(winDesSch)
-					
 				#Add electric equipment for the mel
-				rng_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-				rng = OpenStudio::Model::ElectricEquipment.new(rng_def)
-				rng.setName("residential_electric_mel")
-				rng.setSpaceType(spaceType)
-				rng_def.setName("residential_electric_mel")
-				rng_def.setDesignLevel(mel_max)
-				rng_def.setFractionRadiant(mel_rad)
-				rng_def.setFractionLatent(mel_lat)
-				rng_def.setFractionLost(mel_lost)
-				
-				rng.setSchedule(mel_ruleset)
+				mel_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+				mel = OpenStudio::Model::ElectricEquipment.new(mel_def)
+				mel.setName(obj_name)
+				mel.setSpaceType(spaceType)
+				mel_def.setName(obj_name)
+				mel_def.setDesignLevel(design_level)
+				mel_def.setFractionRadiant(mel_rad)
+				mel_def.setFractionLatent(mel_lat)
+				mel_def.setFractionLost(mel_lost)
+				sch.setSchedule(mel)
 				
 			end
 		end
@@ -291,12 +167,12 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
     #reporting final condition of model
 	if has_elec_mel == 1
 		if replace_mel == 1
-			runner.registerFinalCondition("The existing misc electric loads have been replaced with #{mel_ann.round} kWh annual energy consumption.")
+			runner.registerFinalCondition("The existing misc plug loads have been replaced by plug loads with #{mel_ann.round} kWh annual energy consumption.")
 		else
-			runner.registerFinalCondition("Misc electric loads have been added with #{mel_ann.round} kWh annual energy consumption.")
+			runner.registerFinalCondition("Misc plug loads have been added with #{mel_ann.round} kWh annual energy consumption.")
 		end
 	else
-		runner.registerFinalCondition("Misc electric loads were not added to #{selected_living.get.name.to_s}.")
+		runner.registerFinalCondition("Misc plug loads were not added to #{space_type_r.get.name.to_s}.")
     end
 	
     return true

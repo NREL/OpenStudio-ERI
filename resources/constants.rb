@@ -488,12 +488,21 @@ class Constants
 	def self.Num_Speeds_MSHP
 		return 10
 	end
+	def self.ObjectNameClothesWasher
+		return 'residential_clothes_washer'
+	end
+	def self.ObjectNameClothesDryer
+		return 'residential_clothes_dryer'
+	end
 	def self.ObjectNameCookingRange
 		return 'residential_range'
 	end
 	def self.ObjectNameDishwasher
 		return 'residential_dishwasher'
 	end
+    def self.ObjectNameMiscPlugLoads
+        return 'residential_misc_plug_loads'
+    end
 	def self.ObjectNameRefrigerator
 		return 'residential_refrigerator'
 	end

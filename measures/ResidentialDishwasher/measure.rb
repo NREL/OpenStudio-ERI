@@ -2,6 +2,7 @@ require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/weather"
+require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 
 #start the measure
 class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
@@ -91,18 +92,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	mult_hw.setDefaultValue(1)
 	args << mult_hw
 	
-	#make an integer argument for number of bedrooms
-	chs = OpenStudio::StringVector.new
-	chs << "1"
-	chs << "2" 
-	chs << "3"
-	chs << "4"
-	chs << "5+"
-	num_br = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("Num_Br", chs, true)
-	num_br.setDisplayName("Number of Bedrooms")
-	num_br.setDefaultValue("3")
-	args << num_br
-	
 	#make a choice argument for which zone to put the space in
     space_type_handles = OpenStudio::StringVector.new
     space_type_display_names = OpenStudio::StringVector.new
@@ -166,12 +155,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	dw_energy_guide_annual_gas_cost = runner.getDoubleArgumentValue("eg_gas_cost", user_arguments)
 	dw_energy_multiplier = runner.getDoubleArgumentValue("mult_e", user_arguments)
 	dw_hot_water_multiplier = runner.getDoubleArgumentValue("mult_hw", user_arguments)
-	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
     plant_loop_s = runner.getStringArgumentValue("pl", user_arguments)
-	
-	#Convert num bedrooms to appropriate integer
-	num_br = num_br.tr('+','').to_f
 	
 	#Check for valid inputs
 	if dw_capacity < 1
@@ -202,6 +187,12 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		runner.registerError("Occupancy hot water multiplier must be greater than or equal to 0.")
 		return false
 	end
+    
+    # Get number of bedrooms/bathrooms
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type_r, runner)
+    if nbeds.nil? or nbaths.nil?
+        return false
+    end
 
     #Get plant loop
     plantLoop = nil
@@ -247,9 +238,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     dw_conv = 0.24
     dw_lost = 1 - dw_lat - dw_rad - dw_conv
 	
-	# TODO: Existing OpenStudio unit conversion? If not, add to units.rb
-	ft32gal = 7.4805195
-
 	# The water used in dishwashers must be heated, either internally or
 	# externally, to at least 140 degF for proper operation (dissolving of
 	# detergent, cleaning of dishes).
@@ -340,11 +328,11 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 									 test_dw_gas_dhw_heater_efficiency) / \
 									 (test_dw_water_heater_temp_diff * \
 									  water_dens * water_sh * \
-									  OpenStudio.convert(1, "Btu", "kWh").get / ft32gal) # gal/cycle (hot water)
+									  OpenStudio.convert(1, "Btu", "kWh").get / UnitConversion.ft32gal(1)) # gal/cycle (hot water)
 	end
 									  
 	# (eq. 16 Eastment and Hendron, NREL/CP-550-39769, 2006)
-	actual_dw_cycles_per_year = 215 * (0.5 + num_br / 6) * (8 / dw_capacity) # cycles/year
+	actual_dw_cycles_per_year = 215 * (0.5 + nbeds / 6) * (8 / dw_capacity) # cycles/year
 
 	daily_dishwasher_dhw = actual_dw_cycles_per_year * test_dw_dhw_use_per_cycle / 365 # gal/day (hot water)
 
@@ -353,7 +341,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		# From the 2010 BA Benchmark for dishwasher hot water
 		# consumption. Should be appropriate for cold-water-inlet-only
 		# dishwashers also.
-		daily_dishwasher_water = 2.5 + 0.833 * num_br # gal/day
+		daily_dishwasher_water = 2.5 + 0.833 * nbeds # gal/day
 	else
 		# Dishwasher uses only hot water so total water usage = DHW usage.
 		daily_dishwasher_water = daily_dishwasher_dhw # gal/day
@@ -375,19 +363,18 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
         daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(@weather.data, @weather.header)
 
         monthly_dishwasher_energy = Array.new(12, 0)
-		i = 0
-		monthly_mains.each do |tmain|
+		monthly_mains.each_with_index do |monthly_main, i|
 			# Adjust for monthly variation in Tmains vs. test cold
 			# water supply temperature.
 			actual_dw_elec_use_per_cycle = test_dw_elec_use_per_cycle + \
-                                           (test_dw_mains_temp - tmain) * \
+                                           (test_dw_mains_temp - monthly_main) * \
                                            dw_cold_water_conn_use_per_cycle * \
-                                           (water_dens * water_sh * OpenStudio.convert(1, "Btu", "kWh").get / ft32gal) # kWh/cycle
+                                           (water_dens * water_sh * OpenStudio.convert(1, "Btu", "kWh").get / 
+                                           UnitConversion.ft32gal(1)) # kWh/cycle
 			monthly_dishwasher_energy[i] = (actual_dw_elec_use_per_cycle * \
 										    Constants.MonthNumDays[i] * \
 											actual_dw_cycles_per_year / \
 											365) # kWh/month
-			i = i + 1
 		end
 
 		daily_energy = monthly_dishwasher_energy.inject(:+) / 365 # kWh/day
@@ -400,7 +387,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 				(test_dw_dhw_temp - wh_setpoint) * \
 				test_dw_dhw_use_per_cycle * \
 				(water_dens * water_sh * \
-				 OpenStudio.convert(1, "Btu", "kWh").get / ft32gal) # kWh/cycle
+				 OpenStudio.convert(1, "Btu", "kWh").get / 
+                 UnitConversion.ft32gal(1)) # kWh/cycle
 		daily_energy = actual_dw_elec_use_per_cycle * \
 				actual_dw_cycles_per_year / 365 # kWh/day
 
@@ -414,6 +402,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 
     daily_energy = daily_energy * dw_energy_multiplier
     daily_dishwasher_water = daily_dishwasher_water * dw_hot_water_multiplier
+
+	dw_ann = daily_energy * 365
     
 	if daily_energy < 0
 		runner.registerError("The inputs for the dishwasher resulted in a negative amount of energy consumption.")
@@ -421,7 +411,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	obj_name = Constants.ObjectNameDishwasher
-    sch = HotWaterSchedule.new(runner, model, num_br, 0, "Dishwasher", obj_name, wh_setpoint)
+    sch = HotWaterSchedule.new(runner, model, nbeds, 0, "Dishwasher", obj_name, wh_setpoint)
 	if not sch.validated?
 		return false
 	end
@@ -447,11 +437,14 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 			end
             if replace_dw == 1
                 # Also update water use equipment
-                space_equipments = spaceType.waterUseEquipment
-                space_equipments.each do |space_equipment|
-                    if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
-                        space_equipment.waterUseEquipmentDefinition.setPeakFlowRate(peak_flow)
-                        sch.setWaterSchedule(space_equipment)
+                plantLoop.demandComponents.each do |component|
+                    next unless component.to_WaterUseConnections.is_initialized
+                    connection = component.to_WaterUseConnections.get
+                    connection.waterUseEquipment.each do |equipment|
+                        if equipment.waterUseEquipmentDefinition.name.get.to_s == obj_name
+                            equipment.waterUseEquipmentDefinition.setPeakFlowRate(peak_flow)
+                            sch.setWaterSchedule(equipment)
+                        end
                     end
                 end
             end
@@ -501,7 +494,6 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	end
 
     #reporting final condition of model
-	dw_ann = daily_energy * 365
 	if has_elec_dw == 1
 		if replace_dw == 1
 			runner.registerFinalCondition("The existing dishwasher has been replaced by one with #{dw_ann.round} kWh annual energy consumption.")

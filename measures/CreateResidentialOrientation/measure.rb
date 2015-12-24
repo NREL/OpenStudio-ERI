@@ -6,17 +6,17 @@ class CreateResidentialOrientation < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Create Residential Orientation"
+    return "Set Residential Orientation"
   end
 
   # human readable description
   def description
-    return ""
+    return "Sets the fixed orientation of the building."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return ""
+    return "Modifies the North axis of the building."
   end
 
   # define the arguments that the user will input
@@ -27,7 +27,7 @@ class CreateResidentialOrientation < OpenStudio::Ruleset::ModelUserScript
 	orientation = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("orientation", true)
 	orientation.setDisplayName("Azimuth")
 	orientation.setUnits("degrees")
-	orientation.setDescription("The house's azimuth is measured clockwise from due south (when viewed from above).")
+	orientation.setDescription("The house's azimuth is measured clockwise from due south when viewed from above (e.g., South=0, West=90, North=180, East=270).")
     orientation.setDefaultValue(180.0)
 	args << orientation
 	
