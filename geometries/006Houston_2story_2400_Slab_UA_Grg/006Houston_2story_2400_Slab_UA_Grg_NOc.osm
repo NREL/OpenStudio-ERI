@@ -60,7 +60,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {047123a9-2426-431c-8383-08086a98a424}, !- Handle
-  living_1 Thermal Zone,                  !- Name
+  living Thermal Zone,                    !- Name
   1,                                      !- Multiplier
   4.8768,                                 !- Ceiling Height {m}
   543.6834624,                            !- Volume {m3}
@@ -134,7 +134,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {3af3bebf-5f72-4811-b063-54dd2ff402fa}, !- Handle
-  living_1,                               !- Name
+  living,                                 !- Name
   {e7b207a3-40c0-4eb5-b9c8-d487990a6cf0}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -926,7 +926,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {76e8c34a-24e8-4f9d-94c5-1dc9f4fbf360}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinishedattic 1,                      !- Name
   {5a21113a-7bd0-47c4-8d52-8693cef37aea}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -1459,7 +1459,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {dc4beda9-dca0-4c6a-80f3-837557c5b6af}, !- Handle
-  garage,                                 !- Name
+  garage 1,                               !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {353f2cb0-7662-4b23-9fa3-0cde5e0a0352}; !- Group Rendering Name
@@ -1473,7 +1473,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {e7b207a3-40c0-4eb5-b9c8-d487990a6cf0}, !- Handle
-  living_1,                               !- Name
+  living,                                 !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {2f60c4ca-7619-4c52-a4b4-3cb69e272308}; !- Group Rendering Name
@@ -1561,4 +1561,56 @@ OS:RunPeriod,
   ,                                       !- Use Weather File Rain Indicators
   ,                                       !- Use Weather File Snow Indicators
   ;                                       !- Number of Times Runperiod to be Repeated
+
+OS:Schedule:Ruleset,
+  {2d04eaa4-73f9-4ec8-8f91-adfe9fca3adb}, !- Handle
+  empty_schedule,                         !- Name
+  {c05b93e1-5595-41de-9a77-0c8f33547bf1}, !- Schedule Type Limits Name
+  {58f6f3a7-4f9d-49d4-950e-3108d4c9e1f3}; !- Default Day Schedule Name
+
+OS:Schedule:Day,
+  {58f6f3a7-4f9d-49d4-950e-3108d4c9e1f3}, !- Handle
+  Schedule Day 1,                         !- Name
+  {c05b93e1-5595-41de-9a77-0c8f33547bf1}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  24,                                     !- Hour 1
+  0,                                      !- Minute 1
+  0;                                      !- Value Until Time 1
+
+OS:ElectricEquipment:Definition,
+  {5154270c-e844-4673-a360-236d37cfe7f0}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {56c53220-9347-4f5e-a300-a2eefa40c8ea}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  {5154270c-e844-4673-a360-236d37cfe7f0}, !- Electric Equipment Definition Name
+  {e7b207a3-40c0-4eb5-b9c8-d487990a6cf0}, !- Space or SpaceType Name
+  {2d04eaa4-73f9-4ec8-8f91-adfe9fca3adb}; !- Schedule Name
+
+OS:ScheduleTypeLimits,
+  {c05b93e1-5595-41de-9a77-0c8f33547bf1}, !- Handle
+  Fractional,                             !- Name
+  0,                                      !- Lower Limit Value {BasedOnField A4}
+  1,                                      !- Upper Limit Value {BasedOnField A4}
+  Continuous;                             !- Numeric Type
+
+OS:ElectricEquipment:Definition,
+  {027fb201-2579-4bdb-bbe4-9057c5ce2398}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {3cf8c4a3-fd12-4742-8a49-93938599f6c6}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  {027fb201-2579-4bdb-bbe4-9057c5ce2398}, !- Electric Equipment Definition Name
+  {e7b207a3-40c0-4eb5-b9c8-d487990a6cf0}, !- Space or SpaceType Name
+  {2d04eaa4-73f9-4ec8-8f91-adfe9fca3adb}; !- Schedule Name
 

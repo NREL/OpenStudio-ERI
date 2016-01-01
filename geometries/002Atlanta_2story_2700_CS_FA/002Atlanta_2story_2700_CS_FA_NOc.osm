@@ -5,11 +5,11 @@ OS:Version,
 
 OS:Site,
   {bd79afaa-91de-41e8-a8fd-d98b1f7c020b}, !- Handle
-  Atlanta Hartsfield Intl Ap GA,          !- Name
+  Atlanta Hartsfield Intl Ap,             !- Name
   33.63,                                  !- Latitude {deg}
   -84.43,                                 !- Longitude {deg}
-  -7,                                     !- Time Zone {hr}
-  308.000009856,                          !- Elevation {m}
+  -5,                                     !- Time Zone {hr}
+  308,                                    !- Elevation {m}
   Suburbs;                                !- Terrain
 
 OS:SimulationControl,
@@ -1248,7 +1248,9 @@ OS:Rendering:Color,
   0;                                      !- Rendering Blue Value
 
 OS:YearDescription,
-  {d4dd0872-25a3-441b-94f2-b3ca3a836b88}; !- Handle
+  {d4dd0872-25a3-441b-94f2-b3ca3a836b88}, !- Handle
+  ,                                       !- Calendar Year
+  Sunday;                                 !- Day of Week for Start Day
 
 OS:ClimateZones,
   {8885c625-66f4-4689-ac5c-8383d5a06a8e}, !- Handle
@@ -1279,4 +1281,84 @@ OS:LifeCycleCost:Parameters,
   ,                                       !- Tax Rate
   ,                                       !- Depreciation Method
   Yes;                                    !- Use NIST Fuel Escalation Rates
+
+OS:WeatherFile,
+  {4a79642e-b174-4a39-b72e-11e3a619567a}, !- Handle
+  Atlanta Hartsfield Intl Ap,             !- City
+  GA,                                     !- State Province Region
+  USA,                                    !- Country
+  TMY3,                                   !- Data Source
+  722190,                                 !- WMO Number
+  33.63,                                  !- Latitude {deg}
+  -84.43,                                 !- Longitude {deg}
+  -5,                                     !- Time Zone {hr}
+  308,                                    !- Elevation {m}
+  file:files/USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMY3.epw, !- Url
+  813B1688;                               !- Checksum
+
+OS:RunPeriod,
+  {1e5a614f-4ed3-45ae-a42e-bd22c8fa4b5e}, !- Handle
+  Run Period 1,                           !- Name
+  1,                                      !- Begin Month
+  1,                                      !- Begin Day of Month
+  12,                                     !- End Month
+  31,                                     !- End Day of Month
+  ,                                       !- Use Weather File Holidays and Special Days
+  ,                                       !- Use Weather File Daylight Saving Period
+  ,                                       !- Apply Weekend Holiday Rule
+  ,                                       !- Use Weather File Rain Indicators
+  ,                                       !- Use Weather File Snow Indicators
+  ;                                       !- Number of Times Runperiod to be Repeated
+
+OS:Schedule:Ruleset,
+  {b3789a74-79b3-49c0-b43b-d165e9307b07}, !- Handle
+  empty_schedule,                         !- Name
+  {0305b293-6b1e-4000-a21e-4aa9b110aab1}, !- Schedule Type Limits Name
+  {9c2f4cfe-4336-42ba-8252-dd2876bb9e4c}; !- Default Day Schedule Name
+
+OS:Schedule:Day,
+  {9c2f4cfe-4336-42ba-8252-dd2876bb9e4c}, !- Handle
+  Schedule Day 1,                         !- Name
+  {0305b293-6b1e-4000-a21e-4aa9b110aab1}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  24,                                     !- Hour 1
+  0,                                      !- Minute 1
+  0;                                      !- Value Until Time 1
+
+OS:ElectricEquipment:Definition,
+  {203955e9-2717-4748-a889-a98a41584395}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {d772e354-f4d5-4210-b51d-6d6357edf944}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  {203955e9-2717-4748-a889-a98a41584395}, !- Electric Equipment Definition Name
+  {3d94f7d7-f84b-4823-a63b-1447ed7f1e29}, !- Space or SpaceType Name
+  {b3789a74-79b3-49c0-b43b-d165e9307b07}; !- Schedule Name
+
+OS:ScheduleTypeLimits,
+  {0305b293-6b1e-4000-a21e-4aa9b110aab1}, !- Handle
+  Fractional,                             !- Name
+  0,                                      !- Lower Limit Value {BasedOnField A4}
+  1,                                      !- Upper Limit Value {BasedOnField A4}
+  Continuous;                             !- Numeric Type
+
+OS:ElectricEquipment:Definition,
+  {08701a2e-a8a0-4b26-87e3-02fba47209e1}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {ba5268c8-6b13-428a-8958-e10b189648c9}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  {08701a2e-a8a0-4b26-87e3-02fba47209e1}, !- Electric Equipment Definition Name
+  {3d94f7d7-f84b-4823-a63b-1447ed7f1e29}, !- Space or SpaceType Name
+  {b3789a74-79b3-49c0-b43b-d165e9307b07}; !- Schedule Name
 

@@ -1491,3 +1491,55 @@ OS:RunPeriod,
   ,                                       !- Use Weather File Snow Indicators
   ;                                       !- Number of Times Runperiod to be Repeated
 
+OS:Schedule:Ruleset,
+  {b8d8eb8b-86d9-4be6-8361-3bc98c3cb8ae}, !- Handle
+  empty_schedule,                         !- Name
+  {4924b294-ce05-47fb-86ca-2e09839b4f51}, !- Schedule Type Limits Name
+  {d4eebee4-6246-4a59-a8ab-b86f12180f13}; !- Default Day Schedule Name
+
+OS:Schedule:Day,
+  {d4eebee4-6246-4a59-a8ab-b86f12180f13}, !- Handle
+  Schedule Day 1,                         !- Name
+  {4924b294-ce05-47fb-86ca-2e09839b4f51}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  24,                                     !- Hour 1
+  0,                                      !- Minute 1
+  0;                                      !- Value Until Time 1
+
+OS:ElectricEquipment:Definition,
+  {3b99c1fd-9eec-42c6-a72b-ad7044971c7b}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {0f376831-e184-441e-b468-071d8ed05b01}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  {3b99c1fd-9eec-42c6-a72b-ad7044971c7b}, !- Electric Equipment Definition Name
+  {3a812c18-01f6-4f61-97c4-f44f202e2f67}, !- Space or SpaceType Name
+  {b8d8eb8b-86d9-4be6-8361-3bc98c3cb8ae}; !- Schedule Name
+
+OS:ScheduleTypeLimits,
+  {4924b294-ce05-47fb-86ca-2e09839b4f51}, !- Handle
+  Fractional,                             !- Name
+  0,                                      !- Lower Limit Value {BasedOnField A4}
+  1,                                      !- Upper Limit Value {BasedOnField A4}
+  Continuous;                             !- Numeric Type
+
+OS:ElectricEquipment:Definition,
+  {77875b4a-8f4e-476f-9044-0ea87a0098d9}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {86e7751b-3462-42a6-975c-39ce50edb4fd}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  {77875b4a-8f4e-476f-9044-0ea87a0098d9}, !- Electric Equipment Definition Name
+  {3a812c18-01f6-4f61-97c4-f44f202e2f67}, !- Space or SpaceType Name
+  {b8d8eb8b-86d9-4be6-8361-3bc98c3cb8ae}; !- Schedule Name
+

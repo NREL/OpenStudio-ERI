@@ -679,7 +679,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {bc7ee3b1-1e69-4b0a-8a51-17471d996099}, !- Handle
-  crawlspace 1,                           !- Name
+  crawlspace,                             !- Name
   {637106c4-0222-4948-9fae-e7edca585088}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -2061,7 +2061,7 @@ OS:WeatherFile,
   -84.43,                                 !- Longitude {deg}
   -5,                                     !- Time Zone {hr}
   308,                                    !- Elevation {m}
-  file:///C:/Users/jmaguire/Desktop/OSM Geometries/002Atlanta_2story_2700_CS_FA/002Atlanta_2story_2700_CS_FA_c/files/USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMY3.epw, !- Url
+  file:files/USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMY3.epw, !- Url
   813B1688;                               !- Checksum
 
 OS:RunPeriod,
@@ -2077,4 +2077,56 @@ OS:RunPeriod,
   ,                                       !- Use Weather File Rain Indicators
   ,                                       !- Use Weather File Snow Indicators
   ;                                       !- Number of Times Runperiod to be Repeated
+
+OS:Schedule:Ruleset,
+  {23e3a988-f59b-45f9-89d6-e037c3c73715}, !- Handle
+  empty_schedule,                         !- Name
+  {481ef46d-e8b4-41d9-bd34-04b7153aa30d}, !- Schedule Type Limits Name
+  {30c023e0-316b-4d84-9e3d-8c68e44e2aca}; !- Default Day Schedule Name
+
+OS:Schedule:Day,
+  {30c023e0-316b-4d84-9e3d-8c68e44e2aca}, !- Handle
+  Schedule Day 1,                         !- Name
+  {481ef46d-e8b4-41d9-bd34-04b7153aa30d}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  24,                                     !- Hour 1
+  0,                                      !- Minute 1
+  0;                                      !- Value Until Time 1
+
+OS:ElectricEquipment:Definition,
+  {e17aa88f-0559-4ff4-abf9-386ebb5cbe8b}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {c3068abc-dae2-468c-a674-8498c8c80b8a}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  {e17aa88f-0559-4ff4-abf9-386ebb5cbe8b}, !- Electric Equipment Definition Name
+  {6de5e08c-3720-4def-a106-978d7f85c3f8}, !- Space or SpaceType Name
+  {23e3a988-f59b-45f9-89d6-e037c3c73715}; !- Schedule Name
+
+OS:ScheduleTypeLimits,
+  {481ef46d-e8b4-41d9-bd34-04b7153aa30d}, !- Handle
+  Fractional,                             !- Name
+  0,                                      !- Lower Limit Value {BasedOnField A4}
+  1,                                      !- Upper Limit Value {BasedOnField A4}
+  Continuous;                             !- Numeric Type
+
+OS:ElectricEquipment:Definition,
+  {7b3f83db-6021-49d6-b6b9-27fb3af5eca4}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {ef50dad5-e9e6-4bcc-a78a-24204908147c}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  {7b3f83db-6021-49d6-b6b9-27fb3af5eca4}, !- Electric Equipment Definition Name
+  {6de5e08c-3720-4def-a106-978d7f85c3f8}, !- Space or SpaceType Name
+  {23e3a988-f59b-45f9-89d6-e037c3c73715}; !- Schedule Name
 

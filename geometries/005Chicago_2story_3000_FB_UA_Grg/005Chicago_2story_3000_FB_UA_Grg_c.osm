@@ -439,7 +439,7 @@ OS:Material,
 
 OS:ThermalZone,
   {270363c4-6471-4cf3-be55-ce96ceb11db9}, !- Handle
-  finishedbasement_1 Thermal Zone,        !- Name
+  finishedbasement Thermal Zone,          !- Name
   1,                                      !- Multiplier
   2.4384,                                 !- Ceiling Height {m}
   229.706262864,                          !- Volume {m3}
@@ -513,7 +513,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {37e82f08-1c15-417b-aa8a-6abe2518bafb}, !- Handle
-  finishedbasement_1,                     !- Name
+  finishedbasement,                       !- Name
   {f3e68755-77f7-4a57-bbe3-295f677d3286}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -2581,7 +2581,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {f3e68755-77f7-4a57-bbe3-295f677d3286}, !- Handle
-  finishedbasement_1,                     !- Name
+  finishedbasement,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {92bb29d8-c75c-4c35-8704-f17e7290a6d9}; !- Group Rendering Name
@@ -2669,4 +2669,56 @@ OS:RunPeriod,
   ,                                       !- Use Weather File Rain Indicators
   ,                                       !- Use Weather File Snow Indicators
   ;                                       !- Number of Times Runperiod to be Repeated
+
+OS:Schedule:Ruleset,
+  {79b39d66-66c5-4256-a654-9072e6fcf20b}, !- Handle
+  empty_schedule,                         !- Name
+  {b933be2f-a8a8-4c5d-9f2b-87d8481794a0}, !- Schedule Type Limits Name
+  {f32f210a-5979-4db7-89eb-79e3d4c3900e}; !- Default Day Schedule Name
+
+OS:Schedule:Day,
+  {f32f210a-5979-4db7-89eb-79e3d4c3900e}, !- Handle
+  Schedule Day 1,                         !- Name
+  {b933be2f-a8a8-4c5d-9f2b-87d8481794a0}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  24,                                     !- Hour 1
+  0,                                      !- Minute 1
+  0;                                      !- Value Until Time 1
+
+OS:ElectricEquipment:Definition,
+  {29c6e604-e48d-4b43-82c1-ef617c55f276}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {2409ddbf-24bb-4c13-ba2f-866b1cc53f22}, !- Handle
+  3.0 Bedrooms,                           !- Name
+  {29c6e604-e48d-4b43-82c1-ef617c55f276}, !- Electric Equipment Definition Name
+  {a9d3de29-7027-4ebe-8093-f677f6e66574}, !- Space or SpaceType Name
+  {79b39d66-66c5-4256-a654-9072e6fcf20b}; !- Schedule Name
+
+OS:ScheduleTypeLimits,
+  {b933be2f-a8a8-4c5d-9f2b-87d8481794a0}, !- Handle
+  Fractional,                             !- Name
+  0,                                      !- Lower Limit Value {BasedOnField A4}
+  1,                                      !- Upper Limit Value {BasedOnField A4}
+  Continuous;                             !- Numeric Type
+
+OS:ElectricEquipment:Definition,
+  {f2d3370e-7834-4a49-a039-796d63a059fa}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  EquipmentLevel,                         !- Design Level Calculation Method
+  0,                                      !- Design Level {W}
+  ,                                       !- Watts per Space Floor Area {W/m2}
+  ;                                       !- Watts per Person {W/person}
+
+OS:ElectricEquipment,
+  {ef93a37b-03d7-44ed-a95e-ba55801514c6}, !- Handle
+  2.0 Bathrooms,                          !- Name
+  {f2d3370e-7834-4a49-a039-796d63a059fa}, !- Electric Equipment Definition Name
+  {a9d3de29-7027-4ebe-8093-f677f6e66574}, !- Space or SpaceType Name
+  {79b39d66-66c5-4256-a654-9072e6fcf20b}; !- Schedule Name
 
