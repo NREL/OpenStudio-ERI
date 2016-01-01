@@ -1,5 +1,6 @@
 require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/util"
 
 #start the measure
 class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
