@@ -27,21 +27,21 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	c_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("C_ef", true)
 	c_ef.setDisplayName("Cooktop Energy Factor")
 	c_ef.setDescription("Cooktop energy factor determined by DOE test procedures for cooking appliances (DOE 1997).")
-	c_ef.setDefaultValue(0.74)
+	c_ef.setDefaultValue(0.4)
 	args << c_ef
 
 	#make a double argument for oven EF
 	o_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("O_ef", true)
 	o_ef.setDisplayName("Oven Energy Factor")
 	o_ef.setDescription("Oven energy factor determined by DOE test procedures for cooking appliances (DOE 1997).")
-	o_ef.setDefaultValue(0.11)
+	o_ef.setDefaultValue(0.058)
 	args << o_ef
 	
 	#make a boolean argument for has electric ignition
 	e_ignition = OpenStudio::Ruleset::OSArgument::makeBoolArgument("e_ignition", true)
 	e_ignition.setDisplayName("Has Electronic Ignition")
 	e_ignition.setDescription("For gas/propane cooking ranges with electronic ignition, an extra (40 + 13.3x(#BR)) kWh/yr of electricity will be included.")
-	e_ignition.setDefaultValue(false)
+	e_ignition.setDefaultValue(true)
 	args << e_ignition
 
 	#make a double argument for Occupancy Energy Multiplier

@@ -216,10 +216,8 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
 
     cd_ann_e = daily_energy_elec * 365.0 # kWh/yr
 
-    mult_vacation = 0
-    mult_non_vacation = 1.04
-    mult_weekend = 1.15 * mult_non_vacation
-    mult_weekday = 0.94 * mult_non_vacation
+    mult_weekend = 1.15
+    mult_weekday = 0.94
 
     obj_name = Constants.ObjectNameClothesDryer
     obj_name_e = Constants.ObjectNameClothesDryer + "_" + Constants.FuelTypeElectric
