@@ -20,10 +20,20 @@ end
 
 class WeatherProcess
 
-  def initialize(epwfile, runner)
-    @header, @data, @design = WeatherProcess._process_epw_text(epwfile, runner)
+  def initialize(model, runner)
+    epw_path = WeatherProcess._get_epw_path(model, runner)
+    if epw_path.nil?
+      @error = true
+    else
+      @error = false
+      @header, @data, @design = WeatherProcess._process_epw_text(epw_path, runner)
+    end
   end
 
+  def error?
+    return @error
+  end
+  
   def header
     return @header
   end
@@ -34,6 +44,53 @@ class WeatherProcess
 
   def design
     return @design
+  end
+  
+  def self._get_epw_path(model, runner)
+    # code below copied from https://gist.github.com/nllong/1e5616ac4edb2f05b7fa
+  
+    # try runner first
+    if runner.lastEpwFilePath.is_initialized
+      test = runner.lastEpwFilePath.get.to_s
+      if File.exist?(test)
+        epw_path = test
+      end
+    end
+        
+    # try model second
+    if !epw_path
+      if model.weatherFile.is_initialized
+        test = model.weatherFile.get.path
+        if test.is_initialized
+          # have a file name from the model
+          if File.exist?(test.get.to_s)
+            epw_path = test.get
+          else
+            # If this is an always-run Measure, need to check for file in different path
+            alt_weath_path = File.expand_path(File.join(File.dirname(__FILE__), "../../../resources"))
+            alt_epw_path = File.expand_path(File.join(alt_weath_path, test.get.to_s))
+            server_epw_path = File.expand_path(File.join(File.dirname(__FILE__), "../../weather/#{File.basename(test.get.to_s)}"))
+
+            if File.exist?(alt_epw_path)
+              epw_path = OpenStudio::Path.new(alt_epw_path)
+            elsif File.exist? server_epw_path
+              epw_path = OpenStudio::Path.new(server_epw_path)
+            else
+              runner.registerError("Model has been assigned a weather file, but the file is not in the specified location of '#{test.get}'.")
+              return nil
+            end
+          end
+        else
+          runner.registerError("Model has a weather file assigned, but the weather file path has been deleted.")
+          return nil
+        end
+      else
+        runner.registerError('Model has not been assigned a weather file.')
+        return nil
+      end
+    end
+    
+    return epw_path.to_s
   end
 
   def self._process_epw_text(epwfile, runner)

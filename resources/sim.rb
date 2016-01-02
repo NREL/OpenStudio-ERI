@@ -887,29 +887,8 @@ end
 
 class Sim
 
-	def initialize(model=nil, runner=nil)
-	  @model = nil
-	  @weather = nil
-	  unless model.nil?
-		@model = model
-	  end
-	  unless runner.nil?
-		  if runner.lastEpwFilePath.is_initialized
-			test = runner.lastEpwFilePath.get.to_s
-			if File.exist?(test)
-			  epw_path = test
-			  @weather = WeatherProcess.new(epw_path, runner)
-			end
-		  elsif model.weatherFile.is_initialized
-			test = model.weatherFile.get.path
-			if test.is_initialized
-			  if File.exist?(test.get.to_s)
-				epw_path = test.get.to_s
-				@weather = WeatherProcess.new(epw_path, runner)
-			  end
-			end
-		  end
-	  end
+	def initialize(model, runner)
+      @weather = WeatherProcess.new(model, runner)
 	end
 	
   def _getGroundTemperatures
@@ -4149,7 +4128,7 @@ def get_unfinished_attic_perimeter_insulation_derating(uatc, geometry, eaves_dep
   end
 
   # Return value for uatc.UACeilingInsThickness_Rev
-  area = get_space_area(getSpace(geometry, Constants.SpaceUnfinAttic))
+  area = get_space_area(getSpace(geometry, Constants.UnfinishedAtticSpace))
   return uatc.UACeilingInsThickness * area / spaceArea_Rev_UAtc
 
 end

@@ -33,33 +33,11 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
 	
-	@model = nil
-	@weather = nil
-	unless model.nil?
-	  @model = model
-	end
-	unless runner.nil?
-	  begin # Spreadsheet
-		weather_file_name = "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
-		weather_file_dir = "weather"
-		epw_path = File.absolute_path(File.join(__FILE__.gsub('sim.rb', ''), '../../..', weather_file_dir, weather_file_name))
-		@weather = WeatherProcess.new(epw_path,runner)
-	  rescue # PAT
-		if runner.lastEpwFilePath.is_initialized
-		  test = runner.lastEpwFilePath.get.to_s
-		  if File.exist?(test)
-			epw_path = test
-			@weather = WeatherProcess.new(epw_path,runner)
-		  end
-		end
-	  end
-	end
-	unless @weather.nil?
-	  runner.registerInfo("EPW weather path set to #{epw_path}")
-	else
-	  runner.registerInfo("EPW weather path was NOT set")
-	end
-  
+    @weather = WeatherProcess.new(model,runner)
+    if @weather.error?
+      return false
+    end
+
 	avgOAT = OpenStudio::convert(@weather.data.AnnualAvgDrybulb,"F","C").get
 	monthlyOAT = @weather.data.MonthlyAvgDrybulbs
 	

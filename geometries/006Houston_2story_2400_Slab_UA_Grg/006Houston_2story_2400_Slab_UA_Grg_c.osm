@@ -151,7 +151,7 @@ OS:Material,
 
 OS:ThermalZone,
   {47aac38c-d855-4908-9961-ce69ac82e380}, !- Handle
-  living Thermal Zone,                    !- Name
+  living zone,                            !- Name
   1,                                      !- Multiplier
   4.8768,                                 !- Ceiling Height {m}
   543.6834624,                            !- Volume {m3}
@@ -225,7 +225,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {058d29d7-5aab-4fe6-88b6-fcb1e25e7c2f}, !- Handle
-  living,                                 !- Name
+  living space,                           !- Name
   {dda13c27-bd07-4e69-83b1-ab60f7c251ca}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -283,7 +283,7 @@ OS:Material,
 
 OS:ThermalZone,
   {ccdbf0c1-9854-43c5-9634-f56f0c353a78}, !- Handle
-  garage Thermal Zone,                    !- Name
+  garage zone,                            !- Name
   1,                                      !- Multiplier
   4.2672,                                 !- Ceiling Height {m}
   113.267388,                             !- Volume {m3}
@@ -357,7 +357,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {36eb23c3-3c80-4b14-a7c8-74bddf23158e}, !- Handle
-  garage,                                 !- Name
+  garage space,                           !- Name
   {13980e22-85d9-4fa6-b1c2-e92c6a53393a}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -530,7 +530,7 @@ OS:Material,
 
 OS:ThermalZone,
   {fef4c213-2784-42ee-943c-bb1f28556ae4}, !- Handle
-  unfinishedattic Thermal Zone,           !- Name
+  unfinished attic zone,                  !- Name
   ,                                       !- Multiplier
   2.5908,                                 !- Ceiling Height {m}
   143.3540379375,                         !- Volume {m3}
@@ -604,7 +604,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {c3d1b90c-6a67-4577-8d10-d3ca0ec5d054}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic space,                 !- Name
   {598f4690-2652-4d00-ad35-fba32bd09cba}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -2394,7 +2394,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {598f4690-2652-4d00-ad35-fba32bd09cba}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {eb7f19c5-27e1-4e38-8bd6-39b01aaa58ae}; !- Group Rendering Name

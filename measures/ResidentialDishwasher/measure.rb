@@ -92,31 +92,19 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	mult_hw.setDefaultValue(1)
 	args << mult_hw
 	
-	#make a choice argument for which zone to put the space in
-    space_type_handles = OpenStudio::StringVector.new
-    space_type_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    space_type_args = model.getSpaceTypes
-    space_type_args_hash = {}
-    space_type_args.each do |space_type_arg|
-      space_type_args_hash[space_type_arg.name.to_s] = space_type_arg
+    #make a choice argument for space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
     end
-
-    #looping through sorted hash of model objects
-    space_type_args_hash.sort.map do |key,value|
-      #only include if space type is used in the model
-      if value.spaces.size > 0
-        space_type_handles << value.handle.to_s
-        space_type_display_names << key
-      end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
     end
-	
-	#make a choice argument for space type
-    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
+    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_args, true)
     space_type.setDisplayName("Location")
-    space_type.setDisplayName("Select the space type where the dishwasher is located")
-    space_type.setDefaultValue("*None*") #if none is chosen this will error out
+    space_type.setDescription("Select the space type where the dishwasher is located")
+    space_type.setDefaultValue(Constants.LivingSpaceType)
     args << space_type
     
     #make a choice argument for plant loop
@@ -128,10 +116,11 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     if not plant_loop_args.include?(Constants.PlantLoopServiceWater)
         plant_loop_args << Constants.PlantLoopServiceWater
     end
-	pl = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("pl", plant_loop_args, true)
-	pl.setDisplayName("Plant Loop")
-	pl.setDefaultValue(Constants.PlantLoopServiceWater)
-	args << pl
+    plant_loop = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("plant_loop", plant_loop_args, true)
+    plant_loop.setDisplayName("Plant Loop")
+    plant_loop.setDescription("Select the plant loop for the clothes washer")
+    plant_loop.setDefaultValue(Constants.PlantLoopServiceWater)
+	args << plant_loop
 
     return args
   end #end the arguments method
@@ -156,7 +145,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	dw_energy_multiplier = runner.getDoubleArgumentValue("mult_e", user_arguments)
 	dw_hot_water_multiplier = runner.getDoubleArgumentValue("mult_hw", user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
-    plant_loop_s = runner.getStringArgumentValue("pl", user_arguments)
+    plant_loop_s = runner.getStringArgumentValue("plant_loop", user_arguments)
 	
 	#Check for valid inputs
 	if dw_capacity < 1
@@ -188,48 +177,28 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		return false
 	end
     
-    # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type_r, runner)
-    if nbeds.nil? or nbaths.nil?
+    #Get space type
+    space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
+    if space_type.nil?
         return false
     end
 
     #Get plant loop
-    plantLoop = nil
-    model.getPlantLoops.each do |pl|
-        if pl.name.to_s == plant_loop_s
-            plantLoop = pl
-            break
-        end
+    plant_loop = HelperMethods.get_plant_loop_from_string(model, plant_loop_s, runner)
+    if plant_loop.nil?
+        return false
     end
-    if plantLoop.nil?
-        runner.registerError("Could not find plant loop with name #{plant_loop_s}.")
+    
+    # Get number of bedrooms/bathrooms
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type.handle, runner)
+    if nbeds.nil? or nbaths.nil?
         return false
     end
 
     # Get water heater setpoint
-    waterHeater = nil
-    plantLoop.supplyComponents.each do |wh|
-        if wh.to_WaterHeaterMixed.is_initialized
-            waterHeater = wh.to_WaterHeaterMixed.get
-        elsif wh.to_WaterHeaterStratified.is_initialized
-            waterHeater = wh.to_WaterHeaterStratified.get
-        else
-            next
-        end
-        if waterHeater.setpointTemperatureSchedule.nil?
-            runner.registerError("Water heater found without a setpoint temperature schedule.")
-            return false
-        end
-    end
-    if waterHeater.nil?
-        runner.registerError("No water heater found; add a residential water heater first.")
+    wh_setpoint = HelperMethods.get_water_heater_setpoint(model, plant_loop, runner)
+    if wh_setpoint.nil?
         return false
-    end
-    min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.setpointTemperatureSchedule.get)
-    wh_setpoint = OpenStudio.convert((min_max_result['min'] + min_max_result['max'])/2.0, "C", "F").get
-    if min_max_result['min'] != min_max_result['max']
-        runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
     end
     
 	#hard coded convective, radiative, latent, and lost fractions for dishwashers
@@ -353,12 +322,9 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	# Also convert from per-cycle to daily electricity usage amounts.
 	if dw_is_cold_water_inlet_only
 
-        epw_path = runner.lastEpwFilePath.get.to_s
-        if File.exist?(epw_path)
-            @weather = WeatherProcess.new(epw_path,runner)
-        else
-           runner.registerError("Cannot find weather file: #{epw_path}")
-           return false
+        @weather = WeatherProcess.new(model,runner)
+        if @weather.error?
+            return false
         end
         daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(@weather.data, @weather.header)
 
@@ -421,87 +387,77 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	#add dw to the selected space
 	has_elec_dw = 0
 	replace_dw = 0
-	model.getSpaceTypes.each do |spaceType|
-		spacename = spaceType.name.to_s
-		spacehandle = spaceType.handle.to_s
-		if spacehandle == space_type_r #add dw
-			space_equipments = spaceType.electricEquipment
-			space_equipments.each do |space_equipment|
-				if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
-					has_elec_dw = 1
-					runner.registerWarning("This space already has an dishwasher, the existing dishwasher will be replaced with the the currently selected option")
-					space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
-					sch.setSchedule(space_equipment)
-					replace_dw = 1
-				end
-			end
-            if replace_dw == 1
-                # Also update water use equipment
-                plantLoop.demandComponents.each do |component|
-                    next unless component.to_WaterUseConnections.is_initialized
-                    connection = component.to_WaterUseConnections.get
-                    connection.waterUseEquipment.each do |equipment|
-                        if equipment.waterUseEquipmentDefinition.name.get.to_s == obj_name
-                            equipment.waterUseEquipmentDefinition.setPeakFlowRate(peak_flow)
-                            sch.setWaterSchedule(equipment)
-                        end
-                    end
+    space_equipments = space_type.electricEquipment
+    space_equipments.each do |space_equipment|
+        if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
+            has_elec_dw = 1
+            runner.registerWarning("This space already has an dishwasher, the existing dishwasher will be replaced with the the currently selected option")
+            space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
+            sch.setSchedule(space_equipment)
+            replace_dw = 1
+        end
+    end
+    if replace_dw == 1
+        # Also update water use equipment
+        plant_loop.demandComponents.each do |component|
+            next unless component.to_WaterUseConnections.is_initialized
+            connection = component.to_WaterUseConnections.get
+            connection.waterUseEquipment.each do |equipment|
+                if equipment.waterUseEquipmentDefinition.name.get.to_s == obj_name
+                    equipment.waterUseEquipmentDefinition.setPeakFlowRate(peak_flow)
+                    sch.setWaterSchedule(equipment)
                 end
             end
-			if has_elec_dw == 0
-				has_elec_dw = 1
+        end
+    end
+    if has_elec_dw == 0
+        has_elec_dw = 1
 
-				#Add electric equipment for the dw
-				dw_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-				dw = OpenStudio::Model::ElectricEquipment.new(dw_def)
-				dw.setName(obj_name)
-				dw.setSpaceType(spaceType)
-				dw_def.setName(obj_name)
-				dw_def.setDesignLevel(design_level)
-				dw_def.setFractionRadiant(dw_rad)
-				dw_def.setFractionLatent(dw_lat)
-				dw_def.setFractionLost(dw_lost)
-				sch.setSchedule(dw)
-				
-                #Add water use equipment for the dw
-				dw_def2 = OpenStudio::Model::WaterUseEquipmentDefinition.new(model)
-                dw2 = OpenStudio::Model::WaterUseEquipment.new(dw_def2)
-                dw2.setName(obj_name)
-                dw2.setSpaceType(spaceType)
-                dw_def2.setName(obj_name)
-                dw_def2.setPeakFlowRate(peak_flow)
-                dw_def2.setEndUseSubcategory("Domestic Hot Water")
-				sch.setWaterSchedule(dw2)
-                
-                #Reuse existing water use connection if possible
-                equip_added = false
-                plantLoop.demandComponents.each do |component|
-                    next unless component.to_WaterUseConnections.is_initialized
-                    connection = component.to_WaterUseConnections.get
-                    connection.addWaterUseEquipment(dw2)
-                    equip_added = true
-                    break
-                end
-                if not equip_added
-                    #Need new water heater connection
-                    connection = OpenStudio::Model::WaterUseConnections.new(model)
-                    connection.addWaterUseEquipment(dw2)
-                    plantLoop.addDemandBranchForComponent(connection)
-                end
-                
-			end
-		end
-	end
+        #Add electric equipment for the dw
+        dw_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+        dw = OpenStudio::Model::ElectricEquipment.new(dw_def)
+        dw.setName(obj_name)
+        dw.setSpaceType(space_type)
+        dw_def.setName(obj_name)
+        dw_def.setDesignLevel(design_level)
+        dw_def.setFractionRadiant(dw_rad)
+        dw_def.setFractionLatent(dw_lat)
+        dw_def.setFractionLost(dw_lost)
+        sch.setSchedule(dw)
+        
+        #Add water use equipment for the dw
+        dw_def2 = OpenStudio::Model::WaterUseEquipmentDefinition.new(model)
+        dw2 = OpenStudio::Model::WaterUseEquipment.new(dw_def2)
+        dw2.setName(obj_name)
+        dw2.setSpaceType(space_type)
+        dw_def2.setName(obj_name)
+        dw_def2.setPeakFlowRate(peak_flow)
+        dw_def2.setEndUseSubcategory("Domestic Hot Water")
+        sch.setWaterSchedule(dw2)
+        
+        #Reuse existing water use connection if possible
+        equip_added = false
+        plant_loop.demandComponents.each do |component|
+            next unless component.to_WaterUseConnections.is_initialized
+            connection = component.to_WaterUseConnections.get
+            connection.addWaterUseEquipment(dw2)
+            equip_added = true
+            break
+        end
+        if not equip_added
+            #Need new water heater connection
+            connection = OpenStudio::Model::WaterUseConnections.new(model)
+            connection.addWaterUseEquipment(dw2)
+            plant_loop.addDemandBranchForComponent(connection)
+        end
+        
+    end
 
     #reporting final condition of model
-	if has_elec_dw == 1
-		if replace_dw == 1
-			runner.registerFinalCondition("The existing dishwasher has been replaced by one with #{dw_ann.round} kWh annual energy consumption.")
-		else
-			runner.registerFinalCondition("A dishwasher with #{dw_ann.round} kWh annual energy consumption has been added to plant loop '#{plantLoop.name}'.")
-		end
-	else
-		runner.registerFinalCondition("Dishwasher was not added to #{space_type_r}.")
+    if replace_dw == 1
+        runner.registerFinalCondition("The existing dishwasher has been replaced by one with #{dw_ann.round} kWh annual energy consumption.")
+    else
+        runner.registerFinalCondition("A dishwasher with #{dw_ann.round} kWh annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
     end
 	
     return true

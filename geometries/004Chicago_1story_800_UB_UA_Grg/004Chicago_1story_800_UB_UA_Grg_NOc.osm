@@ -43,7 +43,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {c625041c-9f89-4467-b156-a263b2ea92cf}, !- Handle
-  living Thermal Zone,                    !- Name
+  living zone,                            !- Name
   1,                                      !- Multiplier
   2.4384,                                 !- Ceiling Height {m}
   184.399307664,                          !- Volume {m3}
@@ -117,7 +117,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {78fd69cc-ec4e-431c-987a-45498419c80f}, !- Handle
-  living,                                 !- Name
+  living space,                           !- Name
   {3a812c18-01f6-4f61-97c4-f44f202e2f67}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -149,7 +149,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {c6b09f5f-ede6-4a5f-ba76-9e4ba79f9f0a}, !- Handle
-  garage Thermal Zone,                    !- Name
+  garage zone,                            !- Name
   1,                                      !- Multiplier
   4.2672,                                 !- Ceiling Height {m}
   181.2278208,                            !- Volume {m3}
@@ -223,7 +223,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {07579b4d-0c82-4c7c-99e3-52cd7edd9ce6}, !- Handle
-  garage,                                 !- Name
+  garage space,                           !- Name
   {eb8b9a29-caf6-493a-a4c5-4643259c4d06}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -306,7 +306,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {a8e57107-1490-4d34-8d3f-9ee9ddd9a231}, !- Handle
-  unfinishedbasement Thermal Zone,        !- Name
+  unfinished basement zone,               !- Name
   1,                                      !- Multiplier
   2.4384,                                 !- Ceiling Height {m}
   184.399307664,                          !- Volume {m3}
@@ -380,7 +380,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {9d598398-1820-4a6a-8cc1-2023df090e93}, !- Handle
-  unfinishedbasement,                     !- Name
+  unfinished basement space,              !- Name
   {a90b0b00-fb85-44b4-b205-f76137d65f04}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -615,7 +615,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {015c745e-0a46-4994-afb4-c537c2e6abc3}, !- Handle
-  unfinishedattic Thermal Zone,           !- Name
+  unfinished attic zone,                  !- Name
   ,                                       !- Multiplier
   2.286,                                  !- Ceiling Height {m}
   79.1597457885,                          !- Volume {m3}
@@ -689,7 +689,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {7f94125e-6953-4131-a505-6b109dbfd8cb}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic space,                 !- Name
   {d2e2e2a9-23a3-45fb-9f0c-2eae474a08e3}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -1388,7 +1388,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {a90b0b00-fb85-44b4-b205-f76137d65f04}, !- Handle
-  unfinishedbasement,                     !- Name
+  unfinished basement,                    !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {0ce99ed2-c127-4b24-a6c3-438cb83f9c8b}; !- Group Rendering Name
@@ -1416,7 +1416,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {d2e2e2a9-23a3-45fb-9f0c-2eae474a08e3}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {2b2e2168-b82d-4083-b3e0-cc8039026b2d}; !- Group Rendering Name

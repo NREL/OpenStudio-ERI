@@ -34,11 +34,11 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Exterior Doors"
+    return "Assign Residential Door Construction"
   end
   
   def description
-    return "This measure creates constructions for exterior doors adjacent to the living space as well as garage doors."
+    return "This measure assigns a construction to exterior doors adjacent to the living space as well as garage doors."
   end
   
   def modeler_description
@@ -48,35 +48,6 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
-    end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
-    end
-
-    #make a choice argument for living
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Living Space")
-	selected_living.setDescription("The living space type.")
-    args << selected_living
-
-    #make a choice argument for garage
-    selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, false)
-    selected_garage.setDisplayName("Garage Space")
-	selected_garage.setDescription("The garage space type.")
-    args << selected_garage
 
 	#make a choice argument for model objects
 	doors_display_names = OpenStudio::StringVector.new
@@ -90,7 +61,37 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
 	selected_door.setDescription("The front door type.")
 	selected_door.setDefaultValue("Fiberglass")
     args << selected_door	
-	
+
+    #make a choice argument for living space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
+    end
+    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
+    living_space_type.setDisplayName("Living space type")
+    living_space_type.setDescription("Select the living space type")
+    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << living_space_type
+
+    #make a choice argument for garage space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.GarageSpaceType)
+        space_type_args << Constants.GarageSpaceType
+    end
+    garage_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_space_type", space_type_args, true)
+    garage_space_type.setDisplayName("Garage space type")
+    garage_space_type.setDescription("Select the garage space type")
+    garage_space_type.setDefaultValue(Constants.GarageSpaceType)
+    args << garage_space_type
+
     return args
   end #end the arguments method
 
@@ -104,8 +105,14 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Space Type
-    selected_garage = runner.getOptionalWorkspaceObjectChoiceValue("selectedgarage",user_arguments,model)
-    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
+	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    if living_space_type.nil?
+        return false
+    end
+	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
+    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
+    
 	selected_door = runner.getStringArgumentValue("selecteddoor",user_arguments)
 	
 	doorUvalue = {"Wood"=>0.48, "Steel"=>0.2, "Fiberglass"=>0.2}[selected_door]
@@ -156,7 +163,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     spaces = model.getSpaces
     spaces.each do |space|
       constructions_hash = {}
-      if selected_garage.get.handle.to_s == space.spaceType.get.handle.to_s
+      if not garage_space_type.nil? and garage_space_type.handle.to_s == space.spaceType.get.handle.to_s
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|
@@ -171,7 +178,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
             end
           end
         end
-      elsif selected_living.get.handle.to_s == space.spaceType.get.handle.to_s
+      elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|

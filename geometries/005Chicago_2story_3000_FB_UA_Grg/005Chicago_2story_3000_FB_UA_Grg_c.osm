@@ -152,7 +152,7 @@ OS:Material,
 
 OS:ThermalZone,
   {4e286943-e5cc-40a5-8ef5-c1888fc65cfc}, !- Handle
-  living Thermal Zone,                    !- Name
+  living zone,                            !- Name
   1,                                      !- Multiplier
   4.8768,                                 !- Ceiling Height {m}
   459.412525728,                          !- Volume {m3}
@@ -226,7 +226,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {d3d39da8-4ab4-4fe4-9ab7-1a1027f44923}, !- Handle
-  living,                                 !- Name
+  living space,                           !- Name
   {a9d3de29-7027-4ebe-8093-f677f6e66574}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -439,7 +439,7 @@ OS:Material,
 
 OS:ThermalZone,
   {270363c4-6471-4cf3-be55-ce96ceb11db9}, !- Handle
-  finishedbasement Thermal Zone,          !- Name
+  unfinished basement zone,               !- Name
   1,                                      !- Multiplier
   2.4384,                                 !- Ceiling Height {m}
   229.706262864,                          !- Volume {m3}
@@ -513,7 +513,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {37e82f08-1c15-417b-aa8a-6abe2518bafb}, !- Handle
-  finishedbasement,                       !- Name
+  finished basement space,                !- Name
   {f3e68755-77f7-4a57-bbe3-295f677d3286}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -886,7 +886,7 @@ OS:Material,
 
 OS:ThermalZone,
   {0de47a9b-f31f-4014-8322-f3a811d91ae2}, !- Handle
-  garage Thermal Zone,                    !- Name
+  garage zone,                            !- Name
   1,                                      !- Multiplier
   4.2672,                                 !- Ceiling Height {m}
   181.2278208,                            !- Volume {m3}
@@ -960,7 +960,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {a7500f9f-631b-4f26-ac73-73ba7ae00208}, !- Handle
-  garage,                                 !- Name
+  garage space,                           !- Name
   {ff38f169-45e5-4463-b319-a7178f27af80}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -1423,7 +1423,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {e0615aba-ef4e-470f-9c4f-a208be0238cb}, !- Handle
-  unfinishedattic Thermal Zone,           !- Name
+  unfinished attic zone,                  !- Name
   ,                                       !- Multiplier
   2.286,                                  !- Ceiling Height {m}
   93.3181692885,                          !- Volume {m3}
@@ -1497,7 +1497,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {57b61442-fabc-4f8a-827f-ad3d529df7fb}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic space,                 !- Name
   {a72f312e-75a3-424b-8a32-c9abaa3b5a2c}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -2581,7 +2581,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {f3e68755-77f7-4a57-bbe3-295f677d3286}, !- Handle
-  finishedbasement,                       !- Name
+  finished basement,                      !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {92bb29d8-c75c-4c35-8704-f17e7290a6d9}; !- Group Rendering Name
@@ -2595,7 +2595,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {a72f312e-75a3-424b-8a32-c9abaa3b5a2c}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {446f0e0d-f314-434e-b0ad-96c68a931c92}; !- Group Rendering Name

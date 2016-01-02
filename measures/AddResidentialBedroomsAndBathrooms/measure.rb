@@ -8,7 +8,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Add/Replace Residential Bedrooms And Bathrooms"
+    return "Set Residential Bedrooms And Bathrooms"
   end
 
   # human readable description
@@ -24,29 +24,6 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
   # define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
-    end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
-    end
-
-    #make a choice argument for living space
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Living Space")
-	selected_living.setDescription("The living space type.")
-    args << selected_living
 
 	#make an integer argument for number of bedrooms
 	chs = OpenStudio::StringVector.new
@@ -71,6 +48,21 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	num_ba.setDisplayName("Number of Bathrooms")
 	num_ba.setDefaultValue("2")
 	args << num_ba		
+
+    #make a choice argument for living space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
+    end
+    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
+    living_space_type.setDisplayName("Living space type")
+    living_space_type.setDescription("Select the living space type")
+    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << living_space_type
 	
     return args
   end
@@ -84,12 +76,18 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-	selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
+	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
 	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments)
 	
+    #Get space type
+    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    if living_space_type.nil?
+        return false
+    end
+
 	# Remove any existing bedrooms and bathrooms
-	HelperMethods.remove_bedrooms_bathrooms(model, selected_living.get.handle)
+	HelperMethods.remove_bedrooms_bathrooms(model, living_space_type.handle)
 	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f
@@ -115,21 +113,16 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     ba.setSchedule(sch)
 	
 	# Set the space type
-	model.getSpaceTypes.each do |spaceType|
-		if spaceType.handle.to_s == selected_living.get.handle.to_s
-			br.setSpaceType(spaceType)
-			ba.setSpaceType(spaceType)
-			break
-		end
-	end		
+    br.setSpaceType(living_space_type)
+    ba.setSpaceType(living_space_type)
 	
 	# Test retrieving
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, selected_living.get.handle)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, living_space_type.handle)
     if not nbeds.nil?
-        runner.registerInfo("Number of bedrooms set to #{nbeds} for the '#{selected_living.get.name}' space type.")
+        runner.registerInfo("Number of bedrooms set to #{nbeds} for the '#{living_space_type.name}' space type.")
     end
     if not nbaths.nil?
-        runner.registerInfo("Number of bathrooms set to #{nbaths} for the '#{selected_living.get.name}' space type.")
+        runner.registerInfo("Number of bathrooms set to #{nbaths} for the '#{living_space_type.name}' space type.")
     end
 	
     return true

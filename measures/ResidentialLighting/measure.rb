@@ -13,7 +13,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "ResidentialLighting"
+    return "Set Residential Lighting"
   end
   
   #define the arguments that the user will input
@@ -98,41 +98,51 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	lfl_eff.setDisplayName("LFL Efficacy (lm/W))")
 	lfl_eff.setDefaultValue(88)
 	args << lfl_eff
-	
-	#make a choice argument for which zone to put the space in
-    space_type_handles = OpenStudio::StringVector.new
-    space_type_display_names = OpenStudio::StringVector.new
 
-    #putting model object and names into hash
-    space_type_args = model.getSpaceTypes
-    space_type_args_hash = {}
-    space_type_args.each do |space_type_arg|
-      space_type_args_hash[space_type_arg.name.to_s] = space_type_arg
+    #make a choice argument for living space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
     end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
+    end
+    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
+    living_space_type.setDisplayName("Living space type")
+    living_space_type.setDescription("Select the living space type")
+    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << living_space_type
 
-    #looping through sorted hash of model objects
-    space_type_args_hash.sort.map do |key,value|
-      #only include if space type is used in the model
-      if value.spaces.size > 0
-        space_type_handles << value.handle.to_s
-        space_type_display_names << key
-      end
+    #make a choice argument for garage space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
     end
-	
-	#make a choice argument for space type
-    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
-    space_type.setDisplayName("Select the space where the interior lighting is located")
-    args << space_type
-	
-	#make a choice argument for space type
-    grg_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("grg_space_type", space_type_handles, space_type_display_names, false)
-    grg_space_type.setDisplayName("Select the garage space")
-    args << grg_space_type
-	
-	#make a choice argument for space type
-    fb_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fb_space_type", space_type_handles, space_type_display_names, false)
-    fb_space_type.setDisplayName("Select the finished basement space")
-    args << fb_space_type
+    if not space_type_args.include?(Constants.GarageSpaceType)
+        space_type_args << Constants.GarageSpaceType
+    end
+    garage_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_space_type", space_type_args, true)
+    garage_space_type.setDisplayName("Garage space type")
+    garage_space_type.setDescription("Select the garage space type")
+    garage_space_type.setDefaultValue(Constants.GarageSpaceType)
+    args << garage_space_type
+
+    #make a choice argument for finished basement space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
+        space_type_args << Constants.FinishedBasementSpaceType
+    end
+    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
+    fbasement_space_type.setDisplayName("Finished Basement space type")
+    fbasement_space_type.setDescription("Select the finished basement space type")
+    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
+    args << fbasement_space_type
     
     return args
   end #end the arguments method
@@ -148,15 +158,6 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 
     #assign the user inputs to variables
 	selected_ltg = runner.getStringArgumentValue("selected_ltg",user_arguments)
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
-    space_type_fb = runner.getOptionalStringArgumentValue("fb_space_type",user_arguments)
-    if not space_type_fb.empty?
-        space_type_fb = space_type_fb.get
-    end
-    space_type_grg = runner.getOptionalStringArgumentValue("grg_space_type",user_arguments)
-    if not space_type_grg.empty?
-        space_type_grg = space_type_grg.get
-    end
     ltg_E = runner.getDoubleArgumentValue("ltg_E",user_arguments)
 	hw_cfl = runner.getDoubleArgumentValue("hw_cfl",user_arguments)
 	hw_led = runner.getDoubleArgumentValue("hw_led",user_arguments)
@@ -168,19 +169,25 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	cfl_eff = runner.getDoubleArgumentValue("cfl_eff",user_arguments)
 	led_eff = runner.getDoubleArgumentValue("led_eff",user_arguments)
 	lfl_eff = runner.getDoubleArgumentValue("lfl_eff",user_arguments)
-	
-    lfa = 0
+
+	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    if living_space_type.nil?
+        return false
+    end
+	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
+    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
+	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
+    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
+    
+    lfa = OpenStudio.convert(living_space_type.floorArea,"m^2","ft^2").get
     fbfa = 0
+    if not fbasement_space_type.nil?
+        fbfa = OpenStudio.convert(fbasement_space_type.floorArea,"m^2","ft^2").get
+    end
     gfa = 0
-	model.getSpaceTypes.each do |spaceType|
-		spacehandle = spaceType.handle.to_s
-        if spacehandle == space_type_r
-            lfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        elsif spacehandle == space_type_fb
-            fbfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        elsif spacehandle == space_type_grg
-            gfa = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        end
+    if not garage_space_type.nil?
+        gfa = OpenStudio.convert(garage_space_type.floorArea,"m^2","ft^2").get
     end
     tffa = lfa + fbfa # total finished floor area
 	
@@ -452,7 +459,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	model.getSpaceTypes.each do |spaceType|
 		spacename = spaceType.name.to_s
 		spacehandle = spaceType.handle.to_s
-		if spacehandle == space_type_r or spacehandle == space_type_fb or spacehandle == space_type_grg #add ltg
+		if spacehandle == living_space_type.handle.to_s or (not garage_space_type.nil? and spacehandle == garage_space_type.handle.to_s) or (not fbasement_space_type.nil? and spacehandle == fbasement_space_type.handle.to_s) #add ltg
 			space_lights = spaceType.lights
 			space_lights.each do |light|
 				if light.lightsDefinition.name.get.to_s == "residential_int_lighting"
@@ -484,16 +491,16 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 			
 			ltg_add = has_ltg + has_outside_ltg + has_grg_ltg + has_basement_ltg
 
-			if garage_ann > 0 and spacehandle == space_type_grg
+			if garage_ann > 0 and not garage_space_type.nil? and spacehandle == garage_space_type.handle.to_s
 				has_grg_ltg = 1
 			end
-			if outside_ann > 0 and spacehandle == space_type_r
+			if outside_ann > 0 and spacehandle == living_space_type.handle.to_s
 				has_outside_ltg = 1
 			end
-			if ltg_ann > 0 and spacehandle == space_type_r
+			if ltg_ann > 0 and spacehandle == living_space_type.handle.to_s
 				has_ltg = 1
 			end
-			if fb_max > 0 and spacehandle == space_type_fb
+			if fb_max > 0 and not fbasement_space_type.nil? and spacehandle == fbasement_space_type.handle.to_s
 				has_basement_ltg = 1
 			end
 				
@@ -566,7 +573,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 			ltg_ruleset.setWinterDesignDaySchedule(winDesSch)
 			#Add electric equipment for the ltg
 			
-			if has_ltg and spacehandle == space_type_r
+			if has_ltg and spacehandle == living_space_type.handle.to_s
 				ltg_def = OpenStudio::Model::LightsDefinition.new(model)
 				ltg = OpenStudio::Model::Lights.new(ltg_def)
 				ltg.setName("residential_interior_lighting")
@@ -579,7 +586,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 				ltg.setSchedule(ltg_ruleset)
 			end
 				
-			if has_grg_ltg and spacehandle == space_type_grg
+			if has_grg_ltg and not garage_space_type.nil? and spacehandle == garage_space_type.handle.to_s
 				grg_ltg_def = OpenStudio::Model::LightsDefinition.new(model)
 				grg_ltg = OpenStudio::Model::Lights.new(grg_ltg_def)
 				grg_ltg.setName("residential_garage_lighting")
@@ -592,7 +599,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 				grg_ltg.setSchedule(ltg_ruleset)
 			end
 				
-			if has_basement_ltg and spacehandle == space_type_fb
+			if has_basement_ltg and not fbasement_space_type.nil? and spacehandle == fbasement_space_type.handle.to_s
 				fb_ltg_def = OpenStudio::Model::LightsDefinition.new(model)
 				fb_ltg = OpenStudio::Model::Lights.new(fb_ltg_def)
 				fb_ltg.setName("residential_basement_lighting")
@@ -605,7 +612,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 				fb_ltg.setSchedule(ltg_ruleset)
 			end
 				
-			if has_outside_ltg and spacehandle == space_type_r
+			if has_outside_ltg and spacehandle == living_space_type.handle.to_s
 				ext_ltg_def = OpenStudio::Model::ExteriorLightsDefinition.new(model)
 				ext_ltg = OpenStudio::Model::ExteriorLights.new(ext_ltg_def)
 				ext_ltg.setName("residential_exterior_lighting")
@@ -625,7 +632,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 			runner.registerFinalCondition("Lighting has been added with #{ltg_total.round} kWh annual energy consumption.")
 		end
 	else
-		runner.registerFinalCondition("Lighting was not added to #{space_type_r}.")
+		runner.registerFinalCondition("Lighting was not added to #{living_space_type.name}.")
     end
 	
     return true

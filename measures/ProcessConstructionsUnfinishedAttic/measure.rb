@@ -158,11 +158,11 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Unfinished Attic Floor and Ceiling"
+    return "Assign Residential Unfinished Attic Constructions"
   end
   
   def description
-    return "This measure creates constructions for the unfinished attic floor and ceiling."
+    return "This measure assigns constructions to the unfinished attic floor and ceiling."
   end
   
   def modeler_description
@@ -172,35 +172,6 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
-    end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
-    end
-
-    #make a choice argument for living
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Living Space")
-	selected_living.setDescription("The living space type.")
-    args << selected_living
-
-    #make a choice argument for crawlspace
-    selected_attic = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedattic", spacetype_handles, spacetype_display_names, true)
-    selected_attic.setDisplayName("Attic Space")
-	selected_attic.setDescription("The attic space type.")
-    args << selected_attic
 
     #make a choice argument for model objects
     uains_display_names = OpenStudio::StringVector.new
@@ -323,6 +294,36 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     userdefined_roofmatabs.setDefaultValue(0.85)
     args << userdefined_roofmatabs
 
+    #make a choice argument for living space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
+    end
+    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
+    living_space_type.setDisplayName("Living space type")
+    living_space_type.setDescription("Select the living space type")
+    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << living_space_type
+
+    #make a choice argument for unfinished attic space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.UnfinishedAtticSpaceType)
+        space_type_args << Constants.UnfinishedAtticSpaceType
+    end
+    unfin_attic_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("unfin_attic_space_type", space_type_args, true)
+    unfin_attic_space_type.setDisplayName("Unfinished attic space type")
+    unfin_attic_space_type.setDescription("Select the unfinished attic space type")
+    unfin_attic_space_type.setDefaultValue(Constants.UnfinishedAtticSpaceType)
+    args << unfin_attic_space_type
+
     return args
   end #end the arguments method
 
@@ -345,8 +346,17 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     rigidInsRvalue = 0
 
     # Space Type
-    selected_attic = runner.getOptionalWorkspaceObjectChoiceValue("selectedattic",user_arguments,model)
-    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
+	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    if living_space_type.nil?
+        return false
+    end
+	unfin_attic_space_type_r = runner.getStringArgumentValue("unfin_attic_space_type",user_arguments)
+    unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)
+    if unfin_attic_space_type.nil?
+        # If the building has no unfinished attic, no constructions are assigned and we continue by returning True
+        return true
+    end
 
     # Unfinished Attic Insulation
     selected_uains = runner.getStringArgumentValue("selecteduains",user_arguments)
@@ -648,7 +658,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     spaces = model.getSpaces
     spaces.each do |space|
       constructions_hash = {}
-      if selected_attic.get.handle.to_s == space.spaceType.get.handle.to_s
+      if unfin_attic_space_type.handle.to_s == space.spaceType.get.handle.to_s
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|
@@ -662,7 +672,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
             constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"UnfinInsExtRoof"]
           end
         end
-      elsif selected_living.get.handle.to_s == space.spaceType.get.handle.to_s
+      elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|

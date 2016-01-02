@@ -163,7 +163,7 @@ OS:Material,
 
 OS:ThermalZone,
   {52f40195-01b6-4ae1-b320-d97d3400e855}, !- Handle
-  crawlspace Thermal Zone,                !- Name
+  crawlspace zone,                        !- Name
   1,                                      !- Multiplier
   1.2192,                                 !- Ceiling Height {m}
   103.299857856,                          !- Volume {m3}
@@ -237,7 +237,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {c60139ac-cc4a-4a83-8f3c-6a4dfc48d7ea}, !- Handle
-  crawlspace,                             !- Name
+  crawlspace space,                       !- Name
   {0df13f7d-bd8d-4330-8aae-4981172f47c3}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -422,7 +422,7 @@ OS:Material,
 
 OS:ThermalZone,
   {a2b6f557-2f50-4ebc-b04c-aca5f61bb2af}, !- Handle
-  living Thermal Zone,                    !- Name
+  living zone,                            !- Name
   1,                                      !- Multiplier
   4.8768,                                 !- Ceiling Height {m}
   413.199431424,                          !- Volume {m3}
@@ -496,7 +496,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {9cf41867-6c89-4cb4-9f78-78780777cff6}, !- Handle
-  living,                                 !- Name
+  living space,                           !- Name
   {1df307d2-afe0-4937-8d6d-c3a541d75bf0}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -801,7 +801,7 @@ OS:Construction,
 
 OS:ThermalZone,
   {e09de297-687f-4fa1-8ebe-26e8b0e3facb}, !- Handle
-  unfinishedattic Thermal Zone,           !- Name
+  unfinished attic zone,                  !- Name
   ,                                       !- Multiplier
   2.1336,                                 !- Ceiling Height {m}
   77.474893392,                           !- Volume {m3}
@@ -875,7 +875,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {d74e76cf-5d5d-41f5-87ff-b1515ed93393}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic space,                 !- Name
   {2b3e58ff-3394-4280-92ce-cd340a2d9012}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -2065,7 +2065,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {2b3e58ff-3394-4280-92ce-cd340a2d9012}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {8b5bf7e6-7487-4eb4-9590-a06d29342174}; !- Group Rendering Name

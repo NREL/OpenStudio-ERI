@@ -37,34 +37,6 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	mult.setDefaultValue(1)
 	args << mult
 	
-	#make a choice argument for which zone to put the space in
-	#make a choice argument for model objects
-    space_type_handles = OpenStudio::StringVector.new
-    space_type_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    space_type_args = model.getSpaceTypes
-    space_type_args_hash = {}
-    space_type_args.each do |space_type_arg|
-      space_type_args_hash[space_type_arg.name.to_s] = space_type_arg
-    end
-
-    #looping through sorted hash of model objects
-    space_type_args_hash.sort.map do |key,value|
-      #only include if space type is used in the model
-      if value.spaces.size > 0
-        space_type_handles << value.handle.to_s
-        space_type_display_names << key
-      end
-    end
-	
-	#make a choice argument for space type
-    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
-    space_type.setDisplayName("Location")
-	space_type.setDescription("Select the space type where the refrigerator is located")
-    space_type.setDefaultValue("*None*") #if none is chosen this will error out
-    args << space_type
-	
 	#Make a string argument for 24 weekday schedule values
 	weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch")
 	weekday_sch.setDisplayName("Weekday schedule")
@@ -86,6 +58,21 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch.setDefaultValue("0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837")
 	args << monthly_sch
 
+    #make a choice argument for space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
+    end
+    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_args, true)
+    space_type.setDisplayName("Location")
+    space_type.setDescription("Select the space type where the refrigerator is located")
+    space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << space_type
+
     return args
   end #end the arguments method
 
@@ -101,10 +88,10 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     #assign the user inputs to variables
     fridge_E = runner.getDoubleArgumentValue("fridge_E",user_arguments)
 	mult = runner.getDoubleArgumentValue("mult",user_arguments)
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
 	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
+	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 	
 	#check for reasonable energy consumption
 	if fridge_E < 0
@@ -118,6 +105,12 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 		return false
 	end
 	
+    #Get space type
+    space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
+    if space_type.nil?
+        return false
+    end
+
 	#Calculate fridge daily energy use
 	fridge_ann = fridge_E*mult
 
@@ -137,50 +130,38 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	#add refrigerator to the selected space
 	has_fridge = 0
 	replace_fridge = 0
-	model.getSpaceTypes.each do |spaceType|
-		spacename = spaceType.name.to_s
-		spacehandle = spaceType.handle.to_s
-		if spacehandle == space_type_r #add refrigerator
-			space_equipments = spaceType.electricEquipment
-			space_equipments.each do |space_equipment|
-				if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
-					has_fridge = 1
-					runner.registerWarning("This space already has a refrigerator, the existing refrigerator will be replaced with the the currently selected option.")
-					space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
-					sch.setSchedule(space_equipment)
-					replace_fridge = 1
-				end
-			end
-			if has_fridge == 0 
-				has_fridge = 1
-				
-				#Add electric equipment for the fridge
-				frg_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-				frg = OpenStudio::Model::ElectricEquipment.new(frg_def)
-				frg.setName(obj_name)
-				frg.setSpaceType(spaceType)
-				frg_def.setName(obj_name)
-				frg_def.setDesignLevel(design_level)
-				frg_def.setFractionRadiant(fridge_rad)
-				frg_def.setFractionLatent(fridge_lat)
-				frg_def.setFractionLost(fridge_lost)
-				sch.setSchedule(frg)
-				
-			end
-		end
-	end
-	
-	
+    space_equipments = space_type.electricEquipment
+    space_equipments.each do |space_equipment|
+        if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
+            has_fridge = 1
+            runner.registerWarning("This space already has a refrigerator, the existing refrigerator will be replaced with the the currently selected option.")
+            space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
+            sch.setSchedule(space_equipment)
+            replace_fridge = 1
+        end
+    end
+    if has_fridge == 0 
+        has_fridge = 1
+        
+        #Add electric equipment for the fridge
+        frg_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+        frg = OpenStudio::Model::ElectricEquipment.new(frg_def)
+        frg.setName(obj_name)
+        frg.setSpaceType(space_type)
+        frg_def.setName(obj_name)
+        frg_def.setDesignLevel(design_level)
+        frg_def.setFractionRadiant(fridge_rad)
+        frg_def.setFractionLatent(fridge_lat)
+        frg_def.setFractionLost(fridge_lost)
+        sch.setSchedule(frg)
+        
+    end
 	
     #reporting final condition of model
-	if has_fridge == 1
-		if replace_fridge == 1
-			runner.registerFinalCondition("The existing fridge has been replaced by one with #{fridge_ann.round} kWh annual energy consumption.")
-		else
-			runner.registerFinalCondition("A fridge has been added with #{fridge_ann.round} kWh annual energy consumption.")
-		end
-	else
-		runner.registerFinalCondition("Refrigerator was not added to #{space_type_r}.")
+    if replace_fridge == 1
+        runner.registerFinalCondition("The existing fridge has been replaced by one with #{fridge_ann.round} kWh annual energy consumption.")
+    else
+        runner.registerFinalCondition("A fridge has been added with #{fridge_ann.round} kWh annual energy consumption.")
     end
 	
     return true

@@ -26,7 +26,7 @@ OS:SimulationControl,
 
 OS:ThermalZone,
   {839b3019-eb12-4610-a163-11b61a6d8d45}, !- Handle
-  living Thermal Zone,                    !- Name
+  living zone,                            !- Name
   1,                                      !- Multiplier
   4.8768,                                 !- Ceiling Height {m}
   459.412525728,                          !- Volume {m3}
@@ -100,7 +100,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {bc6a23eb-763e-4519-91cc-e98d845b02bf}, !- Handle
-  living,                                 !- Name
+  living space,                           !- Name
   {26bf7ccf-3f72-4e6d-bee2-ba71fa33d6a2}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -199,7 +199,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {3ea95852-8fe8-44a9-9fd1-13fded5f890e}, !- Handle
-  garage Thermal Zone,                    !- Name
+  garage zone,                            !- Name
   1,                                      !- Multiplier
   4.2672,                                 !- Ceiling Height {m}
   181.2278208,                            !- Volume {m3}
@@ -273,7 +273,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {da02d7a4-23d0-4639-a8e4-46e0e5293bb4}, !- Handle
-  garage,                                 !- Name
+  garage space,                           !- Name
   {68d8c0b1-8d4e-461d-8c4c-3edee49e585d}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -373,7 +373,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {86e4612d-d1e4-45c6-8d61-0f3ec83f8bde}, !- Handle
-  finishedbasement Thermal Zone,          !- Name
+  finished basement zone,                 !- Name
   1,                                      !- Multiplier
   2.4384,                                 !- Ceiling Height {m}
   229.706262864,                          !- Volume {m3}
@@ -447,7 +447,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {200e8cbe-93c8-4a10-9fe6-4fc131dbc733}, !- Handle
-  finishedbasement,                       !- Name
+  finished basement space,                !- Name
   {237d5b82-3633-476b-90ad-767d5d6fe362}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -580,7 +580,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {a032d4ad-7869-48ba-adea-b3a5280cd58e}, !- Handle
-  unfinishedattic Thermal Zone,           !- Name
+  unfinished attic zone,                  !- Name
   ,                                       !- Multiplier
   2.286,                                  !- Ceiling Height {m}
   93.3181692885,                          !- Volume {m3}
@@ -654,7 +654,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {8b70a883-19fc-44f8-a1a9-653aa453f706}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic space,                 !- Name
   {7d8d6416-57b3-40d5-a784-31b6a66a4fb0}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -1636,7 +1636,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {237d5b82-3633-476b-90ad-767d5d6fe362}, !- Handle
-  finishedbasement,                       !- Name
+  finished basement,                      !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {92f94de0-1b3b-4fbb-b497-aff0ffe5abce}; !- Group Rendering Name
@@ -1678,7 +1678,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {7d8d6416-57b3-40d5-a784-31b6a66a4fb0}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {eecba417-184c-424c-8de8-338f1d765252}; !- Group Rendering Name

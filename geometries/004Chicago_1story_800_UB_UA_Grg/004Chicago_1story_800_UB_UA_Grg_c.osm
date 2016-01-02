@@ -81,7 +81,7 @@ OS:Material,
 
 OS:ThermalZone,
   {5089f6b6-9e3c-4fa0-9b15-31a1f4f43375}, !- Handle
-  unfinishedbasement Thermal Zone,        !- Name
+  unfinished basement zone,               !- Name
   1,                                      !- Multiplier
   2.4384,                                 !- Ceiling Height {m}
   184.399307664,                          !- Volume {m3}
@@ -155,7 +155,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {f7be142d-bba7-4b1f-a8e0-2154c3768001}, !- Handle
-  unfinishedbasement,                     !- Name
+  unfinished basement space,              !- Name
   {e6a2dd39-3241-42d3-b91c-156ffb0f9a77}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -282,7 +282,7 @@ OS:Material,
 
 OS:ThermalZone,
   {4a05e092-9c81-4e23-aa15-4e725b61ec64}, !- Handle
-  living Thermal Zone,                    !- Name
+  living zone,                            !- Name
   1,                                      !- Multiplier
   2.4384,                                 !- Ceiling Height {m}
   184.399307664,                          !- Volume {m3}
@@ -356,7 +356,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {c9f73411-2802-4935-b022-a557ea0936fe}, !- Handle
-  living,                                 !- Name
+  living space,                           !- Name
   {b850148a-069a-461c-8849-7a9706addc93}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -416,7 +416,7 @@ OS:Material,
 
 OS:ThermalZone,
   {2c0a125f-d538-4795-a582-2bbe17e2d617}, !- Handle
-  garage Thermal Zone,                    !- Name
+  garage zone,                            !- Name
   1,                                      !- Multiplier
   4.2672,                                 !- Ceiling Height {m}
   181.2278208,                            !- Volume {m3}
@@ -490,7 +490,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {242c2492-8ecb-4484-a2d5-a5eb327e4661}, !- Handle
-  garage,                                 !- Name
+  garage space,                           !- Name
   {96a057f5-3aef-4efc-b2fa-2573f3daec1c}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -547,7 +547,7 @@ OS:Material,
 
 OS:ThermalZone,
   {dae2aab2-18ce-4512-9a69-4c6247e0f9df}, !- Handle
-  unfinishedattic Thermal Zone,           !- Name
+  unfinished attic zone,                  !- Name
   ,                                       !- Multiplier
   2.286,                                  !- Ceiling Height {m}
   79.1597457885,                          !- Volume {m3}
@@ -621,7 +621,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {c075a077-c5ba-4686-879b-e43f8f25fb64}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic space,                 !- Name
   {c7e62f5d-41a6-48c0-9e77-1d9d4f94bf74}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -2344,7 +2344,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {e6a2dd39-3241-42d3-b91c-156ffb0f9a77}, !- Handle
-  unfinishedbasement,                     !- Name
+  unfinished basement,                    !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {0616bf18-6b37-4167-845e-a915349a95dd}; !- Group Rendering Name
@@ -2372,7 +2372,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {c7e62f5d-41a6-48c0-9e77-1d9d4f94bf74}, !- Handle
-  unfinishedattic,                        !- Name
+  unfinished attic,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {fb09220f-90d7-414d-b7f9-fbce8d085a70}; !- Group Rendering Name

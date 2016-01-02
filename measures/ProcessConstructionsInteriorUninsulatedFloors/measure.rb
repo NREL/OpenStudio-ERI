@@ -90,11 +90,11 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Uninsulated Floors"
+    return "Assign Residential Uninsulated Floor Construction"
   end
   
   def description
-    return "This measure creates uninsulated constructions for the floors between living spaces and the floors between the living space and finished basement."
+    return "This measure assigns a construction to the floors between living spaces and the floors between the living space and finished basement."
   end
   
   def modeler_description
@@ -104,35 +104,6 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
-    end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
-    end
-
-    #make a choice argument for crawlspace
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Living Space")
-	selected_living.setDescription("The living space type.")
-    args << selected_living
-
-    #make a choice argument for fbsmt
-    selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_fbsmt.setDisplayName("Finished Basement Space")
-	selected_fbsmt.setDescription("The finished basement space type.")
-    args << selected_fbsmt
 
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
@@ -198,6 +169,36 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     userdefined_carpetfrac.setDefaultValue(0.8)
     args << userdefined_carpetfrac
 
+    #make a choice argument for living space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
+    end
+    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
+    living_space_type.setDisplayName("Living space type")
+    living_space_type.setDescription("Select the living space type")
+    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << living_space_type
+
+    #make a choice argument for finished basement space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
+        space_type_args << Constants.FinishedBasementSpaceType
+    end
+    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
+    fbasement_space_type.setDisplayName("Finished Basement space type")
+    fbasement_space_type.setDescription("Select the finished basement space type")
+    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
+    args << fbasement_space_type
+
     return args
   end #end the arguments method
 
@@ -213,8 +214,13 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     ceilingMassPCMType = nil
 
     # Space Type
-    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
-    selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
+	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    if living_space_type.nil?
+        return false
+    end
+	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
+    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
 
     # Gypsum
     selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
@@ -391,7 +397,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     spaces = model.getSpaces
     spaces.each do |space|
       constructions_hash = {}
-      if selected_living.get.handle.to_s == space.spaceType.get.handle.to_s
+      if living_space_type.handle.to_s == space.spaceType.get.handle.to_s
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|
@@ -406,8 +412,8 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
           end
         end
       end
-      if not selected_fbsmt.empty?
-        if selected_fbsmt.get.handle.to_s == space.spaceType.get.handle.to_s
+      if not fbasement_space_type.nil?
+        if fbasement_space_type.handle.to_s == space.spaceType.get.handle.to_s
           # loop thru all surfaces attached to the space
           surfaces = space.surfaces
           surfaces.each do |surface|
@@ -417,14 +423,14 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
               constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevFinUninsFinFloor"]
             end
           end
-        elsif selected_living.get.handle.to_s == space.spaceType.get.handle.to_s
+        elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
           # loop thru all surfaces attached to the space
           surfaces = space.surfaces
           surfaces.each do |surface|
             if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Surface"
               adjacentSpaces = model.getSpaces
               adjacentSpaces.each do |adjacentSpace|
-                if selected_fbsmt.get.handle.to_s == adjacentSpace.spaceType.get.handle.to_s
+                if fbasement_space_type.handle.to_s == adjacentSpace.spaceType.get.handle.to_s
                   adjacentSurfaces = adjacentSpace.surfaces
                   adjacentSurfaces.each do |adjacentSurface|
                     if surface.adjacentSurface.get.handle.to_s == adjacentSurface.handle.to_s

@@ -75,32 +75,19 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
 	cw_drum_volume.setDefaultValue(3.5)
 	args << cw_drum_volume
     
-	#make a choice argument for which zone to put the space in
-	#make a choice argument for model objects
-    space_type_handles = OpenStudio::StringVector.new
-    space_type_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    space_type_args = model.getSpaceTypes
-    space_type_args_hash = {}
-    space_type_args.each do |space_type_arg|
-      space_type_args_hash[space_type_arg.name.to_s] = space_type_arg
+    #make a choice argument for space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
     end
-
-    #looping through sorted hash of model objects
-    space_type_args_hash.sort.map do |key,value|
-      #only include if space type is used in the model
-      if value.spaces.size > 0
-        space_type_handles << value.handle.to_s
-        space_type_display_names << key
-      end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
     end
-	
-	#make a choice argument for space type
-    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_handles, space_type_display_names)
+    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_args, true)
     space_type.setDisplayName("Location")
-    space_type.setDescription("Select the space type where the clothes washer and dryer are located")
-    space_type.setDefaultValue("*None*") #if none is chosen this will error out
+    space_type.setDescription("Select the space type where the clothes dryer is located")
+    space_type.setDefaultValue(Constants.LivingSpaceType)
     args << space_type
     
     return args
@@ -126,8 +113,14 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
 	cw_drum_volume = runner.getDoubleArgumentValue("cw_drum_volume",user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 
+    #Get space type
+    space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
+    if space_type.nil?
+        return false
+    end
+
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type_r, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type.handle, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -234,60 +227,49 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
 	has_elec_cd = 0
 	replace_elec_cd = 0
 	remove_g_cd = 0
-	model.getSpaceTypes.each do |spaceType|
-		spacename = spaceType.name.to_s
-		spacehandle = spaceType.handle.to_s
-		if spacehandle == space_type_r #add cd
-			space_equipments_g = spaceType.gasEquipment
-			space_equipments_g.each do |space_equipment_g| #check for an existing gas cd
-				if space_equipment_g.gasEquipmentDefinition.name.get.to_s == cd_obj_name_g
-                    runner.registerWarning("This space already has a gas dryer. The existing gas dryer will be removed and replaced with the specified electric dryer.")
-                    space_equipment_g.remove
-                    remove_g_cd = 1
-				end
-			end
-			space_equipments_e = spaceType.electricEquipment
-			space_equipments_e.each do |space_equipment_e|
-				if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
-                    has_elec_cd = 1
-                    runner.registerWarning("This space already has an electric dryer. The existing dryer will be replaced with the the currently selected option.")
-                    space_equipment_e.electricEquipmentDefinition.setDesignLevel(design_level_e)
-                    sch.setSchedule(space_equipment_e)
-                    replace_elec_cd = 1
-				elsif space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_g_e
-                    space_equipment_e.remove
-				end
-			end
-			
-			if has_elec_cd == 0
-				has_elec_cd = 1
-					
-                cd_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-                cd = OpenStudio::Model::ElectricEquipment.new(cd_def)
-                cd.setName(obj_name_e)
-                cd.setSpaceType(spaceType)
-                cd_def.setName(obj_name_e)
-                cd_def.setDesignLevel(design_level_e)
-                cd_def.setFractionRadiant(cd_rad_e)
-                cd_def.setFractionLatent(cd_lat_e)
-                cd_def.setFractionLost(cd_lost_e)
-                sch.setSchedule(cd)
-			end
-			
-		end
-	end
+    space_equipments_g = space_type.gasEquipment
+    space_equipments_g.each do |space_equipment_g| #check for an existing gas cd
+        if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
+            runner.registerWarning("This space already has a gas dryer. The existing gas dryer will be removed and replaced with the specified electric dryer.")
+            space_equipment_g.remove
+            remove_g_cd = 1
+        end
+    end
+    space_equipments_e = space_type.electricEquipment
+    space_equipments_e.each do |space_equipment_e|
+        if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
+            has_elec_cd = 1
+            runner.registerWarning("This space already has an electric dryer. The existing dryer will be replaced with the the currently selected option.")
+            space_equipment_e.electricEquipmentDefinition.setDesignLevel(design_level_e)
+            sch.setSchedule(space_equipment_e)
+            replace_elec_cd = 1
+        elsif space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_g_e
+            space_equipment_e.remove
+        end
+    end
+    
+    if has_elec_cd == 0
+        has_elec_cd = 1
+            
+        cd_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+        cd = OpenStudio::Model::ElectricEquipment.new(cd_def)
+        cd.setName(obj_name_e)
+        cd.setSpaceType(space_type)
+        cd_def.setName(obj_name_e)
+        cd_def.setDesignLevel(design_level_e)
+        cd_def.setFractionRadiant(cd_rad_e)
+        cd_def.setFractionLatent(cd_lat_e)
+        cd_def.setFractionLost(cd_lost_e)
+        sch.setSchedule(cd)
+    end
 	
 	#reporting final condition of model
-	if has_elec_cd == 1
-		if replace_elec_cd == 1
-			runner.registerFinalCondition("The existing electric dryer has been replaced by one with #{cd_ann_e.round} kWhs annual energy consumption.")
-		elsif remove_g_cd == 1
-			runner.registerFinalCondition("The existing gas dryer has been replaced by an electric dryer with #{cd_ann_e.round} kWhs annual energy consumption.")
-		else
-			runner.registerFinalCondition("An electric dryer has been added with #{cd_ann_e.round} kWhs annual energy consumption.")
-		end
-	else
-		runner.registerFinalCondition("Dryer was not added to #{space_type_r}.")
+    if replace_elec_cd == 1
+        runner.registerFinalCondition("The existing electric dryer has been replaced by one with #{cd_ann_e.round} kWhs annual energy consumption.")
+    elsif remove_g_cd == 1
+        runner.registerFinalCondition("The existing gas dryer has been replaced by an electric dryer with #{cd_ann_e.round} kWhs annual energy consumption.")
+    else
+        runner.registerFinalCondition("An electric dryer has been added with #{cd_ann_e.round} kWhs annual energy consumption.")
     end
 	
     return true

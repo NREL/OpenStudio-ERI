@@ -89,6 +89,15 @@ class Constants
 	def self.CondenserTypeAir
 		return 'aircooled'
 	end
+    def self.CrawlSpace
+        return 'crawlspace space'
+    end
+    def self.CrawlSpaceType
+        return 'crawlspace'
+    end
+    def self.CrawlZone
+        return 'crawlspace zone'
+    end
 	def self.DefaultSolarAbsCeiling
 		return 0.3
 	end
@@ -143,6 +152,21 @@ class Constants
 	def self.FanControlSmart
 		return 'smart'
 	end
+    def self.FinishedAtticSpace
+        return 'finished attic space'
+    end
+    def self.FinishedAtticSpaceType
+        return 'finished attic'
+    end
+    def self.FinishedBasementSpace
+        return 'finished basement space'
+    end
+    def self.FinishedBasementSpaceType
+        return 'finished basement'
+    end
+    def self.FinishedBasementZone
+        return 'finished basement zone'
+    end
 	def self.FluidWater
 		return 'water'
 	end
@@ -179,6 +203,15 @@ class Constants
 	def self.g
 		return 32.174    # gravity (ft/s2)
 	end
+    def self.GarageSpace
+        return 'garage space'
+    end
+    def self.GarageSpaceType
+        return 'garage'
+    end
+    def self.GarageZone
+        return 'garage zone'
+    end
 	def self.HeatTransferMethodCTF
 		return 'ctf'
 	end
@@ -224,6 +257,15 @@ class Constants
 	def self.InsulationXPS
 		return 'xps'
 	end
+    def self.LivingSpace(story)
+        return 'living space ' + story.to_s
+    end
+    def self.LivingSpaceType
+        return 'living'
+    end
+    def self.LivingZone
+        return 'living zone'
+    end
 	def self.LocationInterior
 		return 'interior'
 	end
@@ -506,6 +548,9 @@ class Constants
 	def self.ObjectNameRefrigerator
 		return 'residential_refrigerator'
 	end
+    def self.PierBeamSpaceType
+        return 'pier and beam'
+    end
 	def self.PipeTypeTrunkBranch
 		return 'trunkbranch'
 	end
@@ -638,54 +683,9 @@ class Constants
 	def self.SizingAuto
 		return 'autosize'
 	end
-	def self.SpaceLiving
-		return 'living'
-	end
-	def self.SpaceGarage
-		return 'garage'
-	end
-	def self.SpaceGround
-		return 'ground'
-	end
-	def self.SpaceAttic
-		return 'attic'
-	end
-	def self.SpaceUnfinAttic
-		return 'unfinishedattic'
-	end
-	def self.SpaceFinAttic
-		return 'finishedattic'
-	end
-	def self.SpaceCrawl
-		return 'crawlspace'
-	end
-	def self.SpacePierbeam
-		return 'pierbeam'
-	end
-	def self.SpaceBasement
-		return 'basement'
-	end
-	def self.SpaceUnfinBasement
-		return 'unfinishedbasement'
-	end
-	def self.SpaceFinBasement
-		return 'finishedbasement'
-	end
-	def self.SpaceOutside
-		return 'outside'
-	end
-	def self.SpacePorch
-		return 'porchroof'
-	end
-	def self.SpaceDeck
-		return 'deck'
-	end
-	def self.SpaceDummy
-		return 'dummy'
-	end
-	def self.SpaceCorridor
-		return 'corridor'
-	end
+    def self.SlabSpaceType
+        return 'slab'
+    end
 	def self.SurfaceTypeExtInsFinWall
 		return 'ExtInsFinWall'
 	end
@@ -860,6 +860,24 @@ class Constants
 	def self.TubeSpacingAS
 		return 'as'
 	end
+    def self.UnfinishedAtticSpace
+        return 'unfinished attic space'
+    end
+    def self.UnfinishedAtticSpaceType
+        return 'unfinished attic'
+    end
+    def self.UnfinishedAtticZone
+        return 'unfinished attic zone'
+    end
+    def self.UnfinishedBasementSpace
+        return 'unfinished basement space'
+    end
+    def self.UnfinishedBasementSpaceType
+        return 'unfinished basement'
+    end
+    def self.UnfinishedBasementZone
+        return 'unfinished basement zone'
+    end
 	def self.VentTypeExhaust
 		return 'exhaust'
 	end

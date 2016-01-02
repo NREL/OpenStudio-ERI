@@ -36,11 +36,11 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Window Properties"
+    return "Assign Residential Window Construction"
   end
   
   def description
-    return "This measure creates constructions for windows. This measure also creates the interior shading schedule, which is based on shade multipliers and the heating and cooling season logic defined in the Building America House Simulation Protocols."
+    return "This measure assigns a construction to windows. This measure also creates the interior shading schedule, which is based on shade multipliers and the heating and cooling season logic defined in the Building America House Simulation Protocols."
   end
   
   def modeler_description

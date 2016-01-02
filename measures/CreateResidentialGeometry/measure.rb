@@ -1,6 +1,8 @@
 # see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
+require "#{File.dirname(__FILE__)}/resources/constants"
+
 # start the measure
 class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 
@@ -113,17 +115,17 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a choice argument for model objects
 	foundation_display_names = OpenStudio::StringVector.new
-	foundation_display_names << "slab"
-	foundation_display_names << "crawlspace"
-	foundation_display_names << "unfinishedbasement"
-	foundation_display_names << "finishedbasement"
-	foundation_display_names << "pier_and_beam"
+	foundation_display_names << Constants.SlabSpaceType
+	foundation_display_names << Constants.CrawlSpaceType
+	foundation_display_names << Constants.UnfinishedBasementSpaceType
+	foundation_display_names << Constants.FinishedBasementSpaceType
+	foundation_display_names << Constants.PierBeamSpaceType
 	
 	#make a choice argument for foundation type
 	foundation_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("foundation_type", foundation_display_names, true)
 	foundation_type.setDisplayName("Foundation Type")
 	foundation_type.setDescription("The foundation type of the building.")
-    foundation_type.setDefaultValue("slab")
+    foundation_type.setDefaultValue(Constants.SlabSpaceType)
 	args << foundation_type
 
     #make an argument for foundation height
@@ -136,14 +138,14 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a choice argument for model objects
 	attic_type_display_names = OpenStudio::StringVector.new
-	attic_type_display_names << "unfinishedattic"
-	attic_type_display_names << "finishedattic"
+	attic_type_display_names << Constants.UnfinishedAtticSpaceType
+	attic_type_display_names << Constants.FinishedAtticSpaceType
 	
 	#make a choice argument for roof type
 	attic_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("attic_type", attic_type_display_names, true)
 	attic_type.setDisplayName("Attic Type")
 	attic_type.setDescription("The attic type of the building.")
-    attic_type.setDefaultValue("unfinishedattic")
+    attic_type.setDefaultValue(Constants.UnfinishedAtticSpaceType)
 	args << attic_type	
 	
 	#make a choice argument for model objects
@@ -211,15 +213,15 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 		runner.registerError("Invalid aspect ratio entered.")
 		return false
 	end
-	if ( foundation_type == "finished_basement" or foundation_type == "unfinished_basement" ) and (foundation_height - OpenStudio::convert(8.0,"ft","m").get).abs > 0.1
+	if ( foundation_type == Constants.FinishedBasementSpaceType or foundation_type == Constants.UnfinishedBasementSpaceType ) and (foundation_height - OpenStudio::convert(8.0,"ft","m").get).abs > 0.1
 		runner.registerError("Currently the basement height is restricted to 8 ft.")
 		return false
 	end
-	if foundation_type == "crawlspace" and ( foundation_height < OpenStudio::convert(1.4,"ft","m").get or foundation_height > OpenStudio::convert(5.1,"ft","m").get )
+	if foundation_type == Constants.CrawlSpaceType and ( foundation_height < OpenStudio::convert(1.4,"ft","m").get or foundation_height > OpenStudio::convert(5.1,"ft","m").get )
 		runner.registerError("The crawlspace height can be set between 1.5 and 5 ft.")
 		return false
 	end
-	if foundation_type == "pier_and_beam" and ( foundation_height < OpenStudio::convert(0.4,"ft","m").get or foundation_height > OpenStudio::convert(8.1,"ft","m").get )
+	if foundation_type == Constants.PierBeamSpaceType and ( foundation_height < OpenStudio::convert(0.4,"ft","m").get or foundation_height > OpenStudio::convert(8.1,"ft","m").get )
 		runner.registerError("The pier & beam height can be set between 0.5 and 8 ft.")
 		return false
 	end
@@ -248,15 +250,15 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 
 	# create living spacetype
 	living_spacetype = OpenStudio::Model::SpaceType.new(model)
-	living_spacetype.setName("living_spacetype")
+	living_spacetype.setName(Constants.LivingSpaceType)
 	
 	# create living zone
 	living_zone = OpenStudio::Model::ThermalZone.new(model)
-	living_zone.setName("living_1")
+	living_zone.setName(Constants.LivingZone)
 	
 	foundation_offset = 0.0
-	if foundation_type == "pier_and_beam"
-		foundation_type = "crawlspace"
+	if foundation_type == Constants.PierBeamSpaceType
+		foundation_type = Constants.CrawlSpaceType
 		foundation_offset = foundation_height
 	end
 	
@@ -273,11 +275,11 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 			
 			# create living spacetype
 			garage_spacetype = OpenStudio::Model::SpaceType.new(model)
-			garage_spacetype.setName("garage_spacetype")
+			garage_spacetype.setName(Constants.GarageSpaceType)
 			
 			# create garage zone
 			garage_zone = OpenStudio::Model::ThermalZone.new(model)
-			garage_zone.setName("garage")
+			garage_zone.setName(Constants.GarageZone)
 			
 			# make points and polygons
 			if garage_pos == "Right"
@@ -297,7 +299,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 			# make space
 			garage_space = OpenStudio::Model::Space::fromFloorPrint(garage_polygon, living_height, model)
 			garage_space = garage_space.get
-			garage_space_name = "garage"
+			garage_space_name = Constants.GarageSpace
 			garage_space.setName(garage_space_name)
 			runner.registerInfo("Set #{garage_space_name}.")
 				
@@ -357,7 +359,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 		# make space
         living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
         living_space = living_space.get
-		living_space_name = "living_floor_#{floor+1}"
+		living_space_name = Constants.LivingSpace(floor+1)
         living_space.setName(living_space_name)
 		living_space.setBuildingStory(story)
 		runner.registerInfo("Set #{living_space_name}.")
@@ -464,22 +466,27 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 		surface_w_wall.setSpace(attic_space)
 		surface_e_wall.setSpace(attic_space)
 		
-		attic_space.setName(attic_type)
-		runner.registerInfo("Set #{attic_type}.")
+        if attic_type == Constants.UnfinishedAtticSpaceType
+            attic_space_name = Constants.UnfinishedAtticSpace
+        elsif attic_type == Constants.FinishedAtticSpaceType
+            attic_space_name = Constants.FinishedAtticSpace
+        end
+        attic_space.setName(attic_space_name)
+		runner.registerInfo("Set #{attic_space_name}.")
 
 		# set these to the foundation spacetype and zone
-		if attic_type == "unfinishedattic"
-			# create foundation spacetype
+		if attic_type == Constants.UnfinishedAtticSpaceType
+			# create attic spacetype
 			attic_spacetype = OpenStudio::Model::SpaceType.new(model)
-			attic_spacetype.setName("#{attic_type}_spacetype")
+			attic_spacetype.setName(attic_type)
 			
-			# create foundation zone
+			# create attic zone
 			attic_zone = OpenStudio::Model::ThermalZone.new(model)
-			attic_zone.setName(attic_type)		
+			attic_zone.setName(Constants.UnfinishedAtticZone)
 			
 			attic_space.setSpaceType(attic_spacetype)
 			attic_space.setThermalZone(attic_zone)
-		elsif attic_type == "finishedattic"
+		elsif attic_type == Constants.FinishedAtticSpaceType
 			attic_space.setSpaceType(living_spacetype)
 			attic_space.setThermalZone(living_zone)
 		end
@@ -497,17 +504,23 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	# Foundation
-	if ['crawlspace', 'unfinished_basement', 'finished_basement'].include? foundation_type
+	if [Constants.CrawlSpaceType, Constants.UnfinishedBasementSpaceType, Constants.FinishedBasementSpaceType].include? foundation_type
 		
 		z = -foundation_height + foundation_offset
 		
 		# create foundation spacetype
 		foundation_spacetype = OpenStudio::Model::SpaceType.new(model)
-		foundation_spacetype.setName("#{foundation_type}_spacetype")		
+		foundation_spacetype.setName(foundation_type.to_s)		
 		
 		# create foundation zone
 		foundation_zone = OpenStudio::Model::ThermalZone.new(model)
-		foundation_zone.setName(foundation_type)
+        if foundation_type == Constants.CrawlSpaceType
+            foundation_zone.setName(Constants.CrawlZone)
+        elsif foundation_type == Constants.UnfinishedBasementSpaceType
+            foundation_zone.setName(Constants.UnfinishedBasementZone)
+        elsif foundation_type == Constants.FinishedBasementSpaceType
+            foundation_zone.setName(Constants.FinishedBasementZone)
+        end
 		
 		# make points
 		nw_point = OpenStudio::Point3d.new(0,width,z)
@@ -521,8 +534,15 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 		# make space
 		foundation_space = OpenStudio::Model::Space::fromFloorPrint(foundation_polygon, foundation_height, model)
 		foundation_space = foundation_space.get
-        foundation_space.setName(foundation_type)
-		runner.registerInfo("Set #{foundation_type}.")
+        if foundation_type == Constants.CrawlSpaceType
+            foundation_space_name = Constants.CrawlSpace
+        elsif foundation_type == Constants.UnfinishedBasementSpaceType
+            foundation_space_name = Constants.UnfinishedBasementSpace
+        elsif foundation_type == Constants.FinishedBasementSpaceType
+            foundation_space_name = Constants.FinishedBasementSpace
+        end
+        foundation_space.setName(foundation_space_name)
+		runner.registerInfo("Set #{foundation_space_name}.")
 
 		# set these to the foundation zone
 		foundation_space.setThermalZone(foundation_zone)
@@ -533,7 +553,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 		# set foundation walls to ground
 		spaces = model.getSpaces
 		spaces.each do |space|
-			if space.spaceType.get.name.to_s == "#{foundation_type}_spacetype"
+			if space.spaceType.get.name.to_s == foundation_type.to_s
 				surfaces = space.surfaces
 				surfaces.each do |surface|
 					surface_type = surface.surfaceType

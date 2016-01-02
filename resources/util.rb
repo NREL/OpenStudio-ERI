@@ -91,6 +91,69 @@ class HelperMethods
         return floor_area
     end
     
+    def self.get_space_type_from_string(model, spacetype_s, runner, print_err=true)
+        space_type = nil
+        model.getSpaceTypes.each do |st|
+            if st.name.to_s == spacetype_s
+                space_type = st
+                break
+            end
+        end
+        if space_type.nil?
+            if print_err
+                runner.registerError("Could not find space type with the name '#{spacetype_s}'.")
+            else
+                runner.registerWarning("Could not find space type with the name '#{spacetype_s}'.")
+            end
+        end
+        return space_type
+    end
+    
+    def self.get_plant_loop_from_string(model, plantloop_s, runner, print_err=true)
+        plant_loop = nil
+        model.getPlantLoops.each do |pl|
+            if pl.name.to_s == plantloop_s
+                plant_loop = pl
+                break
+            end
+        end
+        if plant_loop.nil?
+            if print_err
+                runner.registerError("Could not find plant loop with the name '#{plantloop_s}'.")
+            else
+                runner.registerWarning("Could not find plant loop with the name '#{plantloop_s}'.")
+            end
+        end
+        return plant_loop
+    end
+    
+    def self.get_water_heater_setpoint(model, plant_loop, runner)
+        waterHeater = nil
+        plant_loop.supplyComponents.each do |wh|
+            if wh.to_WaterHeaterMixed.is_initialized
+                waterHeater = wh.to_WaterHeaterMixed.get
+            elsif wh.to_WaterHeaterStratified.is_initialized
+                waterHeater = wh.to_WaterHeaterStratified.get
+            else
+                next
+            end
+            if waterHeater.setpointTemperatureSchedule.nil?
+                runner.registerError("Water heater found without a setpoint temperature schedule.")
+                return nil
+            end
+        end
+        if waterHeater.nil?
+            runner.registerError("No water heater found; add a residential water heater first.")
+            return nil
+        end
+        min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.setpointTemperatureSchedule.get)
+        wh_setpoint = OpenStudio.convert((min_max_result['min'] + min_max_result['max'])/2.0, "C", "F").get
+        if min_max_result['min'] != min_max_result['max']
+            runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
+        end
+        return wh_setpoint
+    end
+
 end
 
 class Mat_solid

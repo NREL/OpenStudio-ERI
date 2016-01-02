@@ -191,11 +191,11 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Finished Basement Constructions"
+    return "Assign Residential Finished Basement Constructions"
   end
 
   def description
-    return "This measure creates constructions for the finished basement walls, floor, and rim joists."
+    return "This measure assigns constructions to the finished basement walls, floor, and rim joists."
   end
   
   def modeler_description
@@ -205,29 +205,6 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
-    end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
-    end
-
-    #make a choice argument for finished basement
-    selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, true)
-    selected_fbsmt.setDisplayName("Finished Basement Space")
-	selected_fbsmt.setDescription("The finished basement space type.")
-    args << selected_fbsmt
 
     #make a choice argument for model objects
     fbsmtins_display_names = OpenStudio::StringVector.new
@@ -378,6 +355,21 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     userdefined_carpetfrac.setDefaultValue(0.8)
     args << userdefined_carpetfrac
 
+    #make a choice argument for finished basement space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
+        space_type_args << Constants.FinishedBasementSpaceType
+    end
+    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
+    fbasement_space_type.setDisplayName("Finished basement space type")
+    fbasement_space_type.setDescription("Select the finished basement space type")
+    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
+    args << fbasement_space_type
+
     return args
   end #end the arguments method
 
@@ -397,7 +389,12 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     carpetPadRValue = 0
 
     # Space Type
-    selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
+	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
+    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
+    if fbasement_space_type.nil?
+        # If the building has no finished basement, no constructions are assigned and we continue by returning True
+        return true
+    end
 
     # Unfinished Basement Insulation
     selected_fbsmtins = runner.getStringArgumentValue("selectedfbsmtins",user_arguments)
@@ -746,7 +743,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     spaces = model.getSpaces
     spaces.each do |space|
       constructions_hash = {}
-      if selected_fbsmt.get.handle.to_s == space.spaceType.get.handle.to_s
+      if fbasement_space_type.handle.to_s == space.spaceType.get.handle.to_s
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|

@@ -15,7 +15,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Create Residential Door Area"
+    return "Add/Replace Residential Door Area"
   end
 
   # human readable description
@@ -32,29 +32,6 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
-    end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
-    end
-
-    #make a choice argument for living space
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Living Space")
-	selected_living.setDescription("The living space type.")
-    args << selected_living
-
 	#make a double argument for front door area
 	userdefineddoorarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefineddoorarea", true)
 	userdefineddoorarea.setDisplayName("Door Area")
@@ -62,6 +39,21 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
 	userdefineddoorarea.setDescription("The area of the front door.")
 	userdefineddoorarea.setDefaultValue(20.0)
 	args << userdefineddoorarea
+
+    #make a choice argument for living space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
+    end
+    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
+    living_space_type.setDisplayName("Living space type")
+    living_space_type.setDescription("Select the living space type")
+    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << living_space_type
 
     return args
   end
@@ -75,7 +67,12 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-	selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
+	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    if living_space_type.nil?
+        return false
+    end
+
 	door_area = OpenStudio::convert(runner.getDoubleArgumentValue("userdefineddoorarea",user_arguments),"ft^2","m^2").get
 	
 	# error checking
@@ -94,7 +91,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
 	first_story_front_wall = nil
 	spaces = model.getSpaces
 	spaces.each do |space|
-		next if not selected_living.get.handle.to_s == space.spaceType.get.handle.to_s
+		next if not living_space_type.handle.to_s == space.spaceType.get.handle.to_s
 		if space.buildingStory.is_initialized
 			story = space.buildingStory.get.name.to_s
 		end		
