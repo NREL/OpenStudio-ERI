@@ -391,7 +391,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     space_equipments.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_elec_dw = 1
-            runner.registerWarning("This space already has an dishwasher, the existing dishwasher will be replaced with the the currently selected option")
+            runner.registerInfo("This space already has an dishwasher, the existing dishwasher will be replaced with the the currently selected option")
             space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
             sch.setSchedule(space_equipment)
             replace_dw = 1

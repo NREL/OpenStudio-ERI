@@ -489,7 +489,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     space_equipments_e.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_cw = 1
-            runner.registerWarning("This space already has a clothes washer, the existing washer will be replaced with the the currently selected option")
+            runner.registerInfo("This space already has a clothes washer, the existing washer will be replaced with the the currently selected option")
             space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
             sch.setSchedule(space_equipment)
             replace_cw = 1

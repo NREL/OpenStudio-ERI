@@ -254,7 +254,7 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
     space_equipments_g.each do |space_equipment_g| #check for an existing gas cd
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
             has_gas_cd = 1
-            runner.registerWarning("This space already has a gas dryer. The existing gas dryer will be replaced with the specified gas dryer.")
+            runner.registerInfo("This space already has a gas dryer. The existing gas dryer will be replaced with the specified gas dryer.")
             space_equipment_g.gasEquipmentDefinition.setDesignLevel(design_level_g)
             sch.setSchedule(space_equipment_g)
             replace_gas_cd = 1
@@ -263,7 +263,7 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
     space_equipments_e = space_type.electricEquipment
     space_equipments_e.each do |space_equipment_e|
         if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
-            runner.registerWarning("This space already has an electric dryer. The existing dryer will be replaced with the the currently selected option.")
+            runner.registerInfo("This space already has an electric dryer. The existing dryer will be replaced with the the currently selected option.")
             space_equipment_e.remove
             remove_e_cd = 1
         elsif space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_g_e

@@ -8,6 +8,7 @@
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class AddBuildingAmericaBenchmarkOccupants < OpenStudio::Ruleset::ModelUserScript

@@ -3,18 +3,18 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
 
 #start the measure
-class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
+class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Refrigerator"
+    return "Add/Replace Residential Extra Refrigerator"
   end
   
   def description
-    return "Adds (or replaces) a residential refrigerator with the specified efficiency, operation, and schedule."
+    return "Adds (or replaces) a residential extra refrigerator with the specified efficiency, operation, and schedule."
   end
   
   def modeler_description
-    return "Since there is no Refrigerator object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential refrigerator. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Extra Refrigerator object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential extra refrigerator. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
   end
   
   #define the arguments that the user will input
@@ -23,6 +23,14 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     
 	#TODO: New argument for demand response for fridges (alternate schedules if automatic DR control is specified)
 	
+	#make a double argument for num extra fridges
+	num_items = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("num_items",true)
+	num_items.setDisplayName("Number of Extra Refrigerators")
+	num_items.setUnits("#")
+	num_items.setDescription("Number of extra refrigerators. A fractional number can be used to represent a community of houses where some houses have the technology and some do not.")
+	num_items.setDefaultValue(1.0)
+	args << num_items
+
 	#make a double argument for user defined fridge options
 	fridge_E = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fridge_E",true)
 	fridge_E.setDisplayName("Rated Annual Consumption")
@@ -87,6 +95,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #assign the user inputs to variables
+    num_items = runner.getDoubleArgumentValue("num_items",user_arguments)
     fridge_E = runner.getDoubleArgumentValue("fridge_E",user_arguments)
 	mult = runner.getDoubleArgumentValue("mult",user_arguments)
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
@@ -94,6 +103,11 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 	
+    if num_items <= 0
+        runner.registerError("The number of extra refrigerators must be greater than 0.")
+        return false
+    end
+    
 	#check for reasonable energy consumption
 	if fridge_E < 0
 		runner.registerError("Refrigerator energy consumption must be greater than or equal to 0.")
@@ -113,7 +127,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     end
 
 	#Calculate fridge daily energy use
-	fridge_ann = fridge_E*mult
+	fridge_ann = fridge_E*mult*num_items
 
     #hard coded convective, radiative, latent, and lost fractions
     fridge_lat = 0
@@ -121,21 +135,21 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     fridge_conv = 1
     fridge_lost = 1 - fridge_lat - fridge_rad - fridge_conv
 	
-	obj_name = Constants.ObjectNameRefrigerator
+	obj_name = Constants.ObjectNameExtraRefrigerator
 	sch = MonthHourSchedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
 	if not sch.validated?
 		return false
 	end
 	design_level = sch.calcDesignLevelElec(fridge_ann/365.0)
 	
-	#add refrigerator to the selected space
+	#add extra refrigerator to the selected space
 	has_fridge = 0
 	replace_fridge = 0
     space_equipments = space_type.electricEquipment
     space_equipments.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_fridge = 1
-            runner.registerInfo("This space already has a refrigerator, the existing refrigerator will be replaced with the currently selected option.")
+            runner.registerInfo("This space already has an extra refrigerator, the existing extra refrigerator will be replaced with the currently selected option.")
             space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
             sch.setSchedule(space_equipment)
             replace_fridge = 1
@@ -144,7 +158,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     if has_fridge == 0 
         has_fridge = 1
         
-        #Add electric equipment for the fridge
+        #Add electric equipment for the extra fridge
         frg_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         frg = OpenStudio::Model::ElectricEquipment.new(frg_def)
         frg.setName(obj_name)
@@ -160,9 +174,9 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	
     #reporting final condition of model
     if replace_fridge == 1
-        runner.registerFinalCondition("The existing fridge has been replaced by one with #{fridge_ann.round} kWh annual energy consumption.")
+        runner.registerFinalCondition("The existing extra fridge has been replaced by one with #{fridge_ann.round} kWh annual energy consumption.")
     else
-        runner.registerFinalCondition("A fridge has been added with #{fridge_ann.round} kWh annual energy consumption.")
+        runner.registerFinalCondition("An extra fridge has been added with #{fridge_ann.round} kWh annual energy consumption.")
     end
 	
     return true
@@ -172,4 +186,4 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ResidentialRefrigerator.new.registerWithApplication
+ResidentialExtraRefrigerator.new.registerWithApplication

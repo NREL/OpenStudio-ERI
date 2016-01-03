@@ -167,7 +167,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     space_equipments_g.each do |space_equipment_g| #check for an existing gas range
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
             has_gas_range = 1
-            runner.registerWarning("This space already has a gas range. The existing gas range will be replaced with the specified gas range.")
+            runner.registerInfo("This space already has a gas range. The existing gas range will be replaced with the specified gas range.")
             space_equipment_g.gasEquipmentDefinition.setDesignLevel(design_level_g)
             sch.setSchedule(space_equipment_g)
             replace_gas_range = 1
@@ -176,7 +176,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     space_equipments_e = space_type.electricEquipment
     space_equipments_e.each do |space_equipment_e|
         if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
-            runner.registerWarning("This space already has an electric range. The existing range will be replaced with the the currently selected option.")
+            runner.registerInfo("This space already has an electric range. The existing range will be replaced with the the currently selected option.")
             space_equipment_e.remove
             remove_e_range = 1
         elsif space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_i
