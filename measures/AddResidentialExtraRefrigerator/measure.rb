@@ -23,14 +23,6 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     
 	#TODO: New argument for demand response for fridges (alternate schedules if automatic DR control is specified)
 	
-	#make a double argument for num extra fridges
-	num_items = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("num_items",true)
-	num_items.setDisplayName("Number of Extra Refrigerators")
-	num_items.setUnits("#")
-	num_items.setDescription("Number of extra refrigerators. A fractional number can be used to represent a community of houses where some houses have the technology and some do not.")
-	num_items.setDefaultValue(1.0)
-	args << num_items
-
 	#make a double argument for user defined fridge options
 	fridge_E = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fridge_E",true)
 	fridge_E.setDisplayName("Rated Annual Consumption")
@@ -95,7 +87,6 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #assign the user inputs to variables
-    num_items = runner.getDoubleArgumentValue("num_items",user_arguments)
     fridge_E = runner.getDoubleArgumentValue("fridge_E",user_arguments)
 	mult = runner.getDoubleArgumentValue("mult",user_arguments)
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
@@ -103,11 +94,6 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 	
-    if num_items <= 0
-        runner.registerError("The number of extra refrigerators must be greater than 0.")
-        return false
-    end
-    
 	#check for reasonable energy consumption
 	if fridge_E < 0
 		runner.registerError("Refrigerator energy consumption must be greater than or equal to 0.")
@@ -127,7 +113,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     end
 
 	#Calculate fridge daily energy use
-	fridge_ann = fridge_E*mult*num_items
+	fridge_ann = fridge_E*mult
 
     #hard coded convective, radiative, latent, and lost fractions
     fridge_lat = 0

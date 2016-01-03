@@ -9,6 +9,14 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
     return "Add/Replace Residential Electric Clothes Dryer"
   end
 
+  def description
+    return "Adds (or replaces) a residential electric clothes dryer with the specified efficiency, operation, and schedule."
+  end
+  
+  def modeler_description
+    return "Since there is no Electric Clothes Dryer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential electric clothes dryer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+  end
+
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
