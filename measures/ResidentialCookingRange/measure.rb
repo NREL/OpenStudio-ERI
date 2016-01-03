@@ -139,25 +139,25 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	if not sch.validated?
 		return false
 	end
-    design_level_e = sch.calcDesignLevelElec(range_ann_e/365.0)
+    design_level_e = sch.calcDesignLevelFromDailykWh(range_ann_e/365.0)
 
 	#add range to the selected space
 	has_elec_range = 0
 	replace_elec_range = 0
-	remove_g_range = 0
+	replace_g_range = 0
     space_equipments_g = space_type.gasEquipment
     space_equipments_g.each do |space_equipment_g| #check for an existing gas range
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
-            runner.registerInfo("This space already has a gas range. The existing gas range will be removed and replaced with the specified electric range.")
+            runner.registerInfo("This space already has a gas range. The existing gas range will be replaced with the specified electric range.")
             space_equipment_g.remove
-            remove_g_range = 1
+            replace_g_range = 1
         end
     end
     space_equipments_e = space_type.electricEquipment
     space_equipments_e.each do |space_equipment_e|
         if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
             has_elec_range = 1
-            runner.registerInfo("This space already has an electric range. The existing range will be replaced with the the currently selected option.")
+            runner.registerInfo("This space already has an electric range. The existing range will be replaced with the specified electric range.")
             space_equipment_e.electricEquipmentDefinition.setDesignLevel(design_level_e)
             sch.setSchedule(space_equipment_e)
             replace_elec_range = 1
@@ -186,7 +186,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
     if replace_elec_range == 1
         runner.registerFinalCondition("The existing electric range has been replaced by one with #{range_ann_e.round} kWhs annual energy consumption.")
-    elsif remove_g_range == 1
+    elsif replace_g_range == 1
         runner.registerFinalCondition("The existing gas range has been replaced by an electric range with #{range_ann_e.round} kWhs annual energy consumption.")
     else
         runner.registerFinalCondition("An electric range has been added with #{range_ann_e.round} kWhs annual energy consumption.")

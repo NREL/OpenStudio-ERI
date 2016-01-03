@@ -99,7 +99,7 @@ class AddBuildingAmericaBenchmarkOccupants < OpenStudio::Ruleset::ModelUserScrip
     space_occupants.each do |occupant|
         if occupant.peopleDefinition.name.get.to_s == "residential_occupants"
             has_occ = 1
-            runner.registerWarning("This space already has occupants, the existing occupants will be replaced with the the currently selected option")
+            runner.registerWarning("This space already has occupants, the existing occupants will be replaced with the specified occupants.")
             space_equipment.peopleDefinition.setDesignLevel(occ_max)
             replace_occ = 1
         end

@@ -11,6 +11,14 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     return "Add/Replace Residential Clothes Washer"
   end
 
+  def description
+    return "Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule."
+  end
+  
+  def modeler_description
+    return "Since there is no Clothes Washer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential clothes washer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+  end
+
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
@@ -479,8 +487,8 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
 	if not sch.validated?
 		return false
 	end
-	design_level = sch.calcDesignLevelElec(daily_energy)
-    peak_flow = sch.calcPeakFlow(total_daily_water_use)
+	design_level = sch.calcDesignLevelFromDailykWh(daily_energy)
+    peak_flow = sch.calcPeakFlowFromDailygpm(total_daily_water_use)
 
 	#add cw to the selected space
 	has_cw = 0
@@ -489,7 +497,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     space_equipments_e.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_cw = 1
-            runner.registerInfo("This space already has a clothes washer, the existing washer will be replaced with the the currently selected option")
+            runner.registerInfo("This space already has a clothes washer, the existing washer will be replaced with the specified clothes washer.")
             space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
             sch.setSchedule(space_equipment)
             replace_cw = 1
@@ -554,9 +562,9 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
 	
 	#reporting final condition of model
     if replace_cw == 1
-        runner.registerFinalCondition("The existing clothes washer has been replaced by one with #{cw_ann_e.round} kWh annual energy consumption.")
+        runner.registerFinalCondition("The existing clothes washer has been replaced by one with #{cw_ann_e.round} kWhs annual energy consumption.")
     else
-        runner.registerFinalCondition("A clothes washer has been added with #{cw_ann_e.round} kWh annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
+        runner.registerFinalCondition("A clothes washer has been added with #{cw_ann_e.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
     end
 	
     return true

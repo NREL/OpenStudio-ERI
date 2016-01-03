@@ -28,12 +28,12 @@ class MonthHourSchedule
 		return @validated
 	end
 	
-	def calcDesignLevelElec(daily_kwh)
+	def calcDesignLevelFromDailykWh(daily_kwh)
 		return daily_kwh * @maxval * 1000 * @schadjust
 	end
 
-	def calcDesignLevelGas(daily_therm)
-		return calcDesignLevelElec(OpenStudio.convert(daily_therm, "therm", "kWh").get)
+	def calcDesignLevelFromDailyTherm(daily_therm)
+		return calcDesignLevelFromDailykWh(OpenStudio.convert(daily_therm, "therm", "kWh").get)
 	end
 
 	def setSchedule(obj)
@@ -204,11 +204,11 @@ class HotWaterSchedule
 		return @validated
 	end
     
-    def calcDesignLevelElec(kWh_day)
-        return OpenStudio.convert(kWh_day*365*60/(365*@totflow/@maxflow), "kW", "W").get
+    def calcDesignLevelFromDailykWh(daily_kWh)
+        return OpenStudio.convert(daily_kWh*365*60/(365*@totflow/@maxflow), "kW", "W").get
     end
     
-    def calcPeakFlow(daily_water)
+    def calcPeakFlowFromDailygpm(daily_water)
         return OpenStudio.convert(@maxflow * daily_water / @totflow, "gal/min", "m^3/s").get
     end
 

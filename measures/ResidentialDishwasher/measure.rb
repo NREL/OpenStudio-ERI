@@ -381,8 +381,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	if not sch.validated?
 		return false
 	end
-	design_level = sch.calcDesignLevelElec(daily_energy)
-    peak_flow = sch.calcPeakFlow(daily_dishwasher_water)
+	design_level = sch.calcDesignLevelFromDailykWh(daily_energy)
+    peak_flow = sch.calcPeakFlowFromDailygpm(daily_dishwasher_water)
 
 	#add dw to the selected space
 	has_elec_dw = 0
@@ -391,7 +391,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     space_equipments.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_elec_dw = 1
-            runner.registerInfo("This space already has an dishwasher, the existing dishwasher will be replaced with the the currently selected option")
+            runner.registerInfo("This space already has an dishwasher, the existing dishwasher will be replaced with the specified dishwasher.")
             space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
             sch.setSchedule(space_equipment)
             replace_dw = 1
@@ -455,9 +455,9 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 
     #reporting final condition of model
     if replace_dw == 1
-        runner.registerFinalCondition("The existing dishwasher has been replaced by one with #{dw_ann.round} kWh annual energy consumption.")
+        runner.registerFinalCondition("The existing dishwasher has been replaced by one with #{dw_ann.round} kWhs annual energy consumption.")
     else
-        runner.registerFinalCondition("A dishwasher with #{dw_ann.round} kWh annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
+        runner.registerFinalCondition("A dishwasher with #{dw_ann.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
     end
 	
     return true

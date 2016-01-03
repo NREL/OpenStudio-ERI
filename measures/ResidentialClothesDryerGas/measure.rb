@@ -251,13 +251,13 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
 	if not sch.validated?
 		return false
 	end
-	design_level_e = sch.calcDesignLevelElec(daily_energy_elec)
-    design_level_g = sch.calcDesignLevelGas(daily_energy_gas)
+	design_level_e = sch.calcDesignLevelFromDailykWh(daily_energy_elec)
+    design_level_g = sch.calcDesignLevelFromDailyTherm(daily_energy_gas)
 
 	#add cd to the selected space
 	has_gas_cd = 0
 	replace_gas_cd = 0
-	remove_e_cd = 0
+	replace_e_cd = 0
     space_equipments_g = space_type.gasEquipment
     space_equipments_g.each do |space_equipment_g| #check for an existing gas cd
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
@@ -271,9 +271,9 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
     space_equipments_e = space_type.electricEquipment
     space_equipments_e.each do |space_equipment_e|
         if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
-            runner.registerInfo("This space already has an electric dryer. The existing dryer will be replaced with the the currently selected option.")
+            runner.registerInfo("This space already has an electric dryer. The existing dryer will be replaced with the specified gas dryer.")
             space_equipment_e.remove
-            remove_e_cd = 1
+            replace_e_cd = 1
         elsif space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_g_e
             space_equipment_e.electricEquipmentDefinition.setDesignLevel(design_level_e)
             sch.setSchedule(space_equipment_e)
@@ -310,7 +310,7 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
 	#reporting final condition of model
     if replace_gas_cd == 1
         runner.registerFinalCondition("The existing gas dryer has been replaced by one with #{cd_ann_g.round} therms and #{cd_ann_e.round} kWhs annual energy consumption.")
-    elsif remove_e_cd == 1
+    elsif replace_e_cd == 1
         runner.registerFinalCondition("The existing electric dryer has been replaced by a gas dryer with #{cd_ann_g.round} therms and #{cd_ann_e.round} kWhs annual energy consumption.")
     else
         runner.registerFinalCondition("A gas dryer has been added with #{cd_ann_g.round} therms and #{cd_ann_e.round} kWhs annual energy consumption.")

@@ -126,7 +126,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	if not sch.validated?
 		return false
 	end
-	design_level = sch.calcDesignLevelElec(fridge_ann/365.0)
+	design_level = sch.calcDesignLevelFromDailykWh(fridge_ann/365.0)
 	
 	#add extra refrigerator to the selected space
 	has_fridge = 0
@@ -135,7 +135,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     space_equipments.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_fridge = 1
-            runner.registerInfo("This space already has an extra refrigerator, the existing extra refrigerator will be replaced with the currently selected option.")
+            runner.registerInfo("This space already has an extra refrigerator, the existing extra refrigerator will be replaced with the specified extra refrigerator.")
             space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
             sch.setSchedule(space_equipment)
             replace_fridge = 1
@@ -160,9 +160,9 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	
     #reporting final condition of model
     if replace_fridge == 1
-        runner.registerFinalCondition("The existing extra fridge has been replaced by one with #{fridge_ann.round} kWh annual energy consumption.")
+        runner.registerFinalCondition("The existing extra fridge has been replaced by one with #{fridge_ann.round} kWhs annual energy consumption.")
     else
-        runner.registerFinalCondition("An extra fridge has been added with #{fridge_ann.round} kWh annual energy consumption.")
+        runner.registerFinalCondition("An extra fridge has been added with #{fridge_ann.round} kWhs annual energy consumption.")
     end
 	
     return true

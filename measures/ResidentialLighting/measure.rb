@@ -465,25 +465,25 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 				if light.lightsDefinition.name.get.to_s == "residential_int_lighting"
 					has_ltg = 1
 					replace_ltg = 1
-					runner.registerWarning("This space already has interior lighting, the existing lighting will be replaced with the the currently selected option")
+					runner.registerWarning("This space already has interior lighting, the existing lighting will be replaced with the specified interior lighting.")
 					space_equipment.lightsDefinition.setDesignLevel(ltg_max)
 				end
 				if light.lightsDefinition.name.get.to_s == "residential_ext_lighting"
 					has_outside_ltg = 1
 					replace_outside_ltg = 1
-					runner.registerWarning("This space already has exterior lighting, the existing lighting will be replaced with the the currently selected option")
+					runner.registerWarning("This space already has exterior lighting, the existing lighting will be replaced with the specified exterior lighting.")
 					space_equipment.lightsDefinition.setDesignLevel(outside_max)
 				end
 				if light.lightsDefinition.name.get.to_s == "residential_garage_lighting"
 					has_grg_ltg = 1
 					replace_grg_ltg = 1
-					runner.registerWarning("This space already has garage lighting, the existing lighting will be replaced with the the currently selected option")
+					runner.registerWarning("This space already has garage lighting, the existing lighting will be replaced with the specified garage lighting.")
 					space_equipment.lightsDefinition.setDesignLevel(garage_max)
 				end
 				if light.lightsDefinition.name.get.to_s == "residential_int_fb_lighting"
 					has_basement_ltg = 1
 					replace_basement_ltg = 1
-					runner.registerWarning("This space already has lighting in the finished basement, the existing lighting will be replaced with the the currently selected option")
+					runner.registerWarning("This space already has lighting in the finished basement, the existing lighting will be replaced with the specified lighting in the finished basement.")
 					space_equipment.lightsDefinition.setDesignLevel(fb_max)
 					
 				end
@@ -627,9 +627,9 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
 	if has_ltg == 1
 		if replace_ltg == 1
-			runner.registerFinalCondition("The existing lighting has been replaced by one with #{ltg_total.round} kWh annual energy consumption.")
+			runner.registerFinalCondition("The existing lighting has been replaced by one with #{ltg_total.round} kWhs annual energy consumption.")
 		else
-			runner.registerFinalCondition("Lighting has been added with #{ltg_total.round} kWh annual energy consumption.")
+			runner.registerFinalCondition("Lighting has been added with #{ltg_total.round} kWhs annual energy consumption.")
 		end
 	else
 		runner.registerFinalCondition("Lighting was not added to #{living_space_type.name}.")

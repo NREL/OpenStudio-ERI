@@ -548,6 +548,12 @@ class Constants
     def self.ObjectNameMiscPlugLoads
         return 'residential_misc_plug_loads'
     end
+    def self.ObjectNamePoolHeater
+        return 'residential_pool_heater'
+    end
+    def self.ObjectNamePoolPump
+        return 'residential_pool_pump'
+    end
 	def self.ObjectNameRefrigerator
 		return 'residential_refrigerator'
 	end

@@ -151,8 +151,8 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
 	if not sch.validated?
 		return false
 	end
-    living_design_level = sch.calcDesignLevelElec(living_daily)
-    fbasement_design_level = sch.calcDesignLevelElec(fbasement_daily)
+    living_design_level = sch.calcDesignLevelFromDailykWh(living_daily)
+    fbasement_design_level = sch.calcDesignLevelFromDailykWh(fbasement_daily)
 	
 	#add mel to the living space
 	has_elec_mel_living = 0
@@ -161,7 +161,7 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
     space_equipments.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name_living
             has_elec_mel_living = 1
-            runner.registerWarning("This space (#{living_space_type.name}) already has misc plug loads, the existing plug loads will be replaced with the the currently selected option")
+            runner.registerWarning("This space (#{living_space_type.name}) already has misc plug loads, the existing plug loads will be replaced with the specific misc plug loads.")
             space_equipment.electricEquipmentDefinition.setDesignLevel(living_design_level)
             sch.setSchedule(space_equipment)
             replace_mel_living = 1
@@ -191,7 +191,7 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
         space_equipments.each do |space_equipment|
             if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name_fbasement
                 has_elec_mel_fbasement = 1
-                runner.registerWarning("This space (#{fbasement_space_type.name}) already has misc plug loads, the existing plug loads will be replaced with the the currently selected option")
+                runner.registerWarning("This space (#{fbasement_space_type.name}) already has misc plug loads, the existing plug loads will be replaced with the specified misc plug loads.")
                 space_equipment.electricEquipmentDefinition.setDesignLevel(fbasement_design_level)
                 sch.setSchedule(space_equipment)
                 replace_mel_fbasement = 1
@@ -216,9 +216,9 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
     
     #reporting final condition of model
     if replace_mel_living == 1 or replace_mel_fbasement == 1
-        runner.registerFinalCondition("The existing misc plug loads have been replaced by plug loads with #{mel_ann.round} kWh annual energy consumption.")
+        runner.registerFinalCondition("The existing misc plug loads have been replaced by plug loads with #{mel_ann.round} kWhs annual energy consumption.")
     else
-        runner.registerFinalCondition("Misc plug loads have been added with #{mel_ann.round} kWh annual energy consumption.")
+        runner.registerFinalCondition("Misc plug loads have been added with #{mel_ann.round} kWhs annual energy consumption.")
     end
 	
     return true
