@@ -401,11 +401,11 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
         # loop thru all surfaces attached to the space
         surfaces = space.surfaces
         surfaces.each do |surface|
-          if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Adiabatic"
+          if surface.surfaceType == "RoofCeiling" and ( surface.outsideBoundaryCondition == "Surface" or surface.outsideBoundaryCondition == "Adiabatic" )
             surface.resetConstruction
             surface.setConstruction(revfinuninsfinfloor)
             constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevFinUninsFinFloor"]
-          elsif surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Adiabatic"
+          elsif surface.surfaceType == "Floor" and ( surface.outsideBoundaryCondition == "Surface" or surface.outsideBoundaryCondition == "Adiabatic" )
             surface.resetConstruction
             surface.setConstruction(finuninsfinfloor)
             constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"FinUninsFinFloor"]
@@ -421,26 +421,6 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
               surface.resetConstruction
               surface.setConstruction(revfinuninsfinfloor)
               constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevFinUninsFinFloor"]
-            end
-          end
-        elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-          # loop thru all surfaces attached to the space
-          surfaces = space.surfaces
-          surfaces.each do |surface|
-            if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Surface"
-              adjacentSpaces = model.getSpaces
-              adjacentSpaces.each do |adjacentSpace|
-                if fbasement_space_type.handle.to_s == adjacentSpace.spaceType.get.handle.to_s
-                  adjacentSurfaces = adjacentSpace.surfaces
-                  adjacentSurfaces.each do |adjacentSurface|
-                    if surface.adjacentSurface.get.handle.to_s == adjacentSurface.handle.to_s
-                      surface.resetConstruction
-                      surface.setConstruction(finuninsfinfloor)
-                      constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"FinUninsFinFloor"]
-                    end
-                  end
-                end
-              end
             end
           end
         end
