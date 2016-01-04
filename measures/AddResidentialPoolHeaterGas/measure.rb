@@ -6,15 +6,15 @@ require "#{File.dirname(__FILE__)}/resources/util"
 class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Gas Pool Heater"
+    return "Add/Replace Residential Pool Gas Heater"
   end
   
   def description
-    return "Adds (or replaces) a residential gas pool heater with the specified efficiency and schedule. The pool is assumed to be outdoors."
+    return "Adds (or replaces) a residential pool gas heater with the specified efficiency and schedule. The pool is assumed to be outdoors."
   end
   
   def modeler_description
-    return "Since there is no Gas Pool Heater object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas pool heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Pool Gas Heater object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential pool gas heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
   end
   
   #define the arguments that the user will input
@@ -156,7 +156,7 @@ class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
     space_equipments_g.each do |space_equipment_g| #check for an existing gas heater
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
             has_gas_ph = 1
-            runner.registerInfo("There is already a gas pool heater. The existing gas pool heater will be replaced with the specified gas pool heater.")
+            runner.registerInfo("There is already a pool gas heater. The existing pool gas heater will be replaced with the specified pool gas heater.")
             space_equipment_g.gasEquipmentDefinition.setDesignLevel(design_level)
             sch.setSchedule(space_equipment_g)
             replace_gas_ph = 1
@@ -165,7 +165,7 @@ class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
     space_equipments_e = living_space_type.electricEquipment
     space_equipments_e.each do |space_equipment_e|
         if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
-            runner.registerInfo("There is already an electric pool heater. The existing heater will be replaced with the specified gas pool heater.")
+            runner.registerInfo("There is already a pool electric heater. The existing heater will be replaced with the specified pool gas heater.")
             space_equipment_e.remove
             replace_elec_ph = 1
         end
@@ -190,11 +190,11 @@ class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
 	
     #reporting final condition of model
     if replace_gas_ph == 1
-        runner.registerFinalCondition("The existing gas pool heater has been replaced by one with #{ph_ann_g.round} therms annual energy consumption.")
+        runner.registerFinalCondition("The existing pool gas heater has been replaced by one with #{ph_ann_g.round} therms annual energy consumption.")
     elsif replace_elec_ph == 1
-        runner.registerFinalCondition("The existing electric pool heater has been replaced by a gas pool heater with #{ph_ann_g.round} therms annual energy consumption.")
+        runner.registerFinalCondition("The existing pool electric heater has been replaced by a pool gas heater with #{ph_ann_g.round} therms annual energy consumption.")
     else
-        runner.registerFinalCondition("A gas pool heater has been added with #{ph_ann_g.round} therms annual energy consumption.")
+        runner.registerFinalCondition("A pool gas heater has been added with #{ph_ann_g.round} therms annual energy consumption.")
     end
 	
     return true

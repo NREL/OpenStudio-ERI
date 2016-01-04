@@ -1,0 +1,132 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>residential_hot_tub_pump</name>
+  <uid>58b3f782-0d34-455c-9101-df36412196f1</uid>
+  <version_id>bee98aa7-fbd1-4152-a0c0-51ef73904dcb</version_id>
+  <xml_checksum>126F1C43</xml_checksum>
+  <class_name>ResidentialHotTubPump</class_name>
+  <display_name>Add/Replace Residential Hot Tub Pump</display_name>
+  <description>Adds (or replaces) a residential hot tub pump with the specified efficiency and schedule. The hot tub is assumed to be outdoors.</description>
+  <modeler_description>Since there is no Hot Tub Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential hot tub pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
+  <arguments>
+    <argument>
+      <name>mult</name>
+      <display_name>Energy Multiplier</display_name>
+      <description>Sets the annual energy use equal to the national average (Building America Benchmark) energy use times this multiplier.</description>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>weekday_sch</name>
+      <display_name>Weekday schedule</display_name>
+      <description>Specify the 24-hour weekday schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024</default_value>
+    </argument>
+    <argument>
+      <name>weekend_sch</name>
+      <display_name>Weekend schedule</display_name>
+      <description>Specify the 24-hour weekend schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024</default_value>
+    </argument>
+    <argument>
+      <name>monthly_sch</name>
+      <display_name>Month schedule</display_name>
+      <description>Specify the 12-month schedule.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.921, 0.928, 0.921, 0.915, 0.921, 1.160, 1.158, 1.158, 1.160, 0.921, 0.915, 0.921</default_value>
+    </argument>
+    <argument>
+      <name>living_space_type</name>
+      <display_name>Living space type</display_name>
+      <description>Select the living space type. The hot tub will be located outdoors, but the living space floor area is needed to scale energy use.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>fbasement_space_type</name>
+      <display_name>Finished Basement space type</display_name>
+      <description>Select the finished basement space type. The hot tub will be located outdoors, but the finished basement space floor area is needed to scale energy use.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>finished basement</default_value>
+      <choices>
+        <choice>
+          <value>finished basement</value>
+          <display_name>finished basement</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Equipment.Electric Equipment</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ResidentialRefrigerator_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4BBF53E0</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>09D56F53</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3E9597E5</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>40F0D065</checksum>
+    </file>
+  </files>
+</measure>

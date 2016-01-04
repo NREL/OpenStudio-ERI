@@ -545,6 +545,12 @@ class Constants
     def self.ObjectNameExtraRefrigerator
         return 'residential_extra_refrigerator'
     end
+    def self.ObjectNameHotTubHeater
+        return 'residential_hot_tub_heater'
+    end
+    def self.ObjectNameHotTubPump
+        return 'residential_hot_tub_pump'
+    end
     def self.ObjectNameMiscPlugLoads
         return 'residential_misc_plug_loads'
     end
