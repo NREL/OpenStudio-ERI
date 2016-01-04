@@ -46,7 +46,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       @acCoolingInstalledSEER = acCoolingInstalledSEER
     end
 
-    attr_accessor(:IsIdealAC)
+    attr_accessor(:hasIdealAC)
 
     def ACCoolingInstalledSEER
       return @acCoolingInstalledSEER
@@ -286,7 +286,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
     air_loop.setName("Central Air System")
-    # if test_suite.min_test_ideal_systems or air_conditioner.IsIdealAC
+    # if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
     #     air_loop.setDesignSupplyAirFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate,"cfm","m^3/s").get)
     # else
     #   air_loop.setDesignSupplyAirFlowRate(supply.fanspeed_ratio.max * OpenStudio::convert(supply.Fan_AirFlowRate,"cfm","m^3/s").get)
@@ -360,7 +360,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     fan.setFanEfficiency(supply.eff)
     fan.setPressureRise(supply.static)
 
-    # if test_suite.min_test_ideal_systems or air_conditioner.IsIdealAC
+    # if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
     #   fan.setMaximumFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate + 0.05,"cfm","m^3/s").get)
     # else
     #   fan.setMaximumFlowRate(supply.fanspeed_ratio.max * OpenStudio::convert(supply.Fan_AirFlowRate + 0.01,"cfm","m^3/s").get)
@@ -377,7 +377,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     # fan.setMaximumFlowRate(0.4290584054901815)
 
-    if test_suite.min_test_ideal_systems or air_conditioner.IsIdealAC
+    if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
       fan.setMotorInAirstreamFraction(0)
     else
       fan.setMotorInAirstreamFraction(1)
@@ -421,7 +421,6 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
       if selected_living.get.handle.to_s == zone.handle.to_s
 
-        air_loop.addBranchForZone(zone, air_loop_unitary.to_StraightComponent)
         air_loop_unitary.setControllingZoneorThermostatLocation(zone)
 
         # _processSystemDemandSideAir
@@ -434,7 +433,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
         diffuser_living.setName("Living Zone Direct Air")
         # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-        air_loop.addBranchForZone(zone, diffuser_living.to_StraightComponent) # tk this doesn't add the air terminal anymore, for some reason
+        air_loop.addBranchForZone(zone, diffuser_living.to_StraightComponent)
 		
         setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
         setpoint_mgr.setControlZone(zone)
@@ -442,7 +441,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
         # Return Air
 
-        # tk need to replace the mixer with a return plenum
+        # TODO: need to replace the mixer with a return plenum
         # zone_mixer = air_loop.zoneMixer
         # zone_mixer.disconnect
         # return_plenum = OpenStudio::Model::AirLoopHVACReturnPlenum.new(model)

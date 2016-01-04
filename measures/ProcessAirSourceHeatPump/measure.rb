@@ -119,7 +119,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       @acCoolingInstalledSEER = acCoolingInstalledSEER
     end
 
-    attr_accessor(:IsIdealAC)
+    attr_accessor(:hasIdealAC)
 
     def ACCoolingInstalledSEER
       return @acCoolingInstalledSEER
@@ -374,7 +374,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
     air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
     air_loop.setName("Central Air System")
-    # if test_suite.min_test_ideal_systems or air_conditioner.IsIdealAC
+    # if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
     #     air_loop.setDesignSupplyAirFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate,"cfm","m^3/s").get)
     # else
     #   air_loop.setDesignSupplyAirFlowRate(supply.fanspeed_ratio.max * OpenStudio::convert(supply.Fan_AirFlowRate,"cfm","m^3/s").get)
@@ -716,7 +716,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
       if supply.compressor_speeds == 1.0
 
-        if air_conditioner.IsIdealAC
+        if air_conditioner.hasIdealAC
           # tk constant curves here
         else
 
@@ -727,7 +727,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         if hpOutputCapacity != "Autosize"
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
         end
-        if air_conditioner.IsIdealAC
+        if air_conditioner.hasIdealAC
           clg_coil.setRatedSensibleHeatRatio(0.8)
           clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0))
           if hpOutputCapacity != "Autosize"
@@ -742,7 +742,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         end
         clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(supply.fan_power / OpenStudio::convert(1.0,"cfm","m^3/s").get))
 
-        if misc.SimTestSuiteBuilding == Constants.TestBldgMinimal or air_conditioner.IsIdealAC
+        if misc.SimTestSuiteBuilding == Constants.TestBldgMinimal or air_conditioner.hasIdealAC
           clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(0))
           clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(0))
           clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(0))
@@ -772,7 +772,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
           clg_coil.setMaximumOutdoorDryBulbTemperatureForCrankcaseHeaterOperation(OpenStudio::OptionalDouble.new(10.0))
         end
 
-        if air_conditioner.IsIdealAC
+        if air_conditioner.hasIdealAC
           # stuff
         end
 
@@ -868,7 +868,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     fan.setFanEfficiency(supply.eff)
     fan.setPressureRise(supply.static)
 
-    # if test_suite.min_test_ideal_systems or air_conditioner.IsIdealAC
+    # if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
     #   fan.setMaximumFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate + 0.05,"cfm","m^3/s").get)
     # else
     #   fan.setMaximumFlowRate(supply.fanspeed_ratio.max * OpenStudio::convert(supply.Fan_AirFlowRate + 0.01,"cfm","m^3/s").get)
@@ -876,7 +876,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
     fan.setMotorEfficiency(1)
 
-    if test_suite.min_test_ideal_systems or air_conditioner.IsIdealAC
+    if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
       fan.setMotorInAirstreamFraction(0)
     else
       fan.setMotorInAirstreamFraction(1)
@@ -908,7 +908,6 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
       if selected_living.get.handle.to_s == zone.handle.to_s
 
-        air_loop.addBranchForZone(zone, air_loop_unitary.to_StraightComponent)
         air_loop_unitary.setControllingZone(zone)
 
         # _processSystemDemandSideAir
@@ -930,7 +929,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
         # Return Air
 
-        # tk need to replace the mixer with a return plenum
+        # TODO: need to replace the mixer with a return plenum
         # zone_mixer = air_loop.zoneMixer
         # zone_mixer.disconnect
         # return_plenum = OpenStudio::Model::AirLoopHVACReturnPlenum.new(model)

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>6eee7979-ba58-4935-8cfa-2c3037e11447</version_id>
+  <version_id>74936c13-fbf4-4d81-9dc9-6611ae5800fe</version_id>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential EPW File</display_name>
@@ -76,7 +76,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>83575001</checksum>
+      <checksum>446380B5</checksum>
     </file>
   </files>
 </measure>

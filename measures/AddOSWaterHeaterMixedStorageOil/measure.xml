@@ -2,11 +2,11 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>b64fd9b3-7411-4123-9eac-4ff37bcb612d</version_id>
+  <version_id>8025d1db-4abe-4c2f-8e0c-1b5f515cd0f4</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
   <display_name>AddOSWaterHeaterMixedStorageOil</display_name>
-  <description>This measure adds an OS:WaterHeater:Mixed object representing an Oil Storage Water Heater. Users will be asked to provide the following arguments: 1) Use case; 2) Plant Loop Assignment; 3) Number of Bedrooms; 4) Number of Bathrooms; 5) Tank Volume; 6) Energy Factor; 7) Water Heater Location; ) Setpoint Temperature Schedule; 9) Water Heater Capacity; 11) Recovery Efficiency&#xd;
+  <description>This measure adds an OS:WaterHeater:Mixed object representing an Oil Storage Water Heater. Users will be asked to provide the following arguments: 1) Use case; 2) Plant Loop Assignment; 3) Number of Bedrooms; 4) Number of Bathrooms; 5) Tank Volume; 6) Energy Factor; 7) Water Heater Location; ) Setpoint Temperature Schedule; 9) Water Heater Capacity; 11) Recovery Efficiency&#xd;&#xd;
  </description>
   <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a #1 Oil Storage Water Heater. The object will either create a new plant loop, or be assigned to an existing plant loop. The object will be configured be to use the user arguments. The EIO file reports the industry standard ratings of Recovery Efficiency and Energy Factor for water heater objects.</modeler_description>
   <arguments>
@@ -153,6 +153,12 @@
       <checksum>61747C72</checksum>
     </file>
     <file>
+      <filename>AddOSWaterHeaterMixedStorageOil_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1304F290</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -161,13 +167,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6C3EC977</checksum>
+      <checksum>800D01DA</checksum>
     </file>
     <file>
-      <filename>AddOSWaterHeaterMixedStorageOil_Test.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1304F290</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>0354029E</checksum>
     </file>
   </files>
 </measure>

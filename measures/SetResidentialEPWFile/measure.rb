@@ -48,14 +48,14 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     end
 
     # grab the initial weather file
-    @weather_directory = runner.getStringArgumentValue("weather_directory", user_arguments)
+    weather_directory = runner.getStringArgumentValue("weather_directory", user_arguments)
     weather_file_name = runner.getStringArgumentValue("weather_file_name", user_arguments)
 
     #Add Weather File
-    unless (Pathname.new @weather_directory).absolute?
-      @weather_directory = File.expand_path(File.join(File.dirname(__FILE__), @weather_directory))
+    unless (Pathname.new weather_directory).absolute?
+      weather_directory = File.expand_path(File.join(File.dirname(__FILE__), weather_directory))
     end
-    weather_file = File.join(@weather_directory, weather_file_name)
+    weather_file = File.join(weather_directory, weather_file_name)
     if File.exists?(weather_file) and weather_file_name.downcase.include? ".epw"
         epw_file = OpenStudio::EpwFile.new(weather_file)
     else

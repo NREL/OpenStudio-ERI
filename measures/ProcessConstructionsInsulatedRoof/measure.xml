@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_insulated_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>29d4ff8e-98e8-4a63-8f35-ebd58c2e4ec2</version_id>
+  <version_id>67c50d4e-8d6b-43c7-abe0-0bdc3f8246e2</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInsulatedRoof</class_name>
   <display_name>Add/Replace Residential Finished Roof</display_name>
@@ -175,12 +175,6 @@
       <checksum>CBF582D5</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1A15B5AD</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -192,12 +186,6 @@
       <checksum>C86EA5FB</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F49094C3</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -207,13 +195,31 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87D5E9E1</checksum>
+      <checksum>0354029E</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E66401CA</checksum>
+      <checksum>8D4B8CEF</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>058A19F9</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1AB9AE70</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B6E4B5DF</checksum>
     </file>
   </files>
 </measure>

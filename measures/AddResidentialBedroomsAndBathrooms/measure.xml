@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>8598b52e-14e1-4057-8a9c-c3605b72ba59</version_id>
+  <version_id>d4a960c5-f961-4305-9022-55038c827e10</version_id>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
-  <display_name>AddResidentialBedroomsAndBathrooms</display_name>
+  <display_name>Add/Replace Residential Bedrooms And Bathrooms</display_name>
   <description></description>
-  <modeler_description></modeler_description>
+  <modeler_description>Creates dummy ElectricEquipment objects to store the number of bedrooms and bathrooms associated with the model.</modeler_description>
   <arguments>
     <argument>
       <name>selectedliving</name>
@@ -126,7 +126,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9FEA6E49</checksum>
+      <checksum>4F1FB1C4</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1AB9AE70</checksum>
     </file>
   </files>
 </measure>

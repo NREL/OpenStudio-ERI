@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>02e8b224-016f-475c-8009-8c3badf6e2ea</version_id>
+  <version_id>3ff997a4-6f9f-4107-874c-d9325fa11392</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Add/Replace Residential Clothes Washer</display_name>
@@ -153,36 +153,6 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>Num_Br</name>
-      <display_name>Number of Bedrooms</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>3</default_value>
-      <choices>
-        <choice>
-          <value>1</value>
-          <display_name>1</display_name>
-        </choice>
-        <choice>
-          <value>2</value>
-          <display_name>2</display_name>
-        </choice>
-        <choice>
-          <value>3</value>
-          <display_name>3</display_name>
-        </choice>
-        <choice>
-          <value>4</value>
-          <display_name>4</display_name>
-        </choice>
-        <choice>
-          <value>5+</value>
-          <display_name>5+</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>space_type</name>
       <display_name>Location</display_name>
       <description>Select the space type where the clothes washer is located</description>
@@ -235,12 +205,6 @@
       <checksum>159FAC2A</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D7C1258E</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -289,16 +253,16 @@
       <checksum>63BE98ED</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>309DA22A</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>FB078477</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0354029E</checksum>
     </file>
     <file>
       <version>
@@ -309,7 +273,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C7847385</checksum>
+      <checksum>430A2650</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1AB9AE70</checksum>
     </file>
   </files>
 </measure>

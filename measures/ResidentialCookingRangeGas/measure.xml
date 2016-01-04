@@ -2,43 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>33d8c300-8f2b-4d36-b6cc-545422c7b407</uid>
-  <version_id>1a4057be-0153-47df-9aa5-dca8493b1971</version_id>
+  <version_id>2b75b684-cd6a-4fc8-88ee-054ef9304afa</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Add/Replace Residential Gas Cooking Range</display_name>
   <description>Adds (or replaces) a residential cooking range with the specified efficiency, operation, and schedule.</description>
   <modeler_description>Since there is no Cooking Range object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential cooking range. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
-    <argument>
-      <name>Num_Br</name>
-      <display_name>Number of Bedrooms</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>3</default_value>
-      <choices>
-        <choice>
-          <value>1</value>
-          <display_name>1</display_name>
-        </choice>
-        <choice>
-          <value>2</value>
-          <display_name>2</display_name>
-        </choice>
-        <choice>
-          <value>3</value>
-          <display_name>3</display_name>
-        </choice>
-        <choice>
-          <value>4</value>
-          <display_name>4</display_name>
-        </choice>
-        <choice>
-          <value>5+</value>
-          <display_name>5+</display_name>
-        </choice>
-      </choices>
-    </argument>
     <argument>
       <name>C_ef</name>
       <display_name>Cooktop Energy Factor</display_name>
@@ -88,7 +58,7 @@
     <argument>
       <name>space_type</name>
       <display_name>Location</display_name>
-      <description>Select the space where the cooking range is located</description>
+      <description>Select the space type where the cooking range is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -148,7 +118,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87D5E9E1</checksum>
+      <checksum>0354029E</checksum>
     </file>
     <file>
       <version>
@@ -159,13 +129,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BF4E27D4</checksum>
+      <checksum>C609E4D1</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>42C35E6E</checksum>
+      <checksum>FB078477</checksum>
     </file>
   </files>
 </measure>

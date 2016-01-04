@@ -1,8 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
+  <error>cannot load such file -- C:/OpenStudio-BEopt/OpenStudio-Beopt/measures/AddDistributionTimerAndRecirc/resources/constants</error>
   <name>add_water_use_equipment_object</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38c</uid>
-  <version_id>cc786f49-7639-4f35-be60-0837ebd5f919</version_id>
+  <version_id>c6dd3adc-503b-4641-b8dc-aaea8b8aa3c8</version_id>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>AddWaterUseEquipmentObject</class_name>
   <display_name>Add Hot Water Draw and Distribution</display_name>
@@ -17,7 +18,7 @@
       <model_dependent>false</model_dependent>
       <choices>
         <choice>
-          <value>New Plant Loop</value>
+          <value></value>
           <display_name>New Plant Loop</display_name>
         </choice>
       </choices>
@@ -31,11 +32,11 @@
       <default_value>false</default_value>
       <choices>
         <choice>
-          <value>true</value>
+          <value></value>
           <display_name>true</display_name>
         </choice>
         <choice>
-          <value>false</value>
+          <value></value>
           <display_name>false</display_name>
         </choice>
       </choices>
@@ -48,23 +49,23 @@
       <model_dependent>false</model_dependent>
       <choices>
         <choice>
-          <value>1</value>
+          <value></value>
           <display_name>1</display_name>
         </choice>
         <choice>
-          <value>2</value>
+          <value></value>
           <display_name>2</display_name>
         </choice>
         <choice>
-          <value>3</value>
+          <value></value>
           <display_name>3</display_name>
         </choice>
         <choice>
-          <value>4</value>
+          <value></value>
           <display_name>4</display_name>
         </choice>
         <choice>
-          <value>5</value>
+          <value></value>
           <display_name>5</display_name>
         </choice>
       </choices>
@@ -155,11 +156,11 @@
       <default_value>false</default_value>
       <choices>
         <choice>
-          <value>true</value>
+          <value></value>
           <display_name>true</display_name>
         </choice>
         <choice>
-          <value>false</value>
+          <value></value>
           <display_name>false</display_name>
         </choice>
       </choices>
@@ -173,15 +174,15 @@
       <default_value>Basement or Interior Space</default_value>
       <choices>
         <choice>
-          <value>Basement or Interior Space</value>
+          <value></value>
           <display_name>Basement or Interior Space</display_name>
         </choice>
         <choice>
-          <value>Attic</value>
+          <value></value>
           <display_name>Attic</display_name>
         </choice>
         <choice>
-          <value>Garage</value>
+          <value></value>
           <display_name>Garage</display_name>
         </choice>
       </choices>
@@ -195,11 +196,11 @@
       <default_value>Trunk and Branch</default_value>
       <choices>
         <choice>
-          <value>Home run</value>
+          <value></value>
           <display_name>Home run</display_name>
         </choice>
         <choice>
-          <value>Trunk and Branch</value>
+          <value></value>
           <display_name>Trunk and Branch</display_name>
         </choice>
       </choices>
@@ -213,11 +214,11 @@
       <default_value>Copper</default_value>
       <choices>
         <choice>
-          <value>Copper</value>
+          <value></value>
           <display_name>Copper</display_name>
         </choice>
         <choice>
-          <value>Pex</value>
+          <value></value>
           <display_name>Pex</display_name>
         </choice>
       </choices>
@@ -231,15 +232,15 @@
       <default_value>None</default_value>
       <choices>
         <choice>
-          <value>Demand</value>
+          <value></value>
           <display_name>Demand</display_name>
         </choice>
         <choice>
-          <value>Timer</value>
+          <value></value>
           <display_name>Timer</display_name>
         </choice>
         <choice>
-          <value>None</value>
+          <value></value>
           <display_name>None</display_name>
         </choice>
       </choices>
@@ -405,7 +406,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BC795F66</checksum>
+      <checksum>00F9A9C4</checksum>
     </file>
   </files>
 </measure>

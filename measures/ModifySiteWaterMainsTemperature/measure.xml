@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>modify_site_water_mains_temperature</name>
   <uid>f15e8163-22f4-4336-8257-338e1ab63a16</uid>
-  <version_id>293a34a0-4015-40ab-8b3c-b14c8323b10f</version_id>
+  <version_id>d571d957-2546-48fa-bfb2-8b6ad85aad5f</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ModifySiteWaterMainsTemperature</class_name>
   <display_name>ModifySiteWaterMainsTemperature</display_name>
@@ -59,7 +59,7 @@
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E66401CA</checksum>
+      <checksum>8D4B8CEF</checksum>
     </file>
   </files>
 </measure>

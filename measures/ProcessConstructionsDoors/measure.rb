@@ -179,21 +179,21 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
           end
         end
       elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
-            subSurfaces = surface.subSurfaces
-            subSurfaces.each do |subSurface|
-              if subSurface.subSurfaceType.include? "Door"
-                subSurface.resetConstruction
-                subSurface.setConstruction(door)
-                constructions_hash[subSurface.name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,"LivingDoors"]
-              end
-            end
-          end
-        end
-      end
+		# loop thru all surfaces attached to the space
+		surfaces = space.surfaces
+		surfaces.each do |surface|
+		  if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
+			subSurfaces = surface.subSurfaces
+			subSurfaces.each do |subSurface|
+			  if subSurface.subSurfaceType.include? "Door"
+				subSurface.resetConstruction
+				subSurface.setConstruction(garagedoor)
+				constructions_hash[subSurface.name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,"GarageDoors"]
+			  end
+			end
+		  end
+		end
+	  end
       constructions_hash.map do |key,value|
         runner.registerInfo("Sub Surface '#{key}' of Sub Surface Type '#{value[0]}', attached to Surface '#{value[1]}' which is attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}', was assigned Construction '#{value[2]}'")
       end

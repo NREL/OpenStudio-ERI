@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>816f1032-60f4-4252-9b2a-7424821bacbc</version_id>
+  <version_id>951b7004-6c5d-411a-8619-05112841151d</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Add/Replace Residential Refrigerator</display_name>
@@ -31,7 +31,7 @@
     <argument>
       <name>space_type</name>
       <display_name>Location</display_name>
-      <description>Select the space where the refrigerator is located</description>
+      <description>Select the space type where the refrigerator is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -91,7 +91,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87D5E9E1</checksum>
+      <checksum>0354029E</checksum>
     </file>
     <file>
       <version>
@@ -102,13 +102,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>21564647</checksum>
+      <checksum>BFF56663</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>42C35E6E</checksum>
+      <checksum>FB078477</checksum>
     </file>
   </files>
 </measure>

@@ -417,7 +417,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
           # loop thru all surfaces attached to the space
           surfaces = space.surfaces
           surfaces.each do |surface|
-            if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Surface"
+            if surface.surfaceType == "RoofCeiling" and ( surface.outsideBoundaryCondition == "Surface" or surface.outsideBoundaryCondition == "Adiabatic" )
               surface.resetConstruction
               surface.setConstruction(revfinuninsfinfloor)
               constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevFinUninsFinFloor"]

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_gas</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>11a31468-410d-4fdd-a445-c6478e7400d4</version_id>
+  <version_id>c04132ed-9e16-4c28-838e-df9b9c845cf7</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessGas</class_name>
   <display_name>AddOSWaterHeaterMixedTanklessGas</display_name>
@@ -99,6 +99,12 @@
       <checksum>62EF04AD</checksum>
     </file>
     <file>
+      <filename>ba_protocol_table_8_page_13.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>61747C72</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -107,13 +113,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1257165C</checksum>
+      <checksum>6B608A0C</checksum>
     </file>
     <file>
-      <filename>ba_protocol_table_8_page_13.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>61747C72</checksum>
+      <checksum>0354029E</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>7da29753-059d-42fd-930c-7aa1bda24eb5</version_id>
+  <version_id>c773443b-d3a2-4fc4-81be-8c33a6f0c84c</version_id>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Create Residential Door Area</display_name>
@@ -16,6 +16,13 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>placeholder</default_value>
+      <choices>
+        <choice>
+          <value>placeholder</value>
+          <display_name>living_spacetype</display_name>
+        </choice>
+      </choices>
     </argument>
     <argument>
       <name>userdefineddoorarea</name>
@@ -76,7 +83,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1BF8E513</checksum>
+      <checksum>DB824C72</checksum>
     </file>
   </files>
 </measure>

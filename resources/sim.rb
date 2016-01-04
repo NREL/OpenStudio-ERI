@@ -3350,9 +3350,9 @@ class Sim
     # Air System
 
     if air_conditioner.ACCoolingInstalledSEER == 999
-      air_conditioner.IsIdealAC = true
+      air_conditioner.hasIdealAC = true
     else
-      air_conditioner.IsIdealAC = false
+      air_conditioner.hasIdealAC = false
     end
 
     supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
@@ -3365,7 +3365,7 @@ class Sim
 
     if hasFurnace
 
-		f = furnace
+	  f = furnace
 	
       # Before we allowed systems with no cooling equipment, the system
       # fan was defined by the cooling equipment option. For systems
@@ -3398,12 +3398,12 @@ class Sim
 
     if hasCoolingEquipment
 
+	  ac = air_conditioner
+	
       if hasAirConditioner
 
-        ac = air_conditioner
-
         # Cooling Coil
-        if ac.IsIdealAC
+        if ac.hasIdealAC
           supply = get_cooling_coefficients(ac.ACNumberSpeeds, true, false, supply)
         else
           supply = get_cooling_coefficients(ac.ACNumberSpeeds, false, false, supply)
@@ -3484,7 +3484,7 @@ class Sim
     # Curves are hardcoded for both one and two speed models
     supply.Number_Speeds = number_Speeds
 
-    if test_suite.min_test_ideal_loads or air_conditioner.IsIdealAC
+    if test_suite.min_test_ideal_loads or air_conditioner.hasIdealAC
       supply = get_cooling_coefficients(supply.Number_Speeds, true, nil, supply)
     end
 
@@ -3492,7 +3492,7 @@ class Sim
     supply.SHR_Rated = Array.new
     (0...supply.Number_Speeds).to_a.each do |speed|
 
-      if air_conditioner.IsIdealAC
+      if air_conditioner.hasIdealAC
         eir = calc_EIR_from_COP(1.0, supplyFanPower_Rated)
         supply.CoolingEIR << eir
 
@@ -3533,7 +3533,7 @@ class Sim
 		return false
     end
 
-    if test_suite.min_test_ideal_loads or air_conditioner.IsIdealAC
+    if test_suite.min_test_ideal_loads or air_conditioner.hasIdealAC
       supply.COOL_CLOSS_FPLR_SPEC_coefficients = [1.0, 0.0, 0.0]
     else
       supply.COOL_CLOSS_FPLR_SPEC_coefficients = [(1.0 - c_d), c_d, 0.0]    # Linear part load model
