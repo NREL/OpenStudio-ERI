@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>cd86533d-d5e4-489e-9f42-074e6a531b07</version_id>
+  <version_id>1215795f-9c0b-4d68-bf8c-8bcddf859fcf</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Add/Replace Residential Electric Clothes Dryer</display_name>
-  <description>This measure adds a residential clothes washer and dryer. The user can specify how the energy consumption is calculated (using benchmark assumptions or a detailed calculation methond). Users must also specify which space the washer and dryer are installed in (the are assumed to be colocated).</description>
-  <modeler_description>Adds or replaces equipment objects. The dryer can be either gas or electric, and will add the appropriate "GasEquipment" and/or "ElectricEquipment" objects. The washer is always electric. The schedules used are based on the BA HSP.</modeler_description>
+  <description>Adds (or replaces) a residential electric clothes dryer with the specified efficiency, operation, and schedule.</description>
+  <modeler_description>Since there is no Electric Clothes Dryer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential electric clothes dryer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
     <argument>
       <name>cd_ef</name>
@@ -88,10 +88,17 @@
     <argument>
       <name>space_type</name>
       <display_name>Location</display_name>
-      <description>Select the space type where the clothes washer and dryer are located</description>
+      <description>Select the space type where the clothes dryer is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -118,18 +125,6 @@
       <checksum>C0A8F5D4</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FB078477</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -138,7 +133,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CE351268</checksum>
+      <checksum>97292D10</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

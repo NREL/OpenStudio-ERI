@@ -294,12 +294,12 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
   #define what happens when the measure is run
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-    
+    	
     #use the built-in error checking 
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-
+		
     # Space Type
 	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
     living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)

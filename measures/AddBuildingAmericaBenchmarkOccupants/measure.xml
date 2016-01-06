@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>add_building_america_benchmark_occupants</name>
   <uid>922fce56-377a-439d-8b3d-19f9c8bb91f5</uid>
-  <version_id>08d235d8-cc48-4ef2-86d0-4705e85f2078</version_id>
+  <version_id>5c67534b-250e-4215-8c7a-93cc2b6cacb9</version_id>
   <xml_checksum>5639FE46</xml_checksum>
   <class_name>AddBuildingAmericaBenchmarkOccupants</class_name>
-  <display_name>AddBuildingAmericaBenchmarkOccupants</display_name>
+  <display_name>Set Residential Occupants</display_name>
   <description>This measure adds occupants to the home. The number of occupants depends on the number of bedrooms in the home. The schedule used by the occupants comes from the BUilding America House Simulation Protocols (http://energy.gov/sites/prod/files/2014/03/f13/house_simulation_protocols_2014.pdf). Users must also select which space is the living space (where occupants spend the majority of their time).</description>
   <modeler_description>Adds or replaces "People" objects to the building in the user specified zone.</modeler_description>
   <arguments>
@@ -18,11 +18,19 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>space_type</name>
-      <display_name>Select the space where the occupants is located</display_name>
+      <name>living_space_type</name>
+      <display_name>Living space type</display_name>
+      <description>Select the living space type</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -57,7 +65,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2CBA283C</checksum>
+      <checksum>D5A96D61</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

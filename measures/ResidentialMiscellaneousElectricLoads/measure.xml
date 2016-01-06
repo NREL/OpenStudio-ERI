@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_electric_loads</name>
   <uid>3ac41688-ef52-4679-b79c-8cbdf7cbd0e7</uid>
-  <version_id>fdeb800b-12a7-46c1-884a-0c0bff22b59d</version_id>
+  <version_id>73b02218-9af2-47f2-8c3c-fe698de1649f</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialMiscellaneousElectricLoads</class_name>
   <display_name>Add/Replace Residential Plug Loads</display_name>
@@ -16,13 +16,6 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
-    </argument>
-    <argument>
-      <name>space_type</name>
-      <display_name>Select the space where the miscellaneous electric plug loads are located</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
     </argument>
     <argument>
       <name>weekday_sch</name>
@@ -50,6 +43,36 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248</default_value>
+    </argument>
+    <argument>
+      <name>living_space_type</name>
+      <display_name>Living space type</display_name>
+      <description>Select the living space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>fbasement_space_type</name>
+      <display_name>Finished Basement space type</display_name>
+      <description>Select the finished basement space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>finished basement</default_value>
+      <choices>
+        <choice>
+          <value>finished basement</value>
+          <display_name>finished basement</display_name>
+        </choice>
+      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -84,25 +107,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>69504B7C</checksum>
+      <checksum>B9EA42F1</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
+      <checksum>BF5E9F83</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB078477</checksum>
+      <checksum>FC574302</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

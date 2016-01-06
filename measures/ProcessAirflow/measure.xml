@@ -2,27 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>83be616e-11e4-455a-bac7-969cd74ce8de</version_id>
+  <version_id>cf7e8503-03ac-4c94-8b30-8696825d6c64</version_id>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Add Residential Airflow Properties</display_name>
   <description>This measure processes infiltration for the living space, garage, finished basement, unfinished basement, crawlspace, and unfinished attic. It also processes mechanical ventilation and natural ventilation for the living space.</description>
   <modeler_description>Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation).</modeler_description>
   <arguments>
-    <argument>
-      <name>selectedliving</name>
-      <display_name>Living Zone</display_name>
-      <description>The living zone.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <choices>
-        <choice>
-          <value>NA</value>
-          <display_name>NA</display_name>
-        </choice>
-      </choices>
-    </argument>
     <argument>
       <name>userdefinedinflivingspace</name>
       <display_name>Air Leakage: Above-Grade Living Space ACH50</display_name>
@@ -53,36 +39,6 @@
       <default_value>auto</default_value>
     </argument>
     <argument>
-      <name>selectedgarage</name>
-      <display_name>Garage Zone</display_name>
-      <description>The garage zone.</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>NA</default_value>
-      <choices>
-        <choice>
-          <value>NA</value>
-          <display_name>NA</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>selectedfbsmt</name>
-      <display_name>Finished Basement Zone</display_name>
-      <description>The finished basement zone.</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>NA</default_value>
-      <choices>
-        <choice>
-          <value>NA</value>
-          <display_name>NA</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>userdefinedinffbsmt</name>
       <display_name>Finished Basement: Constant ACH</display_name>
       <description>Constant air exchange rate, in Air Changes per Hour (ACH), for the finished basement.</description>
@@ -91,21 +47,6 @@
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>selectedufbsmt</name>
-      <display_name>Unfinished Basement Zone</display_name>
-      <description>The unfinished basement zone.</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>NA</default_value>
-      <choices>
-        <choice>
-          <value>NA</value>
-          <display_name>NA</display_name>
-        </choice>
-      </choices>
     </argument>
     <argument>
       <name>userdefinedinfufbsmt</name>
@@ -118,21 +59,6 @@
       <default_value>0.1</default_value>
     </argument>
     <argument>
-      <name>selectedcrawl</name>
-      <display_name>Crawlspace Zone</display_name>
-      <description>The crawlspace zone.</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>NA</default_value>
-      <choices>
-        <choice>
-          <value>NA</value>
-          <display_name>NA</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>userdefinedinfcrawl</name>
       <display_name>Crawlspace: Constant ACH</display_name>
       <description>Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for the crawlspace.</description>
@@ -141,21 +67,6 @@
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>selectedunfinattic</name>
-      <display_name>Unfinished Attic Zone</display_name>
-      <description>The unfinished attic zone.</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>NA</default_value>
-      <choices>
-        <choice>
-          <value>NA</value>
-          <display_name>NA</display_name>
-        </choice>
-      </choices>
     </argument>
     <argument>
       <name>userdefinedinfunfinattic</name>
@@ -648,6 +559,96 @@
       <model_dependent>false</model_dependent>
       <default_value>1200</default_value>
     </argument>
+    <argument>
+      <name>living_thermal_zone</name>
+      <display_name>Living thermal zone</display_name>
+      <description>Select the living thermal zone</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living zone</default_value>
+      <choices>
+        <choice>
+          <value>living zone</value>
+          <display_name>living zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>garage_thermal_zone</name>
+      <display_name>Garage thermal zone</display_name>
+      <description>Select the garage thermal zone</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>garage zone</default_value>
+      <choices>
+        <choice>
+          <value>garage zone</value>
+          <display_name>garage zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>fbasement_thermal_zone</name>
+      <display_name>Finished Basement thermal zone</display_name>
+      <description>Select the finished basement thermal zone</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>finished basement zone</default_value>
+      <choices>
+        <choice>
+          <value>finished basement zone</value>
+          <display_name>finished basement zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>ufbasement_thermal_zone</name>
+      <display_name>Unfinished Basement thermal zone</display_name>
+      <description>Select the unfinished basement thermal zone</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>unfinished basement zone</default_value>
+      <choices>
+        <choice>
+          <value>unfinished basement zone</value>
+          <display_name>unfinished basement zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>crawl_thermal_zone</name>
+      <display_name>Crawlspace thermal zone</display_name>
+      <description>Select the crawlspace thermal zone</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>crawlspace zone</default_value>
+      <choices>
+        <choice>
+          <value>crawlspace zone</value>
+          <display_name>crawlspace zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>ufattic_thermal_zone</name>
+      <display_name>Unfinished Attic thermal zone</display_name>
+      <description>Select the unfinished attic thermal zone</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>unfinished attic zone</default_value>
+      <choices>
+        <choice>
+          <value>unfinished attic zone</value>
+          <display_name>unfinished attic zone</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -673,18 +674,6 @@
       <checksum>6EEE80CB</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -697,10 +686,28 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030F203D</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>292DA523</checksum>
+    </file>
+    <file>
+      <filename>sim.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>27253A02</checksum>
     </file>
     <file>
       <version>
@@ -711,13 +718,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2D56BB65</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B6E4B5DF</checksum>
+      <checksum>F670CB8D</checksum>
     </file>
   </files>
 </measure>

@@ -959,7 +959,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       end
 
     end
-
+	
     return true
  
   end #end the run method

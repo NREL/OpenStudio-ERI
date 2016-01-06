@@ -69,11 +69,10 @@ class WeatherProcess
             # If this is an always-run Measure, need to check for file in different path
             alt_weath_path = File.expand_path(File.join(File.dirname(__FILE__), "../../../resources"))
             alt_epw_path = File.expand_path(File.join(alt_weath_path, test.get.to_s))
-            server_epw_path = File.expand_path(File.join(File.dirname(__FILE__), "../../weather/#{File.basename(test.get.to_s)}"))
-
+            server_epw_path = File.expand_path(File.join(File.dirname(__FILE__), "../../../weather/#{File.basename(test.get.to_s)}"))
             if File.exist?(alt_epw_path)
               epw_path = OpenStudio::Path.new(alt_epw_path)
-            elsif File.exist? server_epw_path
+            elsif File.exist?(server_epw_path)
               epw_path = OpenStudio::Path.new(server_epw_path)
             else
               runner.registerError("Model has been assigned a weather file, but the file is not in the specified location of '#{test.get}'.")
@@ -85,7 +84,7 @@ class WeatherProcess
           return nil
         end
       else
-        runner.registerError('Model has not been assigned a weather file.')
+        runner.registerError("Model has not been assigned a weather file.")
         return nil
       end
     end

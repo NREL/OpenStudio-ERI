@@ -307,14 +307,14 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     if !runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-
+	
 	# Space type
 	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
     living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
     if living_space_type.nil?
         return false
     end
-	
+		
 	# Gypsum
 	userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
 	userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
@@ -337,7 +337,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 	userdefined_extfinspecheat = runner.getDoubleArgumentValue("userdefinedextfinspecheat",user_arguments)
 	userdefined_extfinthermalabs = runner.getDoubleArgumentValue("userdefinedextfinthermalabs",user_arguments)
 	userdefined_extfinabs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)	
-
+	
 	# Constants
 	mat_wood = get_mat_wood
 	mat_gyp = get_mat_gypsum
@@ -399,13 +399,13 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 	exteriorfinish = ExteriorFinish.new(finishThickness, finishConductivity, finishRvalue)
 	wallsh = WallSheathing.new(rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
 	fu = Furring.new
-	
+		
 	# Create the sim object
 	sim = Sim.new(model, runner)
 	
 	# Process the wood stud walls
 	cmu, fu, wallsh = sim._processConstructionsExteriorInsulatedWallsCMU(cmu, extwallmass, exteriorfinish, wallsh, fu)
-	
+		
 	# Create the material layers
 	
 	# CMU
@@ -450,7 +450,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 	osb.setConductivity(OpenStudio::convert(osbConductivity,"Btu/hr*ft*R","W/m*K").get)
 	osb.setDensity(OpenStudio::convert(osbDensity,"lb/ft^3","kg/m^3").get)
 	osb.setSpecificHeat(OpenStudio::convert(osbSpecificHeat,"Btu/lb*R","J/kg*K").get)
-	
+		
 	# ExteriorFinish
 	extfin = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	extfin.setName("ExteriorFinish")
@@ -480,7 +480,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 	fu.setConductivity(OpenStudio::convert(fuConductivity,"Btu/hr*ft*R","W/m*K").get)
 	fu.setDensity(OpenStudio::convert(fuDensity,"lb/ft^3","kg/m^3").get)
 	fu.setSpecificHeat(OpenStudio::convert(fuSpecificHeat,"Btu/lb*R","J/kg*K").get)	
-	
+		
 	# ExtInsFinWall
 	layercount = 0
 	extinsfinwall = OpenStudio::Model::Construction.new(model)
@@ -505,7 +505,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 		extinsfinwall.insertLayer(layercount,gypsum)
 		layercount += 1
 	end	
-	
+		
 	# ExtInsUnfinWall
 	layercount = 0
 	extinsunfinwall = OpenStudio::Model::Construction.new(model)
@@ -525,7 +525,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 		extinsunfinwall.insertLayer(layercount,fu)
 		layercount += 1
 	end
-	
+		
     # loop thru all the spaces
     spaces = model.getSpaces
     spaces.each do |space|
@@ -545,7 +545,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
         runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
       end
     end	
-	
+		
     return true
 
   end

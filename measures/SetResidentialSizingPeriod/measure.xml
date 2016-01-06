@@ -1,0 +1,52 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>set_residential_sizing_period</name>
+  <uid>c371327e-b5a4-48d2-a58d-42af53a4405c</uid>
+  <version_id>593371ee-97d7-40a5-b18a-f11df83079c7</version_id>
+  <xml_checksum>7DF45990</xml_checksum>
+  <class_name>SetResidentialSizingPeriod</class_name>
+  <display_name>Set Residential Sizing Period</display_name>
+  <description></description>
+  <modeler_description></modeler_description>
+  <arguments/>
+  <provenances/>
+  <tags>
+    <tag>HVAC.Whole System</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>EnergyPlusMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>set_residential_sizing_period_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F7F220BF</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>81483216</checksum>
+    </file>
+  </files>
+</measure>

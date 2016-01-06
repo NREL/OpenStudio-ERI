@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>d1908345-4481-4271-896e-63c59da322d1</version_id>
+  <version_id>09d9a088-5890-4ff1-be0a-c7369d4324ea</version_id>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -106,16 +106,16 @@
           <display_name>crawlspace</display_name>
         </choice>
         <choice>
-          <value>unfinishedbasement</value>
-          <display_name>unfinishedbasement</display_name>
+          <value>unfinished basement</value>
+          <display_name>unfinished basement</display_name>
         </choice>
         <choice>
-          <value>finishedbasement</value>
-          <display_name>finishedbasement</display_name>
+          <value>finished basement</value>
+          <display_name>finished basement</display_name>
         </choice>
         <choice>
-          <value>pier_and_beam</value>
-          <display_name>pier_and_beam</display_name>
+          <value>pier and beam</value>
+          <display_name>pier and beam</display_name>
         </choice>
       </choices>
     </argument>
@@ -136,15 +136,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>unfinishedattic</default_value>
+      <default_value>unfinished attic</default_value>
       <choices>
         <choice>
-          <value>unfinishedattic</value>
-          <display_name>unfinishedattic</display_name>
+          <value>unfinished attic</value>
+          <display_name>unfinished attic</display_name>
         </choice>
         <choice>
-          <value>finishedattic</value>
-          <display_name>finishedattic</display_name>
+          <value>finished attic</value>
+          <display_name>finished attic</display_name>
         </choice>
       </choices>
     </argument>
@@ -279,7 +279,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1BEFF11C</checksum>
+      <checksum>4060C23D</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
     </file>
   </files>
 </measure>

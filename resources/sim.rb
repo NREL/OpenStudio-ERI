@@ -889,6 +889,7 @@ class Sim
 
 	def initialize(model, runner)
       @weather = WeatherProcess.new(model, runner)
+	  @model = model
 	end
 	
   def _getGroundTemperatures
@@ -1140,23 +1141,23 @@ class Sim
     hasUnfinishedBasement = false
     hasCrawl = false
     hasUnfinAttic = false
-    if not selected_garage == "NA"
+    if not selected_garage.nil?
       hasGarage = true
       spaces << garage
     end
-    if not selected_fbsmt == "NA"
+    if not selected_fbsmt.nil?
       hasFinishedBasement = true
       spaces << finished_basement
     end
-    if not selected_ufbsmt == "NA"
+    if not selected_ufbsmt.nil?
       hasUnfinishedBasement = true
       spaces << space_unfinished_basement
     end
-    if not selected_crawl == "NA"
+    if not selected_crawl.nil?
       hasCrawl = true
       spaces << crawlspace
     end
-    if not selected_unfinattic == "NA"
+    if not selected_unfinattic.nil?
       hasUnfinAttic = true
       spaces << unfinished_attic
     end
@@ -1373,7 +1374,7 @@ class Sim
 	  if space.volume == 0
 	    next
 	  end
-
+	  
       space.f_t_SG = ws.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** ws.site_terrain_exponent / (ws.terrain_multiplier * (ws.height / 32.8) ** ws.terrain_exponent)
       space.f_s_SG = nil
       space.f_w_SG = nil

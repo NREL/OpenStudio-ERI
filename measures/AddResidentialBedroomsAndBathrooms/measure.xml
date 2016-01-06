@@ -2,21 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>d4a960c5-f961-4305-9022-55038c827e10</version_id>
+  <version_id>15681662-e9e9-4718-8eed-abc8a5e8f48f</version_id>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
-  <display_name>Add/Replace Residential Bedrooms And Bathrooms</display_name>
+  <display_name>Set Residential Bedrooms And Bathrooms</display_name>
   <description></description>
   <modeler_description>Creates dummy ElectricEquipment objects to store the number of bedrooms and bathrooms associated with the model.</modeler_description>
   <arguments>
-    <argument>
-      <name>selectedliving</name>
-      <display_name>Living Space</display_name>
-      <description>The living space type.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
     <argument>
       <name>Num_Br</name>
       <display_name>Number of Bedrooms</display_name>
@@ -77,6 +69,21 @@
         </choice>
       </choices>
     </argument>
+    <argument>
+      <name>living_space_type</name>
+      <display_name>Living space type</display_name>
+      <description>Select the living space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -126,13 +133,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4F1FB1C4</checksum>
+      <checksum>0AC015F2</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

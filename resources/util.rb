@@ -108,6 +108,42 @@ class HelperMethods
         end
         return space_type
     end
+	
+    def self.get_thermal_zone_from_string(model, thermalzone_s, runner, print_err=true)
+        thermal_zone = nil
+        model.getThermalZones.each do |tz|
+            if tz.name.to_s == thermalzone_s
+                thermal_zone = tz
+                break
+            end
+        end
+        if thermal_zone.nil?
+            if print_err
+                runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
+            else
+                runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
+            end
+        end
+        return thermal_zone
+    end
+
+    def self.get_thermal_zone_from_string_from_idf(workspace, thermalzone_s, runner, print_err=true)
+        thermal_zone = nil
+        workspace.getObjectsByType("Zone".to_IddObjectType).each do |tz|
+            if tz.getString(0).to_s == thermalzone_s
+                thermal_zone = tz
+                break
+            end
+        end
+        if thermal_zone.nil?
+            if print_err
+                runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
+            else
+                runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
+            end
+        end
+        return thermal_zone
+    end		
     
     def self.get_plant_loop_from_string(model, plantloop_s, runner, print_err=true)
         plant_loop = nil

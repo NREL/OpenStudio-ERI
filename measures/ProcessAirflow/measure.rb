@@ -324,7 +324,10 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 		vertices1 << [surface.getString(10).get.to_f, surface.getString(11).get.to_f, surface.getString(12).get.to_f]
 		vertices1 << [surface.getString(13).get.to_f, surface.getString(14).get.to_f, surface.getString(15).get.to_f]
 		vertices1 << [surface.getString(16).get.to_f, surface.getString(17).get.to_f, surface.getString(18).get.to_f]
-		vertices1 << [surface.getString(19).get.to_f, surface.getString(20).get.to_f, surface.getString(21).get.to_f]
+		begin
+			vertices1 << [surface.getString(19).get.to_f, surface.getString(20).get.to_f, surface.getString(21).get.to_f]
+		rescue
+		end
 		vertices1.each do |vertex1|
 			shading_surfaces = workspace.getObjectsByType("Shading:Building:Detailed".to_IddObjectType)
 			shading_surfaces.each do |shading_surface|
@@ -357,29 +360,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
     # Air Leakage
 
-    #make a choice argument for model objects
-    zone_display_names = OpenStudio::StringVector.new
-	
-    #get all thermal zones in model
-    zone_args = workspace.getObjectsByType("Zone".to_IddObjectType)
-    zone_args.each do |zone_arg|
-      zone_arg_name = zone_arg.getString(0) # Name
-      zone_display_names << zone_arg_name.to_s
-    end
-	# TODO: figure out why in spreadsheet workspace.getObjectsByType returns an empty list
-    # zone_display_names << "living_1 Thermal Zone"
-	# zone_display_names << "basement"
-	# zone_display_names << "crawl"
-	# zone_display_names << "unfinishedattic Thermal Zone"
-	# zone_display_names << "garage Thermal Zone"
-	zone_display_names << "NA"
-
-    #make a choice argument for living space
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", zone_display_names, true)
-    selected_living.setDisplayName("Living Zone")
-	selected_living.setDescription("The living zone.")
-    args << selected_living
-
     #make a double argument for infiltration of living space
     userdefined_inflivingspace = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinflivingspace", false)
     userdefined_inflivingspace.setDisplayName("Air Leakage: Above-Grade Living Space ACH50")
@@ -403,20 +383,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     userdefined_infsheltercoef.setDefaultValue("auto")
     args << userdefined_infsheltercoef
 
-    #make a choice argument for garage
-    selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", zone_display_names, false)
-    selected_garage.setDisplayName("Garage Zone")
-	selected_garage.setDescription("The garage zone.")
-    selected_garage.setDefaultValue("NA")
-    args << selected_garage
-
-    #make a choice argument for fbsmt
-    selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", zone_display_names, false)
-    selected_fbsmt.setDisplayName("Finished Basement Zone")
-	selected_fbsmt.setDescription("The finished basement zone.")
-    selected_fbsmt.setDefaultValue("NA")
-    args << selected_fbsmt
-
     #make a double argument for infiltration of finished basement
     userdefined_inffbsmt = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinffbsmt", false)
     userdefined_inffbsmt.setDisplayName("Finished Basement: Constant ACH")
@@ -424,14 +390,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	userdefined_inffbsmt.setDescription("Constant air exchange rate, in Air Changes per Hour (ACH), for the finished basement.")
     userdefined_inffbsmt.setDefaultValue(0.0)
     args << userdefined_inffbsmt
-
-    #make a choice argument for ufbsmt
-    selected_ufbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmt", zone_display_names, false)
-    selected_ufbsmt.setDisplayName("Unfinished Basement Zone")
-	selected_ufbsmt.setDescription("The unfinished basement zone.")
-    selected_ufbsmt.setDefaultValue("NA")
-    args << selected_ufbsmt
-
+	
     #make a double argument for infiltration of unfinished basement
     userdefined_infufbsmt = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinfufbsmt", false)
     userdefined_infufbsmt.setDisplayName("Unfinished Basement: Constant ACH")
@@ -439,14 +398,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	userdefined_infufbsmt.setDescription("Constant air exchange rate, in Air Changes per Hour (ACH), for the unfinished basement. A value of 0.10 ACH or greater is recommended for modeling Heat Pump Water Heaters in unfinished basements.")
     userdefined_infufbsmt.setDefaultValue(0.1)
     args << userdefined_infufbsmt
-
-    #make a choice argument for crawl
-    selected_crawl = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcrawl", zone_display_names, false)
-    selected_crawl.setDisplayName("Crawlspace Zone")
-	selected_crawl.setDescription("The crawlspace zone.")
-    selected_crawl.setDefaultValue("NA")
-    args << selected_crawl
-
+	
     #make a double argument for infiltration of crawlspace
     userdefined_infcrawl = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinfcrawl", false)
     userdefined_infcrawl.setDisplayName("Crawlspace: Constant ACH")
@@ -454,13 +406,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	userdefined_infcrawl.setDescription("Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for the crawlspace.")
     userdefined_infcrawl.setDefaultValue(0.0)
     args << userdefined_infcrawl
-
-    #make a choice argument for unfinattic
-    selected_unfinattic = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedunfinattic", zone_display_names, false)
-    selected_unfinattic.setDisplayName("Unfinished Attic Zone")
-	selected_unfinattic.setDescription("The unfinished attic zone.")
-    selected_unfinattic.setDefaultValue("NA")
-    args << selected_unfinattic
 
     #make a double argument for infiltration of unfinished attic
     userdefined_infunfinattic = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinfunfinattic", false)
@@ -773,6 +718,102 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ufbarea.setDefaultValue(1200.0)
     args << ufbarea
 
+    #make a choice argument for living thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.LivingZone)
+        thermal_zone_args << Constants.LivingZone
+    end
+    living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, true)
+    living_thermal_zone.setDisplayName("Living thermal zone")
+    living_thermal_zone.setDescription("Select the living thermal zone")
+    living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    args << living_thermal_zone		
+	
+    #make a choice argument for garage thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.GarageZone)
+        thermal_zone_args << Constants.GarageZone
+    end
+    garage_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_thermal_zone", thermal_zone_args, true)
+    garage_thermal_zone.setDisplayName("Garage thermal zone")
+    garage_thermal_zone.setDescription("Select the garage thermal zone")
+    garage_thermal_zone.setDefaultValue(Constants.GarageZone)
+    args << garage_thermal_zone	
+
+    #make a choice argument for finished basement thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.FinishedBasementZone)
+        thermal_zone_args << Constants.FinishedBasementZone
+    end
+    fbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_thermal_zone", thermal_zone_args, true)
+    fbasement_thermal_zone.setDisplayName("Finished Basement thermal zone")
+    fbasement_thermal_zone.setDescription("Select the finished basement thermal zone")
+    fbasement_thermal_zone.setDefaultValue(Constants.FinishedBasementZone)
+    args << fbasement_thermal_zone	
+
+    #make a choice argument for unfinished basement thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.UnfinishedBasementZone)
+        thermal_zone_args << Constants.UnfinishedBasementZone
+    end
+    ufbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ufbasement_thermal_zone", thermal_zone_args, true)
+    ufbasement_thermal_zone.setDisplayName("Unfinished Basement thermal zone")
+    ufbasement_thermal_zone.setDescription("Select the unfinished basement thermal zone")
+    ufbasement_thermal_zone.setDefaultValue(Constants.UnfinishedBasementZone)
+    args << ufbasement_thermal_zone	
+
+    #make a choice argument for crawl thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.CrawlZone)
+        thermal_zone_args << Constants.CrawlZone
+    end
+    crawl_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("crawl_thermal_zone", thermal_zone_args, true)
+    crawl_thermal_zone.setDisplayName("Crawlspace thermal zone")
+    crawl_thermal_zone.setDescription("Select the crawlspace thermal zone")
+    crawl_thermal_zone.setDefaultValue(Constants.CrawlZone)
+    args << crawl_thermal_zone	
+	
+    #make a choice argument for ufattic thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.UnfinishedAtticZone)
+        thermal_zone_args << Constants.UnfinishedAtticZone
+    end
+    ufattic_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ufattic_thermal_zone", thermal_zone_args, true)
+    ufattic_thermal_zone.setDisplayName("Unfinished Attic thermal zone")
+    ufattic_thermal_zone.setDescription("Select the unfinished attic thermal zone")
+    ufattic_thermal_zone.setDefaultValue(Constants.UnfinishedAtticZone)
+    args << ufattic_thermal_zone		
+	
     return args
   end #end the arguments method
 
@@ -786,12 +827,21 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     end
 
     # Zones
-    selected_living = runner.getStringArgumentValue("selectedliving",user_arguments)
-    selected_garage = runner.getStringArgumentValue("selectedgarage",user_arguments)
-    selected_fbsmt = runner.getStringArgumentValue("selectedfbsmt",user_arguments)
-    selected_ufbsmt = runner.getStringArgumentValue("selectedufbsmt",user_arguments)
-    selected_crawl = runner.getStringArgumentValue("selectedcrawl",user_arguments)
-    selected_unfinattic = runner.getStringArgumentValue("selectedunfinattic",user_arguments)
+	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+	living_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
+    if living_thermal_zone.nil?
+        return false
+    end
+	garage_thermal_zone_r = runner.getStringArgumentValue("garage_thermal_zone",user_arguments)
+	garage_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, garage_thermal_zone_r, runner, false)
+	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
+	fbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, fbasement_thermal_zone_r, runner, false)
+	ufbasement_thermal_zone_r = runner.getStringArgumentValue("ufbasement_thermal_zone",user_arguments)
+	ufbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, ufbasement_thermal_zone_r, runner, false)
+	crawl_thermal_zone_r = runner.getStringArgumentValue("crawl_thermal_zone",user_arguments)
+	crawl_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, crawl_thermal_zone_r, runner, false)
+	ufattic_thermal_zone_r = runner.getStringArgumentValue("ufattic_thermal_zone",user_arguments)
+	ufattic_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, ufattic_thermal_zone_r, runner, false)
 
     infiltrationLivingSpaceACH50 = runner.getDoubleArgumentValue("userdefinedinflivingspace",user_arguments)
     infiltrationLivingSpaceConstantACH = runner.getDoubleArgumentValue("userdefinedconstinflivingspace",user_arguments)
@@ -844,7 +894,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentMaxOARelativeHumidity = runner.getDoubleArgumentValue("userdefinedrelhumratio",user_arguments)
 
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, selected_living, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, living_thermal_zone_r, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -887,39 +937,39 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     zones = workspace.getObjectsByType("Zone".to_IddObjectType)
     zones.each do |zone|
       zone_name = zone.getString(0).to_s # Name
-      if zone_name == selected_living # tk need to figure out why idf doesn't get these values after OSM translation
+      if zone_name == living_thermal_zone_r # tk need to figure out why idf doesn't get these values after OSM translation
         living_space.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
         living_space.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
         living_space.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         living_space.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
-      elsif zone_name == selected_garage
+      elsif zone_name == garage_thermal_zone_r
         garage.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
         garage.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
         garage.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         garage.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
-      elsif zone_name == selected_fbsmt
+      elsif zone_name == fbasement_thermal_zone_r
         finished_basement.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
         finished_basement.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
         finished_basement.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         finished_basement.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
-      elsif zone_name == selected_ufbsmt
+      elsif zone_name == ufbasement_thermal_zone_r
         space_unfinished_basement.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
         space_unfinished_basement.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
         space_unfinished_basement.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         space_unfinished_basement.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
-      elsif zone_name == selected_crawl
+      elsif zone_name == crawl_thermal_zone_r
         crawlspace.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
         crawlspace.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
         crawlspace.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         crawlspace.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
-      elsif zone_name == selected_unfinattic
+      elsif zone_name == ufattic_thermal_zone_r
         unfinished_attic.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
         unfinished_attic.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
         unfinished_attic.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         unfinished_attic.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
       end
     end
-
+	
     heating_set_point.HeatingSetpointWeekday = Array.new
     cooling_set_point.CoolingSetpointWeekday = Array.new
     schedule_days = workspace.getObjectsByType("Schedule:Day:Interval".to_IddObjectType)
@@ -994,7 +1044,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     sim = Sim.new(workspace, runner)
 	
     # Process the infiltration
-    si, living_space, wind_speed, garage, fb, ub, cs, ua = sim._processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site, geometry)
+    si, living_space, wind_speed, garage, fb, ub, cs, ua = sim._processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, garage_thermal_zone, fbasement_thermal_zone, ufbasement_thermal_zone, crawl_thermal_zone, ufattic_thermal_zone, wind_speed, neighbors, site, geometry)
     # Process the mechanical ventilation
     vent, schedules = sim._processMechanicalVentilation(si, vent, misc, clothes_dryer, geometry, living_space, schedules)
     # Process the natural ventilation
@@ -1065,7 +1115,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ems << "
     ZoneInfiltration:FlowCoefficient,
       Living Infiltration,                                        !- Name
-      #{selected_living},                                         !- Zone Name
+      #{living_thermal_zone_r},                                   !- Zone Name
       AlwaysOn,                                                   !- Schedule Name
       1,                                                          !- Flow Coefficient {m/s-Pa^n}
       1,                                                          !- Stack Coefficient {Pa^n/K^n}
@@ -1078,7 +1128,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ems << "
     ZoneVentilation:DesignFlowRate,
       Natural Ventilation,                                        !- Name
-      #{selected_living},                                         !- Zone Name
+      #{living_thermal_zone_r},                                   !- Zone Name
       NatVent,                                                    !- Schedule Name
       Flow/Zone,                                                  !- Design Flow Rate Calculation Method
       0.001,                                                      !- Design Flow rate {m^3/s}
@@ -1099,7 +1149,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ems << "
     EnergyManagementSystem:Sensor,
       Tout,                                                       !- Name
-      #{selected_living},                                         !- Output:Variable or Output:Meter Index Key Name
+      #{living_thermal_zone_r},                                   !- Output:Variable or Output:Meter Index Key Name
       Zone Outdoor Air Drybulb Temperature;                       !- Output:Variable or Output:Meter Index Key Name"
 
     # Hout
@@ -1120,21 +1170,21 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ems << "
     EnergyManagementSystem:Sensor,
       Tin,                                                        !- Name
-      #{selected_living},                                         !- Output:Variable or Output:Meter Index Key Name
+      #{living_thermal_zone_r},                                   !- Output:Variable or Output:Meter Index Key Name
       Zone Mean Air Temperature;                                  !- Output:Variable or Output:Meter Index Key Name"
 
     # Phiin
     ems << "
     EnergyManagementSystem:Sensor,
       Phiin,                                                      !- Name
-      #{selected_living},                                         !- Output:Variable or Output:Meter Index Key Name
+      #{living_thermal_zone_r},                                   !- Output:Variable or Output:Meter Index Key Name
       Zone Air Relative Humidity;                                 !- Output:Variable or Output:Meter Index Key Name"	  
 	  
     # Win
     ems << "
     EnergyManagementSystem:Sensor,
       Win,                                                        !- Name
-      #{selected_living},                                         !- Output:Variable or Output:Meter Index Key Name
+      #{living_thermal_zone_r},                                   !- Output:Variable or Output:Meter Index Key Name
       Zone Mean Air Humidity Ratio;                               !- Output:Variable or Output:Meter Index Key Name"
 
     # Wout
@@ -1305,7 +1355,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       Set Q_acctd_for_elsewhere = QhpwhOut + QhpwhIn + QductsOut + QductsIn,
 	  Set InfilFlow = (((Qu^2) + (Qn^2))^0.5) - Q_acctd_for_elsewhere,
 	  Set InfilFlow = (@Max InfilFlow 0),
-	  Set InfilFlow_display = ((((Qu^2) + (Qn^2))^0.5) - Qu,
+	  Set InfilFlow_display = (((Qu^2) + (Qn^2))^0.5) - Qu,
       Set InfMechVent = Qb + InfilFlow;"
 
     ems << ems_program
@@ -1512,19 +1562,19 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     hasUnfinishedBasement = false
     hasCrawl = false
     hasUnfinAttic = false
-    if not selected_garage == "NA"
+    if not garage_thermal_zone.nil?
       hasGarage = true
     end
-    if not selected_fbsmt == "NA"
+    if not fbasement_thermal_zone.nil?
       hasFinishedBasement = true
     end
-    if not selected_ufbsmt == "NA"
+    if not ufbasement_thermal_zone.nil?
       hasUnfinishedBasement = true
     end
-    if not selected_crawl == "NA"
+    if not crawl_thermal_zone.nil?
       hasCrawl = true
     end
-    if not selected_unfinattic == "NA"
+    if not ufattic_thermal_zone.nil?
       hasUnfinAttic = true
     end
 
@@ -1535,7 +1585,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         ems << "
         ZoneInfiltration:EffectiveLeakageArea,
           GarageInfiltration,                                                         !- Name
-          #{selected_garage},                                                         !- Zone Name
+          #{garage_thermal_zone_r},                                                   !- Zone Name
           AlwaysOn,                                                                   !- Schedule Name
           #{OpenStudio::convert(garage.ELA,"ft^2","cm^2").get * 10.0},                !- Effective Air Leakage Area {cm}
           #{0.001672 * garage.C_s_SG},                                                !- Stack Coefficient {(L/s)/(cm^4-K)}
@@ -1551,7 +1601,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
           ems << "
           ZoneInfiltration:DesignFlowRate,
             FBsmtInfiltration,                                                        !- Name
-            #{selected_fbsmt},                                                        !- Zone Name
+            #{fbasement_thermal_zone_r},                                              !- Zone Name
             AlwaysOn,                                                                 !- Schedule Name
             AirChanges/Hour,                                                          !- Design Flow Rate Calculation Method
             ,                                                                         !- Design Flow rate {m^3/s}
@@ -1574,7 +1624,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
           ems << "
           ZoneInfiltration:DesignFlowRate,
             UBsmtInfiltration,                                                        !- Name
-            #{selected_ufbsmt},                                                       !- Zone Name
+            #{ufbasement_thermal_zone_r},                                             !- Zone Name
             AlwaysOn,                                                                 !- Schedule Name
             AirChanges/Hour,                                                          !- Design Flow Rate Calculation Method
             ,                                                                         !- Design Flow rate {m^3/s}
@@ -1595,7 +1645,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       ems << "
       ZoneInfiltration:DesignFlowRate,
         UBsmtInfiltration,                                                            !- Name
-        #{selected_crawl},                                                            !- Zone Name
+        #{crawl_thermal_zone_r},                                                      !- Zone Name
         AlwaysOn,                                                                     !- Schedule Name
         AirChanges/Hour,                                                              !- Design Flow Rate Calculation Method
         ,                                                                             !- Design Flow rate {m^3/s}
@@ -1615,7 +1665,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         ems << "
         ZoneInfiltration:EffectiveLeakageArea,
         UAtcInfiltration,                                                             !- Name
-        #{selected_unfinattic},                                                       !- Zone Name
+        #{ufattic_thermal_zone_r},                                                    !- Zone Name
         AlwaysOn,                                                                     !- Schedule Name
         #{OpenStudio::convert(ua.ELA,"ft^2","cm^2").get * 10.0},                      !- Effective Air Leakage Area {cm}
         #{0.001672 * ua.C_s_SG},                                                      !- Stack Coefficient {(L/s)/(cm^4-K)}
