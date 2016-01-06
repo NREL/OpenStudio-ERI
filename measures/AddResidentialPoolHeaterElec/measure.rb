@@ -23,10 +23,18 @@ class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
     
 	#TODO: New argument for demand response for pool heaters (alternate schedules if automatic DR control is specified)
 	
+	#make a double argument for Base Energy Use
+	base_energy = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("base_energy")
+	base_energy.setDisplayName("Base Energy Use")
+    base_energy.setUnits("kWh/yr")
+	base_energy.setDescription("The national average (Building America Benchmark) energy use.")
+	base_energy.setDefaultValue(2300)
+	args << base_energy
+
 	#make a double argument for Energy Multiplier
 	mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mult")
 	mult.setDisplayName("Energy Multiplier")
-	mult.setDescription("Sets the annual energy use equal to the national average (Building America Benchmark) energy use times this multiplier.")
+	mult.setDescription("Sets the annual energy use equal to the base energy use times this multiplier.")
 	mult.setDefaultValue(1)
 	args << mult
 	
@@ -101,6 +109,7 @@ class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #assign the user inputs to variables
+    base_energy = runner.getDoubleArgumentValue("base_energy",user_arguments)
 	mult = runner.getDoubleArgumentValue("mult",user_arguments)
     scale_energy = runner.getBoolArgumentValue("scale_energy",user_arguments)
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
@@ -130,8 +139,7 @@ class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
     cfa_total = cfa_living + cfa_fbasement
 
 	#Calculate annual energy use
-	ann_elec = 2300 # kWh/yr, per the 2010 BA Benchmark
-    ann_elec = ann_elec * mult # kWh/yr
+    ann_elec = base_energy * mult # kWh/yr
 
     if scale_energy
         #Scale energy use by num beds and floor area

@@ -23,10 +23,18 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
     
 	#TODO: New argument for demand response for hot tub heaters (alternate schedules if automatic DR control is specified)
 	
+	#make a double argument for Base Energy Use
+	base_energy = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("base_energy")
+	base_energy.setDisplayName("Base Energy Use")
+    base_energy.setUnits("therm/yr")
+	base_energy.setDescription("The national average (Building America Benchmark) energy use.")
+	base_energy.setDefaultValue(81)
+	args << base_energy
+
 	#make a double argument for Energy Multiplier
 	mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mult")
 	mult.setDisplayName("Energy Multiplier")
-	mult.setDescription("Sets the annual energy use equal to the national average (Building America Benchmark) energy use times this multiplier.")
+	mult.setDescription("Sets the annual energy use equal to the base energy use times this multiplier.")
 	mult.setDefaultValue(1)
 	args << mult
 	
@@ -101,6 +109,7 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #assign the user inputs to variables
+    base_energy = runner.getDoubleArgumentValue("base_energy",user_arguments)
 	mult = runner.getDoubleArgumentValue("mult",user_arguments)
     scale_energy = runner.getBoolArgumentValue("scale_energy",user_arguments)
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
@@ -130,19 +139,17 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
     cfa_total = cfa_living + cfa_fbasement
 
 	#Calculate annual energy use
-	ann_g = 2374.0 # kWh/yr, per the 2010 BA Benchmark
-    ann_g = ann_g * mult # kWh/yr
+    ann_g = base_energy * mult # therm/yr
     
     if scale_energy
         #Scale energy use by num beds and floor area
         constant = ann_g/2
         nbr_coef = ann_g/4/3
         cfa_coef = ann_g/4/1920
-        hth_ann = constant + nbr_coef * nbeds + cfa_coef * cfa_total # kWh/yr
+        hth_ann_g = constant + nbr_coef * nbeds + cfa_coef * cfa_total # therm/yr
     else
-        hth_ann = ann_g # kWh/yr
+        hth_ann_g = ann_g # therm/yr
     end
-    hth_ann_g = OpenStudio.convert(hth_ann, "kWh", "therm").get
 
     #hard coded convective, radiative, latent, and lost fractions
     hth_lat = 0
