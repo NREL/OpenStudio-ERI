@@ -23,7 +23,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
     
-	#TODO: New argument for demand response for cdss (alternate schedules if automatic DR control is specified)
+	#TODO: New argument for demand response for clothes washer (alternate schedules if automatic DR control is specified)
 
 	#make a double argument for Modified Energy Factor
 	cw_mef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cw_mef",true)

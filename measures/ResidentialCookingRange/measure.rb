@@ -21,7 +21,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
     
-	#TODO: New argument for demand response for rangess (alternate schedules if automatic DR control is specified)
+	#TODO: New argument for demand response for ranges (alternate schedules if automatic DR control is specified)
 	
 	#make a double argument for cooktop EF
 	c_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("C_ef", true)

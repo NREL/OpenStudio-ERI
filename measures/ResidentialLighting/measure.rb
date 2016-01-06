@@ -21,8 +21,6 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
     
-	#TODO: New argument for demand response for ltgs (alternate schedules if automatic DR control is specified)
-	
 	#make a choice argument for whether Benchmark fraction or annual energy consumption is specified
 	chs = OpenStudio::StringVector.new
 	chs << "Benchmark" 

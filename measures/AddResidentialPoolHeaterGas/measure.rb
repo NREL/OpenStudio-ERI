@@ -21,8 +21,6 @@ class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
     
-	#TODO: New argument for demand response for pool heaters (alternate schedules if automatic DR control is specified)
-	
 	#make a double argument for Base Energy Use
 	base_energy = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("base_energy")
 	base_energy.setDisplayName("Base Energy Use")

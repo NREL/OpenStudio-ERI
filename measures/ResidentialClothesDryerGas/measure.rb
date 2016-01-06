@@ -21,8 +21,6 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
     
-	#TODO: New argument for demand response for cdss (alternate schedules if automatic DR control is specified)
-
 	#make a double argument for Energy Factor
 	cd_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cd_ef",true)
 	cd_ef.setDisplayName("Energy Factor")
