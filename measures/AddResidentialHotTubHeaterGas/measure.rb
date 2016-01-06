@@ -30,6 +30,13 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
 	mult.setDefaultValue(1)
 	args << mult
 	
+    #make a boolean argument for Scale Energy Use
+	scale_energy = OpenStudio::Ruleset::OSArgument::makeBoolArgument("scale_energy",true)
+	scale_energy.setDisplayName("Scale Energy Use")
+	scale_energy.setDescription("If true, scales the energy use relative to a 3-bedroom, 1920 sqft house using the following equation: Fscale = (0.5 + 0.25 x Nbr/3 + 0.25 x FFA/1920) where Nbr is the number of bedrooms and FFA is the finished floor area.")
+	scale_energy.setDefaultValue(true)
+	args << scale_energy
+
 	#Make a string argument for 24 weekday schedule values
 	weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch")
 	weekday_sch.setDisplayName("Weekday schedule")
@@ -95,6 +102,7 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
 	
     #assign the user inputs to variables
 	mult = runner.getDoubleArgumentValue("mult",user_arguments)
+    scale_energy = runner.getBoolArgumentValue("scale_energy",user_arguments)
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
 	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
@@ -125,11 +133,15 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
 	ann_g = 2374.0 # kWh/yr, per the 2010 BA Benchmark
     ann_g = ann_g * mult # kWh/yr
     
-    #Scale energy use by num beds and floor area
-    constant = ann_g/2
-    nbr_coef = ann_g/4/3
-    cfa_coef = ann_g/4/1920
-    hth_ann = constant + nbr_coef * nbeds + cfa_coef * cfa_total # kWh/yr
+    if scale_energy
+        #Scale energy use by num beds and floor area
+        constant = ann_g/2
+        nbr_coef = ann_g/4/3
+        cfa_coef = ann_g/4/1920
+        hth_ann = constant + nbr_coef * nbeds + cfa_coef * cfa_total # kWh/yr
+    else
+        hth_ann = ann_g # kWh/yr
+    end
     hth_ann_g = OpenStudio.convert(hth_ann, "kWh", "therm").get
 
     #hard coded convective, radiative, latent, and lost fractions

@@ -531,38 +531,41 @@ class Constants
 		return 10
 	end
 	def self.ObjectNameClothesWasher
-		return 'residential_clothes_washer'
+		return 'residential clothes washer'
 	end
 	def self.ObjectNameClothesDryer
-		return 'residential_clothes_dryer'
+		return 'residential clothes dryer'
 	end
 	def self.ObjectNameCookingRange
-		return 'residential_range'
+		return 'residential range'
 	end
 	def self.ObjectNameDishwasher
-		return 'residential_dishwasher'
+		return 'residential dishwasher'
 	end
     def self.ObjectNameExtraRefrigerator
-        return 'residential_extra_refrigerator'
+        return 'residential extra refrigerator'
     end
     def self.ObjectNameHotTubHeater
-        return 'residential_hot_tub_heater'
+        return 'residential hot tub heater'
     end
     def self.ObjectNameHotTubPump
-        return 'residential_hot_tub_pump'
+        return 'residential hot tub pump'
     end
     def self.ObjectNameMiscPlugLoads
-        return 'residential_misc_plug_loads'
+        return 'residential misc plug loads'
     end
     def self.ObjectNamePoolHeater
-        return 'residential_pool_heater'
+        return 'residential pool heater'
     end
     def self.ObjectNamePoolPump
-        return 'residential_pool_pump'
+        return 'residential pool pump'
     end
 	def self.ObjectNameRefrigerator
-		return 'residential_refrigerator'
+		return 'residential refrigerator'
 	end
+    def self.ObjectNameWellPump
+        return 'residential well pump'
+    end
     def self.PierBeamSpaceType
         return 'pier and beam'
     end
@@ -960,19 +963,19 @@ class Constants
 		return 'metal'
 	end
 	def self.WindowTypeSingleCasement  
-		return "single casement"
+		return 'single casement'
 	end
 	def self.WindowTypeDoubleCasement  
-		return "double casement"
+		return 'double casement'
 	end
 	def self.WindowTypeHorizontalSlider
-		return "horizontal slider"
+		return 'horizontal slider'
 	end
 	def self.WindowTypeVerticalSlider  
-		return "vertical slider"
+		return 'vertical slider'
 	end
 	def self.WindowTypeFixedPicture    
-		return "fixed"
+		return 'fixed'
 	end
 	def self.WindowTypeDoor            
 		return "door"
