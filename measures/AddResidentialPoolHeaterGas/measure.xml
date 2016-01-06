@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater</name>
   <uid>65550b9d-c0bf-405b-9229-dc63721eb887</uid>
-  <version_id>90d5fb75-0935-4d97-9dbb-d8f9a8706593</version_id>
+  <version_id>4652a99d-36fc-4bf1-a687-4925188ee320</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialPoolHeater</class_name>
   <display_name>Add/Replace Residential Gas Pool Heater</display_name>
@@ -100,24 +100,6 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>09D56F53</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FC574302</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BF5E9F83</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -127,6 +109,24 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>C60232A4</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

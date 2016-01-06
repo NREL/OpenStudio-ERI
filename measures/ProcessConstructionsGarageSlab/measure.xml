@@ -2,20 +2,27 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_slab</name>
   <uid>3da62049-50f9-4ed0-b05a-6b89a202482d</uid>
-  <version_id>96f060b1-3edb-4370-bd11-18e6fbfe065e</version_id>
+  <version_id>78b0dc2b-d52a-4eba-824a-9403f8cda508</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageSlab</class_name>
-  <display_name>Add/Replace Residential Garage Slab</display_name>
+  <display_name>Assign Residential Garage Slab Construction</display_name>
   <description>This measure creates slab constructions for the garage floor.</description>
   <modeler_description>Calculates material layer properties of slab constructions for the garage floor. Finds surfaces adjacent to the garage and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
-      <name>selectedgarage</name>
-      <display_name>Garage Space</display_name>
-      <description>The garage space type.</description>
+      <name>garage_space_type</name>
+      <display_name>Garage space type</display_name>
+      <description>Select the garage space type</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>garage</default_value>
+      <choices>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
+      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -42,29 +49,6 @@
       <checksum>5F3B09D0</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.3.0</identifier>
-        <min_compatible>1.3.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>CC29FAB4</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -77,16 +61,39 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>1.3.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>2FB092FB</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030F203D</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B6E4B5DF</checksum>
+      <checksum>27253A02</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

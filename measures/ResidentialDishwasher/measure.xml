@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>18187134-48c2-4e30-8c5c-dec2bcb46db9</version_id>
+  <version_id>6343694a-fb1b-4c9e-bc5d-2bb3c7a5036b</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Add/Replace Residential Dishwasher</display_name>
@@ -116,14 +116,23 @@
     </argument>
     <argument>
       <name>space_type</name>
-      <display_name>Select the space type where the dishwasher is located</display_name>
+      <display_name>Location</display_name>
+      <description>Select the space type where the dishwasher is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
     </argument>
     <argument>
-      <name>pl</name>
+      <name>plant_loop</name>
       <display_name>Plant Loop</display_name>
+      <description>Select the plant loop for the clothes washer</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -160,18 +169,6 @@
       <checksum>0B899055</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <filename>MinuteDrawProfilesMaxFlows.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
@@ -182,23 +179,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8D4B8CEF</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FB078477</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>E503EB33</checksum>
     </file>
     <file>
       <filename>DishwasherSchedule_1bed_unit0.csv</filename>
@@ -237,10 +217,39 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>95CABD54</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030F203D</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

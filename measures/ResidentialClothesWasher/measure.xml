@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>3ff997a4-6f9f-4107-874c-d9325fa11392</version_id>
+  <version_id>337737b4-8af5-4ab9-bc8b-82bcfc2f7817</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Add/Replace Residential Clothes Washer</display_name>
-  <description>This measure adds a residential clothes washer and dryer. The user can specify how the energy consumption is calculated (using benchmark assumptions or a detailed calculation methond). Users must also specify which space the washer and dryer are installed in (the are assumed to be colocated).</description>
-  <modeler_description>Adds or replaces equipment objects. The dryer can be either gas or electric, and will add the appropriate "GasEquipment" and/or "ElectricEquipment" objects. The washer is always electric. The schedules used are based on the BA HSP.</modeler_description>
+  <description>Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule.</description>
+  <modeler_description>Since there is no Clothes Washer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential clothes washer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
     <argument>
       <name>cw_mef</name>
@@ -159,10 +159,18 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
     </argument>
     <argument>
-      <name>pl</name>
+      <name>plant_loop</name>
       <display_name>Plant Loop</display_name>
+      <description>Select the plant loop for the clothes washer</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -197,12 +205,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>C0A8F5D4</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
@@ -253,18 +255,6 @@
       <checksum>63BE98ED</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FB078477</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -273,13 +263,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>430A2650</checksum>
+      <checksum>B359410A</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030F203D</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

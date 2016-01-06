@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>c7cca838-bc3e-4ea0-a8ba-682033440459</version_id>
+  <version_id>b9336472-77cc-467e-aadf-1626d8f13dbb</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Add/Replace Residential Electric Cooking Range</display_name>
@@ -37,14 +37,6 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>space_type</name>
-      <display_name>Location</display_name>
-      <description>Select the space type where the cooking range is located</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
       <name>weekday_sch</name>
       <display_name>Weekday schedule</display_name>
       <description>Specify the 24-hour weekday schedule.</description>
@@ -71,6 +63,21 @@
       <model_dependent>false</model_dependent>
       <default_value>1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097</default_value>
     </argument>
+    <argument>
+      <name>space_type</name>
+      <display_name>Location</display_name>
+      <description>Select the space type where the cooking range is located</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -96,12 +103,6 @@
       <checksum>8CE5D019</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -110,13 +111,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>91B0313A</checksum>
+      <checksum>092E267B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB078477</checksum>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

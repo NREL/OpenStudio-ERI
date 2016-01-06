@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>modify_site_water_mains_temperature</name>
   <uid>f15e8163-22f4-4336-8257-338e1ab63a16</uid>
-  <version_id>d571d957-2546-48fa-bfb2-8b6ad85aad5f</version_id>
+  <version_id>13788e5a-a74c-42dd-a949-5cfca35052e9</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ModifySiteWaterMainsTemperature</class_name>
   <display_name>ModifySiteWaterMainsTemperature</display_name>
@@ -39,10 +39,10 @@
       <checksum>3DD9D444</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
+      <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
+      <checksum>8D4B8CEF</checksum>
     </file>
     <file>
       <version>
@@ -53,13 +53,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5CF46FD5</checksum>
+      <checksum>E047C186</checksum>
     </file>
     <file>
-      <filename>psychrometrics.rb</filename>
+      <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8D4B8CEF</checksum>
+      <checksum>030F203D</checksum>
     </file>
   </files>
 </measure>

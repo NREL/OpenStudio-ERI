@@ -2,29 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>5a1e44de-761c-4d2d-84d0-ae251d8cc813</version_id>
+  <version_id>8162ee93-00b1-45f6-b3ee-de6b25926d2e</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUnfinishedAttic</class_name>
-  <display_name>Add/Replace Residential Unfinished Attic Floor and Ceiling</display_name>
-  <description>This measure creates constructions for the unfinished attic floor and ceiling.</description>
+  <display_name>Assign Residential Unfinished Attic Constructions</display_name>
+  <description>This measure assigns constructions to the unfinished attic floor and ceiling.</description>
   <modeler_description>Calculates material layer properties of constructions for the unfinished attic floor and ceiling. Finds surfaces adjacent to the unfinished attic and sets applicable constructions.</modeler_description>
   <arguments>
-    <argument>
-      <name>selectedliving</name>
-      <display_name>Living Space</display_name>
-      <description>The living space type.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>selectedattic</name>
-      <display_name>Attic Space</display_name>
-      <description>The attic space type.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
     <argument>
       <name>selecteduains</name>
       <display_name>Unfinished Attic: Insulation Type</display_name>
@@ -196,6 +180,36 @@
       <model_dependent>false</model_dependent>
       <default_value>0.85</default_value>
     </argument>
+    <argument>
+      <name>living_space_type</name>
+      <display_name>Living space type</display_name>
+      <description>Select the living space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>unfin_attic_space_type</name>
+      <display_name>Unfinished attic space type</display_name>
+      <description>Select the unfinished attic space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>unfinished attic</default_value>
+      <choices>
+        <choice>
+          <value>unfinished attic</value>
+          <display_name>unfinished attic</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -221,29 +235,6 @@
       <checksum>8EE7482E</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.3.0</identifier>
-        <min_compatible>1.3.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>26E37F45</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -256,16 +247,39 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>1.3.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>625B7968</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030F203D</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B6E4B5DF</checksum>
+      <checksum>27253A02</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

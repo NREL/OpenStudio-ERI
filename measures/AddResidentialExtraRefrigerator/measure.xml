@@ -2,23 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>residential_extra_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>fbcef2f9-724d-4d4b-9e21-49784c7c621b</version_id>
+  <version_id>38da4e94-ff55-49bf-a0be-e84c40dbcb18</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialExtraRefrigerator</class_name>
   <display_name>Add/Replace Residential Extra Refrigerator</display_name>
   <description>Adds (or replaces) a residential extra refrigerator with the specified efficiency, operation, and schedule.</description>
   <modeler_description>Since there is no Extra Refrigerator object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential extra refrigerator. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
-    <argument>
-      <name>num_items</name>
-      <display_name>Number of Extra Refrigerators</display_name>
-      <description>Number of extra refrigerators. A fractional number can be used to represent a community of houses where some houses have the technology and some do not.</description>
-      <type>Double</type>
-      <units>#</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1</default_value>
-    </argument>
     <argument>
       <name>fridge_E</name>
       <display_name>Rated Annual Consumption</display_name>
@@ -105,24 +95,6 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FB078477</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5BF9F700</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>09D56F53</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -131,7 +103,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8C5B013C</checksum>
+      <checksum>1A6C6C1A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

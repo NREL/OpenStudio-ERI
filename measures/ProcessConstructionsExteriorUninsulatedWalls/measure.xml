@@ -1,8 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
+  <error>undefined method `UnfinishedAtticSpaceType' for Constants:Class</error>
   <name>process_constructions_exterior_uninsulated_walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>d86a6e1e-739d-4e89-b719-d0f9f6a4f300</version_id>
+  <version_id>90a4bdb1-f71a-4f92-9ccb-7a8c33decedb</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorUninsulatedWalls</class_name>
   <display_name>Add/Replace Residential Exterior Uninsulated Attic and Garage Walls</display_name>
@@ -58,7 +59,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0CAB4903</checksum>
+      <checksum>79B04DFD</checksum>
     </file>
   </files>
 </measure>

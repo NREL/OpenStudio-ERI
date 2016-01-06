@@ -2,29 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>75b29de4-630f-481e-b553-91df4f0fcd25</version_id>
+  <version_id>1ea8d6fa-d833-49b8-a429-c19858d6183f</version_id>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Add/Replace Residential Central Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a central air conditioner along with an on/off supply fan to a unitary air loop.</description>
   <modeler_description>This measure parses the OSM for the CoolingSeasonSchedule. Any supply components, except for heating coils, are removed from any existing air loops or zones. Any existing air loops are also removed. A cooling DX coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists.</modeler_description>
   <arguments>
-    <argument>
-      <name>selectedliving</name>
-      <display_name>Living Zone</display_name>
-      <description>The living zone.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>selectedfbsmt</name>
-      <display_name>Finished Basement Zone</display_name>
-      <description>The finished basement zone.</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-    </argument>
     <argument>
       <name>selectedac</name>
       <display_name>Installed SEER</display_name>
@@ -171,6 +155,36 @@
         </choice>
       </choices>
     </argument>
+    <argument>
+      <name>living_thermal_zone</name>
+      <display_name>Living thermal zone</display_name>
+      <description>Select the living thermal zone</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living zone</default_value>
+      <choices>
+        <choice>
+          <value>living zone</value>
+          <display_name>living zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>fbasement_thermal_zone</name>
+      <display_name>Finished Basement thermal zone</display_name>
+      <description>Select the finished basement thermal zone</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>finished basement zone</default_value>
+      <choices>
+        <choice>
+          <value>finished basement zone</value>
+          <display_name>finished basement zone</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -196,18 +210,6 @@
       <checksum>A4D74917</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -220,16 +222,28 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030F203D</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B6E4B5DF</checksum>
+      <checksum>27253A02</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
     <file>
       <version>
@@ -240,7 +254,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4E20C1F4</checksum>
+      <checksum>47056064</checksum>
     </file>
   </files>
 </measure>

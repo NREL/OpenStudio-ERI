@@ -2,21 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>15adabd8-9f30-464c-9073-a6c49c986836</version_id>
+  <version_id>487da830-815c-4b9e-9a53-ff8e960b29fe</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsSIP</class_name>
-  <display_name>Add/Replace Residential SIP Walls</display_name>
-  <description>This measure creates SIP constructions for the exterior walls adjacent to the living space.</description>
+  <display_name>Assign Residential Living Space SIP Wall Construction</display_name>
+  <description>This measure assigns a SIP construction to the living space exterior walls.</description>
   <modeler_description>Calculates material layer properties of SIP constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
   <arguments>
-    <argument>
-      <name>selectedliving</name>
-      <display_name>Living Space</display_name>
-      <description>The living space type.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
     <argument>
       <name>userdefinedgypthickness</name>
       <display_name>Exterior Wall Mass: Thickness</display_name>
@@ -193,6 +185,21 @@
       <model_dependent>false</model_dependent>
       <default_value>0.3</default_value>
     </argument>
+    <argument>
+      <name>living_space_type</name>
+      <display_name>Living space type</display_name>
+      <description>Select the living space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -234,29 +241,6 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>0A531320</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -269,16 +253,39 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>34F9B264</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030F203D</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B6E4B5DF</checksum>
+      <checksum>27253A02</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

@@ -2,6 +2,7 @@
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 # start the measure
 class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript

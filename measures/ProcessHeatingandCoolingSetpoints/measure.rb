@@ -71,29 +71,6 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    thermalzone_handles = OpenStudio::StringVector.new
-    thermalzone_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    thermalzone_args = model.getThermalZones
-    thermalzone_args_hash = {}
-    thermalzone_args.each do |thermalzone_arg|
-      thermalzone_args_hash[thermalzone_arg.name.to_s] = thermalzone_arg
-    end
-
-    #looping through sorted hash of model objects
-    thermalzone_args_hash.sort.map do |key,value|
-      thermalzone_handles << value.handle.to_s
-      thermalzone_display_names << key
-    end
-
-    #make a choice argument for living space
-    selectedliving = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", thermalzone_handles, thermalzone_display_names, true)
-    selectedliving.setDisplayName("Living Zone")
-	selectedliving.setDescription("The living zone.")
-    args << selectedliving
-
     #make a double argument for constant heating setpoint
     userdefinedhsp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedhsp", false)
     userdefinedhsp.setDisplayName("Heating Set Point: Constant Setpoint")
@@ -124,6 +101,21 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     selectedcooling.setDefaultValue(true)
     args << selectedcooling
 
+    #make a choice argument for living thermal zone
+    thermal_zones = model.getThermalZones
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+        thermal_zone_args << thermal_zone.name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.LivingZone)
+        thermal_zone_args << Constants.LivingZone
+    end
+    living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, true)
+    living_thermal_zone.setDisplayName("Living thermal zone")
+    living_thermal_zone.setDescription("Select the living thermal zone")
+    living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    args << living_thermal_zone	
+	
     return args
   end #end the arguments method
 
@@ -241,7 +233,11 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     runner.registerInfo("Set the monthly CoolingSeasonSchedule as #{schedules.cooling_season.join(", ")}")	
 	
     # Thermal Zone
-    selectedliving = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
+	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+    living_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
+    if living_thermal_zone.nil?
+        return false
+    end
 
     # Setpoints
     heatingSetpointConstantSetpoint = runner.getDoubleArgumentValue("userdefinedhsp",user_arguments)
@@ -294,7 +290,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
 
     thermalzones = model.getThermalZones
     thermalzones.each do |thermalzone|
-      if selectedliving.get.handle.to_s == thermalzone.handle.to_s
+      if living_thermal_zone.handle.to_s == thermalzone.handle.to_s
         thermostatsetpointdualsetpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
         thermostatsetpointdualsetpoint.setName("Living Zone Temperature SP")
 

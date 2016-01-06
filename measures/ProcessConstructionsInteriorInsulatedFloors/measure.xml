@@ -2,29 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>81dd3990-b246-48b4-8fe8-eb343e32c702</version_id>
+  <version_id>f2818fa0-fd0e-40ef-be1c-9899d6e375b4</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedFloors</class_name>
-  <display_name>Add/Replace Residential Interzonal Floors</display_name>
-  <description>This measure creates insulated constructions for the interzonal floors between the living space and the garage.</description>
+  <display_name>Assign Residential Interzonal Floor Construction</display_name>
+  <description>This measure assigns a construction to the interzonal floors.</description>
   <modeler_description>Calculates material layer properties of insulated constructions for the interzonal floors between the living space and the garage. Finds surfaces adjacent to the living space and garage and sets applicable constructions.</modeler_description>
   <arguments>
-    <argument>
-      <name>selectedliving</name>
-      <display_name>Living Space</display_name>
-      <description>The living space type.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>selectedgarage</name>
-      <display_name>Garage Space</display_name>
-      <description>The garage space type.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
     <argument>
       <name>userdefinedinstcavr</name>
       <display_name>Interzonal Floor: Cavity Insulation Nominal R-value</display_name>
@@ -128,6 +112,36 @@
       <model_dependent>false</model_dependent>
       <default_value>0.8</default_value>
     </argument>
+    <argument>
+      <name>living_space_type</name>
+      <display_name>Living space type</display_name>
+      <description>Select the living space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living</default_value>
+      <choices>
+        <choice>
+          <value>living</value>
+          <display_name>living</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>garage_space_type</name>
+      <display_name>Garage space type</display_name>
+      <description>Select the garage space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>garage</default_value>
+      <choices>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -153,29 +167,6 @@
       <checksum>CCAC69DB</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>7FD6613E</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>159FAC2A</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0354029E</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -188,16 +179,39 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>CB09F242</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1AB9AE70</checksum>
+      <checksum>BF5E9F83</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>030F203D</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B6E4B5DF</checksum>
+      <checksum>27253A02</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>292DA523</checksum>
     </file>
   </files>
 </measure>

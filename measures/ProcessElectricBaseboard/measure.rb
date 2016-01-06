@@ -28,35 +28,6 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    zone_handles = OpenStudio::StringVector.new
-    zone_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    zone_args = model.getThermalZones
-    zone_args_hash = {}
-    zone_args.each do |zone_arg|
-      zone_args_hash[zone_arg.name.to_s] = zone_arg
-    end
-
-    #looping through sorted hash of model objects
-    zone_args_hash.sort.map do |key,value|
-      zone_handles << value.handle.to_s
-      zone_display_names << key
-    end
-
-    #make a choice argument for living zone
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", zone_handles, zone_display_names, true)
-    selected_living.setDisplayName("Living Zone")
-	selected_living.setDescription("The living zone.")
-    args << selected_living
-
-    #make a choice argument for fbsmt
-    selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", zone_handles, zone_display_names, false)
-    selected_fbsmt.setDisplayName("Finished Basement Zone")
-	selected_fbsmt.setDescription("The finished basement zone.")
-    args << selected_fbsmt
-
     #make an argument for entering furnace installed afue
     userdefined_eff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedeff",true)
     userdefined_eff.setDisplayName("Efficiency")
@@ -78,6 +49,36 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     selected_baseboardcap.setDefaultValue("Autosize")
     args << selected_baseboardcap
 
+    #make a choice argument for living thermal zone
+    thermal_zones = model.getThermalZones
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+        thermal_zone_args << thermal_zone.name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.LivingZone)
+        thermal_zone_args << Constants.LivingZone
+    end
+    living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, true)
+    living_thermal_zone.setDisplayName("Living thermal zone")
+    living_thermal_zone.setDescription("Select the living thermal zone")
+    living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    args << living_thermal_zone		
+	
+    #make a choice argument for finished basement thermal zone
+    thermal_zones = model.getThermalZones
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+        thermal_zone_args << thermal_zone.name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.FinishedBasementZone)
+        thermal_zone_args << Constants.FinishedBasementZone
+    end
+    fbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_thermal_zone", thermal_zone_args, true)
+    fbasement_thermal_zone.setDisplayName("Finished Basement thermal zone")
+    fbasement_thermal_zone.setDescription("Select the finished basement thermal zone")
+    fbasement_thermal_zone.setDefaultValue(Constants.FinishedBasementZone)
+    args << fbasement_thermal_zone		
+	
     return args
   end #end the arguments method
 
@@ -89,9 +90,15 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-
-    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
-    selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
+	
+	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+    living_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
+    if living_thermal_zone.nil?
+        return false
+    end
+	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
+    fbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, fbasement_thermal_zone_r, runner, false)
+	
     baseboardEfficiency = runner.getDoubleArgumentValue("userdefinedeff",user_arguments)
     baseboardOutputCapacity = runner.getStringArgumentValue("selectedbaseboardcap",user_arguments)
     if not baseboardOutputCapacity == "Autosize"
@@ -118,7 +125,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     zones = model.getThermalZones
     zones.each do |zone|
 
-      if selected_living.get.handle.to_s == zone.handle.to_s
+      if living_thermal_zone.handle.to_s == zone.handle.to_s
 
         htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
         htg_coil.setName("Living Zone Electric Baseboards")
@@ -133,9 +140,9 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
 
       end
 
-      if not selected_fbsmt.empty?
+      if not fbasement_thermal_zone.nil?
 
-        if selected_fbsmt.get.handle.to_s == zone.handle.to_s
+        if fbasement_thermal_zone.handle.to_s == zone.handle.to_s
 
           htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
           htg_coil.setName("FBsmt Zone Electric Baseboards")
@@ -153,8 +160,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       end
 
     end
-
-
+	
     return true
  
   end #end the run method
