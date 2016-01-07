@@ -115,7 +115,17 @@ class ResidentialPoolHeater < OpenStudio::Ruleset::ModelUserScript
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
 	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
-
+    
+    #check for valid inputs
+    if base_energy < 0
+		runner.registerError("Base energy use must be greater than or equal to 0.")
+		return false
+    end
+    if mult < 0
+		runner.registerError("Energy multiplier must be greater than or equal to 0.")
+		return false
+    end
+    
 	# Space type
 	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
     living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)

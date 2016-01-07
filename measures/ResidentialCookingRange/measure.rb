@@ -121,7 +121,11 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 		runner.registerError("Cooktop energy factor must be greater than zero.")
 		return false
 	end
-	
+    if mult < 0
+		runner.registerError("Occupancy energy multiplier must be greater than or equal to 0.")
+		return false
+    end
+    
 	#Calculate electric range daily energy use
     range_ann_e = ((86.5 + 28.9 * nbeds) / c_ef + (14.6 + 4.9 * nbeds) / o_ef)*mult #kWh/yr
 	

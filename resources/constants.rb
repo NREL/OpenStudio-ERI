@@ -545,6 +545,9 @@ class Constants
     def self.ObjectNameExtraRefrigerator
         return 'residential extra refrigerator'
     end
+    def self.ObjectNameFreezer
+        return 'residential freezer'
+    end
     def self.ObjectNameGasFireplace
         return 'residential gas fireplace'
     end

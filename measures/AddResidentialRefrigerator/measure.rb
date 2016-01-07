@@ -94,18 +94,16 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 	
-	#check for reasonable energy consumption
+	#check for valid inputs
 	if fridge_E < 0
-		runner.registerError("Refrigerator energy consumption must be greater than or equal to 0.")
-		return false
-	elsif fridge_E < 100
-		runner.registerError("Refrigerator energy consumption seems low, double check inputs.") 
-		return false
-	elsif fridge_E > 3000
-		runner.registerError("Refrigerator energy consumption seems high, double check inputs.") 
+		runner.registerError("Rated annual consumption must be greater than or equal to 0.")
 		return false
 	end
-	
+    if mult < 0
+		runner.registerError("Occupancy energy multiplier must be greater than or equal to 0.")
+		return false
+    end
+    
     #Get space type
     space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
     if space_type.nil?

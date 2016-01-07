@@ -3,33 +3,33 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
 
 #start the measure
-class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
+class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Extra Refrigerator"
+    return "Add/Replace Residential Freezer"
   end
   
   def description
-    return "Adds (or replaces) a residential extra refrigerator with the specified efficiency, operation, and schedule."
+    return "Adds (or replaces) a residential freezer with the specified efficiency, operation, and schedule."
   end
   
   def modeler_description
-    return "Since there is no Extra Refrigerator object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential extra refrigerator. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Freezer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential freezer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
   end
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
     
-	#TODO: New argument for demand response for fridges (alternate schedules if automatic DR control is specified)
+	#TODO: New argument for demand response for freezers (alternate schedules if automatic DR control is specified)
 	
-	#make a double argument for user defined fridge options
-	fridge_E = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fridge_E",true)
-	fridge_E.setDisplayName("Rated Annual Consumption")
-	fridge_E.setUnits("kWh/yr")
-	fridge_E.setDescription("The EnergyGuide rated annual energy consumption for a refrigerator.")
-	fridge_E.setDefaultValue(434)
-	args << fridge_E
+	#make a double argument for user defined freezer options
+	freezer_E = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("freezer_E",true)
+	freezer_E.setDisplayName("Rated Annual Consumption")
+	freezer_E.setUnits("kWh/yr")
+	freezer_E.setDescription("The EnergyGuide rated annual energy consumption for a freezer.")
+	freezer_E.setDefaultValue(935)
+	args << freezer_E
 	
 	#make a double argument for Occupancy Energy Multiplier
 	mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mult")
@@ -70,7 +70,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     end
     space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_args, true)
     space_type.setDisplayName("Location")
-    space_type.setDescription("Select the space type where the refrigerator is located")
+    space_type.setDescription("Select the space type where the freezer is located")
     space_type.setDefaultValue(Constants.LivingSpaceType)
     args << space_type
 
@@ -87,7 +87,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #assign the user inputs to variables
-    fridge_E = runner.getDoubleArgumentValue("fridge_E",user_arguments)
+    freezer_E = runner.getDoubleArgumentValue("freezer_E",user_arguments)
 	mult = runner.getDoubleArgumentValue("mult",user_arguments)
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
 	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
@@ -95,7 +95,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
 	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
 	
 	#check for valid inputs
-	if fridge_E < 0
+	if freezer_E < 0
 		runner.registerError("Rated annual consumption must be greater than or equal to 0.")
 		return false
 	end
@@ -103,64 +103,64 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
 		runner.registerError("Occupancy energy multiplier must be greater than or equal to 0.")
 		return false
     end
-
+	
     #Get space type
     space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
     if space_type.nil?
         return false
     end
 
-	#Calculate fridge daily energy use
-	fridge_ann = fridge_E*mult
+	#Calculate freezer daily energy use
+	freezer_ann = freezer_E*mult
 
     #hard coded convective, radiative, latent, and lost fractions
-    fridge_lat = 0
-    fridge_rad = 0
-    fridge_conv = 1
-    fridge_lost = 1 - fridge_lat - fridge_rad - fridge_conv
+    freezer_lat = 0
+    freezer_rad = 0
+    freezer_conv = 1
+    freezer_lost = 1 - freezer_lat - freezer_rad - freezer_conv
 	
-	obj_name = Constants.ObjectNameExtraRefrigerator
+	obj_name = Constants.ObjectNameFreezer
 	sch = MonthHourSchedule.new(weekday_sch, weekend_sch, monthly_sch, model, obj_name, runner)
 	if not sch.validated?
 		return false
 	end
-	design_level = sch.calcDesignLevelFromDailykWh(fridge_ann/365.0)
+	design_level = sch.calcDesignLevelFromDailykWh(freezer_ann/365.0)
 	
-	#add extra refrigerator to the selected space
-	has_fridge = 0
-	replace_fridge = 0
+	#add freezer to the selected space
+	has_freezer = 0
+	replace_freezer = 0
     space_equipments = space_type.electricEquipment
     space_equipments.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
-            has_fridge = 1
-            runner.registerInfo("This space already has an extra refrigerator, the existing extra refrigerator will be replaced with the specified extra refrigerator.")
+            has_freezer = 1
+            runner.registerInfo("This space already has a freezer, the existing freezer will be replaced with the specified freezer.")
             space_equipment.electricEquipmentDefinition.setDesignLevel(design_level)
             sch.setSchedule(space_equipment)
-            replace_fridge = 1
+            replace_freezer = 1
         end
     end
-    if has_fridge == 0 
-        has_fridge = 1
+    if has_freezer == 0 
+        has_freezer = 1
         
-        #Add electric equipment for the extra fridge
-        frg_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-        frg = OpenStudio::Model::ElectricEquipment.new(frg_def)
-        frg.setName(obj_name)
-        frg.setSpaceType(space_type)
-        frg_def.setName(obj_name)
-        frg_def.setDesignLevel(design_level)
-        frg_def.setFractionRadiant(fridge_rad)
-        frg_def.setFractionLatent(fridge_lat)
-        frg_def.setFractionLost(fridge_lost)
-        sch.setSchedule(frg)
+        #Add electric equipment for the freezer
+        frz_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+        frz = OpenStudio::Model::ElectricEquipment.new(frz_def)
+        frz.setName(obj_name)
+        frz.setSpaceType(space_type)
+        frz_def.setName(obj_name)
+        frz_def.setDesignLevel(design_level)
+        frz_def.setFractionRadiant(freezer_rad)
+        frz_def.setFractionLatent(freezer_lat)
+        frz_def.setFractionLost(freezer_lost)
+        sch.setSchedule(frz)
         
     end
 	
     #reporting final condition of model
-    if replace_fridge == 1
-        runner.registerFinalCondition("The existing extra fridge has been replaced by one with #{fridge_ann.round} kWhs annual energy consumption.")
+    if replace_freezer == 1
+        runner.registerFinalCondition("The existing freezer has been replaced by one with #{freezer_ann.round} kWhs annual energy consumption.")
     else
-        runner.registerFinalCondition("An extra fridge has been added with #{fridge_ann.round} kWhs annual energy consumption.")
+        runner.registerFinalCondition("An freezer has been added with #{freezer_ann.round} kWhs annual energy consumption.")
     end
 	
     return true
@@ -170,4 +170,4 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ResidentialExtraRefrigerator.new.registerWithApplication
+ResidentialFreezer.new.registerWithApplication
