@@ -8,6 +8,7 @@
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/util"
 
 #start the measure
 class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
@@ -79,47 +80,66 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
+	
+    #make a choice argument for living space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
     end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
     end
+    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
+    living_space_type.setDisplayName("Living space type")
+    living_space_type.setDescription("Select the living space type")
+    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << living_space_type	
+	
+    #make a choice argument for finished basement space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
+        space_type_args << Constants.FinishedBasementSpaceType
+    end
+    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
+    fbasement_space_type.setDisplayName("Finished basement space type")
+    fbasement_space_type.setDescription("Select the finished basement space type")
+    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
+    args << fbasement_space_type	
+	
+    #make a choice argument for unfinished basement space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.UnfinishedBasementSpaceType)
+        space_type_args << Constants.UnfinishedBasementSpaceType
+    end
+    ubasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ubasement_space_type", space_type_args, true)
+    ubasement_space_type.setDisplayName("Unfinished basement space type")
+    ubasement_space_type.setDescription("Select the unfinished basement space type")
+    ubasement_space_type.setDefaultValue(Constants.UnfinishedBasementSpaceType)
+    args << ubasement_space_type
 
-    #make a choice argument for living space
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Of what space type is the living space?")
-	selected_living.setDescription("The living space type.")
-    args << selected_living
-
-    #make a choice argument for fbsmt
-    selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_fbsmt.setDisplayName("Finished Basement Space")
-	selected_fbsmt.setDescription("The finished basement space type.")
-    args << selected_fbsmt
-
-    #make a choice argument for ufbsmt
-    selected_ufbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedufbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_ufbsmt.setDisplayName("Unfinished Basement Space")
-	selected_ufbsmt.setDescription("The unfinished basement space type.")
-    args << selected_ufbsmt
-
-    #make a choice argument for garage
-    selected_garage = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedgarage", spacetype_handles, spacetype_display_names, false)
-    selected_garage.setDisplayName("Garage Space")
-	selected_garage.setDescription("The garage space type.")
-    args << selected_garage
+    #make a choice argument for garage space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.GarageSpaceType)
+        space_type_args << Constants.GarageSpaceType
+    end
+    garage_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_space_type", space_type_args, true)
+    garage_space_type.setDisplayName("Garage space type")
+    garage_space_type.setDescription("Select the garage space type")
+    garage_space_type.setDefaultValue(Constants.GarageSpaceType)
+    args << garage_space_type	
 	
     return args
   end #end the arguments method
@@ -134,41 +154,32 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Space Type
-    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
-    selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
-    selected_ufbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedufbsmt",user_arguments,model)
-    selected_garage = runner.getOptionalWorkspaceObjectChoiceValue("selectedgarage",user_arguments,model)
-
-    # loop thru all the spaces
-    hasFinishedBasement = false
-    hasUnfinishedBasement = false
-    hasGarage = false
-    if not selected_fbsmt.empty?
-      hasFinishedBasement = true
+	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    if living_space_type.nil?
+        return false
     end
-    if not selected_ufbsmt.empty?
-      hasUnfinishedBasement = true
-    end
-    if not selected_garage.empty?
-      hasGarage = true
-    end
+	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
+    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
+	ubasement_space_type_r = runner.getStringArgumentValue("ubasement_space_type",user_arguments)
+    ubasement_space_type = HelperMethods.get_space_type_from_string(model, ubasement_space_type_r, runner, false)
+	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
+    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
     
-    living_space_furn_area = 0
-    finished_basement_furn_area = 0
-    unfinished_basement_furn_area = 0
-    garage_furn_area = 0
-	model.getSpaceTypes.each do |spaceType|
-		spacehandle = spaceType.handle.to_s
-        if spacehandle == selected_living.get.handle.to_s
-            living_space_furn_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        elsif hasFinishedBasement and spacehandle == selected_fbsmt.get.handle.to_s
-            finished_basement_furn_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        elsif hasUnfinishedBasement and spacehandle == selected_ufbsmt.get.handle.to_s
-            unfinished_basement_furn_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        elsif hasGarage and spacehandle == selected_garage.get.handle.to_s
-            garage_furn_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        end
-    end
+	living_space_furn_area = 0
+	finished_basement_furn_area = 0
+	unfinished_basement_furn_area = 0
+	garage_furn_area = 0
+	living_space_furn_area = HelperMethods.get_floor_area(model, living_space_type.handle, runner)
+	unless fbasement_space_type.nil?
+		finished_basement_furn_area = HelperMethods.get_floor_area(model, fbasement_space_type.handle, runner)
+	end
+	unless ubasement_space_type.nil?
+		unfinished_basement_furn_area = HelperMethods.get_floor_area(model, ubasement_space_type.handle, runner)
+	end
+	unless garage_space_type.nil?
+		garage_furn_area = HelperMethods.get_floor_area(model, garage_space_type.handle, runner)
+	end
 
     # Process the furniture
     has_furniture = true
@@ -197,7 +208,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Finished Basement Furniture
-    if hasFinishedBasement
+    unless fbasement_space_type.nil?
 
       finished_basement_furn = Furniture.new(finished_basement_furn_type, furnitureDensity, furnitureConductivity, furnitureSpecHeat, furnitureAreaFraction, furnitureWeight, furnitureSolarAbsorptance)
 
@@ -210,7 +221,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Unfinished Basement Furniture with hard-coded variables
-    if hasUnfinishedBasement
+    unless ubasement_space_type.nil?
 
       furn_type_ubsmt = Constants.FurnTypeLight
       if furn_type_ubsmt == Constants.FurnTypeLight
@@ -224,7 +235,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Garage Furniture with hard-coded variables
-    if hasGarage
+    unless garage_space_type.nil?
 
       furn_type_grg = Constants.FurnTypeLight
       if furn_type_grg == Constants.FurnTypeLight
@@ -249,9 +260,10 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
       lfm.setSolarAbsorptance(living_space_furn.solar_abs)
       lfm.setVisibleAbsorptance(0.1)
 
-      lf = OpenStudio::Model::Construction.new(model)
-      lf.setName("LivingFurniture")
-      lf.insertLayer(0,lfm)
+	  materials = []
+      materials << lfm
+      lf = OpenStudio::Model::Construction.new(materials)
+      lf.setName("LivingFurniture")	  
 
       lsf = OpenStudio::Model::InternalMassDefinition.new(model)
       lsf.setName("LivingSpaceFurniture")
@@ -259,17 +271,11 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
       lsf.setSurfaceArea(living_space_furn.area_frac * OpenStudio::convert(living_space_furn_area,"ft^2","m^2").get)
       im = OpenStudio::Model::InternalMass.new(lsf)
       im.setName("LivingSpaceFurniture")
-      # loop thru all the space types
-      spaceTypes = model.getSpaceTypes
-      spaceTypes.each do |spaceType|
-        if selected_living.get.handle.to_s == spaceType.handle.to_s
-          runner.registerInfo("Assigned internal mass object 'LivingSpaceFurniture' to space type '#{spaceType.name}'")
-          im.setSpaceType(spaceType)
-        end
-      end
+	  im.setSpaceType(living_space_type)
+	  runner.registerInfo("Assigned internal mass object 'LivingSpaceFurniture' to space type '#{living_space_type_r}'")
     end
 
-    if hasFinishedBasement
+    unless fbasement_space_type.nil?
       if finished_basement_furn.area_frac > 0 and has_furniture
         ffm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
         ffm.setName("FBsmtFurnitureMaterial")
@@ -280,58 +286,48 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
         ffm.setSpecificHeat(OpenStudio::convert(finished_basement_furn.spec_heat,"Btu/lb*R","J/kg*K").get)
         # TODO: Check should thermal, solar, and visible absorptance be put here as in the living space?
 
-        ff = OpenStudio::Model::Construction.new(model)
-        ff.setName("FBsmtFurniture")
-        ff.insertLayer(0,ffm)
+		materials = []
+        materials << ffm
+        ff = OpenStudio::Model::Construction.new(materials)
+        ff.setName("FBsmtFurniture")		
 
         fsf = OpenStudio::Model::InternalMassDefinition.new(model)
         fsf.setName("FBsmtSpaceFurniture")
         fsf.setConstruction(ff)
         fsf.setSurfaceArea(living_space_furn.area_frac * OpenStudio::convert(finished_basement_furn_area,"ft^2","m^2").get)
         im = OpenStudio::Model::InternalMass.new(fsf)
-        im.setName("FBsmtSpaceFurniture")
-        # loop thru all the space types
-        spaceTypes = model.getSpaceTypes
-        spaceTypes.each do |spaceType|
-          if selected_fbsmt.get.handle.to_s == spaceType.handle.to_s
-            runner.registerInfo("Assigned internal mass object 'FBsmtSpaceFurniture' to space type '#{spaceType.name}'")
-            im.setSpaceType(spaceType)
-          end
-        end
+        im.setName("FBsmtSpaceFurniture")            
+		im.setSpaceType(fbasement_space_type)
+		runner.registerInfo("Assigned internal mass object 'FBsmtSpaceFurniture' to space type '#{fbasement_space_type_r}'")
       end
     end
 
-    if hasUnfinishedBasement
-        ufm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-        ufm.setName("UFBsmtFurnitureMaterial")
-        ufm.setRoughness("Rough")
-        ufm.setThickness(OpenStudio::convert(ubsmt_furn.thickness,"ft","m").get)
-        ufm.setConductivity(OpenStudio::convert(ubsmt_furn.conductivity,"Btu/hr*ft*R","W/m*K").get)
-        ufm.setDensity(OpenStudio::convert(ubsmt_furn.density,"lb/ft^3","kg/m^3").get)
-        ufm.setSpecificHeat(OpenStudio::convert(ubsmt_furn.spec_heat,"Btu/lb*R","J/kg*K").get)
-        # TODO: Check should thermal, solar, and visible absorptance be put here as in the living space?
+    unless ubasement_space_type.nil?
+	  ufm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
+	  ufm.setName("UFBsmtFurnitureMaterial")
+	  ufm.setRoughness("Rough")
+	  ufm.setThickness(OpenStudio::convert(ubsmt_furn.thickness,"ft","m").get)
+	  ufm.setConductivity(OpenStudio::convert(ubsmt_furn.conductivity,"Btu/hr*ft*R","W/m*K").get)
+	  ufm.setDensity(OpenStudio::convert(ubsmt_furn.density,"lb/ft^3","kg/m^3").get)
+	  ufm.setSpecificHeat(OpenStudio::convert(ubsmt_furn.spec_heat,"Btu/lb*R","J/kg*K").get)
+	  # TODO: Check should thermal, solar, and visible absorptance be put here as in the living space?
 
-        uf = OpenStudio::Model::Construction.new(model)
-        uf.setName("UFBsmtFurniture")
-        uf.insertLayer(0,ufm)
+	  materials = []
+	  materials << ufm
+	  uf = OpenStudio::Model::Construction.new(materials)
+	  uf.setName("UFBsmtFurniture")		
 
-        usf = OpenStudio::Model::InternalMassDefinition.new(model)
-        usf.setName("UFBsmtSpaceFurniture")
-        usf.setConstruction(uf)
-        usf.setSurfaceArea(ubsmt_furn.area_frac * OpenStudio::convert(unfinished_basement_furn_area,"ft^2","m^2").get)
-        im = OpenStudio::Model::InternalMass.new(usf)
-        im.setName("UFBsmtSpaceFurniture")
-        # loop thru all the space types
-        spaceTypes = model.getSpaceTypes
-        spaceTypes.each do |spaceType|
-          if selected_ufbsmt.get.handle.to_s == spaceType.handle.to_s
-            runner.registerInfo("Assigned internal mass object 'UFBsmtSpaceFurniture' to space type '#{spaceType.name}'")
-            im.setSpaceType(spaceType)
-          end
-        end
+	  usf = OpenStudio::Model::InternalMassDefinition.new(model)
+	  usf.setName("UFBsmtSpaceFurniture")
+	  usf.setConstruction(uf)
+	  usf.setSurfaceArea(ubsmt_furn.area_frac * OpenStudio::convert(unfinished_basement_furn_area,"ft^2","m^2").get)
+	  im = OpenStudio::Model::InternalMass.new(usf)
+	  im.setName("UFBsmtSpaceFurniture")
+	  im.setSpaceType(ubasement_space_type)
+	  runner.registerInfo("Assigned internal mass object 'UFBsmtSpaceFurniture' to space type '#{ubasement_space_type_r}'")
     end
 
-    if hasGarage
+    unless garage_space_type.nil?
       gfm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       gfm.setName("GarageFurnitureMaterial")
       gfm.setRoughness("Rough")
@@ -340,9 +336,10 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
       gfm.setDensity(OpenStudio::convert(garage_furn.density,"lb/ft^3","kg/m^3").get)
       gfm.setSpecificHeat(OpenStudio::convert(garage_furn.spec_heat,"Btu/lb*R","J/kg*K").get)
 
-      gf = OpenStudio::Model::Construction.new(model)
-      gf.setName("GarageFurniture")
-      gf.insertLayer(0,gfm)
+	  materials = []
+      materials << gfm
+      gf = OpenStudio::Model::Construction.new(materials)
+      gf.setName("GarageFurniture")	  
 
       gsf = OpenStudio::Model::InternalMassDefinition.new(model)
       gsf.setName("GarageSpaceFurniture")
@@ -350,14 +347,8 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
       gsf.setSurfaceArea(garage_furn.area_frac * OpenStudio::convert(garage_furn_area,"ft^2","m^2").get)
       im = OpenStudio::Model::InternalMass.new(gsf)
       im.setName("GarageSpaceFurniture")
-      # loop thru all the space types
-      spaceTypes = model.getSpaceTypes
-      spaceTypes.each do |spaceType|
-        if selected_garage.get.handle.to_s == spaceType.handle.to_s
-          runner.registerInfo("Assigned internal mass object 'GarageSpaceFurniture' to space type '#{spaceType.name}'")
-          im.setSpaceType(spaceType)
-        end
-      end
+	  im.setSpaceType(garage_space_type)
+	  runner.registerInfo("Assigned internal mass object 'GarageSpaceFurniture' to space type '#{garage_space_type_r}'")
     end
 
     return true

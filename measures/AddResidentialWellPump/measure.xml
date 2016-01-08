@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_well_pump</name>
   <uid>13183743-6249-4762-8050-cf80f5d4650b</uid>
-  <version_id>f508a6db-4a5b-4313-a092-43c3cf7a4bee</version_id>
+  <version_id>b1706e60-61b7-4c0e-abcd-8dded690a17f</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialWellPump</class_name>
   <display_name>Add/Replace Residential Well Pump</display_name>
@@ -10,9 +10,19 @@
   <modeler_description>Since there is no Well Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential well pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
   <arguments>
     <argument>
+      <name>base_energy</name>
+      <display_name>Base Energy Use</display_name>
+      <description>The national average (Building America Benchmark) energy use.</description>
+      <type>Double</type>
+      <units>kWh/yr</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>400</default_value>
+    </argument>
+    <argument>
       <name>mult</name>
       <display_name>Energy Multiplier</display_name>
-      <description>Sets the annual energy use equal to the national average (Building America Benchmark) energy use times this multiplier.</description>
+      <description>Sets the annual energy use equal to the base energy use times this multiplier.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -119,24 +129,6 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>09D56F53</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FC574302</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D90CF9E3</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -145,7 +137,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0C521EC3</checksum>
+      <checksum>4F22FFDF</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A8A14F57</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>913669E3</checksum>
     </file>
   </files>
 </measure>

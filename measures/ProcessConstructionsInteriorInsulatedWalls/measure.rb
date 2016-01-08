@@ -230,7 +230,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     living_space_type.setDescription("Select the living space type")
     living_space_type.setDefaultValue(Constants.LivingSpaceType)
     args << living_space_type
-
+    
     #make a choice argument for garage space type
     space_types = model.getSpaceTypes
     space_type_args = OpenStudio::StringVector.new
@@ -244,8 +244,8 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     garage_space_type.setDisplayName("Garage space type")
     garage_space_type.setDescription("Select the garage space type")
     garage_space_type.setDefaultValue(Constants.GarageSpaceType)
-    args << garage_space_type
-    
+    args << garage_space_type	
+	
     return args
   end #end the arguments method
 
@@ -271,7 +271,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     if garage_space_type.nil?
         # If the building has no garage, no constructions are assigned and we continue by returning True
         return true
-    end
+    end	
 
     # Partition Wall Mass
     userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
@@ -376,96 +376,49 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       iwri.setSpecificHeat(OpenStudio::convert(mat_rigid.Cp,"Btu/lb*R","J/kg*K").get) # Btu/lbm*F
 
       # UnfinInsFinWall
-      layercount = 0
-      unfininsfinwall = OpenStudio::Model::Construction.new(model)
-      unfininsfinwall.setName("UnfinInsFinWall")
-      unfininsfinwall.insertLayer(layercount,iwri)
-      layercount += 1
-      unfininsfinwall.insertLayer(layercount,iwi)
-      layercount += 1
+      materials = []
+      materials << iwri
+      materials << iwi
       if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-        unfininsfinwall.insertLayer(layercount,pcm)
-        layercount += 1
+        materials << pcm
       end
-      unfininsfinwall.insertLayer(layercount,pwm)
-
-      # UnfinInsUnfinWall
-      layercount = 0
-      unfininsunfinwall = OpenStudio::Model::Construction.new(model)
-      unfininsunfinwall.setName("UnfinInsUnfinWall")
-      unfininsunfinwall.insertLayer(layercount,iwri)
-      layercount += 1
-      unfininsunfinwall.insertLayer(layercount,iwi)
-
+      materials << pwm
+      unfininsfinwall = OpenStudio::Model::Construction.new(materials)
+      unfininsfinwall.setName("UnfinInsFinWall")
+	  
     else
 
       # UnfinInsFinWall
-      layercount = 0
-      unfininsfinwall = OpenStudio::Model::Construction.new(model)
-      unfininsfinwall.setName("UnfinInsFinWall")
-      unfininsfinwall.insertLayer(layercount,iwi)
-      layercount += 1
+	  materials = []
+      materials << iwi
       if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-        unfininsfinwall.insertLayer(layercount,pcm)
-        layercount += 1
+        materials << pcm
       end
-      unfininsfinwall.insertLayer(layercount,pwm)
-
-      # UnfinInsUnfinWall
-      layercount = 0
-      unfininsunfinwall = OpenStudio::Model::Construction.new(model)
-      unfininsunfinwall.setName("UnfinInsUnfinWall")
-      unfininsunfinwall.insertLayer(layercount,iwi)
-
+      materials << pwm
+	  unfininsfinwall = OpenStudio::Model::Construction.new(materials)
+      unfininsfinwall.setName("UnfinInsFinWall")
+	  
     end
 
     # RevUnfinInsFinWall
-    layercount = 0
-    revunfininsfinwall = OpenStudio::Model::Construction.new(model)
+    revunfininsfinwall = unfininsfinwall.reverseConstruction
     revunfininsfinwall.setName("RevUnfinInsFinWall")
-    unfininsfinwall.layers.reverse_each do |layer|
-      revunfininsfinwall.insertLayer(layercount,layer)
-      layercount += 1
-    end
 
-    # RevUnfinInsUnfinWall
-    layercount = 0
-    revunfininsunfinwall = OpenStudio::Model::Construction.new(model)
-    revunfininsunfinwall.setName("RevUnfinInsUnfinWall")
-    unfininsunfinwall.layers.reverse_each do |layer|
-      revunfininsunfinwall.insertLayer(layercount,layer)
-      layercount += 1
-    end
-
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if garage_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Surface"
-            surface.resetConstruction
-            surface.setConstruction(revunfininsfinwall)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevUnfinInsFinWall"]
-          end
-        end
-      elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Surface"
-            surface.resetConstruction
-            surface.setConstruction(unfininsfinwall)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"UnfinInsFinWall"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless ["wall"].include? living_surface.surfaceType.downcase
+		adjacent_surface = living_surface.adjacentSurface
+		next unless adjacent_surface.is_initialized
+		adjacent_surface = adjacent_surface.get
+	    adjacent_surface_r = adjacent_surface.name.to_s
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    next unless [garage_space_type_r].include? adjacent_space_type_r
+	    living_surface.setConstruction(unfininsfinwall)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{unfininsfinwall.name}'")
+	    adjacent_surface.setConstruction(revunfininsfinwall)		
+		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfininsfinwall.name}'")
+	  end	
+	end
 
     return true
  

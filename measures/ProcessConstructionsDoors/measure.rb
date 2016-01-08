@@ -139,9 +139,10 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     d.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
 
     # LivingDoors
-    door = OpenStudio::Model::Construction.new(model)
-    door.setName("LivingDoors")
-    door.insertLayer(0,d)
+	materials = []
+    materials << d
+    door = OpenStudio::Model::Construction.new(materials)
+    door.setName("LivingDoors")	
 
     # GarageDoorMaterial
     garage_door_Uvalue = gd.garage_door_Uvalue
@@ -155,50 +156,33 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     gd.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
 
     # GarageDoors
-    garagedoor = OpenStudio::Model::Construction.new(model)
-    garagedoor.setName("GarageDoors")
-    garagedoor.insertLayer(0,gd)
+	materials = []
+    materials << gd
+    garagedoor = OpenStudio::Model::Construction.new(materials)
+    garagedoor.setName("GarageDoors")	
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if not garage_space_type.nil? and garage_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
-            subSurfaces = surface.subSurfaces
-            subSurfaces.each do |subSurface|
-              if subSurface.subSurfaceType.include? "Door"
-                subSurface.resetConstruction
-                subSurface.setConstruction(garagedoor)
-                constructions_hash[subSurface.name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,"GarageDoors"]
-              end
-            end
-          end
-        end
-      elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-		# loop thru all surfaces attached to the space
-		surfaces = space.surfaces
-		surfaces.each do |surface|
-		  if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
-			subSurfaces = surface.subSurfaces
-			subSurfaces.each do |subSurface|
-			  if subSurface.subSurfaceType.include? "Door"
-				subSurface.resetConstruction
-				subSurface.setConstruction(garagedoor)
-				constructions_hash[subSurface.name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,"GarageDoors"]
-			  end
-			end
-		  end
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+		next unless living_surface.surfaceType.downcase == "wall" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
+		living_surface.subSurfaces.each do |living_sub_surface|
+		  next unless living_sub_surface.subSurfaceType.downcase.include? "door"
+		  living_sub_surface.setConstruction(door)
+		  runner.registerInfo("Sub Surface '#{living_sub_surface.name}', of Space Type '#{living_space_type_r}' and with Sub Surface Type '#{living_sub_surface.subSurfaceType}', was assigned Construction '#{door.name}'")
 		end
-	  end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Sub Surface '#{key}' of Sub Surface Type '#{value[0]}', attached to Surface '#{value[1]}' which is attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	  end	
+	end	
 
+	garage_space_type.spaces.each do |garage_space|
+	  garage_space.surfaces.each do |garage_surface|
+		next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
+		garage_surface.subSurfaces.each do |garage_sub_surface|
+		  next unless garage_sub_surface.subSurfaceType.downcase.include? "door"
+		  garage_sub_surface.setConstruction(door)
+		  runner.registerInfo("Sub Surface '#{garage_sub_surface.name}', of Space Type '#{garage_space_type_r}' and with Sub Surface Type '#{garage_sub_surface.subSurfaceType}', was assigned Construction '#{door.name}'")
+		end
+	  end	
+	end
+	
     return true
  
   end #end the run method

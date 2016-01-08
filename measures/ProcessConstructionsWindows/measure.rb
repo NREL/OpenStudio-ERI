@@ -255,23 +255,22 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
       surfaces.each do |surface|
         subSurfaces = surface.subSurfaces
         subSurfaces.each do |subSurface|
-          if subSurface.subSurfaceType.include? "Window"
-            name = subSurface.name
-            glazingName = "#{name}-Win"
-            constName = "#{name}-Glass"
-            sg = OpenStudio::Model::SimpleGlazing.new(model)
-            sg.setName(glazingName)
-            sg.setUFactor(ufactor)
-            sg.setSolarHeatGainCoefficient(shgc * intshadeheatingmult)
-            c = OpenStudio::Model::Construction.new(model)
-            c.setName(constName)
-            c.insertLayer(0,sg)
-            subSurface.resetConstruction
-            subSurface.setConstruction(c)
-            subSurface.setShadingControl(sc)
-            constructions_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,constName]
-            shadingcontrol_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,sc.name]
-          end
+          next unless subSurface.subSurfaceType.downcase.include? "window"
+          name = subSurface.name
+          glazingName = "#{name}-Win"
+          constName = "#{name}-Glass"
+          sg = OpenStudio::Model::SimpleGlazing.new(model)
+          sg.setName(glazingName)
+          sg.setUFactor(ufactor)
+          sg.setSolarHeatGainCoefficient(shgc * intshadeheatingmult)
+          materials = []
+          materials << sg
+		  c = OpenStudio::Model::Construction.new(model)
+          c.setName(constName)			
+          subSurface.setConstruction(c)
+          subSurface.setShadingControl(sc)
+          constructions_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,constName]
+          shadingcontrol_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,sc.name]
         end
       end
       constructions_hash.map do |key,value|

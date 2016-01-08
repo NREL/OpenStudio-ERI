@@ -40,7 +40,7 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
         space_type_args << Constants.UnfinishedAtticSpaceType
     end
     unfin_attic_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("unfin_attic_space_type", space_type_args, true)
-    unfin_attic_space_type.setDisplayName("Unfinished attic space type")
+    unfin_attic_space_type.setDisplayName("Unfinished Attic space type")
     unfin_attic_space_type.setDescription("Select the unfinished attic space type")
     unfin_attic_space_type.setDefaultValue(Constants.UnfinishedAtticSpaceType)
     args << unfin_attic_space_type
@@ -112,46 +112,32 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 	saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).Cp,"Btu/lb*R","J/kg*K").get)
 	
 	# ExtUninsUnfinWall
-	extuninsunfinwall = OpenStudio::Model::Construction.new(model)
-	extuninsunfinwall.setName("ExtUninsUnfinWall")
-	extuninsunfinwall.insertLayer(0,extfin)
-	extuninsunfinwall.insertLayer(1,ply1_2)
-	extuninsunfinwall.insertLayer(2,saw)
+	materials = []
+	materials << extfin.to_StandardOpaqueMaterial.get
+	materials << ply1_2
+	materials << saw
+	extuninsunfinwall = OpenStudio::Model::Construction.new(materials)
+	extuninsunfinwall.setName("ExtUninsUnfinWall")	
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if not unfin_attic_space_type.nil?
-        if unfin_attic_space_type.handle.to_s == space.spaceType.get.handle.to_s
-          # loop thru all surfaces attached to the space
-          surfaces = space.surfaces
-          surfaces.each do |surface|
-            if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
-              surface.resetConstruction
-              surface.setConstruction(extuninsunfinwall)
-              constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"ExtUninsUnfinWall"]
-            end
-          end
-        end
-      end
-      if not garage_space_type.nil?
-        if garage_space_type.handle.to_s == space.spaceType.get.handle.to_s
-          # loop thru all surfaces attached to the space
-          surfaces = space.surfaces
-          surfaces.each do |surface|
-            if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
-              surface.resetConstruction
-              surface.setConstruction(extuninsunfinwall)
-              constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"ExtUninsUnfinWall"]
-            end
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	unless unfin_attic_space_type.nil?
+	  unfin_attic_space_type.spaces.each do |unfin_attic_space|
+	    unfin_attic_space.surfaces.each do |unfin_attic_surface|
+		  next unless unfin_attic_surface.surfaceType.downcase == "wall" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
+		  unfin_attic_surface.setConstruction(extuninsunfinwall)
+		  runner.registerInfo("Surface '#{unfin_attic_surface.name}', of Space Type '#{unfin_attic_space_type_r}' and with Surface Type '#{unfin_attic_surface.surfaceType}' and Outside Boundary Condition '#{unfin_attic_surface.outsideBoundaryCondition}', was assigned Construction '#{extuninsunfinwall.name}'")
+	    end	
+	  end
+	end
+
+	unless garage_space_type.nil?
+	  garage_space_type.spaces.each do |garage_space|
+	    garage_space.surfaces.each do |garage_surface|
+		  next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
+		  garage_surface.setConstruction(extuninsunfinwall)
+		  runner.registerInfo("Surface '#{garage_surface.name}', of Space Type '#{garage_space_type_r}' and with Surface Type '#{garage_surface.surfaceType}' and Outside Boundary Condition '#{garage_surface.outsideBoundaryCondition}', was assigned Construction '#{extuninsunfinwall.name}'")
+	    end	
+	  end
+	end
 	
     return true
  

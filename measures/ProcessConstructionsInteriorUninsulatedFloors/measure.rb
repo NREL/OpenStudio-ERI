@@ -197,8 +197,38 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     fbasement_space_type.setDisplayName("Finished Basement space type")
     fbasement_space_type.setDescription("Select the finished basement space type")
     fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
-    args << fbasement_space_type
-
+    args << fbasement_space_type	
+	
+    #make a choice argument for garage space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.GarageSpaceType)
+        space_type_args << Constants.GarageSpaceType
+    end
+    garage_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_space_type", space_type_args, true)
+    garage_space_type.setDisplayName("Garage space type")
+    garage_space_type.setDescription("Select the garage space type")
+    garage_space_type.setDefaultValue(Constants.GarageSpaceType)
+    args << garage_space_type	
+	
+    #make a choice argument for unfinished attic space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.UnfinishedAtticSpaceType)
+        space_type_args << Constants.UnfinishedAtticSpaceType
+    end
+    unfin_attic_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("unfin_attic_space_type", space_type_args, true)
+    unfin_attic_space_type.setDisplayName("Unfinished Attic space type")
+    unfin_attic_space_type.setDescription("Select the unfinished attic space type")
+    unfin_attic_space_type.setDefaultValue(Constants.UnfinishedAtticSpaceType)
+    args << unfin_attic_space_type	
+	
     return args
   end #end the arguments method
 
@@ -221,7 +251,11 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     end
 	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
     fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
-
+	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
+    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
+	unfin_attic_space_type_r = runner.getStringArgumentValue("unfin_attic_space_type",user_arguments)
+    unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)	
+	
     # Gypsum
     selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
     if selected_gypsum.empty?
@@ -346,89 +380,70 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     end
 
     # FinUninsFinFloor
-    layercount = 0
-    finuninsfinfloor = OpenStudio::Model::Construction.new(model)
-    finuninsfinfloor.setName("FinUninsFinFloor")
+    materials = []
     if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
-      finuninsfinfloor.insertLayer(layercount,pcm)
-      layercount += 1
+      materials << pcm
     end
     (0...gypsumNumLayers).to_a.each do |i|
-      finuninsfinfloor.insertLayer(layercount,gypsum)
-      layercount += 1
+      materials << gypsum
     end
-    finuninsfinfloor.insertLayer(layercount,saf)
-    layercount += 1
-    finuninsfinfloor.insertLayer(layercount,ply3_4)
-    layercount += 1
-    finuninsfinfloor.insertLayer(layercount,fm)
-    layercount += 1
+    materials << saf
+    materials << ply3_4
+    materials << fm
     if carpet.CarpetFloorFraction > 0
-      finuninsfinfloor.insertLayer(layercount,cbl)
+      materials << cbl
     end
-
+	finuninsfinfloor = OpenStudio::Model::Construction.new(materials)
+	finuninsfinfloor.setName("FinUninsFinFloor")
+	
     # RevFinUninsFinFloor
-    layercount = 0
-    revfinuninsfinfloor = OpenStudio::Model::Construction.new(model)
+    revfinuninsfinfloor = finuninsfinfloor.reverseConstruction
     revfinuninsfinfloor.setName("RevFinUninsFinFloor")
-    finuninsfinfloor.layers.reverse_each do |layer|
-      revfinuninsfinfloor.insertLayer(layercount,layer)
-      layercount += 1
-    end
-
-    # UnfinUninsUnfinFloor
-    layercount = 0
-    unfinuninsunfinfloor = OpenStudio::Model::Construction.new(model)
-    unfinuninsunfinfloor.setName("UnfinUninsUnfinFloor")
-    unfinuninsunfinfloor.insertLayer(layercount,saf)
-    layercount += 1
-    unfinuninsunfinfloor.insertLayer(layercount,ply3_4)
-
-    # RevUnfinUninsUnfinFloor
-    layercount = 0
-    revunfinuninsunfinfloor = OpenStudio::Model::Construction.new(model)
-    revunfinuninsunfinfloor.setName("RevUnfinUninsUnfinFloor")
-    finuninsfinfloor.layers.reverse_each do |layer|
-      revunfinuninsunfinfloor.insertLayer(layercount,layer)
-      layercount += 1
-    end
-
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "RoofCeiling" and ( surface.outsideBoundaryCondition == "Surface" or surface.outsideBoundaryCondition == "Adiabatic" )
-            surface.resetConstruction
-            surface.setConstruction(revfinuninsfinfloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevFinUninsFinFloor"]
-          elsif surface.surfaceType == "Floor" and ( surface.outsideBoundaryCondition == "Surface" or surface.outsideBoundaryCondition == "Adiabatic" )
-            surface.resetConstruction
-            surface.setConstruction(finuninsfinfloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"FinUninsFinFloor"]
-          end
-        end
-      end
-      if not fbasement_space_type.nil?
-        if fbasement_space_type.handle.to_s == space.spaceType.get.handle.to_s
-          # loop thru all surfaces attached to the space
-          surfaces = space.surfaces
-          surfaces.each do |surface|
-            if surface.surfaceType == "RoofCeiling" and ( surface.outsideBoundaryCondition == "Surface" or surface.outsideBoundaryCondition == "Adiabatic" )
-              surface.resetConstruction
-              surface.setConstruction(revfinuninsfinfloor)
-              constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevFinUninsFinFloor"]
-            end
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	
+	# UnfinUninsUnfinFloor
+	materials = []
+	materials << saf
+	materials << ply3_4
+	unfinuninsunfinfloor = OpenStudio::Model::Construction.new(materials)
+	unfinuninsunfinfloor.setName("UnfinUninsUnfinFloor")
+	
+	# RevUnfinUninsUnfinFloor
+	revunfinuninsunfinfloor = unfinuninsunfinfloor.reverseConstruction
+	revunfinuninsunfinfloor.setName("RevUnfinUninsUnfinFloor")
+	
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless ["floor"].include? living_surface.surfaceType.downcase
+		adjacent_surface = living_surface.adjacentSurface
+		next unless adjacent_surface.is_initialized
+		adjacent_surface = adjacent_surface.get
+	    adjacent_surface_r = adjacent_surface.name.to_s
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    next unless [living_space_type_r, fbasement_space_type_r].include? adjacent_space_type_r
+	    living_surface.setConstruction(finuninsfinfloor)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{finuninsfinfloor.name}'")
+	    adjacent_surface.setConstruction(revfinuninsfinfloor)		
+		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revfinuninsfinfloor.name}'")
+	  end	
+	end
+	
+	unless unfin_attic_space_type.nil?
+	  unfin_attic_space_type.spaces.each do |unfin_attic_space|
+	    unfin_attic_space.surfaces.each do |unfin_attic_surface|
+	      next unless ["floor"].include? unfin_attic_surface.surfaceType.downcase
+		  adjacent_surface = unfin_attic_surface.adjacentSurface
+		  next unless adjacent_surface.is_initialized
+		  adjacent_surface = adjacent_surface.get
+	      adjacent_surface_r = adjacent_surface.name.to_s
+	      adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	      next unless [garage_space_type_r].include? adjacent_space_type_r
+	      unfin_attic_surface.setConstruction(unfinuninsunfinfloor)
+		  runner.registerInfo("Surface '#{unfin_attic_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{unfin_attic_surface.surfaceType}' and Outside Boundary Condition '#{unfin_attic_surface.outsideBoundaryCondition}', was assigned Construction '#{unfinuninsunfinfloor.name}'")
+	      adjacent_surface.setConstruction(revunfinuninsunfinfloor)		
+		  runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfinuninsunfinfloor.name}'")
+	    end	
+	  end
+	end
     
     return true
  

@@ -9,7 +9,6 @@
 
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
-require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
@@ -76,35 +75,6 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    spacetype_handles = OpenStudio::StringVector.new
-    spacetype_display_names = OpenStudio::StringVector.new
-
-    #putting model object and names into hash
-    spacetype_args = model.getSpaceTypes
-    spacetype_args_hash = {}
-    spacetype_args.each do |spacetype_arg|
-      spacetype_args_hash[spacetype_arg.name.to_s] = spacetype_arg
-    end
-
-    #looping through sorted hash of model objects
-    spacetype_args_hash.sort.map do |key,value|
-      spacetype_handles << value.handle.to_s
-      spacetype_display_names << key
-    end
-
-    #make a choice argument for living
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", spacetype_handles, spacetype_display_names, true)
-    selected_living.setDisplayName("Living Space")
-	selected_living.setDescription("The living space type.")
-    args << selected_living
-
-    #make a choice argument for crawlspace
-    selected_fbsmt = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmt", spacetype_handles, spacetype_display_names, false)
-    selected_fbsmt.setDisplayName("Finished Basement Space")
-	selected_fbsmt.setDescription("The finished basement space type.")
-    args << selected_fbsmt
-
     #make a double argument for partition wall mass thickness
     partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmassth", false)
     partitionwallmassth.setDisplayName("Partition Wall Mass: Thickness")
@@ -144,6 +114,36 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     partitionwallfrac.setDefaultValue(1.0)
     args << partitionwallfrac
 
+    #make a choice argument for living space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.LivingSpaceType)
+        space_type_args << Constants.LivingSpaceType
+    end
+    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
+    living_space_type.setDisplayName("Living space type")
+    living_space_type.setDescription("Select the living space type")
+    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    args << living_space_type	
+	
+    #make a choice argument for finished basement space type
+    space_types = model.getSpaceTypes
+    space_type_args = OpenStudio::StringVector.new
+    space_types.each do |space_type|
+        space_type_args << space_type.name.to_s
+    end
+    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
+        space_type_args << Constants.FinishedBasementSpaceType
+    end
+    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
+    fbasement_space_type.setDisplayName("Finished basement space type")
+    fbasement_space_type.setDescription("Select the finished basement space type")
+    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
+    args << fbasement_space_type	
+	
     return args
   end #end the arguments method
 
@@ -157,30 +157,26 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Space Type
-    selected_living = runner.getOptionalWorkspaceObjectChoiceValue("selectedliving",user_arguments,model)
-    selected_fbsmt = runner.getOptionalWorkspaceObjectChoiceValue("selectedfbsmt",user_arguments,model)
+	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    if living_space_type.nil?
+        return false
+    end
+	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
+    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)	
+	
     partitionWallMassThickness = runner.getDoubleArgumentValue("partitionwallmassth",user_arguments)
     partitionWallMassConductivity = runner.getDoubleArgumentValue("partitionwallmasscond",user_arguments)
     partitionWallMassDensity = runner.getDoubleArgumentValue("partitionwallmassdens",user_arguments)
     partitionWallMassSpecificHeat = runner.getDoubleArgumentValue("partitionwallmasssh",user_arguments)
     partitionWallMassFractionOfFloorArea = runner.getDoubleArgumentValue("partitionwallfrac",user_arguments)
-
-    # loop thru all the spaces
-    hasFinishedBasement = false
-    if not selected_fbsmt.empty?
-      hasFinishedBasement = true
-    end
     
-    living_space_area = 0
-    finished_basement_area = 0
-	model.getSpaceTypes.each do |spaceType|
-		spacehandle = spaceType.handle.to_s
-        if spacehandle == selected_living.get.handle.to_s
-            living_space_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        elsif hasFinishedBasement and spacehandle == selected_fbsmt.get.handle.to_s
-            finished_basement_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-        end
-    end
+	living_space_area = 0
+	finished_basement_area = 0
+	living_space_area = HelperMethods.get_floor_area(model, living_space_type.handle, runner)
+	unless fbasement_space_type.nil?
+		finished_basement_area = HelperMethods.get_floor_area(model, fbasement_space_type.handle, runner)
+	end
 
     # Constants
     mat_wood = get_mat_wood
@@ -247,22 +243,18 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).Cp,"Btu/lb*R","J/kg*K").get)
 
     # FinUninsFinWall
-    layercount = 0
-    fufw = OpenStudio::Model::Construction.new(model)
-    fufw.setName("FinUninsFinWall")
-    fufw.insertLayer(layercount,pwm)
-    layercount += 1
+    materials = []
+    materials << pwm
     if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-      fufw.insertLayer(layercount,pcm)
-      layercount += 1
+      materials << pcm
     end
-    fufw.insertLayer(layercount,saw)
-    layercount += 1
+    materials << saw
     if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-      fufw.insertLayer(layercount,pcm)
-      layercount += 1
+      materials << pcm
     end
-    fufw.insertLayer(layercount,pwm)
+    materials << pwm
+    fufw = OpenStudio::Model::Construction.new(materials)
+    fufw.setName("FinUninsFinWall")	
 
     # Remaining partition walls within spaces (those without geometric representation)
     lp = OpenStudio::Model::InternalMassDefinition.new(model)
@@ -275,16 +267,11 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     end
     im = OpenStudio::Model::InternalMass.new(lp)
     im.setName("LivingPartition")
-    # loop thru all the space types
-    spaceTypes = model.getSpaceTypes
-    spaceTypes.each do |spaceType|
-      if selected_living.get.handle.to_s == spaceType.handle.to_s
-        runner.registerInfo("Assigned internal mass object 'LivingPartition' to space type '#{spaceType.name}'")
-        im.setSpaceType(spaceType)
-      end
-    end
+    
+	im.setSpaceType(living_space_type)
+	runner.registerInfo("Assigned internal mass object 'LivingPartition' to space type '#{living_space_type_r}'")
 
-    if hasFinishedBasement
+    unless fbasement_space_type.nil?
       # Remaining partition walls within spaces (those without geometric representation)
       fbp = OpenStudio::Model::InternalMassDefinition.new(model)
       fbp.setName("FBsmtPartition")
@@ -298,16 +285,11 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
       end
       im = OpenStudio::Model::InternalMass.new(fbp)
       im.setName("FBsmtPartition")
-      # loop thru all the space types
-      spaceTypes = model.getSpaceTypes
-      spaceTypes.each do |spaceType|
-        if selected_fbsmt.get.handle.to_s == spaceType.handle.to_s
-          runner.registerInfo("Assigned internal mass object 'FBsmtPartition' to space type '#{spaceType.name}'")
-          im.setSpaceType(spaceType)
-        end
-      end
+          
+	  im.setSpaceType(fbasement_space_type)
+	  runner.registerInfo("Assigned internal mass object 'FBsmtPartition' to space type '#{fbasement_space_type_r}'")
     end
-
+	
     return true
 
   end #end the run method

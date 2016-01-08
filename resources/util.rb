@@ -145,6 +145,26 @@ class HelperMethods
         return thermal_zone
     end		
     
+	def self.get_space_type_from_surface(model, surface_s, print_err=true)
+		space_type_r = nil
+		model.getSpaces.each do |space|
+			space.surfaces.each do |s|
+				if s.name.to_s == surface_s
+					space_type_r = space.spaceType.get.name.to_s
+					break
+				end
+			end
+		end
+        if space_type_r.nil?
+            if print_err
+                runner.registerError("Could not find surface with the name '#{surface_s}'.")
+            else
+                runner.registerWarning("Could not find surface with the name '#{surface_s}'.")
+            end
+        end		
+		return space_type_r
+	end
+	
     def self.get_plant_loop_from_string(model, plantloop_s, runner, print_err=true)
         plant_loop = nil
         model.getPlantLoops.each do |pl|

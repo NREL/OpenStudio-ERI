@@ -634,23 +634,19 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     gypsum.setVisibleAbsorptance(gypsumVisibleAbs)
 
     # GrndInsFinWall
-    layercount = 0
-    grndinsfinwall = OpenStudio::Model::Construction.new(model)
-    grndinsfinwall.setName("GrndInsFinWall")
+	materials = []
     if fwfrRvalue > 0
-      grndinsfinwall.insertLayer(layercount,fwfr)
-      layercount += 1
+      materials << fwfr
     end
-    grndinsfinwall.insertLayer(layercount,soil)
-    layercount += 1
-    grndinsfinwall.insertLayer(layercount,conc8)
-    layercount += 1
+    materials << soil
+    materials << conc8
     if fwiaddinsullayer
-      grndinsfinwall.insertLayer(layercount,fwi)
-      layercount += 1
+      materials << fwi
     end
-    grndinsfinwall.insertLayer(layercount,gypsum)
-
+    materials << gypsum
+    grndinsfinwall = OpenStudio::Model::Construction.new(materials)
+    grndinsfinwall.setName("GrndInsFinWall")
+	
     # FBaseFloor-FicR
     fffrRvalue = fffr.fb_floor_Rvalue
     fffr = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
@@ -669,15 +665,13 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     conc4.setThermalAbsorptance(get_mat_concrete4in(mat_concrete).TAbs)
 
     # GrndUninsFinBFloor
-    layercount = 0
-    grnduninsfinbfloor = OpenStudio::Model::Construction.new(model)
+    materials = []
+    materials << fffr
+    materials << soil
+    materials << conc4
+    grnduninsfinbfloor = OpenStudio::Model::Construction.new(materials)
     grnduninsfinbfloor.setName("GrndUninsFinBFloor")
-    grnduninsfinbfloor.insertLayer(layercount,fffr)
-    layercount += 1
-    grnduninsfinbfloor.insertLayer(layercount,soil)
-    layercount += 1
-    grnduninsfinbfloor.insertLayer(layercount,conc4)
-
+	
     # Rigid
     if wallSheathingContInsRvalue > 0
       rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -715,57 +709,38 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     end
 
     # FBsmtRimJoist
-    layercount = 0
-    fbsmtrimjoist = OpenStudio::Model::Construction.new(model)
-    fbsmtrimjoist.setName("FBsmtRimJoist")
-    fbsmtrimjoist.insertLayer(layercount,extfin)
-    layercount += 1
+    materials = []
+    materials << extfin.to_StandardOpaqueMaterial.get
     if wallsh.WallSheathingContInsRvalue > 0
-      fbsmtrimjoist.insertLayer(layercount,rigid)
-      layercount += 1
+      materials << rigid
     end
-    fbsmtrimjoist.insertLayer(layercount,ply3_2)
-    layercount += 1
+    materials << ply3_2
     if fjcrimjoistrvalue > 0
-      fbsmtrimjoist.insertLayer(layercount,fjc)
-      layercount += 1
+      materials << fjc
     end
     if gypsumNumLayers > 1
-      fbsmtrimjoist.insertLayer(layercount,gypsum)
-      layercount += 1
-      fbsmtrimjoist.insertLayer(layercount,gypsum)
-      layercount += 1
+      materials << gypsum
+      materials << gypsum
     else
-      fbsmtrimjoist.insertLayer(layercount,gypsum)
+      materials << gypsum
     end
+    fbsmtrimjoist = OpenStudio::Model::Construction.new(materials)
+    fbsmtrimjoist.setName("FBsmtRimJoist")
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if fbasement_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Ground"
-            surface.resetConstruction
-            surface.setConstruction(grndinsfinwall)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"GrndInsFinWall"]
-          elsif surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Ground"
-            surface.resetConstruction
-            surface.setConstruction(grnduninsfinbfloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"GrndUninsFinBFloor"]
-          elsif surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
-            surface.resetConstruction
-            surface.setConstruction(fbsmtrimjoist)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"FBsmtRimJoist"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	fbasement_space_type.spaces.each do |fbasement_space|
+	  fbasement_space.surfaces.each do |fbasement_surface|
+	    if fbasement_surface.surfaceType.downcase == "wall" and fbasement_surface.outsideBoundaryCondition.downcase == "ground"
+	      fbasement_surface.setConstruction(grndinsfinwall)
+		  runner.registerInfo("Surface '#{fbasement_surface.name}', of Space Type '#{fbasement_space_type_r}' and with Surface Type '#{fbasement_surface.surfaceType}' and Outside Boundary Condition '#{fbasement_surface.outsideBoundaryCondition}', was assigned Construction '#{grndinsfinwall.name}'")		
+		elsif fbasement_surface.surfaceType.downcase == "floor" and fbasement_surface.outsideBoundaryCondition.downcase == "ground"
+	      fbasement_surface.setConstruction(grnduninsfinbfloor)
+		  runner.registerInfo("Surface '#{fbasement_surface.name}', of Space Type '#{fbasement_space_type_r}' and with Surface Type '#{fbasement_surface.surfaceType}' and Outside Boundary Condition '#{fbasement_surface.outsideBoundaryCondition}', was assigned Construction '#{grnduninsfinbfloor.name}'")		
+		elsif fbasement_surface.surfaceType.downcase == "wall" and fbasement_surface.outsideBoundaryCondition.downcase == "outdoors"
+	      fbasement_surface.setConstruction(fbsmtrimjoist)
+		  runner.registerInfo("Surface '#{fbasement_surface.name}', of Space Type '#{fbasement_space_type_r}' and with Surface Type '#{fbasement_surface.surfaceType}' and Outside Boundary Condition '#{fbasement_surface.outsideBoundaryCondition}', was assigned Construction '#{fbsmtrimjoist.name}'")		
+		end
+	  end	
+	end
 
     return true
 

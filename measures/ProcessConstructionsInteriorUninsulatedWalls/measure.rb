@@ -191,89 +191,38 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     ply1_2.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FinUninsFinWall
-    layercount = 0
-    fufw = OpenStudio::Model::Construction.new(model)
+	materials = []
+    materials << pwm
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
+     materials << pcm
+    end
+    materials << saw
+    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
+      materials << pcm
+    end
+    materials << pwm
+    fufw = OpenStudio::Model::Construction.new(materials)
     fufw.setName("FinUninsFinWall")
-    fufw.insertLayer(layercount,pwm)
-    layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-      fufw.insertLayer(layercount,pcm)
-      layercount += 1
-    end
-    fufw.insertLayer(layercount,saw)
-    layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-      fufw.insertLayer(layercount,pcm)
-      layercount += 1
-    end
-    fufw.insertLayer(layercount,pwm)
-
+	
     # RevFinUninsFinWall
-    layercount = 0
-    rfufw = OpenStudio::Model::Construction.new(model)
+    rfufw = fufw.reverseConstruction
     rfufw.setName("RevFinUninsFinWall")
-    fufw.layers.reverse_each do |layer|
-      rfufw.insertLayer(layercount,layer)
-      layercount += 1
-    end
 
-    # UnfinUninsFinWall
-    layercount = 0
-    uufw = OpenStudio::Model::Construction.new(model)
-    uufw.setName("UnfinUninsFinWall")
-    uufw.insertLayer(layercount,saw)
-    layercount += 1
-    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-      uufw.insertLayer(layercount,pcm)
-      layercount += 1
-    end
-    uufw.insertLayer(layercount,pwm)
-
-    # RevUnfinUninsFinWall
-    layercount = 0
-    ruufw = OpenStudio::Model::Construction.new(model)
-    ruufw.setName("RevUnfinUninsFinWall")
-    uufw.layers.reverse_each do |layer|
-      ruufw.insertLayer(layercount,layer)
-      layercount += 1
-    end
-
-    # UnfinUninsUnfinWall
-    layercount = 0
-    uuuw = OpenStudio::Model::Construction.new(model)
-    uuuw.setName("UnfinUninsUnfinWall")
-    uuuw.insertLayer(layercount,saw)
-    layercount += 1
-    uuuw.insertLayer(layercount,ply1_2)
-
-    # RevUnfinUninsUnfinWall
-    layercount = 0
-    ruuuw = OpenStudio::Model::Construction.new(model)
-    ruuuw.setName("RevUnfinUninsUnfinWall")
-    uuuw.layers.reverse_each do |layer|
-      ruuuw.insertLayer(layercount,layer)
-      layercount += 1
-    end
-
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Adiabatic"
-            surface.resetConstruction
-            surface.setConstruction(fufw)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"FinUninsFinWall"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end	
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless ["wall"].include? living_surface.surfaceType.downcase
+		adjacent_surface = living_surface.adjacentSurface
+		next unless adjacent_surface.is_initialized
+		adjacent_surface = adjacent_surface.get
+	    adjacent_surface_r = adjacent_surface.name.to_s
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    next unless [living_space_type_r].include? adjacent_space_type_r
+	    living_surface.setConstruction(fufw)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{fufw.name}'")
+	    adjacent_surface.setConstruction(rfufw)		
+		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{rfufw.name}'")
+	  end	
+	end
 	
     return true
  

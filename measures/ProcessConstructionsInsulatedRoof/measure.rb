@@ -400,49 +400,30 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     gypsum.setVisibleAbsorptance(gypsumVisibleAbs)
 
     # FinInsExtRoof
-    layercount = 0
-    fininsextroof = OpenStudio::Model::Construction.new(model)
-    fininsextroof.setName("FinInsExtRoof")
-    fininsextroof.insertLayer(layercount,roofmat)
-    layercount += 1
-    fininsextroof.insertLayer(layercount,ply3_4)
-    layercount += 1
+    materials = []
+    materials << roofmat
+    materials << ply3_4
     if fr.FRRoofContInsThickness > 0
-      fininsextroof.insertLayer(layercount,rri)
-      layercount += 1
-      fininsextroof.insertLayer(layercount,ply3_4)
-      layercount += 1
+      materials << rri
+      materials << ply3_4
     end
-    fininsextroof.insertLayer(layercount,ri)
-    layercount += 1
+    materials << ri
     if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
-      fininsunfinuafloor.insertLayer(layercount,pcm)
-      layercount += 1
+      materials << pcm
     end
     (0...gypsumNumLayers).to_a.each do |i|
-      fininsextroof.insertLayer(layercount,gypsum)
-      layercount += 1
+      materials << gypsum
     end
+    fininsextroof = OpenStudio::Model::Construction.new(materials)
+    fininsextroof.setName("FinInsExtRoof")	
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Outdoors"
-            surface.resetConstruction
-            surface.setConstruction(fininsextroof)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"FinInsExtRoof"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless living_surface.surfaceType.downcase == "roofceiling" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
+	    living_surface.setConstruction(fininsextroof)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{fininsextroof.name}'")		
+	  end	
+	end
 
     return true
  

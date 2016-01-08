@@ -95,31 +95,20 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
 	conc.setThermalAbsorptance(get_mat_concrete4in(mat_concrete).TAbs)	
 	
 	# GrndUninsUnfinGrgFloor
-  grnduninsunfingrgfloor = OpenStudio::Model::Construction.new(model)
-  grnduninsunfingrgfloor.setName("GrndUninsUnfinGrgFloor")
-  grnduninsunfingrgfloor.insertLayer(0,adi)
-  grnduninsunfingrgfloor.insertLayer(1,soil)
-  grnduninsunfingrgfloor.insertLayer(2,conc)
+	materials = []
+	materials << adi
+	materials << soil
+	materials << conc
+	grnduninsunfingrgfloor = OpenStudio::Model::Construction.new(materials)
+	grnduninsunfingrgfloor.setName("GrndUninsUnfinGrgFloor")	
 
-  # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if garage_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition.downcase == "ground"
-            surface.resetConstruction
-            surface.setConstruction(grnduninsunfingrgfloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"GrndUninsUnfinGrgFloor"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	garage_space_type.spaces.each do |garage_space|
+	  garage_space.surfaces.each do |garage_surface|
+	    next unless garage_surface.surfaceType.downcase == "floor" and garage_surface.outsideBoundaryCondition.downcase == "ground"
+	    garage_surface.setConstruction(grnduninsunfingrgfloor)
+		runner.registerInfo("Surface '#{garage_surface.name}', of Space Type '#{garage_space_type_r}' and with Surface Type '#{garage_surface.surfaceType}' and Outside Boundary Condition '#{garage_surface.outsideBoundaryCondition}', was assigned Construction '#{grnduninsunfingrgfloor.name}'")
+	  end	
+	end
 	
     return true
  

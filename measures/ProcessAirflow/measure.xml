@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>cf7e8503-03ac-4c94-8b30-8696825d6c64</version_id>
+  <version_id>bd41bbae-7438-42bf-9d55-f7c44a23e74b</version_id>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Add Residential Airflow Properties</display_name>
@@ -686,22 +686,10 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BF5E9F83</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>030F203D</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>292DA523</checksum>
     </file>
     <file>
       <filename>sim.rb</filename>
@@ -719,6 +707,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>F670CB8D</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A8A14F57</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>913669E3</checksum>
     </file>
   </files>
 </measure>

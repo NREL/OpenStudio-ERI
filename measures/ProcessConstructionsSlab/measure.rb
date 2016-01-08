@@ -332,40 +332,26 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	ss.setSpecificHeat(OpenStudio::convert(0.1,"Btu/lb*R","J/kg*K").get)
 	
 	# Living Area Slab with Equivalent Carpeted/Bare R-value
-	layercount = 0
-	s = OpenStudio::Model::Construction.new(model)
-    s.setName("Slab")
-	if slab.fictitious_slab_Rvalue > 0
-    s.insertLayer(layercount,mfs)
-		layercount += 1
-	end
-    s.insertLayer(layercount,ss)
-	layercount += 1
-    s.insertLayer(layercount,sm)
-	layercount += 1
-	if carpet.CarpetFloorFraction > 0
-    s.insertLayer(layercount,scbem)
-	end
+	materials = []
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition.downcase == "ground"
-            surface.resetConstruction
-            surface.setConstruction(s)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"Slab"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	if slab.fictitious_slab_Rvalue > 0
+		materials << mfs
+	end
+    materials << ss
+    materials << sm
+	if carpet.CarpetFloorFraction > 0
+		materials << scbem
+	end
+	s = OpenStudio::Model::Construction.new(materials)
+    s.setName("Slab")
+	
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless living_surface.surfaceType.downcase == "floor" and living_surface.outsideBoundaryCondition.downcase == "ground"
+	    living_surface.setConstruction(s)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{s.name}'")
+	  end	
+	end
 
   return true
  

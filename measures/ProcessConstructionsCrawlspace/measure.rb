@@ -625,117 +625,83 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	# UnfinCSInsFinFloor
-	layercount = 0
-	unfincsinsfinfloor = OpenStudio::Model::Construction.new(model)
-	unfincsinsfinfloor.setName("UnfinCSInsFinFloor")
+	materials = []
     if cciRvalue > 0
-		unfincsinsfinfloor.insertLayer(layercount,cci)
-		layercount += 1
+		materials << cci
 	end	
-	unfincsinsfinfloor.insertLayer(layercount,ply3_4)
-	layercount += 1	
-	unfincsinsfinfloor.insertLayer(layercount,fm)
-	layercount += 1
+	materials << ply3_4
+	materials << fm
 	if carpet.CarpetFloorFraction > 0
-		unfincsinsfinfloor.insertLayer(layercount,cbl)
-	end	
+		materials << cbl
+	end
+	unfincsinsfinfloor = OpenStudio::Model::Construction.new(materials)
+	unfincsinsfinfloor.setName("UnfinCSInsFinFloor")	
 
 	# RevUnfinCSInsFinFloor
-	layercount = 0
-	revunfincsinsfinfloor = OpenStudio::Model::Construction.new(model)
+	revunfincsinsfinfloor = unfincsinsfinfloor.reverseConstruction
 	revunfincsinsfinfloor.setName("RevUnfinCSInsFinFloor")
-  unfincsinsfinfloor.layers.reverse_each do |layer|
-    revunfincsinsfinfloor.insertLayer(layercount,layer)
-    layercount += 1
-  end
 
 	# GrndInsUnfinCSWall
-	layercount = 0
-	grndinsunfincswall = OpenStudio::Model::Construction.new(model)
-	grndinsunfincswall.setName("GrndInsUnfinCSWall")
+	materials = []
 	if cwfrRvalue > 0
-		grndinsunfincswall.insertLayer(layercount,cwfr)
-		layercount += 1
+		materials << cwfr
 	end
-	grndinsunfincswall.insertLayer(layercount,soil)
-	layercount += 1
-	grndinsunfincswall.insertLayer(layercount,conc8)
-	layercount += 1
+	materials << soil
+	materials << conc8
 	if cs.CrawlWallContInsRvalueNominal > 0
-		grndinsunfincswall.insertLayer(layercount,cwi)
+		materials << cwi
 	end
+	grndinsunfincswall = OpenStudio::Model::Construction.new(materials)
+	grndinsunfincswall.setName("GrndInsUnfinCSWall")	
 	
 	# GrndUninsUnfinCSFloor
-	grnduninsunfincsfloor = OpenStudio::Model::Construction.new(model)
+	materials = []
+	materials << cffr
+	materials << soil
+	grnduninsunfincsfloor = OpenStudio::Model::Construction.new(materials)
 	grnduninsunfincsfloor.setName("GrndUninsUnfinCSFloor")
-	grnduninsunfincsfloor.insertLayer(0,cffr)
-	grnduninsunfincsfloor.insertLayer(1,soil)	
 	
 	# CSRimJoist
-	layercount = 0
-	csrimjoist = OpenStudio::Model::Construction.new(model)
-	csrimjoist.setName("CSRimJoist")
-	csrimjoist.insertLayer(layercount,extfin)
-	layercount += 1
+	materials = []
+	materials << extfin.to_StandardOpaqueMaterial.get
 	if wallsh.WallSheathingContInsRvalue > 0
-		csrimjoist.insertLayer(layercount,rigid)
-		layercount += 1
+		materials << rigid
 	end
-	csrimjoist.insertLayer(layercount,ply3_2)
-	layercount += 1
-	csrimjoist.insertLayer(layercount,cjc)
-
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if crawl_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Ground"
-            surface.resetConstruction
-            surface.setConstruction(grndinsunfincswall)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"GrndInsUnfinCSWall"]
-          elsif surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Surface"
-            surface.resetConstruction
-            surface.setConstruction(revunfincsinsfinfloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevUnfinCSInsFinFloor"]
-          elsif surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Ground"
-            surface.resetConstruction
-            surface.setConstruction(grnduninsunfincsfloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"GrndUninsUnfinCSFloor"]
-          elsif surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
-            surface.resetConstruction
-            surface.setConstruction(csrimjoist)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"CSRimJoist"]
-          end
-        end
-      elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Surface"
-            adjacentSpaces = model.getSpaces
-            adjacentSpaces.each do |adjacentSpace|
-              if crawl_space_type.handle.to_s == adjacentSpace.spaceType.get.handle.to_s
-                adjacentSurfaces = adjacentSpace.surfaces
-                adjacentSurfaces.each do |adjacentSurface|
-                  if surface.adjacentSurface.get.handle.to_s == adjacentSurface.handle.to_s
-                    surface.resetConstruction
-                    surface.setConstruction(unfincsinsfinfloor)
-                    constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"UnfinCSInsFinFloor"]
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	materials << ply3_2
+	materials << cjc
+	csrimjoist = OpenStudio::Model::Construction.new(materials)
+	csrimjoist.setName("CSRimJoist")
+	
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless ["floor"].include? living_surface.surfaceType.downcase
+		adjacent_surface = living_surface.adjacentSurface
+		next unless adjacent_surface.is_initialized
+		adjacent_surface = adjacent_surface.get
+	    adjacent_surface_r = adjacent_surface.name.to_s
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    next unless [crawl_space_type_r].include? adjacent_space_type_r
+	    living_surface.setConstruction(unfincsinsfinfloor)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{unfincsinsfinfloor.name}'")
+	    adjacent_surface.setConstruction(revunfincsinsfinfloor)		
+		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfincsinsfinfloor.name}'")
+	  end	
+	end	
+	
+	crawl_space_type.spaces.each do |crawl_space|
+	  crawl_space.surfaces.each do |crawl_surface|
+	    if crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "ground"
+		  crawl_surface.setConstruction(grndinsunfincswall)
+		  runner.registerInfo("Surface '#{crawl_surface.name}', of Space Type '#{crawl_space_type_r}' and with Surface Type '#{crawl_surface.surfaceType}' and Outside Boundary Condition '#{crawl_surface.outsideBoundaryCondition}', was assigned Construction '#{grndinsunfincswall.name}'")
+		elsif crawl_surface.surfaceType.downcase == "floor" and crawl_surface.outsideBoundaryCondition.downcase == "ground"
+		  crawl_surface.setConstruction(grnduninsunfincsfloor)
+		  runner.registerInfo("Surface '#{crawl_surface.name}', of Space Type '#{crawl_space_type_r}' and with Surface Type '#{crawl_surface.surfaceType}' and Outside Boundary Condition '#{crawl_surface.outsideBoundaryCondition}', was assigned Construction '#{grnduninsunfincsfloor.name}'")		
+		elsif crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "outdoors"
+		  crawl_surface.setConstruction(csrimjoist)
+		  runner.registerInfo("Surface '#{crawl_surface.name}', of Space Type '#{crawl_space_type_r}' and with Surface Type '#{crawl_surface.surfaceType}' and Outside Boundary Condition '#{crawl_surface.outsideBoundaryCondition}', was assigned Construction '#{csrimjoist.name}'")				
+		end
+	  end	
+	end
 
     return true
 

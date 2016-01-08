@@ -192,7 +192,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     living_space_type.setDescription("Select the living space type")
     living_space_type.setDefaultValue(Constants.LivingSpaceType)
     args << living_space_type
-
+    
     #make a choice argument for garage space type
     space_types = model.getSpaceTypes
     space_type_args = OpenStudio::StringVector.new
@@ -206,8 +206,8 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     garage_space_type.setDisplayName("Garage space type")
     garage_space_type.setDescription("Select the garage space type")
     garage_space_type.setDefaultValue(Constants.GarageSpaceType)
-    args << garage_space_type
-    
+    args << garage_space_type	
+	
     return args
   end #end the arguments method
 
@@ -231,7 +231,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     if garage_space_type.nil?
         # If the building has no garage, no constructions are assigned and we continue by returning True
         return true
-    end
+    end	
 
     # Cavity
     userdefined_instcavr = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
@@ -333,97 +333,37 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     end
 
     # UnfinInsFinFloor
-    layercount = 0
-    unfininsfinfloor = OpenStudio::Model::Construction.new(model)
-    unfininsfinfloor.setName("UnfinInsFinFloor")
-    unfininsfinfloor.insertLayer(layercount,ifi)
-    layercount += 1
-    unfininsfinfloor.insertLayer(layercount,ply3_4)
-    layercount += 1
-    unfininsfinfloor.insertLayer(layercount,fm)
-    layercount += 1
+    materials = []
+    materials << ifi
+    materials << ply3_4
+    materials << fm
     if carpet.CarpetFloorFraction > 0
-      unfininsfinfloor.insertLayer(layercount,cbl)
+      materials << cbl
     end
-
-    # UnfinInsUnfinFloor
-    layercount = 0
-    unfininsunfinfloor = OpenStudio::Model::Construction.new(model)
-    unfininsunfinfloor.setName("UnfinInsUnfinFloor")
-    unfininsunfinfloor.insertLayer(layercount,ifi)
-    layercount += 1
-    unfininsunfinfloor.insertLayer(layercount,ply3_4)
+    unfininsfinfloor = OpenStudio::Model::Construction.new(materials)
+    unfininsfinfloor.setName("UnfinInsFinFloor")
 
     # RevUnfinInsFinFloor
-    layercount = 0
-    revunfininsfinfloor = OpenStudio::Model::Construction.new(model)
+    revunfininsfinfloor = unfininsfinfloor.reverseConstruction
     revunfininsfinfloor.setName("RevUnfinInsFinFloor")
-    unfininsfinfloor.layers.reverse_each do |layer|
-      revunfininsfinfloor.insertLayer(layercount,layer)
-      layercount += 1
-    end
 
-    # RevUnfinInsUnfinFloor
-    layercount = 0
-    revunfininsunfinfloor = OpenStudio::Model::Construction.new(model)
-    revunfininsunfinfloor.setName("RevUnfinInsUnfinFloor")
-    unfininsunfinfloor.layers.reverse_each do |layer|
-      revunfininsunfinfloor.insertLayer(layercount,layer)
-      layercount += 1
-    end
-
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if garage_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Surface"
-            surface.resetConstruction
-            surface.setConstruction(revunfininsfinfloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevUnfinInsFinFloor"]
-          end
-        end
-      elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Surface"
-            adjacentSpaces = model.getSpaces
-            adjacentSpaces.each do |adjacentSpace|
-              if garage_space_type.handle.to_s == adjacentSpace.spaceType.get.handle.to_s
-                adjacentSurfaces = adjacentSpace.surfaces
-                adjacentSurfaces.each do |adjacentSurface|
-                  if surface.adjacentSurface.get.handle.to_s == adjacentSurface.handle.to_s
-                    surface.resetConstruction
-                    surface.setConstruction(unfininsfinfloor)
-                    constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"UnfinInsFinFloor"]
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless ["floor"].include? living_surface.surfaceType.downcase
+		adjacent_surface = living_surface.adjacentSurface
+		next unless adjacent_surface.is_initialized
+		adjacent_surface = adjacent_surface.get
+	    adjacent_surface_r = adjacent_surface.name.to_s
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    next unless [garage_space_type_r].include? adjacent_space_type_r
+	    living_surface.setConstruction(unfininsfinfloor)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{unfininsfinfloor.name}'")
+	    adjacent_surface.setConstruction(revunfininsfinfloor)		
+		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfininsfinfloor.name}'")
+	  end	
+	end
 
     return true
-
-
-    # loop thru all surfaces attached to the space
-    surfaces = space.surfaces
-    surfaces.each do |surface|
-      if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Surface"
-        surface.resetConstruction
-        surface.setConstruction(unfininsfinfloor)
-        constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"UnfinInsFinFloor"]
-      end
-    end
 
   end #end the run method
 

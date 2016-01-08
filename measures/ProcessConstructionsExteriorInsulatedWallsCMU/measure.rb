@@ -482,69 +482,31 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 	fu.setSpecificHeat(OpenStudio::convert(fuSpecificHeat,"Btu/lb*R","J/kg*K").get)	
 		
 	# ExtInsFinWall
-	layercount = 0
-	extinsfinwall = OpenStudio::Model::Construction.new(model)
-	extinsfinwall.setName("ExtInsFinWall")
-	extinsfinwall.insertLayer(layercount,extfin)
-	layercount += 1
+	materials = []
+	materials << extfin
 	if rigidInsRvalue > 0
-		extinsfinwall.insertLayer(layercount,rigid)
-		layercount += 1
+		materials << rigid
 	end
 	if hasOSB
-		extinsfinwall.insertLayer(layercount,osb)
-		layercount += 1
+		materials << osb
 	end
-	extinsfinwall.insertLayer(layercount,cmu)
+	materials << cmu
 	if cmuFurringCavityDepth > 0
-		extinsfinwall.insertLayer(layercount,fu)
-		layercount += 1
+		materials << fu
 	end
-	layercount += 1
 	(0...gypsumNumLayers).to_a.each do |i|
-		extinsfinwall.insertLayer(layercount,gypsum)
-		layercount += 1
-	end	
+		materials << gypsum
+	end
+	extinsfinwall = OpenStudio::Model::Construction.new(materials)
+	extinsfinwall.setName("ExtInsFinWall")	
 		
-	# ExtInsUnfinWall
-	layercount = 0
-	extinsunfinwall = OpenStudio::Model::Construction.new(model)
-	extinsunfinwall.setName("ExtInsUnfinWall")
-	extinsunfinwall.insertLayer(layercount,extfin)
-	layercount += 1
-	if rigidInsRvalue > 0
-		extinsunfinwall.insertLayer(layercount,rigid)
-		layercount += 1
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+		next unless living_surface.surfaceType.downcase == "wall" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
+		living_surface.setConstruction(extinsfinwall)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{extinsfinwall.name}'")
+	  end	
 	end
-	if hasOSB
-		extinsunfinwall.insertLayer(layercount,osb)
-		layercount += 1
-	end
-	extinsunfinwall.insertLayer(layercount,cmu)
-	if cmuFurringCavityDepth > 0
-		extinsunfinwall.insertLayer(layercount,fu)
-		layercount += 1
-	end
-		
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
-            surface.resetConstruction
-            surface.setConstruction(extinsfinwall)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"ExtInsFinWall"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end	
 		
     return true
 

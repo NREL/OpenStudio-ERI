@@ -319,7 +319,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
         space_type_args << Constants.UnfinishedAtticSpaceType
     end
     unfin_attic_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("unfin_attic_space_type", space_type_args, true)
-    unfin_attic_space_type.setDisplayName("Unfinished attic space type")
+    unfin_attic_space_type.setDisplayName("Unfinished Attic space type")
     unfin_attic_space_type.setDescription("Select the unfinished attic space type")
     unfin_attic_space_type.setDefaultValue(Constants.UnfinishedAtticSpaceType)
     args << unfin_attic_space_type
@@ -519,23 +519,18 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     gypsum.setVisibleAbsorptance(gypsumVisibleAbs)
 
     # FinInsUnfinUAFloor
-    layercount = 0
-    fininsunfinuafloor = OpenStudio::Model::Construction.new(model)
-    fininsunfinuafloor.setName("FinInsUnfinUAFloor")
+    materials = []
     if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
-      fininsunfinuafloor.insertLayer(layercount,pcm)
-      layercount += 1
+       materials << pcm
     end
     (0...gypsumNumLayers).to_a.each do |i|
-      fininsunfinuafloor.insertLayer(layercount,gypsum)
-      layercount += 1
-    end
+      materials << gypsum
+    end	
 
     # UATrussandIns
     uataiConductivity = uatai.UA_ceiling_joist_ins_conductivity
     uataiDensity = uatai.UA_ceiling_joist_ins_density
     uataiSpecificHeat = uatai.UA_ceiling_joist_ins_spec_heat
-
     if uatc.UACeilingInsRvalueNominal_Rev != 0 and uatc.UACeilingInsThickness_Rev != 0
       uatai = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       uatai.setName("UATrussandIns")
@@ -544,10 +539,9 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       uatai.setConductivity(OpenStudio::convert(uataiConductivity,"Btu/hr*ft*R","W/m*K").get)
       uatai.setDensity(OpenStudio::convert(uataiDensity,"lb/ft^3","kg/m^3").get)
       uatai.setSpecificHeat(OpenStudio::convert(uataiSpecificHeat,"Btu/lb*R","J/kg*K").get)
-      fininsunfinuafloor.insertLayer(layercount,uatai)
-      layercount += 1
+      materials << uatai
       if uatc.UACeilingInsThickness_Rev > uatc.UACeilingJoistThickness
-        fininsunfinuafloor.insertLayer(layercount,uaaci)
+        materials << uaaci
       end
     else
       # Without insulation, we run the risk of CTF errors ("Construction too thin or too light")
@@ -559,17 +553,14 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       ctf.setConductivity(OpenStudio::convert(get_mat_wood.k,"Btu/hr*ft*R","W/m*K").get)
       ctf.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
       ctf.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
-      fininsunfinuafloor.insertLayer(layercount,ctf)
+      materials << ctf
     end
+    fininsunfinuafloor = OpenStudio::Model::Construction.new(materials)
+    fininsunfinuafloor.setName("FinInsUnfinUAFloor")	
 
     # RevFinInsUnfinUAFloor
-    layercount = 0
-    revfininsunfinuafloor = OpenStudio::Model::Construction.new(model)
+    revfininsunfinuafloor = fininsunfinuafloor.reverseConstruction
     revfininsunfinuafloor.setName("RevFinInsUnfinUAFloor")
-    fininsunfinuafloor.layers.reverse_each do |layer|
-      revfininsunfinuafloor.insertLayer(layercount,layer)
-      layercount += 1
-    end
 
     # RoofingMaterial
     mat_roof_mat = get_mat_roofing_mat(roofing_material)
@@ -635,58 +626,44 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     uari.setSpecificHeat(OpenStudio::convert(uariSpecificHeat,"Btu/lb*R","J/kg*K").get)
 
     # UnfinInsExtRoof
-    layercount = 0
-    unfininsextroof = OpenStudio::Model::Construction.new(model)
-    unfininsextroof.setName("UnfinInsExtRoof")
-    unfininsextroof.insertLayer(layercount,roofmat)
-    layercount += 1
-    unfininsextroof.insertLayer(layercount,ply3_4)
-    layercount += 1
+    materials = []
+    materials << roofmat
+    materials << ply3_4
     if uatc.UARoofContInsThickness > 0
-      unfininsextroof.insertLayer(layercount,uarri)
-      layercount +=1
-      unfininsextroof.insertLayer(layercount,ply3_4)
-      layercount += 1
+      materials << uarri
+      materials << ply3_4
     end
-    unfininsextroof.insertLayer(layercount,uari)
-    layercount += 1
+    materials << uari
     if radiant_barrier.HasRadiantBarrier
-      unfininsextroof.insertLayer(layercount,radbar)
+      materials << radbar
     end
+    unfininsextroof = OpenStudio::Model::Construction.new(materials)
+    unfininsextroof.setName("UnfinInsExtRoof")	
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if unfin_attic_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Surface"
-            surface.resetConstruction
-            surface.setConstruction(fininsunfinuafloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"FinInsUnfinUAFloor"]
-          elsif surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Outdoors"
-            surface.resetConstruction
-            surface.setConstruction(unfininsextroof)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"UnfinInsExtRoof"]
-          end
-        end
-      elsif living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Surface"
-            surface.resetConstruction
-            surface.setConstruction(revfininsunfinuafloor)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"RevFinInsUnfinUAFloor"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless ["roofceiling"].include? living_surface.surfaceType.downcase
+		adjacent_surface = living_surface.adjacentSurface
+		next unless adjacent_surface.is_initialized
+		adjacent_surface = adjacent_surface.get
+	    adjacent_surface_r = adjacent_surface.name.to_s
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    next unless [unfin_attic_space_type_r].include? adjacent_space_type_r
+	    living_surface.setConstruction(revfininsunfinuafloor)
+		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{revfininsunfinuafloor.name}'")
+	    adjacent_surface.setConstruction(fininsunfinuafloor)		
+		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{fininsunfinuafloor.name}'")
+	  end	
+	end	
+	
+	unfin_attic_space_type.spaces.each do |unfin_attic_space|
+	  unfin_attic_space.surfaces.each do |unfin_attic_surface|
+	    next unless unfin_attic_surface.surfaceType.downcase == "roofceiling" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
+	    unfin_attic_surface.setConstruction(unfininsextroof)
+		runner.registerInfo("Surface '#{unfin_attic_surface.name}', of Space Type '#{unfin_attic_space_type_r}' and with Surface Type '#{unfin_attic_surface.surfaceType}' and Outside Boundary Condition '#{unfin_attic_surface.outsideBoundaryCondition}', was assigned Construction '#{unfininsextroof.name}'")		
+	  end	
+	end	
 
     return true
  

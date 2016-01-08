@@ -192,38 +192,23 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     gsa.setSpecificHeat(OpenStudio::convert(gsaSpecificHeat,"Btu/lb*R","J/kg*K").get)
 
     # UnfinUninsExtGrgRoof
-    layercount = 0
-    unfinuninsextgrgroof = OpenStudio::Model::Construction.new(model)
-    unfinuninsextgrgroof.setName("UnfinUninsExtGrgRoof")
-    unfinuninsextgrgroof.insertLayer(layercount,roofmat)
-    layercount += 1
-    unfinuninsextgrgroof.insertLayer(layercount,ply3_4)
-    layercount += 1
-    unfinuninsextgrgroof.insertLayer(layercount,gsa)
-    layercount += 1
+	materials = []
+    materials << roofmat
+    materials << ply3_4
+    materials << gsa
     if radiant_barrier.HasRadiantBarrier
-      unfinuninsextgrgroof.insertLayer(layercount,radbar)
+      materials << radbar
     end
+    unfinuninsextgrgroof = OpenStudio::Model::Construction.new(materials)
+    unfinuninsextgrgroof.setName("UnfinUninsExtGrgRoof")	
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      if garage_space_type.handle.to_s == space.spaceType.get.handle.to_s
-        # loop thru all surfaces attached to the space
-        surfaces = space.surfaces
-        surfaces.each do |surface|
-          if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Outdoors"
-            surface.resetConstruction
-            surface.setConstruction(unfinuninsextgrgroof)
-            constructions_hash[surface.name.to_s] = [surface.surfaceType,surface.outsideBoundaryCondition,"UnfinUninsExtGrgRoof"]
-          end
-        end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Surface '#{key}', attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}' and with Surface Type '#{value[0]}' and Outside Boundary Condition '#{value[1]}', was assigned Construction '#{value[2]}'")
-      end
-    end
+	garage_space_type.spaces.each do |garage_space|
+	  garage_space.surfaces.each do |garage_surface|
+		next unless garage_surface.surfaceType.downcase == "roofceiling" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
+		garage_surface.setConstruction(unfinuninsextgrgroof)
+		runner.registerInfo("Surface '#{garage_surface.name}', of Space Type '#{garage_space_type_r}' and with Surface Type '#{garage_surface.surfaceType}' and Outside Boundary Condition '#{garage_surface.outsideBoundaryCondition}', was assigned Construction '#{unfinuninsextgrgroof.name}'")
+	  end	
+	end
 
     return true
  
