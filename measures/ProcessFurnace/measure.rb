@@ -479,6 +479,9 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     end
 	
+	# model.getSimulationControl.setDoZoneSizingCalculation(true) 
+	# model.getSimulationControl.setDoSystemSizingCalculation(true)
+	
     return true
  
   end #end the run method

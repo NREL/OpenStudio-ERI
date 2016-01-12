@@ -325,14 +325,11 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 					sw_point = OpenStudio::Point3d.new(0,0,z)
 					nw_point = OpenStudio::Point3d.new(0,width,z)
 					ne_point = OpenStudio::Point3d.new(length,width,z)
-					# make polygon
 					living_polygon = make_hexagon(sw_point, nw_point, ne_point, garage_ne_point, garage_nw_point, garage_sw_point)
-					foundation_polygon_with_wrong_zs = living_polygon
 				else # 4 points
 					sw_point = OpenStudio::Point3d.new(0,0,z)	
 					nw_point = OpenStudio::Point3d.new(0,width,z)
 					living_polygon = make_rectangle(sw_point, nw_point, garage_nw_point, garage_sw_point)
-					foundation_polygon_with_wrong_zs = living_polygon
 				end
 			elsif garage_pos == "Left" and garage_area > 0
 				if garage_depth < width # 6 points
@@ -340,14 +337,13 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 					ne_point = OpenStudio::Point3d.new(length,width,z)
 					se_point = OpenStudio::Point3d.new(length,0,z)
 					living_polygon = make_hexagon(garage_nw_point, nw_point, ne_point, se_point, garage_se_point, garage_ne_point)
-					foundation_polygon_with_wrong_zs = living_polygon					
 				else # 4 points
 					ne_point = OpenStudio::Point3d.new(length,width,z)				
 					se_point = OpenStudio::Point3d.new(length,0,z)
 					living_polygon = make_rectangle(garage_se_point, garage_ne_point, ne_point, se_point)
-					foundation_polygon_with_wrong_zs = living_polygon
 				end
-			end			
+			end
+			foundation_polygon_with_wrong_zs = living_polygon			
 		
 		else
 			sw_point = OpenStudio::Point3d.new(0,0,z)	
@@ -355,6 +351,9 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 			ne_point = OpenStudio::Point3d.new(length,width,z)
 			se_point = OpenStudio::Point3d.new(length,0,z)
 			living_polygon = make_rectangle(sw_point, nw_point, ne_point, se_point)
+			if z == foundation_offset
+				foundation_polygon_with_wrong_zs = living_polygon
+			end
 		end		
 		
 		# make story

@@ -265,7 +265,7 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
           sg.setSolarHeatGainCoefficient(shgc * intshadeheatingmult)
           materials = []
           materials << sg
-		  c = OpenStudio::Model::Construction.new(model)
+		  c = OpenStudio::Model::Construction.new(materials)
           c.setName(constName)			
           subSurface.setConstruction(c)
           subSurface.setShadingControl(sc)

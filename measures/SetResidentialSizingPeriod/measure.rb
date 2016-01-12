@@ -33,16 +33,7 @@ class SetResidentialSizingPeriod < OpenStudio::Ruleset::WorkspaceUserScript
     # use the built-in error checking 
     if !runner.validateUserArguments(arguments(workspace), user_arguments)
       return false
-    end
-    
-    # _processSimulationControl
-    simulation_controls = workspace.getObjectsByType("SimulationControl".to_IddObjectType)
-	simulation_controls.each do |simulation_control|
-	  simulation_control.setString(0, "Yes") # Do Zone Sizing Calculation
-	  simulation_control.setString(1, "No") # Do System Sizing Calculation
-	  simulation_control.setString(2, "Yes") # Do Plant Sizing Calculation
-	  simulation_control.setString(3, "No") # Run Simulation for Sizing Periods
-	end	    
+    end   
 
 	# _processRunSizingPeriod
 	obj = []

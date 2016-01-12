@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>6dea1b02-19fd-4186-b3b0-9e3f4a9d1bde</version_id>
+  <version_id>22aa33aa-09bb-4725-8b2a-5c1978798f79</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Assign Residential Window Construction</display_name>
@@ -115,7 +115,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>72EF9B7A</checksum>
+      <checksum>4F361BE7</checksum>
     </file>
   </files>
 </measure>
