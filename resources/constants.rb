@@ -1,4 +1,43 @@
 class Constants
+
+    # Numbers --------------------
+    
+    def self.AssumedInsideTemp
+        return 73.5 # deg-F
+    end
+    def self.DefaultFramingFactorCeiling
+        return 0.11
+    end
+    def self.DefaultFramingFactorFloor
+        return 0.13
+    end
+    def self.DefaultFramingFactorInterior
+        return 0.16
+    end
+	def self.DefaultSolarAbsCeiling
+		return 0.3
+	end
+	def self.DefaultSolarAbsFloor
+		return 0.6
+	end
+	def self.DefaultSolarAbsWall
+		return 0.5
+	end
+    def self.DefaultStudSpacing
+        return 16.0 # in
+    end
+	def self.g
+		return 32.174    # gravity (ft/s2)
+	end
+	def self.MonthNumDays
+		return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+	end
+	def self.Num_Speeds_MSHP
+		return 10
+	end
+
+    # Strings --------------------
+    
 	def self.Auto
 		return 'auto'
 	end
@@ -98,15 +137,6 @@ class Constants
     def self.CrawlZone
         return 'crawlspace zone'
     end
-	def self.DefaultSolarAbsCeiling
-		return 0.3
-	end
-	def self.DefaultSolarAbsFloor
-		return 0.6
-	end
-	def self.DefaultSolarAbsWall
-		return 0.5
-	end
 	def self.DehumidDucted
 		return 'ducted'
 	end
@@ -199,9 +229,6 @@ class Constants
 	end
 	def self.FurnTypeHeavy
 		return 'HEAVY'
-	end
-	def self.g
-		return 32.174    # gravity (ft/s2)
 	end
     def self.GarageSpace
         return 'garage space'
@@ -524,12 +551,6 @@ class Constants
 	def self.MonthNames
 		return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 	end
-	def self.MonthNumDays
-		return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-	end
-	def self.Num_Speeds_MSHP
-		return 10
-	end
 	def self.ObjectNameClothesWasher
 		return 'residential clothes washer'
 	end
@@ -627,7 +648,7 @@ class Constants
 		return 'Heating Fan Pump Energy'
 	end
 	def self.ReportHotWater
-		return  'Hot Water Energy'
+		return 'Hot Water Energy'
 	end
 	def self.ReportHotWaterSupp
 		return 'Electric Element Usage'
@@ -665,8 +686,11 @@ class Constants
 	def self.RoofStructureRafter
 		return 'rafter'
 	end
+	def self.RoofTypeGable
+		return 'gable'
+	end
 	def self.RoofTypeHip
-		return "hip"
+		return 'hip'
 	end
 	def self.ScheduleTypeTemperature
 		return 'TEMPERATURE'
@@ -690,25 +714,16 @@ class Constants
 		return 'MONTH'
 	end
 	def self.SeasonHeating
-		return "Heating"
+		return 'Heating'
 	end
 	def self.SeasonCooling
-		return "Cooling"
+		return 'Cooling'
 	end
 	def self.SeasonOverlap
-		return "Overlap"
+		return 'Overlap'
 	end
 	def self.SeasonNone
-		return "None"
-	end
-	def self.SimEngineEnergyPlus
-		return 1
-	end
-	def self.SimEngineSEEM
-		return 3
-	end
-	def self.SimEngineTendril
-		return 4
+		return 'None'
 	end
 	def self.SizingAuto
 		return 'autosize'
@@ -990,6 +1005,7 @@ class Constants
 		return 'fixed'
 	end
 	def self.WindowTypeDoor            
-		return "door"
+		return 'door'
 	end
+    
 end

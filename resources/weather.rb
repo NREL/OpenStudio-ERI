@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/psychrometrics"
 class WeatherHeader
   def initialize
   end
-  attr_accessor(:City, :State, :Country, :DataSource, :Station, :Latitude, :Longitude, :Timezone, :Altitude, :WSF)
+  attr_accessor(:City, :State, :Country, :DataSource, :Station, :Latitude, :Longitude, :Timezone, :Altitude, :WSF, :LocalPressure)
 end
 
 class WeatherData
@@ -20,13 +20,13 @@ end
 
 class WeatherProcess
 
-  def initialize(model, runner)
+  def initialize(model, runner, header_only=false)
     epw_path = WeatherProcess._get_epw_path(model, runner)
     if epw_path.nil?
       @error = true
     else
       @error = false
-      @header, @data, @design = WeatherProcess._process_epw_text(epw_path, runner)
+      @header, @data, @design = WeatherProcess._process_epw_text(epw_path, runner, header_only)
     end
   end
 
@@ -92,7 +92,7 @@ class WeatherProcess
     return epw_path.to_s
   end
 
-  def self._process_epw_text(epwfile, runner)
+  def self._process_epw_text(epwfile, runner, header_only)
   
     # if not os.path.exists(epwfile):
     #     raise IOError("Cannot find file " + epwfile)
@@ -116,6 +116,11 @@ class WeatherProcess
     header.Longitude = WeatherProcess._fmt(headerline[7],3)
     header.Timezone = headerline[8].to_f
     header.Altitude = WeatherProcess._fmt(OpenStudio::convert(headerline[9].to_f,"m","ft").get,4)
+    header.LocalPressure = Math::exp(-0.0000368 * header.Altitude) # atm
+    
+    if header_only
+        return header, nil, nil
+    end
 
 	# self._get_climate_zones_ba(self.header.Station)
 	# self._get_states_in_ba_zone(self.zones.BA)

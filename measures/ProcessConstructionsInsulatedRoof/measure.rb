@@ -14,95 +14,6 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 #start the measure
 class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
 
-  class FinishedRoof
-    def initialize(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor)
-      @frRoofContInsThickness = frRoofContInsThickness
-      @frRoofContInsRvalue = frRoofContInsRvalue
-      @frRoofCavityInsFillsCavity = frRoofCavityInsFillsCavity
-      @frRoofCavityInsRvalueInstalled = frRoofCavityInsRvalueInstalled
-      @frRoofCavityDepth = frRoofCavityDepth
-      @frRoofFramingFactor = frRoofFramingFactor
-    end
-
-    # attr_accessor(:)
-
-    def FRRoofContInsThickness
-      return @frRoofContInsThickness
-    end
-
-    def FRRoofContInsRvalue
-      return @frRoofContInsRvalue
-    end
-
-    def FRRoofCavityInsFillsCavity
-      return @frRoofCavityInsFillsCavity
-    end
-
-    def FRRoofCavityInsRvalueInstalled
-      return @frRoofCavityInsRvalueInstalled
-    end
-
-    def FRRoofCavityDepth
-      return @frRoofCavityDepth
-    end
-
-    def FRRoofFramingFactor
-      return @frRoofFramingFactor
-    end
-  end
-
-  class CeilingMass
-    def initialize(ceilingMassGypsumThickness, ceilingMassGypsumNumLayers, rvalue, ceilingMassPCMType)
-      @ceilingMassGypsumThickness = ceilingMassGypsumThickness
-      @ceilingMassGypsumNumLayers = ceilingMassGypsumNumLayers
-      @rvalue = rvalue
-      @ceilingMassPCMType = ceilingMassPCMType
-    end
-
-    def CeilingMassGypsumThickness
-      return @ceilingMassGypsumThickness
-    end
-
-    def CeilingMassGypsumNumLayers
-      return @ceilingMassGypsumNumLayers
-    end
-
-    def Rvalue
-      return @rvalue
-    end
-
-    def CeilingMassPCMType
-      return @ceilingMassPCMType
-    end
-  end
-
-  class RoofIns
-    def initialize
-    end
-    attr_accessor(:fr_roof_ins_thickness, :fr_roof_ins_conductivity, :fr_roof_ins_density, :fr_roof_ins_spec_heat)
-  end
-
-  class RigidRoofIns
-    def initialize
-    end
-    attr_accessor(:fr_roof_rigid_foam_ins_thickness, :fr_roof_rigid_foam_ins_conductivity, :fr_roof_rigid_foam_ins_density, :fr_roof_rigid_foam_ins_spec_heat)
-  end
-
-  class RoofingMaterial
-    def initialize(roofMatEmissivity, roofMatAbsorptivity)
-      @roofMatEmissivity = roofMatEmissivity
-      @roofMatAbsorptivity = roofMatAbsorptivity
-    end
-
-    def RoofMatEmissivity
-      return @roofMatEmissivity
-    end
-
-    def RoofMatAbsorptivity
-      return @roofMatAbsorptivity
-    end
-  end
-  
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -153,7 +64,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
 	selected_studsize.setDefaultValue("2x10")
     args << selected_studsize
 
-    #make a choice argument for unfinished attic ceiling framing factor
+    #make a choice argument for finished roof framing factor
     userdefined_frroofff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfrroofff", false)
     userdefined_frroofff.setDisplayName("Finished Roof: Framing Factor")
 	userdefined_frroofff.setUnits("frac")
@@ -193,14 +104,14 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
 
-    #make a double argument for roofing material thermal absorptance of unfinished attic
-    userdefined_roofmatthermalabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatthermalabs", false)
-    userdefined_roofmatthermalabs.setDisplayName("Roof Material: Emissivity.")
-	userdefined_roofmatthermalabs.setDescription("Infrared emissivity of the outside surface of the roof.")
-    userdefined_roofmatthermalabs.setDefaultValue(0.91)
-    args << userdefined_roofmatthermalabs
+    #make a double argument for roofing material emmisitivity of finished roof
+    userdefined_roofmatemm = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatemm", false)
+    userdefined_roofmatemm.setDisplayName("Roof Material: Emissivity.")
+	userdefined_roofmatemm.setDescription("Infrared emissivity of the outside surface of the roof.")
+    userdefined_roofmatemm.setDefaultValue(0.91)
+    args << userdefined_roofmatemm
 
-    #make a double argument for roofing material solar/visible absorptance of unfinished attic
+    #make a double argument for roofing material solar/visible absorptance of finished roof
     userdefined_roofmatabs = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedroofmatabs", false)
     userdefined_roofmatabs.setDisplayName("Roof Material: Absorptivity")
 	userdefined_roofmatabs.setDescription("The solar radiation absorptance of the outside roof surface, specified as a value between 0 and 1.")
@@ -234,7 +145,6 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    ceilingMassPCMType = nil
     frRoofCavityInsRvalueInstalled = 0
     rigidInsThickness = 0
     rigidInsRvalue = 0
@@ -249,84 +159,58 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     # Roof Insulation
     selected_frroof = runner.getOptionalWorkspaceObjectChoiceValue("selectedfrroof",user_arguments,model)
     if selected_frroof.empty?
-      userdefined_frroofr = runner.getDoubleArgumentValue("userdefinedfrroofr",user_arguments)
+      frRoofCavityInsRvalueInstalled = runner.getDoubleArgumentValue("userdefinedfrroofr",user_arguments)
     end
 
     # Cavity
     selected_studsize = runner.getStringArgumentValue("selectedstudsize",user_arguments)
     selected_insfills = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
 
-    # Ceiling Framing Factor
-    userdefined_frroofff = runner.getDoubleArgumentValue("userdefinedfrroofff",user_arguments)
-    if not ( userdefined_frroofff > 0.0 and userdefined_frroofff < 1.0 )
+    # Roof Framing Factor
+    frRoofFramingFactor = runner.getDoubleArgumentValue("userdefinedfrroofff",user_arguments)
+    if not ( frRoofFramingFactor > 0.0 and frRoofFramingFactor < 1.0 )
       runner.registerError("Invalid finished roof framing factor")
       return false
     end
 
     # Rigid
-    userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
-    userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
+    frRoofContInsThickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
+    frRoofContInsRvalue = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
 
     # Gypsum
-    userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
-    userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-
-    # Exterior Finish
-    userdefined_roofmatthermalabs = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
-    userdefined_roofmatabs = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
-
-    # Constants
     mat_gyp = get_mat_gypsum
-    mat_rigid = get_mat_rigid_ins
+    gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
+    gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
+    gypsumConductivity = mat_gyp.k
+    gypsumDensity = mat_gyp.rho
+    gypsumSpecificHeat = mat_gyp.Cp
+    gypsumThermalAbs = get_mat_gypsum_ceiling.TAbs
+    gypsumSolarAbs = get_mat_gypsum_ceiling.SAbs
+    gypsumVisibleAbs = get_mat_gypsum_ceiling.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
 
-    # Insulation
-    frRoofCavityInsRvalueInstalled = userdefined_frroofr
+    # Roofing Material
+    roofMatEmissivity = runner.getDoubleArgumentValue("userdefinedroofmatemm",user_arguments)
+    roofMatAbsorptivity = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
     # Cavity
     frRoofCavityDepth_dict = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}
     frRoofCavityDepth = frRoofCavityDepth_dict[selected_studsize]
     frRoofCavityInsFillsCavity = selected_insfills
 
-    # Ceiling Framing Factor
-    frRoofFramingFactor = userdefined_frroofff
+    weather = WeatherProcess.new(model,runner)
+    if weather.error?
+        return false
+    end
 
-    # Rigid
-    rigidInsRvalue = userdefined_rigidinsr
-    rigidInsThickness = userdefined_rigidinsthickness
-    rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
-    rigidInsDensity = mat_rigid.rho
-    rigidInsSpecificHeat = mat_rigid.Cp
+    highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
+    film_roof_R = Properties.film_roof_R(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
 
-    # Gypsum
-    gypsumThickness = userdefined_gypthickness
-    gypsumNumLayers = userdefined_gyplayers
-    gypsumConductivity = mat_gyp.k
-    gypsumDensity = mat_gyp.rho
-    gypsumSpecificHeat = mat_gyp.Cp
-    gypsumThermalAbs = get_mat_gypsum_ceiling(mat_gyp).TAbs
-    gypsumSolarAbs = get_mat_gypsum_ceiling(mat_gyp).SAbs
-    gypsumVisibleAbs = get_mat_gypsum_ceiling(mat_gyp).VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * userdefined_gyplayers / mat_gyp.k)
-
-    # Roofing Material
-    roofMatEmissivity = userdefined_roofmatthermalabs
-    roofMatAbsorptivity = userdefined_roofmatabs
-
-    # Create the material class instances
-    fr = FinishedRoof.new(rigidInsThickness, rigidInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor)
-    ceiling_mass = CeilingMass.new(gypsumThickness, gypsumNumLayers, gypsumRvalue, ceilingMassPCMType)
-    ri = RoofIns.new
-    rri = RigidRoofIns.new
-    roofing_material = RoofingMaterial.new(roofMatEmissivity, roofMatAbsorptivity)
-
-    # Create the sim object
-    sim = Sim.new(model, runner)
-
-    # Process the unfinished attic ceiling
-    ri, rri = sim._processConstructionsInsulatedRoof(fr, ceiling_mass, ri, rri)
+    # Process the finished roof
+    sc_thick, sc_cond, sc_dens, sc_sh, rigid_thick, rigid_cond, rigid_dens, rigid_sh = _processConstructionsInsulatedRoof(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, film_roof_R, weather.header.LocalPressure)
 
     # RoofingMaterial
-    mat_roof_mat = get_mat_roofing_mat(roofing_material)
+    mat_roof_mat = get_mat_roofing_mat(roofMatEmissivity, roofMatAbsorptivity)
     roofmat = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     roofmat.setName("RoofingMaterial")
     roofmat.setRoughness("Rough")
@@ -339,53 +223,34 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     roofmat.setVisibleAbsorptance(mat_roof_mat.VAbs)
 
     # Plywood-3_4in
+    mat_plywood3_4in = get_mat_plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
-    ply3_4.setThickness(OpenStudio::convert(get_mat_plywood3_4in(get_mat_wood).thick,"ft","m").get)
-    ply3_4.setConductivity(OpenStudio::convert(get_mat_wood.k,"Btu/hr*ft*R","W/m*K").get)
-    ply3_4.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
-    ply3_4.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
+    ply3_4.setThickness(OpenStudio::convert(mat_plywood3_4in.thick,"ft","m").get)
+    ply3_4.setConductivity(OpenStudio::convert(mat_plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply3_4.setDensity(OpenStudio::convert(mat_plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
+    ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # RigidRoofIns
-    if fr.FRRoofContInsThickness > 0
-      rriThickness = rri.fr_roof_rigid_foam_ins_thickness
-      rriConductivity = rri.fr_roof_rigid_foam_ins_conductivity
-      rriDensity = rri.fr_roof_rigid_foam_ins_density
-      rriSpecificHeat = rri.fr_roof_rigid_foam_ins_spec_heat
+    if frRoofContInsThickness > 0
       rri = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       rri.setName("RigidRoofIns")
       rri.setRoughness("Rough")
-      rri.setThickness(OpenStudio::convert(rriThickness,"ft","m").get)
-      rri.setConductivity(OpenStudio::convert(rriConductivity,"Btu/hr*ft*R","W/m*K").get)
-      rri.setDensity(OpenStudio::convert(rriDensity,"lb/ft^3","kg/m^3").get)
-      rri.setSpecificHeat(OpenStudio::convert(rriSpecificHeat,"Btu/lb*R","J/kg*K").get)
+      rri.setThickness(OpenStudio::convert(rigid_thick,"ft","m").get)
+      rri.setConductivity(OpenStudio::convert(rigid_cond,"Btu/hr*ft*R","W/m*K").get)
+      rri.setDensity(OpenStudio::convert(rigid_dens,"lb/ft^3","kg/m^3").get)
+      rri.setSpecificHeat(OpenStudio::convert(rigid_sh,"Btu/lb*R","J/kg*K").get)
     end
 
     # RoofIns
-    riThickness = ri.fr_roof_ins_thickness
-    riConductivity = ri.fr_roof_ins_conductivity
-    riDensity = ri.fr_roof_ins_density
-    riSpecificHeat = ri.fr_roof_ins_spec_heat
     ri = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ri.setName("RoofIns")
     ri.setRoughness("Rough")
-    ri.setThickness(OpenStudio::convert(riThickness,"ft","m").get)
-    ri.setConductivity(OpenStudio::convert(riConductivity,"Btu/hr*ft*R","W/m*K").get)
-    ri.setDensity(OpenStudio::convert(riDensity,"lb/ft^3","kg/m^3").get)
-    ri.setSpecificHeat(OpenStudio::convert(riSpecificHeat,"Btu/lb*R","J/kg*K").get)
-
-    # ConcPCMCeilWall
-    if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
-      ceil_pcm_mat_base = get_mat_ceil_pcm(ceiling_mass)
-      pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-      pcm.setName("ConcPCMCeilWall")
-      pcm.setRoughness("Rough")
-      pcm.setThickness(OpenStudio::convert(get_mat_ceil_pcm_conc(get_mat_ceil_pcm, ceiling_mass).thick,"ft","m").get)
-      pcm.setConductivity()
-      pcm.setDensity()
-      pcm.setSpecificHeat()
-    end
+    ri.setThickness(OpenStudio::convert(sc_thick,"ft","m").get)
+    ri.setConductivity(OpenStudio::convert(sc_cond,"Btu/hr*ft*R","W/m*K").get)
+    ri.setDensity(OpenStudio::convert(sc_dens,"lb/ft^3","kg/m^3").get)
+    ri.setSpecificHeat(OpenStudio::convert(sc_sh,"Btu/lb*R","J/kg*K").get)
 
     # Gypsum
     gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -403,14 +268,11 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     materials = []
     materials << roofmat
     materials << ply3_4
-    if fr.FRRoofContInsThickness > 0
+    if frRoofContInsThickness > 0
       materials << rri
       materials << ply3_4
     end
     materials << ri
-    if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
-      materials << pcm
-    end
     (0...gypsumNumLayers).to_a.each do |i|
       materials << gypsum
     end
@@ -429,6 +291,80 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
  
   end #end the run method
 
+  def _processConstructionsInsulatedRoof(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, film_roof_R, localPressure)
+    fr_roof_overall_ins_Rvalue = get_finished_roof_r_assembly(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, film_roof_R)
+
+    if frRoofContInsThickness > 0
+      fr_roof_stud_ins_Rvalue = fr_roof_overall_ins_Rvalue - frRoofContInsRvalue - 2.0 * get_mat_plywood3_4in.Rvalue - gypsumRvalue - film_roof_R - Properties.film_outside_R # hr*ft^2*F/Btu
+    else
+      fr_roof_stud_ins_Rvalue = fr_roof_overall_ins_Rvalue - get_mat_plywood3_4in.Rvalue - gypsumRvalue - film_roof_R - Properties.film_outside_R # hr*ft^2*F/Btu
+    end
+
+    # Set roof characteristics for finished roof
+    sc_thick = OpenStudio::convert(frRoofCavityDepth,"in","ft").get # ft
+    sc_cond = sc_thick / fr_roof_stud_ins_Rvalue # Btu/hr*ft*F
+    sc_dens = frRoofFramingFactor * get_mat_wood.rho + (1 - frRoofFramingFactor) * get_mat_densepack_generic.rho # lbm/ft^3
+    sc_sh = (frRoofFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - frRoofFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / sc_dens # Btu/lbm*F
+
+    if frRoofContInsThickness > 0
+      rigid_thick = OpenStudio::convert(frRoofContInsThickness,"in","ft").get # after() do
+      rigid_cond = rigid_thick / frRoofContInsRvalue # Btu/hr*ft*F
+      rigid_dens = get_mat_rigid_ins.rho # lbm/ft^3
+      rigid_sh = get_mat_rigid_ins.Cp # Btu/lbm*F
+    end
+
+    return sc_thick, sc_cond, sc_dens, sc_sh, rigid_thick, rigid_cond, rigid_dens, rigid_sh
+
+  end
+
+  def get_finished_roof_r_assembly(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, film_roof)
+      # Returns assembly R-value for finished roof, including air films.
+
+      frRoofCavityInsRvalueInstalled = frRoofCavityInsRvalueInstalled
+
+      mat_gyp = get_mat_gypsum
+      mat_wood = get_mat_wood
+      mat_plywood3_4in = get_mat_plywood3_4in
+      mat_air = get_mat_air
+
+      # Add air film coefficients when insulation thickness < cavity depth
+      if not frRoofCavityInsFillsCavity
+        frRoofCavityInsRvalueInstalled += mat_air.R_air_gap
+      end
+
+      path_fracs = [frRoofFramingFactor, 1 - frRoofFramingFactor]
+
+      roof_const = Construction.new(path_fracs)
+
+      # Interior Film
+      roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / film_roof])
+
+      # Interior Finish (GWB)
+      (0...gypsumNumLayers).to_a.each do |i|
+        roof_const.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get, conductivity_list=[mat_gyp.k])
+      end
+
+      # Stud/cavity layer
+      roof_const.addlayer(thickness=OpenStudio::convert(frRoofCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k, OpenStudio::convert(frRoofCavityDepth,"in","ft").get / frRoofCavityInsRvalueInstalled])
+
+      # Sheathing
+      roof_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
+
+      # Rigid
+      if frRoofContInsThickness > 0
+        roof_const.addlayer(thickness=OpenStudio::convert(frRoofContInsThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(frRoofContInsThickness,"in","ft").get / frRoofContInsRvalue])
+        # More sheathing
+        roof_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
+      end
+
+      # Exterior Film
+      roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_outside_R])
+
+      return roof_const.Rvalue_parallel
+
+  end
+
+  
 end #end the measure
 
 #this allows the measure to be use by the application

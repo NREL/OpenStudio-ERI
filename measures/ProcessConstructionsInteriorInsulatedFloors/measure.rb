@@ -13,76 +13,6 @@ require "#{File.dirname(__FILE__)}/resources/sim"
 #start the measure
 class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUserScript
 
-  class InterzonalFloors
-    def initialize(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade)
-      @intFloorFramingFactor = intFloorFramingFactor
-      @intFloorCavityInsRvalueNominal = intFloorCavityInsRvalueNominal
-	  @intFloorInstallGrade = intFloorInstallGrade
-    end
-
-    attr_accessor(:dummy)
-
-    def IntFloorFramingFactor
-      return @intFloorFramingFactor
-    end
-
-    def IntFloorCavityInsRvalueNominal
-      return @intFloorCavityInsRvalueNominal
-    end
-	
-	def IntFloorInstallGrade
-	  return @intFloorInstallGrade
-	end
-  end
-
-  class Carpet
-    def initialize(carpetFloorFraction, carpetPadRValue)
-      @carpetFloorFraction = carpetFloorFraction
-      @carpetPadRValue = carpetPadRValue
-    end
-
-    attr_accessor(:floor_bare_fraction)
-
-    def CarpetFloorFraction
-      return @carpetFloorFraction
-    end
-
-    def CarpetPadRValue
-      return @carpetPadRValue
-    end
-  end
-
-  class FloorMass
-    def initialize(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-      @floorMassThickness = floorMassThickness
-      @floorMassConductivity = floorMassConductivity
-      @floorMassDensity = floorMassDensity
-      @floorMassSpecificHeat = floorMassSpecificHeat
-    end
-
-    def FloorMassThickness
-      return @floorMassThickness
-    end
-
-    def FloorMassConductivity
-      return @floorMassConductivity
-    end
-
-    def FloorMassDensity
-      return @floorMassDensity
-    end
-
-    def FloorMassSpecificHeat
-      return @floorMassSpecificHeat
-    end
-  end
-
-  class IntFloorIns
-    def initialize
-    end
-    attr_accessor(:boundary_floor_thickness, :boundary_floor_conductivity, :boundary_floor_density, :boundary_floor_spec_heat)
-  end
-
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -104,77 +34,77 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     #make a double argument for nominal R-value of cavity insulation
     userdefined_instcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinstcavr", true)
     userdefined_instcavr.setDisplayName("Interzonal Floor: Cavity Insulation Nominal R-value")
-	userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
-	userdefined_instcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-	userdefined_instcavr.setDefaultValue(19.0)
+    userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
+    userdefined_instcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    userdefined_instcavr.setDefaultValue(19.0)
     args << userdefined_instcavr
 
     #make a choice argument for unfinished attic ceiling framing factor
     userdefined_floorff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloorff", false)
     userdefined_floorff.setDisplayName("Interzonal Floor: Framing Factor")
-	userdefined_floorff.setUnits("frac")
-	userdefined_floorff.setDescription("The fraction of a floor assembly that is comprised of structural framing.")
+    userdefined_floorff.setUnits("frac")
+    userdefined_floorff.setDescription("The fraction of a floor assembly that is comprised of structural framing.")
     userdefined_floorff.setDefaultValue(0.13)
     args << userdefined_floorff
-	
-	#make a choice argument for model objects
-	installgrade_display_names = OpenStudio::StringVector.new
-	installgrade_display_names << "I"
-	installgrade_display_names << "II"
-	installgrade_display_names << "III"
-	
-	#make a choice argument for wall cavity insulation installation grade
-	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
-	selected_installgrade.setDisplayName("Interzonal Floor: Cavity Install Grade")
-	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    
+    #make a choice argument for model objects
+    installgrade_display_names = OpenStudio::StringVector.new
+    installgrade_display_names << "I"
+    installgrade_display_names << "II"
+    installgrade_display_names << "III"
+    
+    #make a choice argument for wall cavity insulation installation grade
+    selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
+    selected_installgrade.setDisplayName("Interzonal Floor: Cavity Install Grade")
+    selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     selected_installgrade.setDefaultValue("I")
-	args << selected_installgrade	
+    args << selected_installgrade   
 
     #make a double argument for floor mass thickness
     userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
     userdefined_floormassth.setDisplayName("Floor Mass: Thickness")
-	userdefined_floormassth.setUnits("in")
-	userdefined_floormassth.setDescription("Thickness of the floor mass.")
+    userdefined_floormassth.setUnits("in")
+    userdefined_floormassth.setDescription("Thickness of the floor mass.")
     userdefined_floormassth.setDefaultValue(0.625)
     args << userdefined_floormassth
 
     #make a double argument for floor mass conductivity
     userdefined_floormasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasscond", false)
     userdefined_floormasscond.setDisplayName("Floor Mass: Conductivity")
-	userdefined_floormasscond.setUnits("Btu-in/h-ft^2-R")
-	userdefined_floormasscond.setDescription("Conductivity of the floor mass.")
+    userdefined_floormasscond.setUnits("Btu-in/h-ft^2-R")
+    userdefined_floormasscond.setDescription("Conductivity of the floor mass.")
     userdefined_floormasscond.setDefaultValue(0.8004)
     args << userdefined_floormasscond
 
     #make a double argument for floor mass density
     userdefined_floormassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassdens", false)
     userdefined_floormassdens.setDisplayName("Floor Mass: Density")
-	userdefined_floormassdens.setUnits("lb/ft^3")
-	userdefined_floormassdens.setDescription("Density of the floor mass.")
+    userdefined_floormassdens.setUnits("lb/ft^3")
+    userdefined_floormassdens.setDescription("Density of the floor mass.")
     userdefined_floormassdens.setDefaultValue(34.0)
     args << userdefined_floormassdens
 
     #make a double argument for floor mass specific heat
     userdefined_floormasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasssh", false)
     userdefined_floormasssh.setDisplayName("Floor Mass: Specific Heat")
-	userdefined_floormasssh.setUnits("Btu/lb-R")
-	userdefined_floormasssh.setDescription("Specific heat of the floor mass.")
+    userdefined_floormasssh.setUnits("Btu/lb-R")
+    userdefined_floormasssh.setDescription("Specific heat of the floor mass.")
     userdefined_floormasssh.setDefaultValue(0.29)
     args << userdefined_floormasssh
 
     #make a double argument for carpet pad R-value
     userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
     userdefined_carpetr.setDisplayName("Carpet: Carpet Pad R-value")
-	userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
-	userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
+    userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
+    userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
     userdefined_carpetr.setDefaultValue(2.08)
     args << userdefined_carpetr
 
     #make a double argument for carpet floor fraction
     userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
     userdefined_carpetfrac.setDisplayName("Carpet: Floor Carpet Fraction")
-	userdefined_carpetfrac.setUnits("frac")
-	userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
+    userdefined_carpetfrac.setUnits("frac")
+    userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
     userdefined_carpetfrac.setDefaultValue(0.8)
     args << userdefined_carpetfrac
 
@@ -206,8 +136,8 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     garage_space_type.setDisplayName("Garage space type")
     garage_space_type.setDescription("Select the garage space type")
     garage_space_type.setDefaultValue(Constants.GarageSpaceType)
-    args << garage_space_type	
-	
+    args << garage_space_type   
+    
     return args
   end #end the arguments method
 
@@ -221,115 +151,94 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     end
 
     # Space Type
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
     living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
     if living_space_type.nil?
         return false
     end
-	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
+    garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
     garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
     if garage_space_type.nil?
         # If the building has no garage, no constructions are assigned and we continue by returning True
         return true
-    end	
+    end 
 
     # Cavity
-    userdefined_instcavr = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
-	selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)
+    intFloorCavityInsRvalueNominal = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
+    selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)
+    intFloorInstallGrade_dict = {"I"=>1, "II"=>2, "III"=>3}
+    intFloorInstallGrade = intFloorInstallGrade_dict[selected_installgrade]
 
     # Floor Framing Factor
-    userdefined_floorff = runner.getDoubleArgumentValue("userdefinedfloorff",user_arguments)
-    if not ( userdefined_floorff > 0.0 and userdefined_floorff < 1.0 )
+    intFloorFramingFactor = runner.getDoubleArgumentValue("userdefinedfloorff",user_arguments)
+    if not ( intFloorFramingFactor > 0.0 and intFloorFramingFactor < 1.0 )
       runner.registerError("Invalid interzonal floor framing factor")
       return false
     end
 
     # Floor Mass
-    userdefined_floormassth = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
-    userdefined_floormasscond = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
-    userdefined_floormassdens = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
-    userdefined_floormasssh = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
+    floorMassThickness = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
+    floorMassConductivity = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
+    floorMassDensity = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
+    floorMassSpecificHeat = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
 
     # Carpet
-    userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-    userdefined_carpetfrac = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
+    carpetPadRValue = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
+    carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
-    # Cavity
-    intFloorCavityInsRvalueNominal = userdefined_instcavr
-	intFloorInstallGrade_dict = {"I"=>1, "II"=>2, "III"=>3}
-	intFloorInstallGrade = intFloorInstallGrade_dict[selected_installgrade]
-
-    # Floor Framing Factor
-    intFloorFramingFactor = userdefined_floorff
-
-    # Floor Mass
-    floorMassThickness = userdefined_floormassth
-    floorMassConductivity = userdefined_floormasscond
-    floorMassDensity = userdefined_floormassdens
-    floorMassSpecificHeat = userdefined_floormasssh
-
-    # Carpet
-    carpetPadRValue = userdefined_carpetr
-    carpetFloorFraction = userdefined_carpetfrac
-
-    # Create the material class instances
-    izf = InterzonalFloors.new(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade)
-    carpet = Carpet.new(carpetFloorFraction, carpetPadRValue)
-    floor_mass = FloorMass.new(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-    ifi = IntFloorIns.new
-
-    # Create the sim object
-    sim = Sim.new(model, runner)
+    weather = WeatherProcess.new(model,runner,header_only=true)
+    if weather.error?
+        return false
+    end
 
     # Process the wood stud walls
-    ifi = sim._processConstructionsInteriorInsulatedFloors(izf, carpet, floor_mass, ifi)
+    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorInsulatedFloors(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, weather.header.LocalPressure)
 
     # Create the material layers
 
     # IntFloorIns
-    ifiThickness = ifi.boundary_floor_thickness
-    ifiConductivity = ifi.boundary_floor_conductivity
-    ifiDensity = ifi.boundary_floor_density
-    ifiSpecificHeat = ifi.boundary_floor_spec_heat
     ifi = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ifi.setName("IntFloorIns")
     ifi.setRoughness("Rough")
-    ifi.setThickness(OpenStudio::convert(ifiThickness,"ft","m").get)
-    ifi.setConductivity(OpenStudio::convert(ifiConductivity,"Btu/hr*ft*R","W/m*K").get)
-    ifi.setDensity(OpenStudio::convert(ifiDensity,"lb/ft^3","kg/m^3").get)
-    ifi.setSpecificHeat(OpenStudio::convert(ifiSpecificHeat,"Btu/lb*R","J/kg*K").get)
+    ifi.setThickness(OpenStudio::convert(sc_thick,"ft","m").get)
+    ifi.setConductivity(OpenStudio::convert(sc_cond,"Btu/hr*ft*R","W/m*K").get)
+    ifi.setDensity(OpenStudio::convert(sc_dens,"lb/ft^3","kg/m^3").get)
+    ifi.setSpecificHeat(OpenStudio::convert(sc_sh,"Btu/lb*R","J/kg*K").get)
 
     # Plywood-3_4in
+    mat_plywood3_4in = get_mat_plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
-    ply3_4.setThickness(OpenStudio::convert(get_mat_plywood3_4in(get_mat_wood).thick,"ft","m").get)
-    ply3_4.setConductivity(OpenStudio::convert(get_mat_wood.k,"Btu/hr*ft*R","W/m*K").get)
-    ply3_4.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
-    ply3_4.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
+    ply3_4.setThickness(OpenStudio::convert(mat_plywood3_4in.thick,"ft","m").get)
+    ply3_4.setConductivity(OpenStudio::convert(mat_plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply3_4.setDensity(OpenStudio::convert(mat_plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
+    ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FloorMass
+    mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
     fm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     fm.setName("FloorMass")
     fm.setRoughness("Rough")
-    fm.setThickness(OpenStudio::convert(get_mat_floor_mass(floor_mass).thick,"ft","m").get)
-    fm.setConductivity(OpenStudio::convert(get_mat_floor_mass(floor_mass).k,"Btu/hr*ft*R","W/m*K").get)
-    fm.setDensity(OpenStudio::convert(get_mat_floor_mass(floor_mass).rho,"lb/ft^3","kg/m^3").get)
-    fm.setSpecificHeat(OpenStudio::convert(get_mat_floor_mass(floor_mass).Cp,"Btu/lb*R","J/kg*K").get)
-    fm.setThermalAbsorptance(get_mat_floor_mass(floor_mass).TAbs)
-    fm.setSolarAbsorptance(get_mat_floor_mass(floor_mass).SAbs)
+    fm.setThickness(OpenStudio::convert(mat_floor_mass.thick,"ft","m").get)
+    fm.setConductivity(OpenStudio::convert(mat_floor_mass.k,"Btu/hr*ft*R","W/m*K").get)
+    fm.setDensity(OpenStudio::convert(mat_floor_mass.rho,"lb/ft^3","kg/m^3").get)
+    fm.setSpecificHeat(OpenStudio::convert(mat_floor_mass.Cp,"Btu/lb*R","J/kg*K").get)
+    fm.setThermalAbsorptance(mat_floor_mass.TAbs)
+    fm.setSolarAbsorptance(mat_floor_mass.SAbs)
 
     # CarpetBareLayer
-    if carpet.CarpetFloorFraction > 0
+    if carpetFloorFraction > 0
+      mat_carpet_bare = get_mat_carpet_bare(carpetFloorFraction, carpetPadRValue)
       cbl = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       cbl.setName("CarpetBareLayer")
       cbl.setRoughness("Rough")
-      cbl.setThickness(OpenStudio::convert(get_mat_carpet_bare(carpet).thick,"ft","m").get)
-      cbl.setConductivity(OpenStudio::convert(get_mat_carpet_bare(carpet).k,"Btu/hr*ft*R","W/m*K").get)
-      cbl.setDensity(OpenStudio::convert(get_mat_carpet_bare(carpet).rho,"lb/ft^3","kg/m^3").get)
-      cbl.setSpecificHeat(OpenStudio::convert(get_mat_carpet_bare(carpet).Cp,"Btu/lb*R","J/kg*K").get)
-      cbl.setThermalAbsorptance(get_mat_carpet_bare(carpet).TAbs)
-      cbl.setSolarAbsorptance(get_mat_carpet_bare(carpet).SAbs)
+      cbl.setThickness(OpenStudio::convert(mat_carpet_bare.thick,"ft","m").get)
+      cbl.setConductivity(OpenStudio::convert(mat_carpet_bare.k,"Btu/hr*ft*R","W/m*K").get)
+      cbl.setDensity(OpenStudio::convert(mat_carpet_bare.rho,"lb/ft^3","kg/m^3").get)
+      cbl.setSpecificHeat(OpenStudio::convert(mat_carpet_bare.Cp,"Btu/lb*R","J/kg*K").get)
+      cbl.setThermalAbsorptance(mat_carpet_bare.TAbs)
+      cbl.setSolarAbsorptance(mat_carpet_bare.SAbs)
     end
 
     # UnfinInsFinFloor
@@ -337,7 +246,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     materials << ifi
     materials << ply3_4
     materials << fm
-    if carpet.CarpetFloorFraction > 0
+    if carpetFloorFraction > 0
       materials << cbl
     end
     unfininsfinfloor = OpenStudio::Model::Construction.new(materials)
@@ -347,26 +256,97 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     revunfininsfinfloor = unfininsfinfloor.reverseConstruction
     revunfininsfinfloor.setName("RevUnfinInsFinFloor")
 
-	living_space_type.spaces.each do |living_space|
-	  living_space.surfaces.each do |living_surface|
-	    next unless ["floor"].include? living_surface.surfaceType.downcase
-		adjacent_surface = living_surface.adjacentSurface
-		next unless adjacent_surface.is_initialized
-		adjacent_surface = adjacent_surface.get
-	    adjacent_surface_r = adjacent_surface.name.to_s
-	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-	    next unless [garage_space_type_r].include? adjacent_space_type_r
-	    living_surface.setConstruction(unfininsfinfloor)
-		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{unfininsfinfloor.name}'")
-	    adjacent_surface.setConstruction(revunfininsfinfloor)		
-		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfininsfinfloor.name}'")
-	  end	
-	end
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless ["floor"].include? living_surface.surfaceType.downcase
+        adjacent_surface = living_surface.adjacentSurface
+        next unless adjacent_surface.is_initialized
+        adjacent_surface = adjacent_surface.get
+        adjacent_surface_r = adjacent_surface.name.to_s
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        next unless [garage_space_type_r].include? adjacent_space_type_r
+        living_surface.setConstruction(unfininsfinfloor)
+        runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{unfininsfinfloor.name}'")
+        adjacent_surface.setConstruction(revunfininsfinfloor)       
+        runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfininsfinfloor.name}'")
+      end   
+    end
 
     return true
 
   end #end the run method
 
+  def _processConstructionsInteriorInsulatedFloors(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, localPressure)
+  
+    mat_wood = get_mat_wood
+    mat_2x6 = get_mat_2x6
+
+    overall_floor_Rvalue = get_interzonal_floor_r_assembly(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetPadRValue, carpetFloorFraction, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+
+    # Get overall R-value using parallel paths:
+    boundaryFloorRvalue = (overall_floor_Rvalue - floor_nonstud_layer_Rvalue(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, carpetFloorFraction, carpetPadRValue))
+
+    izfGapFactor = get_wall_gap_factor(intFloorInstallGrade, intFloorFramingFactor)
+
+    sc_thick = mat_2x6.thick # ft
+    sc_cond = sc_thick / boundaryFloorRvalue # Btu/hr*ft*F
+    sc_dens = intFloorFramingFactor * mat_wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * get_mat_densepack_generic.rho  + izfGapFactor * Properties.inside_air_dens(localPressure) # lbm/ft^3
+    sc_sh = (intFloorFramingFactor * mat_wood.Cp * mat_wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho + izfGapFactor * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / sc_dens # Btu/lbm*F
+
+    return sc_thick, sc_cond, sc_dens, sc_sh
+
+  end
+
+  
+  def get_interzonal_floor_r_assembly(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetPadRValue, carpetFloorFraction, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+      # Returns assembly R-value for interzonal floor, including air films.
+
+      mat_wood = get_mat_wood
+      mat_2x6 = get_mat_2x6
+      mat_plywood3_4in = get_mat_plywood3_4in
+
+      gapFactor = get_wall_gap_factor(intFloorInstallGrade, intFloorFramingFactor)
+      
+      path_fracs = [intFloorFramingFactor, 1 - intFloorFramingFactor - gapFactor, gapFactor]
+
+      izf_const = Construction.new(path_fracs)
+
+      # Interior Film
+      izf_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_floor_reduced_R])
+
+      # Stud/cavity layer
+      if intFloorCavityInsRvalueNominal == 0
+        cavity_k = 1000000000
+      else
+        cavity_k = mat_2x6.thick / intFloorCavityInsRvalueNominal
+      end
+      gap_k = mat_2x6.thick / get_mat_air.R_air_gap
+      
+      izf_const.addlayer(thickness=mat_2x6.thick, conductivity_list=[mat_wood.k, cavity_k, gap_k])
+
+      # Floor deck
+      izf_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
+
+      # Floor mass
+      if floorMassThickness > 0
+        mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+        izf_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_floor_mass, material_list=nil)
+      end
+
+      # Carpet
+      if carpetFloorFraction > 0
+        carpet_smeared_cond = OpenStudio::convert(0.5,"in","ft").get / (carpetPadRValue * carpetFloorFraction)
+        izf_const.addlayer(thickness=OpenStudio::convert(0.5,"in","ft").get, conductivity_list=[carpet_smeared_cond])
+      end
+
+      # Exterior Film
+      izf_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_floor_reduced_R])
+
+      return izf_const.Rvalue_parallel
+
+  end
+
+  
 end #end the measure
 
 #this allows the measure to be use by the application

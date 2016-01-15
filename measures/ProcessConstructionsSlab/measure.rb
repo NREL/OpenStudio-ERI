@@ -14,80 +14,6 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 #start the measure
 class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
   
-	class Slab
-		def initialize(slabThickness, slabConductivity, slabDensity, slabSpecificHeat, slabPerimeterRvalue, slabPerimeterInsWidth, slabExtRvalue, slabExtInsDepth, slabGapRvalue, slabWholeInsRvalue)
-			@slabThickness = slabThickness
-			@slabConductivity = slabConductivity
-			@slabDensity = slabDensity
-			@slabSpecificHeat = slabSpecificHeat
-			@slabPerimeterRvalue = slabPerimeterRvalue
-			@slabPerimeterInsWidth = slabPerimeterInsWidth
-			@slabExtRvalue = slabExtRvalue
-			@slabExtInsDepth = slabExtInsDepth
-			@slabGapRvalue = slabGapRvalue
-			@slabWholeInsRvalue = slabWholeInsRvalue
-		end
-		
-		attr_accessor(:SlabHasWholeInsulation, :SlabCarpetPerimeterConduction, :SlabBarePerimeterConduction, :ext_perimeter, :area, :slab_carp_ext_perimeter, :bare_ext_perimeter, :area_perimeter_ratio, :fictitious_carpet_Rvalue, :carp_slab_factor, :fictitious_bare_Rvalue, :bare_slab_factor, :fictitious_slab_Rvalue, :slab_factor)
-		
-		def SlabMassThickness
-			return @slabThickness
-		end
-		
-		def SlabMassConductivity
-			return @slabConductivity
-		end
-		
-		def SlabMassDensity
-			return @slabDensity
-		end
-
-		def SlabMassSpecificHeat
-			return @slabSpecificHeat
-		end
-
-		def SlabPerimeterRvalue
-			return @slabPerimeterRvalue
-		end
-
-		def SlabPerimeterInsWidth
-			return @slabPerimeterInsWidth
-		end		
-		
-		def SlabExtRvalue
-			return @slabExtRvalue
-		end
-
-		def SlabExtInsDepth
-			return @slabExtInsDepth
-		end
-		
-		def SlabGapRvalue
-			return @slabGapRvalue
-		end
-		
-		def SlabWholeInsRvalue
-			return @slabWholeInsRvalue
-		end
-	end  
-	
-	class Carpet
-		def initialize(carpetFloorFraction, carpetPadRValue)
-			@carpetFloorFraction = carpetFloorFraction
-			@carpetPadRValue = carpetPadRValue
-		end
-		
-		attr_accessor(:floor_bare_fraction)
-		
-		def CarpetFloorFraction
-			return @carpetFloorFraction
-		end
-		
-		def CarpetPadRValue
-			return @carpetPadRValue
-		end
-	end
-  
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -274,26 +200,21 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	slabConductivity = 9.1
 	slabDensity = 140.0
 	slabSpecificHeat = 0.2
-	slab = Slab.new(slabThickness, slabConductivity, slabDensity, slabSpecificHeat, slabPerimeterRvalue, slabPerimeterInsWidth, slabExtRvalue, slabExtInsDepth, slabGapRvalue, slabWholeInsRvalue)
-	carpet = Carpet.new(carpetFloorFraction, carpetPadRValue)
 
-	# Create the sim object
-	sim = Sim.new(model, runner)
-
-    slab.area = runner.getDoubleArgumentValue("userdefinedslabarea",user_arguments)
-    slab.ext_perimeter = runner.getDoubleArgumentValue("userdefinedslabextperim",user_arguments)
+    slabArea = runner.getDoubleArgumentValue("userdefinedslabarea",user_arguments)
+    slabExtPerimeter = runner.getDoubleArgumentValue("userdefinedslabextperim",user_arguments)
 	
 	# Process the slab
-	slab = sim._processConstructionsSlab(slab, carpet)
+	fictitious_slab_Rvalue, slab_factor = _processConstructionsSlab(slabThickness, slabConductivity, slabDensity, slabSpecificHeat, slabPerimeterRvalue, slabPerimeterInsWidth, slabExtRvalue, slabExtInsDepth, slabGapRvalue, slabWholeInsRvalue, slabArea, slabExtPerimeter, carpetFloorFraction, carpetPadRValue)
 	
 	# Mat-Fic-Slab
-	if slab.fictitious_slab_Rvalue > 0
+	if fictitious_slab_Rvalue > 0
 		# Fictitious layer below slab to achieve equivalent R-value. See Winkelmann article.
 		mfs = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 		mfs.setName("Mat-Fic-Slab")
 		mfs.setRoughness("Rough")
 		mfs.setThickness(OpenStudio::convert(1.0/12.0,"ft","m").get)
-		mfs.setConductivity(OpenStudio::convert(1.0/12.0,"ft","m").get / (0.1761 * slab.fictitious_slab_Rvalue)) # tk used 0.1761 instead of OpenStudio::convert(slab.fictitious_slab_Rvalue,"Btu/hr*ft*R","W/m*K").get because not getting correct value
+		mfs.setConductivity(OpenStudio::convert(1.0/12.0,"ft","m").get / (0.1761 * fictitious_slab_Rvalue)) # tk used 0.1761 instead of OpenStudio::convert(fictitious_slab_Rvalue,"Btu/hr*ft*R","W/m*K").get because not getting correct value
 		mfs.setDensity(OpenStudio::convert(2.5,"lb/ft^3","kg/m^3").get)
 		mfs.setSpecificHeat(OpenStudio::convert(0.29,"Btu/lb*R","J/kg*K").get)
 	end
@@ -302,20 +223,20 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	sm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	sm.setName("SlabMass")
 	sm.setRoughness("Rough")
-	sm.setThickness(OpenStudio::convert(slab.SlabMassThickness,"in","m").get)
-	sm.setConductivity(OpenStudio::convert(OpenStudio::convert(slab.SlabMassConductivity,"in","ft").get,"Btu/hr*ft*R","W/m*K").get)
-	sm.setDensity(OpenStudio::convert(slab.SlabMassDensity,"lb/ft^3","kg/m^3").get)
-	sm.setSpecificHeat(OpenStudio::convert(slab.SlabMassSpecificHeat,"Btu/lb*R","J/kg*K").get)
+	sm.setThickness(OpenStudio::convert(slabThickness,"in","m").get)
+	sm.setConductivity(OpenStudio::convert(OpenStudio::convert(slabConductivity,"in","ft").get,"Btu/hr*ft*R","W/m*K").get)
+	sm.setDensity(OpenStudio::convert(slabDensity,"lb/ft^3","kg/m^3").get)
+	sm.setSpecificHeat(OpenStudio::convert(slabSpecificHeat,"Btu/lb*R","J/kg*K").get)
 	sm.setThermalAbsorptance(0.9)
 	sm.setSolarAbsorptance(Constants.DefaultSolarAbsFloor)
 	
-	if carpet.CarpetFloorFraction > 0
+	if carpetFloorFraction > 0
 		# Equivalent carpeted/bare material
 		scbem = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 		scbem.setName("SlabCarpetBareEquivalentMaterial")
 		scbem.setRoughness("Rough")
 		scbem.setThickness(OpenStudio::convert(1.0/12.0,"ft","m").get)
-		scbem.setConductivity(OpenStudio::convert(1.0/12.0,"ft","m").get / (carpet.CarpetPadRValue * carpet.CarpetFloorFraction * slab.slab_factor * 0.1761)) # tk the 0.1761 in place of OpenStudio::convert(1.0,"hr*ft^2*F/Btu","m^2*K/W").get because wasn't returning correct value
+		scbem.setConductivity(OpenStudio::convert(1.0/12.0,"ft","m").get / (carpetPadRValue * carpetFloorFraction * slab_factor * 0.1761)) # tk the 0.1761 in place of OpenStudio::convert(1.0,"hr*ft^2*F/Btu","m^2*K/W").get because wasn't returning correct value
 		scbem.setDensity(OpenStudio::convert(2.5,"lb/ft^3","kg/m^3").get)
 		scbem.setSpecificHeat(OpenStudio::convert(0.29,"Btu/lb*R","J/kg*K").get)
 		scbem.setThermalAbsorptance(0.9)
@@ -326,7 +247,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	ss = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	ss.setName("SlabSoil-12in")
 	ss.setRoughness("Rough")
-	ss.setThickness(OpenStudio::convert(slab.slab_factor,"ft","m").get)
+	ss.setThickness(OpenStudio::convert(slab_factor,"ft","m").get)
 	ss.setConductivity(OpenStudio::convert(1.0,"Btu/hr*ft*R","W/m*K").get)
 	ss.setDensity(OpenStudio::convert(115.0,"lb/ft^3","kg/m^3").get)
 	ss.setSpecificHeat(OpenStudio::convert(0.1,"Btu/lb*R","J/kg*K").get)
@@ -334,12 +255,12 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	# Living Area Slab with Equivalent Carpeted/Bare R-value
 	materials = []
 
-	if slab.fictitious_slab_Rvalue > 0
+	if fictitious_slab_Rvalue > 0
 		materials << mfs
 	end
     materials << ss
     materials << sm
-	if carpet.CarpetFloorFraction > 0
+	if carpetFloorFraction > 0
 		materials << scbem
 	end
 	s = OpenStudio::Model::Construction.new(materials)
@@ -357,6 +278,186 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
  
   end #end the run method
 
+  def _processConstructionsSlab(slabThickness, slabConductivity, slabDensity, slabSpecificHeat, slabPerimeterRvalue, slabPerimeterInsWidth, slabExtRvalue, slabExtInsDepth, slabGapRvalue, slabWholeInsRvalue, slabArea, slabExtPerimeter, carpetFloorFraction, carpetPadRValue)
+
+        slab_concrete_Rvalue = OpenStudio::convert(slabThickness,"in","ft").get / slabConductivity
+        
+        slabCarpetPerimeterConduction, slabBarePerimeterConduction, slabHasWholeInsulation = SlabPerimeterConductancesByType(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabExtRvalue, slabWholeInsRvalue, slabExtInsDepth)
+
+        slab_carp_ext_perimeter = slabExtPerimeter * carpetFloorFraction
+        bare_ext_perimeter = slabExtPerimeter * (1 - carpetFloorFraction)
+        
+        # Calculate R-Values from conductances and geometry
+        slab_warning = false
+        
+        # Models one floor surface with an equivalent carpented/bare material (Better alternative
+        # to having two floors with twice the total area, compensated by thinning mass thickness.)
+        slab_perimeter_conduction = slabCarpetPerimeterConduction * carpetFloorFraction + slabBarePerimeterConduction * (1 - carpetFloorFraction)
+
+        if slabExtPerimeter > 0
+            effective_slab_Rvalue = slabArea / (slabExtPerimeter * slab_perimeter_conduction)
+        else
+            effective_slab_Rvalue = 1000 # hr*ft^2*F/Btu
+        end
+
+        fictitious_slab_Rvalue = effective_slab_Rvalue - slab_concrete_Rvalue - Properties.film_flat_reduced_R - get_mat_soil12in.Rvalue - (carpetPadRValue * carpetFloorFraction)
+
+        if fictitious_slab_Rvalue <= 0
+            slab_warning = true
+            slab_factor = effective_slab_Rvalue / (slab_concrete_Rvalue + Properties.film_flat_reduced_R + get_mat_soil12in.Rvalue + carpetPadRValue * carpetFloorFraction)
+        else
+            slab_factor = 1.0
+        end
+
+        if slab_warning
+            runner.registerWarning("The slab foundation thickness will be automatically reduced to avoid simulation errors, but overall R-value will remain the same.")
+        end
+        
+        return fictitious_slab_Rvalue, slab_factor
+        
+  end
+
+  def SlabPerimeterConductancesByType(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabExtRvalue, slabWholeInsRvalue, slabExtInsDepth)
+    slabWidth = 28 # Width (shorter dimension) of slab, feet, to match Winkelmann analysis.
+    slabLength = 55 # Longer dimension of slab, feet, to match Winkelmann analysis.
+    soilConductivity = 1
+    slabHasWholeInsulation = false
+    if slabPerimeterRvalue > 0
+        slabCarpetPerimeterConduction = PerimeterSlabInsulation(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabWidth, slabLength, 1, soilConductivity)
+        slabBarePerimeterConduction = PerimeterSlabInsulation(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabWidth, slabLength, 0, soilConductivity)
+    elsif slabExtRvalue > 0
+        slabCarpetPerimeterConduction = ExteriorSlabInsulation(slabExtInsDepth, slabExtRvalue, 1)
+        slabBarePerimeterConduction = ExteriorSlabInsulation(slabExtInsDepth, slabExtRvalue, 0)
+    elsif slabWholeInsRvalue > 0
+        slabHasWholeInsulation = true
+        if slabWholeInsRvalue >= 999
+            # Super insulated slab option
+            slabCarpetPerimeterConduction = 0.001
+            slabBarePerimeterConduction = 0.001
+        else
+            slabCarpetPerimeterConduction = FullSlabInsulation(slabWholeInsRvalue, slabGapRvalue, slabWidth, slabLength, 1, soilConductivity)
+            slabBarePerimeterConduction = FullSlabInsulation(slabWholeInsRvalue, slabGapRvalue, slabWidth, slabLength, 0, soilConductivity)
+        end
+    else
+        slabCarpetPerimeterConduction = FullSlabInsulation(0, 0, slabWidth, slabLength, 1, soilConductivity)
+        slabBarePerimeterConduction = FullSlabInsulation(0, 0, slabWidth, slabLength, 0, soilConductivity)
+    end
+    
+    return slabCarpetPerimeterConduction, slabBarePerimeterConduction, slabHasWholeInsulation
+    
+  end
+  
+
+  def PerimeterSlabInsulation(rperim, rgap, wperim, slabWidth, slabLength, carpet, k)
+    # Coded by Dennis Barley, April 2013.
+    # This routine calculates the perimeter conductance for a slab with insulation 
+    #   under the slab perimeter as well as gap insulation around the edge.
+    #   The algorithm is based on a correlation to a set of related, fully insulated
+    #   and uninsulated slab (sections), using the FullSlabInsulation function above.
+    # Parameters:
+    #   Rperim     = R-factor of insulation placed horizontally under the slab perimeter, h*ft2*F/Btu
+    #   Rgap       = R-factor of insulation placed vertically between edge of slab & foundation wall, h*ft2*F/Btu
+    #   Wperim     = Width of the perimeter insulation, ft.  Must be > 0.
+    #   SlabWidth  = width (shorter dimension) of the slab, ft
+    #   SlabLength = longer dimension of the slab, ft
+    #   Carpet     = 1 if carpeted, 0 if not carpeted
+    #   k          = thermal conductivity of the soil, Btu/h*ft*F
+    # Constants:
+    k2 =  0.329201  # 1st curve fit coefficient
+    p = -0.327734  # 2nd curve fit coefficient
+    q =  1.158418  # 3rd curve fit coefficient
+    r =  0.144171  # 4th curve fit coefficient
+    # Related, fully insulated slabs:
+    b = FullSlabInsulation(rperim, rgap, 2 * wperim, slabLength, carpet, k)
+    c = FullSlabInsulation(0 ,0 , slabWidth, slabLength, carpet, k)
+    d = FullSlabInsulation(0, 0, 2 * wperim, slabLength, carpet, k)
+    # Trap zeros or small negatives before exponents are applied:
+    dB = [d-b, 0.0000001].max
+    cD = [c-d, 0.0000001].max
+    wp = [wperim, 0.0000001].max
+    # Result:
+    perimeterConductance = b + c - d + k2 * (2 * wp / slabWidth) ** p * dB ** q * cD ** r 
+    return perimeterConductance 
+  end
+
+  def FullSlabInsulation(rbottom, rgap, w, l, carpet, k)
+    # Coded by Dennis Barley, March 2013.
+    # This routine calculates the perimeter conductance for a slab with insulation 
+    #   under the entire slab as well as gap insulation around the edge.
+    # Parameters:
+    #   Rbottom = R-factor of insulation placed horizontally under the entire slab, h*ft2*F/Btu
+    #   Rgap    = R-factor of insulation placed vertically between edge of slab & foundation wall, h*ft2*F/Btu
+    #   W       = width (shorter dimension) of the slab, ft.  Set to 28 to match Winkelmann analysis.
+    #   L       = longer dimension of the slab, ft.  Set to 55 to match Winkelmann analysis. 
+    #   Carpet  = 1 if carpeted, 0 if not carpeted
+    #   k       = thermal conductivity of the soil, Btu/h*ft*F.  Set to 1 to match Winkelmann analysis.
+    # Constants:
+    zf = 0      # Depth of slab bottom, ft
+    r0 = 1.47    # Thermal resistance of concrete slab and inside air film, h*ft2*F/Btu
+    rca = 0      # R-value of carpet, if absent,  h*ft2*F/Btu
+    rcp = 2.0      # R-value of carpet, if present, h*ft2*F/Btu
+    rsea = 0.8860  # Effective resistance of slab edge if carpet is absent,  h*ft2*F/Btu
+    rsep = 1.5260  # Effective resistance of slab edge if carpet is present, h*ft2*F/Btu
+    t  = 4.0 / 12.0  # Thickness of slab: Assumed value if 4 inches; not a variable in the analysis, ft
+    # Carpet factors:
+    if carpet == 0
+        rc  = rca
+        rse = rsea
+    else
+        if carpet == 1
+            rc  = rcp
+            rse = rsep
+        else
+            runner.registerError("In FullSlabInsulation, Carpet must be 0 or 1.")
+            return false
+        end
+    end
+            
+    rother = rc + r0 + rbottom   # Thermal resistance other than the soil (from inside air to soil)
+    # Ubottom:
+    term1 = 2.0 * k / (Math::PI * w)
+    term3 = zf / 2.0 + k * rother / Math::PI
+    term2 = term3 + w / 2.0
+    ubottom = term1 * Math::log(term2 / term3)
+    pbottom = ubottom * (l * w) / (2.0 * (l + w))
+    # Uedge:
+    uedge = 1.0 / (rse + rgap)
+    pedge = t * uedge
+    # Result:
+    perimeterConductance = pbottom + pedge
+    return perimeterConductance
+  end
+
+  def ExteriorSlabInsulation(depth, rvalue, carpet)
+    # Coded by Dennis Barley, April 2013.
+    # This routine calculates the perimeter conductance for a slab with insulation 
+    #   placed vertically outside the foundation.
+    #   This is a correlation to Winkelmann results.
+    # Parameters:
+    #   Depth     = Depth to which insulation extends into the ground, ft
+    #   Rvalue    = R-factor of insulation, h*ft2*F/Btu
+    #   Carpet    = 1 if carpeted, 0 if not carpeted
+    # Carpet factors:
+    if carpet == 0
+        a  = 9.02928
+        b  = 8.20902
+        e1 = 0.54383
+        e2 = 0.74266
+    else
+        if carpet == 1
+            a  =  8.53957
+            b  = 11.09168
+            e1 =  0.57937
+            e2 =  0.80699
+        else
+            runner.registerError("In ExteriorSlabInsulation, Carpet must be 0 or 1.")
+            return false
+        end
+    end
+    perimeterConductance = a / (b + rvalue ** e1 * depth ** e2) 
+    return perimeterConductance
+  end
+  
 end #end the measure
 
 #this allows the measure to be use by the application

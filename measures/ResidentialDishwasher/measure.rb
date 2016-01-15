@@ -322,11 +322,11 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	# Also convert from per-cycle to daily electricity usage amounts.
 	if dw_is_cold_water_inlet_only
 
-        @weather = WeatherProcess.new(model,runner)
-        if @weather.error?
+        weather = WeatherProcess.new(model,runner)
+        if weather.error?
             return false
         end
-        daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(@weather.data, @weather.header)
+        daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(weather.data, weather.header)
 
         monthly_dishwasher_energy = Array.new(12, 0)
 		monthly_mains.each_with_index do |monthly_main, i|

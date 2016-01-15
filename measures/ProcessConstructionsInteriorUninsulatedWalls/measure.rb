@@ -15,12 +15,11 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelUserScript
 
   class PartitionWallMass
-    def initialize(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat, partitionWallMassPCMType)
+    def initialize(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
       @partitionWallMassThickness = partitionWallMassThickness
       @partitionWallMassConductivity = partitionWallMassConductivity
       @partitionWallMassDensity = partitionWallMassDensity
       @partitionWallMassSpecHeat = partitionWallMassSpecHeat
-      @partitionWallMassPCMType = partitionWallMassPCMType
     end
 
     def PartitionWallMassThickness
@@ -37,10 +36,6 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 
     def PartitionWallMassSpecificHeat
       return @partitionWallMassSpecHeat
-    end
-
-    def PartitionWallMassPCMType
-      return @partitionWallMassPCMType
     end
 
   end
@@ -122,8 +117,6 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
       return false
     end
 
-    partitionWallMassPCMType = nil
-
     # Space Type
 	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
     living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
@@ -146,60 +139,51 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     partitionWallMassDensity = userdefined_partitionwallmassdens
     partitionWallMassSpecificHeat = userdefined_partitionwallmasssh
 
+    weather = WeatherProcess.new(model,runner,header_only=true)
+    if weather.error?
+        return false
+    end
+
     # Create the material class instances
-    partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat, partitionWallMassPCMType)
+    partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
 
     # PartitionWallMass
+    mat_partition_wall_mass = get_mat_partition_wall_mass(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
     pwm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     pwm.setName("PartitionWallMass")
     pwm.setRoughness("Rough")
-    pwm.setThickness(OpenStudio::convert(get_mat_partition_wall_mass(partition_wall_mass).thick,"ft","m").get)
-    pwm.setConductivity(OpenStudio::convert(get_mat_partition_wall_mass(partition_wall_mass).k,"Btu/hr*ft*R","W/m*K").get)
-    pwm.setDensity(OpenStudio::convert(get_mat_partition_wall_mass(partition_wall_mass).rho,"lb/ft^3","kg/m^3").get)
-    pwm.setSpecificHeat(OpenStudio::convert(get_mat_partition_wall_mass(partition_wall_mass).Cp,"Btu/lb*R","J/kg*K").get)
-    pwm.setThermalAbsorptance(get_mat_partition_wall_mass(partition_wall_mass).TAbs)
-    pwm.setSolarAbsorptance(get_mat_partition_wall_mass(partition_wall_mass).SAbs)
-    pwm.setVisibleAbsorptance(get_mat_partition_wall_mass(partition_wall_mass).VAbs)
-
-    # ConcPCMPartWall
-    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-      pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-      pcm.setName("ConcPCMPartWall")
-      pcm.setRoughness("Rough")
-      pcm.setThickness(OpenStudio::convert(get_mat_part_pcm_conc(get_mat_part_pcm(partition_wall_mass), partition_wall_mass).thick,"ft","m").get)
-      pcm.setConductivity()
-      pcm.setDensity()
-      pcm.setSpecificHeat()
-    end
+    pwm.setThickness(OpenStudio::convert(mat_partition_wall_mass.thick,"ft","m").get)
+    pwm.setConductivity(OpenStudio::convert(mat_partition_wall_mass.k,"Btu/hr*ft*R","W/m*K").get)
+    pwm.setDensity(OpenStudio::convert(mat_partition_wall_mass.rho,"lb/ft^3","kg/m^3").get)
+    pwm.setSpecificHeat(OpenStudio::convert(mat_partition_wall_mass.Cp,"Btu/lb*R","J/kg*K").get)
+    pwm.setThermalAbsorptance(mat_partition_wall_mass.TAbs)
+    pwm.setSolarAbsorptance(mat_partition_wall_mass.SAbs)
+    pwm.setVisibleAbsorptance(mat_partition_wall_mass.VAbs)
 
     # StudandAirWall
+    mat_stud_and_air_wall = get_stud_and_air_wall(weather.header.LocalPressure)
     saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saw.setName("StudandAirWall")
     saw.setRoughness("Rough")
-    saw.setThickness(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).thick,"ft","m").get)
-    saw.setConductivity(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).k,"Btu/hr*ft*R","W/m*K").get)
-    saw.setDensity(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).rho,"lb/ft^3","kg/m^3").get)
-    saw.setSpecificHeat(OpenStudio::convert(get_stud_and_air_wall(model, runner, mat_wood).Cp,"Btu/lb*R","J/kg*K").get)
+    saw.setThickness(OpenStudio::convert(mat_stud_and_air_wall.thick,"ft","m").get)
+    saw.setConductivity(OpenStudio::convert(mat_stud_and_air_wall.k,"Btu/hr*ft*R","W/m*K").get)
+    saw.setDensity(OpenStudio::convert(mat_stud_and_air_wall.rho,"lb/ft^3","kg/m^3").get)
+    saw.setSpecificHeat(OpenStudio::convert(mat_stud_and_air_wall.Cp,"Btu/lb*R","J/kg*K").get)
 
     # Plywood-1_2in
+    mat_plywood1_2in = get_mat_plywood1_2in
     ply1_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply1_2.setName("Plywood-1_2in")
     ply1_2.setRoughness("Rough")
-    ply1_2.setThickness(OpenStudio::convert(get_mat_plywood1_2in(get_mat_wood).thick,"ft","m").get)
-    ply1_2.setConductivity(OpenStudio::convert(get_mat_wood.k,"Btu/hr*ft*R","W/m*K").get)
-    ply1_2.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
-    ply1_2.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
+    ply1_2.setThickness(OpenStudio::convert(mat_plywood1_2in.thick,"ft","m").get)
+    ply1_2.setConductivity(OpenStudio::convert(mat_plywood1_2in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply1_2.setDensity(OpenStudio::convert(mat_plywood1_2in.rho,"lb/ft^3","kg/m^3").get)
+    ply1_2.setSpecificHeat(OpenStudio::convert(mat_plywood1_2in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FinUninsFinWall
 	materials = []
     materials << pwm
-    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-     materials << pcm
-    end
     materials << saw
-    if partition_wall_mass.PartitionWallMassPCMType == Constants.PCMtypeConcentrated
-      materials << pcm
-    end
     materials << pwm
     fufw = OpenStudio::Model::Construction.new(materials)
     fufw.setName("FinUninsFinWall")

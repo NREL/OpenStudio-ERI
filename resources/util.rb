@@ -360,14 +360,102 @@ class Properties
     return Mat_gas.new(nil,0.1697,nil,nil,nil)
   end
 
-  def self.Wood
-    # From wolframalpha.com
-    return Mat_solid.new(630,2500,0.14)
-  end
-
   def self.PsychMassRat
     return Properties.H2O_v.M / Properties.Air.M
   end
+  
+  def self.inside_air_dens(localPressure)
+    return UnitConversion.atm2Btu_ft3(localPressure) / (Properties.Air.R * (Constants.AssumedInsideTemp + 460)) # lbm/ft^3
+  end
+  
+  def self.film_outside_R
+    return 0.197 # hr-ft-F/Btu
+  end
+  
+  def self.film_vertical_R
+    return 0.68 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
+  end
+  
+  def self.film_flat_enhanced_R
+    return 0.61 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
+  end
+  
+  def self.film_flat_reduced_R
+    return 0.92 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
+  end
+  
+  def self.film_floor_average_R
+    # For floors between conditioned spaces where heat does not flow across
+    # the floor; heat transfer is only important with regards to the thermal
+    return (Properties.film_flat_reduced_R + Properties.film_flat_enhanced_R) / 2.0 # hr-ft-F/Btu
+  end
+
+  def self.film_floor_reduced_R
+    # For floors above unconditioned basement spaces, where heat will
+    # always flow down through the floor.
+    return Properties.film_flat_reduced_R # hr-ft-F/Btu
+  end
+  
+  def self.film_slope_enhanced_R(highest_roof_pitch)
+    # Correlation functions used to interpolate between values provided
+    # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
+    # 0, 45, and 90 degrees. Values are for non-reflective materials of 
+    # emissivity = 0.90.
+    return 0.002 * Math::exp(0.0398 * highest_roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
+  end
+  
+  def self.film_slope_reduced_R(highest_roof_pitch)
+    # Correlation functions used to interpolate between values provided
+    # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
+    # 0, 45, and 90 degrees. Values are for non-reflective materials of 
+    # emissivity = 0.90.
+    return 0.32 * Math::exp(-0.0154 * highest_roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
+  end
+  
+  def self.film_slope_enhanced_reflective_R(highest_roof_pitch)
+    # Correlation functions used to interpolate between values provided
+    # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
+    # 0, 45, and 90 degrees. Values are for reflective materials of 
+    # emissivity = 0.05.
+    return 0.00893 * Math::exp(0.0419 * highest_roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
+  end
+  
+  def self.film_slope_reduced_reflective_R(highest_roof_pitch)
+    # Correlation functions used to interpolate between values provided
+    # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
+    # 0, 45, and 90 degrees. Values are for reflective materials of 
+    # emissivity = 0.05.
+    return 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
+  end
+  
+  def self.film_roof_R(highest_roof_pitch, cdd65f, hdd65f)
+    # Use weighted average between enhanced and reduced convection based on degree days.
+    hdd_frac = hdd65f / (hdd65f + cdd65f)
+    cdd_frac = cdd65f / (hdd65f + cdd65f)
+    return Properties.film_slope_enhanced_R(highest_roof_pitch) * hdd_frac + Properties.film_slope_reduced_R(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+  end
+  
+  def self.film_roof_radiant_barrier_R(highest_roof_pitch, cdd65f, hdd65f)
+    # Use weighted average between enhanced and reduced convection based on degree days.
+    hdd_frac = hdd65f / (hdd65f + cdd65f)
+    cdd_frac = cdd65f / (hdd65f + cdd65f)
+    return Properties.film_slope_enhanced_reflective_R(highest_roof_pitch) * hdd_frac + Properties.film_slope_reduced_reflective_R(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+  end
+  
+  def self.film_floor_below_unconditioned_R(cdd65f, hdd65f)
+    # Use weighted average between enhanced and reduced convection based on degree days.
+    hdd_frac = hdd65f / (hdd65f + cdd65f)
+    cdd_frac = cdd65f / (hdd65f + cdd65f)
+    return Properties.film_flat_enhanced_R * hdd_frac + Properties.film_flat_reduced_R * cdd_frac # hr-ft-F/Btu
+  end
+  
+  def self.film_floor_above_unconditioned_R(cdd65f, hdd65f)
+    # Use weighted average between enhanced and reduced convection based on degree days.
+    hdd_frac = hdd65f / (hdd65f + cdd65f)
+    cdd_frac = cdd65f / (hdd65f + cdd65f)
+    return Properties.film_flat_reduced_R * hdd_frac + Properties.film_flat_enhanced_R * cdd_frac
+  end
+  
 end
 
 class EnergyGuideLabel

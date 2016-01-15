@@ -14,79 +14,6 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 #start the measure
 class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::ModelUserScript
 
-  class StudandAirFloor
-    def initialize
-    end
-    attr_accessor(:floor_part_thickness, :floor_part_conductivity, :floor_part_density, :floor_part_spec_heat)
-  end
-
-  class CeilingMass
-    def initialize(ceilingMassGypsumThickness, ceilingMassGypsumNumLayers, rvalue, ceilingMassPCMType)
-      @ceilingMassGypsumThickness = ceilingMassGypsumThickness
-      @ceilingMassGypsumNumLayers = ceilingMassGypsumNumLayers
-      @rvalue = rvalue
-      @ceilingMassPCMType = ceilingMassPCMType
-    end
-
-    def CeilingMassGypsumThickness
-      return @ceilingMassGypsumThickness
-    end
-
-    def CeilingMassGypsumNumLayers
-      return @ceilingMassGypsumNumLayers
-    end
-
-    def Rvalue
-      return @rvalue
-    end
-
-    def CeilingMassPCMType
-      return @ceilingMassPCMType
-    end
-  end
-
-  class FloorMass
-    def initialize(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-      @floorMassThickness = floorMassThickness
-      @floorMassConductivity = floorMassConductivity
-      @floorMassDensity = floorMassDensity
-      @floorMassSpecificHeat = floorMassSpecificHeat
-    end
-
-    def FloorMassThickness
-      return @floorMassThickness
-    end
-
-    def FloorMassConductivity
-      return @floorMassConductivity
-    end
-
-    def FloorMassDensity
-      return @floorMassDensity
-    end
-
-    def FloorMassSpecificHeat
-      return @floorMassSpecificHeat
-    end
-  end
-
-  class Carpet
-    def initialize(carpetFloorFraction, carpetPadRValue)
-      @carpetFloorFraction = carpetFloorFraction
-      @carpetPadRValue = carpetPadRValue
-    end
-
-    attr_accessor(:floor_bare_fraction)
-
-    def CarpetFloorFraction
-      return @carpetFloorFraction
-    end
-
-    def CarpetPadRValue
-      return @carpetPadRValue
-    end
-  end
-
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -241,8 +168,6 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
       return false
     end
 
-    ceilingMassPCMType = nil
-
     # Space Type
 	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
     living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
@@ -257,82 +182,46 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)	
 	
     # Gypsum
+    mat_gyp = get_mat_gypsum
     selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
     if selected_gypsum.empty?
-      userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
-      userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
+      gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
+      gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
     end
-
-    # Floor Mass
-    userdefined_floormassth = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
-    userdefined_floormasscond = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
-    userdefined_floormassdens = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
-    userdefined_floormasssh = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
-
-    # Carpet
-    userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-    userdefined_carpetfrac = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
-
-    # Constants
-    mat_gyp = get_mat_gypsum
-    mat_wood = get_mat_wood
-
-    # Gypsum
-    gypsumThickness = userdefined_gypthickness
-    gypsumNumLayers = userdefined_gyplayers
     gypsumConductivity = mat_gyp.k
     gypsumDensity = mat_gyp.rho
     gypsumSpecificHeat = mat_gyp.Cp
-    gypsumThermalAbs = get_mat_gypsum_ceiling(mat_gyp).TAbs
-    gypsumSolarAbs = get_mat_gypsum_ceiling(mat_gyp).SAbs
-    gypsumVisibleAbs = get_mat_gypsum_ceiling(mat_gyp).VAbs
+    gypsumThermalAbs = get_mat_gypsum_ceiling.TAbs
+    gypsumSolarAbs = get_mat_gypsum_ceiling.SAbs
+    gypsumVisibleAbs = get_mat_gypsum_ceiling.VAbs
     gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
 
     # Floor Mass
-    floorMassThickness = userdefined_floormassth
-    floorMassConductivity = userdefined_floormasscond
-    floorMassDensity = userdefined_floormassdens
-    floorMassSpecificHeat = userdefined_floormasssh
+    floorMassThickness = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
+    floorMassConductivity = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
+    floorMassDensity = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
+    floorMassSpecificHeat = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
 
     # Carpet
-    carpetPadRValue = userdefined_carpetr
-    carpetFloorFraction = userdefined_carpetfrac
+    carpetPadRValue = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
+    carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
-    # Create the material class instances
-    ceiling_mass = CeilingMass.new(gypsumThickness, gypsumNumLayers, gypsumRvalue, ceilingMassPCMType)
-    floor_mass = FloorMass.new(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-    carpet = Carpet.new(carpetFloorFraction, carpetPadRValue)
-    saf = StudandAirFloor.new
-
-    # Create the sim object
-    sim = Sim.new(model, runner)
-
-    # Process the interior uninsulated floor
-    saf = sim._processConstructionsInteriorUninsulatedFloors(saf)
-
-    # ConcPCMCeilWall
-    if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
-      pcm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-      pcm.setName("ConcPCMCeilWall")
-      pcm.setRoughness("Rough")
-      pcm.setThickness(OpenStudio::convert(get_mat_ceil_pcm_conc(get_mat_ceil_pcm(ceiling_mass), ceiling_mass).thick,"ft","m").get)
-      pcm.setConductivity()
-      pcm.setDensity()
-      pcm.setSpecificHeat()
+    weather = WeatherProcess.new(model,runner,header_only=true)
+    if weather.error?
+        return false
     end
 
+    # Process the interior uninsulated floor
+    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorUninsulatedFloors(weather.header.LocalPressure)
+
     # StudandAirFloor
-    safThickness = saf.floor_part_thickness
-    safConductivity = saf.floor_part_conductivity
-    safDensity = saf.floor_part_density
-    safSpecificHeat = saf.floor_part_spec_heat
     saf = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saf.setName("StudandAirFloor")
     saf.setRoughness("Rough")
-    saf.setThickness(OpenStudio::convert(safThickness,"ft","m").get)
-    saf.setConductivity(OpenStudio::convert(safConductivity,"Btu/hr*ft*R","W/m*K").get)
-    saf.setDensity(OpenStudio::convert(safDensity,"lb/ft^3","kg/m^3").get)
-    saf.setSpecificHeat(OpenStudio::convert(safSpecificHeat,"Btu/lb*R","J/kg*K").get)
+    saf.setThickness(OpenStudio::convert(sc_thick,"ft","m").get)
+    saf.setConductivity(OpenStudio::convert(sc_cond,"Btu/hr*ft*R","W/m*K").get)
+    saf.setDensity(OpenStudio::convert(sc_dens,"lb/ft^3","kg/m^3").get)
+    saf.setSpecificHeat(OpenStudio::convert(sc_sh,"Btu/lb*R","J/kg*K").get)
 
     # Gypsum
     gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -347,50 +236,50 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     gypsum.setVisibleAbsorptance(gypsumVisibleAbs)
 
     # Plywood-3_4in
+    mat_plywood3_4in = get_mat_plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
-    ply3_4.setThickness(OpenStudio::convert(get_mat_plywood3_4in(mat_wood).thick,"ft","m").get)
-    ply3_4.setConductivity(OpenStudio::convert(mat_wood.k,"Btu/hr*ft*R","W/m*K").get)
-    ply3_4.setDensity(OpenStudio::convert(mat_wood.rho,"lb/ft^3","kg/m^3").get)
-    ply3_4.setSpecificHeat(OpenStudio::convert(mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
+    ply3_4.setThickness(OpenStudio::convert(mat_plywood3_4in.thick,"ft","m").get)
+    ply3_4.setConductivity(OpenStudio::convert(mat_plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply3_4.setDensity(OpenStudio::convert(mat_plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
+    ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FloorMass
+    mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
     fm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     fm.setName("FloorMass")
     fm.setRoughness("Rough")
-    fm.setThickness(OpenStudio::convert(get_mat_floor_mass(floor_mass).thick,"ft","m").get)
-    fm.setConductivity(OpenStudio::convert(get_mat_floor_mass(floor_mass).k,"Btu/hr*ft*R","W/m*K").get)
-    fm.setDensity(OpenStudio::convert(get_mat_floor_mass(floor_mass).rho,"lb/ft^3","kg/m^3").get)
-    fm.setSpecificHeat(OpenStudio::convert(get_mat_floor_mass(floor_mass).Cp,"Btu/lb*R","J/kg*K").get)
-    fm.setThermalAbsorptance(get_mat_floor_mass(floor_mass).TAbs)
-    fm.setSolarAbsorptance(get_mat_floor_mass(floor_mass).SAbs)
+    fm.setThickness(OpenStudio::convert(mat_floor_mass.thick,"ft","m").get)
+    fm.setConductivity(OpenStudio::convert(mat_floor_mass.k,"Btu/hr*ft*R","W/m*K").get)
+    fm.setDensity(OpenStudio::convert(mat_floor_mass.rho,"lb/ft^3","kg/m^3").get)
+    fm.setSpecificHeat(OpenStudio::convert(mat_floor_mass.Cp,"Btu/lb*R","J/kg*K").get)
+    fm.setThermalAbsorptance(mat_floor_mass.TAbs)
+    fm.setSolarAbsorptance(mat_floor_mass.SAbs)
 
     # CarpetBareLayer
-    if carpet.CarpetFloorFraction > 0
+    if carpetFloorFraction > 0
+      mat_carpet_bare = get_mat_carpet_bare(carpetFloorFraction, carpetPadRValue)
       cbl = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       cbl.setName("CarpetBareLayer")
       cbl.setRoughness("Rough")
-      cbl.setThickness(OpenStudio::convert(get_mat_carpet_bare(carpet).thick,"ft","m").get)
-      cbl.setConductivity(OpenStudio::convert(get_mat_carpet_bare(carpet).k,"Btu/hr*ft*R","W/m*K").get)
-      cbl.setDensity(OpenStudio::convert(get_mat_carpet_bare(carpet).rho,"lb/ft^3","kg/m^3").get)
-      cbl.setSpecificHeat(OpenStudio::convert(get_mat_carpet_bare(carpet).Cp,"Btu/lb*R","J/kg*K").get)
-      cbl.setThermalAbsorptance(get_mat_carpet_bare(carpet).TAbs)
-      cbl.setSolarAbsorptance(get_mat_carpet_bare(carpet).SAbs)
+      cbl.setThickness(OpenStudio::convert(mat_carpet_bare.thick,"ft","m").get)
+      cbl.setConductivity(OpenStudio::convert(mat_carpet_bare.k,"Btu/hr*ft*R","W/m*K").get)
+      cbl.setDensity(OpenStudio::convert(mat_carpet_bare.rho,"lb/ft^3","kg/m^3").get)
+      cbl.setSpecificHeat(OpenStudio::convert(mat_carpet_bare.Cp,"Btu/lb*R","J/kg*K").get)
+      cbl.setThermalAbsorptance(mat_carpet_bare.TAbs)
+      cbl.setSolarAbsorptance(mat_carpet_bare.SAbs)
     end
 
     # FinUninsFinFloor
     materials = []
-    if ceiling_mass.CeilingMassPCMType == Constants.PCMtypeConcentrated
-      materials << pcm
-    end
     (0...gypsumNumLayers).to_a.each do |i|
       materials << gypsum
     end
     materials << saf
     materials << ply3_4
     materials << fm
-    if carpet.CarpetFloorFraction > 0
+    if carpetFloorFraction > 0
       materials << cbl
     end
 	finuninsfinfloor = OpenStudio::Model::Construction.new(materials)
@@ -449,6 +338,20 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
  
   end #end the run method
 
+  def _processConstructionsInteriorUninsulatedFloors(localPressure)
+    floor_part_U_cavity_path = (1 - Constants.DefaultFramingFactorFloor) / get_mat_air.R_air_gap # Btu/hr*ft^2*F
+    floor_part_U_stud_path = Constants.DefaultFramingFactorFloor / get_mat_2x6.Rvalue # Btu/hr*ft^2*F
+    floor_part_Rvalue = 1 / (floor_part_U_cavity_path + floor_part_U_stud_path) # hr*ft^2*F/Btu
+
+    sc_thick = get_mat_2x4.thick # ft
+    sc_cond = sc_thick / floor_part_Rvalue # Btu/hr*ft*F
+    sc_dens = Constants.DefaultFramingFactorFloor * get_mat_wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Properties.inside_air_dens(localPressure) # lbm/ft^3
+    sc_sh = (Constants.DefaultFramingFactorFloor * get_mat_wood.Cp * get_mat_wood.rho + (1 - Constants.DefaultFramingFactorFloor) * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / sc_dens # Btu/lbm*F
+
+    return sc_thick, sc_cond, sc_dens, sc_sh
+  end
+
+  
 end #end the measure
 
 #this allows the measure to be use by the application
