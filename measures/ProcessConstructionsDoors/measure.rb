@@ -172,15 +172,17 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
 	  end	
 	end	
 
-	garage_space_type.spaces.each do |garage_space|
-	  garage_space.surfaces.each do |garage_surface|
-		next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
-		garage_surface.subSurfaces.each do |garage_sub_surface|
-		  next unless garage_sub_surface.subSurfaceType.downcase.include? "door"
-		  garage_sub_surface.setConstruction(door)
-		  runner.registerInfo("Sub Surface '#{garage_sub_surface.name}', of Space Type '#{garage_space_type_r}' and with Sub Surface Type '#{garage_sub_surface.subSurfaceType}', was assigned Construction '#{door.name}'")
-		end
-	  end	
+	unless garage_space_type.nil?
+	  garage_space_type.spaces.each do |garage_space|
+	    garage_space.surfaces.each do |garage_surface|
+		  next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
+		  garage_surface.subSurfaces.each do |garage_sub_surface|
+		    next unless garage_sub_surface.subSurfaceType.downcase.include? "door"
+		    garage_sub_surface.setConstruction(door)
+		    runner.registerInfo("Sub Surface '#{garage_sub_surface.name}', of Space Type '#{garage_space_type_r}' and with Sub Surface Type '#{garage_sub_surface.subSurfaceType}', was assigned Construction '#{door.name}'")
+		  end
+	    end	
+	  end
 	end
 	
     return true
