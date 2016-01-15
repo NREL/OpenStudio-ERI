@@ -209,8 +209,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
 
     # Constants
-    mat_gyp = get_mat_gypsum
-    mat_rigid = get_mat_rigid_ins
+    mat_rigid = BaseMaterial.InsulationRigid
 
     # Partition Wall Mass
     partitionWallMassThickness = userdefined_partitionwallmassth
@@ -240,7 +239,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     end
 
     # Process the wood stud walls
-    mat_part_wall_mass = get_mat_partition_wall_mass(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
+    mat_part_wall_mass = Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
     sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorInsulatedWalls(intWallCavityDepth, intWallCavityInsRvalueInstalled, intWallContInsThickness, intWallContInsRvalue, intWallCavityInsFillsCavity, intWallInstallGrade, intWallFramingFactor, partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat, mat_part_wall_mass.Rvalue, weather.header.LocalPressure)
 
     # Create the material layers
@@ -326,21 +325,21 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     # Set Furring insulation/air properties
     if intWallCavityInsRvalueInstalled == 0
-      intWallCavityInsDens = Properties.inside_air_dens(localPressure) # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
-      intWallCavityInsSH = get_mat_air.inside_air_sh
+      intWallCavityInsDens = Gas.AirInsideDensity(localPressure) # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
+      intWallCavityInsSH = Gas.Air.Cp
     else
-      intWallCavityInsDens = get_mat_densepack_generic.rho
-      intWallCavityInsSH = get_mat_densepack_generic.Cp
+      intWallCavityInsDens = BaseMaterial.InsulationGenericDensepack.rho
+      intWallCavityInsSH = BaseMaterial.InsulationGenericDensepack.Cp
     end
 
     overall_wall_Rvalue, gapFactor = get_interzonal_wall_r_assembly(intWallCavityDepth, intWallCavityInsRvalueInstalled, intWallContInsThickness, intWallContInsRvalue, intWallCavityInsFillsCavity, intWallInstallGrade, intWallFramingFactor, partitionWallMassThickness, OpenStudio::convert(partitionWallMassConductivity,"in","ft").get)
 
-    bndry_wall_Rvalue = (overall_wall_Rvalue - (Properties.film_vertical_R * 2.0 + partitionWallMassRvalue + intWallContInsRvalue))
+    bndry_wall_Rvalue = (overall_wall_Rvalue - (AirFilms.VerticalR * 2.0 + partitionWallMassRvalue + intWallContInsRvalue))
 
     sc_thick = OpenStudio::convert(intWallCavityDepth,"in","ft").get # ft
     sc_cond = sc_thick / bndry_wall_Rvalue # Btu/hr*ft*F
-    sc_dens = intWallFramingFactor * get_mat_wood.rho + (1 - intWallFramingFactor - gapFactor) * intWallCavityInsDens + gapFactor * Properties.inside_air_dens(localPressure) # lbm/ft^3
-    sc_sh = (intWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - intWallFramingFactor - gapFactor) * intWallCavityInsSH * intWallCavityInsDens + gapFactor * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / sc_dens # Btu/lbm*F
+    sc_dens = intWallFramingFactor * BaseMaterial.Wood.rho + (1 - intWallFramingFactor - gapFactor) * intWallCavityInsDens + gapFactor * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+    sc_sh = (intWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - intWallFramingFactor - gapFactor) * intWallCavityInsSH * intWallCavityInsDens + gapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
 
     return sc_thick, sc_cond, sc_dens, sc_sh
 
@@ -351,16 +350,14 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
       intWallCavityInsRvalueInstalled = intWallCavityInsRvalueInstalled
 
-      mat_air = get_mat_air
-      mat_wood = get_mat_wood
+      mat_wood = BaseMaterial.Wood
       if gypsumConductivity.nil?
-        mat_gyp = get_mat_gypsum
-        gypsumConductivity = mat_gyp.k
+        gypsumConductivity = BaseMaterial.Gypsum.k
       end
 
       # Add air gap when insulation thickness < cavity depth
       if intWallCavityInsFillsCavity == false
-        intWallCavityInsRvalueInstalled += mat_air.R_air_gap
+        intWallCavityInsRvalueInstalled += Gas.AirGapRvalue
       end
 
       gapFactor = get_wall_gap_factor(intWallInstallGrade, intWallFramingFactor)
@@ -370,14 +367,14 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       interzonal_wall = Construction.new(path_fracs)
 
       # Interior Film
-      interzonal_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_vertical_R])
+      interzonal_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.VerticalR])
 
       # Interior Finish (GWB)
       interzonal_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get, conductivity_list=[gypsumConductivity])
 
       # Stud / Cavity Ins / Gap
       ins_k = OpenStudio::convert(intWallCavityDepth,"in","ft").get / intWallCavityInsRvalueInstalled
-      gap_k = OpenStudio::convert(intWallCavityDepth,"in","ft").get / mat_air.R_air_gap
+      gap_k = OpenStudio::convert(intWallCavityDepth,"in","ft").get / Gas.AirGapRvalue
       interzonal_wall.addlayer(thickness=OpenStudio::convert(intWallCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k, ins_k, gap_k])
 
       # Rigid
@@ -387,7 +384,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       end
 
       # Exterior Film
-      interzonal_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_vertical_R])
+      interzonal_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.VerticalR])
 
       return interzonal_wall.Rvalue_parallel, gapFactor
 

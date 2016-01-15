@@ -174,7 +174,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
 	end
 
     # Constants
-    mat_wood = get_mat_wood
+    mat_wood = BaseMaterial.Wood
  
     # Create the material class instances
     partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
@@ -207,16 +207,16 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     pwm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     pwm.setName("PartitionWallMass")
     pwm.setRoughness("Rough")
-    pwm.setThickness(OpenStudio::convert(get_mat_partition_wall_mass(partition_wall_mass).thick,"ft","m").get)
-    pwm.setConductivity(OpenStudio::convert(get_mat_partition_wall_mass(partition_wall_mass).k,"Btu/hr*ft*R","W/m*K").get)
-    pwm.setDensity(OpenStudio::convert(get_mat_partition_wall_mass(partition_wall_mass).rho,"lb/ft^3","kg/m^3").get)
-    pwm.setSpecificHeat(OpenStudio::convert(get_mat_partition_wall_mass(partition_wall_mass).Cp,"Btu/lb*R","J/kg*K").get)
-    pwm.setThermalAbsorptance(get_mat_partition_wall_mass(partition_wall_mass).TAbs)
-    pwm.setSolarAbsorptance(get_mat_partition_wall_mass(partition_wall_mass).SAbs)
-    pwm.setVisibleAbsorptance(get_mat_partition_wall_mass(partition_wall_mass).VAbs)
+    pwm.setThickness(OpenStudio::convert(Material.MassPartitionWall(partition_wall_mass).thick,"ft","m").get)
+    pwm.setConductivity(OpenStudio::convert(Material.MassPartitionWall(partition_wall_mass).k,"Btu/hr*ft*R","W/m*K").get)
+    pwm.setDensity(OpenStudio::convert(Material.MassPartitionWall(partition_wall_mass).rho,"lb/ft^3","kg/m^3").get)
+    pwm.setSpecificHeat(OpenStudio::convert(Material.MassPartitionWall(partition_wall_mass).Cp,"Btu/lb*R","J/kg*K").get)
+    pwm.setThermalAbsorptance(Material.MassPartitionWall(partition_wall_mass).TAbs)
+    pwm.setSolarAbsorptance(Material.MassPartitionWall(partition_wall_mass).SAbs)
+    pwm.setVisibleAbsorptance(Material.MassPartitionWall(partition_wall_mass).VAbs)
 
     # StudandAirWall
-    mat_stud_and_air_wall = get_stud_and_air_wall(localPressure)
+    mat_stud_and_air_wall = Material.StudAndAir(localPressure)
     saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saw.setName("StudandAirWall")
     saw.setRoughness("Rough")

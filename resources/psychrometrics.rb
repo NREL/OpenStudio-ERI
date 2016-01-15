@@ -20,8 +20,8 @@ class Psychrometrics
         --------
             rhoD    float      density of dry air    (lbm/ft3)
         '''
-    pair = Properties.PsychMassRat * p / (Properties.PsychMassRat + w) # (psia)
-    rhoD = OpenStudio::convert(pair,"psi","Btu/ft^3").get / Properties.Air.R / (OpenStudio::convert(tdb,"F","R").get) # (lbm/ft3)
+    pair = Gas.PsychMassRat * p / (Gas.PsychMassRat + w) # (psia)
+    rhoD = OpenStudio::convert(pair,"psi","Btu/ft^3").get / Gas.Air.R / (OpenStudio::convert(tdb,"F","R").get) # (lbm/ft3)
 
     return rhoD
 
@@ -121,7 +121,7 @@ class Psychrometrics
         '''
     w_star = Psychrometrics.w_fP(p, Psychrometrics.Psat_fT(twb))
 
-    w = ((Properties.H2O_l.H_fg - (Properties.H2O_l.Cp - Properties.H2O_v.Cp) * twb) * w_star - Properties.Air.Cp * (tdb - twb)) / (Properties.H2O_l.H_fg + Properties.H2O_v.Cp * tdb - Properties.H2O_l.Cp * twb) # (lbm/lbm)
+    w = ((Liquid.H2O_l.H_fg - (Liquid.H2O_l.Cp - Gas.H2O_v.Cp) * twb) * w_star - Gas.Air.Cp * (tdb - twb)) / (Liquid.H2O_l.H_fg + Gas.H2O_v.Cp * tdb - Liquid.H2O_l.Cp * twb) # (lbm/lbm)
     return w
   end
 
@@ -144,7 +144,7 @@ class Psychrometrics
         --------
             w       float      humidity ratio        (lbm/lbm)
         '''
-    w = Properties.PsychMassRat * pw / (p - pw)
+    w = Gas.PsychMassRat * pw / (p - pw)
     return w
   end
 
@@ -181,7 +181,7 @@ class Psychrometrics
     c13 = 6.5459673
 
     t_abs = OpenStudio::convert(tdb,"F","R").get
-    t_frz_abs = OpenStudio::convert(Properties.H2O_l.T_frz)
+    t_frz_abs = OpenStudio::convert(Liquid.H2O_l.T_frz)
 
     # If below freezing, calculate saturation pressure over ice
     if t_abs < t_frz_abs

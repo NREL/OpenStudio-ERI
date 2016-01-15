@@ -97,7 +97,7 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     end
 
 	# Plywood-1_2in
-    mat_plywood1_2in = get_mat_plywood1_2in
+    mat_plywood1_2in = Material.Plywood1_2in
 	ply1_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	ply1_2.setName("Plywood-1_2in")
 	ply1_2.setRoughness("Rough")
@@ -107,7 +107,7 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 	ply1_2.setSpecificHeat(OpenStudio::convert(mat_plywood1_2in.Cp,"Btu/lb*R","J/kg*K").get)
 
 	# Stud and Air Wall
-    stud_and_air_wall = get_stud_and_air_wall(weather.header.LocalPressure)
+    stud_and_air_wall = Material.StudAndAir(weather.header.LocalPressure)
 	saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	saw.setName("StudandAirWall")
 	saw.setRoughness("Rough")

@@ -206,7 +206,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     ifi.setSpecificHeat(OpenStudio::convert(sc_sh,"Btu/lb*R","J/kg*K").get)
 
     # Plywood-3_4in
-    mat_plywood3_4in = get_mat_plywood3_4in
+    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
@@ -216,7 +216,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FloorMass
-    mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+    mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
     fm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     fm.setName("FloorMass")
     fm.setRoughness("Rough")
@@ -229,7 +229,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
 
     # CarpetBareLayer
     if carpetFloorFraction > 0
-      mat_carpet_bare = get_mat_carpet_bare(carpetFloorFraction, carpetPadRValue)
+      mat_carpet_bare = Material.CarpetBare(carpetFloorFraction, carpetPadRValue)
       cbl = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       cbl.setName("CarpetBareLayer")
       cbl.setRoughness("Rough")
@@ -278,8 +278,8 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
 
   def _processConstructionsInteriorInsulatedFloors(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, localPressure)
   
-    mat_wood = get_mat_wood
-    mat_2x6 = get_mat_2x6
+    mat_wood = BaseMaterial.Wood
+    mat_2x6 = Material.Stud2x6
 
     overall_floor_Rvalue = get_interzonal_floor_r_assembly(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetPadRValue, carpetFloorFraction, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
 
@@ -290,8 +290,8 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
 
     sc_thick = mat_2x6.thick # ft
     sc_cond = sc_thick / boundaryFloorRvalue # Btu/hr*ft*F
-    sc_dens = intFloorFramingFactor * mat_wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * get_mat_densepack_generic.rho  + izfGapFactor * Properties.inside_air_dens(localPressure) # lbm/ft^3
-    sc_sh = (intFloorFramingFactor * mat_wood.Cp * mat_wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho + izfGapFactor * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / sc_dens # Btu/lbm*F
+    sc_dens = intFloorFramingFactor * mat_wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * BaseMaterial.InsulationGenericDensepack.rho  + izfGapFactor * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+    sc_sh = (intFloorFramingFactor * mat_wood.Cp * mat_wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho + izfGapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
 
     return sc_thick, sc_cond, sc_dens, sc_sh
 
@@ -301,9 +301,9 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
   def get_interzonal_floor_r_assembly(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetPadRValue, carpetFloorFraction, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
       # Returns assembly R-value for interzonal floor, including air films.
 
-      mat_wood = get_mat_wood
-      mat_2x6 = get_mat_2x6
-      mat_plywood3_4in = get_mat_plywood3_4in
+      mat_wood = BaseMaterial.Wood
+      mat_2x6 = Material.Stud2x6
+      mat_plywood3_4in = Material.Plywood3_4in
 
       gapFactor = get_wall_gap_factor(intFloorInstallGrade, intFloorFramingFactor)
       
@@ -312,7 +312,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
       izf_const = Construction.new(path_fracs)
 
       # Interior Film
-      izf_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_floor_reduced_R])
+      izf_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
 
       # Stud/cavity layer
       if intFloorCavityInsRvalueNominal == 0
@@ -320,7 +320,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
       else
         cavity_k = mat_2x6.thick / intFloorCavityInsRvalueNominal
       end
-      gap_k = mat_2x6.thick / get_mat_air.R_air_gap
+      gap_k = mat_2x6.thick / Gas.AirGapRvalue
       
       izf_const.addlayer(thickness=mat_2x6.thick, conductivity_list=[mat_wood.k, cavity_k, gap_k])
 
@@ -329,7 +329,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
 
       # Floor mass
       if floorMassThickness > 0
-        mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+        mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
         izf_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_floor_mass, material_list=nil)
       end
 
@@ -340,7 +340,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
       end
 
       # Exterior Film
-      izf_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_floor_reduced_R])
+      izf_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
 
       return izf_const.Rvalue_parallel
 

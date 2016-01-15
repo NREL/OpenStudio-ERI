@@ -66,8 +66,8 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
-	mat_concrete = get_mat_concrete
-	mat_soil = get_mat_soil
+	mat_concrete = BaseMaterial.Concrete
+	mat_soil = BaseMaterial.Soil
 	
 	# Adiabatic
 	adi = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
@@ -79,13 +79,13 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
 	soil = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	soil.setName("Soil-12in")
 	soil.setRoughness("Rough")
-	soil.setThickness(OpenStudio::convert(get_mat_soil12in.thick,"ft","m").get)
+	soil.setThickness(OpenStudio::convert(Material.Soil12in.thick,"ft","m").get)
 	soil.setConductivity(OpenStudio::convert(mat_soil.k,"Btu/hr*ft*R","W/m*K").get)
 	soil.setDensity(OpenStudio::convert(mat_soil.rho,"lb/ft^3","kg/m^3").get)
 	soil.setSpecificHeat(OpenStudio::convert(mat_soil.Cp,"Btu/lb*R","J/kg*K").get)	
 	
 	# Concrete-4in
-    mat_concrete4in = get_mat_concrete4in
+    mat_concrete4in = Material.Concrete4in
 	conc = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	conc.setName("Concrete-4in")
 	conc.setRoughness("Rough")

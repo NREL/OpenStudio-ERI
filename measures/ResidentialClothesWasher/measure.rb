@@ -305,8 +305,8 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     # Determine how much hot water was used in the test based on the amount of gas used in the 
     # test to heat the water and the temperature rise in the water heater in the test (eq. 6 
     # Eastment and Hendron, NREL/CP-550-39769, 2006).
-    water_dens = Properties.H2O_l.rho # lbm/ft^3
-    water_sh = Properties.H2O_l.Cp  # Btu/lbm-R
+    water_dens = Liquid.H2O_l.rho # lbm/ft^3
+    water_sh = Liquid.H2O_l.Cp  # Btu/lbm-R
     cw_dhw_use_per_cycle_test = ((OpenStudio.convert(cw_gas_consumption_for_dhw_per_cycle_test, "therm", "kWh").get * 
                                 cw_gas_dhw_heater_efficiency_test) / (cw_dhw_deltaT_test * 
                                 water_dens * water_sh * OpenStudio.convert(1.0, "Btu", "kWh").get / UnitConversion.ft32gal(1.0)))

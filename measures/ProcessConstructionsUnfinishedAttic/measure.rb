@@ -263,8 +263,8 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     userdefined_roofmatabs = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
     # Constants
-    mat_gyp = get_mat_gypsum
-    mat_rigid = get_mat_rigid_ins
+    mat_gyp_ceiling = Material.GypsumCeiling
+    mat_rigid = BaseMaterial.InsulationRigid
 
     # Insulation
     if selected_uains.to_s == "Ceiling"
@@ -304,13 +304,13 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     # Gypsum
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
-    gypsumConductivity = mat_gyp.k
-    gypsumDensity = mat_gyp.rho
-    gypsumSpecificHeat = mat_gyp.Cp
-    gypsumThermalAbs = get_mat_gypsum_ceiling.TAbs
-    gypsumSolarAbs = get_mat_gypsum_ceiling.SAbs
-    gypsumVisibleAbs = get_mat_gypsum_ceiling.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
+    gypsumConductivity = mat_gyp_ceiling.k
+    gypsumDensity = mat_gyp_ceiling.rho
+    gypsumSpecificHeat = mat_gyp_ceiling.Cp
+    gypsumThermalAbs = mat_gyp_ceiling.TAbs
+    gypsumSolarAbs = mat_gyp_ceiling.SAbs
+    gypsumVisibleAbs = mat_gyp_ceiling.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_ceiling.k)
 
     # Roofing Material
     roofMatEmissivity = userdefined_roofmatthermalabs
@@ -322,8 +322,8 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     end
 
     highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
-    film_roof_R = Properties.film_roof_R(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
-    film_roof_radiant_barrier_R = Properties.film_roof_radiant_barrier_R(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
+    film_roof_R = AirFilms.RoofR(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
+    film_roof_radiant_barrier_R = AirFilms.RoofRadiantBarrierR(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
 
     # Process the unfinished attic ceiling and roof
     ceiling_ins_above_dens, ceiling_ins_above_sh, ceiling_joist_ins_cond, ceiling_joist_ins_dens, ceiling_joist_ins_sh, uACeilingInsThickness_Rev, uACeilingInsRvalueNominal_Rev = _processConstructionsUnfinishedAtticCeiling(uACeilingInsThickness, uARoofFramingThickness, uACeilingFramingFactor, uACeilingInsRvalueNominal, uACeilingJoistThickness, rigidInsThickness, rigidInsRvalue, uARoofFramingFactor, uARoofInsThickness, uARoofInsRvalueNominal, eavesDepth, gypsumThickness, gypsumNumLayers, gypsumRvalue, weather.header.LocalPressure)
@@ -382,9 +382,9 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       ctf.setName("AddforCTFCalc")
       ctf.setRoughness("Rough")
       ctf.setThickness(OpenStudio::convert(0.75,"in","m").get)
-      ctf.setConductivity(OpenStudio::convert(get_mat_wood.k,"Btu/hr*ft*R","W/m*K").get)
-      ctf.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
-      ctf.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
+      ctf.setConductivity(OpenStudio::convert(BaseMaterial.Wood.k,"Btu/hr*ft*R","W/m*K").get)
+      ctf.setDensity(OpenStudio::convert(BaseMaterial.Wood.rho,"lb/ft^3","kg/m^3").get)
+      ctf.setSpecificHeat(OpenStudio::convert(BaseMaterial.Wood.Cp,"Btu/lb*R","J/kg*K").get)
       materials << ctf
     end
     fininsunfinuafloor = OpenStudio::Model::Construction.new(materials)
@@ -395,7 +395,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     revfininsunfinuafloor.setName("RevFinInsUnfinUAFloor")
 
     # RoofingMaterial
-    mat_roof_mat = get_mat_roofing_mat(roofMatEmissivity, roofMatAbsorptivity)
+    mat_roof_mat = Material.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
     roofmat = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     roofmat.setName("RoofingMaterial")
     roofmat.setRoughness("Rough")
@@ -408,7 +408,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     roofmat.setVisibleAbsorptance(mat_roof_mat.VAbs)
 
     # Plywood-3_4in
-    mat_plywood3_4in = get_mat_plywood3_4in
+    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
@@ -418,7 +418,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # RadiantBarrier
-    mat_radiant_barrier = get_mat_radiant_barrier
+    mat_radiant_barrier = Material.RadiantBarrier
     radbar = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     radbar.setName("RadiantBarrier")
     radbar.setRoughness("Rough")
@@ -515,25 +515,25 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
 
         # Define a layer equivalent to the thickness of the joists,
         # including both heat flow paths (joist and insulation in parallel).
-        uA_ceiling_joist_ins_Rvalue = (uA_ceiling_overall_ins_Rvalue - gypsumRvalue - 2.0 * Properties.film_floor_average_R - uACeilingInsRvalueNominal_Rev + uACeilingInsRvalueNominal_Rev * uACeilingJoistThickness / uACeilingInsThickness_Rev) # Btu/hr*ft^2*F
+        uA_ceiling_joist_ins_Rvalue = (uA_ceiling_overall_ins_Rvalue - gypsumRvalue - 2.0 * AirFilms.FloorAverageR - uACeilingInsRvalueNominal_Rev + uACeilingInsRvalueNominal_Rev * uACeilingJoistThickness / uACeilingInsThickness_Rev) # Btu/hr*ft^2*F
         ceiling_joist_ins_cond = (OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uA_ceiling_joist_ins_Rvalue) # Btu/hr*ft*F
-        ceiling_joist_ins_dens = uACeilingFramingFactor * get_mat_wood.rho + (1 - uACeilingFramingFactor) * get_mat_loosefill_generic.rho # lbm/ft^3
-        ceiling_joist_ins_sh = (uACeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - uACeilingFramingFactor) * get_mat_loosefill_generic.Cp * get_mat_loosefill_generic.rho) / ceiling_joist_ins_dens # lbm/ft^3
+        ceiling_joist_ins_dens = uACeilingFramingFactor * BaseMaterial.Wood.rho + (1 - uACeilingFramingFactor) * BaseMaterial.InsulationGenericLoosefill.rho # lbm/ft^3
+        ceiling_joist_ins_sh = (uACeilingFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - uACeilingFramingFactor) * BaseMaterial.InsulationGenericLoosefill.Cp * BaseMaterial.InsulationGenericLoosefill.rho) / ceiling_joist_ins_dens # lbm/ft^3
 
         # If there is additional insulation, above the rafter height,
         # these inputs are used for defining an additional layer.
         if uACeilingInsThickness_Rev > uACeilingJoistThickness
 
-          ceiling_ins_above_dens = get_mat_loosefill_generic.rho # lbm/ft^3
-          ceiling_ins_above_sh = get_mat_loosefill_generic.Cp # Btu/lbm*F
+          ceiling_ins_above_dens = BaseMaterial.InsulationGenericLoosefill.rho # lbm/ft^3
+          ceiling_ins_above_sh = BaseMaterial.InsulationGenericLoosefill.Cp # Btu/lbm*F
 
         # Else the joist thickness is greater than the ceiling insulation thickness
         else
           # Define a layer equivalent to the thickness of the joists,
           # including both heat flow paths (joists and insulation in parallel).
-          ceiling_joist_ins_cond = (OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / (uA_ceiling_overall_ins_Rvalue - gypsumRvalue - 2.0 * Properties.film_floor_average_R)) # Btu/hr*ft*F
-          ceiling_joist_ins_dens = OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uACeilingJoistThickness * (uACeilingFramingFactor * get_mat_wood.rho + (1 - uACeilingFramingFactor) * get_mat_loosefill_generic.rho) + (1 - OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uACeilingJoistThickness) * Properties.inside_air_dens(localPressure) # lbm/ft^3
-          ceiling_joist_ins_sh = (OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uACeilingJoistThickness * (uACeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - uACeilingFramingFactor) * get_mat_loosefill_generic.Cp * get_mat_loosefill_generic.rho) + (1 - OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uACeilingJoistThickness) * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / ceiling_joist_ins_dens # Btu/lbm*F
+          ceiling_joist_ins_cond = (OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / (uA_ceiling_overall_ins_Rvalue - gypsumRvalue - 2.0 * AirFilms.FloorAverageR)) # Btu/hr*ft*F
+          ceiling_joist_ins_dens = OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uACeilingJoistThickness * (uACeilingFramingFactor * BaseMaterial.Wood.rho + (1 - uACeilingFramingFactor) * BaseMaterial.InsulationGenericLoosefill.rho) + (1 - OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uACeilingJoistThickness) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+          ceiling_joist_ins_sh = (OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uACeilingJoistThickness * (uACeilingFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - uACeilingFramingFactor) * BaseMaterial.InsulationGenericLoosefill.Cp * BaseMaterial.InsulationGenericLoosefill.rho) + (1 - OpenStudio::convert(uACeilingJoistThickness,"in","ft").get / uACeilingJoistThickness) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / ceiling_joist_ins_dens # Btu/lbm*F
           
         end
 
@@ -558,27 +558,27 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     uA_roof_overall_ins_Rvalue, roof_ins_thick = get_unfinished_attic_roof_r_assembly(uARoofFramingFactor, uARoofInsThickness, uARoofFramingThickness, uARoofInsRvalueNominal, uARoofContInsThickness, uARoofContInsRvalue, hasRadiantBarrier, film_roof_R)
 
     if uARoofContInsThickness > 0
-      uA_roof_overall_ins_Rvalue = (uA_roof_overall_ins_Rvalue - film_roof_R - Properties.film_outside_R - 2.0 * get_mat_plywood3_4in.Rvalue - uARoofContInsRvalue) # hr*ft^2*F/Btu
+      uA_roof_overall_ins_Rvalue = (uA_roof_overall_ins_Rvalue - film_roof_R - AirFilms.OutsideR - 2.0 * Material.Plywood3_4in.Rvalue - uARoofContInsRvalue) # hr*ft^2*F/Btu
 
       roof_rigid_thick = OpenStudio::convert(uUARoofContInsThickness,"in","ft").get
       roof_rigid_cond = roof_rigid_thick / uARoofContInsRvalue # Btu/hr*ft*F
-      roof_rigid_dens = get_mat_rigid_ins.rho # lbm/ft^3
-      roof_rigid_sh = get_mat_rigid_ins.Cp # Btu/lbm*F
+      roof_rigid_dens = BaseMaterial.InsulationRigid.rho # lbm/ft^3
+      roof_rigid_sh = BaseMaterial.InsulationRigid.Cp # Btu/lbm*F
 
     else
 
-      uA_roof_overall_ins_Rvalue = (uA_roof_overall_ins_Rvalue - film_roof_R - Properties.film_outside_R - get_mat_plywood3_4in.Rvalue) # hr*ft^2*F/Btu
+      uA_roof_overall_ins_Rvalue = (uA_roof_overall_ins_Rvalue - film_roof_R - AirFilms.OutsideR - Material.Plywood3_4in.Rvalue) # hr*ft^2*F/Btu
       
     end
 
     roof_ins_cond = roof_ins_thick / uA_roof_overall_ins_Rvalue # Btu/hr*ft*F
 
     if uARoofInsRvalueNominal == 0
-      roof_ins_dens = uARoofFramingFactor * get_mat_wood.rho + (1 - uARoofFramingFactor) * Properties.inside_air_dens(localPressure) # lbm/ft^3
-      roof_ins_sh = (uARoofFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - uARoofFramingFactor) * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / roof_ins_dens # Btu/lb*F
+      roof_ins_dens = uARoofFramingFactor * BaseMaterial.Wood.rho + (1 - uARoofFramingFactor) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+      roof_ins_sh = (uARoofFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - uARoofFramingFactor) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / roof_ins_dens # Btu/lb*F
     else
-      roof_ins_dens = uARoofFramingFactor * get_mat_wood.rho + (1 - uARoofFramingFactor) * get_mat_densepack_generic.rho # lbm/ft^3
-      roof_ins_sh = (uARoofFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - uARoofFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / roof_ins_dens # Btu/lb*F
+      roof_ins_dens = uARoofFramingFactor * BaseMaterial.Wood.rho + (1 - uARoofFramingFactor) * BaseMaterial.InsulationGenericDensepack.rho # lbm/ft^3
+      roof_ins_sh = (uARoofFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - uARoofFramingFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho) / roof_ins_dens # Btu/lb*F
     end
 
     # Set UA roof film
@@ -595,8 +595,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
   def get_unfinished_attic_ceiling_r_assembly(uACeilingInsThickness, uACeilingFramingFactor, uACeilingInsRvalueNominal, uACeilingJoistThickness, gypsumThickness, gypsumNumLayers, uACeilingInsThickness_Rev=nil)
       # Returns assembly R-value for unfinished attic ceiling, including air films.
 
-      mat_wood = get_mat_wood
-      mat_gyp = get_mat_gypsum
+      mat_wood = BaseMaterial.Wood
 
       if uACeilingInsThickness_Rev.nil?
         # No perimeter taper effect:
@@ -608,10 +607,10 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       attic_floor = Construction.new(path_fracs)
 
       # Interior Film
-      attic_floor.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / Properties.film_floor_average_R])
+      attic_floor.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / AirFilms.FloorAverageR])
 
       # Interior Finish (GWB)
-      attic_floor.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[mat_gyp.k])
+      attic_floor.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[BaseMaterial.Gypsum.k])
 
       if uACeilingInsThickness == 0
         uACeilingInsRvalueNominal_Rev = uACeilingInsRvalueNominal
@@ -649,7 +648,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       end
 
       # Exterior Film
-      attic_floor.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_floor_average_R])
+      attic_floor.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorAverageR])
 
       return attic_floor.Rvalue_parallel, uACeilingInsRvalueNominal_Rev
 
@@ -659,9 +658,8 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       # Returns assembly R-value for unfinished attic roof, including air films.
       # Also returns roof insulation thickness.
 
-      mat_air = get_mat_air
-      mat_wood = get_mat_wood
-      mat_plywood3_4in = get_mat_plywood3_4in
+      mat_wood = BaseMaterial.Wood
+      mat_plywood3_4in = Material.Plywood3_4in
 
       path_fracs = [uARoofFramingFactor, 1 - uARoofFramingFactor]
 
@@ -675,7 +673,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       # Stud/cavity layer
       if uARoofInsRvalueNominal == 0
         if hasRadiantBarrier
-          cavity_k = OpenStudio::convert(uARoofFramingThickness,"in","ft").get / mat_air.R_air_gap
+          cavity_k = OpenStudio::convert(uARoofFramingThickness,"in","ft").get / Gas.AirGapRvalue
         else
           cavity_k = 1000000000
         end
@@ -704,7 +702,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       end
 
       # Exterior Film
-      roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_outside_R])
+      roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.OutsideR])
 
       return roof_const.Rvalue_parallel, uA_roof_ins_thickness
 

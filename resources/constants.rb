@@ -29,11 +29,11 @@ class Constants
 	def self.g
 		return 32.174    # gravity (ft/s2)
 	end
+	def self.MiniSplitNumSpeeds
+		return 10
+	end
 	def self.MonthNumDays
 		return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-	end
-	def self.Num_Speeds_MSHP
-		return 10
 	end
 
     # Strings --------------------

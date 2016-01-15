@@ -4,358 +4,7 @@ require "#{File.dirname(__FILE__)}/weather"
 require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/psychrometrics"
 require "#{File.dirname(__FILE__)}/unit_conversions"
-
-class Construction
-
-    def initialize(path_widths, name=nil, type=nil)
-        @name = name
-        @type = type
-        @path_widths = path_widths
-        @path_fracs = []
-        path_widths.each do |path_width|
-            @path_fracs << path_width / path_widths.inject{ |sum, n| sum + n }
-        end     
-        @layer_thicknesses = []
-        @cond_matrix = []
-        @matrix = []
-    end
-    
-    def addlayer(thickness=nil, conductivity_list=nil, material=nil, material_list=nil)
-        # Adds layer to the construction using a material name or a thickness and list of conductivities.
-        if material
-            thickness = material.thick
-            conductivity_list = [material.k]
-        end     
-        begin
-            if thickness and thickness > 0
-                @layer_thicknesses << thickness
-
-                if @layer_thicknesses.length == 1
-                    # First layer
-
-                    if conductivity_list.length == 1
-                        # continuous layer
-                        single_conductivity = conductivity_list[0] #strangely, this is necessary
-                        (0...@path_fracs.length).to_a.each do |i|
-                            @cond_matrix << [single_conductivity]
-                        end                     
-                    else
-                        # layer has multiple materials
-                        (0...@path_fracs.length).to_a.each do |i|
-                            @cond_matrix << [conductivity_list[i]]
-                        end
-                    end
-                else
-                    # not first layer
-                    if conductivity_list.length == 1
-                        # continuous layer
-                        (0...@path_fracs.length).to_a.each do |i|
-                            @cond_matrix[i] << conductivity_list[0]
-                        end
-                    else
-                        # layer has multiple materials
-                        (0...@path_fracs.length).to_a.each do |i|
-                            @cond_matrix[i] << conductivity_list[i]
-                        end
-                    end
-                end
-                
-            end
-        rescue
-            runner.registerError("Wrong number of conductivity values specified (#{conductivity_list.length} specified); should be one if a continuous layer, or one per path for non-continuous layers (#{@path_fracs.length} paths).")    
-            return false
-        end
         
-    end
-        
-    def Rvalue_parallel
-        # This generic function calculates the total r-value of a wall/roof/floor assembly using parallel paths (R_2D = infinity).
-         # layer_thicknesses = [0.5, 5.5, 0.5] # layer thicknesses
-         # path_widths = [22.5, 1.5]     # path widths
-
-        # gwb  =  Material(cond=0.17 *0.5779)
-        # stud =  Material(cond=0.12 *0.5779)
-        # osb  =  Material(cond=0.13 *0.5779)
-        # ins  =  Material(cond=0.04 *0.5779)
-
-        # cond_matrix = [[gwb.k, stud.k, osb.k],
-                       # [gwb.k, ins.k, osb.k]]
-        u_overall = 0
-        @path_fracs.each_with_index do |path_frac,path_num|
-            # For each parallel path, sum series:
-            r_path = 0
-            @layer_thicknesses.each_with_index do |layer_thickness,layer_num|
-                r_path += layer_thickness / @cond_matrix[path_num][layer_num]
-            end
-                
-            u_overall += 1.0 / r_path * path_frac
-        
-        end
-
-        return 1.0 / u_overall
-        
-    end 
-
-end
-
-class Material
-
-    def initialize(name=nil, type=nil, thick=nil, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=nil, dens=nil, sh=nil, tAbs=nil, sAbs=nil, vAbs=nil, rvalue=nil, is_pcm=false, pcm_temp=nil, pcm_latent_heat=nil, pcm_melting_range=nil)
-        @name = name
-        @type = type
-        @is_pcm = is_pcm
-        @pcm_temp = pcm_temp
-        @pcm_latent_heat = pcm_latent_heat
-        @pcm_melting_range = pcm_melting_range
-        
-        if not thick == nil
-            @thick = thick
-            @thick_in = OpenStudio::convert(@thick,"ft","in").get
-        elsif not thick_in == nil
-            @thick_in = thick_in
-            @thick = OpenStudio::convert(@thick_in,"in","ft").get
-        end
-        
-        if not width == nil
-            @width = width
-            @width_in = OpenStudio::convert(@width,"ft","in").get
-        elsif not width_in == nil
-            @width_in = thick_in
-            @width = OpenStudio::convert(@width_in,"in","ft").get
-        end
-        
-        if not mat_base == nil
-            @k = mat_base.k
-            @rho = mat_base.rho
-            @cp = mat_base.Cp
-        else
-            @k = nil
-            @rho = nil
-            @cp = nil
-        end
-        # override the material base if both are included
-        if not cond == nil
-            @k = cond
-        end
-        if not dens == nil
-            @rho = dens
-        end
-        if not sh == nil
-            @cp = sh
-        end
-        @tAbs = tAbs
-        @sAbs = sAbs
-        @vAbs = vAbs
-        if not rvalue == nil
-            @rvalue = rvalue
-        elsif not thick == nil and (not cond == nil or not mat_base == nil)
-            if @k != 0
-                @rvalue = @thick / @k
-            end
-        end
-    end
-    
-    def thick
-        return @thick
-    end
-
-    def thick_in
-        return @thick_in
-    end
-
-    def width
-        return @width
-    end
-    
-    def width_in
-        return @width_in
-    end
-    
-    def k
-        return @k
-    end
-    
-    def rho
-        return @rho
-    end
-    
-    def Cp
-        return @cp
-    end
-    
-    def Rvalue
-        return @rvalue
-    end
-    
-    def TAbs
-        return @tAbs
-    end
-    
-    def SAbs
-        return @sAbs
-    end
-    
-    def VAbs
-        return @vAbs
-    end
-end
-        
-def get_mat_gypsum
-    return Mat_solid.new(rho=50.0, cp=0.2, k=0.0926)
-end
-
-def get_mat_gypsum1_2in
-  mat_gypsum = get_mat_gypsum
-  return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
-end
-
-def get_mat_gypsum_extwall
-    mat_gypsum = get_mat_gypsum
-    return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
-end
-
-def get_mat_gypsum_ceiling
-  mat_gypsum = get_mat_gypsum
-  return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
-end
-
-def get_mat_gypcrete
-    # http://www.maxxon.com/gyp-crete/data
-    return Mat_solid.new(rho=100.0, cp=0.223, k=0.3952)
-end
-
-def get_mat_air
-    # r_air_gap = 1 # hr*ft*F/Btu (Assume for all air gap configurations since their is no correction for direction of heat flow in the simulation tools)
-    # inside_air_sh = 0.24 # Btu/lbm*F  
-    return Mat_air.new(r_air_gap=1.0, inside_air_sh=0.24)
-end
-
-def get_mat_wood
-    return Mat_solid.new(rho=32.0, cp=0.29, k=0.0667)
-end
-
-def get_mat_rigid_ins
-    return Mat_solid.new(rho=2.0, cp=0.29, k=0.017)
-end
-
-def get_mat_plywood1_2in
-    mat_wood = get_mat_wood
-    return Material.new(name=Constants.MaterialPlywood1_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
-end
-
-def get_mat_plywood3_4in
-    mat_wood = get_mat_wood
-    return Material.new(name=Constants.MaterialPlywood3_4in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.75,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
-end
-
-def get_mat_plywood3_2in
-    mat_wood = get_mat_wood
-    return Material.new(name=Constants.MaterialPlywood3_2in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(1.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_wood)
-end
-    
-def get_mat_densepack_generic
-    return Mat_solid.new(rho=(get_mat_fiberglass_densepack.rho + get_mat_cellulose_densepack.rho) / 2.0, cp=0.25, k=nil)
-end
-
-def get_mat_loosefill_generic
-  return Mat_solid.new(rho=(get_mat_fiberglass_loosefill.rho + get_mat_cellulose_loosefill.rho) / 2.0, cp=0.25, k=nil)
-end
-
-def get_mat_fiberglass_loosefill
-  return Mat_solid.new(rho=0.5, cp=0.25, k=nil)
-end
-
-def get_mat_cellulose_loosefill
-  return Mat_solid.new(rho=1.5, cp=0.25, k=nil)
-end
-
-def get_mat_fiberglass_densepack
-    return Mat_solid.new(rho=2.2, cp=0.25, k=nil)
-end
-
-def get_mat_cellulose_densepack
-    return Mat_solid.new(rho=3.5, cp=0.25, k=nil)
-end
-
-def get_mat_soil
-    return Mat_solid.new(rho=115.0, cp=0.1, k=1)
-end
-
-def get_mat_soil12in
-    mat_soil = get_mat_soil
-    return Material.new(name=Constants.MaterialSoil12in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(12,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_soil)
-end
-
-def get_mat_2x(thickness)
-    mat_wood = get_mat_wood
-    return Material.new(name=Constants.Material2x, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(thickness,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
-end
-
-def get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-    return Material.new(name=Constants.MaterialFloorMass, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(floorMassThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(floorMassConductivity,"in","ft").get, dens=floorMassDensity, sh=floorMassSpecificHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
-end
-
-def get_mat_partition_wall_mass(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
-  return Material.new(name=Constants.MaterialPartitionWallMass, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(partitionWallMassThickness,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(partitionWallMassConductivity,"in","ft").get, dens=partitionWallMassDensity, sh=partitionWallMassSpecHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
-end
-
-def get_mat_concrete
-    return Mat_solid.new(rho=140.0, cp=0.2, k=0.7576)
-end
-
-def get_mat_concrete8in
-    mat_concrete = get_mat_concrete
-    return Material.new(name=Constants.MaterialConcrete8in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(8,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
-end
-
-def get_mat_concrete4in
-    mat_concrete = get_mat_concrete
-    return Material.new(name=Constants.MaterialConcrete8in, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(4,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=mat_concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
-end
-
-def get_mat_carpet_bare(carpetFloorFraction, carpetPadRValue)
-    return Material.new(name=Constants.MaterialCarpetBareLayer, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(0.5,"in","ft").get, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(0.5,"in","ft").get / (carpetPadRValue * carpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
-end
-
-def get_mat_2x4
-    mat_wood = get_mat_wood
-    return Material.new(name=Constants.Material2x4, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(3.5,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
-end
-
-def get_mat_2x6
-  mat_wood = get_mat_wood
-  return Material.new(name=Constants.Material2x6, type=Constants.MaterialTypeProperties, thick=OpenStudio::convert(5.5,"in","ft").get, thick_in=nil, width=OpenStudio::convert(1.5,"in","ft").get, width_in=nil, mat_base=mat_wood)
-end
-
-def get_stud_and_air_wall(localPressure)
-    # Weight specific heat of layer by mass (previously by volume)
-    mat_2x4 = get_mat_2x4
-    mat_stud_and_air_wall = Mat_solid.new(rho=(mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Properties.inside_air_dens(localPressure), cp=((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.Cp * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / ((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Properties.inside_air_dens(localPressure)), k=(mat_2x4.thick / get_stud_and_air_Rvalue))
-    return Material.new(name=Constants.MaterialStudandAirWall, type=Constants.MaterialTypeProperties, thick=mat_2x4.thick, thick_in=nil, width=nil, width_in=nil, mat_base=mat_stud_and_air_wall)
-end
-
-def get_mat_roofing_mat(roofMatEmissivity, roofMatAbsorptivity)
-  return Material.new(name=Constants.MaterialRoofingMaterial, type=Constants.MaterialTypeProperties, thick=0.031, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
-end
-
-def get_mat_radiant_barrier
-  return Material.new(name=Constants.MaterialRadiantBarrier, type=Constants.MaterialTypeProperties, thick=0.0007, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=135.8, dens=168.6, sh=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
-end
-
-def get_wall_gap_factor(installGrade, framingFactor)
-
-    if installGrade == 1
-        return 0
-    elsif installGrade == 2
-        return 0.02 * (1 - framingFactor)
-    elsif installGrade == 3
-        return 0.05 * (1 - framingFactor)
-    else
-        return 0
-    end
-
-end
-
 class Sim
 
     def initialize(model, runner)
@@ -637,7 +286,7 @@ class Sim
       spaces << unfinished_attic
     end
 
-    outside_air_density = UnitConversion.atm2Btu_ft3(localPressure) / (Properties.Air.R * (@weather.data.AnnualAvgDrybulb + 460.0))
+    outside_air_density = UnitConversion.atm2Btu_ft3(localPressure) / (Gas.Air.R * (@weather.data.AnnualAvgDrybulb + 460.0))
     inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
     delta_pref = 0.016 # inH2O
 
@@ -2023,49 +1672,6 @@ class Sim
 
 end
 
-def get_rimjoist_r_assembly(rimJoistInsRvalue, ceilingJoistHeight, wallSheathingContInsThickness, wallSheathingContInsRvalue, drywallThickness, drywallNumLayers, rimjoist_framingfactor, finishThickness, finishConductivity)
-    # Returns assembly R-value for crawlspace or unfinished/finished basement rimjoist, including air films.
-    
-    framingFactor = rimjoist_framingfactor
-    
-    mat_wood = get_mat_wood
-    mat_2x = get_mat_2x(ceilingJoistHeight)
-    mat_plywood3_2in = get_mat_plywood3_2in
-    air = get_mat_air
-    
-    path_fracs = [framingFactor, 1 - framingFactor]
-    
-    prefix_rimjoist = Construction.new(path_fracs)
-    
-    # Interior Film 
-    prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_floor_reduced_R])
-
-    # Stud/cavity layer
-    if rimJoistInsRvalue == 0
-        cavity_k = (mat_2x.thick / air.R_air_gap)
-    else
-        cavity_k = (mat_2x.thick / rimJoistInsRvalue)
-    end
-        
-    prefix_rimjoist.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k])
-    
-    # Rim Joist wood layer
-    prefix_rimjoist.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_2in, material_list=nil)
-    
-    # Wall Sheathing
-    if wallSheathingContInsRvalue > 0
-        wallsh_k = (wallSheathingContInsThickness / wallSheathingContInsRvalue)
-        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(wallSheathingContInsThickness,"in","ft").get, conductivity_list=[wallsh_k])
-    end
-    prefix_rimjoist.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[finishConductivity])
-    
-    # Exterior Film
-    prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / Properties.film_floor_reduced_R])
-    
-    return prefix_rimjoist.Rvalue_parallel
-
-end 
-
 def calc_infiltration_w_factor(weather)
   # Returns a w factor for infiltration calculations; see ticket #852 for derivation.
   hdd65f = weather.data.HDD65F
@@ -2133,7 +1739,7 @@ def calc_cfm_ton_rated(rated_airflow_rate, fanspeed_ratios, capacity_ratios)
 end
 
 def get_cooling_coefficients(num_speeds, is_ideal_system, isHeatPump, supply)
-  if not [1.0, 2.0, 4.0, Constants.Num_Speeds_MSHP].include? num_speeds
+  if not [1.0, 2.0, 4.0, Constants.MiniSplitNumSpeeds].include? num_speeds
     runner.registerError("Number_speeds = #{num_speeds} is not supported. Only 1, 2, 4, and 10 cooling equipment can be modeled.")
     return false
   end
@@ -2176,7 +1782,7 @@ def get_cooling_coefficients(num_speeds, is_ideal_system, isHeatPump, supply)
                                                 [-3.443078025, 0.115186164, -0.000852001, 0.004678056, 0.000134319, -0.000171976]]
         supply.COOL_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
         supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
-      elsif num_speeds == Constants.Num_Speeds_MSHP
+      elsif num_speeds == Constants.MiniSplitNumSpeeds
         # NOTE: These coefficients are in SI UNITS, which differs from the coefficients for 1, 2, and 4 speed units, which are in IP UNITS
         supply.COOL_CAP_FT_SPEC_coefficients = [[1.008993521905866, 0.006512749025457, 0.0, 0.003917565735935, -0.000222646705889, 0.0]] * num_speeds
         supply.COOL_EIR_FT_SPEC_coefficients = [[0.429214441601141, -0.003604841598515, 0.000045783162727, 0.026490875804937, -0.000159212286878, -0.000159062656483]] * num_speeds
@@ -2204,7 +1810,7 @@ def get_cooling_coefficients(num_speeds, is_ideal_system, isHeatPump, supply)
         supply.COOL_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
         supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
 
-      elsif num_speeds == Constants.Num_Speeds_MSHP
+      elsif num_speeds == Constants.MiniSplitNumSpeeds
         # NOTE: These coefficients are in SI UNITS, which differs from the coefficients for 1, 2, and 4 speed units, which are in IP UNITS
         supply.COOL_CAP_FT_SPEC_coefficients = [[1.008993521905866, 0.006512749025457, 0.0, 0.003917565735935, -0.000222646705889, 0.0]] * num_speeds
         supply.COOL_EIR_FT_SPEC_coefficients = [[0.429214441601141, -0.003604841598515, 0.000045783162727, 0.026490875804937, -0.000159212286878, -0.000159062656483]] * num_speeds
@@ -2257,7 +1863,7 @@ def get_heating_coefficients(num_speeds, is_ideal_system, supply)
                                               [0.690404655, 0.00616619, 0.000137643, -0.009350199, 0.000153427, -0.000213258]]
       supply.HEAT_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
       supply.HEAT_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]
-    elsif num_speeds == Constants.Num_Speeds_MSHP
+    elsif num_speeds == Constants.MiniSplitNumSpeeds
       # NOTE: These coefficients are in SI UNITS, which differs from the coefficients for 1, 2, and 4 speed units, which are in IP UNITS
       supply.HEAT_CAP_FT_SPEC_coefficients = [[1.1527124655908571, -0.010386676170938, 0.0, 0.011263752411403, -0.000392549621117, 0.0]] * num_speeds
       supply.HEAT_EIR_FT_SPEC_coefficients = [[0.966475472847719, 0.005914950101249, 0.000191201688297, -0.012965668198361, 0.000042253229429, -0.000524002558712]] * num_speeds
@@ -2567,6 +2173,8 @@ def calc_Cd_from_HSPF_COP_FourSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, 
 
 end
 
+# TODO: Move everything below here elsewhere
+
 def _addInsulatedSheathingMaterial(rigidInsThickness, rigidInsRvalue)
 
     # Set Rigid Insulation Layer Properties
@@ -2576,7 +2184,7 @@ def _addInsulatedSheathingMaterial(rigidInsThickness, rigidInsRvalue)
     else
         rigid_cond = rigidInsThickness / rigidInsRvalue # Btu/hr*ft*F
     end
-    rigid_dens = get_mat_rigid_ins.rho
+    rigid_dens = BaseMaterial.InsulationRigid.rho
     rigid_sh = 0.29 # Btu/lbm*F
         
     return rigid_thick, rigid_cond, rigid_dens, rigid_sh
@@ -2601,14 +2209,11 @@ def get_wood_stud_wall_r_assembly(wallCavityInsFillsCavity, wallCavityInsRvalueI
         hasOSB = false
     end
 
-    mat_gyp = get_mat_gypsum
-    mat_air = get_mat_air
-    mat_wood = get_mat_wood
-    mat_plywood1_2in = get_mat_plywood1_2in
+    mat_wood = BaseMaterial.Wood
 
     # Add air gap when insulation thickness < cavity depth
     if not wallCavityInsFillsCavity
-        wallCavityInsRvalueInstalled += mat_air.R_air_gap
+        wallCavityInsRvalueInstalled += Gas.AirGapRvalue
     end
 
     gapFactor = get_wall_gap_factor(wallInstallGrade, wallFramingFactor)
@@ -2617,24 +2222,24 @@ def get_wood_stud_wall_r_assembly(wallCavityInsFillsCavity, wallCavityInsRvalueI
     wood_stud_wall = Construction.new(path_fracs)
 
     # Interior Film
-    wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_vertical_R])
+    wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.VerticalR])
 
     # Interior Finish (GWB) - Currently only include if cavity depth > 0
     if wallCavityDepth > 0
-        wood_stud_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[mat_gyp.k])
+        wood_stud_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[BaseMaterial.Gypsum.k])
     end
 
     # Only if cavity depth > 0, indicating a framed wall
     if wallCavityDepth > 0
         # Stud / Cavity Ins / Gap
         ins_k = OpenStudio::convert(wallCavityDepth,"in","ft").get / wallCavityInsRvalueInstalled
-        gap_k = OpenStudio::convert(wallCavityDepth,"in","ft").get / mat_air.R_air_gap
+        gap_k = OpenStudio::convert(wallCavityDepth,"in","ft").get / Gas.AirGapRvalue
         wood_stud_wall.addlayer(thickness=OpenStudio::convert(wallCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k,ins_k,gap_k])       
     end
 
     # OSB sheathing
     if hasOSB
-        wood_stud_wall.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood1_2in, material_list=nil)
+        wood_stud_wall.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood1_2in, material_list=nil)
     end
 
     # Rigid
@@ -2648,7 +2253,7 @@ def get_wood_stud_wall_r_assembly(wallCavityInsFillsCavity, wallCavityInsRvalueI
         wood_stud_wall.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(finishConductivty,"in","ft").get])
         
         # Exterior Film - Assume below-grade wall if FinishThickness = 0
-        wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_outside_R])
+        wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.OutsideR])
     end
 
     # Get overall wall R-value using parallel paths:
@@ -2657,17 +2262,17 @@ def get_wood_stud_wall_r_assembly(wallCavityInsFillsCavity, wallCavityInsRvalueI
 end
 
 def floor_nonstud_layer_Rvalue(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, carpetFloorFraction, carpetPadRValue)
-    return (2.0 * Properties.film_floor_reduced_R + get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat).Rvalue + (carpetPadRValue * carpetFloorFraction) + get_mat_plywood3_4in.Rvalue)
+    return (2.0 * AirFilms.FloorReducedR + Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat).Rvalue + (carpetPadRValue * carpetFloorFraction) + Material.Plywood3_4in.Rvalue)
 end
 
 def get_stud_and_air_Rvalue
-    u_stud_path = Constants.DefaultFramingFactorInterior / get_mat_2x4.Rvalue
-    u_air_path = (1 - Constants.DefaultFramingFactorInterior) / get_mat_air.R_air_gap
+    u_stud_path = Constants.DefaultFramingFactorInterior / Material.Stud2x4.Rvalue
+    u_air_path = (1 - Constants.DefaultFramingFactorInterior) / Gas.AirGapRvalue
     return 1 / (u_stud_path + u_air_path)
 end 
 
 def rimjoist_nonstud_layer_Rvalue
-    return (Properties.film_vertical_R + Properties.film_outside_R + get_mat_plywood3_2in.Rvalue)
+    return (AirFilms.VerticalR + AirFilms.OutsideR + Material.Plywood3_2in.Rvalue)
 end
 
 def calc_basement_conduction_factor(bsmtWallInsulationHeight, bsmtWallInsulRvalue)
@@ -2677,3 +2282,58 @@ def calc_basement_conduction_factor(bsmtWallInsulationHeight, bsmtWallInsulRvalu
         return (2.494 / (1.673 + bsmtWallInsulRvalue) ** 0.488)
     end
 end
+
+def get_wall_gap_factor(installGrade, framingFactor)
+
+    if installGrade == 1
+        return 0
+    elsif installGrade == 2
+        return 0.02 * (1 - framingFactor)
+    elsif installGrade == 3
+        return 0.05 * (1 - framingFactor)
+    else
+        return 0
+    end
+
+end
+
+def get_rimjoist_r_assembly(rimJoistInsRvalue, ceilingJoistHeight, wallSheathingContInsThickness, wallSheathingContInsRvalue, drywallThickness, drywallNumLayers, rimjoist_framingfactor, finishThickness, finishConductivity)
+    # Returns assembly R-value for crawlspace or unfinished/finished basement rimjoist, including air films.
+    
+    framingFactor = rimjoist_framingfactor
+    
+    mat_wood = BaseMaterial.Wood
+    mat_2x = Material.Stud2x(ceilingJoistHeight)
+    
+    path_fracs = [framingFactor, 1 - framingFactor]
+    
+    prefix_rimjoist = Construction.new(path_fracs)
+    
+    # Interior Film 
+    prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
+
+    # Stud/cavity layer
+    if rimJoistInsRvalue == 0
+        cavity_k = (mat_2x.thick / air.R_air_gap)
+    else
+        cavity_k = (mat_2x.thick / rimJoistInsRvalue)
+    end
+        
+    prefix_rimjoist.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k])
+    
+    # Rim Joist wood layer
+    prefix_rimjoist.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_2in, material_list=nil)
+    
+    # Wall Sheathing
+    if wallSheathingContInsRvalue > 0
+        wallsh_k = (wallSheathingContInsThickness / wallSheathingContInsRvalue)
+        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(wallSheathingContInsThickness,"in","ft").get, conductivity_list=[wallsh_k])
+    end
+    prefix_rimjoist.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[finishConductivity])
+    
+    # Exterior Film
+    prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / AirFilms.FloorReducedR])
+    
+    return prefix_rimjoist.Rvalue_parallel
+
+end 

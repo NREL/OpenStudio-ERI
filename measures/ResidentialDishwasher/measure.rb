@@ -212,8 +212,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	# detergent, cleaning of dishes).
 	dw_operating_water_temp = 140 # degF
 	
-	water_dens = Properties.H2O_l.rho # lbm/ft^3
-	water_sh = Properties.H2O_l.Cp  # Btu/lbm-R
+	water_dens = Liquid.H2O_l.rho # lbm/ft^3
+	water_sh = Liquid.H2O_l.Cp  # Btu/lbm-R
 
 	# Use EnergyGuide Label test data to calculate per-cycle energy and
 	# water consumption. Calculations are based on "Method for

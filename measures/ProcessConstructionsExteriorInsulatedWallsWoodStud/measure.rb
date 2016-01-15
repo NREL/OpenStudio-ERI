@@ -226,22 +226,21 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     userdefined_extfinabs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)        
     
     # Constants
-    mat_wood = get_mat_wood
-    mat_gyp = get_mat_gypsum
-    mat_air = get_mat_air
-    mat_rigid = get_mat_rigid_ins
-    mat_densepack_generic = get_mat_densepack_generic
+    mat_wood = BaseMaterial.Wood
+    mat_gyp_extwall = Material.GypsumExtWall
+    mat_rigid = BaseMaterial.InsulationRigid
+    mat_densepack_generic = BaseMaterial.InsulationGenericDensepack
 
     # Gypsum    
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
-    gypsumConductivity = mat_gyp.k
-    gypsumDensity = mat_gyp.rho
-    gypsumSpecificHeat = mat_gyp.Cp
-    gypsumThermalAbs = get_mat_gypsum_extwall.TAbs
-    gypsumSolarAbs = get_mat_gypsum_extwall.SAbs
-    gypsumVisibleAbs = get_mat_gypsum_extwall.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
+    gypsumConductivity = mat_gyp_extwall.k
+    gypsumDensity = mat_gyp_extwall.rho
+    gypsumSpecificHeat = mat_gyp_extwall.Cp
+    gypsumThermalAbs = mat_gyp_extwall.TAbs
+    gypsumSolarAbs = mat_gyp_extwall.SAbs
+    gypsumVisibleAbs = mat_gyp_extwall.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_extwall.k)
 
     # Rigid 
     rigidInsRvalue = userdefined_rigidinsr
@@ -255,8 +254,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     osbDensity = mat_wood.rho
     osbSpecificHeat = mat_wood.Cp
     if hasOSB
-        mat_plywood1_2in = get_mat_plywood1_2in
-        osbRvalue = mat_plywood1_2in.Rvalue
+        osbRvalue = Material.Plywood1_2in.Rvalue
     else
         osbRvalue = 0
     end
@@ -375,11 +373,11 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
   def _processConstructionsExteriorInsulatedWallsWoodStud(wsWallCavityInsFillsCavity, wsWallCavityInsRvalueInstalled, wsWallInstallGrade, wsWallCavityDepth, wsWallFramingFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, localPressure)
         # Set Furring insulation/air properties 
         if wsWallCavityInsRvalueInstalled == 0
-            cavityInsDens = Properties.inside_air_dens(localPressure) # lb/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
-            cavityInsSH = get_mat_air.inside_air_sh
+            cavityInsDens = Gas.AirInsideDensity(localPressure) # lb/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
+            cavityInsSH = Gas.Air.Cp
         else
-            cavityInsDens = get_mat_densepack_generic.rho
-            cavityInsSH = get_mat_densepack_generic.Cp
+            cavityInsDens = BaseMaterial.InsulationGenericDensepack.rho
+            cavityInsSH = BaseMaterial.InsulationGenericDensepack.Cp
         end
         
         wsGapFactor = get_wall_gap_factor(wsWallInstallGrade, wsWallFramingFactor)
@@ -393,9 +391,9 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
         
         # Create layers for modeling
         sc_thick = OpenStudio::convert(wsWallCavityDepth,"in","ft").get
-        sc_cond = sc_thick / (overall_wall_Rvalue - (Properties.film_vertical_R + Properties.film_outside_R + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue))
-        sc_dens = wsWallFramingFactor * get_mat_wood.rho + (1 - wsWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * Properties.inside_air_dens(localPressure)
-        sc_sh = (wsWallFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - wsWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / sc_dens
+        sc_cond = sc_thick / (overall_wall_Rvalue - (AirFilms.VerticalR + AirFilms.OutsideR + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue))
+        sc_dens = wsWallFramingFactor * BaseMaterial.Wood.rho + (1 - wsWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * Gas.AirInsideDensity(localPressure)
+        sc_sh = (wsWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - wsWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens
 
         rigid_thick, rigid_cond, rigid_dens, rigid_sh = _addInsulatedSheathingMaterial(rigidInsThickness, rigidInsRvalue)
 

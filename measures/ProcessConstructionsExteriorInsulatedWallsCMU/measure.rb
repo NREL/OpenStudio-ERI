@@ -202,22 +202,21 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     end
         
     # Constants
-    mat_wood = get_mat_wood
-    mat_gyp = get_mat_gypsum
-    mat_air = get_mat_air
-    mat_rigid = get_mat_rigid_ins
-    mat_densepack_generic = get_mat_densepack_generic
+    mat_wood = BaseMaterial.Wood
+    mat_rigid = BaseMaterial.InsulationRigid
+    mat_gyp_extwall = Material.GypsumExtWall
+    mat_densepack_generic = BaseMaterial.InsulationGenericDensepack
 
     # Gypsum
     gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
     gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-    gypsumConductivity = mat_gyp.k
-    gypsumDensity = mat_gyp.rho
-    gypsumSpecificHeat = mat_gyp.Cp
-    gypsumThermalAbs = get_mat_gypsum_extwall.TAbs
-    gypsumSolarAbs = get_mat_gypsum_extwall.SAbs
-    gypsumVisibleAbs = get_mat_gypsum_extwall.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
+    gypsumConductivity = mat_gyp_extwall.k
+    gypsumDensity = mat_gyp_extwall.rho
+    gypsumSpecificHeat = mat_gyp_extwall.Cp
+    gypsumThermalAbs = mat_gyp_extwall.TAbs
+    gypsumSolarAbs = mat_gyp_extwall.SAbs
+    gypsumVisibleAbs = mat_gyp_extwall.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_extwall.k)
 
     # CMU / Furring
     cmuThickness = runner.getDoubleArgumentValue("userdefinedcmuthickness",user_arguments)
@@ -240,8 +239,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     osbDensity = mat_wood.rho
     osbSpecificHeat = mat_wood.Cp
     if hasOSB
-        mat_plywood1_2in = get_mat_plywood1_2in
-        osbRvalue = mat_plywood1_2in.Rvalue
+        osbRvalue = Material.Plywood1_2in.Rvalue
     else
         osbRvalue = 0
     end
@@ -363,30 +361,30 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     overall_wall_Rvalue, furring_layer_equiv_Rvalue = get_cmu_wall_r_assembly(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness, rigidInsRvalue, hasOSB)
     
     # Set Furring insulation/air properties
-    cmu_cond = (OpenStudio.convert(cmuThickness,"in","ft").get / (overall_wall_Rvalue - (Properties.film_vertical_R + Properties.film_outside_R + furring_layer_equiv_Rvalue + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue))) # Btu/hr*ft*F
-    cmu_dens = (cmuFramingFactor * get_mat_wood.rho + (1.0 - cmuFramingFactor) * cmuDensity) # lbm/ft^3)
-    cmu_sh = (cmuFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - cmuFramingFactor) * get_mat_concrete.Cp * cmuDensity) / cmu_dens # Btu/lbm-F
+    cmu_cond = (OpenStudio.convert(cmuThickness,"in","ft").get / (overall_wall_Rvalue - (AirFilms.VerticalR + AirFilms.OutsideR + furring_layer_equiv_Rvalue + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue))) # Btu/hr*ft*F
+    cmu_dens = (cmuFramingFactor * BaseMaterial.Wood.rho + (1.0 - cmuFramingFactor) * cmuDensity) # lbm/ft^3)
+    cmu_sh = (cmuFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1.0 - cmuFramingFactor) * BaseMaterial.Concrete.Cp * cmuDensity) / cmu_dens # Btu/lbm-F
     
     if cmuFurringCavityDepth != 0
     
         # Add air film coefficients when no insulation
         if cmuFurringInsRvalue.nil? or cmuFurringInsRvalue == 0
-            cmuFurringInsRvalue = get_mat_air.R_air_gap
+            cmuFurringInsRvalue = Gas.AirGapRvalue
         end
     
         if cmuFurringInsRvalue == 0
-            furring_ins_dens = Properties.inside_air_dens(localPressure) # lbm/ft^3   Assumes an empty cavity with air films
-            furring_ins_sh = get_mat_air.inside_air_sh
+            furring_ins_dens = Gas.AirInsideDensity(localPressure) # lbm/ft^3   Assumes an empty cavity with air films
+            furring_ins_sh = Gas.Air.Cp
         else
-            furring_ins_dens = get_mat_densepack_generic.rho # lbm/ft^3
-            furring_ins_sh = get_mat_densepack_generic.Cp
+            furring_ins_dens = BaseMaterial.InsulationGenericDensepack.rho # lbm/ft^3
+            furring_ins_sh = BaseMaterial.InsulationGenericDensepack.Cp
         end
         
         fu_thick = OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get # ft
         fu_cond = fu_thick / furring_layer_equiv_Rvalue # Btu/hr*ft*F
-        frac = get_mat_2x4.width_in / cmuFurringStudSpacing + cmuFramingFactor
-        fu_dens = frac * get_mat_wood.rho + (1.0 - frac) * furring_ins_dens # lbm/ft^3
-        fu_sh = (frac * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - frac) * furring_ins_sh * furring_ins_dens) / fu_dens # Btu/lbm*F
+        frac = Material.Stud2x4.width_in / cmuFurringStudSpacing + cmuFramingFactor
+        fu_dens = frac * BaseMaterial.Wood.rho + (1.0 - frac) * furring_ins_dens # lbm/ft^3
+        fu_sh = (frac * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1.0 - frac) * furring_ins_sh * furring_ins_dens) / fu_dens # Btu/lbm*F
         
     end
     
@@ -396,21 +394,19 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
   
   end
 
-  def get_cmu_wall_r_assembly(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=true)
+  def get_cmu_wall_r_assembly(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness, rigidInsRvalue, hasOSB)
     # Returns assembly R-value for CMU wall, including air films.
     # Also returns furring layer equivalent R-value.
     
-    mat_gyp = get_mat_gypsum
-    mat_wood = get_mat_wood
-    mat_plywood1_2in = get_mat_plywood1_2in
-    mat_2x4 = get_mat_2x4
-    mat_air = get_mat_air   
+    mat_wood = BaseMaterial.Wood
+    mat_plywood1_2in = Material.Plywood1_2in
+    mat_2x4 = Material.Stud2x4
     
     # Set paths
     if cmuFurringCavityDepth != 0
         # Add air film coefficients when no insulation
         if cmuFurringInsRvalue.nil? or cmuFurringInsRvalue == 0
-            cmuFurringInsRvalue = mat_air.R_air_gap
+            cmuFurringInsRvalue = Gas.AirGapRvalue
         end
         
         stud_frac = mat_2x4.width_in / cmuFurringStudSpacing
@@ -425,10 +421,10 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     cmu_wall = Construction.new(path_fracs)
     
     # Interior Film
-    cmu_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / Properties.film_vertical_R])
+    cmu_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / AirFilms.VerticalR])
     
     # Interior Finish (GWB)
-    cmu_wall.addlayer(thickness=OpenStudio.convert(gypsumThickness,"in","ft").get, conductivity_list=[mat_gyp.k])
+    cmu_wall.addlayer(thickness=OpenStudio.convert(gypsumThickness,"in","ft").get, conductivity_list=[BaseMaterial.Gypsum.k])
 
     # Furring/Cavity layer
     cmu_layer_conductivity = OpenStudio.convert(cmuConductivity,"in","ft").get # Btu/hr-ft-F
@@ -456,7 +452,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     cmu_wall.addlayer(thickness=OpenStudio.convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio.convert(finishConductivity,"in","ft").get])
     
     # Exterior Film
-    cmu_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / Properties.film_outside_R])
+    cmu_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / AirFilms.OutsideR])
     
     return cmu_wall.Rvalue_parallel, furring_layer_equiv_Rvalue
     

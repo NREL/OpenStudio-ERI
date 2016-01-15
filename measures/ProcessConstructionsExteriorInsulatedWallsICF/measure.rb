@@ -198,22 +198,21 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
     userdefined_extfinabs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)    
 
     # Constants
-    mat_wood = get_mat_wood
-    mat_gyp = get_mat_gypsum
-    mat_air = get_mat_air
-    mat_rigid = get_mat_rigid_ins
-    mat_densepack_generic = get_mat_densepack_generic
+    mat_wood = BaseMaterial.Wood
+    mat_gyp_extwall = Material.GypsumExtWall
+    mat_rigid = BaseMaterial.InsulationRigid
+    mat_densepack_generic = BaseMaterial.InsulationGenericDensepack
 
     # Gypsum    
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
-    gypsumConductivity = mat_gyp.k
-    gypsumDensity = mat_gyp.rho
-    gypsumSpecificHeat = mat_gyp.Cp
-    gypsumThermalAbs = get_mat_gypsum_extwall.TAbs
-    gypsumSolarAbs = get_mat_gypsum_extwall.SAbs
-    gypsumVisibleAbs = get_mat_gypsum_extwall.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
+    gypsumConductivity = mat_gyp_extwall.k
+    gypsumDensity = mat_gyp_extwall.rho
+    gypsumSpecificHeat = mat_gyp_extwall.Cp
+    gypsumThermalAbs = mat_gyp_extwall.TAbs
+    gypsumSolarAbs = mat_gyp_extwall.SAbs
+    gypsumVisibleAbs = mat_gyp_extwall.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_extwall.k)
 
     # Rigid 
     rigidInsRvalue = userdefined_rigidinsr
@@ -227,8 +226,7 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
     osbDensity = mat_wood.rho
     osbSpecificHeat = mat_wood.Cp
     if hasOSB
-        mat_plywood1_2in = get_mat_plywood1_2in
-        osbRvalue = mat_plywood1_2in.Rvalue
+        osbRvalue = Material.Plywood1_2in.Rvalue
     else
         osbRvalue = 0
     end
@@ -349,17 +347,17 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
   def _processConstructionsExteriorInsulatedWallsICF(icfFramingFactor, icfInsThickness, icfInsRvalue, icfConcreteThickness, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
     overall_wall_Rvalue = get_icf_wall_r_assembly(icfFramingFactor, icfInsThickness, icfInsRvalue, icfConcreteThickness, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness, rigidInsRvalue, hasOSB) 
     
-    conc_layer_equiv_Rvalue = (1.0 / (icfFramingFactor / (OpenStudio.convert(icfConcreteThickness,"in","ft").get / get_mat_wood.k) + (1.0 - icfFramingFactor) / (OpenStudio.convert(icfConcreteThickness,"in","ft").get / get_mat_concrete.k))) # hr*ft^2*F/Btu
+    conc_layer_equiv_Rvalue = (1.0 / (icfFramingFactor / (OpenStudio.convert(icfConcreteThickness,"in","ft").get / BaseMaterial.Wood.k) + (1.0 - icfFramingFactor) / (OpenStudio.convert(icfConcreteThickness,"in","ft").get / BaseMaterial.Concrete.k))) # hr*ft^2*F/Btu
     
     ins_thick = OpenStudio.convert(icfInsThickness,"in","ft").get # ft
-    ins_cond = (ins_thick / ((overall_wall_Rvalue - (Properties.film_vertical_R + Properties.film_outside_R + rigidInsRvalue + osbRvalue + conc_layer_equiv_Rvalue + finishRvalue + gypsumRvalue)) / 2.0)) # Btu/hr*ft*F
-    ins_dens = icfFramingFactor * get_mat_wood.rho + (1.0 - icfFramingFactor) * get_mat_rigid_ins.rho # lbm/ft^3
-    ins_sh = (icfFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - icfFramingFactor) * get_mat_rigid_ins.Cp * get_mat_rigid_ins.rho) / ins_dens # Btu/lbm-F
+    ins_cond = (ins_thick / ((overall_wall_Rvalue - (AirFilms.VerticalR + AirFilms.OutsideR + rigidInsRvalue + osbRvalue + conc_layer_equiv_Rvalue + finishRvalue + gypsumRvalue)) / 2.0)) # Btu/hr*ft*F
+    ins_dens = icfFramingFactor * BaseMaterial.Wood.rho + (1.0 - icfFramingFactor) * BaseMaterial.InsulationRigid.rho # lbm/ft^3
+    ins_sh = (icfFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1.0 - icfFramingFactor) * BaseMaterial.InsulationRigid.Cp * BaseMaterial.InsulationRigid.rho) / ins_dens # Btu/lbm-F
     
     conc_thick = OpenStudio.convert(icfConcreteThickness,"in","ft").get # ft
     conc_cond = conc_thick / conc_layer_equiv_Rvalue # Btu/hr*ft*F
-    conc_dens = icfFramingFactor * get_mat_wood.rho + (1.0 - icfFramingFactor) * get_mat_concrete.rho # lbm/ft^3
-    conc_sh = (icfFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1.0 - icfFramingFactor) * get_mat_concrete.Cp * get_mat_concrete.rho) / conc_dens # lbm/ft^3
+    conc_dens = icfFramingFactor * BaseMaterial.Wood.rho + (1.0 - icfFramingFactor) * BaseMaterial.Concrete.rho # lbm/ft^3
+    conc_sh = (icfFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1.0 - icfFramingFactor) * BaseMaterial.Concrete.Cp * BaseMaterial.Concrete.rho) / conc_dens # lbm/ft^3
     
     rigid_thick, rigid_cond, rigid_dens, rigid_sh = _addInsulatedSheathingMaterial(rigidInsThickness, rigidInsRvalue)
     
@@ -370,20 +368,19 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
   def get_icf_wall_r_assembly(icfFramingFactor, icfInsThickness, icfInsRvalue, icfConcreteThickness, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness=0, rigidInsRvalue=0, hasOSB=false)
     # Returns assembly R-value for ICF wall, including air films.
     
-    mat_wood = get_mat_wood
-    mat_gyp = get_mat_gypsum
-    mat_plywood1_2in = get_mat_plywood1_2in
-    mat_concrete = get_mat_concrete
+    mat_wood = BaseMaterial.Wood
+    mat_plywood1_2in = Material.Plywood1_2in
+    mat_concrete = BaseMaterial.Concrete
     
     path_fracs = [icfFramingFactor, 1.0 - icfFramingFactor]
     
     icf_wall = Construction.new(path_fracs)
 
     # Interior Film
-    icf_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / Properties.film_vertical_R])
+    icf_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / AirFilms.VerticalR])
 
     # Interior Finish (GWB)
-    icf_wall.addlayer(thickness=OpenStudio.convert(gypsumThickness,"in","ft").get, conductivity_list=[mat_gyp.k])
+    icf_wall.addlayer(thickness=OpenStudio.convert(gypsumThickness,"in","ft").get, conductivity_list=[BaseMaterial.Gypsum.k])
 
     # Framing / Rigid Ins
     ins_k = OpenStudio.convert(icfInsThickness,"in","ft").get / icfInsRvalue
@@ -411,7 +408,7 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
     icf_wall.addlayer(thickness=OpenStudio.convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio.convert(finishConductivity,"in","ft").get])
 
     # Exterior Film
-    icf_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / Properties.film_outside_R])
+    icf_wall.addlayer(thickness=OpenStudio.convert(1.0,"in","ft").get, conductivity_list=[OpenStudio.convert(1.0,"in","ft").get / AirFilms.OutsideR])
 
     return icf_wall.Rvalue_parallel 
     

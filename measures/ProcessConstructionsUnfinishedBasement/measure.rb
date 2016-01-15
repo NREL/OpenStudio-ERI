@@ -313,10 +313,9 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)	
 	
 	# Constants
-	mat_gyp = get_mat_gypsum
-	mat_wood = get_mat_wood
-	mat_soil = get_mat_soil
-	mat_concrete = get_mat_concrete	
+	mat_wood = BaseMaterial.Wood
+	mat_soil = BaseMaterial.Soil
+	mat_concrete = BaseMaterial.Concrete	
 	
 	# Cavity Insulation
 	if selected_ufbsmtins.to_s == "Half Wall" or selected_ufbsmtins.to_s == "Whole Wall"
@@ -355,7 +354,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	# Gypsum	
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
-    mat_gypsum1_2in = get_mat_gypsum1_2in
+    mat_gypsum1_2in = Material.Gypsum1_2in
     gypsumConductivity = mat_gypsum1_2in.k
     gypsumDensity = mat_gypsum1_2in.rho
     gypsumSpecificHeat = mat_gypsum1_2in.Cp
@@ -411,7 +410,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	end
 	
 	# Plywood-3_4in
-    mat_plywood3_4in = get_mat_plywood3_4in
+    mat_plywood3_4in = Material.Plywood3_4in
 	ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	ply3_4.setName("Plywood-3_4in")
 	ply3_4.setRoughness("Rough")
@@ -421,7 +420,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)	
 
 	# FloorMass
-    mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+    mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
 	fm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	fm.setName("FloorMass")
 	fm.setRoughness("Rough")
@@ -434,7 +433,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	
 	# CarpetBareLayer
 	if carpetFloorFraction > 0
-        mat_carpet_bare = get_mat_carpet_bare(carpetFloorFraction, carpetPadRValue)
+        mat_carpet_bare = Material.CarpetBare(carpetFloorFraction, carpetPadRValue)
 		cbl = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 		cbl.setName("CarpetBareLayer")
 		cbl.setRoughness("Rough")
@@ -481,13 +480,13 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	soil = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	soil.setName("Soil-12in")
 	soil.setRoughness("Rough")
-	soil.setThickness(OpenStudio::convert(get_mat_soil12in.thick,"ft","m").get)
+	soil.setThickness(OpenStudio::convert(Material.Soil12in.thick,"ft","m").get)
 	soil.setConductivity(OpenStudio::convert(mat_soil.k,"Btu/hr*ft*R","W/m*K").get)
 	soil.setDensity(OpenStudio::convert(mat_soil.rho,"lb/ft^3","kg/m^3").get)
 	soil.setSpecificHeat(OpenStudio::convert(mat_soil.Cp,"Btu/lb*R","J/kg*K").get)	
 	
 	# Concrete-8in
-    mat_concrete8in = get_mat_concrete8in
+    mat_concrete8in = Material.Concrete8in
 	conc8 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	conc8.setName("Concrete-8in")
 	conc8.setRoughness("Rough")
@@ -518,7 +517,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	uffr.setThermalResistance(OpenStudio::convert(ub_basement_floor_Rvalue,"hr*ft^2*R/Btu","m^2*K/W").get)
 	
 	# Concrete-4in
-    mat_concrete4in = get_mat_concrete4in
+    mat_concrete4in = Material.Concrete4in
 	conc4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	conc4.setName("Concrete-4in")
 	conc4.setRoughness("Rough")
@@ -552,7 +551,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	end
 	
 	# Plywood-3_2in
-    mat_plywood3_2in = get_mat_plywood3_2in
+    mat_plywood3_2in = Material.Plywood3_2in
 	ply3_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	ply3_2.setName("Plywood-3_2in")
 	ply3_2.setRoughness("Rough")
@@ -627,7 +626,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
         ufbsmtRimJoistInsRvalue = ufbsmtCeilingCavityInsRvalueNominal
     end
 
-    mat_2x = get_mat_2x(ufbsmtCeilingJoistHeight)
+    mat_2x = Material.Stud2x(ufbsmtCeilingJoistHeight)
     
     # Calculate overall R value of the basement wall, including framed walls with cavity insulation
     overall_wall_Rvalue = get_wood_stud_wall_r_assembly(ufbsmtWallCavityInsFillsCavity, ufbsmtWallCavityInsRvalueInstalled,
@@ -644,8 +643,8 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     if ceiling_Rvalue > 0
         ceiling_thick = mat_2x.thick # ft
         ceiling_cond = ceiling_thick / ub_ceiling_studlayer_Rvalue # Btu/hr*ft*F
-        ceiling_dens = ufbsmtCeilingFramingFactor * get_mat_wood.rho + (1 - ufbsmtCeilingFramingFactor) * get_mat_densepack_generic.rho # lbm/ft^3
-        ceiling_sh = (ufbsmtCeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - ufbsmtCeilingFramingFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / ceiling_dens
+        ceiling_dens = ufbsmtCeilingFramingFactor * BaseMaterial.Wood.rho + (1 - ufbsmtCeilingFramingFactor) * BaseMaterial.InsulationGenericDensepack.rho # lbm/ft^3
+        ceiling_sh = (ufbsmtCeilingFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - ufbsmtCeilingFramingFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho) / ceiling_dens
     end
     
     # FIXME: Currently hard-coded
@@ -668,17 +667,17 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     
     if wall_add_insul_layer
         wall_Rvalue = ufbsmtWallContInsRvalue # hr*ft^2*F/Btu
-        wall_thick = wall_Rvalue * get_mat_rigid_ins.k # ft
-        wall_cond = get_mat_rigid_ins.k # Btu/hr*ft*F
-        wall_dens = get_mat_rigid_ins.rho # lbm/ft^3
-        wall_sh = get_mat_rigid_ins.Cp
+        wall_thick = wall_Rvalue * BaseMaterial.InsulationRigid.k # ft
+        wall_cond = BaseMaterial.InsulationRigid.k # Btu/hr*ft*F
+        wall_dens = BaseMaterial.InsulationRigid.rho # lbm/ft^3
+        wall_sh = BaseMaterial.InsulationRigid.Cp
     else
         wall_Rvalue = 0
     end
     
-    ub_US_Rvalue = get_mat_concrete8in.Rvalue + Properties.film_vertical_R + wall_Rvalue # hr*ft^2*F/Btu
+    ub_US_Rvalue = Material.Concrete8in.Rvalue + AirFilms.VerticalR + wall_Rvalue # hr*ft^2*F/Btu
     
-    ub_fictitious_Rvalue = ub_effective_Rvalue - get_mat_soil12in.Rvalue - ub_US_Rvalue # hr*ft^2*F/Btu
+    ub_fictitious_Rvalue = ub_effective_Rvalue - Material.Soil12in.Rvalue - ub_US_Rvalue # hr*ft^2*F/Btu
 
     # For some foundations the effective U-value of the wall can be
     # greater than the raw U-value of the wall. If this is the case,
@@ -689,13 +688,13 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     # U-EFFECTIVE does not affect DOE-2.2 simulations.
     
     ub_total_UA = ubWallArea / ub_effective_Rvalue # Btu/hr*F
-    ub_wall_Rvalue = ub_US_Rvalue + get_mat_soil12in.Rvalue
+    ub_wall_Rvalue = ub_US_Rvalue + Material.Soil12in.Rvalue
     ub_wall_UA = ubWallArea / ub_wall_Rvalue
     
     # Fictitious layer below basement floor to achieve equivalent R-value. See Winklemann article.
     if ub_fictitious_Rvalue < 0 # Not enough cond through walls, need to add in floor conduction
         area = 1505 # FIXME: Currently hard-coded
-        ub_basement_floor_Rvalue = area / (ub_total_UA - ub_wall_UA) - get_mat_soil12in.Rvalue - get_mat_concrete4in.Rvalue # hr*ft^2*F/Btu # (assumes basement floor is a 4-in concrete slab)
+        ub_basement_floor_Rvalue = area / (ub_total_UA - ub_wall_UA) - Material.Soil12in.Rvalue - Material.Concrete4in.Rvalue # hr*ft^2*F/Btu # (assumes basement floor is a 4-in concrete slab)
     else
         ub_basement_floor_Rvalue = 1000
     end
@@ -714,8 +713,8 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
             
     rimjoist_framingfactor = 0.6 * ufbsmtCeilingFramingFactor #06 Factor added for due joist orientation
     
-    mat_2x = get_mat_2x(ufbsmtCeilingJoistHeight)
-    mat_plywood3_2in = get_mat_plywood3_2in
+    mat_2x = Material.Stud2x(ufbsmtCeilingJoistHeight)
+    mat_plywood3_2in = Material.Plywood3_2in
     rigid_thick, rigid_cond, rigid_dens, rigid_sh = _addInsulatedSheathingMaterial(wallSheathingContInsThickness, wallSheathingContInsRvalue)
     
     rj_Rvalue = get_rimjoist_r_assembly(ufbsmtRimJoistInsRvalue, ufbsmtCeilingJoistHeight, wallSheathingContInsThickness, wallSheathingContInsRvalue, 0, 0, rimjoist_framingfactor, finishThickness, finishConductivity)
@@ -726,11 +725,11 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     rj_cond = rj_thick / ub_rimjoist_studlayer_Rvalue         
         
     if ufbsmtRimJoistInsRvalue > 0
-        rj_dens = rimjoist_framingfactor * get_mat_wood.rho + (1 - rimjoist_framingfactor) * get_mat_densepack_generic.rho # lbm/ft^3
-        rj_sh = (rimjoist_framingfactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - rimjoist_framingfactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / rj_dens # Btu/lbm*F
+        rj_dens = rimjoist_framingfactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * BaseMaterial.InsulationGenericDensepack.rho # lbm/ft^3
+        rj_sh = (rimjoist_framingfactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho) / rj_dens # Btu/lbm*F
     else            
-        rj_dens = rimjoist_framingfactor * get_mat_wood.rho + (1 - rimjoist_framingfactor) * Properties.inside_air_dens(localPressure) # lbm/ft^3
-        rj_sh = (rimjoist_framingfactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - rimjoist_framingfactor) * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / rj_dens # Btu/lbm*F
+        rj_dens = rimjoist_framingfactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+        rj_sh = (rimjoist_framingfactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / rj_dens # Btu/lbm*F
     end
     
     return rj_thick, rj_cond, rj_dens, rj_sh, rj_Rvalue, rigid_thick, rigid_cond, rigid_dens, rigid_sh          
@@ -739,16 +738,16 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 
   def get_unfinished_basement_ceiling_r_assembly(ufbsmtCeilingCavityInsRvalueNominal, ufbsmtCeilingFramingFactor, ufbsmtCeilingJoistHeight, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
     # Returns assembly R-value for unfinished basement ceiling, including air films.
-    mat_wood = get_mat_wood
-    mat_2x = get_mat_2x(ufbsmtCeilingJoistHeight)
-    mat_plywood3_4in = get_mat_plywood3_4in
+    mat_wood = BaseMaterial.Wood
+    mat_2x = Material.Stud2x(ufbsmtCeilingJoistHeight)
+    mat_plywood3_4in = Material.Plywood3_4in
     
     path_fracs = [ufbsmtCeilingFramingFactor, 1 - ufbsmtCeilingFramingFactor]
     
     ub_ceiling = Construction.new(path_fracs)
     
     # Interior Film
-    ub_ceiling.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / Properties.film_floor_reduced_R])
+    ub_ceiling.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / AirFilms.FloorReducedR])
     
     # Stud/cavity layer
     if ufbsmtCeilingCavityInsRvalueNominal == 0
@@ -764,7 +763,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     
     # Floor mass
     if floorMassThickness > 0
-        mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+        mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
         ub_ceiling.addlayer(thickness=nil, conductivity_list=nil, material=mat_floor_mass, material_list=nil)
     end
     
@@ -775,7 +774,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     end
     
     # Exterior Film
-    ub_ceiling.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / Properties.film_floor_reduced_R])
+    ub_ceiling.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / AirFilms.FloorReducedR])
     
     return ub_ceiling.Rvalue_parallel   
 

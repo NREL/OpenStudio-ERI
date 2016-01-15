@@ -131,7 +131,7 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
 
     # Constants
-    mat_wood = get_mat_wood
+    mat_wood = BaseMaterial.Wood
 
     # Partition Wall Mass
     partitionWallMassThickness = userdefined_partitionwallmassth
@@ -148,7 +148,7 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
 
     # PartitionWallMass
-    mat_partition_wall_mass = get_mat_partition_wall_mass(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
+    mat_partition_wall_mass = Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
     pwm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     pwm.setName("PartitionWallMass")
     pwm.setRoughness("Rough")
@@ -161,7 +161,7 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     pwm.setVisibleAbsorptance(mat_partition_wall_mass.VAbs)
 
     # StudandAirWall
-    mat_stud_and_air_wall = get_stud_and_air_wall(weather.header.LocalPressure)
+    mat_stud_and_air_wall = Material.StudAndAir(weather.header.LocalPressure)
     saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saw.setName("StudandAirWall")
     saw.setRoughness("Rough")
@@ -171,7 +171,7 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     saw.setSpecificHeat(OpenStudio::convert(mat_stud_and_air_wall.Cp,"Btu/lb*R","J/kg*K").get)
 
     # Plywood-1_2in
-    mat_plywood1_2in = get_mat_plywood1_2in
+    mat_plywood1_2in = Material.Plywood1_2in
     ply1_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply1_2.setName("Plywood-1_2in")
     ply1_2.setRoughness("Rough")

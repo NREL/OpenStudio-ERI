@@ -107,13 +107,13 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     end
 
     highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
-    film_roof_R = Properties.film_roof_R(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
+    film_roof_R = AirFilms.RoofR(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
 
     # Process the roof
     sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsGarageRoof(film_roof_R, weather.header.LocalPressure)
 
     # RoofingMaterial
-    mat_roof_mat = get_mat_roofing_mat(roofMatEmissivity, roofMatAbsorptivity)
+    mat_roof_mat = Material.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
     roofmat = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     roofmat.setName("RoofingMaterial")
     roofmat.setRoughness("Rough")
@@ -126,7 +126,7 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     roofmat.setVisibleAbsorptance(mat_roof_mat.VAbs)
 
     # Plywood-3_4in
-    mat_plywood3_4in = get_mat_plywood3_4in
+    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
@@ -136,7 +136,7 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # RadiantBarrier
-    mat_radiant_barrier = get_mat_radiant_barrier
+    mat_radiant_barrier = Material.RadiantBarrier
     radbar = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     radbar.setName("RadiantBarrier")
     radbar.setRoughness("Rough")
@@ -190,20 +190,20 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / film_roof_R])
 
     # Stud/cavity layer
-    roof_const.addlayer(thickness=get_mat_2x4.thick, conductivity_list=[get_mat_wood.k, 1000000000.0])
+    roof_const.addlayer(thickness=Material.Stud2x4.thick, conductivity_list=[BaseMaterial.Wood.k, 1000000000.0])
 
     # Sheathing
-    roof_const.addlayer(thickness=nil, conductivity_list=nil, material=get_mat_plywood3_4in, material_list=nil)
+    roof_const.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_4in, material_list=nil)
 
     # Exterior Film
-    roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_outside_R])
+    roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.OutsideR])
 
-    grgRoofStudandAir_Rvalue = roof_const.Rvalue_parallel - film_roof_R - Properties.film_outside_R - get_mat_plywood3_4in.Rvalue # hr*ft^2*F/Btu
+    grgRoofStudandAir_Rvalue = roof_const.Rvalue_parallel - film_roof_R - AirFilms.OutsideR - Material.Plywood3_4in.Rvalue # hr*ft^2*F/Btu
 
-    sc_thick = get_mat_2x4.thick # ft
+    sc_thick = Material.Stud2x4.thick # ft
     sc_cond = sc_thick / grgRoofStudandAir_Rvalue # Btu/hr*ft*F
-    sc_dens = Constants.DefaultFramingFactorCeiling * get_mat_wood.rho + (1 - Constants.DefaultFramingFactorCeiling) * Properties.inside_air_dens(localPressure) # lbm/ft^3
-    sc_sh = (Constants.DefaultFramingFactorCeiling * get_mat_wood.Cp * get_mat_wood.rho + (1 - Constants.DefaultFramingFactorCeiling) * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / sc_dens # Btu/lbm*F
+    sc_dens = Constants.DefaultFramingFactorCeiling * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorCeiling) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+    sc_sh = (Constants.DefaultFramingFactorCeiling * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorCeiling) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
 
     return sc_thick, sc_cond, sc_dens, sc_sh
 

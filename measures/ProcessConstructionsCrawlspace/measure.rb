@@ -263,9 +263,9 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
     
     # Constants
-    mat_wood = get_mat_wood
-    mat_soil = get_mat_soil
-    mat_concrete = get_mat_concrete
+    mat_wood = BaseMaterial.Wood
+    mat_soil = BaseMaterial.Soil
+    mat_concrete = BaseMaterial.Concrete
     
     # Insulation
     if selected_csins.to_s == "Wall"
@@ -344,7 +344,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Plywood-3_4in
-    mat_plywood3_4in = get_mat_plywood3_4in
+    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
@@ -354,7 +354,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
     
     # Plywood-3_2in
-    mat_plywood3_2in = get_mat_plywood3_2in
+    mat_plywood3_2in = Material.Plywood3_2in
     ply3_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_2.setName("Plywood-3_2in")
     ply3_2.setRoughness("Rough")
@@ -364,7 +364,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     ply3_2.setSpecificHeat(OpenStudio::convert(mat_plywood3_2in.Cp,"Btu/lb*R","J/kg*K").get)    
     
     # FloorMass
-    mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+    mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
     fm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     fm.setName("FloorMass")
     fm.setRoughness("Rough")
@@ -387,13 +387,13 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     soil = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     soil.setName("Soil-12in")
     soil.setRoughness("Rough")
-    soil.setThickness(OpenStudio::convert(get_mat_soil12in.thick,"ft","m").get)
+    soil.setThickness(OpenStudio::convert(Material.Soil12in.thick,"ft","m").get)
     soil.setConductivity(OpenStudio::convert(mat_soil.k,"Btu/hr*ft*R","W/m*K").get)
     soil.setDensity(OpenStudio::convert(mat_soil.rho,"lb/ft^3","kg/m^3").get)
     soil.setSpecificHeat(OpenStudio::convert(mat_soil.Cp,"Btu/lb*R","J/kg*K").get)
     
     # Concrete-8in
-    mat_concrete8in = get_mat_concrete8in
+    mat_concrete8in = Material.Concrete8in
     conc8 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     conc8.setName("Concrete-8in")
     conc8.setRoughness("Rough")
@@ -442,7 +442,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     
     # CarpetBareLayer
     if carpetFloorFraction > 0
-        mat_carpet_bare = get_mat_carpet_bare(carpetFloorFraction, carpetPadRValue)
+        mat_carpet_bare = Material.CarpetBare(carpetFloorFraction, carpetPadRValue)
         cbl = OpenStudio::Model::StandardOpaqueMaterial.new(model)
         cbl.setName("CarpetBareLayer")
         cbl.setRoughness("Rough")
@@ -543,7 +543,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
             crawlRimJoistInsRvalue = crawlCeilingCavityInsRvalueNominal
         end
         
-        mat_2x = get_mat_2x(crawlCeilingJoistHeight)
+        mat_2x = Material.Stud2x(crawlCeilingJoistHeight)
         
         crawlspace_conduction = calc_crawlspace_wall_conductance(crawlWallContInsRvalueNominal, csHeight)
         
@@ -556,15 +556,15 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         if sc_Rvalue > 0
             sc_thick = mat_2x.thick
             sc_cond = sc_thick / crawl_ceiling_studlayer_Rvalue
-            sc_dens = crawlCeilingFramingFactor * get_mat_wood.rho + (1 - crawlCeilingFramingFactor - csGapFactor) * get_mat_densepack_generic.rho + csGapFactor * Properties.inside_air_dens(localPressure) # lbm/ft^3
-            sc_sh = (crawlCeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - crawlCeilingFramingFactor - csGapFactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho + csGapFactor * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / sc_dens # Btu/lbm*F
+            sc_dens = crawlCeilingFramingFactor * BaseMaterial.Wood.rho + (1 - crawlCeilingFramingFactor - csGapFactor) * BaseMaterial.InsulationGenericDensepack.rho + csGapFactor * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+            sc_sh = (crawlCeilingFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - crawlCeilingFramingFactor - csGapFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho + csGapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
         end
         
         if crawlWallContInsRvalueNominal > 0
             wall_thick = OpenStudio::convert(crawlWallContInsRvalueNominal / 5.0,"in","ft").get # ft
             wall_cond = wall_thick / crawlWallContInsRvalueNominal # Btu/hr*ft*F
-            wall_dens = get_mat_rigid_ins.rho # lbm/ft^3
-            wall_sh = get_mat_rigid_ins.Cp # Btu/lbm*F
+            wall_dens = BaseMaterial.InsulationRigid.rho # lbm/ft^3
+            wall_sh = BaseMaterial.InsulationRigid.Cp # Btu/lbm*F
         end
         
         crawlspace_wall_area = csExtPerimeter * csHeight
@@ -576,16 +576,16 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         end
         
         # Fictitious layer behind unvented crawlspace wall to achieve equivalent R-value. See Winklemann article.
-        crawlspace_US_Rvalue = get_mat_concrete8in.Rvalue + Properties.film_vertical_R + crawlWallContInsRvalueNominal
-        crawlspace_fictitious_Rvalue = crawlspace_effective_Rvalue - get_mat_soil12in.Rvalue - crawlspace_US_Rvalue
+        crawlspace_US_Rvalue = Material.Concrete8in.Rvalue + AirFilms.VerticalR + crawlWallContInsRvalueNominal
+        crawlspace_fictitious_Rvalue = crawlspace_effective_Rvalue - Material.Soil12in.Rvalue - crawlspace_US_Rvalue
         
         crawlspace_total_UA = crawlspace_wall_area / crawlspace_effective_Rvalue # Btu/hr*F
-        crawlspace_wall_Rvalue = crawlspace_US_Rvalue + get_mat_soil12in.Rvalue
+        crawlspace_wall_Rvalue = crawlspace_US_Rvalue + Material.Soil12in.Rvalue
         crawlspace_wall_UA = crawlspace_wall_area / crawlspace_wall_Rvalue
         
         # Fictitious layer below crawlspace floor to achieve equivalent R-value. See Winklemann article.
         if crawlspace_fictitious_Rvalue < 0
-            crawlspace_floor_Rvalue = csArea / (crawlspace_total_UA - crawlspace_wall_area / (crawlspace_US_Rvalue + get_mat_soil12in.Rvalue)) - get_mat_soil12in.Rvalue # hr*ft^2*F/Btu
+            crawlspace_floor_Rvalue = csArea / (crawlspace_total_UA - crawlspace_wall_area / (crawlspace_US_Rvalue + Material.Soil12in.Rvalue)) - Material.Soil12in.Rvalue # hr*ft^2*F/Btu
              # (assumes crawlspace floor is dirt with no concrete slab)
         else
             crawlspace_floor_Rvalue = 1000 # hr*ft^2*F/Btu
@@ -600,9 +600,9 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
   def get_crawlspace_ceiling_r_assembly(crawlCeilingCavityInsRvalueNominal, crawlCeilingFramingFactor, crawlCeilingInstallGrade, crawlCeilingJoistHeight, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
     # Returns assembly R-value for crawlspace ceiling, including air films.
     
-    mat_wood = get_mat_wood
-    mat_2x = get_mat_2x(crawlCeilingJoistHeight)
-    mat_plywood3_4in = get_mat_plywood3_4in
+    mat_wood = BaseMaterial.Wood
+    mat_2x = Material.Stud2x(crawlCeilingJoistHeight)
+    mat_plywood3_4in = Material.Plywood3_4in
     
     gapFactor = get_wall_gap_factor(crawlCeilingInstallGrade, crawlCeilingFramingFactor)
     
@@ -611,7 +611,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     crawl_ceiling = Construction.new(path_fracs)
     
     # Interior Film
-    crawl_ceiling.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_floor_reduced_R])
+    crawl_ceiling.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
     
     # Stud/cavity layer
     if crawlCeilingCavityInsRvalueNominal == 0
@@ -619,7 +619,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     else
         cavity_k = (mat_2x.thick / crawlCeilingCavityInsRvalueNominal)
     end
-    gap_k = mat_2x.thick / get_mat_air.R_air_gap
+    gap_k = mat_2x.thick / Gas.AirGapRvalue
     
     crawl_ceiling.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k, gap_k])
 
@@ -628,7 +628,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 
     # Floor mass
     if floorMassThickness > 0
-        mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+        mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
         crawl_ceiling.addlayer(thickness=nil, conductivity_list=nil, material=mat_floor_mass)
     end
 
@@ -639,7 +639,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Exterior Film
-    crawl_ceiling.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Properties.film_floor_reduced_R])
+    crawl_ceiling.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
 
     return crawl_ceiling.Rvalue_parallel
     
@@ -648,8 +648,8 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
   def _processConstructionsCrawlspaceRimJoist(crawlRimJoistInsRvalue, crawlCeilingJoistHeight, crawlCeilingFramingFactor, wallSheathingContInsThickness, wallSheathingContInsRvalue, finishThickness, finishConductivity)
     
         rimjoist_framingfactor = 0.6 * crawlCeilingFramingFactor #0.6 Factor added for due joist orientation
-        mat_2x = get_mat_2x(crawlCeilingJoistHeight)
-        mat_plywood3_2in = get_mat_plywood3_2in
+        mat_2x = Material.Stud2x(crawlCeilingJoistHeight)
+        mat_plywood3_2in = Material.Plywood3_2in
         rigid_thick, rigid_cond, rigid_dens, rigid_sh = _addInsulatedSheathingMaterial(wallSheathingContInsThickness, wallSheathingContInsRvalue)
 
         crawl_rimjoist_Rvalue = get_rimjoist_r_assembly(crawlRimJoistInsRvalue, crawlCeilingJoistHeight, wallSheathingContInsThickness, wallSheathingContInsRvalue, 0, 0, rimjoist_framingfactor, finishThickness, finishConductivity)
@@ -659,11 +659,11 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         rj_thick = mat_2x.thick
         rj_cond = rj_thick / crawl_rimjoist_studlayer_Rvalue
         if crawlRimJoistInsRvalue > 0
-            rj_dens = crawlCeilingFramingFactor * get_mat_wood.rho + (1 - rimjoist_framingfactor) * get_mat_densepack_generic.rho  # lbm/ft^3
-            rj_sh = (crawlCeilingFramingFactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - rimjoist_framingfactor) * get_mat_densepack_generic.Cp * get_mat_densepack_generic.rho) / rj_dens # Btu/lbm*F
+            rj_dens = crawlCeilingFramingFactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * BaseMaterial.InsulationGenericDensepack.rho  # lbm/ft^3
+            rj_sh = (crawlCeilingFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho) / rj_dens # Btu/lbm*F
         else
-            rj_dens = rimjoist_framingfactor * get_mat_wood.rho + (1 - rimjoist_framingfactor) * Properties.inside_air_dens(localPressure) # lbm/ft^3
-            rj_sh = (rimjoist_framingfactor * get_mat_wood.Cp * get_mat_wood.rho + (1 - rimjoist_framingfactor) * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / rj_dens # Btu/lbm*F
+            rj_dens = rimjoist_framingfactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+            rj_sh = (rimjoist_framingfactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / rj_dens # Btu/lbm*F
         end
    
         return rj_thick, rj_cond, rj_dens, rj_sh, rigid_thick, rigid_cond, rigid_dens, rigid_sh

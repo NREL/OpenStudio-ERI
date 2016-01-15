@@ -182,19 +182,19 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)	
 	
     # Gypsum
-    mat_gyp = get_mat_gypsum
+    mat_gyp_ceiling = Material.GypsumCeiling
     selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
     if selected_gypsum.empty?
       gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
       gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
     end
-    gypsumConductivity = mat_gyp.k
-    gypsumDensity = mat_gyp.rho
-    gypsumSpecificHeat = mat_gyp.Cp
-    gypsumThermalAbs = get_mat_gypsum_ceiling.TAbs
-    gypsumSolarAbs = get_mat_gypsum_ceiling.SAbs
-    gypsumVisibleAbs = get_mat_gypsum_ceiling.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp.k)
+    gypsumConductivity = mat_gyp_ceiling.k
+    gypsumDensity = mat_gyp_ceiling.rho
+    gypsumSpecificHeat = mat_gyp_ceiling.Cp
+    gypsumThermalAbs = mat_gyp_ceiling.TAbs
+    gypsumSolarAbs = mat_gyp_ceiling.SAbs
+    gypsumVisibleAbs = mat_gyp_ceiling.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_ceiling.k)
 
     # Floor Mass
     floorMassThickness = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
@@ -236,7 +236,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     gypsum.setVisibleAbsorptance(gypsumVisibleAbs)
 
     # Plywood-3_4in
-    mat_plywood3_4in = get_mat_plywood3_4in
+    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
@@ -246,7 +246,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FloorMass
-    mat_floor_mass = get_mat_floor_mass(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
+    mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
     fm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     fm.setName("FloorMass")
     fm.setRoughness("Rough")
@@ -259,7 +259,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
 
     # CarpetBareLayer
     if carpetFloorFraction > 0
-      mat_carpet_bare = get_mat_carpet_bare(carpetFloorFraction, carpetPadRValue)
+      mat_carpet_bare = Material.CarpetBare(carpetFloorFraction, carpetPadRValue)
       cbl = OpenStudio::Model::StandardOpaqueMaterial.new(model)
       cbl.setName("CarpetBareLayer")
       cbl.setRoughness("Rough")
@@ -339,14 +339,14 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
   end #end the run method
 
   def _processConstructionsInteriorUninsulatedFloors(localPressure)
-    floor_part_U_cavity_path = (1 - Constants.DefaultFramingFactorFloor) / get_mat_air.R_air_gap # Btu/hr*ft^2*F
-    floor_part_U_stud_path = Constants.DefaultFramingFactorFloor / get_mat_2x6.Rvalue # Btu/hr*ft^2*F
+    floor_part_U_cavity_path = (1 - Constants.DefaultFramingFactorFloor) / Gas.AirGapRvalue # Btu/hr*ft^2*F
+    floor_part_U_stud_path = Constants.DefaultFramingFactorFloor / Material.Stud2x6.Rvalue # Btu/hr*ft^2*F
     floor_part_Rvalue = 1 / (floor_part_U_cavity_path + floor_part_U_stud_path) # hr*ft^2*F/Btu
 
-    sc_thick = get_mat_2x4.thick # ft
+    sc_thick = Material.Stud2x4.thick # ft
     sc_cond = sc_thick / floor_part_Rvalue # Btu/hr*ft*F
-    sc_dens = Constants.DefaultFramingFactorFloor * get_mat_wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Properties.inside_air_dens(localPressure) # lbm/ft^3
-    sc_sh = (Constants.DefaultFramingFactorFloor * get_mat_wood.Cp * get_mat_wood.rho + (1 - Constants.DefaultFramingFactorFloor) * get_mat_air.inside_air_sh * Properties.inside_air_dens(localPressure)) / sc_dens # Btu/lbm*F
+    sc_dens = Constants.DefaultFramingFactorFloor * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
+    sc_sh = (Constants.DefaultFramingFactorFloor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
 
     return sc_thick, sc_cond, sc_dens, sc_sh
   end

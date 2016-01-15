@@ -225,7 +225,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 
       furn_type_ubsmt = Constants.FurnTypeLight
       if furn_type_ubsmt == Constants.FurnTypeLight
-        ubsmt_furn = Furniture.new(furn_type_ubsmt, 40.0, 0.0667, get_mat_wood.Cp, 0.4, 8.0, nil)
+        ubsmt_furn = Furniture.new(furn_type_ubsmt, 40.0, 0.0667, BaseMaterial.Wood.Cp, 0.4, 8.0, nil)
       elsif furn_type_ubsmt == Constants.FurnTypeHeavy
         ubsmt_furn = Furniture.new(furn_type_ubsmt, 80.0, 0.0939, 0.35, 0.4, 8.0, nil)
       end
@@ -239,7 +239,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 
       furn_type_grg = Constants.FurnTypeLight
       if furn_type_grg == Constants.FurnTypeLight
-        garage_furn = Furniture.new(furn_type_grg, 40.0, 0.0667, get_mat_wood.Cp, 0.1, 2.0, nil)
+        garage_furn = Furniture.new(furn_type_grg, 40.0, 0.0667, BaseMaterial.Wood.Cp, 0.1, 2.0, nil)
       elsif furn_type_grg == Constants.FurnTypeHeavy
         garage_furn = Furniture.new(furn_type_grg, 80.0, 0.0939, 0.35, 0.1, 2.0, nil)
       end

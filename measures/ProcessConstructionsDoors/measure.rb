@@ -106,8 +106,8 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     door_Rvalue_air_to_air = 1.0 / door_Uvalue_air_to_air
     garage_door_Rvalue_air_to_air = 1.0 / garage_door_Uvalue_air_to_air
 
-    door_Rvalue = door_Rvalue_air_to_air - Properties.film_outside_R - Properties.film_vertical_R
-    garage_door_Rvalue = garage_door_Rvalue_air_to_air - Properties.film_outside_R - Properties.film_vertical_R
+    door_Rvalue = door_Rvalue_air_to_air - AirFilms.OutsideR - AirFilms.VerticalR
+    garage_door_Rvalue = garage_door_Rvalue_air_to_air - AirFilms.OutsideR - AirFilms.VerticalR
 
     mat_door_Uvalue = 1.0 / door_Rvalue
     garage_door_Uvalue = 1.0 / garage_door_Rvalue
@@ -121,8 +121,8 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     d.setRoughness("Rough")
     d.setThickness(OpenStudio::convert(door_thickness,"ft","m").get)
     d.setConductivity(OpenStudio::convert(mat_door_Uvalue * door_thickness,"Btu/hr*ft*R","W/m*K").get)
-    d.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
-    d.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
+    d.setDensity(OpenStudio::convert(BaseMaterial.Wood.rho,"lb/ft^3","kg/m^3").get)
+    d.setSpecificHeat(OpenStudio::convert(BaseMaterial.Wood.Cp,"Btu/lb*R","J/kg*K").get)
 
     # LivingDoors
     materials = []
@@ -136,8 +136,8 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     gd.setRoughness("Rough")
     gd.setThickness(OpenStudio::convert(garage_door_thickness,"ft","m").get)
     gd.setConductivity(OpenStudio::convert(garage_door_Uvalue * garage_door_thickness,"Btu/hr*ft*R","W/m*K").get)
-    gd.setDensity(OpenStudio::convert(get_mat_wood.rho,"lb/ft^3","kg/m^3").get)
-    gd.setSpecificHeat(OpenStudio::convert(get_mat_wood.Cp,"Btu/lb*R","J/kg*K").get)
+    gd.setDensity(OpenStudio::convert(BaseMaterial.Wood.rho,"lb/ft^3","kg/m^3").get)
+    gd.setSpecificHeat(OpenStudio::convert(BaseMaterial.Wood.Cp,"Btu/lb*R","J/kg*K").get)
 
     # GarageDoors
     materials = []
