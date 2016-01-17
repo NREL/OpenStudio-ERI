@@ -7,8 +7,8 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/util"
 
 #start the measure
 class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
@@ -66,9 +66,6 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
-	mat_concrete = BaseMaterial.Concrete
-	mat_soil = BaseMaterial.Soil
-	
 	# Adiabatic
 	adi = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
 	adi.setName("Adiabatic")
@@ -80,20 +77,19 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
 	soil.setName("Soil-12in")
 	soil.setRoughness("Rough")
 	soil.setThickness(OpenStudio::convert(Material.Soil12in.thick,"ft","m").get)
-	soil.setConductivity(OpenStudio::convert(mat_soil.k,"Btu/hr*ft*R","W/m*K").get)
-	soil.setDensity(OpenStudio::convert(mat_soil.rho,"lb/ft^3","kg/m^3").get)
-	soil.setSpecificHeat(OpenStudio::convert(mat_soil.Cp,"Btu/lb*R","J/kg*K").get)	
+	soil.setConductivity(OpenStudio::convert(Material.Soil12in.k,"Btu/hr*ft*R","W/m*K").get)
+	soil.setDensity(OpenStudio::convert(Material.Soil12in.rho,"lb/ft^3","kg/m^3").get)
+	soil.setSpecificHeat(OpenStudio::convert(Material.Soil12in.Cp,"Btu/lb*R","J/kg*K").get)	
 	
 	# Concrete-4in
-    mat_concrete4in = Material.Concrete4in
 	conc = OpenStudio::Model::StandardOpaqueMaterial.new(model)
 	conc.setName("Concrete-4in")
 	conc.setRoughness("Rough")
-	conc.setThickness(OpenStudio::convert(mat_concrete4in.thick,"ft","m").get)
-	conc.setConductivity(OpenStudio::convert(mat_concrete4in.k,"Btu/hr*ft*R","W/m*K").get)
-	conc.setDensity(OpenStudio::convert(mat_concrete4in.rho,"lb/ft^3","kg/m^3").get)
-	conc.setSpecificHeat(OpenStudio::convert(mat_concrete4in.Cp,"Btu/lb*R","J/kg*K").get)
-	conc.setThermalAbsorptance(mat_concrete4in.TAbs)	
+	conc.setThickness(OpenStudio::convert(Material.Concrete4in.thick,"ft","m").get)
+	conc.setConductivity(OpenStudio::convert(Material.Concrete4in.k,"Btu/hr*ft*R","W/m*K").get)
+	conc.setDensity(OpenStudio::convert(Material.Concrete4in.rho,"lb/ft^3","kg/m^3").get)
+	conc.setSpecificHeat(OpenStudio::convert(Material.Concrete4in.Cp,"Btu/lb*R","J/kg*K").get)
+	conc.setThermalAbsorptance(Material.Concrete4in.TAbs)	
 	
 	# GrndUninsUnfinGrgFloor
 	materials = []

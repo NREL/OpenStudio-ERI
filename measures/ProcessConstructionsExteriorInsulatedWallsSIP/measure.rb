@@ -1,8 +1,8 @@
 # see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 # start the measure
 class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::ModelUserScript
@@ -192,16 +192,31 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
     # Gypsum
     userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
     userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
+    
     # SIP
     selected_intsheathingtype = runner.getStringArgumentValue("selectedintsheathingtype",user_arguments)
     userdefined_framingfrac = runner.getDoubleArgumentValue("userdefinedframingfrac",user_arguments)
     userdefined_sipinsthickness = runner.getDoubleArgumentValue("userdefinedsipinsthickness",user_arguments)
     userdefined_sipinsr = runner.getDoubleArgumentValue("userdefinedsipinsr",user_arguments)
     userdefined_sipintsheathingthick = runner.getDoubleArgumentValue("userdefinedsipintsheathingthick",user_arguments)
+    
     # Rigid
-    userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
-    userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
-    userdefined_hasosb = runner.getBoolArgumentValue("userdefinedhasosb",user_arguments)
+    rigidInsThickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
+    rigidInsRvalue = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
+    rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+    rigidInsDensity = BaseMaterial.InsulationRigid.rho
+    rigidInsSpecificHeat = BaseMaterial.InsulationRigid.Cp 
+    hasOSB = runner.getBoolArgumentValue("userdefinedhasosb",user_arguments)
+    osbThickness = 0.5
+    osbConductivity = Material.Plywood1_2in.k
+    osbDensity = Material.Plywood1_2in.rho
+    osbSpecificHeat = Material.Plywood1_2in.Cp
+    if hasOSB
+        osbRvalue = Material.Plywood1_2in.Rvalue
+    else
+        osbRvalue = 0
+    end
+    
     # Exterior Finish
     userdefined_extfinthickness = runner.getDoubleArgumentValue("userdefinedextfinthickness",user_arguments)
     userdefined_extfinr = runner.getDoubleArgumentValue("userdefinedextfinr",user_arguments)
@@ -210,39 +225,16 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
     userdefined_extfinthermalabs = runner.getDoubleArgumentValue("userdefinedextfinthermalabs",user_arguments)
     userdefined_extfinabs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)    
 
-    # Constants
-    mat_wood = BaseMaterial.Wood
-    mat_gyp_extwall = Material.GypsumExtWall
-    mat_rigid = BaseMaterial.InsulationRigid
-    mat_densepack_generic = BaseMaterial.InsulationGenericDensepack
-
     # Gypsum    
     gypsumThickness = userdefined_gypthickness
     gypsumNumLayers = userdefined_gyplayers
-    gypsumConductivity = mat_gyp_extwall.k
-    gypsumDensity = mat_gyp_extwall.rho
-    gypsumSpecificHeat = mat_gyp_extwall.Cp
-    gypsumThermalAbs = mat_gyp_extwall.TAbs
-    gypsumSolarAbs = mat_gyp_extwall.SAbs
-    gypsumVisibleAbs = mat_gyp_extwall.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_extwall.k)
-
-    # Rigid 
-    rigidInsRvalue = userdefined_rigidinsr
-    rigidInsThickness = userdefined_rigidinsthickness
-    rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
-    rigidInsDensity = mat_rigid.rho
-    rigidInsSpecificHeat = mat_rigid.Cp 
-    hasOSB = userdefined_hasosb
-    osbThickness = 0.5
-    osbConductivity = mat_wood.k
-    osbDensity = mat_wood.rho
-    osbSpecificHeat = mat_wood.Cp
-    if hasOSB
-        osbRvalue = Material.Plywood1_2in.Rvalue
-    else
-        osbRvalue = 0
-    end
+    gypsumConductivity = Material.GypsumExtWall.k
+    gypsumDensity = Material.GypsumExtWall.rho
+    gypsumSpecificHeat = Material.GypsumExtWall.Cp
+    gypsumThermalAbs = Material.GypsumExtWall.TAbs
+    gypsumSolarAbs = Material.GypsumExtWall.SAbs
+    gypsumVisibleAbs = Material.GypsumExtWall.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumExtWall.k)
     
     # SIP
     sipIntSheathingType = selected_intsheathingtype
@@ -261,8 +253,8 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
     finishSolarAbs = userdefined_extfinabs
     finishVisibleAbs = userdefined_extfinabs
 
-    # Process the wood stud walls
-    spline_thick, spline_cond, spline_dens, spline_sh, ins_thick, ins_cond, ins_dens, ins_sh, int_sheathing, rigid_thick, rigid_cond, rigid_dens, rigid_sh = _processConstructionsExteriorInsulatedWallsSIP(sipIntSheathingType, sipFramingFactor, sipInsThickness, sipInsRvalue, sipIntSheathingThick, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
+    # Process the SIP walls
+    spline_thick, spline_cond, spline_dens, spline_sh, ins_thick, ins_cond, ins_dens, ins_sh, int_sheathing = _processConstructionsExteriorInsulatedWallsSIP(sipIntSheathingType, sipFramingFactor, sipInsThickness, sipInsRvalue, sipIntSheathingThick, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
     
     # Create the material layers
     
@@ -280,13 +272,13 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
 
     # Rigid
     if rigidInsRvalue > 0
-      rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-      rigid.setName("WallRigidIns")
-      rigid.setRoughness("Rough")
-      rigid.setThickness(OpenStudio::convert(rigid_thick,"ft","m").get)
-      rigid.setConductivity(OpenStudio::convert(rigid_cond,"Btu/hr*ft*R","W/m*K").get)
-      rigid.setDensity(OpenStudio::convert(rigid_dens,"lb/ft^3","kg/m^3").get)
-      rigid.setSpecificHeat(OpenStudio::convert(rigid_sh,"Btu/lb*R","J/kg*K").get)
+        rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)
+        rigid.setName("WallRigidIns")
+        rigid.setRoughness("Rough")
+        rigid.setThickness(OpenStudio::convert(rigidInsThickness,"in","m").get)
+        rigid.setConductivity(OpenStudio::convert(rigidInsConductivity,"Btu/hr*ft*R","W/m*K").get)
+        rigid.setDensity(OpenStudio::convert(rigidInsDensity,"lb/ft^3","kg/m^3").get)
+        rigid.setSpecificHeat(OpenStudio::convert(rigidInsSpecificHeat,"Btu/lb*R","J/kg*K").get)
     end
     
     # OSB
@@ -392,9 +384,7 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
     ins_dens = sipFramingFactor * BaseMaterial.Wood.rho + (1.0 - sipFramingFactor) * BaseMaterial.InsulationRigid.rho # lbm/ft3
     ins_sh = (sipFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1.0 - sipFramingFactor) * BaseMaterial.InsulationRigid.Cp * BaseMaterial.InsulationRigid.rho) / ins_dens # Btu/lbm-F
     
-    rigid_thick, rigid_cond, rigid_dens, rigid_sh = _addInsulatedSheathingMaterial(rigidInsThickness, rigidInsRvalue)
-    
-    return spline_thick, spline_cond, spline_dens, spline_sh, ins_thick, ins_cond, ins_dens, ins_sh, int_sheathing, rigid_thick, rigid_cond, rigid_dens, rigid_sh
+    return spline_thick, spline_cond, spline_dens, spline_sh, ins_thick, ins_cond, ins_dens, ins_sh, int_sheathing
     
   end
 
@@ -402,9 +392,6 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
     # Returns assembly R-value for SIP wall, including air films.
     # Also returns spline layer thickness, insulation layer thickness, and cavity fraction.
                                     
-    mat_wood = BaseMaterial.Wood
-    mat_plywood1_2in = Material.Plywood1_2in
-
     spline_thick = OpenStudio.convert(0.5,"in","ft").get
     spline_frac = 4.0 / 48.0 # One 4" spline for every 48" wide panel
     cavity_frac = 1.0 - (spline_frac + sipFramingFactor)
@@ -426,18 +413,18 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
     sip_wall.addlayer(thickness=OpenStudio.convert(sipIntSheathingThick,"in","ft").get, conductivity_list=[int_sheathing.k])
 
     # Spline layer
-    sip_wall.addlayer(thickness=spline_thick, conductivity_list=[mat_wood.k, mat_wood.k, cavity_ins_k])
+    sip_wall.addlayer(thickness=spline_thick, conductivity_list=[BaseMaterial.Wood.k, BaseMaterial.Wood.k, cavity_ins_k])
 
     # Ins layer
     ins_layer_thickness = OpenStudio.convert(sipInsThickness,"in","ft").get - (2.0 * spline_thick) # ft
-    sip_wall.addlayer(thickness=ins_layer_thickness, conductivity_list=[mat_wood.k, cavity_ins_k, cavity_ins_k])
+    sip_wall.addlayer(thickness=ins_layer_thickness, conductivity_list=[BaseMaterial.Wood.k, cavity_ins_k, cavity_ins_k])
 
     # Spline layer
-    sip_wall.addlayer(thickness=spline_thick, conductivity_list=[mat_wood.k, mat_wood.k, cavity_ins_k])
+    sip_wall.addlayer(thickness=spline_thick, conductivity_list=[BaseMaterial.Wood.k, BaseMaterial.Wood.k, cavity_ins_k])
 
     # OSB sheathing
     if hasOSB
-        sip_wall.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood1_2in, material_list=nil)
+        sip_wall.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood1_2in, material_list=nil)
     end
 
     # Rigid

@@ -7,9 +7,9 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelUserScript
@@ -125,19 +125,10 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     end
 	
     # Partition Wall Mass
-    userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
-    userdefined_partitionwallmasscond = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
-    userdefined_partitionwallmassdens = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
-    userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
-
-    # Constants
-    mat_wood = BaseMaterial.Wood
-
-    # Partition Wall Mass
-    partitionWallMassThickness = userdefined_partitionwallmassth
-    partitionWallMassConductivity = userdefined_partitionwallmasscond
-    partitionWallMassDensity = userdefined_partitionwallmassdens
-    partitionWallMassSpecificHeat = userdefined_partitionwallmasssh
+    partitionWallMassThickness = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
+    partitionWallMassConductivity = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
+    partitionWallMassDensity = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
+    partitionWallMassSpecificHeat = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
 
     weather = WeatherProcess.new(model,runner,header_only=true)
     if weather.error?
@@ -171,14 +162,13 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     saw.setSpecificHeat(OpenStudio::convert(mat_stud_and_air_wall.Cp,"Btu/lb*R","J/kg*K").get)
 
     # Plywood-1_2in
-    mat_plywood1_2in = Material.Plywood1_2in
     ply1_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply1_2.setName("Plywood-1_2in")
     ply1_2.setRoughness("Rough")
-    ply1_2.setThickness(OpenStudio::convert(mat_plywood1_2in.thick,"ft","m").get)
-    ply1_2.setConductivity(OpenStudio::convert(mat_plywood1_2in.k,"Btu/hr*ft*R","W/m*K").get)
-    ply1_2.setDensity(OpenStudio::convert(mat_plywood1_2in.rho,"lb/ft^3","kg/m^3").get)
-    ply1_2.setSpecificHeat(OpenStudio::convert(mat_plywood1_2in.Cp,"Btu/lb*R","J/kg*K").get)
+    ply1_2.setThickness(OpenStudio::convert(Material.Plywood1_2in.thick,"ft","m").get)
+    ply1_2.setConductivity(OpenStudio::convert(Material.Plywood1_2in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply1_2.setDensity(OpenStudio::convert(Material.Plywood1_2in.rho,"lb/ft^3","kg/m^3").get)
+    ply1_2.setSpecificHeat(OpenStudio::convert(Material.Plywood1_2in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FinUninsFinWall
 	materials = []

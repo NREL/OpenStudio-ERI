@@ -7,8 +7,8 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
@@ -109,7 +109,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     door_Rvalue = door_Rvalue_air_to_air - AirFilms.OutsideR - AirFilms.VerticalR
     garage_door_Rvalue = garage_door_Rvalue_air_to_air - AirFilms.OutsideR - AirFilms.VerticalR
 
-    mat_door_Uvalue = 1.0 / door_Rvalue
+    door_Uvalue = 1.0 / door_Rvalue
     garage_door_Uvalue = 1.0 / garage_door_Rvalue
 
     door_thickness = OpenStudio.convert(1.75,"in","ft").get # ft
@@ -120,7 +120,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     d.setName("DoorMaterial")
     d.setRoughness("Rough")
     d.setThickness(OpenStudio::convert(door_thickness,"ft","m").get)
-    d.setConductivity(OpenStudio::convert(mat_door_Uvalue * door_thickness,"Btu/hr*ft*R","W/m*K").get)
+    d.setConductivity(OpenStudio::convert(door_Uvalue * door_thickness,"Btu/hr*ft*R","W/m*K").get)
     d.setDensity(OpenStudio::convert(BaseMaterial.Wood.rho,"lb/ft^3","kg/m^3").get)
     d.setSpecificHeat(OpenStudio::convert(BaseMaterial.Wood.Cp,"Btu/lb*R","J/kg*K").get)
 

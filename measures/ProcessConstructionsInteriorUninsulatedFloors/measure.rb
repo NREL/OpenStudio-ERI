@@ -7,9 +7,9 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::ModelUserScript
@@ -182,19 +182,18 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)	
 	
     # Gypsum
-    mat_gyp_ceiling = Material.GypsumCeiling
     selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
     if selected_gypsum.empty?
       gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
       gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
     end
-    gypsumConductivity = mat_gyp_ceiling.k
-    gypsumDensity = mat_gyp_ceiling.rho
-    gypsumSpecificHeat = mat_gyp_ceiling.Cp
-    gypsumThermalAbs = mat_gyp_ceiling.TAbs
-    gypsumSolarAbs = mat_gyp_ceiling.SAbs
-    gypsumVisibleAbs = mat_gyp_ceiling.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_ceiling.k)
+    gypsumConductivity = Material.GypsumCeiling.k
+    gypsumDensity = Material.GypsumCeiling.rho
+    gypsumSpecificHeat = Material.GypsumCeiling.Cp
+    gypsumThermalAbs = Material.GypsumCeiling.TAbs
+    gypsumSolarAbs = Material.GypsumCeiling.SAbs
+    gypsumVisibleAbs = Material.GypsumCeiling.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumCeiling.k)
 
     # Floor Mass
     floorMassThickness = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
@@ -236,14 +235,13 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     gypsum.setVisibleAbsorptance(gypsumVisibleAbs)
 
     # Plywood-3_4in
-    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
-    ply3_4.setThickness(OpenStudio::convert(mat_plywood3_4in.thick,"ft","m").get)
-    ply3_4.setConductivity(OpenStudio::convert(mat_plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
-    ply3_4.setDensity(OpenStudio::convert(mat_plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
-    ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
+    ply3_4.setThickness(OpenStudio::convert(Material.Plywood3_4in.thick,"ft","m").get)
+    ply3_4.setConductivity(OpenStudio::convert(Material.Plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply3_4.setDensity(OpenStudio::convert(Material.Plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
+    ply3_4.setSpecificHeat(OpenStudio::convert(Material.Plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FloorMass
     mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)

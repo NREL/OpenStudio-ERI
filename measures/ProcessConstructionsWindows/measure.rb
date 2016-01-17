@@ -7,31 +7,11 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
-
-  class InteriorShading
-    def initialize(intShadeCoolingMonths, intShadeCoolingMultiplier, intShadeHeatingMultiplier)
-      @intShadeCoolingMultiplier = intShadeCoolingMultiplier
-      @intShadeHeatingMultiplier = intShadeHeatingMultiplier
-      @intShadeCoolingMonths = intShadeCoolingMonths
-    end
-
-    def IntShadeCoolingMonths
-      return @intShadeCoolingMonths
-    end
-
-    def IntShadeCoolingMultiplier
-      return @intShadeCoolingMultiplier
-    end
-
-    def IntShadeHeatingMultiplier
-      return @intShadeHeatingMultiplier
-    end
-  end
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
@@ -99,30 +79,29 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     shgc = userdefined_shgc
 
     intShadeCoolingMonths = nil
-    intshadeheatingmult = runner.getDoubleArgumentValue("userdefinedintshadeheatingmult",user_arguments)
-    intshadecoolingmult = runner.getDoubleArgumentValue("userdefinedintshadecoolingmult",user_arguments)
+    intShadeHeatingMultiplier = runner.getDoubleArgumentValue("userdefinedintshadeheatingmult",user_arguments)
+    intShadeCoolingMultiplier = runner.getDoubleArgumentValue("userdefinedintshadecoolingmult",user_arguments)
 
-    # Create the material class instances
-    ish = InteriorShading.new(intShadeCoolingMonths, intshadecoolingmult, intshadeheatingmult)
-
-    # Create the sim object
-    sim = Sim.new(model, runner)
-
+    weather = WeatherProcess.new(model,runner)
+    if weather.error?
+        return false
+    end
+    
     # Process the windows
-    window_shade_cooling_season, window_shade_multiplier = sim._processInteriorShadingSchedule(ish)
+    window_shade_cooling_season, window_shade_multiplier = _processInteriorShadingSchedule(weather, intShadeCoolingMonths, intShadeCoolingMultiplier, intShadeHeatingMultiplier)
 
     # Shades
 
     # EnergyPlus doesn't like shades that absorb no heat, transmit no heat or reflect no heat.
-    if intshadecoolingmult == 1
-      intshadecoolingmult = 0.999
+    if intShadeCoolingMultiplier == 1
+      intShadeCoolingMultiplier = 0.999
     end
 
-    if intshadeheatingmult == 1
-      intshadeheatingmult = 0.999
+    if intShadeHeatingMultiplier == 1
+      intShadeHeatingMultiplier = 0.999
     end
 
-    total_shade_trans = intshadecoolingmult / intshadeheatingmult * 0.999
+    total_shade_trans = intShadeCoolingMultiplier / intShadeHeatingMultiplier * 0.999
     total_shade_abs = 0.00001
     total_shade_ref = 1 - total_shade_trans - total_shade_abs
 
@@ -262,7 +241,7 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
           sg = OpenStudio::Model::SimpleGlazing.new(model)
           sg.setName(glazingName)
           sg.setUFactor(ufactor)
-          sg.setSolarHeatGainCoefficient(shgc * intshadeheatingmult)
+          sg.setSolarHeatGainCoefficient(shgc * intShadeHeatingMultiplier)
           materials = []
           materials << sg
 		  c = OpenStudio::Model::Construction.new(materials)
@@ -285,6 +264,86 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
  
   end #end the run method
 
+  def _processInteriorShadingSchedule(weather, intShadeCoolingMonths, intShadeCoolingMultiplier, intShadeHeatingMultiplier)
+    # Assigns window shade multiplier and shading cooling season for each month.
+
+    #if not intShadeCoolingMonths.nil?
+    #  cooling_season = intShadeCoolingMonths.item # TODO: what is this?
+    #else
+    #  cooling_season = [0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0]
+    #end
+
+    monthly_temps = weather.data.MonthlyAvgDrybulbs
+    heat_design_db = weather.design.HeatingDrybulb
+
+    # create basis lists with zero for every month
+    cooling_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+    heating_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+
+    monthly_temps.each_with_index do |temp, i|
+      if temp < 66.0
+        heating_season_temp_basis[i] = 1.0
+      elsif temp >= 66.0
+        cooling_season_temp_basis[i] = 1.0
+      end
+
+      if (i == 0 or i == 11) and heat_design_db < 59.0
+        heating_season_temp_basis[i] = 1.0
+      elsif i == 6 or i == 7
+        cooling_season_temp_basis[i] = 1.0
+      end
+    end
+
+    cooling_season = Array.new(monthly_temps.length, 0.0)
+    heating_season = Array.new(monthly_temps.length, 0.0)
+
+    monthly_temps.each_with_index do |temp, i|
+      # Heating overlaps with cooling at beginning of summer
+      if i == 0 # January
+        prevmonth = 11 # December
+      else
+        prevmonth = i - 1
+      end
+
+      if (heating_season_temp_basis[i] == 1.0 or (cooling_season_temp_basis[prevmonth] == 0.0 and cooling_season_temp_basis[i] == 1.0))
+        heating_season[i] = 1.0
+      else
+        heating_season[i] = 0.0
+      end
+
+      if (cooling_season_temp_basis[i] == 1.0 or (heating_season_temp_basis[prevmonth] == 0.0 and heating_season_temp_basis[i] == 1.0))
+        cooling_season[i] = 1.0
+      else
+        cooling_season[i] = 0.0
+      end
+    end
+
+    # Find the first month of cooling and add one month
+    (1...12).to_a.each do |i|
+      if cooling_season[i] == 1.0
+        cooling_season[i - 1] = 1.0
+        break
+      end
+    end
+
+    
+    window_shade_multiplier = []
+    window_shade_cooling_season = cooling_season
+    (0...Constants.MonthNames.length).to_a.each do |i|
+      if cooling_season[i] == 1.0
+        window_shade_multiplier << intShadeCoolingMultiplier
+      else
+        window_shade_multiplier << intShadeHeatingMultiplier
+      end
+    end
+
+    # Interior Shading Schedule
+
+    return window_shade_cooling_season, window_shade_multiplier
+
+  end
+
+  
 end #end the measure
 
 #this allows the measure to be use by the application

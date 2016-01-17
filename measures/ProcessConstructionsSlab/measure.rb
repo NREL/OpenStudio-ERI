@@ -7,8 +7,7 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
@@ -172,8 +171,8 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	end
 	
 	# Carpet
-	userdefined_carpetr = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-	userdefined_carpetfrac = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
+	carpetPadRValue = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
+	carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
 	# Insulation
 	if selected_slabins == "Perimeter"
@@ -191,10 +190,6 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 		slabGapRvalue = userdefined_slabgapr
 	end
 	
-	# Carpet
-	carpetPadRValue = userdefined_carpetr
-	carpetFloorFraction = userdefined_carpetfrac
-
 	# Create the material class instances
 	slabThickness = 4.0
 	slabConductivity = 9.1

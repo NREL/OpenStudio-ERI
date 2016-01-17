@@ -7,8 +7,9 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
@@ -88,18 +89,11 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Radiant Barrier
-    userdefined_hasradiantbarrier = runner.getBoolArgumentValue("userdefinedhasradiantbarrier",user_arguments)
-
-    # Exterior Finish
-    userdefined_roofmatthermalabs = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
-    userdefined_roofmatabs = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
-
-    # Radiant Barrier
-    hasRadiantBarrier = userdefined_hasradiantbarrier
+    hasRadiantBarrier = runner.getBoolArgumentValue("userdefinedhasradiantbarrier",user_arguments)
 
     # Roofing Material
-    roofMatEmissivity = userdefined_roofmatthermalabs
-    roofMatAbsorptivity = userdefined_roofmatabs
+    roofMatEmissivity = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
+    roofMatAbsorptivity = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
     weather = WeatherProcess.new(model,runner)
     if weather.error?
@@ -126,27 +120,25 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     roofmat.setVisibleAbsorptance(mat_roof_mat.VAbs)
 
     # Plywood-3_4in
-    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
-    ply3_4.setThickness(OpenStudio::convert(mat_plywood3_4in.thick,"ft","m").get)
-    ply3_4.setConductivity(OpenStudio::convert(mat_plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
-    ply3_4.setDensity(OpenStudio::convert(mat_plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
-    ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
+    ply3_4.setThickness(OpenStudio::convert(Material.Plywood3_4in.thick,"ft","m").get)
+    ply3_4.setConductivity(OpenStudio::convert(Material.Plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply3_4.setDensity(OpenStudio::convert(Material.Plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
+    ply3_4.setSpecificHeat(OpenStudio::convert(Material.Plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # RadiantBarrier
-    mat_radiant_barrier = Material.RadiantBarrier
     radbar = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     radbar.setName("RadiantBarrier")
     radbar.setRoughness("Rough")
-    radbar.setThickness(OpenStudio::convert(mat_radiant_barrier.thick,"ft","m").get)
-    radbar.setConductivity(OpenStudio::convert(mat_radiant_barrier.k,"Btu/hr*ft*R","W/m*K").get)
-    radbar.setDensity(OpenStudio::convert(mat_radiant_barrier.rho,"lb/ft^3","kg/m^3").get)
-    radbar.setSpecificHeat(OpenStudio::convert(mat_radiant_barrier.Cp,"Btu/lb*R","J/kg*K").get)
-    radbar.setThermalAbsorptance(mat_radiant_barrier.TAbs)
-    radbar.setSolarAbsorptance(mat_radiant_barrier.SAbs)
-    radbar.setVisibleAbsorptance(mat_radiant_barrier.VAbs)
+    radbar.setThickness(OpenStudio::convert(Material.RadiantBarrier.thick,"ft","m").get)
+    radbar.setConductivity(OpenStudio::convert(Material.RadiantBarrier.k,"Btu/hr*ft*R","W/m*K").get)
+    radbar.setDensity(OpenStudio::convert(Material.RadiantBarrier.rho,"lb/ft^3","kg/m^3").get)
+    radbar.setSpecificHeat(OpenStudio::convert(Material.RadiantBarrier.Cp,"Btu/lb*R","J/kg*K").get)
+    radbar.setThermalAbsorptance(Material.RadiantBarrier.TAbs)
+    radbar.setSolarAbsorptance(Material.RadiantBarrier.SAbs)
+    radbar.setVisibleAbsorptance(Material.RadiantBarrier.VAbs)
 
     # GrgRoofStudandAir
     gsa = OpenStudio::Model::StandardOpaqueMaterial.new(model)

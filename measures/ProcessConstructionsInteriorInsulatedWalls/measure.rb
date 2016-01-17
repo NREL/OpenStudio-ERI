@@ -7,9 +7,9 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUserScript
@@ -194,44 +194,23 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     end 
 
     # Partition Wall Mass
-    userdefined_partitionwallmassth = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
-    userdefined_partitionwallmasscond = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
-    userdefined_partitionwallmassdens = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
-    userdefined_partitionwallmasssh = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
+    partitionWallMassThickness = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
+    partitionWallMassConductivity = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)
+    partitionWallMassDensity = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
+    partitionWallMassSpecHeat = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
+    
     # Cavity
-    selected_studsize = runner.getStringArgumentValue("selectedstudsize",user_arguments)
-    selected_spacing = runner.getStringArgumentValue("selectedspacing",user_arguments)
-    userdefined_instcavr = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
-    selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)
-    selected_insfills = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
+    intWallCavityDepth = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}[runner.getStringArgumentValue("selectedstudsize",user_arguments)]
+    intWallFramingFactor = {"16 in o.c."=>0.25, "24 in o.c."=>0.22}[runner.getStringArgumentValue("selectedspacing",user_arguments)]
+    intWallCavityInsRvalueInstalled = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
+    intWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)]
+    intWallCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
+    
     # Rigid
-    userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
-    userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
-
-    # Constants
-    mat_rigid = BaseMaterial.InsulationRigid
-
-    # Partition Wall Mass
-    partitionWallMassThickness = userdefined_partitionwallmassth
-    partitionWallMassConductivity = userdefined_partitionwallmasscond
-    partitionWallMassDensity = userdefined_partitionwallmassdens
-    partitionWallMassSpecHeat = userdefined_partitionwallmasssh
-
-    # Rigid
-    intWallContInsRvalue = userdefined_rigidinsr
-    intWallContInsThickness = userdefined_rigidinsthickness
-    rigidInsDensity = mat_rigid.rho
-    rigidInsSpecificHeat = mat_rigid.Cp
-
-    # Cavity
-    intWallCavityInsFillsCavity = selected_insfills
-    intWallCavityInsRvalueInstalled = userdefined_instcavr
-    intWallInstallGrade_dict = {"I"=>1, "II"=>2, "III"=>3}
-    intWallInstallGrade = intWallInstallGrade_dict[selected_installgrade]
-    intWallCavityDepth_dict = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}
-    intWallCavityDepth = intWallCavityDepth_dict[selected_studsize]
-    intWallFramingFactor_dict = {"16 in o.c."=>0.25, "24 in o.c."=>0.22}
-    intWallFramingFactor = intWallFramingFactor_dict[selected_spacing]
+    intWallContInsThickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
+    intWallContInsRvalue = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
+    rigidInsDensity = BaseMaterial.InsulationRigid.rho
+    rigidInsSpecificHeat = BaseMaterial.InsulationRigid.Cp
 
     weather = WeatherProcess.new(model,runner,header_only=true)
     if weather.error?
@@ -273,8 +252,8 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       iwri.setName("IntWallRigidIns")
       iwri.setThickness(OpenStudio::convert(intWallContInsThickness,"in","m").get)
       iwri.setConductivity(OpenStudio::convert(OpenStudio::convert(intWallContInsThickness,"in","ft").get / intWallContInsRvalue,"Btu/hr*ft*R","W/m*K").get)
-      iwri.setDensity(OpenStudio::convert(mat_rigid.rho,"lb/ft^3","kg/m^3").get) # lbm/ft^3
-      iwri.setSpecificHeat(OpenStudio::convert(mat_rigid.Cp,"Btu/lb*R","J/kg*K").get) # Btu/lbm*F
+      iwri.setDensity(OpenStudio::convert(BaseMaterial.InsulationRigid.rho,"lb/ft^3","kg/m^3").get) # lbm/ft^3
+      iwri.setSpecificHeat(OpenStudio::convert(BaseMaterial.InsulationRigid.Cp,"Btu/lb*R","J/kg*K").get) # Btu/lbm*F
 
       # UnfinInsFinWall
       materials = []
@@ -350,7 +329,6 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
       intWallCavityInsRvalueInstalled = intWallCavityInsRvalueInstalled
 
-      mat_wood = BaseMaterial.Wood
       if gypsumConductivity.nil?
         gypsumConductivity = BaseMaterial.Gypsum.k
       end
@@ -360,7 +338,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
         intWallCavityInsRvalueInstalled += Gas.AirGapRvalue
       end
 
-      gapFactor = get_wall_gap_factor(intWallInstallGrade, intWallFramingFactor)
+      gapFactor = Construction.GetWallGapFactor(intWallInstallGrade, intWallFramingFactor)
 
       path_fracs = [intWallFramingFactor, 1 - intWallFramingFactor - gapFactor, gapFactor]
 
@@ -375,7 +353,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       # Stud / Cavity Ins / Gap
       ins_k = OpenStudio::convert(intWallCavityDepth,"in","ft").get / intWallCavityInsRvalueInstalled
       gap_k = OpenStudio::convert(intWallCavityDepth,"in","ft").get / Gas.AirGapRvalue
-      interzonal_wall.addlayer(thickness=OpenStudio::convert(intWallCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k, ins_k, gap_k])
+      interzonal_wall.addlayer(thickness=OpenStudio::convert(intWallCavityDepth,"in","ft").get, conductivity_list=[BaseMaterial.Wood.k, ins_k, gap_k])
 
       # Rigid
       if intWallContInsRvalue > 0

@@ -1,8 +1,9 @@
 # see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 # start the measure
 class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::ModelUserScript
@@ -201,22 +202,16 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
         return false
     end
         
-    # Constants
-    mat_wood = BaseMaterial.Wood
-    mat_rigid = BaseMaterial.InsulationRigid
-    mat_gyp_extwall = Material.GypsumExtWall
-    mat_densepack_generic = BaseMaterial.InsulationGenericDensepack
-
     # Gypsum
     gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
     gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-    gypsumConductivity = mat_gyp_extwall.k
-    gypsumDensity = mat_gyp_extwall.rho
-    gypsumSpecificHeat = mat_gyp_extwall.Cp
-    gypsumThermalAbs = mat_gyp_extwall.TAbs
-    gypsumSolarAbs = mat_gyp_extwall.SAbs
-    gypsumVisibleAbs = mat_gyp_extwall.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_extwall.k)
+    gypsumConductivity = Material.GypsumExtWall.k
+    gypsumDensity = Material.GypsumExtWall.rho
+    gypsumSpecificHeat = Material.GypsumExtWall.Cp
+    gypsumThermalAbs = Material.GypsumExtWall.TAbs
+    gypsumSolarAbs = Material.GypsumExtWall.SAbs
+    gypsumVisibleAbs = Material.GypsumExtWall.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumExtWall.k)
 
     # CMU / Furring
     cmuThickness = runner.getDoubleArgumentValue("userdefinedcmuthickness",user_arguments)
@@ -230,14 +225,14 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     # Rigid
     rigidInsThickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
     rigidInsRvalue = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
-    hasOSB = runner.getBoolArgumentValue("userdefinedhasosb",user_arguments)
     rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
-    rigidInsDensity = mat_rigid.rho
-    rigidInsSpecificHeat = mat_rigid.Cp 
+    rigidInsDensity = BaseMaterial.InsulationRigid.rho
+    rigidInsSpecificHeat = BaseMaterial.InsulationRigid.Cp 
+    hasOSB = runner.getBoolArgumentValue("userdefinedhasosb",user_arguments)
     osbThickness = 0.5
-    osbConductivity = mat_wood.k
-    osbDensity = mat_wood.rho
-    osbSpecificHeat = mat_wood.Cp
+    osbConductivity = Material.Plywood1_2in.k
+    osbDensity = Material.Plywood1_2in.rho
+    osbSpecificHeat = Material.Plywood1_2in.Cp
     if hasOSB
         osbRvalue = Material.Plywood1_2in.Rvalue
     else
@@ -253,14 +248,14 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     finishSolarAbs = runner.getDoubleArgumentValue("userdefinedextfinabs",user_arguments)    
     finishVisibleAbs = finishSolarAbs
     finishConductivity = finishThickness / finishRvalue
-    
+
     weather = WeatherProcess.new(model,runner,header_only=true)
     if weather.error?
         return false
     end
     
-    # Process the wood stud walls
-    cmu_cond, cmu_dens, cmu_sh, fu_thick, fu_cond, fu_dens, fu_sh, rigid_thick, rigid_cond, rigid_dens, rigid_sh = _processConstructionsExteriorInsulatedWallsCMU(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, weather.header.LocalPressure)
+    # Process the CMU walls
+    cmu_cond, cmu_dens, cmu_sh, fu_thick, fu_cond, fu_dens, fu_sh = _processConstructionsExteriorInsulatedWallsCMU(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, weather.header.LocalPressure)
         
     # Create the material layers
     
@@ -278,13 +273,13 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 
     # Rigid
     if rigidInsRvalue > 0
-      rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-      rigid.setName("WallRigidIns")
-      rigid.setRoughness("Rough")
-      rigid.setThickness(OpenStudio::convert(rigid_thick,"ft","m").get)
-      rigid.setConductivity(OpenStudio::convert(rigid_cond,"Btu/hr*ft*R","W/m*K").get)
-      rigid.setDensity(OpenStudio::convert(rigid_dens,"lb/ft^3","kg/m^3").get)
-      rigid.setSpecificHeat(OpenStudio::convert(rigid_sh,"Btu/lb*R","J/kg*K").get)
+        rigid = OpenStudio::Model::StandardOpaqueMaterial.new(model)
+        rigid.setName("WallRigidIns")
+        rigid.setRoughness("Rough")
+        rigid.setThickness(OpenStudio::convert(rigidInsThickness,"in","ft").get)
+        rigid.setConductivity(OpenStudio::convert(rigidInsConductivity,"Btu/hr*ft*R","W/m*K").get)
+        rigid.setDensity(OpenStudio::convert(rigidInsDensity,"lb/ft^3","kg/m^3").get)
+        rigid.setSpecificHeat(OpenStudio::convert(rigidInsSpecificHeat,"Btu/lb*R","J/kg*K").get)
     end
     
     # OSB
@@ -388,19 +383,13 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
         
     end
     
-    rigid_thick, rigid_cond, rigid_dens, rigid_sh = _addInsulatedSheathingMaterial(rigidInsThickness, rigidInsRvalue)
-    
-    return cmu_cond, cmu_dens, cmu_sh, fu_thick, fu_cond, fu_dens, fu_sh, rigid_thick, rigid_cond, rigid_dens, rigid_sh
+    return cmu_cond, cmu_dens, cmu_sh, fu_thick, fu_cond, fu_dens, fu_sh
   
   end
 
   def get_cmu_wall_r_assembly(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness, rigidInsRvalue, hasOSB)
     # Returns assembly R-value for CMU wall, including air films.
     # Also returns furring layer equivalent R-value.
-    
-    mat_wood = BaseMaterial.Wood
-    mat_plywood1_2in = Material.Plywood1_2in
-    mat_2x4 = Material.Stud2x4
     
     # Set paths
     if cmuFurringCavityDepth != 0
@@ -409,10 +398,10 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
             cmuFurringInsRvalue = Gas.AirGapRvalue
         end
         
-        stud_frac = mat_2x4.width_in / cmuFurringStudSpacing
+        stud_frac = Material.Stud2x4.width_in / cmuFurringStudSpacing
         cavity_frac = 1.0 - (stud_frac + cmuFramingFactor)
         path_fracs = [cmuFramingFactor, stud_frac, cavity_frac]
-        furring_layer_equiv_Rvalue = 1.0 / (cavity_frac / cmuFurringInsRvalue + (1.0 - cavity_frac) / (OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get / mat_wood.k)) # hr*ft^2*F/Btu
+        furring_layer_equiv_Rvalue = 1.0 / (cavity_frac / cmuFurringInsRvalue + (1.0 - cavity_frac) / (OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get / BaseMaterial.Wood.k)) # hr*ft^2*F/Btu
     else # No furring:
         path_fracs = [cmuFramingFactor, 1.0 - cmuFramingFactor]
         furring_layer_equiv_Rvalue = 0.0
@@ -431,16 +420,16 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     
     if cmuFurringCavityDepth != 0
         cavity_ins_k = OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get / cmuFurringInsRvalue
-        cmu_wall.addlayer(thickness=OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k, mat_wood.k, cavity_ins_k])
+        cmu_wall.addlayer(thickness=OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get, conductivity_list=[BaseMaterial.Wood.k, BaseMaterial.Wood.k, cavity_ins_k])
         # CMU layer
-        cmu_wall.addlayer(thickness=OpenStudio.convert(cmuThickness,"in","ft").get, conductivity_list=[mat_wood.k, cmu_layer_conductivity, cmu_layer_conductivity])
+        cmu_wall.addlayer(thickness=OpenStudio.convert(cmuThickness,"in","ft").get, conductivity_list=[BaseMaterial.Wood.k, cmu_layer_conductivity, cmu_layer_conductivity])
     else
-        cmu_wall.addlayer(thickness=OpenStudio.convert(cmuThickness,"in","ft").get, conductivity_list=[mat_wood.k, cmu_layer_conductivity])     
+        cmu_wall.addlayer(thickness=OpenStudio.convert(cmuThickness,"in","ft").get, conductivity_list=[BaseMaterial.Wood.k, cmu_layer_conductivity])     
     end
     
     # OSB sheathing
     if hasOSB
-        cmu_wall.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood1_2in, material_list=nil)
+        cmu_wall.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood1_2in, material_list=nil)
     end
     
     if rigidInsRvalue > 0

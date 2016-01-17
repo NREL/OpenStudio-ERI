@@ -7,9 +7,9 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
@@ -163,8 +163,8 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Cavity
-    selected_studsize = runner.getStringArgumentValue("selectedstudsize",user_arguments)
-    selected_insfills = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
+    frRoofCavityDepth = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}[runner.getStringArgumentValue("selectedstudsize",user_arguments)]
+    frRoofCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
 
     # Roof Framing Factor
     frRoofFramingFactor = runner.getDoubleArgumentValue("userdefinedfrroofff",user_arguments)
@@ -178,25 +178,19 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     frRoofContInsRvalue = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
 
     # Gypsum
-    mat_gyp_ceiling = Material.GypsumCeiling
     gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
     gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-    gypsumConductivity = mat_gyp_ceiling.k
-    gypsumDensity = mat_gyp_ceiling.rho
-    gypsumSpecificHeat = mat_gyp_ceiling.Cp
-    gypsumThermalAbs = mat_gyp_ceiling.TAbs
-    gypsumSolarAbs = mat_gyp_ceiling.SAbs
-    gypsumVisibleAbs = mat_gyp_ceiling.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_ceiling.k)
+    gypsumConductivity = Material.GypsumCeiling.k
+    gypsumDensity = Material.GypsumCeiling.rho
+    gypsumSpecificHeat = Material.GypsumCeiling.Cp
+    gypsumThermalAbs = Material.GypsumCeiling.TAbs
+    gypsumSolarAbs = Material.GypsumCeiling.SAbs
+    gypsumVisibleAbs = Material.GypsumCeiling.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumCeiling.k)
 
     # Roofing Material
     roofMatEmissivity = runner.getDoubleArgumentValue("userdefinedroofmatemm",user_arguments)
     roofMatAbsorptivity = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
-
-    # Cavity
-    frRoofCavityDepth_dict = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}
-    frRoofCavityDepth = frRoofCavityDepth_dict[selected_studsize]
-    frRoofCavityInsFillsCavity = selected_insfills
 
     weather = WeatherProcess.new(model,runner)
     if weather.error?
@@ -223,14 +217,13 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     roofmat.setVisibleAbsorptance(mat_roof_mat.VAbs)
 
     # Plywood-3_4in
-    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
-    ply3_4.setThickness(OpenStudio::convert(mat_plywood3_4in.thick,"ft","m").get)
-    ply3_4.setConductivity(OpenStudio::convert(mat_plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
-    ply3_4.setDensity(OpenStudio::convert(mat_plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
-    ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
+    ply3_4.setThickness(OpenStudio::convert(Material.Plywood3_4in.thick,"ft","m").get)
+    ply3_4.setConductivity(OpenStudio::convert(Material.Plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply3_4.setDensity(OpenStudio::convert(Material.Plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
+    ply3_4.setSpecificHeat(OpenStudio::convert(Material.Plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # RigidRoofIns
     if frRoofContInsThickness > 0
@@ -320,11 +313,6 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
   def get_finished_roof_r_assembly(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, film_roof)
       # Returns assembly R-value for finished roof, including air films.
 
-      frRoofCavityInsRvalueInstalled = frRoofCavityInsRvalueInstalled
-
-      mat_wood = BaseMaterial.Wood
-      mat_plywood3_4in = Material.Plywood3_4in
-
       # Add air film coefficients when insulation thickness < cavity depth
       if not frRoofCavityInsFillsCavity
         frRoofCavityInsRvalueInstalled += Gas.AirGapRvalue
@@ -343,16 +331,16 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
       end
 
       # Stud/cavity layer
-      roof_const.addlayer(thickness=OpenStudio::convert(frRoofCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k, OpenStudio::convert(frRoofCavityDepth,"in","ft").get / frRoofCavityInsRvalueInstalled])
+      roof_const.addlayer(thickness=OpenStudio::convert(frRoofCavityDepth,"in","ft").get, conductivity_list=[BaseMaterial.Wood.k, OpenStudio::convert(frRoofCavityDepth,"in","ft").get / frRoofCavityInsRvalueInstalled])
 
       # Sheathing
-      roof_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
+      roof_const.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_4in, material_list=nil)
 
       # Rigid
       if frRoofContInsThickness > 0
         roof_const.addlayer(thickness=OpenStudio::convert(frRoofContInsThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(frRoofContInsThickness,"in","ft").get / frRoofContInsRvalue])
         # More sheathing
-        roof_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
+        roof_const.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_4in, material_list=nil)
       end
 
       # Exterior Film

@@ -382,7 +382,10 @@ class Material
 
     def self.StudAndAir(localPressure)
         mat_2x4 = Material.Stud2x4
-        mat_stud_and_air_wall = BaseMaterial.new(rho=(mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.AirInsideDensity(localPressure), cp=((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.Cp * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / ((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.AirInsideDensity(localPressure)), k=(mat_2x4.thick / get_stud_and_air_Rvalue))
+        u_stud_path = Constants.DefaultFramingFactorInterior / Material.Stud2x4.Rvalue
+        u_air_path = (1 - Constants.DefaultFramingFactorInterior) / Gas.AirGapRvalue
+        stud_and_air_Rvalue = 1 / (u_stud_path + u_air_path)
+        mat_stud_and_air_wall = BaseMaterial.new(rho=(mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.AirInsideDensity(localPressure), cp=((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.Cp * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / ((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.AirInsideDensity(localPressure)), k=(mat_2x4.thick / stud_and_air_Rvalue))
         return Material.new(name=Constants.MaterialStudandAirWall, type=Constants.MaterialTypeProperties, thick=mat_2x4.thick, thick_in=nil, width=nil, width_in=nil, mat_base=mat_stud_and_air_wall)
     end
 
@@ -479,6 +482,148 @@ class Construction
         
     end 
 
+    def self.GetWallGapFactor(installGrade, framingFactor)
+
+        if installGrade == 1
+            return 0
+        elsif installGrade == 2
+            return 0.02 * (1 - framingFactor)
+        elsif installGrade == 3
+            return 0.05 * (1 - framingFactor)
+        else
+            return 0
+        end
+
+    end
+
+    def self.GetWoodStudWallAssemblyR(wallCavityInsFillsCavity, wallCavityInsRvalueInstalled, 
+                                      wallInstallGrade, wallCavityDepth, wallFramingFactor, 
+                                      prefix, gypsumThickness, gypsumNumLayers, finishThickness, 
+                                      finishConductivty, rigidInsThickness, rigidInsRvalue, hasOSB)
+
+        if not wallCavityInsRvalueInstalled
+            wallCavityInsRvalueInstalled = 0
+        end
+        if not wallFramingFactor
+            wallFramingFactor = 0
+        end
+
+        # For foundation walls, only add OSB if there is wall insulation.
+        # This is consistent with the NREMDB costs.
+        if prefix != "WS" and wallCavityInsRvalueInstalled == 0 and rigidInsRvalue == 0
+            hasOSB = false
+        end
+
+        mat_wood = BaseMaterial.Wood
+
+        # Add air gap when insulation thickness < cavity depth
+        if not wallCavityInsFillsCavity
+            wallCavityInsRvalueInstalled += Gas.AirGapRvalue
+        end
+
+        gapFactor = Construction.GetWallGapFactor(wallInstallGrade, wallFramingFactor)
+
+        path_fracs = [wallFramingFactor, 1 - wallFramingFactor - gapFactor, gapFactor]
+        wood_stud_wall = Construction.new(path_fracs)
+
+        # Interior Film
+        wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.VerticalR])
+
+        # Interior Finish (GWB) - Currently only include if cavity depth > 0
+        if wallCavityDepth > 0
+            wood_stud_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[BaseMaterial.Gypsum.k])
+        end
+
+        # Only if cavity depth > 0, indicating a framed wall
+        if wallCavityDepth > 0
+            # Stud / Cavity Ins / Gap
+            ins_k = OpenStudio::convert(wallCavityDepth,"in","ft").get / wallCavityInsRvalueInstalled
+            gap_k = OpenStudio::convert(wallCavityDepth,"in","ft").get / Gas.AirGapRvalue
+            wood_stud_wall.addlayer(thickness=OpenStudio::convert(wallCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k,ins_k,gap_k])       
+        end
+
+        # OSB sheathing
+        if hasOSB
+            wood_stud_wall.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood1_2in, material_list=nil)
+        end
+
+        # Rigid
+        if rigidInsRvalue > 0
+            rigid_k = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+            wood_stud_wall.addlayer(thickness=OpenStudio::convert(rigidInsThickness,"in","ft").get, conductivity_list=[rigid_k])
+        end
+
+        # Exterior Finish
+        if finishThickness > 0
+            wood_stud_wall.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(finishConductivty,"in","ft").get])
+            
+            # Exterior Film - Assume below-grade wall if FinishThickness = 0
+            wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.OutsideR])
+        end
+
+        # Get overall wall R-value using parallel paths:
+        return wood_stud_wall.Rvalue_parallel
+
+    end
+
+    def self.GetFloorNonStudLayerR(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, carpetFloorFraction, carpetPadRValue)
+        return (2.0 * AirFilms.FloorReducedR + Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat).Rvalue + (carpetPadRValue * carpetFloorFraction) + Material.Plywood3_4in.Rvalue)
+    end
+    
+    def self.GetRimJoistAssmeblyR(rimJoistInsRvalue, ceilingJoistHeight, wallSheathingContInsThickness, wallSheathingContInsRvalue, drywallThickness, drywallNumLayers, rimjoist_framingfactor, finishThickness, finishConductivity)
+        # Returns assembly R-value for crawlspace or unfinished/finished basement rimjoist, including air films.
+        
+        framingFactor = rimjoist_framingfactor
+        
+        mat_wood = BaseMaterial.Wood
+        mat_2x = Material.Stud2x(ceilingJoistHeight)
+        
+        path_fracs = [framingFactor, 1 - framingFactor]
+        
+        prefix_rimjoist = Construction.new(path_fracs)
+        
+        # Interior Film 
+        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
+
+        # Stud/cavity layer
+        if rimJoistInsRvalue == 0
+            cavity_k = (mat_2x.thick / air.R_air_gap)
+        else
+            cavity_k = (mat_2x.thick / rimJoistInsRvalue)
+        end
+            
+        prefix_rimjoist.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k])
+        
+        # Rim Joist wood layer
+        prefix_rimjoist.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_2in, material_list=nil)
+        
+        # Wall Sheathing
+        if wallSheathingContInsRvalue > 0
+            wallsh_k = (wallSheathingContInsThickness / wallSheathingContInsRvalue)
+            prefix_rimjoist.addlayer(thickness=OpenStudio::convert(wallSheathingContInsThickness,"in","ft").get, conductivity_list=[wallsh_k])
+        end
+        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[finishConductivity])
+        
+        # Exterior Film
+        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / AirFilms.FloorReducedR])
+        
+        return prefix_rimjoist.Rvalue_parallel
+
+    end 
+    
+    def self.GetRimJoistNonStudLayerR
+        return (AirFilms.VerticalR + AirFilms.OutsideR + Material.Plywood3_2in.Rvalue)
+    end
+    
+    def self.GetBasementConductionFactor(bsmtWallInsulationHeight, bsmtWallInsulRvalue)
+        if bsmtWallInsulationHeight == 4
+            return (1.689 / (0.430 + bsmtWallInsulRvalue) ** 0.164)
+        else
+            return (2.494 / (1.673 + bsmtWallInsulRvalue) ** 0.488)
+        end
+    end
+
+    
 end
 
 class BaseMaterial

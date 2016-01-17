@@ -7,9 +7,9 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
@@ -226,45 +226,51 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Ceiling Joist Thickness
-    selected_uaceiljoistthickness = runner.getStringArgumentValue("selecteduaceiljoistthickness",user_arguments)
+    uACeilingJoistThickness = {"3.5"=>3.5}[runner.getStringArgumentValue("selecteduaceiljoistthickness",user_arguments)]
 
     # Ceiling Framing Factor
-    userdefined_uaceilff = runner.getDoubleArgumentValue("userdefineduaceilff",user_arguments)
-    if not ( userdefined_uaceilff > 0.0 and userdefined_uaceilff < 1.0 )
+    uACeilingFramingFactor = runner.getDoubleArgumentValue("userdefineduaceilff",user_arguments)
+    if not ( uACeilingFramingFactor > 0.0 and uACeilingFramingFactor < 1.0 )
       runner.registerError("Invalid unfinished attic ceiling framing factor")
       return false
     end
 
     # Roof Framing Thickness
-    selected_uaroofframethickness = runner.getStringArgumentValue("selecteduaroofframethickness",user_arguments)
+    uARoofFramingThickness = {"7.25"=>7.25}[runner.getStringArgumentValue("selecteduaroofframethickness",user_arguments)]
 
     # Roof Framing Factor
-    userdefined_uaroofff = runner.getDoubleArgumentValue("userdefineduaroofff",user_arguments)
-    if not ( userdefined_uaroofff > 0.0 and userdefined_uaroofff < 1.0 )
+    uARoofFramingFactor = runner.getDoubleArgumentValue("userdefineduaroofff",user_arguments)
+    if not ( uARoofFramingFactor > 0.0 and uARoofFramingFactor < 1.0 )
       runner.registerError("Invalid unfinished attic roof framing factor")
       return false
     end
 
     # Rigid
     if ["Roof"].include? selected_uains.to_s
-      userdefined_rigidinsthickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
-      userdefined_rigidinsr = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
+      rigidInsThickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
+      rigidInsRvalue = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
+      rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
+      rigidInsDensity = BaseMaterial.InsulationRigid.rho
+      rigidInsSpecificHeat = BaseMaterial.InsulationRigid.Cp
     end
 
     # Radiant Barrier
-    userdefined_hasradiantbarrier = runner.getBoolArgumentValue("userdefinedhasradiantbarrier",user_arguments)
+    hasRadiantBarrier = runner.getBoolArgumentValue("userdefinedhasradiantbarrier",user_arguments)
 
     # Gypsum
-    userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
-    userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
+    gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
+    gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
+    gypsumConductivity = Material.GypsumCeiling.k
+    gypsumDensity = Material.GypsumCeiling.rho
+    gypsumSpecificHeat = Material.GypsumCeiling.Cp
+    gypsumThermalAbs = Material.GypsumCeiling.TAbs
+    gypsumSolarAbs = Material.GypsumCeiling.SAbs
+    gypsumVisibleAbs = Material.GypsumCeiling.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumCeiling.k)
 
-    # Exterior Finish
-    userdefined_roofmatthermalabs = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
-    userdefined_roofmatabs = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
-
-    # Constants
-    mat_gyp_ceiling = Material.GypsumCeiling
-    mat_rigid = BaseMaterial.InsulationRigid
+    # Roofing Material
+    roofMatEmissivity = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
+    roofMatAbsorptivity = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
     # Insulation
     if selected_uains.to_s == "Ceiling"
@@ -274,47 +280,6 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       uARoofInsThickness = userdefined_ceilroofinsthickness
       uARoofInsRvalueNominal = userdefined_uaceilroofr
     end
-
-    # Ceiling Joist Thickness
-    uACeilingJoistThickness_dict = {"3.5"=>3.5}
-    uACeilingJoistThickness = uACeilingJoistThickness_dict[selected_uaceiljoistthickness]
-
-    # Ceiling Framing Factor
-    uACeilingFramingFactor = userdefined_uaceilff
-
-    # Roof Framing Thickness
-    uARoofFramingThickness_dict = {"7.25"=>7.25}
-    uARoofFramingThickness = uARoofFramingThickness_dict[selected_uaroofframethickness]
-
-    # Roof Framing Factor
-    uARoofFramingFactor = userdefined_uaroofff
-
-    # Rigid
-    if selected_uains.to_s == "Roof"
-      rigidInsRvalue = userdefined_rigidinsr
-      rigidInsThickness = userdefined_rigidinsthickness
-      rigidInsConductivity = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
-      rigidInsDensity = mat_rigid.rho
-      rigidInsSpecificHeat = mat_rigid.Cp
-    end
-
-    # Radiant Barrier
-    hasRadiantBarrier = userdefined_hasradiantbarrier
-
-    # Gypsum
-    gypsumThickness = userdefined_gypthickness
-    gypsumNumLayers = userdefined_gyplayers
-    gypsumConductivity = mat_gyp_ceiling.k
-    gypsumDensity = mat_gyp_ceiling.rho
-    gypsumSpecificHeat = mat_gyp_ceiling.Cp
-    gypsumThermalAbs = mat_gyp_ceiling.TAbs
-    gypsumSolarAbs = mat_gyp_ceiling.SAbs
-    gypsumVisibleAbs = mat_gyp_ceiling.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / mat_gyp_ceiling.k)
-
-    # Roofing Material
-    roofMatEmissivity = userdefined_roofmatthermalabs
-    roofMatAbsorptivity = userdefined_roofmatabs
 
     weather = WeatherProcess.new(model,runner)
     if weather.error?
@@ -408,27 +373,25 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     roofmat.setVisibleAbsorptance(mat_roof_mat.VAbs)
 
     # Plywood-3_4in
-    mat_plywood3_4in = Material.Plywood3_4in
     ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     ply3_4.setName("Plywood-3_4in")
     ply3_4.setRoughness("Rough")
-    ply3_4.setThickness(OpenStudio::convert(mat_plywood3_4in.thick,"ft","m").get)
-    ply3_4.setConductivity(OpenStudio::convert(mat_plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
-    ply3_4.setDensity(OpenStudio::convert(mat_plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
-    ply3_4.setSpecificHeat(OpenStudio::convert(mat_plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
+    ply3_4.setThickness(OpenStudio::convert(Material.Plywood3_4in.thick,"ft","m").get)
+    ply3_4.setConductivity(OpenStudio::convert(Material.Plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
+    ply3_4.setDensity(OpenStudio::convert(Material.Plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
+    ply3_4.setSpecificHeat(OpenStudio::convert(Material.Plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
 
     # RadiantBarrier
-    mat_radiant_barrier = Material.RadiantBarrier
     radbar = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     radbar.setName("RadiantBarrier")
     radbar.setRoughness("Rough")
-    radbar.setThickness(OpenStudio::convert(mat_radiant_barrier.thick,"ft","m").get)
-    radbar.setConductivity(OpenStudio::convert(mat_radiant_barrier.k,"Btu/hr*ft*R","W/m*K").get)
-    radbar.setDensity(OpenStudio::convert(mat_radiant_barrier.rho,"lb/ft^3","kg/m^3").get)
-    radbar.setSpecificHeat(OpenStudio::convert(mat_radiant_barrier.Cp,"Btu/lb*R","J/kg*K").get)
-    radbar.setThermalAbsorptance(mat_radiant_barrier.TAbs)
-    radbar.setSolarAbsorptance(mat_radiant_barrier.SAbs)
-    radbar.setVisibleAbsorptance(mat_radiant_barrier.VAbs)
+    radbar.setThickness(OpenStudio::convert(Material.RadiantBarrier.thick,"ft","m").get)
+    radbar.setConductivity(OpenStudio::convert(Material.RadiantBarrier.k,"Btu/hr*ft*R","W/m*K").get)
+    radbar.setDensity(OpenStudio::convert(Material.RadiantBarrier.rho,"lb/ft^3","kg/m^3").get)
+    radbar.setSpecificHeat(OpenStudio::convert(Material.RadiantBarrier.Cp,"Btu/lb*R","J/kg*K").get)
+    radbar.setThermalAbsorptance(Material.RadiantBarrier.TAbs)
+    radbar.setSolarAbsorptance(Material.RadiantBarrier.SAbs)
+    radbar.setVisibleAbsorptance(Material.RadiantBarrier.VAbs)
 
     # UARigidRoofIns
     if rigidInsThickness > 0
@@ -595,8 +558,6 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
   def get_unfinished_attic_ceiling_r_assembly(uACeilingInsThickness, uACeilingFramingFactor, uACeilingInsRvalueNominal, uACeilingJoistThickness, gypsumThickness, gypsumNumLayers, uACeilingInsThickness_Rev=nil)
       # Returns assembly R-value for unfinished attic ceiling, including air films.
 
-      mat_wood = BaseMaterial.Wood
-
       if uACeilingInsThickness_Rev.nil?
         # No perimeter taper effect:
         uACeilingInsThickness_Rev = uACeilingInsThickness
@@ -622,7 +583,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       if uACeilingInsThickness_Rev >= uACeilingJoistThickness
 
         # Stud / Cavity Ins
-        attic_floor.addlayer(thickness=OpenStudio::convert(uACeilingJoistThickness,"in","ft").get, conductivity_list=[mat_wood.k, OpenStudio::convert(uACeilingInsThickness_Rev,"in","ft").get / uACeilingInsRvalueNominal_Rev])
+        attic_floor.addlayer(thickness=OpenStudio::convert(uACeilingJoistThickness,"in","ft").get, conductivity_list=[BaseMaterial.Wood.k, OpenStudio::convert(uACeilingInsThickness_Rev,"in","ft").get / uACeilingInsRvalueNominal_Rev])
 
         # If there is additional insulation, above the rafter height,
         # these inputs are used for defining an additional layer.after() do
@@ -642,7 +603,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
           else
             cond_insul = uA_ceiling_joist_ins_thickness / uACeilingInsRvalueNominal_Rev
           end
-          attic_floor.addlayer(thickness=uA_ceiling_joist_ins_thickness, conductivity_list=[mat_wood.k, cond_insul])
+          attic_floor.addlayer(thickness=uA_ceiling_joist_ins_thickness, conductivity_list=[BaseMaterial.Wood.k, cond_insul])
         end
 
       end
@@ -657,9 +618,6 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
   def get_unfinished_attic_roof_r_assembly(uARoofFramingFactor, uARoofInsThickness, uARoofFramingThickness, uARoofInsRvalueNominal, uARoofContInsThickness, uARoofContInsRvalue, hasRadiantBarrier, film_roof)
       # Returns assembly R-value for unfinished attic roof, including air films.
       # Also returns roof insulation thickness.
-
-      mat_wood = BaseMaterial.Wood
-      mat_plywood3_4in = Material.Plywood3_4in
 
       path_fracs = [uARoofFramingFactor, 1 - uARoofFramingFactor]
 
@@ -685,20 +643,20 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       end
 
       if uARoofInsThickness > uARoofFramingThickness and uARoofFramingThickness > 0
-        wood_k = mat_wood.k * uARoofInsThickness / uARoofFramingThickness
+        wood_k = BaseMaterial.Wood.k * uARoofInsThickness / uARoofFramingThickness
       else
-        wood_k = mat_wood.k
+        wood_k = BaseMaterial.Wood.k
       end
       roof_const.addlayer(thickness=uA_roof_ins_thickness, conductivity_list=[wood_k, cavity_k])
 
       # Sheathing
-      roof_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
+      roof_const.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_4in, material_list=nil)
 
       # Rigid
       if uARoofContInsThickness > 0
         roof_const.addlayer(thickness=OpenStudio::convert(uARoofContInsThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(uARoofContInsThickness,"in","ft").get / uARoofContInsRvalue])
         # More sheathing
-        roof_const.addlayer(thickness=nil, conductivity_list=nil, material=mat_plywood3_4in, material_list=nil)
+        roof_const.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_4in, material_list=nil)
       end
 
       # Exterior Film
