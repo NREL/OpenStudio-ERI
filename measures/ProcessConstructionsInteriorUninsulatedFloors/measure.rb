@@ -35,64 +35,64 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     #make a double argument for thickness of gypsum
     userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
     userdefined_gypthickness.setDisplayName("Ceiling Mass: Thickness")
-	userdefined_gypthickness.setUnits("in")
-	userdefined_gypthickness.setDescription("Gypsum layer thickness.")
+    userdefined_gypthickness.setUnits("in")
+    userdefined_gypthickness.setDescription("Gypsum layer thickness.")
     userdefined_gypthickness.setDefaultValue(0.5)
     args << userdefined_gypthickness
 
     #make a double argument for number of gypsum layers
     userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
     userdefined_gyplayers.setDisplayName("Ceiling Mass: Num Layers")
-	userdefined_gyplayers.setUnits("#")
-	userdefined_gyplayers.setDescription("Integer number of layers of gypsum.")
+    userdefined_gyplayers.setUnits("#")
+    userdefined_gyplayers.setDescription("Integer number of layers of gypsum.")
     userdefined_gyplayers.setDefaultValue(1)
     args << userdefined_gyplayers
 
     #make a double argument for floor mass thickness
     userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
     userdefined_floormassth.setDisplayName("Floor Mass: Thickness")
-	userdefined_floormassth.setUnits("in")
-	userdefined_floormassth.setDescription("Thickness of the floor mass.")
+    userdefined_floormassth.setUnits("in")
+    userdefined_floormassth.setDescription("Thickness of the floor mass.")
     userdefined_floormassth.setDefaultValue(0.625)
     args << userdefined_floormassth
 
     #make a double argument for floor mass conductivity
     userdefined_floormasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasscond", false)
     userdefined_floormasscond.setDisplayName("Floor Mass: Conductivity")
-	userdefined_floormasscond.setUnits("Btu-in/h-ft^2-R")
-	userdefined_floormasscond.setDescription("Conductivity of the floor mass.")
+    userdefined_floormasscond.setUnits("Btu-in/h-ft^2-R")
+    userdefined_floormasscond.setDescription("Conductivity of the floor mass.")
     userdefined_floormasscond.setDefaultValue(0.8004)
     args << userdefined_floormasscond
 
     #make a double argument for floor mass density
     userdefined_floormassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassdens", false)
     userdefined_floormassdens.setDisplayName("Floor Mass: Density")
-	userdefined_floormassdens.setUnits("lb/ft^3")
-	userdefined_floormassdens.setDescription("Density of the floor mass.")
+    userdefined_floormassdens.setUnits("lb/ft^3")
+    userdefined_floormassdens.setDescription("Density of the floor mass.")
     userdefined_floormassdens.setDefaultValue(34.0)
     args << userdefined_floormassdens
 
     #make a double argument for floor mass specific heat
     userdefined_floormasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasssh", false)
     userdefined_floormasssh.setDisplayName("Floor Mass: Specific Heat")
-	userdefined_floormasssh.setUnits("Btu/lb-R")
-	userdefined_floormasssh.setDescription("Specific heat of the floor mass.")
+    userdefined_floormasssh.setUnits("Btu/lb-R")
+    userdefined_floormasssh.setDescription("Specific heat of the floor mass.")
     userdefined_floormasssh.setDefaultValue(0.29)
     args << userdefined_floormasssh
 
     #make a double argument for carpet pad R-value
     userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
     userdefined_carpetr.setDisplayName("Carpet: Carpet Pad R-value")
-	userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
-	userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
+    userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
+    userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
     userdefined_carpetr.setDefaultValue(2.08)
     args << userdefined_carpetr
 
     #make a double argument for carpet floor fraction
     userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
     userdefined_carpetfrac.setDisplayName("Carpet: Floor Carpet Fraction")
-	userdefined_carpetfrac.setUnits("frac")
-	userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
+    userdefined_carpetfrac.setUnits("frac")
+    userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
     userdefined_carpetfrac.setDefaultValue(0.8)
     args << userdefined_carpetfrac
 
@@ -124,8 +124,8 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     fbasement_space_type.setDisplayName("Finished Basement space type")
     fbasement_space_type.setDescription("Select the finished basement space type")
     fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
-    args << fbasement_space_type	
-	
+    args << fbasement_space_type    
+    
     #make a choice argument for garage space type
     space_types = model.getSpaceTypes
     space_type_args = OpenStudio::StringVector.new
@@ -139,8 +139,8 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     garage_space_type.setDisplayName("Garage space type")
     garage_space_type.setDescription("Select the garage space type")
     garage_space_type.setDefaultValue(Constants.GarageSpaceType)
-    args << garage_space_type	
-	
+    args << garage_space_type   
+    
     #make a choice argument for unfinished attic space type
     space_types = model.getSpaceTypes
     space_type_args = OpenStudio::StringVector.new
@@ -154,8 +154,8 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     unfin_attic_space_type.setDisplayName("Unfinished Attic space type")
     unfin_attic_space_type.setDescription("Select the unfinished attic space type")
     unfin_attic_space_type.setDefaultValue(Constants.UnfinishedAtticSpaceType)
-    args << unfin_attic_space_type	
-	
+    args << unfin_attic_space_type  
+    
     return args
   end #end the arguments method
 
@@ -169,18 +169,18 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     end
 
     # Space Type
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
+    living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
     living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
     if living_space_type.nil?
         return false
     end
-	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
+    fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
     fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
-	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
+    garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
     garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
-	unfin_attic_space_type_r = runner.getStringArgumentValue("unfin_attic_space_type",user_arguments)
-    unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)	
-	
+    unfin_attic_space_type_r = runner.getStringArgumentValue("unfin_attic_space_type",user_arguments)
+    unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)   
+    
     # Gypsum
     selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
     if selected_gypsum.empty?
@@ -280,57 +280,82 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     if carpetFloorFraction > 0
       materials << cbl
     end
-	finuninsfinfloor = OpenStudio::Model::Construction.new(materials)
-	finuninsfinfloor.setName("FinUninsFinFloor")
-	
+    finuninsfinfloor = OpenStudio::Model::Construction.new(materials)
+    finuninsfinfloor.setName("FinUninsFinFloor")
+    
     # RevFinUninsFinFloor
     revfinuninsfinfloor = finuninsfinfloor.reverseConstruction
     revfinuninsfinfloor.setName("RevFinUninsFinFloor")
-	
-	# UnfinUninsUnfinFloor
-	materials = []
-	materials << saf
-	materials << ply3_4
-	unfinuninsunfinfloor = OpenStudio::Model::Construction.new(materials)
-	unfinuninsunfinfloor.setName("UnfinUninsUnfinFloor")
-	
-	# RevUnfinUninsUnfinFloor
-	revunfinuninsunfinfloor = unfinuninsunfinfloor.reverseConstruction
-	revunfinuninsunfinfloor.setName("RevUnfinUninsUnfinFloor")
-	
-	living_space_type.spaces.each do |living_space|
-	  living_space.surfaces.each do |living_surface|
-	    next unless ["floor"].include? living_surface.surfaceType.downcase
-		adjacent_surface = living_surface.adjacentSurface
-		next unless adjacent_surface.is_initialized
-		adjacent_surface = adjacent_surface.get
-	    adjacent_surface_r = adjacent_surface.name.to_s
-	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-	    next unless [living_space_type_r, fbasement_space_type_r].include? adjacent_space_type_r
-	    living_surface.setConstruction(finuninsfinfloor)
-		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{finuninsfinfloor.name}'")
-	    adjacent_surface.setConstruction(revfinuninsfinfloor)		
-		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revfinuninsfinfloor.name}'")
-	  end	
-	end
-	
-	unless unfin_attic_space_type.nil?
-	  unfin_attic_space_type.spaces.each do |unfin_attic_space|
-	    unfin_attic_space.surfaces.each do |unfin_attic_surface|
-	      next unless ["floor"].include? unfin_attic_surface.surfaceType.downcase
-		  adjacent_surface = unfin_attic_surface.adjacentSurface
-		  next unless adjacent_surface.is_initialized
-		  adjacent_surface = adjacent_surface.get
-	      adjacent_surface_r = adjacent_surface.name.to_s
-	      adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-	      next unless [garage_space_type_r].include? adjacent_space_type_r
-	      unfin_attic_surface.setConstruction(unfinuninsunfinfloor)
-		  runner.registerInfo("Surface '#{unfin_attic_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{unfin_attic_surface.surfaceType}' and Outside Boundary Condition '#{unfin_attic_surface.outsideBoundaryCondition}', was assigned Construction '#{unfinuninsunfinfloor.name}'")
-	      adjacent_surface.setConstruction(revunfinuninsunfinfloor)		
-		  runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfinuninsunfinfloor.name}'")
-	    end	
-	  end
-	end
+    
+    # UnfinUninsUnfinFloor
+    materials = []
+    materials << saf
+    materials << ply3_4
+    unfinuninsunfinfloor = OpenStudio::Model::Construction.new(materials)
+    unfinuninsunfinfloor.setName("UnfinUninsUnfinFloor")
+    
+    # RevUnfinUninsUnfinFloor
+    revunfinuninsunfinfloor = unfinuninsunfinfloor.reverseConstruction
+    revunfinuninsunfinfloor.setName("RevUnfinUninsUnfinFloor")
+    
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless ["floor"].include? living_surface.surfaceType.downcase
+        adjacent_surface = living_surface.adjacentSurface
+        next unless adjacent_surface.is_initialized
+        adjacent_surface = adjacent_surface.get
+        adjacent_surface_r = adjacent_surface.name.to_s
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        next unless [living_space_type_r, fbasement_space_type_r].include? adjacent_space_type_r
+        living_surface.setConstruction(finuninsfinfloor)
+        runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{finuninsfinfloor.name}'")
+        adjacent_surface.setConstruction(revfinuninsfinfloor)       
+        runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revfinuninsfinfloor.name}'")
+      end   
+    end
+    
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless living_surface.outsideBoundaryCondition.downcase == "adiabatic"
+        if living_surface.surfaceType.downcase == "floor"
+          living_surface.setConstruction(finuninsfinfloor)
+          runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{finuninsfinfloor.name}'")
+        elsif living_surface.surfaceType.downcase == "roofceiling"
+          living_surface.setConstruction(revfinuninsfinfloor)       
+          runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{revfinuninsfinfloor.name}'")
+        end
+      end   
+    end
+    
+    unless fbasement_space_type.nil?
+      fbasement_space_type.spaces.each do |fbasement_space|
+        fbasement_space.surfaces.each do |fbasement_surface|
+          next unless fbasement_surface.outsideBoundaryCondition.downcase == "adiabatic"
+          if fbasement_surface.surfaceType.downcase == "roofceiling"
+            fbasement_surface.setConstruction(revfinuninsfinfloor)      
+            runner.registerInfo("Surface '#{fbasement_surface.name}', of Space Type '#{fbasement_space_type_r}' and with Surface Type '#{fbasement_surface.surfaceType}' and Outside Boundary Condition '#{fbasement_surface.outsideBoundaryCondition}', was assigned Construction '#{revfinuninsfinfloor.name}'")
+          end
+        end
+      end   
+    end
+    
+    unless unfin_attic_space_type.nil?
+      unfin_attic_space_type.spaces.each do |unfin_attic_space|
+        unfin_attic_space.surfaces.each do |unfin_attic_surface|
+          next unless ["floor"].include? unfin_attic_surface.surfaceType.downcase
+          adjacent_surface = unfin_attic_surface.adjacentSurface
+          next unless adjacent_surface.is_initialized
+          adjacent_surface = adjacent_surface.get
+          adjacent_surface_r = adjacent_surface.name.to_s
+          adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+          next unless [garage_space_type_r].include? adjacent_space_type_r
+          unfin_attic_surface.setConstruction(unfinuninsunfinfloor)
+          runner.registerInfo("Surface '#{unfin_attic_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{unfin_attic_surface.surfaceType}' and Outside Boundary Condition '#{unfin_attic_surface.outsideBoundaryCondition}', was assigned Construction '#{unfinuninsunfinfloor.name}'")
+          adjacent_surface.setConstruction(revunfinuninsunfinfloor)     
+          runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfinuninsunfinfloor.name}'")
+        end 
+      end
+    end
     
     return true
  
