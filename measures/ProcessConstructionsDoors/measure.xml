@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>faec40be-0361-443b-ac7b-f844be59a609</version_id>
+  <version_id>cc14e171-2387-4949-b7d7-fa60d0baa6fe</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>Assign Residential Door Construction</display_name>
@@ -114,7 +114,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A8A14F57</checksum>
+      <checksum>3E621BBD</checksum>
     </file>
     <file>
       <version>
@@ -125,13 +125,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>55FB2417</checksum>
+      <checksum>281265B3</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>913669E3</checksum>
+      <checksum>6A7CFF89</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>caec200b-2137-4414-b738-604a2e3867a2</version_id>
+  <version_id>38c42af3-88a5-43d2-9e9b-2bf883553556</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Add/Replace Residential Electric Baseboard</display_name>
@@ -246,13 +246,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A8A14F57</checksum>
+      <checksum>3E621BBD</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>913669E3</checksum>
+      <checksum>6A7CFF89</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater</name>
   <uid>bbb7dbaa-5517-438e-bb14-5b92e9d09284</uid>
-  <version_id>49433468-08e6-453c-9b79-8d933f2ada02</version_id>
+  <version_id>2d56b5cd-72d1-4262-a4d4-eebde575f332</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialPoolHeater</class_name>
   <display_name>Add/Replace Residential Pool Gas Heater</display_name>
@@ -143,19 +143,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D2012BA7</checksum>
+      <checksum>AFB0BBC4</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A8A14F57</checksum>
+      <checksum>3E621BBD</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>913669E3</checksum>
+      <checksum>6A7CFF89</checksum>
     </file>
   </files>
 </measure>

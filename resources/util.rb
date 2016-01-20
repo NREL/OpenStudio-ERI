@@ -166,6 +166,22 @@ class HelperMethods
         end		
 		return space_type_r
 	end
+    
+    def self.remove_object_from_idf_based_on_name(workspace, name_s, object_s, runner=nil)
+      workspace.getObjectsByType(object_s.to_IddObjectType).each do |str|
+        n = str.getString(0).to_s
+        name_s.each do |name|
+		  if n.include? name
+		    str.remove
+		    unless runner.nil?
+			  runner.registerInfo("Removed object '#{object_s} - #{n}'")
+		    end
+			break
+		  end
+		end
+      end
+      return workspace
+    end
 	
     def self.get_plant_loop_from_string(model, plantloop_s, runner, print_err=true)
         plant_loop = nil

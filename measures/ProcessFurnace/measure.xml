@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>47a77f74-4f0e-42e3-88dd-ec2cc7f74a32</version_id>
+  <version_id>354918d7-9d61-465d-a28e-9aba07b004e4</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Add/Replace Residential Furnace</display_name>
@@ -274,13 +274,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A8A14F57</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>913669E3</checksum>
+      <checksum>3E621BBD</checksum>
     </file>
     <file>
       <version>
@@ -291,7 +285,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>689F3919</checksum>
+      <checksum>77FD839E</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6A7CFF89</checksum>
     </file>
   </files>
 </measure>

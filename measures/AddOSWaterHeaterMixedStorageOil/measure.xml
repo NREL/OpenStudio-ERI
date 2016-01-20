@@ -2,11 +2,11 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>3586172f-f6c3-4256-a2c1-65157d5aa89e</version_id>
+  <version_id>ad78c064-f14c-45bc-bfbb-edb4dee63e60</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
   <display_name>AddOSWaterHeaterMixedStorageOil</display_name>
-  <description>This measure adds an OS:WaterHeater:Mixed object representing an Oil Storage Water Heater. Users will be asked to provide the following arguments: 1) Use case; 2) Plant Loop Assignment; 3) Number of Bedrooms; 4) Number of Bathrooms; 5) Tank Volume; 6) Energy Factor; 7) Water Heater Location; ) Setpoint Temperature Schedule; 9) Water Heater Capacity; 11) Recovery Efficiency&#xd;&#xd;&#xd;&#xd;
+  <description>This measure adds an OS:WaterHeater:Mixed object representing an Oil Storage Water Heater. Users will be asked to provide the following arguments: 1) Use case; 2) Plant Loop Assignment; 3) Number of Bedrooms; 4) Number of Bathrooms; 5) Tank Volume; 6) Energy Factor; 7) Water Heater Location; ) Setpoint Temperature Schedule; 9) Water Heater Capacity; 11) Recovery Efficiency&#xd;&#xd;&#xd;&#xd;&#xd;
  </description>
   <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a #1 Oil Storage Water Heater. The object will either create a new plant loop, or be assigned to an existing plant loop. The object will be configured be to use the user arguments. The EIO file reports the industry standard ratings of Recovery Efficiency and Energy Factor for water heater objects.</modeler_description>
   <arguments>
@@ -173,7 +173,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A8A14F57</checksum>
+      <checksum>3E621BBD</checksum>
     </file>
   </files>
 </measure>

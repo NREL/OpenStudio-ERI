@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>d52b3881-c8ca-45cb-82e8-32cfda4f0508</version_id>
+  <version_id>6a5df5dc-5e08-44bc-a759-4d4957eb9397</version_id>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -271,12 +271,6 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A8A14F57</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -286,6 +280,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>4FBE56E0</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3E621BBD</checksum>
     </file>
   </files>
 </measure>

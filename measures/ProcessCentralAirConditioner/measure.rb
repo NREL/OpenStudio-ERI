@@ -684,7 +684,6 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         # Supply Air
         zone_splitter = air_loop.zoneSplitter
         zone_splitter.setName("Zone Splitter")
-        # zone_splitter.addToNote(air_demand_inlet_node)
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
         diffuser_living.setName("Living Zone Direct Air")

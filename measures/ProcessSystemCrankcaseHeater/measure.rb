@@ -10,6 +10,10 @@
 #see the URL below for access to C++ documentation on workspace objects (click on "workspace" in the main window to view workspace objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/utilities/html/idf_page.html
 
+#load util.rb
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
+
 #start the measure
 class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
 
@@ -22,7 +26,7 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner"
+    return "Add/Replace Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner"
   end
   
   def description
@@ -37,50 +41,36 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
   def arguments(workspace)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    zone_display_names = OpenStudio::StringVector.new
-
-    #get all thermal zones in model
-    zone_args = workspace.getObjectsByType("Zone".to_IddObjectType)
-    zone_args.each do |zone_arg|
-      zone_arg_name = zone_arg.getString(0) # Name
-      zone_display_names << zone_arg_name.to_s
-    end
-
-    #make a choice argument for living space
-    selected_living = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedliving", zone_display_names, true)
-    selected_living.setDisplayName("Living Zone")
-	selected_living.setDescription("The living zone.")
-    args << selected_living
-
     #make an argument for entering crankcase heater capacity
     userdefined_crankcase = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcrankcase",true)
     userdefined_crankcase.setDisplayName("Crankcase [kW]")
 	userdefined_crankcase.setDescription("Capacity of the crankcase heater for the compressor.")
-    userdefined_crankcase.setDefaultValue(0.0)
+    userdefined_crankcase.setDefaultValue(0.02)
     args << userdefined_crankcase
 
     #make an argument for entering crankcase heater max temp
     userdefined_crankcasemaxt = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcrankcasemaxt",true)
     userdefined_crankcasemaxt.setDisplayName("Crankcase Max Temp [degrees F]")
-	userdefined_crankcasemaxt.setDescription("")
+	userdefined_crankcasemaxt.setDescription("Outdoor dry-bulb temperature above which compressor crankcase heating is disabled.")
     userdefined_crankcasemaxt.setDefaultValue(55.0)
     args << userdefined_crankcasemaxt
 
-    #make a bool argument for heat pump
-    selected_heatpump = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedheatpump",false)
-    selected_heatpump.setDisplayName("Has Heat Pump")
-	selected_heatpump.setDescription("Indicates whether the house has a heat pump.")
-    selected_heatpump.setDefaultValue(false)
-    args << selected_heatpump
-
-    #make an argument for entering speeds
-    userdefined_speeds = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedspeeds",true)
-    userdefined_speeds.setDisplayName("Num Speeds [#]")
-	userdefined_speeds.setDescription("Integer number of speeds of the compressor.")
-    userdefined_speeds.setDefaultValue(2.0)
-    args << userdefined_speeds
-
+    #make a choice argument for living thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if not thermal_zone_args.include?(Constants.LivingZone)
+        thermal_zone_args << Constants.LivingZone
+    end
+    living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, true)
+    living_thermal_zone.setDisplayName("Living thermal zone")
+    living_thermal_zone.setDescription("Select the living thermal zone")
+    living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    args << living_thermal_zone		    
+    
     return args
 
   end #end the arguments method
@@ -94,19 +84,49 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end
 
-    selected_living = runner.getStringArgumentValue("selectedliving",user_arguments)
-    hasHeatPump = runner.getBoolArgumentValue("selectedheatpump",user_arguments)
+	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+	living_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
+    if living_thermal_zone.nil?
+      return false
+    end
 
+    # Remove existing crankcase heater objects
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Crankcase Heater"], "ElectricEquipment", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["CrankcaseHeaterManager"], "EnergyManagementSystem:ProgramCallingManager", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["CrankcaseHeaterActuator"], "EnergyManagementSystem:Actuator", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["CoolingCoilRTF", "HeatingCoilRTF"], "EnergyManagementSystem:Sensor", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["CrankcaseHeaterProgram"], "EnergyManagementSystem:Program", runner)
+
+    # Find heat pump
+    hasHeatPump = true
+    if workspace.getObjectsByType("AirLoopHVAC:UnitaryHeatPump:AirToAir".to_IddObjectType).empty?
+      hasHeatPump = false  
+    end
+
+    # Get compressor speeds
+    compressor_speeds = nil
+    if not workspace.getObjectsByType("Coil:Cooling:DX:SingleSpeed".to_IddObjectType).empty?
+      compressor_speeds = 1.0
+    elsif not workspace.getObjectsByType("Coil:Cooling:DX:TwoSpeed".to_IddObjectType).empty?
+      compressor_speeds = 2.0
+    end
+    
+    # Error checking
+    if compressor_speeds.nil?
+      runner.registerWarning("No Coil:Cooling:DX object found, so crankcase heater is not necessary.")
+      return true
+    end
+    if not hasHeatPump and compressor_speeds == 1.0
+      runner.registerWarning("Crankcase heater is not necessary for building with HP=false and compressor_speeds=1")
+      return true
+    end
+    
     # Create the material class instances
     supply = Supply.new
 
     supply.Crankcase = runner.getDoubleArgumentValue("userdefinedcrankcase",user_arguments)
     supply.Crankcase_MaxT = runner.getDoubleArgumentValue("userdefinedcrankcasemaxt",user_arguments)
-    supply.compressor_speeds = runner.getDoubleArgumentValue("userdefinedspeeds",user_arguments)
-
-    if not hasHeatPump and supply.compressor_speeds == 1.0
-      runner.registerWarning("Crankcase heater is not necessary for building with HP=false and compressor_speeds=1")
-    else
+    supply.compressor_speeds = compressor_speeds
 
       # Crankcase heater for heat pumps and multispeed air conditioners
       # These EMS components are used to account for the crankcase heater power use for heat pumps and multi-stage/speed air conditioners
@@ -117,9 +137,15 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
       ems = []
 
       ems << "
+      Schedule:Constant,
+        AlwaysOn,                     !- Name
+        FRACTION,                     !- Schedule Type
+        1;                            !- Hourly Value"
+      
+      ems << "
       ElectricEquipment,
-        Crankcase Heater,                                      !- Name
-        #{selected_living},                                   !- Zone Name
+        Crankcase Heater,                                     !- Name
+        #{living_thermal_zone_r},                             !- Zone Name
         AlwaysOn,                                             !- SCHEDULE Name
         EquipmentLevel,                                       !- Design Level calculation method
         0,                                                    !- Design Level {W}
@@ -207,8 +233,6 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
         wsObject = workspace.addObject(object)
         runner.registerInfo("Set object '#{str.split("\n")[1].gsub(",","")} - #{str.split("\n")[2].split(",")[0]}'")
       end
-
-    end
 
     return true
  

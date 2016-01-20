@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>5e2c5bad-f06d-4d53-a0b5-24d89f9b8b58</version_id>
+  <version_id>f09f4284-626f-4104-836e-0ea4218628fc</version_id>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Weather File</display_name>
@@ -12,11 +12,11 @@
     <argument>
       <name>weather_directory</name>
       <display_name>Weather Directory</display_name>
-      <description>Absolute (or relative) directory to weather files</description>
+      <description>Absolute (or relative) directory to weather files.</description>
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>C:/Program Files (x86)/NREL/BEopt_2.5.0/Weather</default_value>
+      <default_value>../../../../OpenStudio-Beopt/OpenStudio-analysis-spreadsheet/weather</default_value>
     </argument>
     <argument>
       <name>weather_file_name</name>
@@ -25,7 +25,7 @@
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMY3.epw</default_value>
+      <default_value>USA_CO_Denver.Intl.AP.725650_TMY3.epw</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -76,7 +76,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DD831E6C</checksum>
+      <checksum>71E76B9D</checksum>
     </file>
   </files>
 </measure>

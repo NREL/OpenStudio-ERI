@@ -461,7 +461,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
       end
 
-      if not fbasement_thermal_zone.nil?
+      unless fbasement_thermal_zone.nil?
 
         if fbasement_thermal_zone.handle.to_s == zone.handle.to_s
 
@@ -478,9 +478,6 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       end
 
     end
-	
-	# model.getSimulationControl.setDoZoneSizingCalculation(true) 
-	# model.getSimulationControl.setDoSystemSizingCalculation(true)
 	
     return true
  

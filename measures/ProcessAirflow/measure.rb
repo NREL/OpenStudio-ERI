@@ -304,7 +304,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add Residential Airflow Properties"
+    return "Add/Replace Residential Airflow Properties"
   end
   
   def description
@@ -843,6 +843,20 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	ufattic_thermal_zone_r = runner.getStringArgumentValue("ufattic_thermal_zone",user_arguments)
 	ufattic_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, ufattic_thermal_zone_r, runner, false)
 
+    # Remove existing airflow objects
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["NatVentProbability"], "Schedule:Constant", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["MechanicalVentilationEnergyWk", "MechanicalVentilationWk", "BathExhaustWk", "ClothesDryerExhaustWk", "RangeHoodWk", "NatVentOffSeason-Week", "NatVent-Week", "NatVentClgSsnTempWeek", "NatVentHtgSsnTempWeek", "NatVentOvlpSsnTempWeek"], "Schedule:Week:Compact", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["MechanicalVentilationEnergy", "MechanicalVentilation", "BathExhaust", "ClothesDryerExhaust", "RangeHood", "NatVent", "NatVentTemp"], "Schedule:Year", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["MechanicalVentilationDay", "MechanicalVentilationEnergyDay", "BathExhaustDay", "ClothesDryerExhaustDay", "RangeHoodDay", "NatVentOn-Day", "NatVentOff-Day", "NatVentHtgSsnTempWkDay", "NatVentHtgSsnTempWkEnd", "NatVentClgSsnTempWkDay", "NatVentClgSsnTempWkEnd", "NatVentOvlpSsnTempWkDay", "NatVentOvlpSsnTempWkEnd", "NatVentOvlpSsnTempWkEnd"], "Schedule:Day:Hourly", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Living Infiltration"], "ZoneInfiltration:FlowCoefficient", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Natural Ventilation"], "ZoneVentilation:DesignFlowRate", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Tout", "Hout", "Pbar", "Tin", "Phiin", "Win", "Wout", "Vwind", "WH_sch", "Range_sch", "Bath_sch", "Clothes_dryer_sch", "NVAvail", "NVSP"], "EnergyManagementSystem:Sensor", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["NatVentFlow", "InfilFlow"], "EnergyManagementSystem:Actuator", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["InfiltrationProgram", "NaturalVentilationProgram"], "EnergyManagementSystem:Program", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Zone Infil/MechVent Flow Rate", "Whole House Fan Vent Flow Rate", "Range Hood Fan Vent Flow Rate", "Bath Exhaust Fan Vent Flow Rate", "Clothes Dryer Exhaust Fan Vent Flow Rate", "Local Wind Speed", "Zone Natural Ventilation Flow Rate"], "EnergyManagementSystem:OutputVariable", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["AirflowCalculator"], "EnergyManagementSystem:ProgramCallingManager", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["UAtcInfiltration"], "ZoneInfiltration:EffectiveLeakageArea", runner)
+    
     infiltrationLivingSpaceACH50 = runner.getDoubleArgumentValue("userdefinedinflivingspace",user_arguments)
     infiltrationLivingSpaceConstantACH = runner.getDoubleArgumentValue("userdefinedconstinflivingspace",user_arguments)
     infiltrationShelterCoefficient = runner.getStringArgumentValue("userdefinedinfsheltercoef",user_arguments)

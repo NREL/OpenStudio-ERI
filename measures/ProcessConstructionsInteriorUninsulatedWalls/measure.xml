@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_walls</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>1095f4ce-e047-4657-afd7-4cb6ef3cb51e</version_id>
+  <version_id>66a0f7c6-7496-4937-af43-cb5fda31652d</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedWalls</class_name>
   <display_name>Assign Residential Uninsulated Wall Construction</display_name>
-  <description>This measure assigns a construction for the walls between living spaces.</description>
-  <modeler_description>Calculates material layer properties of uninsulated constructions for the walls between living spaces. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <description>This measure assigns constructions for the uninsulated walls between spaces.</description>
+  <modeler_description>Calculates material layer properties of uninsulated constructions for the walls between spaces. Finds surfaces adjacent to the space and sets applicable constructions.</modeler_description>
   <arguments>
     <argument>
       <name>userdefinedpartitionwallmassth</name>
@@ -64,6 +64,36 @@
         </choice>
       </choices>
     </argument>
+    <argument>
+      <name>unfin_attic_space_type</name>
+      <display_name>Unfinished Attic space type</display_name>
+      <description>Select the unfinished attic space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>unfinished attic</default_value>
+      <choices>
+        <choice>
+          <value>unfinished attic</value>
+          <display_name>unfinished attic</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>garage_space_type</name>
+      <display_name>Garage space type</display_name>
+      <description>Select the garage space type</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>garage</default_value>
+      <choices>
+        <choice>
+          <value>garage</value>
+          <display_name>garage</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -116,13 +146,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A8A14F57</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>913669E3</checksum>
+      <checksum>3E621BBD</checksum>
     </file>
     <file>
       <version>
@@ -133,7 +157,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>801AAC92</checksum>
+      <checksum>6138828F</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6A7CFF89</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_uninsulated_walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>b969e811-b719-43e7-a123-0a2f3874501a</version_id>
+  <version_id>afd0c391-bcc2-44c2-b39a-04657b8d4557</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorUninsulatedWalls</class_name>
   <display_name>Assign Residential Unfinished Attic and Garage Wall Constructions</display_name>
@@ -67,7 +67,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A8A14F57</checksum>
+      <checksum>3E621BBD</checksum>
     </file>
     <file>
       <version>
@@ -78,7 +78,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>25615F59</checksum>
+      <checksum>F65FC10A</checksum>
     </file>
   </files>
 </measure>

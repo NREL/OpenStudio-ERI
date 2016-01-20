@@ -124,15 +124,15 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 	materials << ply1_2
 	materials << saw
 	extuninsunfinwall = OpenStudio::Model::Construction.new(materials)
-	extuninsunfinwall.setName("ExtUninsUnfinWall")	
-
+	extuninsunfinwall.setName("ExtUninsUnfinWall")
+    
 	unless unfin_attic_space_type.nil?
 	  unfin_attic_space_type.spaces.each do |unfin_attic_space|
 	    unfin_attic_space.surfaces.each do |unfin_attic_surface|
 		  next unless unfin_attic_surface.surfaceType.downcase == "wall" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
 		  unfin_attic_surface.setConstruction(extuninsunfinwall)
 		  runner.registerInfo("Surface '#{unfin_attic_surface.name}', of Space Type '#{unfin_attic_space_type_r}' and with Surface Type '#{unfin_attic_surface.surfaceType}' and Outside Boundary Condition '#{unfin_attic_surface.outsideBoundaryCondition}', was assigned Construction '#{extuninsunfinwall.name}'")
-	    end	
+	    end
 	  end
 	end
 
