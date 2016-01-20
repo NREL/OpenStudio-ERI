@@ -38,7 +38,7 @@ ProcessElectricBaseboard,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.r
 ProcessFurnace,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,unit_conversions.rb,,,,,,
 ProcessGroundTemperature,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,unit_conversions.rb,,,,,,
 ProcessHeatingandCoolingSetpoints,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,unit_conversions.rb,,,,,,
-ProcessSystemCrankcaseHeater,util.rb,constants.rb,,,,,,,,,,
+ProcessSystemCrankcaseHeater,util.rb,constants.rb,unit_conversions.rb,,,,,,,,,
 ProcessThermalMassFurniture,constants.rb,util.rb,unit_conversions.rb,,,,,,,,,
 ProcessThermalMassPartitionWall,sim.rb,util.rb,weather.rb,constants.rb,psychrometrics.rb,unit_conversions.rb,,,,,,
 ResidentialClothesWasher,schedules.rb,constants.rb,util.rb,weather.rb,psychrometrics.rb,unit_conversions.rb,DrawProfiles/ClothesWasherSchedule_1bed_unit0.csv,DrawProfiles/ClothesWasherSchedule_2bed_unit0.csv,DrawProfiles/ClothesWasherSchedule_3bed_unit0.csv,DrawProfiles/ClothesWasherSchedule_4bed_unit0.csv,DrawProfiles/ClothesWasherSchedule_5bed_unit0.csv,DrawProfiles/MinuteDrawProfilesMaxFlows.csv

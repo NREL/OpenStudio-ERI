@@ -160,6 +160,11 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
 	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
     fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)	
 	
+    weather = WeatherProcess.new(model,runner,header_only=true)
+    if weather.error?
+        return false
+    end    
+    
     partitionWallMassThickness = runner.getDoubleArgumentValue("partitionwallmassth",user_arguments)
     partitionWallMassConductivity = runner.getDoubleArgumentValue("partitionwallmasscond",user_arguments)
     partitionWallMassDensity = runner.getDoubleArgumentValue("partitionwallmassdens",user_arguments)
@@ -207,16 +212,16 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     pwm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     pwm.setName("PartitionWallMass")
     pwm.setRoughness("Rough")
-    pwm.setThickness(OpenStudio::convert(Material.MassPartitionWall(partition_wall_mass).thick,"ft","m").get)
-    pwm.setConductivity(OpenStudio::convert(Material.MassPartitionWall(partition_wall_mass).k,"Btu/hr*ft*R","W/m*K").get)
-    pwm.setDensity(OpenStudio::convert(Material.MassPartitionWall(partition_wall_mass).rho,"lb/ft^3","kg/m^3").get)
-    pwm.setSpecificHeat(OpenStudio::convert(Material.MassPartitionWall(partition_wall_mass).Cp,"Btu/lb*R","J/kg*K").get)
-    pwm.setThermalAbsorptance(Material.MassPartitionWall(partition_wall_mass).TAbs)
-    pwm.setSolarAbsorptance(Material.MassPartitionWall(partition_wall_mass).SAbs)
-    pwm.setVisibleAbsorptance(Material.MassPartitionWall(partition_wall_mass).VAbs)
+    pwm.setThickness(OpenStudio::convert(Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat).thick,"ft","m").get)
+    pwm.setConductivity(OpenStudio::convert(Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat).k,"Btu/hr*ft*R","W/m*K").get)
+    pwm.setDensity(OpenStudio::convert(Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat).rho,"lb/ft^3","kg/m^3").get)
+    pwm.setSpecificHeat(OpenStudio::convert(Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat).Cp,"Btu/lb*R","J/kg*K").get)
+    pwm.setThermalAbsorptance(Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat).TAbs)
+    pwm.setSolarAbsorptance(Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat).SAbs)
+    pwm.setVisibleAbsorptance(Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat).VAbs)
 
     # StudandAirWall
-    mat_stud_and_air_wall = Material.StudAndAir(localPressure)
+    mat_stud_and_air_wall = Material.StudAndAir(weather.header.LocalPressure)
     saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saw.setName("StudandAirWall")
     saw.setRoughness("Rough")

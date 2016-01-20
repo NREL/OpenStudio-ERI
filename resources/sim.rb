@@ -207,7 +207,7 @@ class Sim
       spaces << unfinished_attic
     end
 
-    outside_air_density = UnitConversion.atm2Btu_ft3(localPressure) / (Gas.Air.R * (@weather.data.AnnualAvgDrybulb + 460.0))
+    outside_air_density = UnitConversion.atm2Btu_ft3(@weather.header.LocalPressure) / (Gas.Air.R * (@weather.data.AnnualAvgDrybulb + 460.0))
     inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
     delta_pref = 0.016 # inH2O
 
@@ -567,7 +567,6 @@ class Sim
     vent.range_hood_exhaust_operation = 60.0 # min/day, per HSP
     vent.clothes_dryer_exhaust_operation = 60.0 # min/day, per HSP
 
-    vent.num_vent_fans = get_mech_vent_num_vent_fans(vent.MechVentType)
     if vent.MechVentType == Constants.VentTypeExhaust
         vent.num_vent_fans = 1 # One fan for unbalanced airflow
     elsif vent.MechVentType == Constants.VentTypeSupply
