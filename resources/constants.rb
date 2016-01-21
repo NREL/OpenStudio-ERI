@@ -132,7 +132,7 @@ class Constants
         return 'crawlspace space'
     end
     def self.CrawlSpaceType
-        return 'crawlspace'
+        return 'crawlspace space type'
     end
     def self.CrawlZone
         return 'crawlspace zone'
@@ -186,13 +186,13 @@ class Constants
         return 'finished attic space'
     end
     def self.FinishedAtticSpaceType
-        return 'finished attic'
+        return 'finished attic space type'
     end
     def self.FinishedBasementSpace
         return 'finished basement space'
     end
     def self.FinishedBasementSpaceType
-        return 'finished basement'
+        return 'finished basement space type'
     end
     def self.FinishedBasementZone
         return 'finished basement zone'
@@ -234,7 +234,7 @@ class Constants
         return 'garage space'
     end
     def self.GarageSpaceType
-        return 'garage'
+        return 'garage space type'
     end
     def self.GarageZone
         return 'garage zone'
@@ -285,10 +285,13 @@ class Constants
 		return 'xps'
 	end
     def self.LivingSpace(story)
+        if story == 1
+            return 'living space'
+        end
         return 'living space ' + story.to_s
     end
     def self.LivingSpaceType
-        return 'living'
+        return 'living space type'
     end
     def self.LivingZone
         return 'living zone'
@@ -600,7 +603,7 @@ class Constants
         return 'residential well pump'
     end
     def self.PierBeamSpaceType
-        return 'pier and beam'
+        return 'pier and beam space type'
     end
 	def self.PipeTypeTrunkBranch
 		return 'trunkbranch'
@@ -729,7 +732,7 @@ class Constants
 		return 'autosize'
 	end
     def self.SlabSpaceType
-        return 'slab'
+        return 'slab space type'
     end
 	def self.SurfaceTypeExtInsFinWall
 		return 'ExtInsFinWall'
@@ -909,7 +912,7 @@ class Constants
         return 'unfinished attic space'
     end
     def self.UnfinishedAtticSpaceType
-        return 'unfinished attic'
+        return 'unfinished attic space type'
     end
     def self.UnfinishedAtticZone
         return 'unfinished attic zone'
@@ -918,7 +921,7 @@ class Constants
         return 'unfinished basement space'
     end
     def self.UnfinishedBasementSpaceType
-        return 'unfinished basement'
+        return 'unfinished basement space type'
     end
     def self.UnfinishedBasementZone
         return 'unfinished basement zone'

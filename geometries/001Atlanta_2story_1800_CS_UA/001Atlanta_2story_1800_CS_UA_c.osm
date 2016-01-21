@@ -2065,7 +2065,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {2b3e58ff-3394-4280-92ce-cd340a2d9012}, !- Handle
-  unfinished attic,                       !- Name
+  unfinished attic space type,            !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {8b5bf7e6-7487-4eb4-9590-a06d29342174}; !- Group Rendering Name
@@ -2079,7 +2079,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {1df307d2-afe0-4937-8d6d-c3a541d75bf0}, !- Handle
-  living,                                 !- Name
+  living space type,                      !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {5c922e21-d0f8-493a-9ab6-c54f2e104d9d}; !- Group Rendering Name
@@ -2093,7 +2093,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {0df13f7d-bd8d-4330-8aae-4981172f47c3}, !- Handle
-  crawlspace,                             !- Name
+  crawlspace space type,                  !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {286842d9-861f-41c5-8c96-a2ebb7e971c0}; !- Group Rendering Name

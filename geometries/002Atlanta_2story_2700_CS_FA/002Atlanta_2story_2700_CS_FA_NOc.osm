@@ -1221,7 +1221,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {3d94f7d7-f84b-4823-a63b-1447ed7f1e29}, !- Handle
-  living,                                 !- Name
+  living space type,                      !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {ad729aad-e389-46a3-86d0-a0815c04ead8}; !- Group Rendering Name
@@ -1235,7 +1235,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {105ab0ba-28d1-4d5f-ad64-4383a3da5146}, !- Handle
-  crawlspace,                             !- Name
+  crawlspace space type,                  !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {5392128f-dc5b-4ce0-b719-ebe6c2e17e99}; !- Group Rendering Name

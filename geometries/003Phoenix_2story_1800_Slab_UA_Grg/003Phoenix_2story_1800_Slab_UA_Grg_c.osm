@@ -2298,7 +2298,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {3d2cf8da-d931-4650-9ce4-0e9b65aac0e9}, !- Handle
-  garage,                                 !- Name
+  garage space type,                      !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {057827ff-eebc-4085-9d83-953690dcbe47}; !- Group Rendering Name
@@ -2312,7 +2312,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {3d6d1511-06f5-40b5-aad5-afafc49f72d9}, !- Handle
-  living,                                 !- Name
+  living space type,                      !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {effbdfc7-c1b3-4fe1-bd9f-ff9218914f6b}; !- Group Rendering Name
@@ -2326,7 +2326,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {b21438be-a0a1-4e4e-93fb-642ee77b8390}, !- Handle
-  unfinished attic,                       !- Name
+  unfinished attic space type,            !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {e51cda25-0591-4c8e-a9ac-43f4c907b10d}; !- Group Rendering Name
