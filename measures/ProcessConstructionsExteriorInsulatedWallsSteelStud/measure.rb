@@ -10,7 +10,7 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
 
   # human readable name
   def name
-    return "Assign Residential Living Space Steel Stud Wall Construction"
+    return "Set Residential Living Space Steel Stud Wall Construction"
   end
 
   # human readable description

@@ -9,7 +9,7 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
 
   # human readable name
   def name
-    return "Assign Residential Living Space SIP Wall Construction"
+    return "Set Residential Living Space SIP Wall Construction"
   end
 
   # human readable description

@@ -6,7 +6,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Pool Pump"
+    return "Set Residential Pool Pump"
   end
   
   def description
@@ -14,7 +14,7 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "Since there is no Pool Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential pool pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Pool Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential pool pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned."
   end
   
   #define the arguments that the user will input
@@ -66,36 +66,6 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch.setDefaultValue("1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154")
 	args << monthly_sch
 
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
-    end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type. The pool will be located outdoors, but the living space floor area is needed to scale energy use.")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type
-
-    #make a choice argument for finished basement space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
-        space_type_args << Constants.FinishedBasementSpaceType
-    end
-    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
-    fbasement_space_type.setDisplayName("Finished Basement space type")
-    fbasement_space_type.setDescription("Select the finished basement space type. The pool will be located outdoors, but the finished basement space floor area is needed to scale energy use.")
-    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
-    args << fbasement_space_type
-
     return args
   end #end the arguments method
 
@@ -126,28 +96,16 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
 		return false
     end
     
-	# Space type
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
+    # Get CFA and number of bedrooms/bathrooms
+    cfa = HelperMethods.get_building_conditioned_floor_area(model, runner)
+    if cfa.nil?
         return false
     end
-	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
-    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
-
-    # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, living_space_type.handle, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
     
-    cfa_living = HelperMethods.get_floor_area(model, living_space_type.handle, runner)
-    cfa_fbasement = 0.0
-    if not fbasement_space_type.nil?
-        cfa_fbasement = HelperMethods.get_floor_area(model, fbasement_space_type.handle, runner)
-    end
-    cfa_total = cfa_living + cfa_fbasement
-
 	#Calculate annual energy use
     ann_elec = base_energy * mult # kWh/yr
     
@@ -156,7 +114,7 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
         constant = ann_elec/2
         nbr_coef = ann_elec/4/3
         cfa_coef = ann_elec/4/1920
-        pp_ann = constant + nbr_coef * nbeds + cfa_coef * cfa_total # kWh/yr
+        pp_ann = constant + nbr_coef * nbeds + cfa_coef * cfa # kWh/yr
     else
         pp_ann = ann_elec # kWh/yr
     end
@@ -174,11 +132,14 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
 	end
 	design_level = sch.calcDesignLevelFromDailykWh(pp_ann/365.0)
 	
-	#add pool pump to the living space
-    #because there are no space gains, the choice of space is arbitrary
+	#add pool pump to an arbitrary space (there are no space gains)
 	has_pp = 0
 	replace_pp = 0
-    space_equipments = living_space_type.electricEquipment
+    space = HelperMethods.get_default_space(model, runner)
+    if space.nil?
+        return false
+    end
+    space_equipments = space.electricEquipment
     space_equipments.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_pp = 1
@@ -195,7 +156,7 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
         pp_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         pp = OpenStudio::Model::ElectricEquipment.new(pp_def)
         pp.setName(obj_name)
-        pp.setSpaceType(living_space_type)
+        pp.setSpace(space)
         pp_def.setName(obj_name)
         pp_def.setDesignLevel(design_level)
         pp_def.setFractionRadiant(pp_rad)
@@ -206,11 +167,7 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #reporting final condition of model
-    if replace_pp == 1
-        runner.registerFinalCondition("The existing pool pump has been replaced by one with #{pp_ann.round} kWhs annual energy consumption.")
-    else
-        runner.registerFinalCondition("A pool pump has been added with #{pp_ann.round} kWhs annual energy consumption.")
-    end
+    runner.registerFinalCondition("A pool pump has been set with #{pp_ann.round} kWhs annual energy consumption.")
 	
     return true
  

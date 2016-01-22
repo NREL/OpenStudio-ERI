@@ -17,7 +17,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Assign Residential Living Space Wood Stud Wall Construction"
+    return "Set Residential Living Space Wood Stud Wall Construction"
   end
   
   def description

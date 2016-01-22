@@ -160,7 +160,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Air Source Heat Pump"
+    return "Set Residential Air Source Heat Pump"
   end
   
   def description

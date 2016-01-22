@@ -16,7 +16,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Assign Residential Unfinished Basement Constructions"
+    return "Set Residential Unfinished Basement Constructions"
   end
   
   def description
@@ -671,8 +671,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     # then the resistance of the fictitious layer will be negative
     # which DOE-2 will not accept. The code here sets a fictitious
     # R-value for the basement floor which results in the same
-    # overall UA value for the crawlspace. Note: The DOE-2 keyword
-    # U-EFFECTIVE does not affect DOE-2.2 simulations.
+    # overall UA value for the crawlspace.
     
     ub_total_UA = ubWallArea / ub_effective_Rvalue # Btu/hr*F
     ub_wall_Rvalue = ub_US_Rvalue + Material.Soil12in.Rvalue

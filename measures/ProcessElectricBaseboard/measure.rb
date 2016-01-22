@@ -13,7 +13,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Electric Baseboard"
+    return "Set Residential Electric Baseboard"
   end
   
   def description

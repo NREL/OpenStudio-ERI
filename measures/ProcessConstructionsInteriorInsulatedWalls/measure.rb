@@ -17,7 +17,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Assign Residential Interzonal Wall Construction"
+    return "Set Residential Interzonal Wall Construction"
   end
   
   def description

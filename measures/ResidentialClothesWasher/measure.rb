@@ -8,15 +8,15 @@ require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Clothes Washer"
+    return "Set Residential Clothes Washer"
   end
 
   def description
-    return "Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule."
+    return "Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule in the given space."
   end
   
   def modeler_description
-    return "Since there is no Clothes Washer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential clothes washer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Clothes Washer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential clothes washer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end
 
   #define the arguments that the user will input
@@ -106,20 +106,20 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
 	cw_mult_hw.setDefaultValue(1)
 	args << cw_mult_hw
 
-    #make a choice argument for space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
+    #make a choice argument for space
+    spaces = model.getSpaces
+    space_args = OpenStudio::StringVector.new
+    spaces.each do |space|
+        space_args << space.name.to_s
     end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
+    if not space_args.include?(Constants.LivingSpace(1))
+        space_args << Constants.LivingSpace(1)
     end
-    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_args, true)
-    space_type.setDisplayName("Location")
-    space_type.setDescription("Select the space type where the clothes washer is located")
-    space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << space_type
+    space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_args, true)
+    space.setDisplayName("Location")
+    space.setDescription("Select the space where the clothes washer is located")
+    space.setDefaultValue(Constants.LivingSpace(1))
+    args << space
     
     #make a choice argument for plant loop
     plant_loops = model.getPlantLoops
@@ -160,7 +160,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     cw_fill_sensor = runner.getBoolArgumentValue("cw_fill_sensor",user_arguments)
 	cw_mult_e = runner.getDoubleArgumentValue("cw_mult_e",user_arguments)
     cw_mult_hw = runner.getDoubleArgumentValue("cw_mult_hw",user_arguments)
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+	space_r = runner.getStringArgumentValue("space",user_arguments)
     plant_loop_s = runner.getStringArgumentValue("plant_loop", user_arguments)
 
     #Check for valid inputs
@@ -193,9 +193,9 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
         return false
 	end
 	
-    #Get space type
-    space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
-    if space_type.nil?
+    #Get space
+    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    if space.nil?
         return false
     end
 
@@ -206,7 +206,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type.handle, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -493,7 +493,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
 	#add cw to the selected space
 	has_cw = 0
 	replace_cw = 0
-    space_equipments_e = space_type.electricEquipment
+    space_equipments_e = space.electricEquipment
     space_equipments_e.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_cw = 1
@@ -524,7 +524,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
         cw_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         cw = OpenStudio::Model::ElectricEquipment.new(cw_def)
         cw.setName(obj_name)
-        cw.setSpaceType(space_type)
+        cw.setSpace(space)
         cw_def.setName(obj_name)
         cw_def.setDesignLevel(design_level)
         cw_def.setFractionRadiant(cw_rad)
@@ -536,7 +536,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
         cw_def2 = OpenStudio::Model::WaterUseEquipmentDefinition.new(model)
         cw2 = OpenStudio::Model::WaterUseEquipment.new(cw_def2)
         cw2.setName(obj_name)
-        cw2.setSpaceType(space_type)
+        cw2.setSpace(space)
         cw_def2.setName(obj_name)
         cw_def2.setPeakFlowRate(peak_flow)
         cw_def2.setEndUseSubcategory("Domestic Hot Water")
@@ -561,11 +561,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     end
 	
 	#reporting final condition of model
-    if replace_cw == 1
-        runner.registerFinalCondition("The existing clothes washer has been replaced by one with #{cw_ann_e.round} kWhs annual energy consumption.")
-    else
-        runner.registerFinalCondition("A clothes washer has been added with #{cw_ann_e.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
-    end
+    runner.registerFinalCondition("A clothes washer has been set with #{cw_ann_e.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
 	
     return true
 	

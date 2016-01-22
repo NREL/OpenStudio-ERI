@@ -17,7 +17,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Assign Residential Uninsulated Floor Construction"
+    return "Set Residential Uninsulated Floor Construction"
   end
   
   def description

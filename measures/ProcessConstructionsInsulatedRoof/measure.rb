@@ -17,7 +17,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Assign Residential Finished Roof Construction"
+    return "Set Residential Finished Roof Construction"
   end
   
   def description

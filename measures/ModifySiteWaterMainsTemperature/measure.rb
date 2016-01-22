@@ -13,7 +13,7 @@ require "#{File.dirname(__FILE__)}/resources/weather"
 class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "ModifySiteWaterMainsTemperature"
+    return "Set Residential Mains Water Temperature"
   end
   
   def description

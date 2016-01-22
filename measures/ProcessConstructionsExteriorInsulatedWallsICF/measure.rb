@@ -9,7 +9,7 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
 
   # human readable name
   def name
-    return "Assign Residential Living Space ICF Wall Construction"
+    return "Set Residential Living Space ICF Wall Construction"
   end
 
   # human readable description

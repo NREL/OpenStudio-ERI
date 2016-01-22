@@ -6,7 +6,7 @@ class CreateResidentialOverhangs < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Add/Replace Residential Overhangs"
+    return "Set Residential Overhangs"
   end
 
   # human readable description

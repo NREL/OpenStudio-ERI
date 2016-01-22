@@ -6,15 +6,15 @@ require "#{File.dirname(__FILE__)}/resources/util"
 class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Gas Cooking Range"
+    return "Set Residential Gas Cooking Range"
   end
   
   def description
-    return "Adds (or replaces) a residential cooking range with the specified efficiency, operation, and schedule."
+    return "Adds (or replaces) a residential cooking range with the specified efficiency, operation, and schedule in the given space."
   end
   
   def modeler_description
-    return "Since there is no Cooking Range object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential cooking range. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Cooking Range object in OpenStudio/EnergyPlus, we look for a GasEquipment or ElectricEquipment object with the name that denotes it is a residential cooking range. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end
   
   #define the arguments that the user will input
@@ -70,20 +70,20 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch.setDefaultValue("1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097")
 	args << monthly_sch
 
-    #make a choice argument for space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
+    #make a choice argument for space
+    spaces = model.getSpaces
+    space_args = OpenStudio::StringVector.new
+    spaces.each do |space|
+        space_args << space.name.to_s
     end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
+    if not space_args.include?(Constants.LivingSpace(1))
+        space_args << Constants.LivingSpace(1)
     end
-    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_args, true)
-    space_type.setDisplayName("Location")
-    space_type.setDescription("Select the space type where the cooking range is located")
-    space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << space_type
+    space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_args, true)
+    space.setDisplayName("Location")
+    space.setDescription("Select the space where the cooking range is located")
+    space.setDefaultValue(Constants.LivingSpace(1))
+    args << space
 
     return args
   end #end the arguments method
@@ -105,16 +105,16 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
 	weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
 	monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+	space_r = runner.getStringArgumentValue("space",user_arguments)
 	
-    #Get space type
-    space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
-    if space_type.nil?
+    #Get space
+    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    if space.nil?
         return false
     end
 
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type.handle, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -165,7 +165,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	has_gas_range = 0
 	replace_gas_range = 0
 	replace_e_range = 0
-    space_equipments_g = space_type.gasEquipment
+    space_equipments_g = space.gasEquipment
     space_equipments_g.each do |space_equipment_g| #check for an existing gas range
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
             has_gas_range = 1
@@ -175,8 +175,8 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
             replace_gas_range = 1
         end
     end
-    space_equipments_e = space_type.electricEquipment
-    space_equipments_e.each do |space_equipment_e|
+    space_equipments_e = space.electricEquipment
+    space_equipments_e.each do |space_equipment_e| #check for an existing elec range
         if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
             runner.registerInfo("This space already has an electric range. The existing range will be replaced with the specified gas range.")
             space_equipment_e.remove
@@ -198,7 +198,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
         rng_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
         rng = OpenStudio::Model::GasEquipment.new(rng_def)
         rng.setName(obj_name_g)
-        rng.setSpaceType(space_type)
+        rng.setSpace(space)
         rng_def.setName(obj_name_g)
         rng_def.setDesignLevel(design_level_g)
         rng_def.setFractionRadiant(range_rad_g)
@@ -209,7 +209,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
             rng_def2 = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             rng2 = OpenStudio::Model::ElectricEquipment.new(rng_def2)
             rng2.setName(obj_name_i)
-            rng2.setSpaceType(space_type)
+            rng2.setSpace(space)
             rng_def2.setName(obj_name_i)
             rng_def2.setDesignLevel(design_level_i)
             rng_def2.setFractionRadiant(range_rad_e)
@@ -220,24 +220,10 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     end
 
     #reporting final condition of model
-    if replace_gas_range == 1
-        if e_ignition == true
-            runner.registerFinalCondition("The existing gas range has been replaced by one with #{range_ann_g.round} therms and #{range_ann_i.round} kWhs annual energy consumption.")
-        else
-            runner.registerFinalCondition("The existing gas range has been replaced by one with #{range_ann_g.round} therms annual energy consumption.")
-        end
-    elsif replace_e_range == 1
-        if e_ignition == true
-            runner.registerFinalCondition("The existing electric range has been replaced by a gas range with #{range_ann_g.round} therms and #{range_ann_i.round} kWhs annual energy consumption.")
-        else
-            runner.registerFinalCondition("The existing electric range has been replaced by a gas range with #{range_ann_g.round} therms annual energy consumption.")
-        end
+    if e_ignition == true
+        runner.registerFinalCondition("A gas range has been set with #{range_ann_g.round} therms and #{range_ann_i.round} kWhs annual energy consumption.")
     else
-        if e_ignition == true
-            runner.registerFinalCondition("A gas range has been added with #{range_ann_g.round} therms and #{range_ann_i.round} kWhs annual energy consumption.")
-        else
-            runner.registerFinalCondition("A gas range has been added with #{range_ann_g.round} therms annual energy consumption.")
-        end
+        runner.registerFinalCondition("A gas range has been set with #{range_ann_g.round} therms annual energy consumption.")
     end
 	
     return true

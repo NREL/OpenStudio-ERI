@@ -66,11 +66,11 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Furniture Thermal Mass"
+    return "Set Residential Furniture Thermal Mass"
   end
   
   def description
-    return "This measure creates internal mass for furniture in the living space, finished basement, unfinished basement, and garage."
+    return "This measure assigns furniture mass to the living space, finished basement, unfinished basement, and garage."
   end
   
   def modeler_description
@@ -170,15 +170,15 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 	finished_basement_furn_area = 0
 	unfinished_basement_furn_area = 0
 	garage_furn_area = 0
-	living_space_furn_area = HelperMethods.get_floor_area(model, living_space_type.handle, runner)
+	living_space_furn_area = HelperMethods.get_floor_area_for_space_type(model, living_space_type.handle)
 	unless fbasement_space_type.nil?
-		finished_basement_furn_area = HelperMethods.get_floor_area(model, fbasement_space_type.handle, runner)
+		finished_basement_furn_area = HelperMethods.get_floor_area_for_space_type(model, fbasement_space_type.handle)
 	end
 	unless ubasement_space_type.nil?
-		unfinished_basement_furn_area = HelperMethods.get_floor_area(model, ubasement_space_type.handle, runner)
+		unfinished_basement_furn_area = HelperMethods.get_floor_area_for_space_type(model, ubasement_space_type.handle)
 	end
 	unless garage_space_type.nil?
-		garage_furn_area = HelperMethods.get_floor_area(model, garage_space_type.handle, runner)
+		garage_furn_area = HelperMethods.get_floor_area_for_space_type(model, garage_space_type.handle)
 	end
 
     # Process the furniture

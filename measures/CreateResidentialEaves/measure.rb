@@ -14,7 +14,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Create Residential Eaves"
+    return "Set Residential Eaves"
   end
 
   # human readable description

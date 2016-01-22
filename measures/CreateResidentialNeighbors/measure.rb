@@ -6,7 +6,7 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Add Residential Neighbors"
+    return "Set Residential Neighbors"
   end
 
   # human readable description

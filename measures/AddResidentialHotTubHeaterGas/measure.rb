@@ -6,15 +6,15 @@ require "#{File.dirname(__FILE__)}/resources/util"
 class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Hot Tub Gas Heater"
+    return "Set Residential Hot Tub Gas Heater"
   end
   
   def description
-    return "Adds (or replaces) a residential hot tub gas heater with the specified efficiency and schedule. The hot tub is assumed to be outdoors."
+    return "Adds (or replaces) a residential hot tub heater with the specified efficiency and schedule. The hot tub is assumed to be outdoors."
   end
   
   def modeler_description
-    return "Since there is no Hot Tub Gas Heater object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential hot tub gas heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Hot Tub Heater object in OpenStudio/EnergyPlus, we look for a GasEquipment or ElectricEquipment object with the name that denotes it is a residential hot tub heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned."
   end
   
   #define the arguments that the user will input
@@ -64,36 +64,6 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch.setDefaultValue("0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837")
 	args << monthly_sch
 
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
-    end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type. The hot tub will be located outdoors, but the living space floor area is needed to scale energy use.")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type
-
-    #make a choice argument for finished basement space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
-        space_type_args << Constants.FinishedBasementSpaceType
-    end
-    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
-    fbasement_space_type.setDisplayName("Finished Basement space type")
-    fbasement_space_type.setDescription("Select the finished basement space type. The hot tub will be located outdoors, but the finished basement space floor area is needed to scale energy use.")
-    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
-    args << fbasement_space_type
-
     return args
   end #end the arguments method
 
@@ -124,28 +94,16 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
 		return false
     end
     
-	# Space type
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
+    # Get CFA and number of bedrooms/bathrooms
+    cfa = HelperMethods.get_building_conditioned_floor_area(model, runner)
+    if cfa.nil?
         return false
     end
-	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
-    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
-
-    # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, living_space_type.handle, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
     
-    cfa_living = HelperMethods.get_floor_area(model, living_space_type.handle, runner)
-    cfa_fbasement = 0.0
-    if not fbasement_space_type.nil?
-        cfa_fbasement = HelperMethods.get_floor_area(model, fbasement_space_type.handle, runner)
-    end
-    cfa_total = cfa_living + cfa_fbasement
-
 	#Calculate annual energy use
     ann_g = base_energy * mult # therm/yr
     
@@ -154,7 +112,7 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
         constant = ann_g/2
         nbr_coef = ann_g/4/3
         cfa_coef = ann_g/4/1920
-        hth_ann_g = constant + nbr_coef * nbeds + cfa_coef * cfa_total # therm/yr
+        hth_ann_g = constant + nbr_coef * nbeds + cfa_coef * cfa # therm/yr
     else
         hth_ann_g = ann_g # therm/yr
     end
@@ -174,12 +132,15 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
 	end
 	design_level = sch.calcDesignLevelFromDailyTherm(hth_ann_g/365.0)
 	
-	#add hot tub heater to the living space
-    #because there are no space gains, the choice of space is arbitrary
+	#add hot tub heater to an arbitrary space (there are no space gains)
 	has_gas_hth = 0
 	replace_gas_hth = 0
     replace_elec_hth = 0
-    space_equipments_g = living_space_type.gasEquipment
+    space = HelperMethods.get_default_space(model, runner)
+    if space.nil?
+        return false
+    end
+    space_equipments_g = space.gasEquipment
     space_equipments_g.each do |space_equipment_g| #check for an existing gas heater
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
             has_gas_hth = 1
@@ -189,7 +150,7 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
             replace_gas_hth = 1
         end
     end
-    space_equipments_e = living_space_type.electricEquipment
+    space_equipments_e = space.electricEquipment
     space_equipments_e.each do |space_equipment_e|
         if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
             runner.registerInfo("There is already a hot tub electric heater. The existing heater will be replaced with the specified hot tub gas heater.")
@@ -205,7 +166,7 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
         hth_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
         hth = OpenStudio::Model::GasEquipment.new(hth_def)
         hth.setName(obj_name_g)
-        hth.setSpaceType(living_space_type)
+        hth.setSpace(space)
         hth_def.setName(obj_name_g)
         hth_def.setDesignLevel(design_level)
         hth_def.setFractionRadiant(hth_rad)
@@ -216,13 +177,7 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #reporting final condition of model
-    if replace_gas_hth == 1
-        runner.registerFinalCondition("The existing hot tub gas heater has been replaced by one with #{hth_ann_g.round} therms annual energy consumption.")
-    elsif replace_elec_hth == 1
-        runner.registerFinalCondition("The existing hot tub electric heater has been replaced by a hot tub gas heater with #{hth_ann_g.round} therms annual energy consumption.")
-    else
-        runner.registerFinalCondition("A hot tub gas heater has been added with #{hth_ann_g.round} therms annual energy consumption.")
-    end
+    runner.registerFinalCondition("A hot tub gas heater has been set with #{hth_ann_g.round} therms annual energy consumption.")
 	
     return true
  

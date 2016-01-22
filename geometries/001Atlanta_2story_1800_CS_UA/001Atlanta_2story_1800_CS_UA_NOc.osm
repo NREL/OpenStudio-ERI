@@ -149,7 +149,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {58e3b471-f859-4ce7-8f72-d83e47760274}, !- Handle
-  crawlspace zone,                        !- Name
+  crawl zone,                        !- Name
   1,                                      !- Multiplier
   1.2192,                                 !- Ceiling Height {m}
   103.299857856,                          !- Volume {m3}
@@ -223,7 +223,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {74e2777f-bdce-4229-8d95-bc8b6f729397}, !- Handle
-  crawlspace space,                       !- Name
+  crawl space,                       !- Name
   {d50b70df-3742-4dd4-83b1-4353efb844cf}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -1294,7 +1294,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {d50b70df-3742-4dd4-83b1-4353efb844cf}, !- Handle
-  crawlspace space type,                  !- Name
+  crawl space type,                  !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {9e182b72-4228-43e1-b99a-88b8aec7a81e}; !- Group Rendering Name

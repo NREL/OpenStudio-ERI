@@ -304,7 +304,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Airflow Properties"
+    return "Set Residential Airflow"
   end
   
   def description
@@ -312,7 +312,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
   end
   
   def modeler_description
-    return "Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation)."
+    return "Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation). Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end     
   
   def get_least_neighbor_offset(workspace)
@@ -908,7 +908,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentMaxOARelativeHumidity = runner.getDoubleArgumentValue("userdefinedrelhumratio",user_arguments)
 
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, living_thermal_zone_r, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end

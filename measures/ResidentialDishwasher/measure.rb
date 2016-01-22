@@ -8,15 +8,15 @@ require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Dishwasher"
+    return "Set Residential Dishwasher"
   end
  
   def description
-    return "Adds (or replaces) a residential dishwasher with the specified efficiency, operation, and schedule."
+    return "Adds (or replaces) a residential dishwasher with the specified efficiency, operation, and schedule in the given space."
   end
   
   def modeler_description
-    return "Since there is no Dishwasher object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential dishwasher. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Dishwasher object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential dishwasher. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end
  
   #define the arguments that the user will input
@@ -92,20 +92,20 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	mult_hw.setDefaultValue(1)
 	args << mult_hw
 	
-    #make a choice argument for space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
+    #make a choice argument for space
+    spaces = model.getSpaceTypes
+    space_args = OpenStudio::StringVector.new
+    spaces.each do |space|
+        space_args << space.name.to_s
     end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
+    if not space_args.include?(Constants.LivingSpace(1))
+        space_args << Constants.LivingSpace(1)
     end
-    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_args, true)
-    space_type.setDisplayName("Location")
-    space_type.setDescription("Select the space type where the dishwasher is located")
-    space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << space_type
+    space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_args, true)
+    space.setDisplayName("Location")
+    space.setDescription("Select the space where the dishwasher is located")
+    space.setDefaultValue(Constants.LivingSpace(1))
+    args << space
     
     #make a choice argument for plant loop
     plant_loops = model.getPlantLoops
@@ -144,7 +144,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	dw_energy_guide_annual_gas_cost = runner.getDoubleArgumentValue("eg_gas_cost", user_arguments)
 	dw_energy_multiplier = runner.getDoubleArgumentValue("mult_e", user_arguments)
 	dw_hot_water_multiplier = runner.getDoubleArgumentValue("mult_hw", user_arguments)
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+	space_r = runner.getStringArgumentValue("space",user_arguments)
     plant_loop_s = runner.getStringArgumentValue("plant_loop", user_arguments)
 	
 	#Check for valid inputs
@@ -177,9 +177,9 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 		return false
 	end
     
-    #Get space type
-    space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
-    if space_type.nil?
+    #Get space
+    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    if space.nil?
         return false
     end
 
@@ -190,7 +190,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type.handle, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -387,7 +387,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	#add dw to the selected space
 	has_elec_dw = 0
 	replace_dw = 0
-    space_equipments = space_type.electricEquipment
+    space_equipments = space.electricEquipment
     space_equipments.each do |space_equipment|
         if space_equipment.electricEquipmentDefinition.name.get.to_s == obj_name
             has_elec_dw = 1
@@ -417,7 +417,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
         dw_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         dw = OpenStudio::Model::ElectricEquipment.new(dw_def)
         dw.setName(obj_name)
-        dw.setSpaceType(space_type)
+        dw.setSpace(space)
         dw_def.setName(obj_name)
         dw_def.setDesignLevel(design_level)
         dw_def.setFractionRadiant(dw_rad)
@@ -429,7 +429,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
         dw_def2 = OpenStudio::Model::WaterUseEquipmentDefinition.new(model)
         dw2 = OpenStudio::Model::WaterUseEquipment.new(dw_def2)
         dw2.setName(obj_name)
-        dw2.setSpaceType(space_type)
+        dw2.setSpace(space)
         dw_def2.setName(obj_name)
         dw_def2.setPeakFlowRate(peak_flow)
         dw_def2.setEndUseSubcategory("Domestic Hot Water")
@@ -454,11 +454,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     end
 
     #reporting final condition of model
-    if replace_dw == 1
-        runner.registerFinalCondition("The existing dishwasher has been replaced by one with #{dw_ann.round} kWhs annual energy consumption.")
-    else
-        runner.registerFinalCondition("A dishwasher with #{dw_ann.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
-    end
+    runner.registerFinalCondition("A dishwasher with #{dw_ann.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}'.")
 	
     return true
  

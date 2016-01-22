@@ -10,7 +10,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     
   # human readable name
   def name
-    return "Assign Residential Living Space CMU Wall Construction"
+    return "Set Residential Living Space CMU Wall Construction"
   end
 
   # human readable description

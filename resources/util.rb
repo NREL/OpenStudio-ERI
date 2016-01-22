@@ -7,21 +7,19 @@ class HelperMethods
 
     # Retrieves the number of bedrooms and bathrooms from the space type
     # They are assigned in the SetResidentialBedroomsAndBathrooms measure.
-    def self.get_bedrooms_bathrooms(model, spacetype_handle, runner=nil)
+    def self.get_bedrooms_bathrooms(model, runner=nil)
         nbeds = nil
         nbaths = nil
-        model.getSpaceTypes.each do |spaceType|
-            if spaceType.handle.to_s == spacetype_handle.to_s
-                space_equipments = spaceType.electricEquipment
-                space_equipments.each do |space_equipment|
-                    name = space_equipment.electricEquipmentDefinition.name.get.to_s
-                    br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
-                    ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)	
-                    if br_regexpr
-                        nbeds = br_regexpr[:br].to_f
-                    elsif ba_regexpr
-                        nbaths = ba_regexpr[:ba].to_f
-                    end
+        model.getSpaces.each do |space|
+            space_equipments = space.electricEquipment
+            space_equipments.each do |space_equipment|
+                name = space_equipment.electricEquipmentDefinition.name.get.to_s
+                br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
+                ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)	
+                if br_regexpr
+                    nbeds = br_regexpr[:br].to_f
+                elsif ba_regexpr
+                    nbaths = ba_regexpr[:ba].to_f
                 end
             end
         end
@@ -33,7 +31,7 @@ class HelperMethods
         return [nbeds, nbaths]
     end
 	
-    def self.get_bedrooms_bathrooms_from_idf(workspace, zone_name, runner=nil)
+    def self.get_bedrooms_bathrooms_from_idf(workspace, runner=nil)
         nbeds = nil
         nbaths = nil
 		electricEquipments = workspace.getObjectsByType("ElectricEquipment".to_IddObjectType)
@@ -43,15 +41,13 @@ class HelperMethods
 			zone_lists.each do |zone_list|
 				if zone_list.getString(0).to_s == zone_list_name
 					zone = zone_list.getString(1).to_s
-					if zone == zone_name.to_s
-						br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(electricEquipment.getString(0).to_s)
-						ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(electricEquipment.getString(0).to_s)	
-						if br_regexpr
-							nbeds = br_regexpr[:br].to_f
-						elsif ba_regexpr
-							nbaths = ba_regexpr[:ba].to_f
-						end
-					end
+                    br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(electricEquipment.getString(0).to_s)
+                    ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(electricEquipment.getString(0).to_s)	
+                    if br_regexpr
+                        nbeds = br_regexpr[:br].to_f
+                    elsif ba_regexpr
+                        nbaths = ba_regexpr[:ba].to_f
+                    end
 				end
 			end
         end
@@ -63,27 +59,25 @@ class HelperMethods
         return [nbeds, nbaths]
     end	
     
-	# Removes the number of bedrooms and bathrooms from the space type
-    def self.remove_bedrooms_bathrooms(model, spacetype_handle)
-        model.getSpaceTypes.each do |spaceType|
-            if spaceType.handle.to_s == spacetype_handle.to_s
-                space_equipments = spaceType.electricEquipment
-                space_equipments.each do |space_equipment|
-                    name = space_equipment.electricEquipmentDefinition.name.get.to_s
-                    br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
-                    ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)	
-                    if br_regexpr
-                        space_equipment.electricEquipmentDefinition.remove
-                    elsif ba_regexpr
-                        space_equipment.electricEquipmentDefinition.remove
-                    end
+	# Removes the number of bedrooms and bathrooms in the model
+    def self.remove_bedrooms_bathrooms(model)
+        model.getSpaces.each do |space|
+            space_equipments = space.electricEquipment
+            space_equipments.each do |space_equipment|
+                name = space_equipment.electricEquipmentDefinition.name.get.to_s
+                br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
+                ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)	
+                if br_regexpr
+                    space_equipment.electricEquipmentDefinition.remove
+                elsif ba_regexpr
+                    space_equipment.electricEquipmentDefinition.remove
                 end
             end
         end
     end	
 	
     # Retrieves the floor area of the specified space type
-    def self.get_floor_area(model, spacetype_handle, runner=nil)
+    def self.get_floor_area_for_space_type(model, spacetype_handle)
         floor_area = 0
         model.getSpaceTypes.each do |spaceType|
             if spaceType.handle.to_s == spacetype_handle.to_s
@@ -91,6 +85,45 @@ class HelperMethods
             end
         end
         return floor_area
+    end
+    
+    # Retrieves the conditioned floor area for the building
+    def self.get_building_conditioned_floor_area(model, runner=nil)
+        floor_area = 0
+        model.getThermalZones.each do |zone|
+            if self.zone_is_conditioned(zone)
+                runner.registerWarning(zone.name.to_s)
+                floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
+            end
+        end
+        if floor_area == 0 and not runner.nil?
+            runner.registerError("Could not find any conditioned floor area. Please assign HVAC equipment first.")
+            return nil
+        end
+        return floor_area
+    end
+    
+    def self.zone_is_conditioned(zone)
+        # FIXME: Ugly hack until we can get conditioned floor area from OS
+        if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone
+            return true
+        end
+        return false
+    end
+    
+    def self.get_default_space(model, runner=nil)
+        space = nil
+        model.getSpaces.each do |s|
+            if s.name.to_s == Constants.LivingSpace(1) # Try to return our living space
+                return s
+            elsif space.nil? # Return first space in list if our living space not found
+                space = s
+            end
+        end
+        if space.nil? and not runner.nil?
+            runner.registerError("Could not find any spaces in the model.")
+        end
+        return space
     end
     
     def self.get_space_type_from_string(model, spacetype_s, runner, print_err=true)
@@ -111,6 +144,24 @@ class HelperMethods
         return space_type
     end
 	
+    def self.get_space_from_string(model, space_s, runner, print_err=true)
+        space = nil
+        model.getSpaces.each do |s|
+            if s.name.to_s == space_s
+                space = s
+                break
+            end
+        end
+        if space.nil?
+            if print_err
+                runner.registerError("Could not find space with the name '#{space_s}'.")
+            else
+                runner.registerWarning("Could not find space with the name '#{space_s}'.")
+            end
+        end
+        return space
+    end
+
     def self.get_thermal_zone_from_string(model, thermalzone_s, runner, print_err=true)
         thermal_zone = nil
         model.getThermalZones.each do |tz|

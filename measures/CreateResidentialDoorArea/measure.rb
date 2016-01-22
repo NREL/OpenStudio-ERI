@@ -18,7 +18,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Add/Replace Residential Door Area"
+    return "Set Residential Door Area"
   end
 
   # human readable description

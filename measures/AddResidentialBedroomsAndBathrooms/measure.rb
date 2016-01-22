@@ -9,7 +9,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Set Residential Bedrooms And Bathrooms"
+    return "Set Residential Number of Bedrooms/Bathrooms"
   end
 
   # human readable description
@@ -50,21 +50,6 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	num_ba.setDefaultValue("2")
 	args << num_ba		
 
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
-    end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type
-	
     return args
   end
 
@@ -77,18 +62,11 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
 	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments)
 	
-    #Get space type
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
-        return false
-    end
-
 	# Remove any existing bedrooms and bathrooms
-	HelperMethods.remove_bedrooms_bathrooms(model, living_space_type.handle)
+	HelperMethods.remove_bedrooms_bathrooms(model)
 	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f
@@ -113,17 +91,21 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	ba.setName("#{num_ba} Bathrooms")
     ba.setSchedule(sch)
 	
-	# Set the space type
-    br.setSpaceType(living_space_type)
-    ba.setSpaceType(living_space_type)
+	# Assign to an arbitrary space
+    space = HelperMethods.get_default_space(model, runner)
+    if space.nil?
+        return false
+    end
+    br.setSpace(space)
+    ba.setSpace(space)
 	
 	# Test retrieving
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, living_space_type.handle)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model)
     if not nbeds.nil?
-        runner.registerInfo("Number of bedrooms set to #{nbeds} for the '#{living_space_type.name}' space type.")
+        runner.registerInfo("Number of bedrooms set to #{nbeds}.")
     end
     if not nbaths.nil?
-        runner.registerInfo("Number of bathrooms set to #{nbaths} for the '#{living_space_type.name}' space type.")
+        runner.registerInfo("Number of bathrooms set to #{nbaths}.")
     end
 	
     return true

@@ -6,15 +6,15 @@ require "#{File.dirname(__FILE__)}/resources/util"
 class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Gas Fireplace"
+    return "Set Residential Gas Fireplace"
   end
   
   def description
-    return "Adds (or replaces) a residential gas fireplace with the specified efficiency and schedule. The fireplace is assumed to be in the living space."
+    return "Adds (or replaces) a residential gas fireplace with the specified efficiency and schedule in the given space."
   end
   
   def modeler_description
-    return "Since there is no Gas Fireplace object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas fireplace. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Gas Fireplace object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas fireplace. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned."
   end
   
   #define the arguments that the user will input
@@ -64,35 +64,20 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
 	monthly_sch.setDefaultValue("1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154")
 	args << monthly_sch
 
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
+    #make a choice argument for space
+    spaces = model.getSpaceTypes
+    space_args = OpenStudio::StringVector.new
+    spaces.each do |space|
+        space_args << space.name.to_s
     end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
+    if not space_args.include?(Constants.LivingSpace(1))
+        space_args << Constants.LivingSpace(1)
     end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type. The fireplace will be located in this space.")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type
-
-    #make a choice argument for finished basement space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
-        space_type_args << Constants.FinishedBasementSpaceType
-    end
-    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
-    fbasement_space_type.setDisplayName("Finished Basement space type")
-    fbasement_space_type.setDescription("Select the finished basement space type. The fireplace will be located in the living space, but the finished basement space floor area is needed to scale energy use.")
-    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
-    args << fbasement_space_type
+    space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_args, true)
+    space.setDisplayName("Location")
+    space.setDescription("Select the space where the fireplace is located.")
+    space.setDefaultValue(Constants.LivingSpace(1))
+    args << space
 
     return args
   end #end the arguments method
@@ -124,28 +109,23 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
 		return false
     end
 
-	# Space type
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
+	# Space
+	space_r = runner.getStringArgumentValue("space",user_arguments)
+    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    if space.nil?
         return false
     end
-	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
-    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
 
-    # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, living_space_type.handle, runner)
+    # Get CFA and number of bedrooms/bathrooms
+    cfa = HelperMethods.get_building_conditioned_floor_area(model, runner)
+    if cfa.nil?
+        return false
+    end
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
     
-    cfa_living = HelperMethods.get_floor_area(model, living_space_type.handle, runner)
-    cfa_fbasement = 0.0
-    if not fbasement_space_type.nil?
-        cfa_fbasement = HelperMethods.get_floor_area(model, fbasement_space_type.handle, runner)
-    end
-    cfa_total = cfa_living + cfa_fbasement
-
 	#Calculate annual energy use
     ann_g = base_energy * mult # therm/yr
     
@@ -154,7 +134,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
         constant = ann_g/2
         nbr_coef = ann_g/4/3
         cfa_coef = ann_g/4/1920
-        gg_ann_g = constant + nbr_coef * nbeds + cfa_coef * cfa_total # therm/yr
+        gg_ann_g = constant + nbr_coef * nbeds + cfa_coef * cfa # therm/yr
     else
         gg_ann_g = ann_g # therm/yr
     end
@@ -172,10 +152,10 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
 	end
 	design_level = sch.calcDesignLevelFromDailyTherm(gg_ann_g/365.0)
 	
-	#add fireplace to the living space
+	#add fireplace to the space
 	has_gg = 0
 	replace_gg = 0
-    space_equipments_g = living_space_type.gasEquipment
+    space_equipments_g = space.gasEquipment
     space_equipments_g.each do |space_equipment_g| #check for an existing gas fireplace
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name
             has_gg = 1
@@ -193,7 +173,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
         gg_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
         gg = OpenStudio::Model::GasEquipment.new(gg_def)
         gg.setName(obj_name)
-        gg.setSpaceType(living_space_type)
+        gg.setSpace(space)
         gg_def.setName(obj_name)
         gg_def.setDesignLevel(design_level)
         gg_def.setFractionRadiant(gg_rad)
@@ -204,11 +184,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #reporting final condition of model
-    if replace_gg == 1
-        runner.registerFinalCondition("The existing gas fireplace has been replaced by one with #{gg_ann_g.round} therms annual energy consumption.")
-    else
-        runner.registerFinalCondition("A gas fireplace has been added with #{gg_ann_g.round} therms annual energy consumption.")
-    end
+    runner.registerFinalCondition("A gas fireplace has been set with #{gg_ann_g.round} therms annual energy consumption.")
 	
     return true
  

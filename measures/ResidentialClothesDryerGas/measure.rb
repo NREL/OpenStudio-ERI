@@ -6,15 +6,15 @@ require "#{File.dirname(__FILE__)}/resources/util"
 class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
   
   def name
-    return "Add/Replace Residential Gas Clothes Dryer"
+    return "Set Residential Gas Clothes Dryer"
   end
 
   def description
-    return "Adds (or replaces) a residential gas clothes dryer with the specified efficiency, operation, and schedule."
+    return "Adds (or replaces) a residential clothes dryer with the specified efficiency, operation, and schedule in the given space."
   end
   
   def modeler_description
-    return "Since there is no Gas Clothes Dryer object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas clothes dryer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model."
+    return "Since there is no Clothes Dryer object in OpenStudio/EnergyPlus, we look for a GasEquipment or ElectricEquipment object with the name that denotes it is a residential clothes dryer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end
 
   #define the arguments that the user will input
@@ -89,20 +89,20 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
 	cw_drum_volume.setDefaultValue(3.5)
 	args << cw_drum_volume
     
-    #make a choice argument for space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
+    #make a choice argument for space
+    spaces = model.getSpaces
+    space_args = OpenStudio::StringVector.new
+    spaces.each do |space|
+        space_args << space.name.to_s
     end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
+    if not space_args.include?(Constants.LivingSpace(1))
+        space_args << Constants.LivingSpace(1)
     end
-    space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space_type", space_type_args, true)
-    space_type.setDisplayName("Location")
-    space_type.setDescription("Select the space type where the clothes dryer is located")
-    space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << space_type
+    space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_args, true)
+    space.setDisplayName("Location")
+    space.setDescription("Select the space where the clothes dryer is located")
+    space.setDefaultValue(Constants.LivingSpace(1))
+    args << space
     
     return args
   end #end the arguments method
@@ -126,16 +126,16 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
 	cw_mef = runner.getDoubleArgumentValue("cw_mef",user_arguments)
     cw_rated_annual_energy = runner.getDoubleArgumentValue("cw_rated_annual_energy",user_arguments)
 	cw_drum_volume = runner.getDoubleArgumentValue("cw_drum_volume",user_arguments)
-	space_type_r = runner.getStringArgumentValue("space_type",user_arguments)
+	space_r = runner.getStringArgumentValue("space",user_arguments)
 
-    #Get space type
-    space_type = HelperMethods.get_space_type_from_string(model, space_type_r, runner)
-    if space_type.nil?
+    #Get space
+    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    if space.nil?
         return false
     end
 
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, space_type.handle, runner)
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -256,7 +256,7 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
 	has_gas_cd = 0
 	replace_gas_cd = 0
 	replace_e_cd = 0
-    space_equipments_g = space_type.gasEquipment
+    space_equipments_g = space.gasEquipment
     space_equipments_g.each do |space_equipment_g| #check for an existing gas cd
         if space_equipment_g.gasEquipmentDefinition.name.get.to_s == obj_name_g
             has_gas_cd = 1
@@ -266,8 +266,8 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
             replace_gas_cd = 1
         end
     end
-    space_equipments_e = space_type.electricEquipment
-    space_equipments_e.each do |space_equipment_e|
+    space_equipments_e = space.electricEquipment
+    space_equipments_e.each do |space_equipment_e| #check for an existing elec cd
         if space_equipment_e.electricEquipmentDefinition.name.get.to_s == obj_name_e
             runner.registerInfo("This space already has an electric dryer. The existing dryer will be replaced with the specified gas dryer.")
             space_equipment_e.remove
@@ -285,7 +285,7 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
         cd_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
         cd = OpenStudio::Model::GasEquipment.new(cd_def)
         cd.setName(obj_name_g)
-        cd.setSpaceType(space_type)
+        cd.setSpace(space)
         cd_def.setName(obj_name_g)
         cd_def.setDesignLevel(design_level_g)
         cd_def.setFractionRadiant(cd_rad_g)
@@ -296,7 +296,7 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
         cd_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         cd = OpenStudio::Model::ElectricEquipment.new(cd_def)
         cd.setName(obj_name_g_e)
-        cd.setSpaceType(space_type)
+        cd.setSpace(space)
         cd_def.setName(obj_name_g_e)
         cd_def.setDesignLevel(design_level_e)
         cd_def.setFractionRadiant(cd_rad_g_e)
@@ -306,13 +306,7 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
     end
 	
 	#reporting final condition of model
-    if replace_gas_cd == 1
-        runner.registerFinalCondition("The existing gas dryer has been replaced by one with #{cd_ann_g.round} therms and #{cd_ann_e.round} kWhs annual energy consumption.")
-    elsif replace_e_cd == 1
-        runner.registerFinalCondition("The existing electric dryer has been replaced by a gas dryer with #{cd_ann_g.round} therms and #{cd_ann_e.round} kWhs annual energy consumption.")
-    else
-        runner.registerFinalCondition("A gas dryer has been added with #{cd_ann_g.round} therms and #{cd_ann_e.round} kWhs annual energy consumption.")
-    end
+    runner.registerFinalCondition("A gas dryer has been set with #{cd_ann_g.round} therms and #{cd_ann_e.round} kWhs annual energy consumption.")
 	
     return true
 	

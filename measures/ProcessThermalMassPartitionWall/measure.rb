@@ -55,11 +55,11 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Add/Replace Residential Partition Wall Thermal Mass"
+    return "Set Residential Partition Wall Thermal Mass"
   end
   
   def description
-    return "This measure creates internal mass for partition walls in the living space and finished basement."
+    return "This measure assigns partition wall mass to the living space and finished basement."
   end
   
   def modeler_description
@@ -173,9 +173,9 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     
 	living_space_area = 0
 	finished_basement_area = 0
-	living_space_area = HelperMethods.get_floor_area(model, living_space_type.handle, runner)
+	living_space_area = HelperMethods.get_floor_area_for_space_type(model, living_space_type.handle)
 	unless fbasement_space_type.nil?
-		finished_basement_area = HelperMethods.get_floor_area(model, fbasement_space_type.handle, runner)
+		finished_basement_area = HelperMethods.get_floor_area_for_space_type(model, fbasement_space_type.handle)
 	end
 
     # Constants

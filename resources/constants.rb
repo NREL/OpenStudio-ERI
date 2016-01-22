@@ -129,13 +129,13 @@ class Constants
 		return 'aircooled'
 	end
     def self.CrawlSpace
-        return 'crawlspace space'
+        return 'crawl space'
     end
     def self.CrawlSpaceType
-        return 'crawlspace space type'
+        return 'crawl space type'
     end
     def self.CrawlZone
-        return 'crawlspace zone'
+        return 'crawl zone'
     end
 	def self.DehumidDucted
 		return 'ducted'
