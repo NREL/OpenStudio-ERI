@@ -124,7 +124,7 @@ class WeatherProcess
 
 	# self._get_climate_zones_ba(self.header.Station)
 	# self._get_states_in_ba_zone(self.zones.BA)
-	# header = WeatherProcess._get_ashrae_622_wsf(header, header.Station, runner) TODO: getting utf-8 byte error on linux server when parsing this csv
+	# header.WSF = WeatherProcess._get_ashrae_622_wsf(header.Station, runner) TODO: getting utf-8 byte error on linux server when parsing this csv
 	
     # Design data line:
 
@@ -380,7 +380,7 @@ class WeatherProcess
 
   end
 
-  def self._get_ashrae_622_wsf(header, wmo, runner)
+  def self._get_ashrae_622_wsf(wmo, runner)
     # Looks up the ASHRAE 62.2 weather and sheilding factor from ASHRAE622WSF
     # for the specified WMO station number. If not found, uses the average value 
     # in the file.
@@ -410,16 +410,13 @@ class WeatherProcess
 	wsfs = []
 	ashrae_dict.each do |adict|
 		if adict['TMY3'] == wmo
-			header.WSF = adict['wsf'].to_f
-			return header
+			return adict['wsf'].to_f
 		end
 		wsfs << adict['wsf'].to_f
 	end
 	
 	# Value not found, use average
-	header.WSF = wsfs.inject{ |sum, n| sum + n } / wsfs.length
-				
-	return header
+	return wsfs.inject{ |sum, n| sum + n } / wsfs.length
 		
   end
   
@@ -440,14 +437,6 @@ class WeatherProcess
   end
 
   def _get_states_in_ba_zone
-
-  end
-
-  def printData
-
-  end
-
-  def writeData
 
   end
 

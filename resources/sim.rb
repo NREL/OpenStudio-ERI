@@ -11,170 +11,7 @@ class Sim
       @weather = WeatherProcess.new(model, runner)
       @model = model
     end
-    
-  def _getGroundTemperatures
-    # Return monthly ground temperatures.
-
-    # This correlation is the same that is used in DOE-2's src\WTH.f file, subroutine GTEMP.
-    monthly_temps = @weather.data.MonthlyAvgDrybulbs
-    annual_temp = @weather.data.AnnualAvgDrybulb
-
-    amon = [15.0, 46.0, 74.0, 95.0, 135.0, 166.0, 196.0, 227.0, 258.0, 288.0, 319.0, 349.0]
-    po = 0.6
-    dif = 0.025
-    p = OpenStudio::convert(1.0,"yr","hr").get
-
-    beta = Math::sqrt(Math::PI / (p * dif)) * 10.0
-    x = Math::exp(-beta)
-    x2 = x * x
-    s = Math::sin(beta)
-    c = Math::cos(beta)
-    y = (x2 - 2.0 * x * c + 1.0) / (2.0 * beta ** 2.0)
-    gm = Math::sqrt(y)
-    z = (1.0 - x * (c + s)) / (1.0 - x * (c - s))
-    phi = Math::atan(z)
-    bo = (monthly_temps.max - monthly_temps.min) * 0.5
-
-    ground_temps = []
-    (0...12).to_a.each do |i|
-      theta = amon[i] * 24.0
-      ground_temps << OpenStudio::convert(annual_temp - bo * Math::cos(2.0 * Math::PI / p * theta - po - phi) * gm + 460.0,"R","F").get
-    end
-
-    return ground_temps, annual_temp
-
-  end
-    
-  def _processHeatingCoolingSeasons(misc, schedules)
-    # Assigns monthly heating and cooling seasons.
-
-    monthly_temps = @weather.data.MonthlyAvgDrybulbs
-    heat_design_db = @weather.design.HeatingDrybulb
-
-    # create basis lists with zero for every month
-    cooling_season_temp_basis = Array.new(monthly_temps.length, 0.0)
-    heating_season_temp_basis = Array.new(monthly_temps.length, 0.0)
-
-    monthly_temps.each_with_index do |temp, i|
-      if temp < 66.0
-        heating_season_temp_basis[i] = 1.0
-      elsif temp >= 66.0
-        cooling_season_temp_basis[i] = 1.0
-      end
-
-      if (i == 0 or i == 11) and heat_design_db < 59.0
-        heating_season_temp_basis[i] = 1.0
-      elsif i == 6 or i == 7
-        cooling_season_temp_basis[i] = 1.0
-      end
-    end
-
-    cooling_season = Array.new(monthly_temps.length, 0.0)
-    heating_season = Array.new(monthly_temps.length, 0.0)
-
-    monthly_temps.each_with_index do |temp, i|
-      # Heating overlaps with cooling at beginning of summer
-      if i == 0 # January
-        prevmonth = 11 # December
-      else
-        prevmonth = i - 1
-      end
-
-      if (heating_season_temp_basis[i] == 1.0 or (cooling_season_temp_basis[prevmonth] == 0.0 and cooling_season_temp_basis[i] == 1.0))
-        heating_season[i] = 1.0
-      else
-        heating_season[i] = 0.0
-      end
-
-      if (cooling_season_temp_basis[i] == 1.0 or (heating_season_temp_basis[prevmonth] == 0.0 and heating_season_temp_basis[i] == 1.0))
-        cooling_season[i] = 1.0
-      else
-        cooling_season[i] = 0.0
-      end
-    end
-
-    # Find the first month of cooling and add one month
-    (1...12).to_a.each do |i|
-      if cooling_season[i] == 1.0
-        cooling_season[i - 1] = 1.0
-        break
-      end
-    end
-
-    season_type = []
-    (0...12).to_a.each do |month|
-      if heating_season[month] == 1.0 and cooling_season[month] == 0.0
-        season_type << Constants.SeasonHeating
-      elsif heating_season[month] == 0.0 and cooling_season[month] == 1.0
-        season_type << Constants.SeasonCooling
-      elsif heating_season[month] == 1.0 and cooling_season[month] == 1.0
-        season_type << Constants.SeasonOverlap
-      else
-        season_type << Constants.SeasonNone
-      end
-    end
-
-    # Avoid issues in the minimal building test suite by eliminating
-    # cooling and heating seasons
-    if misc.SimTestSuiteBuilding == Constants.TestBldgMinimal
-      cooling_season = Array.new(12, 1.0)
-      heating_season = Array.new(12, 1.0)
-    end
-
-    # Heating and Cooling Season Schedules
-    schedules.heating_season = heating_season
-    schedules.cooling_season = cooling_season
-
-    return schedules
-
-  end
-
-  def _processHeatingCoolingSetpoints(hsp, csp, selectedheating, selectedcooling)
-    # Heating/Cooling Setpoints
-
-    # Adjust cooling setpoints according to the offset the user has selected in conjunction with the user of ceiling fans.
-
-    # Convert to Weekday/Weekend 24-hour lists
-    if not hsp.HeatingSetpointConstantSetpoint.nil?
-      hsp.HeatingSetpointSchedule = Array.new(48, hsp.HeatingSetpointConstantSetpoint)
-    end
-    if not csp.CoolingSetpointConstantSetpoint.nil?
-      csp.CoolingSetpointSchedule = Array.new(48, csp.CoolingSetpointConstantSetpoint)
-    end
-
-    csp.CoolingSetpointWeekday = csp.CoolingSetpointSchedule[0...24]
-    if csp.CoolingSetpointSchedule.length > 24
-      csp.CoolingSetpointWeekend = csp.CoolingSetpointSchedule[24...48]
-    else
-      csp.CoolingSetpointWeekend = csp.CoolingSetpointWeekday
-    end
-    hsp.HeatingSetpointWeekday = hsp.HeatingSetpointSchedule[0...24]
-    if hsp.HeatingSetpointSchedule.length > 24
-      hsp.HeatingSetpointWeekend = hsp.HeatingSetpointSchedule[0...24]
-    else
-      hsp.HeatingSetpointWeekend = hsp.HeatingSetpointWeekday
-    end
-
-    # self.cooling_set_point.weekday_hourly_schedule_with_offset = \
-    #             [x + self.ceiling_fans.CeilingFanCoolingSetptOffset for x in csp.CoolingSetpointWeekday]
-    # self.cooling_set_point.weekend_hourly_schedule_with_offset = \
-    #             [x + self.ceiling_fans.CeilingFanCoolingSetptOffset for x in csp.CoolingSetpointWeekend]
-
-    # Thermostatic Control type schedule
-    if selectedheating and selectedcooling
-      controlType = 4 # Dual Setpoint (Heating and Cooling) with deadband
-    elsif selectedcooling
-      controlType = 2 # Single Cooling Setpoint
-    elsif selectedheating
-      controlType = 1 # Single Heating Setpoint
-    else
-      controlType = 0 # Uncontrolled
-    end
-
-    return hsp, csp, controlType
-
-  end
-
+        
   def _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site, geometry)
     # Infiltration calculations.
 
@@ -514,7 +351,7 @@ class Sim
 
   end
 
-  def _processMechanicalVentilation(infil, vent, misc, clothes_dryer, geometry, living_space, schedules)
+  def _processMechanicalVentilation(infil, vent, ageOfHome, clothes_dryer, geometry, living_space, schedules)
     # Mechanical Ventilation
 
     # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
@@ -523,7 +360,7 @@ class Sim
     # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2);
     # only applies to existing buildings
     infil.rate_credit = 0 # default to no credit
-    if vent.MechVentInfilCreditForExistingHomes and misc.AgeOfHome > 0
+    if vent.MechVentInfilCreditForExistingHomes and ageOfHome > 0
 
       if vent.MechVentASHRAEStandard == '2010'
         # ASHRAE Standard 62.2 2010
@@ -553,15 +390,9 @@ class Sim
     vent.whole_house_vent_rate = vent.MechVentFractionOfASHRAE * vent.ashrae_vent_rate # cfm    
 
     # Spot Ventilation
-    if misc.SimTestSuiteBuilding != Constants.TestBldgMinimal
-      vent.MechVentBathroomExhaust = 50.0 # cfm, per HSP
-      vent.MechVentRangeHoodExhaust = 100.0 # cfm, per HSP
-      vent.MechVentSpotFanPower = 0.3 # W/cfm/fan, per HSP
-    else
-      vent.MechVentBathroomExhaust = 0.0 # cfm
-      vent.MechVentRangeHoodExhaust = 0.0 # cfm
-      vent.MechVentSpotFanPower = 0.0 # W/cfm/fan
-    end
+    vent.MechVentBathroomExhaust = 50.0 # cfm, per HSP
+    vent.MechVentRangeHoodExhaust = 100.0 # cfm, per HSP
+    vent.MechVentSpotFanPower = 0.3 # W/cfm/fan, per HSP
 
     vent.bath_exhaust_operation = 60.0 # min/day, per HSP
     vent.range_hood_exhaust_operation = 60.0 # min/day, per HSP
@@ -1320,7 +1151,7 @@ class Sim
 
   end
                     
-  def _processAirSystem(supply, furnace=nil, air_conditioner=nil, heat_pump=nil, hasFurnace=false, hasCoolingEquipment=false, hasAirConditioner=false, hasHeatPump=false, hasMiniSplitHP=false, hasRoomAirConditioner=false, hasGroundSourceHP=false, test_suite=nil)
+  def _processAirSystem(supply, furnace=nil, air_conditioner=nil, heat_pump=nil, hasFurnace=false, hasCoolingEquipment=false, hasAirConditioner=false, hasHeatPump=false, hasMiniSplitHP=false, hasRoomAirConditioner=false, hasGroundSourceHP=false)
     # Air System
 
     if air_conditioner.ACCoolingInstalledSEER == 999
@@ -1384,7 +1215,7 @@ class Sim
         end
 
         supply.CFM_TON_Rated = calc_cfm_ton_rated(ac.ACRatedAirFlowRate, ac.ACFanspeedRatio, ac.ACCapacityRatio)
-        supply = Sim._processAirSystemCoolingCoil(ac.ACNumberSpeeds, ac.ACCoolingEER, ac.ACCoolingInstalledSEER, ac.ACSupplyFanPowerInstalled, ac.ACSupplyFanPowerRated, ac.ACSHRRated, ac.ACCapacityRatio, ac.ACFanspeedRatio, ac.ACCondenserType, ac.ACCrankcase, ac.ACCrankcaseMaxT, ac.ACEERCapacityDerateFactor, test_suite, air_conditioner, supply, hasHeatPump)
+        supply = Sim._processAirSystemCoolingCoil(ac.ACNumberSpeeds, ac.ACCoolingEER, ac.ACCoolingInstalledSEER, ac.ACSupplyFanPowerInstalled, ac.ACSupplyFanPowerRated, ac.ACSHRRated, ac.ACCapacityRatio, ac.ACFanspeedRatio, ac.ACCondenserType, ac.ACCrankcase, ac.ACCrankcaseMaxT, ac.ACEERCapacityDerateFactor, air_conditioner, supply, hasHeatPump)
 
       end
 
@@ -1395,12 +1226,12 @@ class Sim
         # Cooling Coil
         supply = get_cooling_coefficients(hp.HPNumberSpeeds, false, true, supply)
         supply.CFM_TON_Rated = calc_cfm_ton_rated(hp.HPRatedAirFlowRateCooling, hp.HPFanspeedRatioCooling, hp.HPCapacityRatio)
-        supply = Sim._processAirSystemCoolingCoil(hp.HPNumberSpeeds, hp.HPCoolingEER, hp.HPCoolingInstalledSEER, hp.HPSupplyFanPowerInstalled, hp.HPSupplyFanPowerRated, hp.HPSHRRated, hp.HPCapacityRatio, hp.HPFanspeedRatioCooling, hp.HPCondenserType, hp.HPCrankcase, hp.HPCrankcaseMaxT, hp.HPEERCapacityDerateFactor, test_suite, air_conditioner, supply, hasHeatPump)
+        supply = Sim._processAirSystemCoolingCoil(hp.HPNumberSpeeds, hp.HPCoolingEER, hp.HPCoolingInstalledSEER, hp.HPSupplyFanPowerInstalled, hp.HPSupplyFanPowerRated, hp.HPSHRRated, hp.HPCapacityRatio, hp.HPFanspeedRatioCooling, hp.HPCondenserType, hp.HPCrankcase, hp.HPCrankcaseMaxT, hp.HPEERCapacityDerateFactor, air_conditioner, supply, hasHeatPump)
 
         # Heating Coil
         supply = get_heating_coefficients(supply.Number_Speeds, false, supply)
         supply.CFM_TON_Rated_Heat = calc_cfm_ton_rated(hp.HPRatedAirFlowRateHeating, hp.HPFanspeedRatioHeating, hp.HPCapacityRatio)
-        supply = Sim._processAirSystemHeatingCoil(hp.HPHeatingCOP, hp.HPHeatingInstalledHSPF, hp.HPSupplyFanPowerRated, hp.HPCapacityRatio, hp.HPFanspeedRatioHeating, hp.HPMinT, hp.HPCOPCapacityDerateFactor, test_suite, supply)
+        supply = Sim._processAirSystemHeatingCoil(hp.HPHeatingCOP, hp.HPHeatingInstalledHSPF, hp.HPSupplyFanPowerRated, hp.HPCapacityRatio, hp.HPFanspeedRatioHeating, hp.HPMinT, hp.HPCOPCapacityDerateFactor, supply)
 
       end
 
@@ -1450,7 +1281,7 @@ class Sim
 
   end
 
-  def self._processAirSystemCoolingCoil(number_Speeds, coolingEER, coolingSEER, supplyFanPower, supplyFanPower_Rated, shr_Rated, capacity_Ratio, fanspeed_Ratio, condenserType, crankcase, crankcase_MaxT, eer_CapacityDerateFactor, test_suite, air_conditioner, supply, hasHeatPump)
+  def self._processAirSystemCoolingCoil(number_Speeds, coolingEER, coolingSEER, supplyFanPower, supplyFanPower_Rated, shr_Rated, capacity_Ratio, fanspeed_Ratio, condenserType, crankcase, crankcase_MaxT, eer_CapacityDerateFactor, air_conditioner, supply, hasHeatPump)
 
     # if len(Capacity_Ratio) > len(set(Capacity_Ratio)):
     #     SimError("Capacity Ratio values must be unique ({})".format(Capacity_Ratio))
@@ -1458,7 +1289,7 @@ class Sim
     # Curves are hardcoded for both one and two speed models
     supply.Number_Speeds = number_Speeds
 
-    if test_suite.min_test_ideal_loads or air_conditioner.hasIdealAC
+    if air_conditioner.hasIdealAC
       supply = get_cooling_coefficients(supply.Number_Speeds, true, nil, supply)
     end
 
@@ -1507,7 +1338,7 @@ class Sim
         return false
     end
 
-    if test_suite.min_test_ideal_loads or air_conditioner.hasIdealAC
+    if air_conditioner.hasIdealAC
       supply.COOL_CLOSS_FPLR_SPEC_coefficients = [1.0, 0.0, 0.0]
     else
       supply.COOL_CLOSS_FPLR_SPEC_coefficients = [(1.0 - c_d), c_d, 0.0]    # Linear part load model
@@ -1530,14 +1361,10 @@ class Sim
 
   end
 
-  def self._processAirSystemHeatingCoil(heatingCOP, heatingHSPF, supplyFanPower_Rated, capacity_Ratio, fanspeed_Ratio_Heating, min_T, cop_CapacityDerateFactor, test_suite, supply)
+  def self._processAirSystemHeatingCoil(heatingCOP, heatingHSPF, supplyFanPower_Rated, capacity_Ratio, fanspeed_Ratio_Heating, min_T, cop_CapacityDerateFactor, supply)
 
     # if len(Capacity_Ratio) > len(set(Capacity_Ratio)):
     #     SimError("Capacity Ratio values must be unique ({})".format(Capacity_Ratio))
-
-    if test_suite.min_test_ideal_loads
-      get_heating_coeffcients(supply.Number_Speeds, true, supply)
-    end
 
     supply.HeatingEIR = Array.new
     (0...supply.Number_Speeds).to_a.each do |speed|
@@ -1557,10 +1384,6 @@ class Sim
     end
 
     supply.HEAT_CLOSS_FPLR_SPEC_coefficients = [(1 - c_d), c_d, 0] # Linear part load model
-
-    if test_suite.min_test_ideal_loads
-      supply.HEAT_CLOSS_FPLR_SPEC_coefficients = [1, 0, 0]
-    end
 
     supply.Capacity_Ratio_Heating = capacity_Ratio
     supply.fanspeed_ratio_heating = fanspeed_Ratio_Heating

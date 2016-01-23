@@ -7,7 +7,6 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load weather.rb
 require "#{File.dirname(__FILE__)}/resources/weather"
 
 class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
@@ -33,13 +32,13 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
 	
-    @weather = WeatherProcess.new(model,runner)
-    if @weather.error?
+    weather = WeatherProcess.new(model,runner)
+    if weather.error?
       return false
     end
 
-	avgOAT = OpenStudio::convert(@weather.data.AnnualAvgDrybulb,"F","C").get
-	monthlyOAT = @weather.data.MonthlyAvgDrybulbs
+	avgOAT = OpenStudio::convert(weather.data.AnnualAvgDrybulb,"F","C").get
+	monthlyOAT = weather.data.MonthlyAvgDrybulbs
 	
 	min_temp = monthlyOAT.min
 	max_temp = monthlyOAT.max
@@ -47,7 +46,7 @@ class ModifySiteWaterMainsTemperature < OpenStudio::Ruleset::ModelUserScript
 	maxDiffOAT = OpenStudio::convert(max_temp,"F","C").get - OpenStudio::convert(min_temp,"F","C").get
 	
 	#Calc annual average mains temperature to report
-	daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(@weather.data, @weather.header)
+	daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(weather.data, weather.header)
 		
     swmt = model.getSiteWaterMainsTemperature
         

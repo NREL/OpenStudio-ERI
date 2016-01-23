@@ -10,8 +10,7 @@
 #see the URL below for access to C++ documentation on workspace objects (click on "workspace" in the main window to view workspace objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/utilities/html/idf_page.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessGroundTemperature < OpenStudio::Ruleset::WorkspaceUserScript
@@ -46,11 +45,13 @@ class ProcessGroundTemperature < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end
 
-    # Create the sim object
-    sim = Sim.new(workspace, runner)
+    weather = WeatherProcess.new(workspace,runner)
+    if weather.error?
+      return false
+    end
 
     # Process the ground temperatures
-    ground_temps, annual_temp = sim._getGroundTemperatures
+    ground_temps, annual_temp = _getGroundTemperatures(weather)
 
     t = []
 
@@ -95,6 +96,40 @@ class ProcessGroundTemperature < OpenStudio::Ruleset::WorkspaceUserScript
  
   end #end the run method
 
+  def _getGroundTemperatures(weather)
+    # Return monthly ground temperatures.
+
+    # This correlation is the same that is used in DOE-2's src\WTH.f file, subroutine GTEMP.
+    monthly_temps = weather.data.MonthlyAvgDrybulbs
+    annual_temp = weather.data.AnnualAvgDrybulb
+
+    amon = [15.0, 46.0, 74.0, 95.0, 135.0, 166.0, 196.0, 227.0, 258.0, 288.0, 319.0, 349.0]
+    po = 0.6
+    dif = 0.025
+    p = OpenStudio::convert(1.0,"yr","hr").get
+
+    beta = Math::sqrt(Math::PI / (p * dif)) * 10.0
+    x = Math::exp(-beta)
+    x2 = x * x
+    s = Math::sin(beta)
+    c = Math::cos(beta)
+    y = (x2 - 2.0 * x * c + 1.0) / (2.0 * beta ** 2.0)
+    gm = Math::sqrt(y)
+    z = (1.0 - x * (c + s)) / (1.0 - x * (c - s))
+    phi = Math::atan(z)
+    bo = (monthly_temps.max - monthly_temps.min) * 0.5
+
+    ground_temps = []
+    (0...12).to_a.each do |i|
+      theta = amon[i] * 24.0
+      ground_temps << OpenStudio::convert(annual_temp - bo * Math::cos(2.0 * Math::PI / p * theta - po - phi) * gm + 460.0,"R","F").get
+    end
+
+    return ground_temps, annual_temp
+
+  end
+
+  
 end #end the measure
 
 #this allows the measure to be use by the application

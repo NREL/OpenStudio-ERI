@@ -173,21 +173,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	end
   end
 
-  class Misc
-    def initialize(ageOfHome, simTestSuiteBuilding)
-      @ageOfHome = ageOfHome
-      @simTestSuiteBuilding = simTestSuiteBuilding
-    end
-
-    def AgeOfHome
-      return @ageOfHome
-    end
-
-    def SimTestSuiteBuilding
-      return @simTestSuiteBuilding
-    end
-  end
-
   class ClothesDryer
     def initialize(dryerExhaust)
       @dryerExhaust = dryerExhaust
@@ -926,7 +911,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       infiltrationGarageACH50 = 0.0
       infiltrationShelterCoefficient = Constants.Auto
     end
-    simTestSuiteBuilding = nil
 	
     # Create the material class instances
     si = Infiltration.new(infiltrationLivingSpaceACH50, infiltrationShelterCoefficient, infiltrationLivingSpaceConstantACH, infiltrationGarageACH50)
@@ -940,7 +924,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     neighbors = Neighbors.new(get_least_neighbor_offset(workspace))
     site = Site.new(terrainType)
     vent = MechanicalVentilation.new(mechVentType, mechVentInfilCreditForExistingHomes, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
-    misc = Misc.new(ageOfHome, simTestSuiteBuilding)
     clothes_dryer = ClothesDryer.new(dryerExhaust)
     geometry = Geometry.new(nbeds, nbaths)
     nv = NaturalVentilation.new(natVentHtgSsnSetpointOffset, natVentClgSsnSetpointOffset, natVentOvlpSsnSetpointOffset, natVentHeatingSeason, natVentCoolingSeason, natVentOverlapSeason, natVentNumberWeekdays, natVentNumberWeekendDays, natVentFractionWindowsOpen, natVentFractionWindowAreaOpen, natVentMaxOAHumidityRatio, natVentMaxOARelativeHumidity)
@@ -1060,7 +1043,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     # Process the infiltration
     si, living_space, wind_speed, garage, fb, ub, cs, ua = sim._processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, garage_thermal_zone, fbasement_thermal_zone, ufbasement_thermal_zone, crawl_thermal_zone, ufattic_thermal_zone, wind_speed, neighbors, site, geometry)
     # Process the mechanical ventilation
-    vent, schedules = sim._processMechanicalVentilation(si, vent, misc, clothes_dryer, geometry, living_space, schedules)
+    vent, schedules = sim._processMechanicalVentilation(si, vent, ageOfHome, clothes_dryer, geometry, living_space, schedules)
     # Process the natural ventilation
     nv, schedules = sim._processNaturalVentilation(nv, living_space, wind_speed, si, schedules, geometry, cooling_set_point, heating_set_point)
 

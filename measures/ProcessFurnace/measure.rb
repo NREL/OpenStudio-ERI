@@ -59,28 +59,6 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     attr_accessor(:static, :cfm_ton, :HPCoolingOversizingFactor, :SpaceConditionedMult, :fan_power, :eff, :min_flow_ratio, :FAN_EIR_FPLR_SPEC_coefficients, :max_temp, :Heat_Capacity, :compressor_speeds, :Zone_Water_Remove_Cap_Ft_DB_RH_Coefficients, :Zone_Energy_Factor_Ft_DB_RH_Coefficients, :Zone_DXDH_PLF_F_PLR_Coefficients, :Number_Speeds, :fanspeed_ratio, :Heat_AirFlowRate, :Cool_AirFlowRate, :Fan_AirFlowRate)
   end
 
-  class TestSuite
-    def initialize(min_test_ideal_systems)
-      @min_test_ideal_systems = min_test_ideal_systems
-    end
-
-    def min_test_ideal_systems
-      return @min_test_ideal_systems
-    end
-  end
-
-  class MJ8
-    def initialize
-    end
-    attr_accessor(:HeatingLoad, :HeatingLoad_Inter, :heating_setpoint)
-  end
-
-  class Site
-    def initialize
-    end
-    attr_accessor(:acf, :acfs)
-  end
-
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -211,9 +189,6 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     furnace = Furnace.new(furnaceInstalledAFUE, furnaceMaxSupplyTemp, furnaceFuelType, furnaceInstalledSupplyFanPower)
     air_conditioner = AirConditioner.new(nil)
     supply = Supply.new
-    test_suite = TestSuite.new(false)
-    mj8 = MJ8.new
-    site = Site.new
 
     # Create the sim object
     sim = Sim.new(model, runner)
@@ -278,7 +253,6 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     always_on = model.alwaysOnDiscreteSchedule
 
-    # _processSystemAir
     # Air System
 
     if not hasCoolingEquipment
@@ -288,12 +262,9 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       supply.compressor_speeds = 1.0
     end
 
-    # if not sim.hasForcedAirEquipment:
-    #     return
-
     air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
     air_loop.setName("Central Air System")
-    # if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
+    # if air_conditioner.hasIdealAC
     #     air_loop.setDesignSupplyAirFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate,"cfm","m^3/s").get)
     # else
     #   air_loop.setDesignSupplyAirFlowRate(supply.fanspeed_ratio.max * OpenStudio::convert(supply.Fan_AirFlowRate,"cfm","m^3/s").get)
@@ -367,7 +338,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     fan.setFanEfficiency(supply.eff)
     fan.setPressureRise(supply.static)
 
-    # if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
+    # if air_conditioner.hasIdealAC
     #   fan.setMaximumFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate + 0.05,"cfm","m^3/s").get)
     # else
     #   fan.setMaximumFlowRate(supply.fanspeed_ratio.max * OpenStudio::convert(supply.Fan_AirFlowRate + 0.01,"cfm","m^3/s").get)
@@ -384,7 +355,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     # fan.setMaximumFlowRate(0.4290584054901815)
 
-    if test_suite.min_test_ideal_systems or air_conditioner.hasIdealAC
+    if air_conditioner.hasIdealAC
       fan.setMotorInAirstreamFraction(0)
     else
       fan.setMotorInAirstreamFraction(1)

@@ -7,51 +7,12 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
-
-  class Misc
-    def initialize(simTestSuiteBuilding)
-      @simTestSuiteBuilding = simTestSuiteBuilding
-    end
-
-    def SimTestSuiteBuilding
-      return @simTestSuiteBuilding
-    end
-  end
-
-  class Schedules
-    def initialize
-    end
-    attr_accessor(:heating_season, :cooling_season)
-  end
-
-  class HeatingSetpoint
-    def initialize(heatingSetpointConstantSetpoint)
-      @heatingSetpointConstantSetpoint = heatingSetpointConstantSetpoint
-    end
-
-    attr_accessor(:HeatingSetpointSchedule, :HeatingSetpointWeekday, :HeatingSetpointWeekend)
-
-    def HeatingSetpointConstantSetpoint
-      return @heatingSetpointConstantSetpoint
-    end
-  end
-
-  class CoolingSetpoint
-    def initialize(coolingSetpointConstantSetpoint)
-      @coolingSetpointConstantSetpoint = coolingSetpointConstantSetpoint
-    end
-
-    attr_accessor(:CoolingSetpointSchedule, :CoolingSetpointWeekday, :CoolingSetpointWeekend)
-
-    def CoolingSetpointConstantSetpoint
-      return @coolingSetpointConstantSetpoint
-    end
-  end
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
@@ -128,17 +89,13 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    simTestSuiteBuilding = nil
-
-    # Create the material class instances
-    misc = Misc.new(simTestSuiteBuilding)
-    schedules = Schedules.new
-
-    # Create the sim object
-    sim = Sim.new(model, runner)
-
+    weather = WeatherProcess.new(model,runner)
+    if weather.error?
+      return false
+    end
+    
     # Process the heating and cooling seasons
-    schedules = sim._processHeatingCoolingSeasons(misc, schedules)
+    heating_season, cooling_season = _processHeatingCoolingSeasons(weather)
 
     day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
     day_startm = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
@@ -165,7 +122,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
       htgssn_rule_day.setName("HeatingSeasonSchedule%02dd" % m.to_s)
       for h in 1..24
         time = OpenStudio::Time.new(0,h,0,0)
-        val = schedules.heating_season[m - 1]
+        val = heating_season[m - 1]
         htgssn_rule_day.addValue(time,val)
       end
       htgssn_rule_days << htgssn_rule_day
@@ -205,7 +162,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
       clgssn_rule_day.setName("CoolingSeasonSchedule%02dd" % m.to_s)
       for h in 1..24
         time = OpenStudio::Time.new(0,h,0,0)
-        val = schedules.cooling_season[m - 1]
+        val = cooling_season[m - 1]
         clgssn_rule_day.addValue(time,val)
       end
       clgssn_rule_days << clgssn_rule_day
@@ -229,8 +186,8 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     clgssn_winter = clgssn_ruleset.winterDesignDaySchedule
     clgssn_winter.setName("CoolingSeasonScheduleWinter")
 
-    runner.registerInfo("Set the monthly HeatingSeasonSchedule as #{schedules.heating_season.join(", ")}")
-    runner.registerInfo("Set the monthly CoolingSeasonSchedule as #{schedules.cooling_season.join(", ")}")	
+    runner.registerInfo("Set the monthly HeatingSeasonSchedule as #{heating_season.join(", ")}")
+    runner.registerInfo("Set the monthly CoolingSeasonSchedule as #{cooling_season.join(", ")}")	
 	
     # Thermal Zone
 	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
@@ -278,15 +235,8 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
       end
     end
 
-    # Create the material class instances
-    hsp = HeatingSetpoint.new(heatingSetpointConstantSetpoint)
-    csp = CoolingSetpoint.new(coolingSetpointConstantSetpoint)
-
-    # Create the sim object
-    sim = Sim.new(model, runner)
-
     # Process the heating and cooling setpoints
-    hsp, csp, controlType = sim._processHeatingCoolingSetpoints(hsp, csp, selectedheating, selectedcooling)
+    heatingSetpointSchedule, heatingSetpointWeekday, heatingSetpointWeekend, coolingSetpointSchedule, coolingSetpointWeekday, coolingSetpointWeekend, controlType = _processHeatingCoolingSetpoints(heatingSetpointConstantSetpoint, coolingSetpointConstantSetpoint, selectedheating, selectedcooling)
 
     thermalzones = model.getThermalZones
     thermalzones.each do |thermalzone|
@@ -311,7 +261,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
           for h in 1..24
             time = OpenStudio::Time.new(0,h,0,0)
             if heating_season["HeatingSeasonSchedule%02d" % m.to_s] == 1.0
-              val = OpenStudio::convert(hsp.HeatingSetpointWeekday[h - 1],"F","C").get
+              val = OpenStudio::convert(heatingSetpointWeekday[h - 1],"F","C").get
             else
               val = -1000
             end
@@ -337,7 +287,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         htgssn_summer.clearValues
         for h in 1..24
           time = OpenStudio::Time.new(0,h,0,0)
-          val = OpenStudio::convert(hsp.HeatingSetpointWeekday[h - 1],"F","C").get
+          val = OpenStudio::convert(heatingSetpointWeekday[h - 1],"F","C").get
           htgssn_summer.addValue(time,val)
         end
         heatingsetpoint.setWinterDesignDaySchedule(htgssn_winDesSch)
@@ -346,7 +296,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         htgssn_winter.clearValues
         for h in 1..24
           time = OpenStudio::Time.new(0,h,0,0)
-          val = OpenStudio::convert(hsp.HeatingSetpointWeekday[h - 1],"F","C").get
+          val = OpenStudio::convert(heatingSetpointWeekday[h - 1],"F","C").get
           htgssn_winter.addValue(time,val)
         end
 
@@ -364,7 +314,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
           for h in 1..24
             time = OpenStudio::Time.new(0,h,0,0)
             if cooling_season["CoolingSeasonSchedule%02d" % m.to_s] == 1.0
-              val = OpenStudio::convert(csp.CoolingSetpointWeekday[h - 1],"F","C").get
+              val = OpenStudio::convert(coolingSetpointWeekday[h - 1],"F","C").get
             else
               val = 1000
             end
@@ -390,7 +340,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         clgssn_summer.clearValues
         for h in 1..24
           time = OpenStudio::Time.new(0,h,0,0)
-          val = OpenStudio::convert(csp.CoolingSetpointWeekday[h - 1],"F","C").get
+          val = OpenStudio::convert(coolingSetpointWeekday[h - 1],"F","C").get
           clgssn_summer.addValue(time,val)
         end
         coolingsetpoint.setWinterDesignDaySchedule(clgssn_winDesSch)
@@ -399,7 +349,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         clgssn_winter.clearValues
         for h in 1..24
           time = OpenStudio::Time.new(0,h,0,0)
-          val = OpenStudio::convert(csp.CoolingSetpointWeekday[h - 1],"F","C").get
+          val = OpenStudio::convert(coolingSetpointWeekday[h - 1],"F","C").get
           clgssn_winter.addValue(time,val)
         end
 
@@ -464,6 +414,125 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
  
   end #end the run method
 
+  def _processHeatingCoolingSeasons(weather)
+    # Assigns monthly heating and cooling seasons.
+
+    monthly_temps = weather.data.MonthlyAvgDrybulbs
+    heat_design_db = weather.design.HeatingDrybulb
+
+    # create basis lists with zero for every month
+    cooling_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+    heating_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+
+    monthly_temps.each_with_index do |temp, i|
+      if temp < 66.0
+        heating_season_temp_basis[i] = 1.0
+      elsif temp >= 66.0
+        cooling_season_temp_basis[i] = 1.0
+      end
+
+      if (i == 0 or i == 11) and heat_design_db < 59.0
+        heating_season_temp_basis[i] = 1.0
+      elsif i == 6 or i == 7
+        cooling_season_temp_basis[i] = 1.0
+      end
+    end
+
+    cooling_season = Array.new(monthly_temps.length, 0.0)
+    heating_season = Array.new(monthly_temps.length, 0.0)
+
+    monthly_temps.each_with_index do |temp, i|
+      # Heating overlaps with cooling at beginning of summer
+      if i == 0 # January
+        prevmonth = 11 # December
+      else
+        prevmonth = i - 1
+      end
+
+      if (heating_season_temp_basis[i] == 1.0 or (cooling_season_temp_basis[prevmonth] == 0.0 and cooling_season_temp_basis[i] == 1.0))
+        heating_season[i] = 1.0
+      else
+        heating_season[i] = 0.0
+      end
+
+      if (cooling_season_temp_basis[i] == 1.0 or (heating_season_temp_basis[prevmonth] == 0.0 and heating_season_temp_basis[i] == 1.0))
+        cooling_season[i] = 1.0
+      else
+        cooling_season[i] = 0.0
+      end
+    end
+
+    # Find the first month of cooling and add one month
+    (1...12).to_a.each do |i|
+      if cooling_season[i] == 1.0
+        cooling_season[i - 1] = 1.0
+        break
+      end
+    end
+
+    season_type = []
+    (0...12).to_a.each do |month|
+      if heating_season[month] == 1.0 and cooling_season[month] == 0.0
+        season_type << Constants.SeasonHeating
+      elsif heating_season[month] == 0.0 and cooling_season[month] == 1.0
+        season_type << Constants.SeasonCooling
+      elsif heating_season[month] == 1.0 and cooling_season[month] == 1.0
+        season_type << Constants.SeasonOverlap
+      else
+        season_type << Constants.SeasonNone
+      end
+    end
+
+    return heating_season, cooling_season
+
+  end
+  
+  def _processHeatingCoolingSetpoints(heatingSetpointConstantSetpoint, coolingSetpointConstantSetpoint, selectedheating, selectedcooling)
+    # Heating/Cooling Setpoints
+
+    # Adjust cooling setpoints according to the offset the user has selected in conjunction with the user of ceiling fans.
+
+    # Convert to Weekday/Weekend 24-hour lists
+    if not heatingSetpointConstantSetpoint.nil?
+      heatingSetpointSchedule = Array.new(48, heatingSetpointConstantSetpoint)
+    end
+    if not coolingSetpointConstantSetpoint.nil?
+      coolingSetpointSchedule = Array.new(48, coolingSetpointConstantSetpoint)
+    end
+
+    coolingSetpointWeekday = coolingSetpointSchedule[0...24]
+    if coolingSetpointSchedule.length > 24
+      coolingSetpointWeekend = coolingSetpointSchedule[24...48]
+    else
+      coolingSetpointWeekend = coolingSetpointWeekday
+    end
+    heatingSetpointWeekday = heatingSetpointSchedule[0...24]
+    if heatingSetpointSchedule.length > 24
+      heatingSetpointWeekend = heatingSetpointSchedule[0...24]
+    else
+      heatingSetpointWeekend = heatingSetpointWeekday
+    end
+
+    # self.cooling_set_point.weekday_hourly_schedule_with_offset = \
+    #             [x + self.ceiling_fans.CeilingFanCoolingSetptOffset for x in coolingSetpointWeekday]
+    # self.cooling_set_point.weekend_hourly_schedule_with_offset = \
+    #             [x + self.ceiling_fans.CeilingFanCoolingSetptOffset for x in coolingSetpointWeekend]
+
+    # Thermostatic Control type schedule
+    if selectedheating and selectedcooling
+      controlType = 4 # Dual Setpoint (Heating and Cooling) with deadband
+    elsif selectedcooling
+      controlType = 2 # Single Cooling Setpoint
+    elsif selectedheating
+      controlType = 1 # Single Heating Setpoint
+    else
+      controlType = 0 # Uncontrolled
+    end
+
+    return heatingSetpointSchedule, heatingSetpointWeekday, heatingSetpointWeekend, coolingSetpointSchedule, coolingSetpointWeekday, coolingSetpointWeekend, controlType
+
+  end
+  
 end #end the measure
 
 #this allows the measure to be use by the application
