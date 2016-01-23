@@ -712,8 +712,8 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
         rj_dens = rimjoist_framingfactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * BaseMaterial.InsulationGenericDensepack.rho # lbm/ft^3
         rj_sh = (rimjoist_framingfactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho) / rj_dens # Btu/lbm*F
     else            
-        rj_dens = rimjoist_framingfactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
-        rj_sh = (rimjoist_framingfactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / rj_dens # Btu/lbm*F
+        rj_dens = rimjoist_framingfactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.Air.Cp # lbm/ft^3
+        rj_sh = (rimjoist_framingfactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.Air.Cp * Gas.Air.Cp) / rj_dens # Btu/lbm*F
     end
     
     return rj_thick, rj_cond, rj_dens, rj_sh, rj_Rvalue

@@ -9,7 +9,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUserScript
@@ -187,13 +186,8 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     carpetPadRValue = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
     carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end
-
     # Process the wood stud walls
-    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorInsulatedFloors(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, weather.header.LocalPressure)
+    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorInsulatedFloors(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
 
     # Create the material layers
 
@@ -276,7 +270,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
 
   end #end the run method
 
-  def _processConstructionsInteriorInsulatedFloors(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, localPressure)
+  def _processConstructionsInteriorInsulatedFloors(intFloorFramingFactor, intFloorCavityInsRvalueNominal, intFloorInstallGrade, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
   
     izfGapFactor = Construction.GetWallGapFactor(intFloorInstallGrade, intFloorFramingFactor)
 
@@ -287,8 +281,8 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
 
     sc_thick = Material.Stud2x6.thick # ft
     sc_cond = sc_thick / boundaryFloorRvalue # Btu/hr*ft*F
-    sc_dens = intFloorFramingFactor * BaseMaterial.Wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * BaseMaterial.InsulationGenericDensepack.rho  + izfGapFactor * Gas.AirInsideDensity(localPressure) # lbm/ft^3
-    sc_sh = (intFloorFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho + izfGapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
+    sc_dens = intFloorFramingFactor * BaseMaterial.Wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * BaseMaterial.InsulationGenericDensepack.rho  + izfGapFactor * Gas.Air.Cp # lbm/ft^3
+    sc_sh = (intFloorFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - intFloorFramingFactor - izfGapFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho + izfGapFactor * Gas.Air.Cp * Gas.Air.Cp) / sc_dens # Btu/lbm*F
 
     return sc_thick, sc_cond, sc_dens, sc_sh
 

@@ -1320,21 +1320,6 @@ class Sim
 
   end
                     
-  def _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
-
-    # Handle Exception for user entry of zero (avoids EPlus complaining about zero value)
-    if partitionWallMassFractionOfFloorArea <= 0.0
-      partitionWallMassFractionOfFloorArea = 0.0001 # Set approximately to zero
-    end
-
-    # Calculate the total partition wall mass areas for conditioned spaces
-    partition_wall_mass.living_space_area = partitionWallMassFractionOfFloorArea * living_space.area # ft^2
-    partition_wall_mass.finished_basement_area = partitionWallMassFractionOfFloorArea * finished_basement.area # ft^2
-
-    return partition_wall_mass
-
-  end
-
   def _processAirSystem(supply, furnace=nil, air_conditioner=nil, heat_pump=nil, hasFurnace=false, hasCoolingEquipment=false, hasAirConditioner=false, hasHeatPump=false, hasMiniSplitHP=false, hasRoomAirConditioner=false, hasGroundSourceHP=false, test_suite=nil)
     # Air System
 

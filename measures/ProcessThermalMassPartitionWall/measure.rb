@@ -7,8 +7,8 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 #start the measure
 class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
@@ -160,11 +160,6 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
 	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
     fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)	
 	
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end    
-    
     partitionWallMassThickness = runner.getDoubleArgumentValue("partitionwallmassth",user_arguments)
     partitionWallMassConductivity = runner.getDoubleArgumentValue("partitionwallmasscond",user_arguments)
     partitionWallMassDensity = runner.getDoubleArgumentValue("partitionwallmassdens",user_arguments)
@@ -184,8 +179,6 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     # Create the material class instances
     partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
 
-    # Create the sim object
-    sim = Sim.new(model, runner)
     living_space = LivingSpace.new
     finished_basement = FinishedBasement.new
 
@@ -193,7 +186,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     finished_basement.area = finished_basement_area
 
     # Process the partition wall
-    partition_wall_mass = sim._processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
+    partition_wall_mass = _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
 
     # Initialize variables for drawn partition wall areas
     livingPartWallDrawnArea = 0 # Drawn partition wall area of the living space
@@ -221,14 +214,13 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
     pwm.setVisibleAbsorptance(Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat).VAbs)
 
     # StudandAirWall
-    mat_stud_and_air_wall = Material.StudAndAir(weather.header.LocalPressure)
     saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saw.setName("StudandAirWall")
     saw.setRoughness("Rough")
-    saw.setThickness(OpenStudio::convert(mat_stud_and_air_wall.thick,"ft","m").get)
-    saw.setConductivity(OpenStudio::convert(mat_stud_and_air_wall.k,"Btu/hr*ft*R","W/m*K").get)
-    saw.setDensity(OpenStudio::convert(mat_stud_and_air_wall.rho,"lb/ft^3","kg/m^3").get)
-    saw.setSpecificHeat(OpenStudio::convert(mat_stud_and_air_wall.Cp,"Btu/lb*R","J/kg*K").get)
+    saw.setThickness(OpenStudio::convert(Material.StudAndAir.thick,"ft","m").get)
+    saw.setConductivity(OpenStudio::convert(Material.StudAndAir.k,"Btu/hr*ft*R","W/m*K").get)
+    saw.setDensity(OpenStudio::convert(Material.StudAndAir.rho,"lb/ft^3","kg/m^3").get)
+    saw.setSpecificHeat(OpenStudio::convert(Material.StudAndAir.Cp,"Btu/lb*R","J/kg*K").get)
 
     # FinUninsFinWall
     materials = []
@@ -276,6 +268,22 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
 
   end #end the run method
 
+  def _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
+
+    # Handle Exception for user entry of zero (avoids EPlus complaining about zero value)
+    if partitionWallMassFractionOfFloorArea <= 0.0
+      partitionWallMassFractionOfFloorArea = 0.0001 # Set approximately to zero
+    end
+
+    # Calculate the total partition wall mass areas for conditioned spaces
+    partition_wall_mass.living_space_area = partitionWallMassFractionOfFloorArea * living_space.area # ft^2
+    partition_wall_mass.finished_basement_area = partitionWallMassFractionOfFloorArea * finished_basement.area # ft^2
+
+    return partition_wall_mass
+
+  end
+
+  
 end #end the measure
 
 #this allows the measure to be use by the application

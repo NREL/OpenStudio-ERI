@@ -3,7 +3,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 # start the measure
 class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::ModelUserScript
@@ -249,13 +248,8 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     finishVisibleAbs = finishSolarAbs
     finishConductivity = finishThickness / finishRvalue
 
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end
-    
     # Process the CMU walls
-    cmu_cond, cmu_dens, cmu_sh, fu_thick, fu_cond, fu_dens, fu_sh = _processConstructionsExteriorInsulatedWallsCMU(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, weather.header.LocalPressure)
+    cmu_cond, cmu_dens, cmu_sh, fu_thick, fu_cond, fu_dens, fu_sh = _processConstructionsExteriorInsulatedWallsCMU(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
         
     # Create the material layers
     
@@ -352,7 +346,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 
   end
 
-  def _processConstructionsExteriorInsulatedWallsCMU(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, localPressure)
+  def _processConstructionsExteriorInsulatedWallsCMU(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
     overall_wall_Rvalue, furring_layer_equiv_Rvalue = get_cmu_wall_r_assembly(cmuThickness, cmuConductivity, cmuDensity, cmuFramingFactor, cmuFurringCavityDepth, cmuFurringStudSpacing, cmuFurringInsRvalue, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness, rigidInsRvalue, hasOSB)
     
     # Set Furring insulation/air properties
@@ -368,7 +362,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
         end
     
         if cmuFurringInsRvalue == 0
-            furring_ins_dens = Gas.AirInsideDensity(localPressure) # lbm/ft^3   Assumes an empty cavity with air films
+            furring_ins_dens = Gas.Air.Cp # lbm/ft^3   Assumes an empty cavity with air films
             furring_ins_sh = Gas.Air.Cp
         else
             furring_ins_dens = BaseMaterial.InsulationGenericDensepack.rho # lbm/ft^3

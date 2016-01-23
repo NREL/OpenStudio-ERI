@@ -9,7 +9,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelUserScript
@@ -164,11 +163,6 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     partitionWallMassDensity = runner.getDoubleArgumentValue("userdefinedpartitionwallmassdens",user_arguments)
     partitionWallMassSpecificHeat = runner.getDoubleArgumentValue("userdefinedpartitionwallmasssh",user_arguments)
 
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end
-
     # Create the material class instances
     partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
 
@@ -186,14 +180,13 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     pwm.setVisibleAbsorptance(mat_partition_wall_mass.VAbs)
 
     # StudandAirWall
-    mat_stud_and_air_wall = Material.StudAndAir(weather.header.LocalPressure)
     saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
     saw.setName("StudandAirWall")
     saw.setRoughness("Rough")
-    saw.setThickness(OpenStudio::convert(mat_stud_and_air_wall.thick,"ft","m").get)
-    saw.setConductivity(OpenStudio::convert(mat_stud_and_air_wall.k,"Btu/hr*ft*R","W/m*K").get)
-    saw.setDensity(OpenStudio::convert(mat_stud_and_air_wall.rho,"lb/ft^3","kg/m^3").get)
-    saw.setSpecificHeat(OpenStudio::convert(mat_stud_and_air_wall.Cp,"Btu/lb*R","J/kg*K").get)
+    saw.setThickness(OpenStudio::convert(Material.StudAndAir.thick,"ft","m").get)
+    saw.setConductivity(OpenStudio::convert(Material.StudAndAir.k,"Btu/hr*ft*R","W/m*K").get)
+    saw.setDensity(OpenStudio::convert(Material.StudAndAir.rho,"lb/ft^3","kg/m^3").get)
+    saw.setSpecificHeat(OpenStudio::convert(Material.StudAndAir.Cp,"Btu/lb*R","J/kg*K").get)
 
     # Plywood-1_2in
     ply1_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)

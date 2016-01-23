@@ -3,7 +3,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 # start the measure
 class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset::ModelUserScript
@@ -254,13 +253,8 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
     finishVisibleAbs = finishSolarAbs
     finishConductivity = finishThickness / finishRvalue
     
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end
-    
     # Process the steel stud walls
-    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsExteriorInsulatedWallsSteelStud(ssWallCavityInsRvalueInstalled, ssWallInstallGrade, ssWallCavityDepth, ssWallCavityInsFillsCavity, ssWallFramingFactor, ssWallCorrectionFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, weather.header.LocalPressure)
+    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsExteriorInsulatedWallsSteelStud(ssWallCavityInsRvalueInstalled, ssWallInstallGrade, ssWallCavityDepth, ssWallCavityInsFillsCavity, ssWallFramingFactor, ssWallCorrectionFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
     
     # Create the material layers
     
@@ -345,10 +339,10 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
 
   end
   
-  def _processConstructionsExteriorInsulatedWallsSteelStud(ssWallCavityInsRvalueInstalled, ssWallInstallGrade, ssWallCavityDepth, ssWallCavityInsFillsCavity, ssWallFramingFactor, ssWallCorrectionFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, localPressure)
+  def _processConstructionsExteriorInsulatedWallsSteelStud(ssWallCavityInsRvalueInstalled, ssWallInstallGrade, ssWallCavityDepth, ssWallCavityInsFillsCavity, ssWallFramingFactor, ssWallCorrectionFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
     # Set Furring insulation/air properties
     if ssWallCavityInsRvalueInstalled == 0
-        cavityInsDens = Gas.AirInsideDensity(localPressure) # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
+        cavityInsDens = Gas.Air.Cp # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
         cavityInsSH = Gas.Air.Cp
     else
         cavityInsDens = BaseMaterial.InsulationGenericDensepack.rho
@@ -362,8 +356,8 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
     # Create layers for modeling
     sc_thick = OpenStudio::convert(ssWallCavityDepth,"in","ft").get # ft
     sc_cond = sc_thick / (overall_wall_Rvalue - (AirFilms.VerticalR + AirFilms.OutsideR + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue)) # Btu/hr*ft*F     
-    sc_dens = ssWallFramingFactor * BaseMaterial.Wood.rho + (1 - ssWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * Gas.AirInsideDensity(localPressure) 
-    sc_sh = (ssWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - ssWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens
+    sc_dens = ssWallFramingFactor * BaseMaterial.Wood.rho + (1 - ssWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * Gas.Air.Cp 
+    sc_sh = (ssWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - ssWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * Gas.Air.Cp * Gas.Air.Cp) / sc_dens
         
     return sc_thick, sc_cond, sc_dens, sc_sh
         

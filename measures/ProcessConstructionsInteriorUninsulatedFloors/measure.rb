@@ -9,7 +9,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::ModelUserScript
@@ -205,13 +204,8 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     carpetPadRValue = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
     carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
 
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end
-
     # Process the interior uninsulated floor
-    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorUninsulatedFloors(weather.header.LocalPressure)
+    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorUninsulatedFloors()
 
     # StudandAirFloor
     saf = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -361,15 +355,15 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
  
   end #end the run method
 
-  def _processConstructionsInteriorUninsulatedFloors(localPressure)
+  def _processConstructionsInteriorUninsulatedFloors()
     floor_part_U_cavity_path = (1 - Constants.DefaultFramingFactorFloor) / Gas.AirGapRvalue # Btu/hr*ft^2*F
     floor_part_U_stud_path = Constants.DefaultFramingFactorFloor / Material.Stud2x6.Rvalue # Btu/hr*ft^2*F
     floor_part_Rvalue = 1 / (floor_part_U_cavity_path + floor_part_U_stud_path) # hr*ft^2*F/Btu
 
     sc_thick = Material.Stud2x4.thick # ft
     sc_cond = sc_thick / floor_part_Rvalue # Btu/hr*ft*F
-    sc_dens = Constants.DefaultFramingFactorFloor * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
-    sc_sh = (Constants.DefaultFramingFactorFloor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
+    sc_dens = Constants.DefaultFramingFactorFloor * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Gas.Air.Cp # lbm/ft^3
+    sc_sh = (Constants.DefaultFramingFactorFloor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Gas.Air.Cp * Gas.Air.Cp) / sc_dens # Btu/lbm*F
 
     return sc_thick, sc_cond, sc_dens, sc_sh
   end

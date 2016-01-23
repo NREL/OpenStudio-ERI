@@ -9,7 +9,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Ruleset::ModelUserScript
@@ -259,13 +258,8 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     finishVisibleAbs = finishSolarAbs
     finishConductivity = finishThickness / finishRvalue
 
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end
-
     # Process the double wood stud walls
-    sc_thick, sc_cond, sc_dens, sc_sh, c_thick, c_cond, c_dens, c_sh = _processConstructionsExteriorInsulatedWallsDoubleStud(dsWallCavityInsRvalue, dsWallStudDepth, dsWallGapDepth, dsWallFramingFactor, dsWallIsStaggered, dsWallInstallGrade, dsWallStudSpacing, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, weather.header.LocalPressure)
+    sc_thick, sc_cond, sc_dens, sc_sh, c_thick, c_cond, c_dens, c_sh = _processConstructionsExteriorInsulatedWallsDoubleStud(dsWallCavityInsRvalue, dsWallStudDepth, dsWallGapDepth, dsWallFramingFactor, dsWallIsStaggered, dsWallInstallGrade, dsWallStudSpacing, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
 
     # Create the material layers
 
@@ -365,7 +359,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
  
   end #end the run method
 
-  def _processConstructionsExteriorInsulatedWallsDoubleStud(dsWallCavityInsRvalue, dsWallStudDepth, dsWallGapDepth, dsWallFramingFactor, dsWallIsStaggered, dsWallInstallGrade, dsWallStudSpacing, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue, localPressure)
+  def _processConstructionsExteriorInsulatedWallsDoubleStud(dsWallCavityInsRvalue, dsWallStudDepth, dsWallGapDepth, dsWallFramingFactor, dsWallIsStaggered, dsWallInstallGrade, dsWallStudSpacing, gypsumThickness, gypsumNumLayers, gypsumRvalue, finishThickness, finishConductivity, finishRvalue, rigidInsThickness, rigidInsRvalue, hasOSB, osbRvalue)
     dsGapFactor = Construction.GetWallGapFactor(dsWallInstallGrade, dsWallFramingFactor)
 	
 	overall_wall_Rvalue, dsWallMiscFramingFactor = get_double_stud_wall_r_assembly(dsWallCavityInsRvalue, dsWallStudDepth, dsWallGapDepth, dsWallFramingFactor, dsWallIsStaggered, dsWallInstallGrade, dsWallStudSpacing, gypsumThickness, gypsumNumLayers, finishThickness, finishConductivity, rigidInsThickness, rigidInsRvalue, hasOSB, dsGapFactor)
@@ -377,7 +371,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
       c_thick = OpenStudio::convert(dsWallGapDepth,"in","ft").get # ft
       c_cond = c_thick / cavity_layer_Rvalue # Btu/hr*ft*F
       c_dens = dsWallMiscFramingFactor * BaseMaterial.Wood.rho + (1.0 - dsWallMiscFramingFactor - dsGapFactor) * BaseMaterial.InsulationGenericDensepack.rho # Btu/hr*ft*F
-	  c_sh = (dsWallMiscFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1.0 - dsWallMiscFramingFactor - dsGapFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho + dsGapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / c_dens # Btu/lbm-F	
+	  c_sh = (dsWallMiscFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1.0 - dsWallMiscFramingFactor - dsGapFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho + dsGapFactor * Gas.Air.Cp * Gas.Air.Cp) / c_dens # Btu/lbm-F	
 	else
 	  cavity_layer_Rvalue = 0
 	end

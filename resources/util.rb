@@ -447,12 +447,12 @@ class Material
         return Material.new(name=Constants.MaterialRoofingMaterial, type=Constants.MaterialTypeProperties, thick=0.031, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
     end
 
-    def self.StudAndAir(localPressure)
+    def self.StudAndAir
         mat_2x4 = Material.Stud2x4
         u_stud_path = Constants.DefaultFramingFactorInterior / Material.Stud2x4.Rvalue
         u_air_path = (1 - Constants.DefaultFramingFactorInterior) / Gas.AirGapRvalue
         stud_and_air_Rvalue = 1 / (u_stud_path + u_air_path)
-        mat_stud_and_air_wall = BaseMaterial.new(rho=(mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.AirInsideDensity(localPressure), cp=((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.Cp * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / ((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.AirInsideDensity(localPressure)), k=(mat_2x4.thick / stud_and_air_Rvalue))
+        mat_stud_and_air_wall = BaseMaterial.new(rho=(mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp, cp=((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.Cp * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp * Gas.Air.Cp) / ((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp), k=(mat_2x4.thick / stud_and_air_Rvalue))
         return Material.new(name=Constants.MaterialStudandAirWall, type=Constants.MaterialTypeProperties, thick=mat_2x4.thick, thick_in=nil, width=nil, width_in=nil, mat_base=mat_stud_and_air_wall)
     end
 
@@ -867,10 +867,6 @@ class Gas
         return 1.0 # hr*ft*F/Btu (Assume for all air gap configurations since there is no correction for direction of heat flow in the simulation tools)
     end
 
-    def self.AirInsideDensity(localPressure)
-        return UnitConversion.atm2Btu_ft3(localPressure) / (Gas.Air.R * (Constants.AssumedInsideTemp + 460)) # lbm/ft^3
-    end
-    
     def self.H2O_v
         # From EES at STP
         return Gas.new(nil,0.4495,nil,nil,18.02)
@@ -948,34 +944,24 @@ class AirFilms
         return 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
     end
   
-    def self.RoofR(highest_roof_pitch, cdd65f, hdd65f)
+    def self.RoofR(highest_roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
-        hdd_frac = hdd65f / (hdd65f + cdd65f)
-        cdd_frac = cdd65f / (hdd65f + cdd65f)
-        return AirFilms.SlopeEnhancedR(highest_roof_pitch) * hdd_frac + AirFilms.SlopeReducedR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+        #hdd_frac = hdd65f / (hdd65f + cdd65f)
+        #cdd_frac = cdd65f / (hdd65f + cdd65f)
+        #return AirFilms.SlopeEnhancedR(highest_roof_pitch) * hdd_frac + AirFilms.SlopeReducedR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+        # Simplification to not depend on weather
+        return (AirFilms.SlopeEnhancedR(highest_roof_pitch) + AirFilms.SlopeReducedR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
     end
   
-    def self.RoofRadiantBarrierR(highest_roof_pitch, cdd65f, hdd65f)
+    def self.RoofRadiantBarrierR(highest_roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
-        hdd_frac = hdd65f / (hdd65f + cdd65f)
-        cdd_frac = cdd65f / (hdd65f + cdd65f)
-        return AirFilms.SlopeEnhancedReflectiveR(highest_roof_pitch) * hdd_frac + AirFilms.SlopeReducedReflectiveR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+        #hdd_frac = hdd65f / (hdd65f + cdd65f)
+        #cdd_frac = cdd65f / (hdd65f + cdd65f)
+        #return AirFilms.SlopeEnhancedReflectiveR(highest_roof_pitch) * hdd_frac + AirFilms.SlopeReducedReflectiveR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+        # Simplification to not depend on weather
+        return (AirFilms.SlopeEnhancedReflectiveR(highest_roof_pitch) + AirFilms.SlopeReducedReflectiveR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
     end
-  
-    def self.FloorBelowUnconditionedR(cdd65f, hdd65f)
-        # Use weighted average between enhanced and reduced convection based on degree days.
-        hdd_frac = hdd65f / (hdd65f + cdd65f)
-        cdd_frac = cdd65f / (hdd65f + cdd65f)
-        return AirFilms.FlatEnhancedR * hdd_frac + AirFilms.FlatReducedR * cdd_frac # hr-ft-F/Btu
-    end
-  
-    def self.FloorAboveUnconditionedR(cdd65f, hdd65f)
-        # Use weighted average between enhanced and reduced convection based on degree days.
-        hdd_frac = hdd65f / (hdd65f + cdd65f)
-        cdd_frac = cdd65f / (hdd65f + cdd65f)
-        return AirFilms.FlatReducedR * hdd_frac + AirFilms.FlatEnhancedR * cdd_frac
-    end
-  
+    
 end
 
 class EnergyGuideLabel

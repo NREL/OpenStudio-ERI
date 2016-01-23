@@ -9,7 +9,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
@@ -322,13 +321,8 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     csArea = runner.getDoubleArgumentValue("userdefinedcsarea",user_arguments)
     csExtPerimeter = runner.getDoubleArgumentValue("userdefinedcsextperim",user_arguments)
     
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end
-
     # Process the crawlspace
-    sc_thick, sc_cond, sc_dens, sc_sh, sc_Rvalue, crawlspace_fictitious_Rvalue, wall_thick, wall_cond, wall_dens, wall_sh, crawlspace_floor_Rvalue, rj_thick, rj_cond, rj_dens, rj_sh = _processConstructionsCrawlspace(crawlCeilingFramingFactor, crawlCeilingInstallGrade, crawlWallContInsRvalueNominal, crawlRimJoistInsRvalue, crawlCeilingJoistHeight, crawlCeilingCavityInsRvalueNominal, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, wallSheathingContInsThickness, wallSheathingContInsRvalue, finishThickness, finishConductivity, crawl_space_type, weather.header.LocalPressure, csHeight, csExtPerimeter, csArea)
+    sc_thick, sc_cond, sc_dens, sc_sh, sc_Rvalue, crawlspace_fictitious_Rvalue, wall_thick, wall_cond, wall_dens, wall_sh, crawlspace_floor_Rvalue, rj_thick, rj_cond, rj_dens, rj_sh = _processConstructionsCrawlspace(crawlCeilingFramingFactor, crawlCeilingInstallGrade, crawlWallContInsRvalueNominal, crawlRimJoistInsRvalue, crawlCeilingJoistHeight, crawlCeilingCavityInsRvalueNominal, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, wallSheathingContInsThickness, wallSheathingContInsRvalue, finishThickness, finishConductivity, crawl_space_type, csHeight, csExtPerimeter, csArea)
     
     # CrawlCeilingIns
     if sc_Rvalue > 0
@@ -532,7 +526,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 
   end #end the run method
 
-  def _processConstructionsCrawlspace(crawlCeilingFramingFactor, crawlCeilingInstallGrade, crawlWallContInsRvalueNominal, crawlRimJoistInsRvalue, crawlCeilingJoistHeight, crawlCeilingCavityInsRvalueNominal, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, wallSheathingContInsThickness, wallSheathingContInsRvalue, finishThickness, finishConductivity, selected_crawlspace, localPressure, csHeight, csExtPerimeter, csArea)
+  def _processConstructionsCrawlspace(crawlCeilingFramingFactor, crawlCeilingInstallGrade, crawlWallContInsRvalueNominal, crawlRimJoistInsRvalue, crawlCeilingJoistHeight, crawlCeilingCavityInsRvalueNominal, carpetFloorFraction, carpetPadRValue, floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, wallSheathingContInsThickness, wallSheathingContInsRvalue, finishThickness, finishConductivity, selected_crawlspace, csHeight, csExtPerimeter, csArea)
         # If there is no wall insulation, apply the ceiling insulation R-value to the rim joists
         if crawlWallContInsRvalueNominal == 0
             crawlRimJoistInsRvalue = crawlCeilingCavityInsRvalueNominal
@@ -551,8 +545,8 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         if sc_Rvalue > 0
             sc_thick = mat_2x.thick
             sc_cond = sc_thick / crawl_ceiling_studlayer_Rvalue
-            sc_dens = crawlCeilingFramingFactor * BaseMaterial.Wood.rho + (1 - crawlCeilingFramingFactor - csGapFactor) * BaseMaterial.InsulationGenericDensepack.rho + csGapFactor * Gas.AirInsideDensity(localPressure) # lbm/ft^3
-            sc_sh = (crawlCeilingFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - crawlCeilingFramingFactor - csGapFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho + csGapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
+            sc_dens = crawlCeilingFramingFactor * BaseMaterial.Wood.rho + (1 - crawlCeilingFramingFactor - csGapFactor) * BaseMaterial.InsulationGenericDensepack.rho + csGapFactor * Gas.Air.Cp # lbm/ft^3
+            sc_sh = (crawlCeilingFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - crawlCeilingFramingFactor - csGapFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho + csGapFactor * Gas.Air.Cp * Gas.Air.Cp) / sc_dens # Btu/lbm*F
         end
         
         if crawlWallContInsRvalueNominal > 0
@@ -651,8 +645,8 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
             rj_dens = crawlCeilingFramingFactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * BaseMaterial.InsulationGenericDensepack.rho  # lbm/ft^3
             rj_sh = (crawlCeilingFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho) / rj_dens # Btu/lbm*F
         else
-            rj_dens = rimjoist_framingfactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
-            rj_sh = (rimjoist_framingfactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / rj_dens # Btu/lbm*F
+            rj_dens = rimjoist_framingfactor * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.Air.Cp # lbm/ft^3
+            rj_sh = (rimjoist_framingfactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - rimjoist_framingfactor) * Gas.Air.Cp * Gas.Air.Cp) / rj_dens # Btu/lbm*F
         end
    
         return rj_thick, rj_cond, rj_dens, rj_sh

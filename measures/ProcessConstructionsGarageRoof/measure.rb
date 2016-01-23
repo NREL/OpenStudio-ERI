@@ -9,7 +9,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
@@ -95,16 +94,11 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     roofMatEmissivity = runner.getDoubleArgumentValue("userdefinedroofmatthermalabs",user_arguments)
     roofMatAbsorptivity = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
-    weather = WeatherProcess.new(model,runner)
-    if weather.error?
-        return false
-    end
-
     highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
-    film_roof_R = AirFilms.RoofR(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
+    film_roof_R = AirFilms.RoofR(highest_roof_pitch)
 
     # Process the roof
-    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsGarageRoof(film_roof_R, weather.header.LocalPressure)
+    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsGarageRoof(film_roof_R)
 
     # RoofingMaterial
     mat_roof_mat = Material.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
@@ -172,7 +166,7 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
  
   end #end the run method
 
-  def _processConstructionsGarageRoof(film_roof_R, localPressure)
+  def _processConstructionsGarageRoof(film_roof_R)
 
     #generic method
     path_fracs = [Constants.DefaultFramingFactorCeiling, 1 - Constants.DefaultFramingFactorCeiling]
@@ -194,8 +188,8 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
 
     sc_thick = Material.Stud2x4.thick # ft
     sc_cond = sc_thick / grgRoofStudandAir_Rvalue # Btu/hr*ft*F
-    sc_dens = Constants.DefaultFramingFactorCeiling * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorCeiling) * Gas.AirInsideDensity(localPressure) # lbm/ft^3
-    sc_sh = (Constants.DefaultFramingFactorCeiling * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorCeiling) * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
+    sc_dens = Constants.DefaultFramingFactorCeiling * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorCeiling) * Gas.Air.Cp # lbm/ft^3
+    sc_sh = (Constants.DefaultFramingFactorCeiling * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorCeiling) * Gas.Air.Cp * Gas.Air.Cp) / sc_dens # Btu/lbm*F
 
     return sc_thick, sc_cond, sc_dens, sc_sh
 

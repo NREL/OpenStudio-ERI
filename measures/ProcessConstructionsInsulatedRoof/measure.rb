@@ -9,7 +9,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
@@ -192,16 +191,11 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     roofMatEmissivity = runner.getDoubleArgumentValue("userdefinedroofmatemm",user_arguments)
     roofMatAbsorptivity = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
-    weather = WeatherProcess.new(model,runner)
-    if weather.error?
-        return false
-    end
-
     highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
-    film_roof_R = AirFilms.RoofR(highest_roof_pitch, weather.data.CDD65F, weather.data.HDD65F)
+    film_roof_R = AirFilms.RoofR(highest_roof_pitch)
 
     # Process the finished roof
-    sc_thick, sc_cond, sc_dens, sc_sh, rigid_thick, rigid_cond, rigid_dens, rigid_sh = _processConstructionsInsulatedRoof(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, film_roof_R, weather.header.LocalPressure)
+    sc_thick, sc_cond, sc_dens, sc_sh, rigid_thick, rigid_cond, rigid_dens, rigid_sh = _processConstructionsInsulatedRoof(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, film_roof_R)
 
     # RoofingMaterial
     mat_roof_mat = Material.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
@@ -284,7 +278,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
  
   end #end the run method
 
-  def _processConstructionsInsulatedRoof(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, film_roof_R, localPressure)
+  def _processConstructionsInsulatedRoof(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, gypsumRvalue, film_roof_R)
     fr_roof_overall_ins_Rvalue = get_finished_roof_r_assembly(frRoofContInsThickness, frRoofContInsRvalue, frRoofCavityInsFillsCavity, frRoofCavityInsRvalueInstalled, frRoofCavityDepth, frRoofFramingFactor, gypsumThickness, gypsumNumLayers, film_roof_R)
 
     if frRoofContInsThickness > 0

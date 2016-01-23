@@ -9,7 +9,6 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
 
 #start the measure
 class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUserScript
@@ -212,14 +211,9 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     rigidInsDensity = BaseMaterial.InsulationRigid.rho
     rigidInsSpecificHeat = BaseMaterial.InsulationRigid.Cp
 
-    weather = WeatherProcess.new(model,runner,header_only=true)
-    if weather.error?
-        return false
-    end
-
     # Process the wood stud walls
     mat_part_wall_mass = Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
-    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorInsulatedWalls(intWallCavityDepth, intWallCavityInsRvalueInstalled, intWallContInsThickness, intWallContInsRvalue, intWallCavityInsFillsCavity, intWallInstallGrade, intWallFramingFactor, partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat, mat_part_wall_mass.Rvalue, weather.header.LocalPressure)
+    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorInsulatedWalls(intWallCavityDepth, intWallCavityInsRvalueInstalled, intWallContInsThickness, intWallContInsRvalue, intWallCavityInsFillsCavity, intWallInstallGrade, intWallFramingFactor, partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat, mat_part_wall_mass.Rvalue)
 
     # Create the material layers
 
@@ -298,13 +292,13 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
  
   end #end the run method
 
-  def _processConstructionsInteriorInsulatedWalls(intWallCavityDepth, intWallCavityInsRvalueInstalled, intWallContInsThickness, intWallContInsRvalue, intWallCavityInsFillsCavity, intWallInstallGrade, intWallFramingFactor, partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat, partitionWallMassRvalue, localPressure)
+  def _processConstructionsInteriorInsulatedWalls(intWallCavityDepth, intWallCavityInsRvalueInstalled, intWallContInsThickness, intWallContInsRvalue, intWallCavityInsFillsCavity, intWallInstallGrade, intWallFramingFactor, partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat, partitionWallMassRvalue)
     # Calculate R-value of Stud and Cavity Walls between two walls
     # where both interior and exterior spaces are not conditioned.
 
     # Set Furring insulation/air properties
     if intWallCavityInsRvalueInstalled == 0
-      intWallCavityInsDens = Gas.AirInsideDensity(localPressure) # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
+      intWallCavityInsDens = Gas.Air.Cp # lbm/ft^3   Assumes that a cavity with an R-value of 0 is an air cavity
       intWallCavityInsSH = Gas.Air.Cp
     else
       intWallCavityInsDens = BaseMaterial.InsulationGenericDensepack.rho
@@ -317,8 +311,8 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     sc_thick = OpenStudio::convert(intWallCavityDepth,"in","ft").get # ft
     sc_cond = sc_thick / bndry_wall_Rvalue # Btu/hr*ft*F
-    sc_dens = intWallFramingFactor * BaseMaterial.Wood.rho + (1 - intWallFramingFactor - gapFactor) * intWallCavityInsDens + gapFactor * Gas.AirInsideDensity(localPressure) # lbm/ft^3
-    sc_sh = (intWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - intWallFramingFactor - gapFactor) * intWallCavityInsSH * intWallCavityInsDens + gapFactor * Gas.Air.Cp * Gas.AirInsideDensity(localPressure)) / sc_dens # Btu/lbm*F
+    sc_dens = intWallFramingFactor * BaseMaterial.Wood.rho + (1 - intWallFramingFactor - gapFactor) * intWallCavityInsDens + gapFactor * Gas.Air.Cp # lbm/ft^3
+    sc_sh = (intWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - intWallFramingFactor - gapFactor) * intWallCavityInsSH * intWallCavityInsDens + gapFactor * Gas.Air.Cp * Gas.Air.Cp) / sc_dens # Btu/lbm*F
 
     return sc_thick, sc_cond, sc_dens, sc_sh
 
