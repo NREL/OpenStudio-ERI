@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>3d4a9955-9873-4889-9009-9bffbc6a972f</version_id>
+  <version_id>ab44e8f9-d941-44be-b003-00bcb297213e</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsWoodStud</class_name>
-  <display_name>Assign Residential Living Space Wood Stud Wall Construction</display_name>
+  <display_name>Set Residential Living Space Wood Stud Wall Construction</display_name>
   <description>This measure assigns a wood stud constructions to the living space exterior walls.</description>
   <modeler_description>Calculates material layer properties of wood stud constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
   <arguments>
@@ -225,11 +225,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space type</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space type</value>
+          <display_name>living space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -264,6 +264,18 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3DAB63FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>99845B95</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -272,31 +284,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3F3CC1F4</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>7A1AF4E5</checksum>
     </file>
   </files>
 </measure>

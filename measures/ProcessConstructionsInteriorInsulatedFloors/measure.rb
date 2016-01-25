@@ -163,6 +163,24 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
         return true
     end 
 
+    has_applicable_surfaces = false
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless ["floor"].include? living_surface.surfaceType.downcase
+        adjacent_surface = living_surface.adjacentSurface
+        next unless adjacent_surface.is_initialized
+        adjacent_surface = adjacent_surface.get
+        adjacent_surface_r = adjacent_surface.name.to_s
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        next unless [garage_space_type_r].include? adjacent_space_type_r
+        has_applicable_surfaces = true
+        break
+      end   
+    end
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Cavity
     intFloorCavityInsRvalueNominal = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
     selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)

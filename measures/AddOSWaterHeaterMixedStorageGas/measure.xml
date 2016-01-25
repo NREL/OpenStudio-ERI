@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>19a9f869-59ad-4d5a-8661-293440d604b5</version_id>
+  <version_id>67c0ba22-7f7a-4b2c-b57f-913db8355aa5</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageGas</class_name>
   <display_name>AddOSWaterHeaterMixedStorageGas</display_name>
@@ -214,7 +214,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
+      <checksum>3DAB63FF</checksum>
     </file>
   </files>
 </measure>

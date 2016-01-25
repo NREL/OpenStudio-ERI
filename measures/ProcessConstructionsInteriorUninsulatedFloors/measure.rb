@@ -180,6 +180,64 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     unfin_attic_space_type_r = runner.getStringArgumentValue("unfin_attic_space_type",user_arguments)
     unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)   
     
+    has_applicable_surfaces = false
+    
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless ["floor"].include? living_surface.surfaceType.downcase
+        adjacent_surface = living_surface.adjacentSurface
+        next unless adjacent_surface.is_initialized
+        adjacent_surface = adjacent_surface.get
+        adjacent_surface_r = adjacent_surface.name.to_s
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        next unless [living_space_type_r, fbasement_space_type_r].include? adjacent_space_type_r
+        has_applicable_surfaces = true
+        break
+      end   
+    end
+    
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless living_surface.outsideBoundaryCondition.downcase == "adiabatic"
+        if ( living_surface.surfaceType.downcase == "floor" ) or ( living_surface.surfaceType.downcase == "roofceiling" )
+          has_applicable_surfaces = true
+          break
+        end
+      end   
+    end
+    
+    unless fbasement_space_type.nil?
+      fbasement_space_type.spaces.each do |fbasement_space|
+        fbasement_space.surfaces.each do |fbasement_surface|
+          next unless fbasement_surface.outsideBoundaryCondition.downcase == "adiabatic"
+          if fbasement_surface.surfaceType.downcase == "roofceiling"
+            has_applicable_surfaces = true
+            break
+          end
+        end
+      end   
+    end
+    
+    unless unfin_attic_space_type.nil?
+      unfin_attic_space_type.spaces.each do |unfin_attic_space|
+        unfin_attic_space.surfaces.each do |unfin_attic_surface|
+          next unless ["floor"].include? unfin_attic_surface.surfaceType.downcase
+          adjacent_surface = unfin_attic_surface.adjacentSurface
+          next unless adjacent_surface.is_initialized
+          adjacent_surface = adjacent_surface.get
+          adjacent_surface_r = adjacent_surface.name.to_s
+          adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+          next unless [garage_space_type_r].include? adjacent_space_type_r
+          has_applicable_surfaces = true
+          break
+        end 
+      end
+    end    
+    
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Gypsum
     selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
     if selected_gypsum.empty?

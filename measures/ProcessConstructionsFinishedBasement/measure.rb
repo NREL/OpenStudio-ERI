@@ -221,6 +221,19 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
         return true
     end
 
+    has_applicable_surfaces = false
+	fbasement_space_type.spaces.each do |fbasement_space|
+	  fbasement_space.surfaces.each do |fbasement_surface|
+	    if ( fbasement_surface.surfaceType.downcase == "wall" and fbasement_surface.outsideBoundaryCondition.downcase == "ground" ) or ( fbasement_surface.surfaceType.downcase == "floor" and fbasement_surface.outsideBoundaryCondition.downcase == "ground" ) or ( fbasement_surface.surfaceType.downcase == "wall" and fbasement_surface.outsideBoundaryCondition.downcase == "outdoors" )
+          has_applicable_surfaces = true
+          break
+		end
+	  end
+	end
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Unfinished Basement Insulation
     selected_fbsmtins = runner.getStringArgumentValue("selectedfbsmtins",user_arguments)
 

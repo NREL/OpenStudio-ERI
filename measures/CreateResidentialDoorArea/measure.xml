@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>5e745467-d2e5-439c-b4f8-a39a9efb1f6a</version_id>
+  <version_id>b191cb61-39c9-47fc-adc9-f02aedbd24b0</version_id>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
-  <display_name>Add/Replace Residential Door Area</display_name>
+  <display_name>Set Residential Door Area</display_name>
   <description></description>
   <modeler_description></modeler_description>
   <arguments>
@@ -26,11 +26,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space type</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space type</value>
+          <display_name>living space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -75,6 +75,12 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>058A19F9</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -83,25 +89,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B5DD54D9</checksum>
+      <checksum>103C8780</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
+      <checksum>3DAB63FF</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
+      <checksum>99845B95</checksum>
     </file>
   </files>
 </measure>

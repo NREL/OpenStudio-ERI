@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_temperature</name>
   <uid>4a3a96e7-00ea-4b61-9433-3d6fc3395a62</uid>
-  <version_id>996acc38-8bb6-4724-914b-0e83a4774258</version_id>
+  <version_id>5173eba2-2095-4bc9-8709-86a4cf1db83c</version_id>
   <xml_checksum>3BE1CF9C</xml_checksum>
   <class_name>ProcessGroundTemperature</class_name>
-  <display_name>Add Residential Ground Temperatures</display_name>
+  <display_name>Set Residential Ground Temperatures</display_name>
   <description>This measure calculates ground temperatures using weather data.</description>
   <modeler_description>This measure writes monthly ground temperatures to the EnergyPlus objects Site:GroundTemperature:BuildingSurface and Site:GroundTemperature:Deep.</modeler_description>
   <arguments/>
@@ -33,6 +33,12 @@
       <checksum>4EE9ECE3</checksum>
     </file>
     <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B9149D09</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -41,43 +47,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0696E268</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
+      <checksum>FBAA3C35</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E525299C</checksum>
+      <checksum>79B0EC38</checksum>
     </file>
   </files>
 </measure>

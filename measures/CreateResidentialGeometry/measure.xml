@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>3cdacf28-68bf-4ba0-938b-883ada3724f7</version_id>
+  <version_id>2806d2d6-d6ec-42c7-8b60-aa978c74a649</version_id>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -95,27 +95,27 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>slab</default_value>
+      <default_value>slab space type</default_value>
       <choices>
         <choice>
-          <value>slab</value>
-          <display_name>slab</display_name>
+          <value>slab space type</value>
+          <display_name>slab space type</display_name>
         </choice>
         <choice>
-          <value>crawlspace</value>
-          <display_name>crawlspace</display_name>
+          <value>crawl space type</value>
+          <display_name>crawl space type</display_name>
         </choice>
         <choice>
-          <value>unfinished basement</value>
-          <display_name>unfinished basement</display_name>
+          <value>unfinished basement space type</value>
+          <display_name>unfinished basement space type</display_name>
         </choice>
         <choice>
-          <value>finished basement</value>
-          <display_name>finished basement</display_name>
+          <value>finished basement space type</value>
+          <display_name>finished basement space type</display_name>
         </choice>
         <choice>
-          <value>pier and beam</value>
-          <display_name>pier and beam</display_name>
+          <value>pier and beam space type</value>
+          <display_name>pier and beam space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -136,15 +136,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>unfinished attic</default_value>
+      <default_value>unfinished attic space type</default_value>
       <choices>
         <choice>
-          <value>unfinished attic</value>
-          <display_name>unfinished attic</display_name>
+          <value>unfinished attic space type</value>
+          <display_name>unfinished attic space type</display_name>
         </choice>
         <choice>
-          <value>finished attic</value>
-          <display_name>finished attic</display_name>
+          <value>finished attic space type</value>
+          <display_name>finished attic space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -285,7 +285,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
+      <checksum>3DAB63FF</checksum>
     </file>
   </files>
 </measure>

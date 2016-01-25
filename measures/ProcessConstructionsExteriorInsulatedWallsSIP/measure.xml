@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>6f5c7fed-c8fb-40f3-bd0d-bce62b0c6787</version_id>
+  <version_id>744d7ac5-90ea-40dc-9aac-7deac79b87f5</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsSIP</class_name>
-  <display_name>Assign Residential Living Space SIP Wall Construction</display_name>
+  <display_name>Set Residential Living Space SIP Wall Construction</display_name>
   <description>This measure assigns a SIP construction to the living space exterior walls.</description>
   <modeler_description>Calculates material layer properties of SIP constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
   <arguments>
@@ -192,11 +192,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space type</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space type</value>
+          <display_name>living space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -247,6 +247,18 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3DAB63FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>99845B95</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -255,19 +267,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8746D8A0</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>E789FC11</checksum>
     </file>
   </files>
 </measure>

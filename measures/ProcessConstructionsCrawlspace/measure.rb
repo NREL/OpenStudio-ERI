@@ -225,6 +225,35 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
+    has_applicable_surfaces = false
+    
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless ["floor"].include? living_surface.surfaceType.downcase
+        adjacent_surface = living_surface.adjacentSurface
+        next unless adjacent_surface.is_initialized
+        adjacent_surface = adjacent_surface.get
+        adjacent_surface_r = adjacent_surface.name.to_s
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        next unless [crawl_space_type_r].include? adjacent_space_type_r
+        has_applicable_surfaces = true
+        break
+      end   
+    end 
+    
+    crawl_space_type.spaces.each do |crawl_space|
+      crawl_space.surfaces.each do |crawl_surface|
+        if ( crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "ground" ) or ( crawl_surface.surfaceType.downcase == "floor" and crawl_surface.outsideBoundaryCondition.downcase == "ground" ) or ( crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "outdoors" )
+          has_applicable_surfaces = true
+          break
+        end
+      end   
+    end
+
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Crawlspace Insulation
     selected_csins = runner.getStringArgumentValue("selectedcsins",user_arguments)
     selected_installgrade = runner.getStringArgumentValue("selectedinstallgrade",user_arguments)

@@ -151,6 +151,18 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
+    has_applicable_surfaces = false
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless living_surface.surfaceType.downcase == "floor" and living_surface.outsideBoundaryCondition.downcase == "ground"
+        has_applicable_surfaces = true
+        break
+	  end	
+	end
+    unless has_applicable_surfaces
+        return true
+    end    
+    
 	# Slab Insulation
 	selected_slabins = runner.getStringArgumentValue("selectedslabins",user_arguments)
 	

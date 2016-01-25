@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_uninsulated_walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>62ed6cf6-bd78-4dac-af2a-3e229fc52ef7</version_id>
+  <version_id>3f2752cf-a78a-466a-8845-eb824d4b1098</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorUninsulatedWalls</class_name>
-  <display_name>Assign Residential Unfinished Attic and Garage Wall Constructions</display_name>
+  <display_name>Set Residential Unfinished Attic and Garage Wall Constructions</display_name>
   <description>This measure assigns a construction to the unfinished attic and garage exterior walls.</description>
   <modeler_description>Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the exterior walls of the attic and garage. Finds surfaces adjacent to the attic and garage and sets applicable constructions.</modeler_description>
   <arguments>
@@ -16,11 +16,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>unfinished attic</default_value>
+      <default_value>unfinished attic space type</default_value>
       <choices>
         <choice>
-          <value>unfinished attic</value>
-          <display_name>unfinished attic</display_name>
+          <value>unfinished attic space type</value>
+          <display_name>unfinished attic space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -31,11 +31,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>garage</default_value>
+      <default_value>garage space type</default_value>
       <choices>
         <choice>
-          <value>garage</value>
-          <display_name>garage</display_name>
+          <value>garage space type</value>
+          <display_name>garage space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -64,6 +64,24 @@
       <checksum>2DF2E77C</checksum>
     </file>
     <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>058A19F9</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3DAB63FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>99845B95</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -72,37 +90,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>404CE1E6</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
+      <checksum>B1541244</checksum>
     </file>
   </files>
 </measure>

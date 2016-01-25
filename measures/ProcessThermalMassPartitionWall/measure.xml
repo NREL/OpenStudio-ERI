@@ -2,11 +2,11 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_partition_wall</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>daa449ed-e20b-4953-be9c-e6eb12939b28</version_id>
+  <version_id>3a1b2c6d-694d-4984-aa4d-10c4e2e40be6</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassPartitionWall</class_name>
-  <display_name>Add/Replace Residential Partition Wall Thermal Mass</display_name>
-  <description>This measure creates internal mass for partition walls in the living space and finished basement.</description>
+  <display_name>Set Residential Partition Wall Thermal Mass</display_name>
+  <description>This measure assigns partition wall mass to the living space and finished basement.</description>
   <modeler_description>This measure creates constructions representing the internal mass of partition walls in the living space and finished basement. The constructions are set to define the internal mass objects of their respective spaces.</modeler_description>
   <arguments>
     <argument>
@@ -65,11 +65,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space type</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space type</value>
+          <display_name>living space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -80,11 +80,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>finished basement</default_value>
+      <default_value>finished basement space type</default_value>
       <choices>
         <choice>
-          <value>finished basement</value>
-          <display_name>finished basement</display_name>
+          <value>finished basement space type</value>
+          <display_name>finished basement space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -119,28 +119,10 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>3DAB63FF</checksum>
     </file>
     <file>
       <version>
@@ -151,13 +133,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>690BA217</checksum>
+      <checksum>98460E7A</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E525299C</checksum>
+      <checksum>99845B95</checksum>
     </file>
   </files>
 </measure>

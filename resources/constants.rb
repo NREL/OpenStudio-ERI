@@ -41,6 +41,9 @@ class Constants
 	def self.Auto
 		return 'auto'
 	end
+    def self.BasementSpace
+        return 'basement space'
+    end
 	def self.BAZoneCold
 		return 'Cold'
 	end
@@ -601,6 +604,9 @@ class Constants
 	end
     def self.ObjectNameWellPump
         return 'residential well pump'
+    end
+    def self.PierBeamSpace
+        return 'pier and beam space'
     end
     def self.PierBeamSpaceType
         return 'pier and beam space type'

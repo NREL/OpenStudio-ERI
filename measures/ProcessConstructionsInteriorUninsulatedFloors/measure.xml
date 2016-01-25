@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_floors</name>
   <uid>477cfef1-0c37-4b16-9cfd-82d617472e43</uid>
-  <version_id>4b371504-f0b0-44ec-9a78-8700a9854df2</version_id>
+  <version_id>c58cef01-8048-4664-bdc0-037ee5e17a36</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedFloors</class_name>
-  <display_name>Assign Residential Uninsulated Floor Construction</display_name>
+  <display_name>Set Residential Uninsulated Floor Construction</display_name>
   <description>This measure assigns a construction to the floors between living spaces and the floors between the living space and finished basement.</description>
   <modeler_description>Calculates material layer properties of uninsulated constructions for the floors between living spaces and the floors between the living space and finished basement. Finds surfaces adjacent to the living space and finished basement and sets applicable constructions.</modeler_description>
   <arguments>
@@ -96,11 +96,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space type</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space type</value>
+          <display_name>living space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -111,11 +111,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>finished basement</default_value>
+      <default_value>finished basement space type</default_value>
       <choices>
         <choice>
-          <value>finished basement</value>
-          <display_name>finished basement</display_name>
+          <value>finished basement space type</value>
+          <display_name>finished basement space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -126,11 +126,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>garage</default_value>
+      <default_value>garage space type</default_value>
       <choices>
         <choice>
-          <value>garage</value>
-          <display_name>garage</display_name>
+          <value>garage space type</value>
+          <display_name>garage space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -141,11 +141,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>unfinished attic</default_value>
+      <default_value>unfinished attic space type</default_value>
       <choices>
         <choice>
-          <value>unfinished attic</value>
-          <display_name>unfinished attic</display_name>
+          <value>unfinished attic space type</value>
+          <display_name>unfinished attic space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -180,6 +180,18 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3DAB63FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>99845B95</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -188,31 +200,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1DC326C0</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>3C62B77A</checksum>
     </file>
   </files>
 </measure>

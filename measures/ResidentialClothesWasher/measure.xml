@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>77d26226-8ee1-45a9-b5dc-a66fd9190f1d</version_id>
+  <version_id>e45653d3-a474-4e19-8e7b-f4ac01b59f34</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
-  <display_name>Add/Replace Residential Clothes Washer</display_name>
-  <description>Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule.</description>
-  <modeler_description>Since there is no Clothes Washer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential clothes washer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.</modeler_description>
+  <display_name>Set Residential Clothes Washer</display_name>
+  <description>Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule in the given space.</description>
+  <modeler_description>Since there is no Clothes Washer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential clothes washer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
   <arguments>
     <argument>
       <name>cw_mef</name>
@@ -153,17 +153,17 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>space_type</name>
+      <name>space</name>
       <display_name>Location</display_name>
-      <description>Select the space type where the clothes washer is located</description>
+      <description>Select the space where the clothes washer is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space</value>
+          <display_name>living space</display_name>
         </choice>
       </choices>
     </argument>
@@ -255,6 +255,12 @@
       <checksum>FC574302</checksum>
     </file>
     <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B9149D09</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -263,31 +269,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FFF083DB</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
+      <checksum>BBDA2FF9</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
+      <checksum>79B0EC38</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
+      <checksum>3DAB63FF</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>99845B95</checksum>
     </file>
   </files>
 </measure>

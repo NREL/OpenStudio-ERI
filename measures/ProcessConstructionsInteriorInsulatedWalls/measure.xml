@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_walls</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>d122407e-4a29-4601-8227-9604569c5339</version_id>
+  <version_id>8fa07f52-2ce1-4049-afce-0d76fa2cdf99</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedWalls</class_name>
-  <display_name>Assign Residential Interzonal Wall Construction</display_name>
+  <display_name>Set Residential Interzonal Wall Construction</display_name>
   <description>This measure assigns a construction to the interzonal walls.</description>
   <modeler_description>Calculates material layer properties of insulated constructions for the interzonal walls between the living space and the garage. Finds surfaces adjacent to the living space and garage and sets applicable constructions.</modeler_description>
   <arguments>
@@ -184,11 +184,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space type</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space type</value>
+          <display_name>living space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -199,11 +199,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>garage</default_value>
+      <default_value>garage space type</default_value>
       <choices>
         <choice>
-          <value>garage</value>
-          <display_name>garage</display_name>
+          <value>garage space type</value>
+          <display_name>garage space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -238,6 +238,18 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3DAB63FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>99845B95</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -246,31 +258,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CF0954EE</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>8244C7FC</checksum>
     </file>
   </files>
 </measure>

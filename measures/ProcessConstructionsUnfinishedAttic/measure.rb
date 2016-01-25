@@ -215,6 +215,34 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
+    has_applicable_surfaces = false
+    
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless ["roofceiling"].include? living_surface.surfaceType.downcase
+        adjacent_surface = living_surface.adjacentSurface
+        next unless adjacent_surface.is_initialized
+        adjacent_surface = adjacent_surface.get
+        adjacent_surface_r = adjacent_surface.name.to_s
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        next unless [unfin_attic_space_type_r].include? adjacent_space_type_r
+        has_applicable_surfaces = true
+        break
+      end   
+    end 
+    
+    unfin_attic_space_type.spaces.each do |unfin_attic_space|
+      unfin_attic_space.surfaces.each do |unfin_attic_surface|
+        next unless unfin_attic_surface.surfaceType.downcase == "roofceiling" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
+        has_applicable_surfaces = true
+        break
+      end   
+    end
+
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Unfinished Attic Insulation
     selected_uains = runner.getStringArgumentValue("selecteduains",user_arguments)
 
@@ -422,7 +450,6 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     unfininsextroof = OpenStudio::Model::Construction.new(materials)
     unfininsextroof.setName("UnfinInsExtRoof")  
 
-    
     living_space_type.spaces.each do |living_space|
       living_space.surfaces.each do |living_surface|
         next unless ["roofceiling"].include? living_surface.surfaceType.downcase

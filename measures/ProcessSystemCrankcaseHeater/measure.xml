@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_system_crankcase_heater</name>
   <uid>b0630593-f352-4753-ae2c-2aa68f1c5611</uid>
-  <version_id>dc47578d-3cc6-4cd8-9cc9-850379bbfa6c</version_id>
+  <version_id>dc684724-124e-4fa9-9798-33d7d0a9ced2</version_id>
   <xml_checksum>C7ED76C0</xml_checksum>
   <class_name>ProcessSystemCrankcaseHeater</class_name>
-  <display_name>Add/Replace Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner</display_name>
+  <display_name>Set Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner</display_name>
   <description>This measure creates a crankcase heater for heat pumps and multispeed air conditioners.</description>
   <modeler_description>Using EMS code, this measure creates a crankcase heater electric equipment object for heat pumps and also air conditioners with number of compressor speeds greater than one.</modeler_description>
   <arguments>
@@ -67,6 +67,12 @@
       <checksum>B79FDDBB</checksum>
     </file>
     <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>058A19F9</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -75,25 +81,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0A1823F5</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>B65D68D2</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
+      <checksum>3DAB63FF</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
+      <checksum>99845B95</checksum>
     </file>
   </files>
 </measure>

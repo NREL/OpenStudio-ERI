@@ -72,6 +72,25 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
+    has_applicable_sub_surfaces = false
+    spaces = model.getSpaces
+    spaces.each do |space|
+      constructions_hash = {}
+      shadingcontrol_hash = {}
+      surfaces = space.surfaces
+      surfaces.each do |surface|
+        subSurfaces = surface.subSurfaces
+        subSurfaces.each do |subSurface|
+          next unless subSurface.subSurfaceType.downcase.include? "window"
+          has_applicable_sub_surfaces = true
+          break
+        end
+      end
+    end
+    unless has_applicable_sub_surfaces
+        return true
+    end    
+    
     userdefined_ufactor = runner.getDoubleArgumentValue("ufactor",user_arguments)
     userdefined_shgc = runner.getDoubleArgumentValue("shgc",user_arguments)
 

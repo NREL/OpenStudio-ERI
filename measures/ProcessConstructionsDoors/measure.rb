@@ -95,6 +95,36 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
     garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
     
+    has_applicable_surfaces = false
+    
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless living_surface.surfaceType.downcase == "wall" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
+        living_surface.subSurfaces.each do |living_sub_surface|
+          next unless living_sub_surface.subSurfaceType.downcase.include? "door"
+          has_applicable_surfaces = true
+          break
+        end
+      end   
+    end 
+
+    unless garage_space_type.nil?
+      garage_space_type.spaces.each do |garage_space|
+        garage_space.surfaces.each do |garage_surface|
+          next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
+          garage_surface.subSurfaces.each do |garage_sub_surface|
+            next unless garage_sub_surface.subSurfaceType.downcase.include? "door"
+            has_applicable_surfaces = true
+            break
+          end
+        end   
+      end
+    end    
+    
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     selected_door = runner.getStringArgumentValue("selecteddoor",user_arguments)
     
     doorUvalue = {"Wood"=>0.48, "Steel"=>0.2, "Fiberglass"=>0.2}[selected_door]
@@ -156,7 +186,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
       end   
     end 
 
-    if not garage_space_type.nil?
+    unless garage_space_type.nil?
       garage_space_type.spaces.each do |garage_space|
         garage_space.surfaces.each do |garage_surface|
           next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"

@@ -66,6 +66,18 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
+    has_applicable_surfaces = false
+	garage_space_type.spaces.each do |garage_space|
+	  garage_space.surfaces.each do |garage_surface|
+	    next unless garage_surface.surfaceType.downcase == "floor" and garage_surface.outsideBoundaryCondition.downcase == "ground"
+        has_applicable_surfaces = true
+        break
+	  end	
+	end
+    unless has_applicable_surfaces
+        return true
+    end    
+    
 	# Adiabatic
 	adi = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
 	adi.setName("Adiabatic")

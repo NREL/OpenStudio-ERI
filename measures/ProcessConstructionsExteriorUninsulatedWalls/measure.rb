@@ -91,7 +91,37 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)
 	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
     garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
-	
+	if unfin_attic_space_type.nil? and garage_space_type.nil?
+        # If the building has no unfinished attic and no garage, no constructions are assigned and we continue by returning True
+        return true
+    end
+    
+    has_applicable_surfaces = false
+    
+	unless unfin_attic_space_type.nil?
+	  unfin_attic_space_type.spaces.each do |unfin_attic_space|
+	    unfin_attic_space.surfaces.each do |unfin_attic_surface|
+		  next unless unfin_attic_surface.surfaceType.downcase == "wall" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
+          has_applicable_surfaces = true
+          break
+	    end
+	  end
+	end
+
+	unless garage_space_type.nil?
+	  garage_space_type.spaces.each do |garage_space|
+	    garage_space.surfaces.each do |garage_surface|
+		  next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
+          has_applicable_surfaces = true
+          break
+	    end	
+	  end
+	end
+
+    unless has_applicable_surfaces
+        return true
+    end    
+    
 	# Plywood-1_2in
     mat_plywood1_2in = Material.Plywood1_2in
 	ply1_2 = OpenStudio::Model::StandardOpaqueMaterial.new(model)

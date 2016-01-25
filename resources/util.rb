@@ -36,20 +36,13 @@ class HelperMethods
         nbaths = nil
 		electricEquipments = workspace.getObjectsByType("ElectricEquipment".to_IddObjectType)
         electricEquipments.each do |electricEquipment|
-			zone_list_name = electricEquipment.getString(1).to_s
-			zone_lists = workspace.getObjectsByType("ZoneList".to_IddObjectType)
-			zone_lists.each do |zone_list|
-				if zone_list.getString(0).to_s == zone_list_name
-					zone = zone_list.getString(1).to_s
-                    br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(electricEquipment.getString(0).to_s)
-                    ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(electricEquipment.getString(0).to_s)	
-                    if br_regexpr
-                        nbeds = br_regexpr[:br].to_f
-                    elsif ba_regexpr
-                        nbaths = ba_regexpr[:ba].to_f
-                    end
-				end
-			end
+            br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(electricEquipment.getString(0).to_s)
+            ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(electricEquipment.getString(0).to_s)	
+            if br_regexpr
+                nbeds = br_regexpr[:br].to_f
+            elsif ba_regexpr
+                nbaths = ba_regexpr[:ba].to_f
+            end
         end
         if nbeds.nil? or nbaths.nil?
             if not runner.nil?

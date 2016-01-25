@@ -87,6 +87,18 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
+    has_applicable_surfaces = false
+    garage_space_type.spaces.each do |garage_space|
+      garage_space.surfaces.each do |garage_surface|
+        next unless garage_surface.surfaceType.downcase == "roofceiling" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
+        has_applicable_surfaces = true
+        break
+      end   
+    end
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Radiant Barrier
     hasRadiantBarrier = runner.getBoolArgumentValue("userdefinedhasradiantbarrier",user_arguments)
 

@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>ff99ea14-6ffa-4619-93d8-723f2ea918c8</version_id>
+  <version_id>210b3724-a80a-4ee9-bc1c-7bf4514068a7</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageRoof</class_name>
-  <display_name>Assign Residential Garage Roof Construction</display_name>
+  <display_name>Set Residential Garage Roof Construction</display_name>
   <description>This measure assigns a construction to the garage roof.</description>
   <modeler_description>Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the garage roof. Finds surfaces adjacent to the garage and sets applicable constructions.</modeler_description>
   <arguments>
@@ -53,11 +53,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>garage</default_value>
+      <default_value>garage space type</default_value>
       <choices>
         <choice>
-          <value>garage</value>
-          <display_name>garage</display_name>
+          <value>garage space type</value>
+          <display_name>garage space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -92,6 +92,18 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3DAB63FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>99845B95</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -100,31 +112,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>58D0B520</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>D66D0C55</checksum>
     </file>
   </files>
 </measure>

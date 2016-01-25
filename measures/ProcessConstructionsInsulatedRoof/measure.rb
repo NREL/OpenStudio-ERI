@@ -155,6 +155,18 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
+    has_applicable_surfaces = false
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless living_surface.surfaceType.downcase == "roofceiling" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
+        has_applicable_surfaces = true
+        break
+	  end	
+	end
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Roof Insulation
     selected_frroof = runner.getOptionalWorkspaceObjectChoiceValue("selectedfrroof",user_arguments,model)
     if selected_frroof.empty?

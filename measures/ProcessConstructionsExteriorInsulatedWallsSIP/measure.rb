@@ -189,6 +189,18 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
         return false
     end
     
+    has_applicable_surfaces = false
+    living_space_type.spaces.each do |living_space|
+      living_space.surfaces.each do |living_surface|
+        next unless living_surface.surfaceType.downcase == "wall" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
+        has_applicable_surfaces = true
+        break
+      end   
+    end
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Gypsum
     userdefined_gypthickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
     userdefined_gyplayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)

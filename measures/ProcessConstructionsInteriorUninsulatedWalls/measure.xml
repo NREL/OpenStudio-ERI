@@ -2,10 +2,10 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_walls</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>34e0796a-b0ba-4f6a-ad87-1542e6df73ef</version_id>
+  <version_id>7fca74c8-2aec-4d4e-af5b-3419c4ebfe29</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedWalls</class_name>
-  <display_name>Assign Residential Uninsulated Wall Construction</display_name>
+  <display_name>Set Residential Uninsulated Wall Construction</display_name>
   <description>This measure assigns constructions for the uninsulated walls between spaces.</description>
   <modeler_description>Calculates material layer properties of uninsulated constructions for the walls between spaces. Finds surfaces adjacent to the space and sets applicable constructions.</modeler_description>
   <arguments>
@@ -56,11 +56,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space type</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space type</value>
+          <display_name>living space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -71,11 +71,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>unfinished attic</default_value>
+      <default_value>unfinished attic space type</default_value>
       <choices>
         <choice>
-          <value>unfinished attic</value>
-          <display_name>unfinished attic</display_name>
+          <value>unfinished attic space type</value>
+          <display_name>unfinished attic space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -86,11 +86,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>garage</default_value>
+      <default_value>garage space type</default_value>
       <choices>
         <choice>
-          <value>garage</value>
-          <display_name>garage</display_name>
+          <value>garage space type</value>
+          <display_name>garage space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -125,6 +125,18 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3DAB63FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>99845B95</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -133,31 +145,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>876F0667</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9149D09</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4D7F6365</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7FE94C0A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7465C670</checksum>
+      <checksum>F1153EE4</checksum>
     </file>
   </files>
 </measure>

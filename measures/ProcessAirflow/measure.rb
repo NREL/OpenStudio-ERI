@@ -17,6 +17,12 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 #start the measure
 class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
+  class Ducts
+    def initialize
+    end
+    attr_accessor(:DuctLocation, :has_ducts)
+  end
+
   class Infiltration
     def initialize(infiltrationLivingSpaceACH50, infiltrationShelterCoefficient, infiltrationLivingSpaceConstantACH, infiltrationGarageACH50)
       @infiltrationLivingSpaceACH50 = infiltrationLivingSpaceACH50
@@ -799,6 +805,18 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ufattic_thermal_zone.setDefaultValue(Constants.UnfinishedAtticZone)
     args << ufattic_thermal_zone		
 	
+    #make a choice arguments for duct location
+    duct_locations = OpenStudio::StringVector.new
+    duct_locations << Constants.Auto
+    duct_locations << Constants.LivingSpace(1)
+    duct_locations << Constants.BasementSpace
+    duct_locations << Constants.UnfinishedAtticSpace
+    duct_location = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("duct_location", duct_locations, true)
+    duct_location.setDisplayName("Duct Location")
+	duct_location.setDescription("The space with the primary location of ducts.")
+    duct_location.setDefaultValue(Constants.Auto)
+    args << duct_location
+    
     return args
   end #end the arguments method
 
@@ -821,6 +839,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	garage_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, garage_thermal_zone_r, runner, false)
 	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
 	fbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, fbasement_thermal_zone_r, runner, false)
+    puts fbasement_thermal_zone
+    puts "HERE"
 	ufbasement_thermal_zone_r = runner.getStringArgumentValue("ufbasement_thermal_zone",user_arguments)
 	ufbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, ufbasement_thermal_zone_r, runner, false)
 	crawl_thermal_zone_r = runner.getStringArgumentValue("crawl_thermal_zone",user_arguments)
@@ -891,6 +911,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentFractionWindowAreaOpen = runner.getDoubleArgumentValue("userdefinedfracwinareaopen",user_arguments)
     natVentMaxOAHumidityRatio = runner.getDoubleArgumentValue("userdefinedhumratio",user_arguments)
     natVentMaxOARelativeHumidity = runner.getDoubleArgumentValue("userdefinedrelhumratio",user_arguments)
+    
+    duct_location = runner.getStringArgumentValue("duct_location",user_arguments)
 
     # Get number of bedrooms/bathrooms
     nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, runner)
@@ -930,6 +952,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     schedules = Schedules.new
     cooling_set_point = CoolingSetpoint.new
     heating_set_point = HeatingSetpoint.new
+    d = Ducts.new
 
     zones = workspace.getObjectsByType("Zone".to_IddObjectType)
     zones.each do |zone|
@@ -1677,6 +1700,46 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       runner.registerInfo("Set object '#{str.split("\n")[1].gsub(",","")} - #{str.split("\n")[2].split(",")[0]}'")
     end
 
+    # Ducts
+    if duct_location == Constants.Auto
+      if not fbasement_thermal_zone.nil?
+        duct_location = Constants.FinishedBasementSpace
+      elsif not ufbasement_thermal_zone.nil?
+        duct_location = Constants.UnfinishedBasementSpace
+      elsif not crawl_thermal_zone.nil?
+        duct_location = Constants.CrawlSpace
+      elsif not ufattic_thermal_zone.nil?
+        duct_location = Constants.UnfinishedAtticSpace
+      else
+        duct_location = Constants.LivingSpace(1)
+      end    
+    elsif duct_location == Constants.BasementSpace
+      if not fbasement_thermal_zone.nil?
+        duct_location = Constants.FinishedBasementSpace
+      elsif not ufbasement_thermal_zone.nil?
+        duct_location = Constants.UnfinishedBasementSpace
+      else
+        runner.registerError("Duct location is basement, but the building does not have a basement.")
+        return false
+      end
+    elsif duct_location == Constants.AtticSpace
+      if not ufattic_thermal_zone.nil?
+        duct_location = Constants.UnfinishedAtticSpace
+      else
+        duct_location = Constants.LivingSpace
+      end
+    end
+    if [Constants.UnfinishedBasementSpace, Constants.CrawlSpace, Constants.GarageSpace, Constants.UnfinishedAtticSpace, Constants.PierBeamSpace].include? duct_location
+      
+    end
+    if duct_location == Constants.FinishedAtticSpace
+      duct_location = Constants.LivingSpace
+    elsif duct_location == Constants.PierBeamSpace
+      duct_location = Constants.CrawlSpace
+    end
+    d.DuctLocation = duct_location
+    d.has_ducts = true
+    
     return true
  
   end #end the run method

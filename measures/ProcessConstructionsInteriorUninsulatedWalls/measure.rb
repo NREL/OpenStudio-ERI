@@ -157,6 +157,42 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
     garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)    
 	
+    has_applicable_surfaces = false
+    
+	living_space_type.spaces.each do |living_space|
+	  living_space.surfaces.each do |living_surface|
+	    next unless ["wall"].include? living_surface.surfaceType.downcase
+		adjacent_surface = living_surface.adjacentSurface
+		next unless adjacent_surface.is_initialized
+		adjacent_surface = adjacent_surface.get
+	    adjacent_surface_r = adjacent_surface.name.to_s
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    next unless [living_space_type_r].include? adjacent_space_type_r
+        has_applicable_surfaces = true
+        break
+	  end	
+	end
+	
+    unless garage_space_type.nil?
+      garage_space_type.spaces.each do |garage_space|
+        garage_space.surfaces.each do |garage_surface|    
+          next unless ["wall"].include? garage_surface.surfaceType.downcase
+          adjacent_surface = garage_surface.adjacentSurface
+          next unless adjacent_surface.is_initialized
+          adjacent_surface = adjacent_surface.get
+          adjacent_surface_r = adjacent_surface.name.to_s
+          adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+          next unless [unfin_attic_space_type_r].include? adjacent_space_type_r
+          has_applicable_surfaces = true
+          break
+        end
+      end          
+    end
+
+    unless has_applicable_surfaces
+        return true
+    end    
+    
     # Partition Wall Mass
     partitionWallMassThickness = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
     partitionWallMassConductivity = runner.getDoubleArgumentValue("userdefinedpartitionwallmasscond",user_arguments)

@@ -18,29 +18,19 @@ class Sim
     # loop thru all the spaces
     spaces = []
     spaces << living_space
-    hasGarage = false
-    hasFinishedBasement = false
-    hasUnfinishedBasement = false
-    hasCrawl = false
-    hasUnfinAttic = false
     if not selected_garage.nil?
-      hasGarage = true
       spaces << garage
     end
     if not selected_fbsmt.nil?
-      hasFinishedBasement = true
       spaces << finished_basement
     end
     if not selected_ufbsmt.nil?
-      hasUnfinishedBasement = true
       spaces << space_unfinished_basement
     end
     if not selected_crawl.nil?
-      hasCrawl = true
       spaces << crawlspace
     end
     if not selected_unfinattic.nil?
-      hasUnfinAttic = true
       spaces << unfinished_attic
     end
 
@@ -195,7 +185,7 @@ class Sim
 
     end
 
-    if hasGarage
+    unless selected_garage.nil?
 
       garage.inf_method = Constants.InfMethodSG
       garage.hor_leak_frac = 0.4 # DOE-2 Default
@@ -207,7 +197,7 @@ class Sim
 
     end
 
-    if hasFinishedBasement
+    unless selected_fbsmt.nil?
 
       finished_basement.inf_method = Constants.InfMethodRes # Used for constant ACH
       finished_basement.ACH = finished_basement.FBsmtACH
@@ -216,7 +206,7 @@ class Sim
 
     end
 
-    if hasUnfinishedBasement
+    unless selected_ufbsmt.nil?
 
       space_unfinished_basement.inf_method = Constants.InfMethodRes # Used for constant ACH
       space_unfinished_basement.ACH = space_unfinished_basement.UFBsmtACH
@@ -225,7 +215,7 @@ class Sim
 
     end
 
-    if hasCrawl
+    unless selected_crawl.nil?
 
       crawlspace.inf_method = Constants.InfMethodRes
 
@@ -235,7 +225,7 @@ class Sim
 
     end
 
-    if hasUnfinAttic
+    unless selected_unfinattic.nil?
 
       unfinished_attic.inf_method = Constants.InfMethodSG
       unfinished_attic.hor_leak_frac = 0.75 # Same as Energy Gauge USA Attic Model
