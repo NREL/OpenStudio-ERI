@@ -243,7 +243,9 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
         return true
     end
 
-    has_applicable_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"UnfinBInsFinFloor"=>[], "RevUnfinBInsFinFloor"=>[], "GrndInsUnfinBWall"=>[], "GrndUninsUnfinBFloor"=>[], "UFBsmtRimJoist"=>[]}
+    constructions_to_objects = Hash.new
     
 	living_space_type.spaces.each do |living_space|
 	  living_space.surfaces.each do |living_surface|
@@ -252,25 +254,29 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 		next unless adjacent_surface.is_initialized
 		adjacent_surface = adjacent_surface.get
 	    adjacent_surface_r = adjacent_surface.name.to_s
-	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r, runner)
 	    next unless [ubasement_space_type_r].include? adjacent_space_type_r
-        has_applicable_surfaces = true
-        break
+        constructions_to_surfaces["UnfinBInsFinFloor"] << living_surface
+        constructions_to_surfaces["RevUnfinBInsFinFloor"] << adjacent_surface
 	  end	
 	end	
 	
 	ubasement_space_type.spaces.each do |ubasement_space|
 	  ubasement_space.surfaces.each do |ubasement_surface|
-	    if ( ubasement_surface.surfaceType.downcase == "wall" and ubasement_surface.outsideBoundaryCondition.downcase == "ground" ) or ( ubasement_surface.surfaceType.downcase == "floor" and ubasement_surface.outsideBoundaryCondition.downcase == "ground" ) or ( ubasement_surface.surfaceType.downcase == "wall" and ubasement_surface.outsideBoundaryCondition.downcase == "outdoors" )
-          has_applicable_surfaces = true
-          break
+	    if ubasement_surface.surfaceType.downcase == "wall" and ubasement_surface.outsideBoundaryCondition.downcase == "ground"
+          constructions_to_surfaces["GrndInsUnfinBWall"] << ubasement_surface
+		elsif ubasement_surface.surfaceType.downcase == "floor" and ubasement_surface.outsideBoundaryCondition.downcase == "ground"
+          constructions_to_surfaces["GrndUninsUnfinBFloor"] << ubasement_surface
+		elsif ubasement_surface.surfaceType.downcase == "wall" and ubasement_surface.outsideBoundaryCondition.downcase == "outdoors"
+          constructions_to_surfaces["UFBsmtRimJoist"] << ubasement_surface
 		end
 	  end	
 	end
 
-    unless has_applicable_surfaces
-        return true
-    end    
+    # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end   
     
 	# Unfinished Basement Insulation
 	selected_ufbsmtins = runner.getStringArgumentValue("selectedufbsmtins",user_arguments)	
@@ -474,8 +480,11 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	if carpetFloorFraction > 0
 		materials << cbl
 	end
-	unfinbinsfinfloor = OpenStudio::Model::Construction.new(materials)
-	unfinbinsfinfloor.setName("UnfinBInsFinFloor")	
+    unless constructions_to_surfaces["UnfinBInsFinFloor"].empty?
+        unfinbinsfinfloor = OpenStudio::Model::Construction.new(materials)
+        unfinbinsfinfloor.setName("UnfinBInsFinFloor")
+        constructions_to_objects["UnfinBInsFinFloor"] = unfinbinsfinfloor
+    end
 	
 	# UFBaseWallIns
 	if wall_add_insul_layer
@@ -525,8 +534,11 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	if wall_add_insul_layer
 		materials << uwi
 	end
-	grndinsunfinbwall = OpenStudio::Model::Construction.new(materials)
-	grndinsunfinbwall.setName("GrndInsUnfinBWall")	
+    unless constructions_to_surfaces["GrndInsUnfinBWall"].empty?
+        grndinsunfinbwall = OpenStudio::Model::Construction.new(materials)
+        grndinsunfinbwall.setName("GrndInsUnfinBWall")
+        constructions_to_objects["GrndInsUnfinBWall"] = grndinsunfinbwall
+    end
 	
 	# UFBaseFloor-FicR
 	uffr = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
@@ -549,12 +561,18 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	materials << uffr
 	materials << soil
 	materials << conc4
-	grnduninsunfinbfloor = OpenStudio::Model::Construction.new(materials)
-	grnduninsunfinbfloor.setName("GrndUninsUnfinBFloor")	
+    unless constructions_to_surfaces["GrndUninsUnfinBFloor"].empty?
+        grnduninsunfinbfloor = OpenStudio::Model::Construction.new(materials)
+        grnduninsunfinbfloor.setName("GrndUninsUnfinBFloor")	
+        constructions_to_objects["GrndUninsUnfinBFloor"] = grnduninsunfinbfloor
+    end
 	
 	# RevUnfinBInsFinFloor
-	revunfinbinsfinfloor = unfinbinsfinfloor.reverseConstruction
-	revunfinbinsfinfloor.setName("RevUnfinBInsFinFloor")
+    unless constructions_to_surfaces["RevUnfinBInsFinFloor"].empty?
+        revunfinbinsfinfloor = unfinbinsfinfloor.reverseConstruction
+        revunfinbinsfinfloor.setName("RevUnfinBInsFinFloor")
+        constructions_to_objects["RevUnfinBInsFinFloor"] = revunfinbinsfinfloor
+    end
 
 	# Rigid
 	if wallSheathingContInsRvalue > 0
@@ -597,39 +615,22 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 	if rj_Rvalue > 0
 		materials << ujc
 	end
-	ufbsmtrimjoist = OpenStudio::Model::Construction.new(materials)
-	ufbsmtrimjoist.setName("UFBsmtRimJoist")	
+    unless constructions_to_surfaces["UFBsmtRimJoist"].empty?
+        ufbsmtrimjoist = OpenStudio::Model::Construction.new(materials)
+        ufbsmtrimjoist.setName("UFBsmtRimJoist")
+        constructions_to_objects["UFBsmtRimJoist"] = ufbsmtrimjoist
+    end
 
-	living_space_type.spaces.each do |living_space|
-	  living_space.surfaces.each do |living_surface|
-	    next unless ["floor"].include? living_surface.surfaceType.downcase
-		adjacent_surface = living_surface.adjacentSurface
-		next unless adjacent_surface.is_initialized
-		adjacent_surface = adjacent_surface.get
-	    adjacent_surface_r = adjacent_surface.name.to_s
-	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-	    next unless [ubasement_space_type_r].include? adjacent_space_type_r
-	    living_surface.setConstruction(unfinbinsfinfloor)
-		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{unfinbinsfinfloor.name}'")
-	    adjacent_surface.setConstruction(revunfinbinsfinfloor)		
-		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfinbinsfinfloor.name}'")
-	  end	
-	end	
-	
-	ubasement_space_type.spaces.each do |ubasement_space|
-	  ubasement_space.surfaces.each do |ubasement_surface|
-	    if ubasement_surface.surfaceType.downcase == "wall" and ubasement_surface.outsideBoundaryCondition.downcase == "ground"
-		  ubasement_surface.setConstruction(grndinsunfinbwall)
-		  runner.registerInfo("Surface '#{ubasement_surface.name}', of Space Type '#{ubasement_space_type_r}' and with Surface Type '#{ubasement_surface.surfaceType}' and Outside Boundary Condition '#{ubasement_surface.outsideBoundaryCondition}', was assigned Construction '#{grndinsunfinbwall.name}'")
-		elsif ubasement_surface.surfaceType.downcase == "floor" and ubasement_surface.outsideBoundaryCondition.downcase == "ground"
-		  ubasement_surface.setConstruction(grnduninsunfinbfloor)
-		  runner.registerInfo("Surface '#{ubasement_surface.name}', of Space Type '#{ubasement_space_type_r}' and with Surface Type '#{ubasement_surface.surfaceType}' and Outside Boundary Condition '#{ubasement_surface.outsideBoundaryCondition}', was assigned Construction '#{grnduninsunfinbfloor.name}'")		
-		elsif ubasement_surface.surfaceType.downcase == "wall" and ubasement_surface.outsideBoundaryCondition.downcase == "outdoors"
-		  ubasement_surface.setConstruction(ufbsmtrimjoist)
-		  runner.registerInfo("Surface '#{ubasement_surface.name}', of Space Type '#{ubasement_space_type_r}' and with Surface Type '#{ubasement_surface.surfaceType}' and Outside Boundary Condition '#{ubasement_surface.outsideBoundaryCondition}', was assigned Construction '#{ufbsmtrimjoist.name}'")				
-		end
-	  end	
-	end
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
+        end
+    end
+    
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)     
 
     return true
  

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>0b86d0f1-1da2-4c3b-b195-4cfb30317e47</version_id>
+  <version_id>0107e944-1a43-4094-ac6c-e787585e1920</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsSlab</class_name>
   <display_name>Set Residential Slab Construction</display_name>
@@ -165,13 +165,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3DAB63FF</checksum>
+      <checksum>3993E7C9</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>99845B95</checksum>
+      <checksum>E913FBAD</checksum>
     </file>
     <file>
       <version>
@@ -182,7 +182,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>40FAC484</checksum>
+      <checksum>39FDBCFD</checksum>
     </file>
   </files>
 </measure>

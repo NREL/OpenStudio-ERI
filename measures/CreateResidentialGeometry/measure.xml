@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>2806d2d6-d6ec-42c7-8b60-aa978c74a649</version_id>
+  <version_id>5aaa8a80-26cc-4ab4-8d37-789f528f1c1a</version_id>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -285,7 +285,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3DAB63FF</checksum>
+      <checksum>3993E7C9</checksum>
     </file>
   </files>
 </measure>

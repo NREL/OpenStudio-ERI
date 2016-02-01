@@ -223,10 +223,13 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     if crawl_space_type.nil?
         # If the building has no crawlspace, no constructions are assigned and we continue by returning True
         return true
-    end
-
-    has_applicable_surfaces = false
+    end  
     
+    # Initialize hashes
+    constructions_to_surfaces = {"UnfinCSInsFinFloor"=>[], "RevUnfinCSInsFinFloor"=>[], "GrndInsUnfinCSWall"=>[], "GrndUninsUnfinCSFloor"=>[], "CSRimJoist"=>[]}
+    constructions_to_objects = Hash.new
+    
+    # Floor between crawlspace and living
     living_space_type.spaces.each do |living_space|
       living_space.surfaces.each do |living_surface|
         next unless ["floor"].include? living_surface.surfaceType.downcase
@@ -234,24 +237,29 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         next unless adjacent_surface.is_initialized
         adjacent_surface = adjacent_surface.get
         adjacent_surface_r = adjacent_surface.name.to_s
-        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r, runner)
         next unless [crawl_space_type_r].include? adjacent_space_type_r
-        has_applicable_surfaces = true
-        break
+        constructions_to_surfaces["UnfinCSInsFinFloor"] << living_surface
+        constructions_to_surfaces["RevUnfinCSInsFinFloor"] << adjacent_surface
       end   
     end 
     
+    # Crawlspace walls, floor, rimjoists
     crawl_space_type.spaces.each do |crawl_space|
       crawl_space.surfaces.each do |crawl_surface|
-        if ( crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "ground" ) or ( crawl_surface.surfaceType.downcase == "floor" and crawl_surface.outsideBoundaryCondition.downcase == "ground" ) or ( crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "outdoors" )
-          has_applicable_surfaces = true
-          break
+        if crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "ground"
+          constructions_to_surfaces["GrndInsUnfinCSWall"] << crawl_surface
+        elsif crawl_surface.surfaceType.downcase == "floor" and crawl_surface.outsideBoundaryCondition.downcase == "ground"
+          constructions_to_surfaces["GrndUninsUnfinCSFloor"] << crawl_surface
+        elsif crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "outdoors"
+          constructions_to_surfaces["CSRimJoist"] << crawl_surface
         end
       end   
     end
-
-    unless has_applicable_surfaces
-        return true
+    
+    # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
     end    
     
     # Crawlspace Insulation
@@ -328,6 +336,10 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         end
       end
     end
+    if extfin.nil?
+      runner.registerError("Could not find material layer 'ExteriorFinish'. Need to set exterior insulated walls first.")
+      return false
+    end    
 
     # Rigid
     wallSheathingContInsThickness = 0
@@ -343,7 +355,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
           end
         end
       end
-    end
+    end 
 
     # FIXME: Need to calculate and remove inputs
     csHeight = runner.getDoubleArgumentValue("userdefinedcsheight",user_arguments)
@@ -482,12 +494,18 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     if carpetFloorFraction > 0
         materials << cbl
     end
-    unfincsinsfinfloor = OpenStudio::Model::Construction.new(materials)
-    unfincsinsfinfloor.setName("UnfinCSInsFinFloor")    
+    unless constructions_to_surfaces["UnfinCSInsFinFloor"].empty?
+        unfincsinsfinfloor = OpenStudio::Model::Construction.new(materials)
+        unfincsinsfinfloor.setName("UnfinCSInsFinFloor")
+        constructions_to_objects["UnfinCSInsFinFloor"] = unfincsinsfinfloor
+    end
 
     # RevUnfinCSInsFinFloor
-    revunfincsinsfinfloor = unfincsinsfinfloor.reverseConstruction
-    revunfincsinsfinfloor.setName("RevUnfinCSInsFinFloor")
+    unless constructions_to_surfaces["RevUnfinCSInsFinFloor"].empty?
+        revunfincsinsfinfloor = unfincsinsfinfloor.reverseConstruction
+        revunfincsinsfinfloor.setName("RevUnfinCSInsFinFloor")
+        constructions_to_objects["RevUnfinCSInsFinFloor"] = revunfincsinsfinfloor
+    end
 
     # GrndInsUnfinCSWall
     materials = []
@@ -499,15 +517,21 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     if crawlWallContInsRvalueNominal > 0
         materials << cwi
     end
-    grndinsunfincswall = OpenStudio::Model::Construction.new(materials)
-    grndinsunfincswall.setName("GrndInsUnfinCSWall")    
+    unless constructions_to_surfaces["GrndInsUnfinCSWall"].empty?
+        grndinsunfincswall = OpenStudio::Model::Construction.new(materials)
+        grndinsunfincswall.setName("GrndInsUnfinCSWall")
+        constructions_to_objects["GrndInsUnfinCSWall"] = grndinsunfincswall
+    end
     
     # GrndUninsUnfinCSFloor
     materials = []
     materials << cffr
     materials << soil
-    grnduninsunfincsfloor = OpenStudio::Model::Construction.new(materials)
-    grnduninsunfincsfloor.setName("GrndUninsUnfinCSFloor")
+    unless constructions_to_surfaces["GrndUninsUnfinCSFloor"].empty?
+        grnduninsunfincsfloor = OpenStudio::Model::Construction.new(materials)
+        grnduninsunfincsfloor.setName("GrndUninsUnfinCSFloor")
+        constructions_to_objects["GrndUninsUnfinCSFloor"] = grnduninsunfincsfloor
+    end
     
     # CSRimJoist
     materials = []
@@ -517,39 +541,22 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     end
     materials << ply3_2
     materials << cjc
-    csrimjoist = OpenStudio::Model::Construction.new(materials)
-    csrimjoist.setName("CSRimJoist")
-    
-    living_space_type.spaces.each do |living_space|
-      living_space.surfaces.each do |living_surface|
-        next unless ["floor"].include? living_surface.surfaceType.downcase
-        adjacent_surface = living_surface.adjacentSurface
-        next unless adjacent_surface.is_initialized
-        adjacent_surface = adjacent_surface.get
-        adjacent_surface_r = adjacent_surface.name.to_s
-        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-        next unless [crawl_space_type_r].include? adjacent_space_type_r
-        living_surface.setConstruction(unfincsinsfinfloor)
-        runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{unfincsinsfinfloor.name}'")
-        adjacent_surface.setConstruction(revunfincsinsfinfloor)     
-        runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfincsinsfinfloor.name}'")
-      end   
-    end 
-    
-    crawl_space_type.spaces.each do |crawl_space|
-      crawl_space.surfaces.each do |crawl_surface|
-        if crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "ground"
-          crawl_surface.setConstruction(grndinsunfincswall)
-          runner.registerInfo("Surface '#{crawl_surface.name}', of Space Type '#{crawl_space_type_r}' and with Surface Type '#{crawl_surface.surfaceType}' and Outside Boundary Condition '#{crawl_surface.outsideBoundaryCondition}', was assigned Construction '#{grndinsunfincswall.name}'")
-        elsif crawl_surface.surfaceType.downcase == "floor" and crawl_surface.outsideBoundaryCondition.downcase == "ground"
-          crawl_surface.setConstruction(grnduninsunfincsfloor)
-          runner.registerInfo("Surface '#{crawl_surface.name}', of Space Type '#{crawl_space_type_r}' and with Surface Type '#{crawl_surface.surfaceType}' and Outside Boundary Condition '#{crawl_surface.outsideBoundaryCondition}', was assigned Construction '#{grnduninsunfincsfloor.name}'")      
-        elsif crawl_surface.surfaceType.downcase == "wall" and crawl_surface.outsideBoundaryCondition.downcase == "outdoors"
-          crawl_surface.setConstruction(csrimjoist)
-          runner.registerInfo("Surface '#{crawl_surface.name}', of Space Type '#{crawl_space_type_r}' and with Surface Type '#{crawl_surface.surfaceType}' and Outside Boundary Condition '#{crawl_surface.outsideBoundaryCondition}', was assigned Construction '#{csrimjoist.name}'")             
-        end
-      end   
+    unless constructions_to_surfaces["CSRimJoist"].empty?
+        csrimjoist = OpenStudio::Model::Construction.new(materials)
+        csrimjoist.setName("CSRimJoist")
+        constructions_to_objects["CSRimJoist"] = csrimjoist
     end
+    
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
+        end
+    end
+    
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)
 
     return true
 

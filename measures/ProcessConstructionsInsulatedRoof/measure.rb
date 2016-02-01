@@ -155,17 +155,22 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    has_applicable_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"FinInsExtRoof"=>[]}
+    constructions_to_objects = Hash.new     
+    
+    # Roof of finished attic
 	living_space_type.spaces.each do |living_space|
 	  living_space.surfaces.each do |living_surface|
 	    next unless living_surface.surfaceType.downcase == "roofceiling" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
-        has_applicable_surfaces = true
-        break
+          constructions_to_surfaces["FinInsExtRoof"] << living_surface
 	  end	
 	end
-    unless has_applicable_surfaces
-        return true
-    end    
+    
+    # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end       
     
     # Roof Insulation
     selected_frroof = runner.getOptionalWorkspaceObjectChoiceValue("selectedfrroof",user_arguments,model)
@@ -275,16 +280,22 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     (0...gypsumNumLayers).to_a.each do |i|
       materials << gypsum
     end
-    fininsextroof = OpenStudio::Model::Construction.new(materials)
-    fininsextroof.setName("FinInsExtRoof")	
-
-	living_space_type.spaces.each do |living_space|
-	  living_space.surfaces.each do |living_surface|
-	    next unless living_surface.surfaceType.downcase == "roofceiling" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
-	    living_surface.setConstruction(fininsextroof)
-		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{fininsextroof.name}'")		
-	  end	
-	end
+    unless constructions_to_surfaces["FinInsExtRoof"].empty?
+        fininsextroof = OpenStudio::Model::Construction.new(materials)
+        fininsextroof.setName("FinInsExtRoof")
+        constructions_to_objects["FinInsExtRoof"] = fininsextroof
+    end
+    
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
+        end
+    end
+    
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)
 
     return true
  

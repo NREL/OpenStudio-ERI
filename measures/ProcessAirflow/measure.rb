@@ -18,9 +18,31 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
   class Ducts
-    def initialize
+    def initialize(ductNormLeakageToOutside, ductSupplyLeakageFractionOfTotal, ductReturnLeakageFractionOfTotal, ductAHSupplyLeakageFractionOfTotal, ductAHReturnLeakageFractionOfTotal)
+      @ductNormLeakageToOutside = ductNormLeakageToOutside
+      @ductSupplyLeakageFractionOfTotal = ductSupplyLeakageFractionOfTotal
+      @ductReturnLeakageFractionOfTotal = ductReturnLeakageFractionOfTotal
+      @ductAHSupplyLeakageFractionOfTotal = ductAHSupplyLeakageFractionOfTotal
+      @ductAHReturnLeakageFractionOfTotal = ductAHReturnLeakageFractionOfTotal
     end
-    attr_accessor(:DuctLocation, :has_ducts)
+    
+    attr_accessor(:DuctLocation, :has_ducts, :has_unconditioned_ducts)
+    
+    def DuctNormLeakageToOutside
+      return @ductNormLeakageToOutside
+    end
+    
+    def DuctReturnLeakageFractionOfTotal
+      return @ductReturnLeakageFractionOfTotal
+    end
+    
+    def DuctAHSupplyLeakageFractionOfTotal
+      return @ductAHSupplyLeakageFractionOfTotal
+    end
+
+    def DuctAHReturnLeakageFractionOfTotal
+      return @ductAHReturnLeakageFractionOfTotal
+    end    
   end
 
   class Infiltration
@@ -807,15 +829,63 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	
     #make a choice arguments for duct location
     duct_locations = OpenStudio::StringVector.new
+    duct_locations << "None"
     duct_locations << Constants.Auto
     duct_locations << Constants.LivingSpace(1)
     duct_locations << Constants.BasementSpace
-    duct_locations << Constants.UnfinishedAtticSpace
+    duct_locations << Constants.AtticSpace
     duct_location = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("duct_location", duct_locations, true)
     duct_location.setDisplayName("Duct Location")
 	duct_location.setDescription("The space with the primary location of ducts.")
     duct_location.setDefaultValue(Constants.Auto)
     args << duct_location
+    
+    #make a double argument for total leakage
+    duct_total_leakage = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_total_leakage", false)
+    duct_total_leakage.setDisplayName("Ducts: Total Leakage")
+	duct_total_leakage.setUnits("frac")
+	duct_total_leakage.setDescription("The total amount of air flow leakage expressed as a fraction of the total air flow rate.")
+    duct_total_leakage.setDefaultValue(0.3)
+    args << duct_total_leakage
+
+    #make a double argument for supply leakage fraction of total
+    duct_total_leakage = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_sup_frac", false)
+    duct_total_leakage.setDisplayName("Ducts: Supply Leakage Fraction of Total")
+	duct_total_leakage.setUnits("frac")
+	duct_total_leakage.setDescription("The amount of air flow leakage leaking out from the supply duct expressed as a fraction of the total duct leakage.")
+    duct_total_leakage.setDefaultValue(0.6)
+    args << duct_total_leakage
+
+    #make a double argument for return leakage fraction of total
+    duct_total_leakage = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_ret_frac", false)
+    duct_total_leakage.setDisplayName("Ducts: Return Leakage Fraction of Total")
+	duct_total_leakage.setUnits("frac")
+	duct_total_leakage.setDescription("The amount of air flow leakage leaking into the return duct expressed as a fraction of the total duct leakage.")
+    duct_total_leakage.setDefaultValue(0.067)
+    args << duct_total_leakage  
+
+    #make a double argument for supply AH leakage fraction of total
+    duct_total_leakage = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_ah_sup_frac", false)
+    duct_total_leakage.setDisplayName("Ducts: Supply Air Handler Leakage Fraction of Total")
+	duct_total_leakage.setUnits("frac")
+	duct_total_leakage.setDescription("The amount of air flow leakage leaking out from the supply-side of the air handler expressed as a fraction of the total duct leakage.")
+    duct_total_leakage.setDefaultValue(0.067)
+    args << duct_total_leakage  
+
+    #make a double argument for return AH leakage fraction of total
+    duct_total_leakage = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_ah_ret_leakage", false)
+    duct_total_leakage.setDisplayName("Ducts: Return Air Handler Leakage Fraction of Total")
+	duct_total_leakage.setUnits("frac")
+	duct_total_leakage.setDescription("The amount of air flow leakage leaking out from the return-side of the air handler expressed as a fraction of the total duct leakage.")
+    duct_total_leakage.setDefaultValue(0.267)
+    args << duct_total_leakage      
+    
+    #make a double argument for leakage to outside
+    duct_norm_leakage_to_outside = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_norm_leakage_to_outside", false)
+    duct_norm_leakage_to_outside.setDisplayName("Ducts: Leakage to Outside at 25Pa")
+	duct_norm_leakage_to_outside.setUnits("cfm/100 ft^2")
+	duct_norm_leakage_to_outside.setDescription("Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
+    args << duct_norm_leakage_to_outside    
     
     return args
   end #end the arguments method
@@ -839,8 +909,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	garage_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, garage_thermal_zone_r, runner, false)
 	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
 	fbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, fbasement_thermal_zone_r, runner, false)
-    puts fbasement_thermal_zone
-    puts "HERE"
 	ufbasement_thermal_zone_r = runner.getStringArgumentValue("ufbasement_thermal_zone",user_arguments)
 	ufbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, ufbasement_thermal_zone_r, runner, false)
 	crawl_thermal_zone_r = runner.getStringArgumentValue("crawl_thermal_zone",user_arguments)
@@ -913,7 +981,13 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentMaxOARelativeHumidity = runner.getDoubleArgumentValue("userdefinedrelhumratio",user_arguments)
     
     duct_location = runner.getStringArgumentValue("duct_location",user_arguments)
-
+    ductTotalLeakage = runner.getDoubleArgumentValue("duct_total_leakage",user_arguments)
+    ductSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_sup_frac",user_arguments)
+    ductReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ret_frac",user_arguments)
+    ductAHSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_sup_frac",user_arguments)
+    ductAHReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_ret_frac",user_arguments)
+    ductNormLeakageToOutside = runner.getDoubleArgumentValue("duct_norm_leakage_to_outside",user_arguments)
+    
     # Get number of bedrooms/bathrooms
     nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, runner)
     if nbeds.nil? or nbaths.nil?
@@ -952,7 +1026,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     schedules = Schedules.new
     cooling_set_point = CoolingSetpoint.new
     heating_set_point = HeatingSetpoint.new
-    d = Ducts.new
+    d = Ducts.new(ductNormLeakageToOutside)
 
     zones = workspace.getObjectsByType("Zone".to_IddObjectType)
     zones.each do |zone|
@@ -1701,6 +1775,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     end
 
     # Ducts
+    d.has_ducts = true
     if duct_location == Constants.Auto
       if not fbasement_thermal_zone.nil?
         duct_location = Constants.FinishedBasementSpace
@@ -1710,6 +1785,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         duct_location = Constants.CrawlSpace
       elsif not ufattic_thermal_zone.nil?
         duct_location = Constants.UnfinishedAtticSpace
+      elsif not garage_thermal_zone.nil?
+        duct_location = Constants.GarageSpace
       else
         duct_location = Constants.LivingSpace(1)
       end    
@@ -1728,9 +1805,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       else
         duct_location = Constants.LivingSpace
       end
-    end
-    if [Constants.UnfinishedBasementSpace, Constants.CrawlSpace, Constants.GarageSpace, Constants.UnfinishedAtticSpace, Constants.PierBeamSpace].include? duct_location
-      
+    elsif duct_location == "None"
+      duct_location = Constants.LivingSpace
+      d.has_ducts = false
     end
     if duct_location == Constants.FinishedAtticSpace
       duct_location = Constants.LivingSpace
@@ -1738,7 +1815,48 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       duct_location = Constants.CrawlSpace
     end
     d.DuctLocation = duct_location
-    d.has_ducts = true
+    
+    has_mini_split_hp = false
+    if has_mini_split_hp and ( d.DuctLocation != (Constants.LivingSpace or nil) )
+      d.DuctLocation = Constants.SpaceLiving
+      d.has_ducts = false
+      runner.registerWarning("Duct losses are currently neglected when simulating mini-split heat pumps. Set Ducts to None or In Finished Space to avoid this warning message.")
+    end
+    
+    d.has_unconditioned_ducts = true
+    if ( d.DuctLocation == (Constants.LivingSpace or Constants.FinishedBasementSpace) )
+      d.has_unconditioned_ducts = false
+    end
+    
+    if d.DuctNormLeakageToOutside.nil?
+      # Normalize values in case user inadvertently entered values that add up to the total duct leakage, 
+      # as opposed to adding up to 1
+      sumFractionOfTotal = (d.DuctSupplyLeakageFractionOfTotal + d.DuctReturnLeakageFractionOfTotal + d.DuctAHSupplyLeakageFractionOfTotal + d.DuctAHReturnLeakageFractionOfTotal)
+      if sumFractionOfTotal > 0
+        d.DuctSupplyLeakageFractionOfTotal = d.DuctSupplyLeakageFractionOfTotal / sumFractionOfTotal
+        d.DuctReturnLeakageFractionOfTotal = d.DuctReturnLeakageFractionOfTotal / sumFractionOfTotal
+        d.DuctAHSupplyLeakageFractionOfTotal = d.DuctAHSupplyLeakageFractionOfTotal / sumFractionOfTotal
+        d.DuctAHReturnLeakageFractionOfTotal = d.DuctAHReturnLeakageFractionOfTotal / sumFractionOfTotal
+      end
+      
+      # Calculate actual leakages from percentages
+      d.DuctSupplyLeakage = d.DuctSupplyLeakageFractionOfTotal * d.DuctTotalLeakage
+      d.DuctReturnLeakage = d.DuctReturnLeakageFractionOfTotal * d.DuctTotalLeakage
+      d.DuctAHSupplyLeakage = d.DuctAHSupplyLeakageFractionOfTotal * d.DuctTotalLeakage
+      d.DuctAHReturnLeakage = d.DuctAHReturnLeakageFractionOfTotal * d.DuctTotalLeakage     
+    end
+    
+    # Fraction of ducts in primary duct location (remaining ducts are in above-grade conditioned space).
+    if d.DuctLocationFrac == Constants.Auto
+      # Duct location fraction per 2010 BA Benchmark
+      if d.num_stories == 1
+        d.DuctLocationFrac = 1
+      else
+        d.DuctLocationFrac = 0.65
+      end
+    else
+      d.DuctLocationFrac = d.DuctLocationFrac # tk here
+    end
     
     return true
  

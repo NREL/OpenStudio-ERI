@@ -151,18 +151,22 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    has_applicable_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"Slab"=>[]}
+    constructions_to_objects = Hash.new    
+
 	living_space_type.spaces.each do |living_space|
 	  living_space.surfaces.each do |living_surface|
 	    next unless living_surface.surfaceType.downcase == "floor" and living_surface.outsideBoundaryCondition.downcase == "ground"
-        has_applicable_surfaces = true
-        break
+        constructions_to_surfaces["Slab"] << living_surface
 	  end	
 	end
-    unless has_applicable_surfaces
-        return true
-    end    
-    
+  
+   # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end     
+  
 	# Slab Insulation
 	selected_slabins = runner.getStringArgumentValue("selectedslabins",user_arguments)
 	
@@ -270,16 +274,22 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	if carpetFloorFraction > 0
 		materials << scbem
 	end
-	s = OpenStudio::Model::Construction.new(materials)
-    s.setName("Slab")
-	
-	living_space_type.spaces.each do |living_space|
-	  living_space.surfaces.each do |living_surface|
-	    next unless living_surface.surfaceType.downcase == "floor" and living_surface.outsideBoundaryCondition.downcase == "ground"
-	    living_surface.setConstruction(s)
-		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{s.name}'")
-	  end	
-	end
+    unless constructions_to_surfaces["Slab"].empty?
+        s = OpenStudio::Model::Construction.new(materials)
+        s.setName("Slab")
+        constructions_to_objects["Slab"] = s
+    end
+    
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
+        end
+    end
+    
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)     
 
   return true
  

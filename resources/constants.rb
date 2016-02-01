@@ -38,6 +38,9 @@ class Constants
 
     # Strings --------------------
     
+    def self.AtticSpace
+        return 'attic space'
+    end
 	def self.Auto
 		return 'auto'
 	end

@@ -157,8 +157,11 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
     garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)    
 	
-    has_applicable_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"FinUninsFinWall"=>[], "RevFinUninsFinWall"=>[], "UnfinUninsUnfinWall"=>[], "RevUnfinUninsUnfinWall"=>[]}
+    constructions_to_objects = Hash.new 
     
+    # Walls between living spaces
 	living_space_type.spaces.each do |living_space|
 	  living_space.surfaces.each do |living_surface|
 	    next unless ["wall"].include? living_surface.surfaceType.downcase
@@ -166,13 +169,14 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 		next unless adjacent_surface.is_initialized
 		adjacent_surface = adjacent_surface.get
 	    adjacent_surface_r = adjacent_surface.name.to_s
-	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r, runner)
 	    next unless [living_space_type_r].include? adjacent_space_type_r
-        has_applicable_surfaces = true
-        break
+        constructions_to_surfaces["FinUninsFinWall"] << living_surface
+        constructions_to_surfaces["RevFinUninsFinWall"] << adjacent_surface
 	  end	
 	end
 	
+    # Walls between garage and unfinished attic
     unless garage_space_type.nil?
       garage_space_type.spaces.each do |garage_space|
         garage_space.surfaces.each do |garage_surface|    
@@ -181,17 +185,18 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
           next unless adjacent_surface.is_initialized
           adjacent_surface = adjacent_surface.get
           adjacent_surface_r = adjacent_surface.name.to_s
-          adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+          adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r, runner)
           next unless [unfin_attic_space_type_r].include? adjacent_space_type_r
-          has_applicable_surfaces = true
-          break
+          constructions_to_surfaces["RevUnfinUninsUnfinWall"] << garage_surface
+          constructions_to_surfaces["UnfinUninsUnfinWall"] << adjacent_surface
         end
       end          
     end
 
-    unless has_applicable_surfaces
-        return true
-    end    
+    # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end     
     
     # Partition Wall Mass
     partitionWallMassThickness = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
@@ -238,57 +243,46 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     materials << pwm
     materials << saw
     materials << pwm
-    fufw = OpenStudio::Model::Construction.new(materials)
-    fufw.setName("FinUninsFinWall")
+    unless constructions_to_surfaces["FinUninsFinWall"].empty?
+        fufw = OpenStudio::Model::Construction.new(materials)
+        fufw.setName("FinUninsFinWall")
+        constructions_to_objects["FinUninsFinWall"] = fufw
+    end
 	
     # RevFinUninsFinWall
-    rfufw = fufw.reverseConstruction
-    rfufw.setName("RevFinUninsFinWall")
+    unless constructions_to_surfaces["RevFinUninsFinWall"].empty?
+        rfufw = fufw.reverseConstruction
+        rfufw.setName("RevFinUninsFinWall")
+        constructions_to_objects["RevFinUninsFinWall"] = rfufw
+    end
 
     # UnfinUninsUnfinWall
     materials = []
     materials << saw
     materials << ply1_2
-    unfinuninsunfinwall = OpenStudio::Model::Construction.new(materials)
-    unfinuninsunfinwall.setName("UnfinUninsUnfinWall")
+    unless constructions_to_surfaces["UnfinUninsUnfinWall"].empty?
+        unfinuninsunfinwall = OpenStudio::Model::Construction.new(materials)
+        unfinuninsunfinwall.setName("UnfinUninsUnfinWall")
+        constructions_to_objects["UnfinUninsUnfinWall"] = unfinuninsunfinwall
+    end
     
     # RevUnfinUninsUnfinWall
-    revunfinuninsunfinwall = unfinuninsunfinwall.reverseConstruction
-    revunfinuninsunfinwall.setName("RevUnfinUninsUnfinWall")    
+    unless constructions_to_surfaces["RevUnfinUninsUnfinWall"].empty?
+        revunfinuninsunfinwall = unfinuninsunfinwall.reverseConstruction
+        revunfinuninsunfinwall.setName("RevUnfinUninsUnfinWall")
+        constructions_to_objects["RevUnfinUninsUnfinWall"] = revunfinuninsunfinwall
+    end
     
-	living_space_type.spaces.each do |living_space|
-	  living_space.surfaces.each do |living_surface|
-	    next unless ["wall"].include? living_surface.surfaceType.downcase
-		adjacent_surface = living_surface.adjacentSurface
-		next unless adjacent_surface.is_initialized
-		adjacent_surface = adjacent_surface.get
-	    adjacent_surface_r = adjacent_surface.name.to_s
-	    adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-	    next unless [living_space_type_r].include? adjacent_space_type_r
-	    living_surface.setConstruction(fufw)
-		runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{fufw.name}'")
-	    adjacent_surface.setConstruction(rfufw)		
-		runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{rfufw.name}'")
-	  end	
-	end
-	
-    unless garage_space_type.nil?
-      garage_space_type.spaces.each do |garage_space|
-        garage_space.surfaces.each do |garage_surface|    
-          next unless ["wall"].include? garage_surface.surfaceType.downcase
-          adjacent_surface = garage_surface.adjacentSurface
-          next unless adjacent_surface.is_initialized
-          adjacent_surface = adjacent_surface.get
-          adjacent_surface_r = adjacent_surface.name.to_s
-          adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-          next unless [unfin_attic_space_type_r].include? adjacent_space_type_r
-          garage_surface.setConstruction(revunfinuninsunfinwall)
-          runner.registerInfo("Surface '#{garage_surface.name}', of Space Type '#{garage_space_type_r}' and with Surface Type '#{garage_surface.surfaceType}' and Outside Boundary Condition '#{garage_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfinuninsunfinwall.name}'")
-          adjacent_surface.setConstruction(unfinuninsunfinwall)     
-          runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{unfinuninsunfinwall.name}'")      
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
         end
-      end          
-    end    
+    end
+    
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)     
     
     return true
  

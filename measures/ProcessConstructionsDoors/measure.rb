@@ -95,35 +95,38 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
     garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
     
-    has_applicable_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"LivingDoors"=>[], "GarageDoors"=>[]}
+    constructions_to_objects = Hash.new    
     
+    # Door between living and outdoors
     living_space_type.spaces.each do |living_space|
       living_space.surfaces.each do |living_surface|
         next unless living_surface.surfaceType.downcase == "wall" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
         living_surface.subSurfaces.each do |living_sub_surface|
           next unless living_sub_surface.subSurfaceType.downcase.include? "door"
-          has_applicable_surfaces = true
-          break
+            constructions_to_surfaces["LivingDoors"] << living_sub_surface
         end
       end   
     end 
-
+    
+    # Garage door between living and outdoors
     unless garage_space_type.nil?
       garage_space_type.spaces.each do |garage_space|
         garage_space.surfaces.each do |garage_surface|
           next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
           garage_surface.subSurfaces.each do |garage_sub_surface|
             next unless garage_sub_surface.subSurfaceType.downcase.include? "door"
-            has_applicable_surfaces = true
-            break
+            constructions_to_surfaces["GarageDoors"] << garage_sub_surface
           end
         end   
       end
-    end    
+    end
     
-    unless has_applicable_surfaces
-        return true
-    end    
+    # Continue if no applicable sub surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end   
     
     selected_door = runner.getStringArgumentValue("selecteddoor",user_arguments)
     
@@ -157,8 +160,11 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     # LivingDoors
     materials = []
     materials << d
-    door = OpenStudio::Model::Construction.new(materials)
-    door.setName("LivingDoors") 
+    unless constructions_to_surfaces["LivingDoors"].empty?
+        door = OpenStudio::Model::Construction.new(materials)
+        door.setName("LivingDoors")
+        constructions_to_objects["LivingDoors"] = door
+    end
 
     # GarageDoorMaterial
     gd = OpenStudio::Model::StandardOpaqueMaterial.new(model)
@@ -172,32 +178,22 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     # GarageDoors
     materials = []
     materials << gd
-    garagedoor = OpenStudio::Model::Construction.new(materials)
-    garagedoor.setName("GarageDoors")   
-
-    living_space_type.spaces.each do |living_space|
-      living_space.surfaces.each do |living_surface|
-        next unless living_surface.surfaceType.downcase == "wall" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
-        living_surface.subSurfaces.each do |living_sub_surface|
-          next unless living_sub_surface.subSurfaceType.downcase.include? "door"
-          living_sub_surface.setConstruction(door)
-          runner.registerInfo("Sub Surface '#{living_sub_surface.name}', of Space Type '#{living_space_type_r}' and with Sub Surface Type '#{living_sub_surface.subSurfaceType}', was assigned Construction '#{door.name}'")
-        end
-      end   
-    end 
-
-    unless garage_space_type.nil?
-      garage_space_type.spaces.each do |garage_space|
-        garage_space.surfaces.each do |garage_surface|
-          next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
-          garage_surface.subSurfaces.each do |garage_sub_surface|
-            next unless garage_sub_surface.subSurfaceType.downcase.include? "door"
-            garage_sub_surface.setConstruction(door)
-            runner.registerInfo("Sub Surface '#{garage_sub_surface.name}', of Space Type '#{garage_space_type_r}' and with Sub Surface Type '#{garage_sub_surface.subSurfaceType}', was assigned Construction '#{door.name}'")
-          end
-        end   
-      end
+    unless constructions_to_surfaces["GarageDoors"].empty?
+        garagedoor = OpenStudio::Model::Construction.new(materials)
+        garagedoor.setName("GarageDoors")
+        constructions_to_objects["GarageDoors"] = garagedoor
     end
+
+    # Apply constructions to sub surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Sub Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_sub_surface(model, surface.name.to_s, runner)}' and with Sub Surface Type '#{surface.subSurfaceType}', was assigned Construction '#{construction}'")
+        end
+    end
+
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)
     
     return true
  

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>5ed68a46-51de-471a-8c2f-88d3de69f8b9</version_id>
+  <version_id>1d927e64-084e-4a3e-8b8a-6f7977ea5f58</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedFloors</class_name>
   <display_name>Set Residential Interzonal Floor Construction</display_name>
@@ -176,13 +176,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3DAB63FF</checksum>
+      <checksum>3993E7C9</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>99845B95</checksum>
+      <checksum>E913FBAD</checksum>
     </file>
     <file>
       <version>
@@ -193,7 +193,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9F4CE403</checksum>
+      <checksum>433BB04D</checksum>
     </file>
   </files>
 </measure>

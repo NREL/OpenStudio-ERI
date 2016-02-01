@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>19ac2b5d-c4fa-415c-86a1-876c6cb1f6ba</version_id>
+  <version_id>6ede9d17-0dec-430e-bfd6-dba0712cece5</version_id>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -659,6 +659,10 @@
       <default_value>auto</default_value>
       <choices>
         <choice>
+          <value>None</value>
+          <display_name>None</display_name>
+        </choice>
+        <choice>
           <value>auto</value>
           <display_name>auto</display_name>
         </choice>
@@ -671,10 +675,69 @@
           <display_name>basement space</display_name>
         </choice>
         <choice>
-          <value>unfinished attic space</value>
-          <display_name>unfinished attic space</display_name>
+          <value>attic space</value>
+          <display_name>attic space</display_name>
         </choice>
       </choices>
+    </argument>
+    <argument>
+      <name>duct_total_leakage</name>
+      <display_name>Ducts: Total Leakage</display_name>
+      <description>The total amount of air flow leakage expressed as a fraction of the total air flow rate.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.3</default_value>
+    </argument>
+    <argument>
+      <name>duct_sup_frac</name>
+      <display_name>Ducts: Supply Leakage Fraction of Total</display_name>
+      <description>The amount of air flow leakage leaking out from the supply duct expressed as a fraction of the total duct leakage.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.6</default_value>
+    </argument>
+    <argument>
+      <name>duct_ret_frac</name>
+      <display_name>Ducts: Return Leakage Fraction of Total</display_name>
+      <description>The amount of air flow leakage leaking into the return duct expressed as a fraction of the total duct leakage.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.067</default_value>
+    </argument>
+    <argument>
+      <name>duct_ah_sup_frac</name>
+      <display_name>Ducts: Supply Air Handler Leakage Fraction of Total</display_name>
+      <description>The amount of air flow leakage leaking out from the supply-side of the air handler expressed as a fraction of the total duct leakage.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.067</default_value>
+    </argument>
+    <argument>
+      <name>duct_ah_ret_leakage</name>
+      <display_name>Ducts: Return Air Handler Leakage Fraction of Total</display_name>
+      <description>The amount of air flow leakage leaking out from the return-side of the air handler expressed as a fraction of the total duct leakage.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.267</default_value>
+    </argument>
+    <argument>
+      <name>duct_norm_leakage_to_outside</name>
+      <display_name>Ducts: Leakage to Outside at 25Pa</display_name>
+      <description>Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.</description>
+      <type>Double</type>
+      <units>cfm/100 ft^2</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
     </argument>
   </arguments>
   <provenances/>
@@ -719,22 +782,22 @@
       <checksum>79B0EC38</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3DAB63FF</checksum>
-    </file>
-    <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>5196FB01</checksum>
+      <checksum>82B1C233</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3993E7C9</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>99845B95</checksum>
+      <checksum>E913FBAD</checksum>
     </file>
     <file>
       <version>
@@ -745,7 +808,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CADE4DA7</checksum>
+      <checksum>06AD888E</checksum>
     </file>
   </files>
 </measure>

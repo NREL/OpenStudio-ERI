@@ -191,7 +191,7 @@ class HelperMethods
         return thermal_zone
     end		
     
-	def self.get_space_type_from_surface(model, surface_s, print_err=true)
+	def self.get_space_type_from_surface(model, surface_s, runner, print_err=true)
 		space_type_r = nil
 		model.getSpaces.each do |space|
 			space.surfaces.each do |s|
@@ -210,6 +210,28 @@ class HelperMethods
         end		
 		return space_type_r
 	end
+    
+	def self.get_space_type_from_sub_surface(model, sub_surface_s, runner, print_err=true)
+		space_type_r = nil
+		model.getSpaces.each do |space|
+			space.surfaces.each do |surface|
+                surface.subSurfaces.each do |s|
+                    if s.name.to_s == sub_surface_s
+                        space_type_r = space.spaceType.get.name.to_s
+                        break
+                    end
+                end
+			end
+		end
+        if space_type_r.nil?
+            if print_err
+                runner.registerError("Could not find surface with the name '#{sub_surface_s}'.")
+            else
+                runner.registerWarning("Could not find surface with the name '#{sub_surface_s}'.")
+            end
+        end		
+		return space_type_r
+	end    
     
     def self.remove_object_from_idf_based_on_name(workspace, name_s, object_s, runner=nil)
       workspace.getObjectsByType(object_s.to_IddObjectType).each do |str|
@@ -270,6 +292,27 @@ class HelperMethods
             runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
         end
         return wh_setpoint
+    end
+    
+    def self.remove_unused_materials(model, runner)
+        used_materials = []
+        model.getConstructions.each do |construction|
+            construction.layers.each do |material|
+                used_materials << material
+            end
+        end
+        model.getStandardOpaqueMaterials.each do |material|
+            if not used_materials.include? material
+                material.remove
+                runner.registerInfo("Removed standard opaque material '#{material.name}' because it was orphaned.")
+            end
+        end
+        model.getMasslessOpaqueMaterials.each do |material|
+            if not used_materials.include? material
+                material.remove
+                runner.registerInfo("Removed massless opaque material '#{material.name}' because it was orphaned.")
+            end
+        end
     end
 
 end

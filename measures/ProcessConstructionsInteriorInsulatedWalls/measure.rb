@@ -192,7 +192,11 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
         return true
     end 
 
-    has_applicable_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"UnfinInsFinWall"=>[], "RevUnfinInsFinWall"=>[]}
+    constructions_to_objects = Hash.new     
+    
+    # Wall between garage and living
     living_space_type.spaces.each do |living_space|
       living_space.surfaces.each do |living_surface|
         next unless ["wall"].include? living_surface.surfaceType.downcase
@@ -200,15 +204,17 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
         next unless adjacent_surface.is_initialized
         adjacent_surface = adjacent_surface.get
         adjacent_surface_r = adjacent_surface.name.to_s
-        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r, runner)
         next unless [garage_space_type_r].include? adjacent_space_type_r
-        has_applicable_surfaces = true
-        break
+        constructions_to_surfaces["UnfinInsFinWall"] << living_surface
+        constructions_to_surfaces["RevUnfinInsFinWall"] << adjacent_surface
       end   
     end
-    unless has_applicable_surfaces
-        return true
-    end    
+    
+    # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end        
     
     # Partition Wall Mass
     partitionWallMassThickness = runner.getDoubleArgumentValue("userdefinedpartitionwallmassth",user_arguments)
@@ -272,8 +278,6 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       materials << iwri
       materials << iwi
       materials << pwm
-      unfininsfinwall = OpenStudio::Model::Construction.new(materials)
-      unfininsfinwall.setName("UnfinInsFinWall")
       
     else
 
@@ -281,30 +285,31 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       materials = []
       materials << iwi
       materials << pwm
+      
+    end
+    unless constructions_to_surfaces["UnfinInsFinWall"].empty?
       unfininsfinwall = OpenStudio::Model::Construction.new(materials)
       unfininsfinwall.setName("UnfinInsFinWall")
-      
+      constructions_to_objects["UnfinInsFinWall"] = unfininsfinwall
     end
 
     # RevUnfinInsFinWall
-    revunfininsfinwall = unfininsfinwall.reverseConstruction
-    revunfininsfinwall.setName("RevUnfinInsFinWall")
-
-    living_space_type.spaces.each do |living_space|
-      living_space.surfaces.each do |living_surface|
-        next unless ["wall"].include? living_surface.surfaceType.downcase
-        adjacent_surface = living_surface.adjacentSurface
-        next unless adjacent_surface.is_initialized
-        adjacent_surface = adjacent_surface.get
-        adjacent_surface_r = adjacent_surface.name.to_s
-        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-        next unless [garage_space_type_r].include? adjacent_space_type_r
-        living_surface.setConstruction(unfininsfinwall)
-        runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{unfininsfinwall.name}'")
-        adjacent_surface.setConstruction(revunfininsfinwall)        
-        runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{revunfininsfinwall.name}'")
-      end   
+    unless constructions_to_surfaces["RevUnfinInsFinWall"].empty?
+        revunfininsfinwall = unfininsfinwall.reverseConstruction
+        revunfininsfinwall.setName("RevUnfinInsFinWall")
+        constructions_to_objects["RevUnfinInsFinWall"] = revunfininsfinwall
     end
+
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
+        end
+    end
+    
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)
 
     return true
  

@@ -85,6 +85,10 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
         end
       end
     end
+    if extfin.nil?
+      runner.registerError("Could not find material layer 'ExteriorFinish'. Need to set exterior insulated walls first.")
+      return false
+    end
 
     # Space Type
 	unfin_attic_space_type_r = runner.getStringArgumentValue("unfin_attic_space_type",user_arguments)
@@ -96,31 +100,36 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
         return true
     end
     
-    has_applicable_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"ExtUninsUnfinWall"=>[]}
+    constructions_to_objects = Hash.new     
     
+    # Wall between unfinished attic and outdoors
 	unless unfin_attic_space_type.nil?
 	  unfin_attic_space_type.spaces.each do |unfin_attic_space|
 	    unfin_attic_space.surfaces.each do |unfin_attic_surface|
-		  next unless unfin_attic_surface.surfaceType.downcase == "wall" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
-          has_applicable_surfaces = true
-          break
+            if unfin_attic_surface.surfaceType.downcase == "wall" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
+                constructions_to_surfaces["ExtUninsUnfinWall"] << unfin_attic_surface
+            end
 	    end
 	  end
 	end
-
+    
+    # Wall between garage and outdoors
 	unless garage_space_type.nil?
 	  garage_space_type.spaces.each do |garage_space|
 	    garage_space.surfaces.each do |garage_surface|
-		  next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
-          has_applicable_surfaces = true
-          break
+            if garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
+                constructions_to_surfaces["ExtUninsUnfinWall"] << garage_surface
+            end
 	    end	
 	  end
 	end
-
-    unless has_applicable_surfaces
-        return true
-    end    
+    
+    # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end     
     
 	# Plywood-1_2in
     mat_plywood1_2in = Material.Plywood1_2in
@@ -146,28 +155,22 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 	materials << extfin.to_StandardOpaqueMaterial.get
 	materials << ply1_2
 	materials << saw
-	extuninsunfinwall = OpenStudio::Model::Construction.new(materials)
-	extuninsunfinwall.setName("ExtUninsUnfinWall")
+    unless constructions_to_surfaces["ExtUninsUnfinWall"].empty?
+        extinsfinwall = OpenStudio::Model::Construction.new(materials)
+        extinsfinwall.setName("ExtUninsUnfinWall")
+        constructions_to_objects["ExtUninsUnfinWall"] = extinsfinwall
+    end    
     
-	unless unfin_attic_space_type.nil?
-	  unfin_attic_space_type.spaces.each do |unfin_attic_space|
-	    unfin_attic_space.surfaces.each do |unfin_attic_surface|
-		  next unless unfin_attic_surface.surfaceType.downcase == "wall" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
-		  unfin_attic_surface.setConstruction(extuninsunfinwall)
-		  runner.registerInfo("Surface '#{unfin_attic_surface.name}', of Space Type '#{unfin_attic_space_type_r}' and with Surface Type '#{unfin_attic_surface.surfaceType}' and Outside Boundary Condition '#{unfin_attic_surface.outsideBoundaryCondition}', was assigned Construction '#{extuninsunfinwall.name}'")
-	    end
-	  end
-	end
-
-	unless garage_space_type.nil?
-	  garage_space_type.spaces.each do |garage_space|
-	    garage_space.surfaces.each do |garage_surface|
-		  next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
-		  garage_surface.setConstruction(extuninsunfinwall)
-		  runner.registerInfo("Surface '#{garage_surface.name}', of Space Type '#{garage_space_type_r}' and with Surface Type '#{garage_surface.surfaceType}' and Outside Boundary Condition '#{garage_surface.outsideBoundaryCondition}', was assigned Construction '#{extuninsunfinwall.name}'")
-	    end	
-	  end
-	end
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
+        end
+    end
+    
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)
 	
     return true
  

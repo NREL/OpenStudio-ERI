@@ -215,7 +215,9 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
-    has_applicable_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"FinInsUnfinUAFloor"=>[], "RevFinInsUnfinUAFloor"=>[], "UnfinInsExtRoof"=>[]}
+    constructions_to_objects = Hash.new  
     
     living_space_type.spaces.each do |living_space|
       living_space.surfaces.each do |living_surface|
@@ -224,24 +226,24 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
         next unless adjacent_surface.is_initialized
         adjacent_surface = adjacent_surface.get
         adjacent_surface_r = adjacent_surface.name.to_s
-        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
+        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r, runner)
         next unless [unfin_attic_space_type_r].include? adjacent_space_type_r
-        has_applicable_surfaces = true
-        break
+        constructions_to_surfaces["RevFinInsUnfinUAFloor"] << living_surface
+        constructions_to_surfaces["FinInsUnfinUAFloor"] << adjacent_surface
       end   
     end 
     
     unfin_attic_space_type.spaces.each do |unfin_attic_space|
       unfin_attic_space.surfaces.each do |unfin_attic_surface|
         next unless unfin_attic_surface.surfaceType.downcase == "roofceiling" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
-        has_applicable_surfaces = true
-        break
+          constructions_to_surfaces["UnfinInsExtRoof"] << unfin_attic_surface
       end   
     end
 
-    unless has_applicable_surfaces
-        return true
-    end    
+    # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end   
     
     # Unfinished Attic Insulation
     selected_uains = runner.getStringArgumentValue("selecteduains",user_arguments)
@@ -374,12 +376,18 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
       ctf.setSpecificHeat(OpenStudio::convert(BaseMaterial.Wood.Cp,"Btu/lb*R","J/kg*K").get)
       materials << ctf
     end
-    fininsunfinuafloor = OpenStudio::Model::Construction.new(materials)
-    fininsunfinuafloor.setName("FinInsUnfinUAFloor")    
+    unless constructions_to_surfaces["FinInsUnfinUAFloor"].empty?
+        fininsunfinuafloor = OpenStudio::Model::Construction.new(materials)
+        fininsunfinuafloor.setName("FinInsUnfinUAFloor")
+        constructions_to_objects["FinInsUnfinUAFloor"] = fininsunfinuafloor
+    end
 
     # RevFinInsUnfinUAFloor
-    revfininsunfinuafloor = fininsunfinuafloor.reverseConstruction
-    revfininsunfinuafloor.setName("RevFinInsUnfinUAFloor")
+    unless constructions_to_surfaces["RevFinInsUnfinUAFloor"].empty?
+        revfininsunfinuafloor = fininsunfinuafloor.reverseConstruction
+        revfininsunfinuafloor.setName("RevFinInsUnfinUAFloor")
+        constructions_to_objects["RevFinInsUnfinUAFloor"] = revfininsunfinuafloor
+    end
 
     # RoofingMaterial
     mat_roof_mat = Material.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
@@ -447,32 +455,22 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     if hasRadiantBarrier
       materials << radbar
     end
-    unfininsextroof = OpenStudio::Model::Construction.new(materials)
-    unfininsextroof.setName("UnfinInsExtRoof")  
+    unless constructions_to_surfaces["UnfinInsExtRoof"].empty?
+        unfininsextroof = OpenStudio::Model::Construction.new(materials)
+        unfininsextroof.setName("UnfinInsExtRoof")
+        constructions_to_objects["UnfinInsExtRoof"] = unfininsextroof
+    end
 
-    living_space_type.spaces.each do |living_space|
-      living_space.surfaces.each do |living_surface|
-        next unless ["roofceiling"].include? living_surface.surfaceType.downcase
-        adjacent_surface = living_surface.adjacentSurface
-        next unless adjacent_surface.is_initialized
-        adjacent_surface = adjacent_surface.get
-        adjacent_surface_r = adjacent_surface.name.to_s
-        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r)
-        next unless [unfin_attic_space_type_r].include? adjacent_space_type_r
-        living_surface.setConstruction(revfininsunfinuafloor)
-        runner.registerInfo("Surface '#{living_surface.name}', of Space Type '#{living_space_type_r}' and with Surface Type '#{living_surface.surfaceType}' and Outside Boundary Condition '#{living_surface.outsideBoundaryCondition}', was assigned Construction '#{revfininsunfinuafloor.name}'")
-        adjacent_surface.setConstruction(fininsunfinuafloor)        
-        runner.registerInfo("Surface '#{adjacent_surface.name}', of Space Type '#{adjacent_space_type_r}' and with Surface Type '#{adjacent_surface.surfaceType}' and Outside Boundary Condition '#{adjacent_surface.outsideBoundaryCondition}', was assigned Construction '#{fininsunfinuafloor.name}'")
-      end   
-    end 
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
+        end
+    end
     
-    unfin_attic_space_type.spaces.each do |unfin_attic_space|
-      unfin_attic_space.surfaces.each do |unfin_attic_surface|
-        next unless unfin_attic_surface.surfaceType.downcase == "roofceiling" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
-        unfin_attic_surface.setConstruction(unfininsextroof)
-        runner.registerInfo("Surface '#{unfin_attic_surface.name}', of Space Type '#{unfin_attic_space_type_r}' and with Surface Type '#{unfin_attic_surface.surfaceType}' and Outside Boundary Condition '#{unfin_attic_surface.outsideBoundaryCondition}', was assigned Construction '#{unfininsextroof.name}'")      
-      end   
-    end 
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)     
 
     return true
  

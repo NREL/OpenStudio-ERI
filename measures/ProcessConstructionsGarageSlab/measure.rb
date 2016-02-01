@@ -66,17 +66,22 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
-    has_applicable_surfaces = false
-	garage_space_type.spaces.each do |garage_space|
-	  garage_space.surfaces.each do |garage_surface|
-	    next unless garage_surface.surfaceType.downcase == "floor" and garage_surface.outsideBoundaryCondition.downcase == "ground"
-        has_applicable_surfaces = true
-        break
-	  end	
-	end
-    unless has_applicable_surfaces
-        return true
-    end    
+    # Initialize hashes
+    constructions_to_surfaces = {"GrndUninsUnfinGrgFloor"=>[]}
+    constructions_to_objects = Hash.new     
+    
+    # Floor of garage
+    garage_space_type.spaces.each do |garage_space|
+      garage_space.surfaces.each do |garage_surface|
+        next unless garage_surface.surfaceType.downcase == "floor" and garage_surface.outsideBoundaryCondition.downcase == "ground"
+          constructions_to_surfaces["GrndUninsUnfinGrgFloor"] << garage_surface
+      end	
+    end
+    
+    # Continue if no applicable surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
+    end       
     
 	# Adiabatic
 	adi = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
@@ -108,17 +113,23 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
 	materials << adi
 	materials << soil
 	materials << conc
-	grnduninsunfingrgfloor = OpenStudio::Model::Construction.new(materials)
-	grnduninsunfingrgfloor.setName("GrndUninsUnfinGrgFloor")	
-
-	garage_space_type.spaces.each do |garage_space|
-	  garage_space.surfaces.each do |garage_surface|
-	    next unless garage_surface.surfaceType.downcase == "floor" and garage_surface.outsideBoundaryCondition.downcase == "ground"
-	    garage_surface.setConstruction(grnduninsunfingrgfloor)
-		runner.registerInfo("Surface '#{garage_surface.name}', of Space Type '#{garage_space_type_r}' and with Surface Type '#{garage_surface.surfaceType}' and Outside Boundary Condition '#{garage_surface.outsideBoundaryCondition}', was assigned Construction '#{grnduninsunfingrgfloor.name}'")
-	  end	
-	end
+    unless constructions_to_surfaces["GrndUninsUnfinGrgFloor"].empty?
+        grnduninsunfingrgfloor = OpenStudio::Model::Construction.new(materials)
+        grnduninsunfingrgfloor.setName("GrndUninsUnfinGrgFloor")
+        constructions_to_objects["GrndUninsUnfinGrgFloor"] = grnduninsunfingrgfloor
+    end
 	
+    # Apply constructions to surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
+        end
+    end
+    
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)     
+    
     return true
  
   end #end the run method

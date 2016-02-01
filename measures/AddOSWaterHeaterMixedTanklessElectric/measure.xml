@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>884e47d1-8399-4020-ad7c-423944c875f9</version_id>
+  <version_id>80de35e6-f52b-449f-a285-eafcb85adcab</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessElectric</class_name>
   <display_name>AddOSWaterHeaterMixedTanklessElectric</display_name>
@@ -102,7 +102,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3DAB63FF</checksum>
+      <checksum>3993E7C9</checksum>
     </file>
   </files>
 </measure>

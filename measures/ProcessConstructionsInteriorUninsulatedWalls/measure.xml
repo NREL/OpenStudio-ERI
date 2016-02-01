@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_walls</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>7fca74c8-2aec-4d4e-af5b-3419c4ebfe29</version_id>
+  <version_id>a60a60ce-0cff-45bf-8480-ba56f78e6416</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedWalls</class_name>
   <display_name>Set Residential Uninsulated Wall Construction</display_name>
@@ -128,13 +128,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3DAB63FF</checksum>
+      <checksum>3993E7C9</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>99845B95</checksum>
+      <checksum>E913FBAD</checksum>
     </file>
     <file>
       <version>
@@ -145,7 +145,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F1153EE4</checksum>
+      <checksum>A1EEF7B6</checksum>
     </file>
   </files>
 </measure>

@@ -72,23 +72,25 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    has_applicable_sub_surfaces = false
+    # Initialize hashes
+    constructions_to_surfaces = {"WindowConstruction"=>[]}
+    constructions_to_objects = Hash.new      
+    
+    # loop thru all the spaces
     spaces = model.getSpaces
     spaces.each do |space|
-      constructions_hash = {}
-      shadingcontrol_hash = {}
       surfaces = space.surfaces
       surfaces.each do |surface|
-        subSurfaces = surface.subSurfaces
-        subSurfaces.each do |subSurface|
+        surface.subSurfaces.each do |subSurface|
           next unless subSurface.subSurfaceType.downcase.include? "window"
-          has_applicable_sub_surfaces = true
-          break
+          constructions_to_surfaces["WindowConstruction"] << subSurface
         end
       end
     end
-    unless has_applicable_sub_surfaces
-        return true
+    
+    # Continue if no applicable sub surfaces
+    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      return true
     end    
     
     userdefined_ufactor = runner.getDoubleArgumentValue("ufactor",user_arguments)
@@ -244,41 +246,33 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     ish_winter = ish_ruleset.winterDesignDaySchedule
     ish_winter.setName("WindowShadesWinter")
 
-    # loop thru all the spaces
-    spaces = model.getSpaces
-    spaces.each do |space|
-      constructions_hash = {}
-      shadingcontrol_hash = {}
-      surfaces = space.surfaces
-      surfaces.each do |surface|
-        subSurfaces = surface.subSurfaces
-        subSurfaces.each do |subSurface|
-          next unless subSurface.subSurfaceType.downcase.include? "window"
-          name = subSurface.name
-          glazingName = "#{name}-Win"
-          constName = "#{name}-Glass"
-          sg = OpenStudio::Model::SimpleGlazing.new(model)
-          sg.setName(glazingName)
-          sg.setUFactor(ufactor)
-          sg.setSolarHeatGainCoefficient(shgc * intShadeHeatingMultiplier)
-          materials = []
-          materials << sg
-		  c = OpenStudio::Model::Construction.new(materials)
-          c.setName(constName)			
-          subSurface.setConstruction(c)
-          subSurface.setShadingControl(sc)
-          constructions_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,constName]
-          shadingcontrol_hash[name.to_s] = [subSurface.subSurfaceType,surface.name.to_s,sc.name]
+    # GlazingMaterial
+    sg = OpenStudio::Model::SimpleGlazing.new(model)
+    sg.setName("GlazingMaterial")
+    sg.setUFactor(ufactor)
+    sg.setSolarHeatGainCoefficient(shgc * intShadeHeatingMultiplier)
+          
+    # WindowConstruction
+    materials = []
+    materials << sg
+    unless constructions_to_surfaces["WindowConstruction"].empty?
+        c = OpenStudio::Model::Construction.new(materials)
+        c.setName("WindowConstruction")
+        constructions_to_objects["WindowConstruction"] = c
+    end
+    
+    # Apply constructions to sub surfaces
+    constructions_to_surfaces.each do |construction, surfaces|
+        surfaces.each do |surface|
+            surface.setConstruction(constructions_to_objects[construction])
+            surface.setShadingControl(sc)
+            runner.registerInfo("Sub Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_sub_surface(model, surface.name.to_s, runner)}' and with Sub Surface Type '#{surface.subSurfaceType}', was assigned Construction '#{construction}'")
         end
-      end
-      constructions_hash.map do |key,value|
-        runner.registerInfo("Sub Surface '#{key}' of Sub Surface Type '#{value[0]}', attached to Surface '#{value[1]}' which is attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}', was assigned Construction '#{value[2]}'")
-      end
-      shadingcontrol_hash.map do |key,value|
-        runner.registerInfo("Sub Surface '#{key}' of Sub Surface Type '#{value[0]}', attached to Surface '#{value[1]}' which is attached to Space '#{space.name.to_s}' of Space Type '#{space.spaceType.get.name.to_s}', was assigned Shading Control '#{value[2]}'")
-      end
     end
 
+    # Remove any materials which aren't used in any constructions
+    HelperMethods.remove_unused_materials(model, runner)    
+    
     return true
  
   end #end the run method
