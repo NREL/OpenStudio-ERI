@@ -231,13 +231,13 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     # Gypsum
     gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
     gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-    gypsumConductivity = Material.GypsumExtWall.k
-    gypsumDensity = Material.GypsumExtWall.rho
-    gypsumSpecificHeat = Material.GypsumExtWall.Cp
-    gypsumThermalAbs = Material.GypsumExtWall.TAbs
-    gypsumSolarAbs = Material.GypsumExtWall.SAbs
-    gypsumVisibleAbs = Material.GypsumExtWall.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumExtWall.k)
+    gypsumConductivity = Material.Gypsum1_2in.k
+    gypsumDensity = Material.Gypsum1_2in.rho
+    gypsumSpecificHeat = Material.Gypsum1_2in.Cp
+    gypsumThermalAbs = Material.Gypsum1_2in.TAbs
+    gypsumSolarAbs = Material.Gypsum1_2in.SAbs
+    gypsumVisibleAbs = Material.Gypsum1_2in.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.Gypsum1_2in.k)
 
     # Cavity
     selected_spacing = runner.getStringArgumentValue("selectedspacing",user_arguments)
@@ -401,7 +401,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
 	end
 	
     sc_thick = OpenStudio::convert(dsWallStudDepth,"in","ft").get # ft
-    sc_cond = sc_thick / ((overall_wall_Rvalue - (AirFilms.VerticalR + AirFilms.OutsideR + rigidInsRvalue + cavity_layer_Rvalue + osbRvalue + (finishThickness / finishConductivity) + (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / BaseMaterial.Gypsum.k))) / 2.0) # Btu/hr*ft*F
+    sc_cond = sc_thick / ((overall_wall_Rvalue - (Material.AirFilmVertical.Rvalue + Material.AirFilmOutside.Rvalue + rigidInsRvalue + cavity_layer_Rvalue + osbRvalue + (finishThickness / finishConductivity) + (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / BaseMaterial.Gypsum.k))) / 2.0) # Btu/hr*ft*F
     sc_dens = dsWallFramingFactor * BaseMaterial.Wood.rho + (1 - dsWallFramingFactor) * BaseMaterial.InsulationGenericDensepack.rho # lbm/ft^3
     sc_sh = (dsWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - dsWallFramingFactor) * BaseMaterial.InsulationGenericDensepack.Cp * BaseMaterial.InsulationGenericDensepack.rho) / sc_dens # Btu/lbm-F
 
@@ -432,7 +432,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
       double_stud_wall = Construction.new(path_fracs)
 
       # Interior Film
-      double_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.VerticalR])
+      double_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmVertical.Rvalue])
 
       # Interior Finish (GWB)
       double_stud_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[BaseMaterial.Gypsum.k])
@@ -467,7 +467,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
       double_stud_wall.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(finishConductivity,"in","ft").get])
 
       # Exterior Film
-      double_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.OutsideR])
+      double_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmOutside.Rvalue])
 
       # Get overall wall R-value using parallel paths:
       return double_stud_wall.Rvalue_parallel, dsWallMiscFramingFactor

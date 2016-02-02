@@ -413,6 +413,96 @@ class Material
     def VAbs
         return @vAbs
     end
+    
+    def self.AirFilmOutside
+        rvalue = 0.197 # hr-ft-F/Btu
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmVertical
+        rvalue = 0.68 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmFlatEnhanced
+        rvalue = 0.61 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmFlatReduced
+        rvalue = 0.92 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmFloorAverage
+        # For floors between conditioned spaces where heat does not flow across
+        # the floor; heat transfer is only important with regards to the thermal
+        rvalue = (Material.AirFilmFlatReduced.Rvalue + Material.AirFilmFlatEnhanced.Rvalue) / 2.0 # hr-ft-F/Btu
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmFloorReduced
+        # For floors above unconditioned basement spaces, where heat will
+        # always flow down through the floor.
+        rvalue = Material.AirFilmFlatReduced.Rvalue # hr-ft-F/Btu
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmSlopeEnhanced(highest_roof_pitch)
+        # Correlation functions used to interpolate between values provided
+        # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
+        # 0, 45, and 90 degrees. Values are for non-reflective materials of 
+        # emissivity = 0.90.
+        rvalue = 0.002 * Math::exp(0.0398 * highest_roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmSlopeReduced(highest_roof_pitch)
+        # Correlation functions used to interpolate between values provided
+        # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
+        # 0, 45, and 90 degrees. Values are for non-reflective materials of 
+        # emissivity = 0.90.
+        rvalue = 0.32 * Math::exp(-0.0154 * highest_roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmSlopeEnhancedReflective(highest_roof_pitch)
+        # Correlation functions used to interpolate between values provided
+        # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
+        # 0, 45, and 90 degrees. Values are for reflective materials of 
+        # emissivity = 0.05.
+        rvalue = 0.00893 * Math::exp(0.0419 * highest_roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmSlopeReducedReflective(highest_roof_pitch)
+        # Correlation functions used to interpolate between values provided
+        # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
+        # 0, 45, and 90 degrees. Values are for reflective materials of 
+        # emissivity = 0.05.
+        rvalue = 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmRoof(highest_roof_pitch)
+        # Use weighted average between enhanced and reduced convection based on degree days.
+        #hdd_frac = hdd65f / (hdd65f + cdd65f)
+        #cdd_frac = cdd65f / (hdd65f + cdd65f)
+        #return Material.AirFilmSlopeEnhanced(highest_roof_pitch).Rvalue * hdd_frac + Material.AirFilmSlopeReduced(highest_roof_pitch).Rvalue * cdd_frac # hr-ft-F/Btu
+        # Simplification to not depend on weather
+        rvalue = (Material.AirFilmSlopeEnhanced(highest_roof_pitch).Rvalue + Material.AirFilmSlopeReduced(highest_roof_pitch).Rvalue) / 2.0 # hr-ft-F/Btu
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
+
+    def self.AirFilmRoofRadiantBarrier(highest_roof_pitch)
+        # Use weighted average between enhanced and reduced convection based on degree days.
+        #hdd_frac = hdd65f / (hdd65f + cdd65f)
+        #cdd_frac = cdd65f / (hdd65f + cdd65f)
+        #return Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).Rvalue * hdd_frac + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).Rvalue * cdd_frac # hr-ft-F/Btu
+        # Simplification to not depend on weather
+        rvalue = (Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).Rvalue + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).Rvalue) / 2.0 # hr-ft-F/Btu
+        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+    end
 
     def self.CarpetBare(carpetFloorFraction, carpetPadRValue)
         thickness = 0.5 # in
@@ -426,17 +516,13 @@ class Material
     def self.Concrete4in
         return Material.new(name=Constants.MaterialConcrete8in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=4, width=nil, width_in=nil, mat_base=BaseMaterial.Concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
     end
+    
+    def self.DefaultExteriorFinish
+        return Material.new(name=Constants.MaterialExteriorFinish, type=Constants.MaterialTypeProperties, thick=nil, thick_in=0.375, width=nil, width_in=nil, mat_base=nil, cond=0.375/0.6, dens=11.1, sh=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
+    end
 
     def self.Gypsum1_2in
         return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=0.5, width=nil, width_in=nil, mat_base=BaseMaterial.Gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
-    end
-
-    def self.GypsumExtWall
-        return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=0.5, width=nil, width_in=nil, mat_base=BaseMaterial.Gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
-    end
-
-    def self.GypsumCeiling
-        return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=0.5, width=nil, width_in=nil, mat_base=BaseMaterial.Gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
     end
 
     def self.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
@@ -630,7 +716,7 @@ class Construction
         wood_stud_wall = Construction.new(path_fracs)
 
         # Interior Film
-        wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.VerticalR])
+        wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmVertical.Rvalue])
 
         # Interior Finish (GWB) - Currently only include if cavity depth > 0
         if wallCavityDepth > 0
@@ -661,7 +747,7 @@ class Construction
             wood_stud_wall.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(finishConductivty,"in","ft").get])
             
             # Exterior Film - Assume below-grade wall if FinishThickness = 0
-            wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.OutsideR])
+            wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmOutside.Rvalue])
         end
 
         # Get overall wall R-value using parallel paths:
@@ -670,7 +756,7 @@ class Construction
     end
 
     def self.GetFloorNonStudLayerR(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, carpetFloorFraction, carpetPadRValue)
-        return (2.0 * AirFilms.FloorReducedR + Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat).Rvalue + (carpetPadRValue * carpetFloorFraction) + Material.Plywood3_4in.Rvalue)
+        return (2.0 * Material.AirFilmFloorReduced.Rvalue + Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat).Rvalue + (carpetPadRValue * carpetFloorFraction) + Material.Plywood3_4in.Rvalue)
     end
     
     def self.GetRimJoistAssmeblyR(rimJoistInsRvalue, ceilingJoistHeight, wallSheathingContInsThickness, wallSheathingContInsRvalue, drywallThickness, drywallNumLayers, rimjoist_framingfactor, finishThickness, finishConductivity)
@@ -686,7 +772,7 @@ class Construction
         prefix_rimjoist = Construction.new(path_fracs)
         
         # Interior Film 
-        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
+        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmFloorReduced.Rvalue])
 
         # Stud/cavity layer
         if rimJoistInsRvalue == 0
@@ -708,14 +794,14 @@ class Construction
         prefix_rimjoist.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[finishConductivity])
         
         # Exterior Film
-        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / AirFilms.FloorReducedR])
+        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / Material.AirFilmFloorReduced.Rvalue])
         
         return prefix_rimjoist.Rvalue_parallel
 
     end 
     
     def self.GetRimJoistNonStudLayerR
-        return (AirFilms.VerticalR + AirFilms.OutsideR + Material.Plywood3_2in.Rvalue)
+        return (Material.AirFilmVertical.Rvalue + Material.AirFilmOutside.Rvalue + Material.Plywood3_2in.Rvalue)
     end
     
     def self.GetBasementConductionFactor(bsmtWallInsulationHeight, bsmtWallInsulRvalue)
@@ -916,88 +1002,6 @@ class Gas
     def self.PsychMassRat
         return Gas.H2O_v.M / Gas.Air.M
     end
-end
-
-class AirFilms
-
-    def self.OutsideR
-        return 0.197 # hr-ft-F/Btu
-    end
-  
-    def self.VerticalR
-        return 0.68 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-    end
-  
-    def self.FlatEnhancedR
-        return 0.61 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-    end
-  
-    def self.FlatReducedR
-        return 0.92 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-    end
-  
-    def self.FloorAverageR
-        # For floors between conditioned spaces where heat does not flow across
-        # the floor; heat transfer is only important with regards to the thermal
-        return (AirFilms.FlatReducedR + AirFilms.FlatEnhancedR) / 2.0 # hr-ft-F/Btu
-    end
-
-    def self.FloorReducedR
-        # For floors above unconditioned basement spaces, where heat will
-        # always flow down through the floor.
-        return AirFilms.FlatReducedR # hr-ft-F/Btu
-    end
-  
-    def self.SlopeEnhancedR(highest_roof_pitch)
-        # Correlation functions used to interpolate between values provided
-        # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
-        # 0, 45, and 90 degrees. Values are for non-reflective materials of 
-        # emissivity = 0.90.
-        return 0.002 * Math::exp(0.0398 * highest_roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
-    end
-  
-    def self.SlopeReducedR(highest_roof_pitch)
-        # Correlation functions used to interpolate between values provided
-        # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
-        # 0, 45, and 90 degrees. Values are for non-reflective materials of 
-        # emissivity = 0.90.
-        return 0.32 * Math::exp(-0.0154 * highest_roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
-    end
-  
-    def self.SlopeEnhancedReflectiveR(highest_roof_pitch)
-        # Correlation functions used to interpolate between values provided
-        # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
-        # 0, 45, and 90 degrees. Values are for reflective materials of 
-        # emissivity = 0.05.
-        return 0.00893 * Math::exp(0.0419 * highest_roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
-    end
-  
-    def self.SlopeReducedReflectiveR(highest_roof_pitch)
-        # Correlation functions used to interpolate between values provided
-        # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
-        # 0, 45, and 90 degrees. Values are for reflective materials of 
-        # emissivity = 0.05.
-        return 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
-    end
-  
-    def self.RoofR(highest_roof_pitch)
-        # Use weighted average between enhanced and reduced convection based on degree days.
-        #hdd_frac = hdd65f / (hdd65f + cdd65f)
-        #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return AirFilms.SlopeEnhancedR(highest_roof_pitch) * hdd_frac + AirFilms.SlopeReducedR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
-        # Simplification to not depend on weather
-        return (AirFilms.SlopeEnhancedR(highest_roof_pitch) + AirFilms.SlopeReducedR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
-    end
-  
-    def self.RoofRadiantBarrierR(highest_roof_pitch)
-        # Use weighted average between enhanced and reduced convection based on degree days.
-        #hdd_frac = hdd65f / (hdd65f + cdd65f)
-        #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return AirFilms.SlopeEnhancedReflectiveR(highest_roof_pitch) * hdd_frac + AirFilms.SlopeReducedReflectiveR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
-        # Simplification to not depend on weather
-        return (AirFilms.SlopeEnhancedReflectiveR(highest_roof_pitch) + AirFilms.SlopeReducedReflectiveR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
-    end
-    
 end
 
 class EnergyGuideLabel

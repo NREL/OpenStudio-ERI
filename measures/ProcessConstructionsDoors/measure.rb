@@ -139,8 +139,8 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     door_Rvalue_air_to_air = 1.0 / door_Uvalue_air_to_air
     garage_door_Rvalue_air_to_air = 1.0 / garage_door_Uvalue_air_to_air
 
-    door_Rvalue = door_Rvalue_air_to_air - AirFilms.OutsideR - AirFilms.VerticalR
-    garage_door_Rvalue = garage_door_Rvalue_air_to_air - AirFilms.OutsideR - AirFilms.VerticalR
+    door_Rvalue = door_Rvalue_air_to_air - Material.AirFilmOutside.Rvalue - Material.AirFilmVertical.Rvalue
+    garage_door_Rvalue = garage_door_Rvalue_air_to_air - Material.AirFilmOutside.Rvalue - Material.AirFilmVertical.Rvalue
 
     door_Uvalue = 1.0 / door_Rvalue
     garage_door_Uvalue = 1.0 / garage_door_Rvalue

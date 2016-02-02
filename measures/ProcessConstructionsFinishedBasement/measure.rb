@@ -588,7 +588,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
       wall_Rvalue = 0 # hr*ft^2*F/Btu
     end
 
-    fb_US_Rvalue = Material.Concrete8in.Rvalue + AirFilms.VerticalR + wall_Rvalue + Material.Gypsum1_2in.Rvalue
+    fb_US_Rvalue = Material.Concrete8in.Rvalue + Material.AirFilmVertical.Rvalue + wall_Rvalue + Material.Gypsum1_2in.Rvalue
 
     fb_fictitious_Rvalue = fb_effective_Rvalue - Material.Soil12in.Rvalue - fb_US_Rvalue
 

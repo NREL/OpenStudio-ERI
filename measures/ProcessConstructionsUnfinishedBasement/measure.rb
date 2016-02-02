@@ -692,7 +692,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
         wall_Rvalue = 0
     end
     
-    ub_US_Rvalue = Material.Concrete8in.Rvalue + AirFilms.VerticalR + wall_Rvalue # hr*ft^2*F/Btu
+    ub_US_Rvalue = Material.Concrete8in.Rvalue + Material.AirFilmVertical.Rvalue + wall_Rvalue # hr*ft^2*F/Btu
     
     ub_fictitious_Rvalue = ub_effective_Rvalue - Material.Soil12in.Rvalue - ub_US_Rvalue # hr*ft^2*F/Btu
 
@@ -759,7 +759,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     ub_ceiling = Construction.new(path_fracs)
     
     # Interior Film
-    ub_ceiling.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / AirFilms.FloorReducedR])
+    ub_ceiling.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / Material.AirFilmFloorReduced.Rvalue])
     
     # Stud/cavity layer
     if ufbsmtCeilingCavityInsRvalueNominal == 0
@@ -786,7 +786,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
     end
     
     # Exterior Film
-    ub_ceiling.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / AirFilms.FloorReducedR])
+    ub_ceiling.addlayer(thickness=OpenStudio::convert(1,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / Material.AirFilmFloorReduced.Rvalue])
     
     return ub_ceiling.Rvalue_parallel   
 

@@ -228,13 +228,13 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
     # Gypsum
     gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
     gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-    gypsumConductivity = Material.GypsumExtWall.k
-    gypsumDensity = Material.GypsumExtWall.rho
-    gypsumSpecificHeat = Material.GypsumExtWall.Cp
-    gypsumThermalAbs = Material.GypsumExtWall.TAbs
-    gypsumSolarAbs = Material.GypsumExtWall.SAbs
-    gypsumVisibleAbs = Material.GypsumExtWall.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumExtWall.k)
+    gypsumConductivity = Material.Gypsum1_2in.k
+    gypsumDensity = Material.Gypsum1_2in.rho
+    gypsumSpecificHeat = Material.Gypsum1_2in.Cp
+    gypsumThermalAbs = Material.Gypsum1_2in.TAbs
+    gypsumSolarAbs = Material.Gypsum1_2in.SAbs
+    gypsumVisibleAbs = Material.Gypsum1_2in.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.Gypsum1_2in.k)
     
     # Cavity
     ssWallCavityDepth = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}[runner.getStringArgumentValue("selectedstudsize",user_arguments)]   
@@ -379,7 +379,7 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
         
     # Create layers for modeling
     sc_thick = OpenStudio::convert(ssWallCavityDepth,"in","ft").get # ft
-    sc_cond = sc_thick / (overall_wall_Rvalue - (AirFilms.VerticalR + AirFilms.OutsideR + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue)) # Btu/hr*ft*F     
+    sc_cond = sc_thick / (overall_wall_Rvalue - (Material.AirFilmVertical.Rvalue + Material.AirFilmOutside.Rvalue + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue)) # Btu/hr*ft*F     
     sc_dens = ssWallFramingFactor * BaseMaterial.Wood.rho + (1 - ssWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * Gas.Air.Cp 
     sc_sh = (ssWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - ssWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * Gas.Air.Cp * Gas.Air.Cp) / sc_dens
         
@@ -402,14 +402,14 @@ class ProcessConstructionsExteriorInsulatedWallsSteelStud < OpenStudio::Ruleset:
     
     # The cumulative R-value of the wall components along the path of heat transfer,
     # excluding the cavity insulation and steel studs
-    r = AirFilms.VerticalR # Interior film
+    r = Material.AirFilmVertical.Rvalue # Interior film
     r += (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / BaseMaterial.Gypsum.k) # Interior Finish (GWB)
     if hasOSB
         r += mat_plywood1_2in.Rvalue # OSB sheathing
     end
     r += rigidInsRvalue
     r += (OpenStudio::convert(finishThickness,"in","ft").get / OpenStudio::convert(finishConductivity,"in","ft").get) # Exterior Finish
-    r += AirFilms.OutsideR # Exterior film
+    r += Material.AirFilmOutside.Rvalue # Exterior film
     
     # The effective R-value of the cavity insulation with steel studs
     eR = ssWallCavityInsRvalueInstalled * ssWallCorrectionFactor

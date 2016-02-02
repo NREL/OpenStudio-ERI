@@ -330,7 +330,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
 
     overall_wall_Rvalue, gapFactor = get_interzonal_wall_r_assembly(intWallCavityDepth, intWallCavityInsRvalueInstalled, intWallContInsThickness, intWallContInsRvalue, intWallCavityInsFillsCavity, intWallInstallGrade, intWallFramingFactor, partitionWallMassThickness, OpenStudio::convert(partitionWallMassConductivity,"in","ft").get)
 
-    bndry_wall_Rvalue = (overall_wall_Rvalue - (AirFilms.VerticalR * 2.0 + partitionWallMassRvalue + intWallContInsRvalue))
+    bndry_wall_Rvalue = (overall_wall_Rvalue - (Material.AirFilmVertical.Rvalue * 2.0 + partitionWallMassRvalue + intWallContInsRvalue))
 
     sc_thick = OpenStudio::convert(intWallCavityDepth,"in","ft").get # ft
     sc_cond = sc_thick / bndry_wall_Rvalue # Btu/hr*ft*F
@@ -362,7 +362,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       interzonal_wall = Construction.new(path_fracs)
 
       # Interior Film
-      interzonal_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.VerticalR])
+      interzonal_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmVertical.Rvalue])
 
       # Interior Finish (GWB)
       interzonal_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get, conductivity_list=[gypsumConductivity])
@@ -379,7 +379,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       end
 
       # Exterior Film
-      interzonal_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.VerticalR])
+      interzonal_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmVertical.Rvalue])
 
       return interzonal_wall.Rvalue_parallel, gapFactor
 

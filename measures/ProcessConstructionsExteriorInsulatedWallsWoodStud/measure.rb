@@ -225,13 +225,13 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     # Gypsum
     gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
     gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-    gypsumConductivity = Material.GypsumExtWall.k
-    gypsumDensity = Material.GypsumExtWall.rho
-    gypsumSpecificHeat = Material.GypsumExtWall.Cp
-    gypsumThermalAbs = Material.GypsumExtWall.TAbs
-    gypsumSolarAbs = Material.GypsumExtWall.SAbs
-    gypsumVisibleAbs = Material.GypsumExtWall.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumExtWall.k)
+    gypsumConductivity = Material.Gypsum1_2in.k
+    gypsumDensity = Material.Gypsum1_2in.rho
+    gypsumSpecificHeat = Material.Gypsum1_2in.Cp
+    gypsumThermalAbs = Material.Gypsum1_2in.TAbs
+    gypsumSolarAbs = Material.Gypsum1_2in.SAbs
+    gypsumVisibleAbs = Material.Gypsum1_2in.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.Gypsum1_2in.k)
     
     # Cavity
     wsWallCavityDepth = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}[runner.getStringArgumentValue("selectedstudsize",user_arguments)]
@@ -379,7 +379,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
         
         # Create layers for modeling
         sc_thick = OpenStudio::convert(wsWallCavityDepth,"in","ft").get
-        sc_cond = sc_thick / (overall_wall_Rvalue - (AirFilms.VerticalR + AirFilms.OutsideR + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue))
+        sc_cond = sc_thick / (overall_wall_Rvalue - (Material.AirFilmVertical.Rvalue + Material.AirFilmOutside.Rvalue + rigidInsRvalue + osbRvalue + finishRvalue + gypsumRvalue))
         sc_dens = wsWallFramingFactor * BaseMaterial.Wood.rho + (1 - wsWallFramingFactor - wsGapFactor) * cavityInsDens + wsGapFactor * Gas.Air.Cp
         sc_sh = (wsWallFramingFactor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - wsWallFramingFactor - wsGapFactor) * cavityInsSH * cavityInsDens + wsGapFactor * Gas.Air.Cp * Gas.Air.Cp) / sc_dens
 

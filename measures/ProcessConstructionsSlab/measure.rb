@@ -317,11 +317,11 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
             effective_slab_Rvalue = 1000 # hr*ft^2*F/Btu
         end
 
-        fictitious_slab_Rvalue = effective_slab_Rvalue - slab_concrete_Rvalue - AirFilms.FlatReducedR - Material.Soil12in.Rvalue - (carpetPadRValue * carpetFloorFraction)
+        fictitious_slab_Rvalue = effective_slab_Rvalue - slab_concrete_Rvalue - Material.AirFilmFlatReduced.Rvalue - Material.Soil12in.Rvalue - (carpetPadRValue * carpetFloorFraction)
 
         if fictitious_slab_Rvalue <= 0
             slab_warning = true
-            slab_factor = effective_slab_Rvalue / (slab_concrete_Rvalue + AirFilms.FlatReducedR + Material.Soil12in.Rvalue + carpetPadRValue * carpetFloorFraction)
+            slab_factor = effective_slab_Rvalue / (slab_concrete_Rvalue + Material.AirFilmFlatReduced.Rvalue + Material.Soil12in.Rvalue + carpetPadRValue * carpetFloorFraction)
         else
             slab_factor = 1.0
         end

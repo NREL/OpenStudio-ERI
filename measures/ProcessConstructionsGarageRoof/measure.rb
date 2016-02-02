@@ -112,7 +112,7 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     roofMatAbsorptivity = runner.getDoubleArgumentValue("userdefinedroofmatabs",user_arguments)
 
     highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
-    film_roof_R = AirFilms.RoofR(highest_roof_pitch)
+    film_roof_R = Material.AirFilmRoof(highest_roof_pitch).Rvalue
 
     # Process the roof
     sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsGarageRoof(film_roof_R)
@@ -205,9 +205,9 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     roof_const.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_4in, material_list=nil)
 
     # Exterior Film
-    roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.OutsideR])
+    roof_const.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmOutside.Rvalue])
 
-    grgRoofStudandAir_Rvalue = roof_const.Rvalue_parallel - film_roof_R - AirFilms.OutsideR - Material.Plywood3_4in.Rvalue # hr*ft^2*F/Btu
+    grgRoofStudandAir_Rvalue = roof_const.Rvalue_parallel - film_roof_R - Material.AirFilmOutside.Rvalue - Material.Plywood3_4in.Rvalue # hr*ft^2*F/Btu
 
     sc_thick = Material.Stud2x4.thick # ft
     sc_cond = sc_thick / grgRoofStudandAir_Rvalue # Btu/hr*ft*F

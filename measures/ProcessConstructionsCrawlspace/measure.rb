@@ -601,7 +601,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         end
         
         # Fictitious layer behind unvented crawlspace wall to achieve equivalent R-value. See Winklemann article.
-        crawlspace_US_Rvalue = Material.Concrete8in.Rvalue + AirFilms.VerticalR + crawlWallContInsRvalueNominal
+        crawlspace_US_Rvalue = Material.Concrete8in.Rvalue + Material.AirFilmVertical.Rvalue + crawlWallContInsRvalueNominal
         crawlspace_fictitious_Rvalue = crawlspace_effective_Rvalue - Material.Soil12in.Rvalue - crawlspace_US_Rvalue
         
         crawlspace_total_UA = crawlspace_wall_area / crawlspace_effective_Rvalue # Btu/hr*F
@@ -632,7 +632,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     crawl_ceiling = Construction.new(path_fracs)
     
     # Interior Film
-    crawl_ceiling.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
+    crawl_ceiling.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmFloorReduced.Rvalue])
     
     # Stud/cavity layer
     if crawlCeilingCavityInsRvalueNominal == 0
@@ -660,7 +660,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Exterior Film
-    crawl_ceiling.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / AirFilms.FloorReducedR])
+    crawl_ceiling.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmFloorReduced.Rvalue])
 
     return crawl_ceiling.Rvalue_parallel
     

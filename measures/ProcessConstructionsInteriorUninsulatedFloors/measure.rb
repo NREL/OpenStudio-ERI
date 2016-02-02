@@ -251,13 +251,13 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
       gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
       gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
     end
-    gypsumConductivity = Material.GypsumCeiling.k
-    gypsumDensity = Material.GypsumCeiling.rho
-    gypsumSpecificHeat = Material.GypsumCeiling.Cp
-    gypsumThermalAbs = Material.GypsumCeiling.TAbs
-    gypsumSolarAbs = Material.GypsumCeiling.SAbs
-    gypsumVisibleAbs = Material.GypsumCeiling.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.GypsumCeiling.k)
+    gypsumConductivity = Material.Gypsum1_2in.k
+    gypsumDensity = Material.Gypsum1_2in.rho
+    gypsumSpecificHeat = Material.Gypsum1_2in.Cp
+    gypsumThermalAbs = Material.Gypsum1_2in.TAbs
+    gypsumSolarAbs = Material.Gypsum1_2in.SAbs
+    gypsumVisibleAbs = Material.Gypsum1_2in.VAbs
+    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.Gypsum1_2in.k)
 
     # Floor Mass
     floorMassThickness = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
