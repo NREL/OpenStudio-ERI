@@ -9,8 +9,10 @@
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
 require 'OpenStudio'
-require "#{File.dirname(__FILE__)}/resources/constants"
-require_relative "resources/ba_protocol_table_8_page_13.rb"
+require "#{File.dirname(__FILE__)}/resources/util"
+require"#{File.dirname(__FILE__)}/resources/waterheater"
+require"#{File.dirname(__FILE__)}/resources/constants"
+
 
 #start the measure
 class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
@@ -45,75 +47,55 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
     osargument = ruleset::OSArgument
     
     args = ruleset::OSArgumentVector.new
-    
-    #  Choice list of use_case
-    measure_uses = [ "Create a water heater representing B10 Benchmark standard",
-      "Create a water heater representing NCTH standard",
-      "Create a water heater representing BA Pre-Retrofit Case standard",
-      "General"]
-    use_case = osargument::makeChoiceArgument("use_case", measure_uses,true)
-    use_case.setDisplayName("How will this measure be used?")
-    args << use_case
-    
-    # make an argument for the number of bedrooms
-    bed_choices = (1..5).to_a.collect{|c| c.to_s}
-    number_of_bedrooms = osargument::makeChoiceArgument("number_of_bedrooms", bed_choices, true)
-    number_of_bedrooms.setDisplayName("Number of Bedrooms in the Proposed Home")
-    args << number_of_bedrooms
-
-    # make an argument for the number of bedrooms
-    possible_number_of_bathrooms = ["1", "1.5", "2", "2.5", "3", "3.5 or more"]
-    number_of_bathrooms = osargument::makeChoiceArgument("number_of_bathrooms", possible_number_of_bathrooms, true)
-    number_of_bathrooms.setDisplayName("Number of Bathrooms in the Proposed Home")
-    args << number_of_bathrooms
-
-    # make an argument for the existing plant loop
-    existing_plant_loops = model.getPlantLoops
-    existing_heating_plant_loops = existing_plant_loops.select{ |pl| pl.sizingPlant.loopType() == "Heating"}
-    existing_plant_names = existing_heating_plant_loops.select{ |pl| not pl.name.empty?}.collect{ |pl| pl.name.get }
-    existing_plant_names << "New Plant Loop"
-    existing_Plant_Loop_name  = osargument::makeChoiceArgument("existing_plant_loop_name", existing_plant_names, true)
-    existing_Plant_Loop_name.setDisplayName("Plant Loop to assign Water heater as a Supply Equipment")
-    args << existing_Plant_Loop_name
 
     # make an argument for the storage tank volume
-    storage_tank_volume = osargument::makeDoubleArgument("storage_tank_volume", true)
-    storage_tank_volume.setDisplayName("Volume of the Storage Tank (gallons) of the Gas Hot Water Heater. Set to 0 to have Storage tank volume autosized. This field is ignored for NCTH and B10 protocols.")
-    args << storage_tank_volume
+    storage_tank_volume = osargument::makeStringArgument("storage_tank_volume", true)
+    storage_tank_volume.setDisplayName("Volume of the storage tank (gallons) of the gas water heater. Set to 'auto' to have volume autosized.")
+    storage_tank_volume.setDefaultValue("auto")
+	args << storage_tank_volume
 
     # make an argument for hot water setpoint temperature
-    shw_setpoint = osargument::makeDoubleArgument("shw_setpoint_temperature", true)
-    shw_setpoint.setDisplayName("Hot Water Temperature Setpoint (Deg F).")
-    args << shw_setpoint
-
-    # make an argument for water_heater_location
+    dhw_setpoint = osargument::makeDoubleArgument("dhw_setpoint_temperature", true)
+    dhw_setpoint.setDisplayName("Water heater setpoint temperature (degrees F).")
+	dhw_setpoint.setDefaultValue(125)
+    args << dhw_setpoint
+	
+	   # make an argument for water_heater_location
     thermal_zones = model.getThermalZones
     thermal_zone_names = thermal_zones.select { |tz| not tz.name.empty?}.collect{|tz| tz.name.get }
     water_heater_location = osargument::makeChoiceArgument("water_heater_location",thermal_zone_names, true)
-    water_heater_location.setDisplayName("Thermal Zone where the Gas Storage Water Heater is located")
+    water_heater_location.setDisplayName("Thermal zone where the water heater is located.")
     args << water_heater_location
 
     # make an argument for water_heater_capacity
-    water_heater_capacity = osargument::makeDoubleArgument("water_heater_capacity", true)
-    water_heater_capacity.setDisplayName("The nominal capacity [kBtu/hr] of the gas storage water heater. Set to 0 to have this field autosized. This field is ignored for NCTH and B10 protocols.")
-    args << water_heater_capacity
+    water_heater_capacity = osargument::makeStringArgument("water_heater_capacity", true)
+    water_heater_capacity.setDisplayName("The nominal capacity [kBtu/hr] of the gas storage water heater. Set to 'auto' to have this field autosized.")
+    water_heater_capacity.setDefaultValue("40.0")
+	args << water_heater_capacity
 
     # make an argument for the rated energy factor
-    rated_energy_factor = osargument::makeDoubleArgument("rated_energy_factor", true)
-    rated_energy_factor.setDisplayName("Rated Energy Factor of Gas Storage Tank Water Heater. This field is ignored for NCTH and B10 protocols.")
-    args << rated_energy_factor
+    rated_energy_factor = osargument::makeStringArgument("rated_energy_factor", true)
+    rated_energy_factor.setDisplayName("Rated energy factor of gas storage water heater. Enter 'auto' for a water heater that meets the minimum federal efficiency requirements.")
+    rated_energy_factor.setDefaultValue("0.59")
+	args << rated_energy_factor
 
     # make an argument for water_heater_recovery_efficiency
     water_heater_recovery_efficiency = osargument::makeDoubleArgument("water_heater_recovery_efficiency", true)
-    water_heater_recovery_efficiency.setDisplayName("Rated Recovery Efficiency of the water heater equal to the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the DOE in 10 CFR Part 430, Appendix E to Subpart B. Enter a number between 0 and 1.0. This is used to calculate the thermal efficiency. Users wil need to review the E+out.eio file to confirm Calculated recovery efficiency - Rated recovery efficiency.")
-    water_heater_recovery_efficiency.setDefaultValue(0.80)
+    water_heater_recovery_efficiency.setDisplayName("Rated recovery efficiency of the water heater. Enter a number between 0 and 1. This is used to calculate the thermal efficiency of the burner.")
+    water_heater_recovery_efficiency.setDefaultValue(0.76)
     args << water_heater_recovery_efficiency
-
-    # make an argument for water_heater_fuel_type
-    acceptable_fuels = [ "Natural Gas", "Propane Gas"]
-    water_heater_fuel_type = osargument::makeChoiceArgument("water_heater_fuel_type", acceptable_fuels, true)
-    water_heater_fuel_type.setDisplayName("The Type of Fuel used for heating.")
-    args << water_heater_fuel_type
+	
+	# make an argument on cycle electricity consumption
+    offcyc_power = osargument::makeDoubleArgument("offcyc_power", true)
+    offcyc_power.setDisplayName("Forced draft fan power of the water heater (W)")
+	offcyc_power.setDefaultValue(0)
+    args << offcyc_power
+	
+	# make an argument on cycle electricity consumption
+    oncyc_power = osargument::makeDoubleArgument("oncyc_power", true)
+    oncyc_power.setDisplayName("Parasitic electricity power of the water heater (W)")
+	oncyc_power.setDefaultValue(0)
+    args << oncyc_power
     
     return args
   end #end the arguments method
@@ -122,34 +104,92 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
 
-    @model = model
-    @runner = runner
-    @user_arguments = user_arguments
-
-    # copy inputs to local vars
-    @args =  parse_arguments
-                
-    return false unless validate_arguments
-
-    register_initial_conditions
-
-    if @args[:existing_plant_loop] == "New Plant Loop"
-      loop = create_new_loop
-    else
-      loop = model.getPlantLoops.find{|pl| pl.name.get == @args[:existing_plant_loop]}
+	
+	#Assign user inputs to variables
+	cap = runner.getStringArgumentValue("water_heater_capacity",user_arguments)
+	vol = runner.getStringArgumentValue("storage_tank_volume",user_arguments)
+	ef = runner.getStringArgumentValue("rated_energy_factor",user_arguments)
+	re = runner.getDoubleArgumentValue("water_heater_recovery_efficiency",user_arguments)
+	water_heater_tz = runner.getStringArgumentValue("water_heater_location",user_arguments)
+	t_set = runner.getDoubleArgumentValue("dhw_setpoint_temperature",user_arguments).to_f
+	oncycle_p = runner.getDoubleArgumentValue("oncyc_power",user_arguments)
+	offcycle_p = runner.getDoubleArgumentValue("offcyc_power",user_arguments)
+	
+	#Validate inputs
+	if not runner.validateUserArguments(arguments(model), user_arguments)
+      return false
     end
+	
+    # Validate inputs further
+    validate_storage_tank_volume(vol, runner)
+    validate_rated_energy_factor(ef, runner)
+    validate_setpoint_temperature(t_set, runner)
+    validate_water_heater_capacity(cap, runner)
+    validate_water_heater_recovery_efficiency(re, runner)
+	validate_parasitic_elec(oncycle_p, offcycle_p, runner)
+	
+	# Get number of bedrooms/bathrooms
+    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
+    if nbeds.nil? or nbaths.nil?
+        return false
+    end
+	
+	#Check if a DHW plant loop already exists, if not add it
+	pl_name = "Domestic Hot Water Loop"
+	existing_loop = 0
+	loop = nil
+	
+	model.getPlantLoops.each do |pl|
+		if pl.name.to_s == pl_name
+			runner.registerInfo("A gas water heater will be added to the existing DHW plant loop")
+			loop = HelperMethods.get_plant_loop_from_string(model, pl_name.to_s, runner)
+			if loop.nil?
+				return false
+			end
+			existing_loop = 1
+		end
+	end
+
+	if existing_loop == 0
+		runner.registerInfo("A new plant loop for DHW will be added to the model")
+		loop = Waterheater.create_new_loop(model)
+	end
+			
+	
+	#Remove the existing water heater
+	model.getPlantLoops.each do |pl|
+		if pl.name.get == pl_name
+			pl.supplyComponents.each do |wh|
+				if wh.to_WaterHeaterMixed.is_initialized
+					waterHeater = wh.to_WaterHeaterMixed.get
+					waterHeater.remove
+					runner.registerInfo("The existing mixed water heater has been removed and will be replaced with the new user specified water heater")
+				elsif wh.to_WaterHeaterStratified.is_initialized
+					waterHeater = wh.to_WaterHeaterStratified.get
+					waterHeater.remove
+					runner.registerInfo("The existing stratified water heater has been removed and will be replaced with the new user specified water heater")
+				end
+			end
+		end
+	end
+
+    register_initial_conditions(model, runner)
 
     if loop.components(OSM::PumpConstantSpeed::iddObjectType).empty?
-      new_pump = create_new_pump
+      new_pump = Waterheater.create_new_pump(model)
       new_pump.addToNode(loop.supplyInletNode)
     end
 
     if loop.supplyOutletNode.setpointManagers.empty?
-      new_manager = create_new_schedule_manager
+      new_manager = create_new_schedule_manager(t_set, model)
       new_manager.addToNode(loop.supplyOutletNode)
     end
-
-    new_heater = create_new_heater
+	
+			
+	new_heater = Waterheater.create_new_heater(cap, Constants.FuelTypeGas, vol, nbeds, nbaths, ef, re, t_set, water_heater_tz, oncycle_p, offcycle_p, model, runner)
+		
+	register_info_messages(new_heater, runner)
+	
     loop.addSupplyBranchForComponent(new_heater)
         
     register_final_conditions(runner, model)
@@ -159,24 +199,6 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
   end #end the run method
 
   private
-
-  def validate_arguments
-      #use the built-in error checking 
-    if not @runner.validateUserArguments(arguments(@model), @user_arguments)
-      return false
-    end
-
-    # Validate inputs further
-    validate_use_case
-    validate_existing_plant_loop
-    validate_storage_tank_volume
-    validate_rated_energy_factor
-    validate_setpoint_temperature
-    validate_water_heater_capacity
-    validate_water_heater_recovery_efficiency
-
-    return @runner.result.errors.empty?    
-  end
   
   def qty(value, unit)
     return OS::Quantity.new(value, unit)
@@ -189,379 +211,148 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
     
     OS::convert(value, oldUnit, newUnit).get
   end
+
+  def create_new_schedule_manager(t_set, model)
+    new_schedule = Waterheater.create_new_schedule_ruleset("DHW Temp", "HW Temp Default", t_set, model)
+    OSM::SetpointManagerScheduled.new(model, new_schedule)
+  end 
   
-
-  def create_new_loop
-    loop = OSM::PlantLoop.new(@model)
-    loop.setName(Constants.PlantLoopServiceWater)
-    loop.sizingPlant.setDesignLoopExitTemperature(60)
-    loop.sizingPlant.setLoopDesignTemperatureDifference(50)
-        
-    bypass_pipe  = OSM::PipeAdiabatic.new(@model)
-    out_pipe = OSM::PipeAdiabatic.new(@model)
-    
-    loop.addSupplyBranchForComponent(bypass_pipe)
-    out_pipe.addToNode(loop.supplyOutletNode)      
-    return loop
-  end
-
-  def create_new_pump
-    # pump seems to default to an autosized flow rate and intermittent control type
-    pump = OSM::PumpConstantSpeed.new(@model)
-    pump.setFractionofMotorInefficienciestoFluidStream(1)
-    pump.setMotorEfficiency(0.999)
-    pump.setRatedPowerConsumption(0.001)
-    pump.setRatedPumpHead(0.001)
-    return pump
-  end
-
-  def create_new_schedule_manager
-    new_schedule = create_new_schedule_ruleset("SHW Temp", "HW Temp Default", @args[:shw_setpoint_temperature])
-    OSM::SetpointManagerScheduled.new(@model, new_schedule)
-  end
-
-  def create_new_schedule_ruleset(name, schedule_name, temperature)
-    new_schedule = OSM::ScheduleRuleset.new(@model)
-    new_schedule.setName(name)
-    new_schedule.defaultDaySchedule.setName(schedule_name)
-    new_schedule.defaultDaySchedule.addValue(OS::Time.new("24:00:00"), convert(temperature, Celsius))
-    return new_schedule
-  end
-  
-
-  def create_new_heater
-    new_heater = OSM::WaterHeaterMixed.new(@model)
-    configure_tank_volume(new_heater)
-    configure_setpoint_schedule(new_heater)
-    new_heater.setMaximumTemperatureLimit(qty(212, Fahrenheit))
-    new_heater.setHeaterControlType("Modulate")
-    configure_heater_capacity(new_heater)
-    new_heater.setHeaterMinimumCapacity(0)
-    new_heater.setHeaterFuelType("Natural Gas")
-    new_heater.setHeaterThermalEfficiency(@args[:water_heater_recovery_efficiency])
-    new_heater.setAmbientTemperatureIndicator("ThermalZone")
-
-    thermal_zone = @model.getThermalZones.find{|tz| tz.name.get == @args[:water_heater_location]}
-    
-    new_heater.setAmbientTemperatureThermalZone(thermal_zone)
-    configure_cycle_loss_coeficients(new_heater)
-
-    register_info_messages(new_heater)
-    return new_heater
-  end
-
-  def configure_tank_volume(new_heater)
-    type = @args[:use_case]
-    if type == "General" || type == "Create a water heater representing BA Pre-Retrofit Case standard"         
-
-      if @args[:storage_tank_volume].value == 0
-        new_heater.autosizeTankVolume
-        return
-      end
-      
-      nominal_volume = @args[:storage_tank_volume]
-    end
-    
-    if type == "Create a water heater representing B10 Benchmark standard" ||
-        type == "Create a water heater representing NCTH standard"
-      nominal_volume = lookup_from_table(:storage)
-    end
-
-    actual_volume = nominal_volume
-    new_heater.setTankVolume(actual_volume)
-    
-  end    
-
-  def lookup_from_table(key)
-    beds = @args[:number_of_bedrooms]
-    baths = @args[:number_of_bathrooms]
-    return BA_Protocol::Table_8_gas[[beds,baths]][key]
-  end
-
-  def configure_setpoint_schedule(new_heater)
-    if @args[:use_case] == "General"
-      set_temp = @args[:shw_setpoint_temperature]
-      else
-      set_temp = qty(125,Fahrenheit)
-    end
-    
-    new_schedule = create_new_schedule_ruleset("SHW Set Temp", "SHW Set Temp Default", set_temp)
-    new_heater.setSetpointTemperatureSchedule(new_schedule)
-
-    @runner.registerInfo "A schedule named SHW Set Temp was created and applied to #{new_heater.name.get}, using a constant temperature of #{set_temp.to_s} for generating service hot water."
-  end
-
-  def configure_heater_capacity(new_heater)
-    if @args[:use_case] == "General" ||
-        @args[:use_case] == "Create a water heater representing BA Pre-Retrofit Case standard"         
-
-      given_capacity = @args[:water_heater_capacity]
-      if given_capacity.value == 0
-        new_heater.autosizeHeaterMaximumCapacity
-        return
-      else        
-      capacity = @args[:water_heater_capacity]
-    end
-    
-    end
-    
-    if @args[:use_case] == "Create a water heater representing B10 Benchmark standard" ||
-        @args[:use_case] == "Create a water heater representing NCTH standard" 
-      capacity = lookup_from_table(:capacity)
-    end
-    
-    new_heater.setHeaterMaximumCapacity(capacity)      
-  end
-
-  def configure_cycle_loss_coeficients(new_heater)
-    # based on cell N4594 of the Options sheed to BA_Analysis_FY10.xlsm spreadsheet
-
-    # Note: OpenStudio conversions based on DegF or DegC don't work well. Defining temperatures in Rankine instead.
-
-    use_case = @args[:use_case]
-    if use_case.include?("B10") || use_case.include?("NCTH")
-      energy_factor = lookup_from_table(:energy_factor)
-      rated_input_power = lookup_from_table(:capacity)
-    else
-      energy_factor = @args[:rated_energy_factor]
-      rated_input_power = @args[:water_heater_capacity]
-      if rated_input_power.value == 0 # autosized
-        # use 36 kBtu/hr based on BA protocol table for buildings with less
-        # than 4 bedrooms.
-        rated_input_power = qty(36, KBtuhr)
-      end      
-    end
-    
-    tank_temperature = qty(135, Rankine)
-    environment_temperature = qty(67.5, Rankine)
-    day = qty(24, Hour)
-
-    unitless = OpenStudio::createUnit("").get
-    
-    unexplained_constant = qty(41073, Btu)
-    deltaT = tank_temperature - environment_temperature
-
-    energy_factor = qty(energy_factor, unitless)
-    recovery_efficiency = qty(@args[:water_heater_recovery_efficiency], unitless)
-
-#binding.pry    
-    
-    loss_coeff = (recovery_efficiency/energy_factor - qty(1,unitless)) / (deltaT * day/unexplained_constant - deltaT/(rated_input_power*energy_factor))
-
-    new_heater.setOnCycleLossCoefficienttoAmbientTemperature(loss_coeff)
-    new_heater.setOffCycleLossCoefficienttoAmbientTemperature(loss_coeff)
-  end
-      
-  
-  def register_initial_conditions
-    initial_condition = list_water_heaters.join("\n")
+  def register_initial_conditions(model, runner)
+    initial_condition = list_water_heaters(model).join("\n")
     if initial_condition.empty?
       initial_condition = "No water heaters in initial model"
     end
     
-    @runner.registerInitialCondition(initial_condition)
+    runner.registerInitialCondition(initial_condition)
   end
 
   def register_final_conditions(runner, model)
-    final_condition = list_water_heaters.join("\n")
-    @runner.registerFinalCondition(final_condition)
+    final_condition = list_water_heaters(model).join("\n")
+    runner.registerFinalCondition(final_condition)
   end    
 
-  def list_water_heaters
+  def list_water_heaters(model)
     water_heaters = []
 
-    existing_heaters = @model.getWaterHeaterMixeds
+    existing_heaters = model.getWaterHeaterMixeds
     for heater in existing_heaters do
       heatername = heater.name.get
       loopname = heater.plantLoop.get.name.get
 
-      if heater.isHeaterMaximumCapacityAutosized
-        capacity = "autosized"
-      else
-        capacity_si = heater.getHeaterMaximumCapacity.get
-        capacity = OS::convert(capacity_si, KBtuhr).get
-      end
+      capacity_si = heater.getHeaterMaximumCapacity.get
+      capacity = OS::convert(capacity_si, KBtuhr).get
       
-      if heater.isTankVolumeAutosized
-        volume = "autosized"
-      else
-        volume_si = heater.getTankVolume.get
-        volume = OS::convert(volume_si, Gallon).get
-      end
+      volume_si = heater.getTankVolume.get
+      volume = OS::convert(volume_si, Gallon).get
       
-      water_heaters << "Water heater '#{heatername}' on plant loop '#{loopname}', with capacity #{capacity}" +
-        " and tank volume #{volume}"
+      water_heaters << "Water heater '#{heatername}' added to plant loop '#{loopname}', with a capacity of #{capacity}" +
+        " and an actual tank volume of #{volume}"
     end
 
     water_heaters
   end
 
-  def register_info_messages(new_heater)
-    info_prefix = "Water heater '#{new_heater.name}' has "
-
-    max_temp = OS::convert(new_heater.getMaximumTemperatureLimit.get, Fahrenheit).get   
-    min_cap = OS::convert(new_heater.getHeaterMinimumCapacity.get, KBtuhr).get
-
-    if new_heater.isHeaterMaximumCapacityAutosized
-      max_cap = "autosized"
-    else
-      max_cap = OS::convert(new_heater.getHeaterMaximumCapacity.get, KBtuhr).get
-    end
-
-    if new_heater.isTankVolumeAutosized
-      tank_volume = "autosized"
-    else
-      tank_volume = OS::convert(new_heater.getTankVolume.get, Gallon).get
-    end
-
-    on_cycle_loss_coeff = new_heater.getOnCycleLossCoefficienttoAmbientTemperature.get
-    off_cycle_loss_coeff = new_heater.getOffCycleLossCoefficienttoAmbientTemperature.get
+  def register_info_messages(new_heater, runner)
+    info_prefix = "Gas water heater has "
+	
+    max_cap = OS::convert(new_heater.getHeaterMaximumCapacity.get, KBtuhr).get
+    tank_volume = OS::convert(new_heater.getTankVolume.get, Gallon).get
     
-    @runner.registerInfo "A new water heater '#{new_heater.name}' was created"
-    @runner.registerInfo info_prefix + "a deadband temperature difference of #{new_heater.getDeadbandTemperatureDifference.to_s}"
-    @runner.registerInfo info_prefix + "a maximum temperature limit of #{max_temp}"
-    @runner.registerInfo info_prefix + "a tank volume of #{tank_volume}"
-    @runner.registerInfo info_prefix + "a heater minimum capacity of #{min_cap}"
-    @runner.registerInfo info_prefix + "a heater maximum capacity of #{max_cap}"
-    @runner.registerInfo info_prefix + "a heater fuel type of '#{new_heater.heaterFuelType}'"
-    @runner.registerInfo info_prefix + "a heater thermal efficiency of #{new_heater.heaterThermalEfficiency}"
-    @runner.registerInfo info_prefix + "an ambient temperature indicator of '#{new_heater.ambientTemperatureIndicator}'"
-    @runner.registerInfo info_prefix + "an on-cycle loss fraction to thermal zone of #{new_heater.onCycleLossFractiontoThermalZone}"
-    @runner.registerInfo info_prefix + "an off-cycle loss fraction to thermal zone of #{new_heater.onCycleLossFractiontoThermalZone}"
-    @runner.registerInfo info_prefix + "a use side effectiveness of #{new_heater.useSideEffectiveness}"
-    @runner.registerInfo info_prefix + "a source side effectiveness of #{new_heater.sourceSideEffectiveness}"
-    @runner.registerInfo info_prefix + "an ambient temperature thermal zone of '#{new_heater.ambientTemperatureThermalZone.get.name.get}'"
-    @runner.registerInfo "Water heater '#{new_heater.name.get}' has an on-cycle loss coefficient to ambient temperature of #{on_cycle_loss_coeff}"
-    @runner.registerInfo "Water heater '#{new_heater.name.get}' has an off-cycle loss coefficient to ambient temperature of #{off_cycle_loss_coeff}"
+    runner.registerInfo "A new gas water heater was created"
+    runner.registerInfo info_prefix + "a tank volume of #{tank_volume}"
+    runner.registerInfo info_prefix + "a capacity of #{max_cap}"
+    runner.registerInfo info_prefix + "a heater thermal efficiency of #{new_heater.heaterThermalEfficiency}"
 
   end
-  
-  def parse_arguments
-    return {
-      use_case: @runner.getStringArgumentValue("use_case", @user_arguments),
-      number_of_bedrooms: @runner.getStringArgumentValue("number_of_bedrooms", @user_arguments).to_i,
-      number_of_bathrooms: @runner.getStringArgumentValue("number_of_bathrooms", @user_arguments),
-      existing_plant_loop: @runner.getStringArgumentValue("existing_plant_loop_name", @user_arguments),
-      storage_tank_volume: qty(@runner.getDoubleArgumentValue("storage_tank_volume", @user_arguments),Gallon),
-      rated_energy_factor: @runner.getDoubleArgumentValue("rated_energy_factor", @user_arguments),
-      shw_setpoint_temperature: qty(@runner.getDoubleArgumentValue("shw_setpoint_temperature", @user_arguments),Fahrenheit),
-      water_heater_capacity: qty(@runner.getDoubleArgumentValue("water_heater_capacity", @user_arguments),KBtuhr),
-      water_heater_location: @runner.getStringArgumentValue("water_heater_location", @user_arguments),
-      water_heater_recovery_efficiency: @runner.getDoubleArgumentValue("water_heater_recovery_efficiency", @user_arguments)
-    }    
-  end
 
-  def validate_use_case
-    if @args[:use_case] != "General"
-      @runner.registerWarning("BA protocols require water heater location to be in attached garage (if it exists and climate = hot-humid or hot-dry or unconditioned basement if it exists and climate = all others). Please check table 9 of 2014 simulation protocols.")
+  def validate_storage_tank_volume(vol, runner)
+    return if (vol == 'auto')  # flag for autosizing
+	vol = vol.to_f
+    if (vol < 0)
+      runner.registerError("Storage tank volume must be greater than 0 gallons.")      
     end
-  end
-  
-
-  def validate_existing_plant_loop
-    existing_plant_loop = @args[:existing_plant_loop]
-    if existing_plant_loop == "New Plant Loop"
-      @runner.registerWarning("The water heater will be applied to a new OS:PlantLoop object. The plant loop object will be created using default values. Please review the values for appropriateness.")
-    else
-      @runner.registerWarning("Additional Water heater being added to #{existing_plant_loop}. User will need to confirm controls.")
-    end
-  end
-
-  def validate_storage_tank_volume
-    storage_tank_volume = convert(@args[:storage_tank_volume], Gallon)
-    return if (storage_tank_volume == 0)  # flag for autosizing
-    if (storage_tank_volume < 0)
-      @runner.registerError("Storage Tank Volume cannot be less than 0 gallons. Please correct.")      
-    end
-    if storage_tank_volume < 25
-      @runner.registerWarning("A storage tank volume of less than 25 gallons and a certified rating is not commercially available. Please review the input.")
+    if vol < 25
+      runner.registerWarning("A storage tank volume of less than 25 gallons and a certified rating is not commercially available. Please review the input.")
     end                             
-    if storage_tank_volume > 100
-      @runner.registerWarning("A hot water heater with a storage tank volume of greater than 100 gallons and a certified rating is not commercially available. Please review the input.")
+    if vol > 120
+      runner.registerWarning("A water heater with a storage tank volume of greater than 120 gallons and a certified rating is not commercially available. Please review the input.")
     end                             
   end
 
-  def validate_rated_energy_factor
-    rated_energy_factor = @args[:rated_energy_factor]
-    if (rated_energy_factor > 1)
-      @runner.registerError("Rated Energy Factor has a maximum value of 1.0")
+  def validate_rated_energy_factor(ef, runner)
+	return if (ef == 'auto')  # flag for autosizing
+	ef = ef.to_f
+    if (ef > 1)
+      runner.registerError("Rated energy factor has a maximum value of 1.0")
     end
-    if (rated_energy_factor <= 0)
-      @runner.registerError("Rated Energy Factor must be greater than 0")
+    if (ef <= 0)
+      runner.registerError("Rated energy factor must be greater than 0")
     end
-    if (rated_energy_factor >0.82)
-      @runner.registerWarning("Rated Energy Factor for Commercially available Gas Storage Water Heaters should be less than 0.82")
+    if (ef >0.82)
+      runner.registerWarning("Rated energy factor for commercially available gas storage water heaters should be less than 0.82")
     end    
-    if (rated_energy_factor <0.48)
-      @runner.registerWarning("Rated Energy Factor for Commercially available Gas Storage Water Heaters should be greater than 0.48")
+    if (ef <0.48)
+      runner.registerWarning("Rated energy factor for commercially available gas storage water heaters should be greater than 0.48")
     end    
   end
   
-  def validate_setpoint_temperature
-    shw_setpoint_temperature = convert(@args[:shw_setpoint_temperature], Fahrenheit)
-    if (shw_setpoint_temperature <= 0)
-      @runner.registerError("Hot water temperature should be greater than 0")
+  def validate_setpoint_temperature(t_set, runner)
+    if (t_set <= 0)
+      runner.registerError("Hot water temperature must be greater than 0")
     end
-    if (shw_setpoint_temperature > 140)
-      @runner.registerWarning("Hot Water Setpoint schedule SHW_Temp has values greater than 140F. This temperature, if achieved, may cause scalding.")
+    if (t_set > 140)
+      runner.registerWarning("Hot water setpoint schedule DHW_Temp has values greater than 140F. This temperature, if achieved, may cause scalding.")
     end    
-    if (shw_setpoint_temperature < 120)
-      @runner.registerWarning("Hot Water Setpoint schedule SHW_Temp has values less than 120F. This temperature may promote the growth of Legionellae or other bacteria.")               
+    if (t_set < 120)
+      runner.registerWarning("Hot water setpoint schedule DHW_Temp has values less than 120F. This temperature may promote the growth of Legionellae or other bacteria.")               
 
     end    
   end
 
-  def validate_water_heater_effectiveness
-    water_heater_effectiveness = @args[:water_heater_effectiveness]
-    if (water_heater_effectiveness < 0)
-      @runner.registerError("Gas Water Heater Heat Exchange Effectiveness must be greater than 0")
+  def validate_water_heater_capacity(cap, runner)
+    return if cap == 'auto' # Autosized
+	cap = cap.to_f
+    if cap < 0
+      runner.registerError("Gas storage water heater nominal capacity must be greater than 0 kBtu/hr.")
     end
-    if (water_heater_effectiveness > 1)
-      @runner.registerError("Gas Water Heater Heat Exchange Effectiveness must be less than 1")
+    if cap < 25
+      runner.registerWarning("Commercially available residential gas storage water heaters should have a minimum nominal capacity of 25 kBtu/h.")
     end
-    if (water_heater_effectiveness < 0.8)
-      @runner.registerWarning "Actual Performance of modeled water heater may not match Rated EF and RE per GAMA and 10CFR430 test procedures. Check EPlusout.eio file for calculated EF and RE."
+    if cap > 75
+      runner.registerWarning("Commercially available residential gas storage water heaters should have a maximum nominal capacity of 75 kBtu/h.")
     end
   end
-
-  def validate_water_heater_capacity
-    water_heater_capacity = convert(@args[:water_heater_capacity], KBtuhr)
-    return if water_heater_capacity == 0 # Autosized
-    if water_heater_capacity < 0
-      @runner.registerError("Gas Storage Water Heater Nominal Capacity must be greater than 0 kBtu/hr.")
-    end
-
-    if water_heater_capacity < 25
-      @runner.registerWarning("Commercially Available Gas Storage Water Heaters should have a minimum Nominal Capacity of 25 kBtu/h.")
-    end
-    if water_heater_capacity > 75
-      @runner.registerWarning("Commercially Available Gas Storage Water Heaters should have a maximum Nominal Capacity of 75 kBtu/h.")
-    end
-    end
     
-  def validate_water_heater_recovery_efficiency
-    water_heater_recovery_efficiency = @args[:water_heater_recovery_efficiency]
-    if (water_heater_recovery_efficiency < 0)
-      @runner.registerError("Gas Storage Water Heater Recovery Efficiency must be at least 0 and at most 1.")
+  def validate_water_heater_recovery_efficiency(re, runner)
+    if (re < 0)
+      runner.registerError("Gas storage water heater recovery efficiency must be at least 0 and at most 1.")
     end
-    if (water_heater_recovery_efficiency > 1)
-      @runner.registerError("Gas Storage Water Heater Recovery Efficiency must be at least 0 and at most 1.")
+    if (re > 1)
+      runner.registerError("Gas storage water heater recovery efficiency must be at least 0 and at most 1.")
     end
-    if (water_heater_recovery_efficiency < 0.70)
-      @runner.registerWarning("Commercially Available Gas Storage Water heaters should have a minimum rated recovery efficiency of 0.70.")
+    if (re < 0.70)
+      runner.registerWarning("Commercially available gas storage water heaters should have a minimum rated recovery efficiency of 0.70.")
     end
-    if (water_heater_recovery_efficiency > 0.90)
-      @runner.registerWarning("Commercially Available Gas Storage Water heaters should have a maximum rated recovery efficiency of 0.90.")
-    end
-
-    energy_factor = @args[:rated_energy_factor]
-    if (water_heater_recovery_efficiency <= energy_factor)
-      @runner.registerError("Energy factor must be less than Recovery efficiency.")
+    if (re > 0.90)
+      runner.registerWarning("Commercially available gas storage water heaters should have a maximum rated recovery efficiency of 0.90.")
     end
     
   end
   
-  
+  def validate_parasitic_elec(oncycle_p, offcycle_p, runner)
+	if oncycle_p < 0
+	  runner.registerError("Forced draft fan power must be greater than 0")
+	end
+	if offcycle_p < 0
+	  runner.registerError("Parasitic electricity power must be greater than 0")
+	end
+	if oncycle_p > 100
+	  runner.registerWarning("Forced draft power consumption is larger than typically seen for residential water heaters, double check inputs")
+	end
+	if offcycle_p > 30
+	  runner.registerWarning("Parasitic power consumption is larger than typically seen for residential water heaters, double check inputs")
+	end
+  end
   
   
 end #end the measure
