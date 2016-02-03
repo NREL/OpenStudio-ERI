@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>89c5184b-e33a-4440-b609-3884732e6f06</version_id>
+  <version_id>a2a338de-f019-46b1-bcbf-5b55ba1669fe</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageGas</class_name>
   <display_name>AddOSWaterHeaterMixedStorageGas</display_name>
@@ -54,7 +54,7 @@
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.8</default_value>
+      <default_value>0.76</default_value>
     </argument>
     <argument>
       <name>offcyc_power</name>
@@ -129,7 +129,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7DA40D21</checksum>
+      <checksum>349F8DC9</checksum>
     </file>
   </files>
 </measure>
