@@ -1,5 +1,6 @@
 # Add classes or functions here than can be used across a variety of our python classes and modules.
 require "#{File.dirname(__FILE__)}/constants"
+require "#{File.dirname(__FILE__)}/util"
 
 class Waterheater
 	def self.calc_nom_tankvol(vol, fuel, num_beds, num_baths)
@@ -175,26 +176,14 @@ class Waterheater
 		t_set_c = OpenStudio::convert(t_set,"F","C").get
 		new_schedule.setName(name)
 		new_schedule.defaultDaySchedule.setName(schedule_name)
-		new_schedule.defaultDaySchedule.addValue(OpenStudio::Time.new("24:00:00"), t_set_c)
+		new_schedule.defaultDaySchedule.addValue(OpenStudio::Time.new("24:00:00"), t_set)
 		return new_schedule
-	end
-	
-	def self.eplus_fuel_map(fuel)
-		if fuel == Constants.FuelTypeElectric
-			return "Electricity"
-		elsif fuel == Constants.FuelTypeGas
-			return "NaturalGas"
-		elsif fuel == Constants.FuelTypeOil
-			return "FuelOil#1"
-		else #Propane
-			return "Propane"
-		end
 	end
 	
 	def self.create_new_heater(cap, fuel, vol, nbeds, nbaths, ef, re, t_set, loc, oncycle_p, offcycle_p, model, runner)
 	
 		new_heater = OpenStudio::Model::WaterHeaterMixed.new(model)
-		fuel_eplus = self.eplus_fuel_map(fuel)
+		fuel_eplus = HelperMethods.eplus_fuel_map(fuel)
 		capacity = self.calc_capacity(cap, fuel, nbeds, nbaths)
 		capacity_w = OpenStudio::convert(capacity,"kBtu/hr","W").get
 		nom_vol = self.calc_nom_tankvol(vol, fuel, nbeds, nbaths)
@@ -250,10 +239,10 @@ class Waterheater
   
     def self.configure_setpoint_schedule(new_heater, t_set, model, runner)
 		set_temp = OpenStudio::convert(t_set,"F","C").get
-		
-		new_schedule = self.create_new_schedule_ruleset("DHW Set Temp", "DHW Set Temp Default", set_temp, model)
+		runner.registerInfo("t_set = #{t_set}")
+		runner.registerInfo("set_temp = #{set_temp}")
+		new_schedule = self.create_new_schedule_ruleset("DHW Set Temp", "DHW Set Temp", set_temp, model)
 		new_heater.setSetpointTemperatureSchedule(new_schedule)
-
 		runner.registerInfo "A schedule named DHW Set Temp was created and applied to the gas water heater, using a constant temperature of #{t_set.to_s} F for generating domestic hot water."
 	end
 	
@@ -272,4 +261,31 @@ class Waterheater
 		
 		return loop
 	end
+	
+	def self.get_water_heater_setpoint(model, plant_loop, runner)
+        waterHeater = nil
+        plant_loop.supplyComponents.each do |wh|
+            if wh.to_WaterHeaterMixed.is_initialized
+                waterHeater = wh.to_WaterHeaterMixed.get
+            elsif wh.to_WaterHeaterStratified.is_initialized
+                waterHeater = wh.to_WaterHeaterStratified.get
+            else
+                next
+            end
+            if waterHeater.setpointTemperatureSchedule.nil?
+                runner.registerError("Water heater found without a setpoint temperature schedule.")
+                return nil
+            end
+        end
+        if waterHeater.nil?
+            runner.registerError("No water heater found; add a residential water heater first.")
+            return nil
+        end
+        min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.setpointTemperatureSchedule.get)
+        wh_setpoint = OpenStudio.convert((min_max_result['min'] + min_max_result['max'])/2.0, "C", "F").get
+        if min_max_result['min'] != min_max_result['max']
+            runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
+        end
+        return wh_setpoint
+    end
 end

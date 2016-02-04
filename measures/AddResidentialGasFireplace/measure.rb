@@ -65,7 +65,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
 	args << monthly_sch
 
     #make a choice argument for space
-    spaces = model.getSpaceTypes
+    spaces = model.getSpaces
     space_args = OpenStudio::StringVector.new
     spaces.each do |space|
         space_args << space.name.to_s

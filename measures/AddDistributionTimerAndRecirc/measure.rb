@@ -481,7 +481,7 @@ class AddWaterUseEquipmentObject < OpenStudio::Ruleset::ModelUserScript
 	
 	def create_new_loop
 		loop = OSM::PlantLoop.new(@model)
-		loop.setName(Constants.PlantLoopServiceWater)
+		loop.setName(Constants.PlantLoopDomesticWater)
 		loop.sizingPlant.setDesignLoopExitTemperature(60)
 		loop.sizingPlant.setLoopDesignTemperatureDifference(50)
 		bypass_pipe = OSM::PipeAdiabatic.new(@model)

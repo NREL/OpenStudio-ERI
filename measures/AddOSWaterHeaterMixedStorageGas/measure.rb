@@ -12,6 +12,7 @@ require 'OpenStudio'
 require "#{File.dirname(__FILE__)}/resources/util"
 require"#{File.dirname(__FILE__)}/resources/waterheater"
 require"#{File.dirname(__FILE__)}/resources/constants"
+require"#{File.dirname(__FILE__)}/resources/unit_conversions"
 
 
 #start the measure
@@ -23,6 +24,14 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
   #the display name in PAT comes from the name field in measure.xml
   def name
     return "AddOSWaterHeaterMixedStorageGas"
+  end
+  
+  def description
+    return "This measure adds a new residential gas storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced."
+  end
+  
+  def modeler_description
+    return "The measure will create a new instance of the OS:WaterHeater:Mixed object representing a gas storage water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created."
   end
 
   OS = OpenStudio
@@ -63,8 +72,13 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
 	   # make an argument for water_heater_location
     thermal_zones = model.getThermalZones
     thermal_zone_names = thermal_zones.select { |tz| not tz.name.empty?}.collect{|tz| tz.name.get }
+	if not thermal_zone_names.include?(Constants.LivingZone)
+        thermal_zone_names << Constants.LivingZone
+	end
     water_heater_location = osargument::makeChoiceArgument("water_heater_location",thermal_zone_names, true)
+	water_heater_location.setDefaultValue(Constants.LivingZone)
     water_heater_location.setDisplayName("Thermal zone where the water heater is located.")
+	
     args << water_heater_location
 
     # make an argument for water_heater_capacity
@@ -135,30 +149,16 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
     end
 	
 	#Check if a DHW plant loop already exists, if not add it
-	pl_name = "Domestic Hot Water Loop"
-	existing_loop = 0
 	loop = nil
 	
 	model.getPlantLoops.each do |pl|
-		if pl.name.to_s == pl_name
+		if pl.name.to_s == Constants.PlantLoopDomesticWater
 			runner.registerInfo("A gas water heater will be added to the existing DHW plant loop")
-			loop = HelperMethods.get_plant_loop_from_string(model, pl_name.to_s, runner)
+			loop = HelperMethods.get_plant_loop_from_string(model, Constants.PlantLoopDomesticWater, runner)
 			if loop.nil?
 				return false
 			end
-			existing_loop = 1
-		end
-	end
-
-	if existing_loop == 0
-		runner.registerInfo("A new plant loop for DHW will be added to the model")
-		loop = Waterheater.create_new_loop(model)
-	end
-			
-	
-	#Remove the existing water heater
-	model.getPlantLoops.each do |pl|
-		if pl.name.get == pl_name
+			#Remove the existing water heater
 			pl.supplyComponents.each do |wh|
 				if wh.to_WaterHeaterMixed.is_initialized
 					waterHeater = wh.to_WaterHeaterMixed.get
@@ -171,6 +171,11 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
 				end
 			end
 		end
+	end
+
+	if loop.nil?
+		runner.registerInfo("A new plant loop for DHW will be added to the model")
+		loop = Waterheater.create_new_loop(model)
 	end
 
     register_initial_conditions(model, runner)
@@ -187,8 +192,6 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
 	
 			
 	new_heater = Waterheater.create_new_heater(cap, Constants.FuelTypeGas, vol, nbeds, nbaths, ef, re, t_set, water_heater_tz, oncycle_p, offcycle_p, model, runner)
-		
-	register_info_messages(new_heater, runner)
 	
     loop.addSupplyBranchForComponent(new_heater)
         
@@ -213,7 +216,7 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
   end
 
   def create_new_schedule_manager(t_set, model)
-    new_schedule = Waterheater.create_new_schedule_ruleset("DHW Temp", "HW Temp Default", t_set, model)
+    new_schedule = Waterheater.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", t_set, model)
     OSM::SetpointManagerScheduled.new(model, new_schedule)
   end 
   
@@ -250,19 +253,6 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
     end
 
     water_heaters
-  end
-
-  def register_info_messages(new_heater, runner)
-    info_prefix = "Gas water heater has "
-	
-    max_cap = OS::convert(new_heater.getHeaterMaximumCapacity.get, KBtuhr).get
-    tank_volume = OS::convert(new_heater.getTankVolume.get, Gallon).get
-    
-    runner.registerInfo "A new gas water heater was created"
-    runner.registerInfo info_prefix + "a tank volume of #{tank_volume}"
-    runner.registerInfo info_prefix + "a capacity of #{max_cap}"
-    runner.registerInfo info_prefix + "a heater thermal efficiency of #{new_heater.heaterThermalEfficiency}"
-
   end
 
   def validate_storage_tank_volume(vol, runner)

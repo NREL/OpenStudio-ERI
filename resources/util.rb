@@ -244,33 +244,18 @@ class HelperMethods
         end
         return plant_loop
     end
-    
-    def self.get_water_heater_setpoint(model, plant_loop, runner)
-        waterHeater = nil
-        plant_loop.supplyComponents.each do |wh|
-            if wh.to_WaterHeaterMixed.is_initialized
-                waterHeater = wh.to_WaterHeaterMixed.get
-            elsif wh.to_WaterHeaterStratified.is_initialized
-                waterHeater = wh.to_WaterHeaterStratified.get
-            else
-                next
-            end
-            if waterHeater.setpointTemperatureSchedule.nil?
-                runner.registerError("Water heater found without a setpoint temperature schedule.")
-                return nil
-            end
-        end
-        if waterHeater.nil?
-            runner.registerError("No water heater found; add a residential water heater first.")
-            return nil
-        end
-        min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.setpointTemperatureSchedule.get)
-        wh_setpoint = OpenStudio.convert((min_max_result['min'] + min_max_result['max'])/2.0, "C", "F").get
-        if min_max_result['min'] != min_max_result['max']
-            runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
-        end
-        return wh_setpoint
-    end
+	
+	def self.eplus_fuel_map(fuel)
+		if fuel == Constants.FuelTypeElectric
+			return "Electricity"
+		elsif fuel == Constants.FuelTypeGas
+			return "NaturalGas"
+		elsif fuel == Constants.FuelTypeOil
+			return "FuelOil#1"
+		elsif fuel == Constants.FuelTypePropane
+			return "Propane"
+		end
+	end
 
 end
 
