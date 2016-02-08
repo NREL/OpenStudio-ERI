@@ -239,8 +239,6 @@ class Waterheater
   
     def self.configure_setpoint_schedule(new_heater, t_set, model, runner)
 		set_temp = OpenStudio::convert(t_set,"F","C").get
-		runner.registerInfo("t_set = #{t_set}")
-		runner.registerInfo("set_temp = #{set_temp}")
 		new_schedule = self.create_new_schedule_ruleset("DHW Set Temp", "DHW Set Temp", set_temp, model)
 		new_heater.setSetpointTemperatureSchedule(new_schedule)
 		runner.registerInfo "A schedule named DHW Set Temp was created and applied to the gas water heater, using a constant temperature of #{t_set.to_s} F for generating domestic hot water."
