@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/util"
 class Waterheater
 	def self.calc_nom_tankvol(vol, fuel, num_beds, num_baths)
 		#Calculates the volume of a water heater
-		if vol == 'auto'
+		if vol == Constants.Auto
 			#Based on the BA HSP
 			if fuel == Constants.FuelTypeElectric
 			# Source: Table 5 HUD-FHA Minimum Water Heater Capacities for One- and 
@@ -64,7 +64,7 @@ class Waterheater
     def self.calc_capacity(cap, fuel, num_beds, num_baths)
     #Calculate the capacity of the water heater based on the fuel type and number of bedrooms and bathrooms in a home
     #returns the capacity in kBtu/hr
-		if cap == 'auto'
+		if cap == Constants.Auto
 			if fuel != Constants.FuelTypeElectric
 				if num_beds <= 3
 					input_power = 36
@@ -119,7 +119,7 @@ class Waterheater
 	
 	def self.calc_ef(ef, vol, fuel)
 	#Calculate the energy factor as a function of the tank volume and fuel type
-		if ef == 'auto'
+		if ef == Constants.Auto
 			if fuel == Constants.FuelTypePropane or fuel == Constants.FuelTypeGas
 				return 0.67 - (0.0019 * vol)
 			elsif fuel == Constants.FuelTypeElectric
