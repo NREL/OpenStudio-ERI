@@ -18,9 +18,36 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
   class Ducts
-    def initialize
+    def initialize(ductTotalLeakage, ductNormLeakageToOutside, ductSupplySurfaceAreaMultiplier, ductReturnSurfaceAreaMultiplier, ductUnconditionedRvalue)
+      @ductTotalLeakage = ductTotalLeakage
+      @ductNormLeakageToOutside = ductNormLeakageToOutside
+      @ductSupplySurfaceAreaMultiplier = ductSupplySurfaceAreaMultiplier
+      @ductReturnSurfaceAreaMultiplier = ductReturnSurfaceAreaMultiplier
+      @ductUnconditionedRvalue = ductUnconditionedRvalue
     end
-    attr_accessor(:DuctLocation, :has_ducts)
+    
+    attr_accessor(:DuctLocation, :has_ducts, :ducts_not_in_living, :num_stories, :num_stories_for_ducts, :DuctLocationFrac, :DuctLocationFracLeakage, :DuctLocationFracConduction, :DuctSupplyLeakageFractionOfTotal, :DuctReturnLeakageFractionOfTotal, :DuctAHSupplyLeakageFractionOfTotal, :DuctAHReturnLeakageFractionOfTotal, :DuctSupplyLeakage, :DuctReturnLeakage, :DuctAHSupplyLeakage, :DuctAHReturnLeakage, :DuctNumReturns, :supply_duct_surface_area, :return_duct_surface_area, :unconditioned_duct_area, :supply_duct_r, :return_duct_r, :unconditioned_duct_ua, :return_duct_ua, :supply_duct_volume, :return_duct_volume, :direct_oa_supply_duct_loss, :supply_duct_loss, :return_duct_loss, :supply_leak_oper, :return_leak_oper, :ah_supply_leak_oper, :ah_return_leak_oper, :total_duct_unbalance, :frac_oa, :oa_duct_makeup)
+    
+    def DuctTotalLeakage
+      return @ductTotalLeakage
+    end
+    
+    def DuctNormLeakageToOutside
+      return @ductNormLeakageToOutside
+    end
+    
+    def DuctSupplySurfaceAreaMultiplier
+      return @ductSupplySurfaceAreaMultiplier
+    end
+    
+    def DuctReturnSurfaceAreaMultiplier
+      return @ductReturnSurfaceAreaMultiplier
+    end
+    
+    def DuctUnconditionedRvalue
+      return @ductUnconditionedRvalue
+    end
+    
   end
 
   class Infiltration
@@ -808,14 +835,104 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     #make a choice arguments for duct location
     duct_locations = OpenStudio::StringVector.new
     duct_locations << Constants.Auto
-    duct_locations << Constants.LivingSpace(1)
-    duct_locations << Constants.BasementSpace
-    duct_locations << Constants.UnfinishedAtticSpace
+    duct_locations << Constants.LivingZone
+    duct_locations << Constants.AtticZone
+    duct_locations << Constants.BasementZone
+    duct_locations << Constants.GarageZone
+    duct_locations << "none"
     duct_location = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("duct_location", duct_locations, true)
-    duct_location.setDisplayName("Duct Location")
+    duct_location.setDisplayName("Ducts: Location")
 	duct_location.setDescription("The space with the primary location of ducts.")
     duct_location.setDefaultValue(Constants.Auto)
     args << duct_location
+    
+    #make a double argument for total leakage
+    duct_total_leakage = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_total_leakage", false)
+    duct_total_leakage.setDisplayName("Ducts: Total Leakage")
+	duct_total_leakage.setUnits("frac")
+	duct_total_leakage.setDescription("The total amount of air flow leakage expressed as a fraction of the total air flow rate.")
+    duct_total_leakage.setDefaultValue(0.3)
+    args << duct_total_leakage
+
+    #make a double argument for supply leakage fraction of total
+    duct_sup_frac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_sup_frac", false)
+    duct_sup_frac.setDisplayName("Ducts: Supply Leakage Fraction of Total")
+	duct_sup_frac.setUnits("frac")
+	duct_sup_frac.setDescription("The amount of air flow leakage leaking out from the supply duct expressed as a fraction of the total duct leakage.")
+    duct_sup_frac.setDefaultValue(0.6)
+    args << duct_sup_frac
+
+    #make a double argument for return leakage fraction of total
+    duct_ret_frac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_ret_frac", false)
+    duct_ret_frac.setDisplayName("Ducts: Return Leakage Fraction of Total")
+	duct_ret_frac.setUnits("frac")
+	duct_ret_frac.setDescription("The amount of air flow leakage leaking into the return duct expressed as a fraction of the total duct leakage.")
+    duct_ret_frac.setDefaultValue(0.067)
+    args << duct_ret_frac  
+
+    #make a double argument for supply AH leakage fraction of total
+    duct_ah_sup_frac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_ah_sup_frac", false)
+    duct_ah_sup_frac.setDisplayName("Ducts: Supply Air Handler Leakage Fraction of Total")
+	duct_ah_sup_frac.setUnits("frac")
+	duct_ah_sup_frac.setDescription("The amount of air flow leakage leaking out from the supply-side of the air handler expressed as a fraction of the total duct leakage.")
+    duct_ah_sup_frac.setDefaultValue(0.067)
+    args << duct_ah_sup_frac  
+
+    #make a double argument for return AH leakage fraction of total
+    duct_ah_ret_frac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_ah_ret_frac", false)
+    duct_ah_ret_frac.setDisplayName("Ducts: Return Air Handler Leakage Fraction of Total")
+	duct_ah_ret_frac.setUnits("frac")
+	duct_ah_ret_frac.setDescription("The amount of air flow leakage leaking out from the return-side of the air handler expressed as a fraction of the total duct leakage.")
+    duct_ah_ret_frac.setDefaultValue(0.267)
+    args << duct_ah_ret_frac
+    
+    #make a double argument for norm leakage to outside
+    duct_norm_leakage_to_outside = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_norm_leakage_to_outside", false)
+    duct_norm_leakage_to_outside.setDisplayName("Ducts: Leakage to Outside at 25Pa")
+	duct_norm_leakage_to_outside.setUnits("cfm/100 ft^2")
+	duct_norm_leakage_to_outside.setDescription("Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
+    duct_norm_leakage_to_outside.setDefaultValue(0)
+    args << duct_norm_leakage_to_outside
+    
+    #make a string argument for duct location frac    
+    duct_location_frac = OpenStudio::Ruleset::OSArgument::makeStringArgument("duct_location_frac", true)
+    duct_location_frac.setDisplayName("Ducts: Location Fraction")
+	duct_location_frac.setUnits("frac")
+	duct_location_frac.setDescription("Fraction of supply ducts in the space specified by Duct Location; the remainder of supply ducts will be located in above-grade conditioned space.")
+    duct_location_frac.setDefaultValue(Constants.Auto)
+    args << duct_location_frac
+
+    #make a string argument for duct num returns
+    duct_num_returns = OpenStudio::Ruleset::OSArgument::makeStringArgument("duct_num_returns", true)
+    duct_num_returns.setDisplayName("Ducts: Number of Returns")
+	duct_num_returns.setUnits("#")
+	duct_num_returns.setDescription("The number of duct returns.")
+    duct_num_returns.setDefaultValue(Constants.Auto)
+    args << duct_num_returns       
+    
+    #make a double argument for supply surface area multiplier
+    supply_surface_area_multiplier = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("supply_surface_area_multiplier", true)
+    supply_surface_area_multiplier.setDisplayName("Ducts: Supply Surface Area Multiplier")
+	supply_surface_area_multiplier.setUnits("mult")
+	supply_surface_area_multiplier.setDescription("Values specify a fraction of the Building America Benchmark supply duct surface area.")
+    supply_surface_area_multiplier.setDefaultValue(1.0)
+    args << supply_surface_area_multiplier
+
+    #make a double argument for return surface area multiplier
+    return_surface_area_multiplier = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("return_surface_area_multiplier", true)
+    return_surface_area_multiplier.setDisplayName("Ducts: Return Surface Area Multiplier")
+	return_surface_area_multiplier.setUnits("mult")
+	return_surface_area_multiplier.setDescription("Values specify a fraction of the Building America Benchmark return duct surface area.")
+    return_surface_area_multiplier.setDefaultValue(1.0)
+    args << return_surface_area_multiplier
+    
+    #make a double argument for duct unconditioned r value
+    duct_unconditioned_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_unconditioned_rvalue", true)
+    duct_unconditioned_rvalue.setDisplayName("Ducts: Insulation Nominal R-Value")
+	duct_unconditioned_rvalue.setUnits("h-ft^2-R/Btu")
+	duct_unconditioned_rvalue.setDescription("The nominal R-value for duct insulation.")
+    duct_unconditioned_rvalue.setDefaultValue(0.0)
+    args << duct_unconditioned_rvalue    
     
     return args
   end #end the arguments method
@@ -839,8 +956,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	garage_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, garage_thermal_zone_r, runner, false)
 	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
 	fbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, fbasement_thermal_zone_r, runner, false)
-    puts fbasement_thermal_zone
-    puts "HERE"
 	ufbasement_thermal_zone_r = runner.getStringArgumentValue("ufbasement_thermal_zone",user_arguments)
 	ufbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, ufbasement_thermal_zone_r, runner, false)
 	crawl_thermal_zone_r = runner.getStringArgumentValue("crawl_thermal_zone",user_arguments)
@@ -913,6 +1028,20 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentMaxOARelativeHumidity = runner.getDoubleArgumentValue("userdefinedrelhumratio",user_arguments)
     
     duct_location = runner.getStringArgumentValue("duct_location",user_arguments)
+    ductTotalLeakage = runner.getDoubleArgumentValue("duct_total_leakage",user_arguments)
+    ductSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_sup_frac",user_arguments)
+    ductReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ret_frac",user_arguments)
+    ductAHSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_sup_frac",user_arguments)
+    ductAHReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_ret_frac",user_arguments)
+    ductNormLeakageToOutside = runner.getDoubleArgumentValue("duct_norm_leakage_to_outside",user_arguments)
+    if ductNormLeakageToOutside == 0
+        ductNormLeakageToOutside = nil
+    end
+    duct_location_frac = runner.getStringArgumentValue("duct_location",user_arguments)
+    duct_num_returns = runner.getStringArgumentValue("duct_num_returns",user_arguments)
+    ductSupplySurfaceAreaMultiplier = runner.getDoubleArgumentValue("supply_surface_area_multiplier",user_arguments)
+    ductReturnSurfaceAreaMultiplier = runner.getDoubleArgumentValue("return_surface_area_multiplier",user_arguments)
+    ductUnconditionedRvalue = runner.getDoubleArgumentValue("duct_unconditioned_rvalue",user_arguments)
 
     # Get number of bedrooms/bathrooms
     nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, runner)
@@ -952,12 +1081,12 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     schedules = Schedules.new
     cooling_set_point = CoolingSetpoint.new
     heating_set_point = HeatingSetpoint.new
-    d = Ducts.new
+    d = Ducts.new(ductTotalLeakage, ductNormLeakageToOutside, ductSupplySurfaceAreaMultiplier, ductReturnSurfaceAreaMultiplier, ductUnconditionedRvalue)
 
     zones = workspace.getObjectsByType("Zone".to_IddObjectType)
     zones.each do |zone|
       zone_name = zone.getString(0).to_s # Name
-      if zone_name == living_thermal_zone_r # tk need to figure out why idf doesn't get these values after OSM translation
+      if zone_name == living_thermal_zone_r # FIXME: this would be the code if the idf indeed stored this information
         living_space.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
         living_space.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
         living_space.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
@@ -1033,7 +1162,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     heating_set_point.HeatingSetpointWeekend = heating_set_point.HeatingSetpointWeekday
     cooling_set_point.CoolingSetpointWeekend = cooling_set_point.CoolingSetpointWeekday
 
-    # temp code for testing
+    # TODO: create helper methods to retrieve the following
     geometry.finished_floor_area = runner.getDoubleArgumentValue("finished_floor_area",user_arguments)
     geometry.above_grade_finished_floor_area = runner.getDoubleArgumentValue("above_grade_finished_floor_area",user_arguments)
     geometry.building_height = runner.getDoubleArgumentValue("building_height",user_arguments)
@@ -1058,7 +1187,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     space_unfinished_basement.volume = runner.getDoubleArgumentValue("ufbvolume",user_arguments)
     space_unfinished_basement.height = runner.getDoubleArgumentValue("ufbheight",user_arguments)
     space_unfinished_basement.area = runner.getDoubleArgumentValue("ufbarea",user_arguments)
-    #
+    ###
 
     # Create the sim object
     sim = Sim.new(workspace, runner)
@@ -1492,7 +1621,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       NaturalVentilationProgram;                                      !- Program Name 2"
 
     # Mechanical Ventilation
-    if vent.MechVentType == Constants.VentTypeBalanced # tk will need to complete _processSystemVentilationNodes for this to work
+    if vent.MechVentType == Constants.VentTypeBalanced # TODO: will need to complete _processSystemVentilationNodes for this to work
 
       ems << "
       Fan:OnOff,
@@ -1509,7 +1638,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         ,                                                                             !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
         VentFans;                                                                     !- End-Use Subcategory"
 
-      # tk Fan-EIR-fPLR has not been added so does not show up in IDF (does it need to?)
+      # TODO: Fan-EIR-fPLR has not been added so does not show up in IDF (does it need to?)
 
       ems << "
       Fan:OnOff,
@@ -1526,7 +1655,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         ,                                                                             !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
         VentFans;                                                                     !- End-Use Subcategory"
 
-      # tk Fan-EIR-fPLR has not been added so does not show up in IDF (does it need to?)
+      # TODO: Fan-EIR-fPLR has not been added so does not show up in IDF (does it need to?)
 
       ems << "
       ZoneHVAC:EnergyRecoveryVentilator:Controller,
@@ -1693,57 +1822,1016 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       end
     end
 
+    # _processDuctwork
+    d.DuctLocation = get_duct_location(duct_location, garage_thermal_zone, fbasement_thermal_zone, ufbasement_thermal_zone, crawl_thermal_zone, ufattic_thermal_zone)
+    # Disallow placing ducts in locations that don't exist, and handle
+    # exception for no ducts (in DuctLocation = None).    
+    
+    d.has_ducts = true  
+    if d.DuctLocation == "none"
+        d.DuctLocation = Constants.LivingZone
+        d.has_ducts = false
+    end
+    
+    has_mini_split_hp = false # TODO: will need to update when mini split measure is available
+    if has_mini_split_hp and ( d.DuctLocation != (Constants.LivingZone or nil) )
+      d.DuctLocation = Constants.LivingZone
+      d.has_ducts = false
+      runner.registerWarning("Duct losses are currently neglected when simulating mini-split heat pumps. Set Ducts to None or In Finished Space to avoid this warning message.")
+    end    
+    
+    # Set has_uncond_ducts to False if ducts are in a conditioned space,
+    # otherwise True    
+    if d.DuctLocation == Constants.LivingZone or d.DuctLocation == Constants.FinishedAtticZone
+        d.ducts_not_in_living = false
+    elsif d.DuctLocation == Constants.FinishedBasementZone or d.DuctLocation == Constants.UnfinishedBasementZone or d.DuctLocation == Constants.CrawlZone or d.DuctLocation == Constants.GarageZone or d.DuctLocation == Constants.UnfinishedAtticZone
+        d.ducts_not_in_living = true
+    end
+    
+    # unless d.DuctSystemEfficiency.nil?
+        # d.ducts_not_in_living = true
+        # d.has_ducts = true
+    # end
+    
+    unless fbasement_thermal_zone.nil?
+      d.num_stories_for_ducts = geometry.stories + 1
+    end
+    
+    d.num_stories = d.num_stories_for_ducts
+    
+    if d.DuctNormLeakageToOutside.nil?
+      # Normalize values in case user inadvertently entered values that add up to the total duct leakage, 
+      # as opposed to adding up to 1
+      sumFractionOfTotal = (ductSupplyLeakageFractionOfTotal + ductReturnLeakageFractionOfTotal + ductAHSupplyLeakageFractionOfTotal + ductAHReturnLeakageFractionOfTotal)
+      if sumFractionOfTotal > 0
+        d.DuctSupplyLeakageFractionOfTotal = ductSupplyLeakageFractionOfTotal / sumFractionOfTotal
+        d.DuctReturnLeakageFractionOfTotal = ductReturnLeakageFractionOfTotal / sumFractionOfTotal
+        d.DuctAHSupplyLeakageFractionOfTotal = ductAHSupplyLeakageFractionOfTotal / sumFractionOfTotal
+        d.DuctAHReturnLeakageFractionOfTotal = ductAHReturnLeakageFractionOfTotal / sumFractionOfTotal
+      end
+      
+      # Calculate actual leakages from percentages
+      d.DuctSupplyLeakage = d.DuctSupplyLeakageFractionOfTotal * d.DuctTotalLeakage
+      d.DuctReturnLeakage = d.DuctReturnLeakageFractionOfTotal * d.DuctTotalLeakage
+      d.DuctAHSupplyLeakage = d.DuctAHSupplyLeakageFractionOfTotal * d.DuctTotalLeakage
+      d.DuctAHReturnLeakage = d.DuctAHReturnLeakageFractionOfTotal * d.DuctTotalLeakage     
+    end
+    
+    # Fraction of ducts in primary duct location (remaining ducts are in above-grade conditioned space).
+    if duct_location_frac == Constants.Auto
+      # Duct location fraction per 2010 BA Benchmark
+      if d.num_stories == 1
+        d.DuctLocationFrac = 1
+      else
+        d.DuctLocationFrac = 0.65
+      end
+    else
+      d.DuctLocationFrac = duct_location_frac.to_f
+    end    
+    
+    d.DuctLocationFracLeakage = d.DuctLocationFrac
+    d.DuctLocationFracConduction = d.DuctLocationFrac
+    
+    d.supply_duct_surface_area = get_duct_supply_surface_area(d.DuctSupplySurfaceAreaMultiplier, geometry, d.num_stories)
+    
+    d.DuctNumReturns = get_duct_num_returns(duct_num_returns, d.num_stories)
+    
+    d.return_duct_surface_area = get_duct_return_surface_area(d.DuctReturnSurfaceAreaMultiplier, geometry, d.num_stories, d.DuctNumReturns)
+   
+    ducts_total_duct_surface_area = d.supply_duct_surface_area + d.return_duct_surface_area
+     
+    # Calculate Duct UA value
+    if d.ducts_not_in_living
+      d.unconditioned_duct_area = d.supply_duct_surface_area * d.DuctLocationFracConduction
+      d.supply_duct_r = get_duct_insulation_rvalue(d.DuctUnconditionedRvalue, true)
+      d.return_duct_r = get_duct_insulation_rvalue(d.DuctUnconditionedRvalue, false)
+      d.unconditioned_duct_ua = d.unconditioned_duct_area / d.supply_duct_r
+      d.return_duct_ua = d.return_duct_surface_area / d.return_duct_r
+    else
+      d.DuctLocationFracConduction = 0
+      d.unconditioned_duct_ua = 0
+      d.return_duct_ua = 0
+    end
+    
+    # Calculate Duct Volume
+    if d.ducts_not_in_living
+      # Assume ducts are 3 ft by 1 ft, (8 is the perimeter)
+      d.supply_duct_volume = (d.unconditioned_duct_area / 8.0) * 3.0
+      d.return_duct_volume = (d.return_duct_surface_area / 8.0) * 3.0
+    else
+      d.supply_duct_volume = 0
+      d.return_duct_volume = 0
+    end
+    
+    # This can't be zero. A value of zero causes weird sizing issues in DOE-2.
+    d.direct_oa_supply_duct_loss = 0.000001    
+    
+    # Only if using the Fractional Leakage Option Type:
+    if d.DuctNormLeakageToOutside.nil?
+      d.supply_duct_loss = (d.DuctLocationFracLeakage * (d.DuctSupplyLeakage - d.direct_oa_supply_duct_loss) + (d.DuctAHSupplyLeakage + d.direct_oa_supply_duct_loss))
+      d.return_duct_loss = d.DuctReturnLeakage + d.DuctAHReturnLeakage
+    end
+    
+    # _processDuctLeakage
+    unless d.DuctNormLeakageToOutside.nil?
+      d = calc_duct_leakage_from_test(geometry.finished_floor_area, supply.FanAirFlowRate) # TODO: if DuctNormLeakageToOutside is specified, this will error because we don't calculate FanAirFlowRate
+    end
+    
+    d.total_duct_unbalance = (d.supply_duct_loss - d.return_duct_loss).abs
+    
+    if not d.DuctLocation == Constants.LivingZone and not d.DuctLocation == "none" and d.supply_duct_loss > 0
+      # Calculate d.frac_oa = fraction of unbalanced make-up air that is outside air
+      if d.total_duct_unbalance <= 0
+        # Handle the exception for if there is no leakage unbalance.
+        d.frac_oa = 0
+      elsif [Constants.FinishedBasementZone, Constants.UnfinishedBasementZone].include? d.DuctLocation or (d.DuctLocation == Constants.CrawlZone and crawlACH == 0) or (d.DuctLocation == Constants.UnfinishedAtticZone and uaSLA == 0)         
+        d.frac_oa = d.direct_oa_supply_duct_loss / d.total_duct_unbalance
+      else
+        # Assume that all of the unbalanced make-up air is driven infiltration from outdoors.
+        # This assumes that the holes for attic ventilation are much larger than any attic bypasses.      
+        d.frac_oa = 1
+      end
+      # d.oa_duct_makeup =  fraction of the supply duct air loss that is made up by outside air (via return leakage)
+      d.oa_duct_makeup = [d.frac_oa * d.total_duct_unbalance / [d.supply_duct_loss,d.return_duct_loss].max, 1].min
+    else
+      d.frac_oa = 0
+      d.oa_duct_makeup = 0
+    end
+    
+    hasForcedAirEquipment = false
+    if workspace.getObjectsByType("AirLoopHVAC".to_IddObjectType).length > 0
+      hasForcedAirEquipment = true
+    end
+
+    if not d.DuctLocation == Constants.LivingZone and not d.DuctLocation == "none" and hasForcedAirEquipment
+    
+      # _processConstructionsAdiabatic
+      # Adiabatic Constructions are used for interior underground surfaces
+      ems << "
+      Construction,
+        AdiabaticConst,                                                     !- Name
+        Adiabatic;                                                          !- Outside Layer"
+    
+      # _processZoneReturnPlenum
+      # Return Plenum Zone and Duct Leakage Objects
+      
+      ems << "
+      Zone,
+        RA Duct Zone,                                                       !- Name
+        0,                                                                  !- Direction of Relative North {deg}
+        0,                                                                  !- X Origin {m}
+        0,                                                                  !- Y Origin {m}
+        0,                                                                  !- Z Origin {m}
+        ,                                                                   !- Type
+        ,                                                                   !- Multiplier
+        0,                                                                  !- Ceiling Height {m}
+        #{OpenStudio::convert(d.return_duct_volume,"ft^3","m^3").get},      !- Volume {m3}
+        0;                                                                  !- Floor Area {m2}"    
+      
+      ems << "
+      Wall:Adiabatic,
+        RADuctWall_N,                                                       !- Name
+        AdiabaticConst,                                                     !- Construction Name
+        RA Duct Zone,                                                       !- RA Duct Zone
+        0,                                                                  !- Azimuth
+        90,                                                                 !- Tilt
+        0,                                                                  !- Vertex 1 X-Coordinate
+        75,                                                                 !- Vertex 1 Y-Coordinate
+        0,                                                                  !- Vertex 1 Z-Coordinate
+        1,                                                                  !- Length
+        1;                                                                  !- Height"      
+      
+      ems << "
+      Wall:Adiabatic,
+        RADuctWall_E,                                                       !- Name
+        AdiabaticConst,                                                     !- Construction Name
+        RA Duct Zone,                                                       !- RA Duct Zone
+        90,                                                                 !- Azimuth
+        90,                                                                 !- Tilt
+        0,                                                                  !- Vertex 1 X-Coordinate
+        74,                                                                 !- Vertex 1 Y-Coordinate
+        0,                                                                  !- Vertex 1 Z-Coordinate
+        1,                                                                  !- Length
+        1;                                                                  !- Height" 
+ 
+      ems << "
+      Wall:Adiabatic,
+        RADuctWall_S,                                                       !- Name
+        AdiabaticConst,                                                     !- Construction Name
+        RA Duct Zone,                                                       !- RA Duct Zone
+        180,                                                                !- Azimuth
+        90,                                                                 !- Tilt
+        -1,                                                                 !- Vertex 1 X-Coordinate
+        74,                                                                 !- Vertex 1 Y-Coordinate
+        0,                                                                  !- Vertex 1 Z-Coordinate
+        1,                                                                  !- Length
+        1;                                                                  !- Height"
+ 
+      ems << "
+      Wall:Adiabatic,
+        RADuctWall_W,                                                       !- Name
+        AdiabaticConst,                                                     !- Construction Name
+        RA Duct Zone,                                                       !- RA Duct Zone
+        270,                                                                !- Azimuth
+        90,                                                                 !- Tilt
+        -1,                                                                 !- Vertex 1 X-Coordinate
+        75,                                                                 !- Vertex 1 Y-Coordinate
+        0,                                                                  !- Vertex 1 Z-Coordinate
+        1,                                                                  !- Length
+        1;                                                                  !- Height"
+
+      ems << "
+      Ceiling:Adiabatic,
+        RADuctCeiling,                                                      !- Name
+        AdiabaticConst,                                                     !- Construction Name
+        RA Duct Zone,                                                       !- RA Duct Zone
+        0,                                                                  !- Azimuth
+        90,                                                                 !- Tilt
+        0,                                                                  !- Vertex 1 X-Coordinate
+        75,                                                                 !- Vertex 1 Y-Coordinate
+        1,                                                                  !- Vertex 1 Z-Coordinate
+        1,                                                                  !- Length
+        1;                                                                  !- Height"
+        
+      ems << "
+      Floor:Adiabatic,
+        RADuctFloor,                                                        !- Name
+        AdiabaticConst,                                                     !- Construction Name
+        RA Duct Zone,                                                       !- RA Duct Zone
+        0,                                                                  !- Azimuth
+        180,                                                                !- Tilt
+        0,                                                                  !- Vertex 1 X-Coordinate
+        74,                                                                 !- Vertex 1 Y-Coordinate
+        0,                                                                  !- Vertex 1 Z-Coordinate
+        1,                                                                  !- Length
+        1;                                                                  !- Height"        
+       
+      # Two objects are required to model the air exchange between the air handler zone and the living space since
+      # ZoneMixing objects can not account for direction of air flow (both are controlled by EMS)
+
+      # Accounts for leaks from the AH zone to the Living zone
+      ems << "
+      ZoneMixing,
+        AHZoneToLivingZoneMixing,                                           !- Name
+        #{Constants.LivingZone},                                            !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        Flow/Zone,                                                          !- Design Flow Rate Calculation Method
+        0,                                                                  !- Design Flow Rate (set by EMS)
+        ,                                                                   !- Flow Rate per Zone Floor Area
+        ,                                                                   !- Flow Rate per Person
+        ,                                                                   !- Air Changes per Hour
+        #{d.DuctLocation};                                                  !- Source Zone Name"
+            
+      # Accounts for leaks from the Living zone to the AH Zone
+      ems << "
+      ZoneMixing,
+        LivingZoneToAHZoneMixing,                                           !- Name
+        #{d.DuctLocation},                                                  !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        Flow/Zone,                                                          !- Design Flow Rate Calculation Method
+        0,                                                                  !- Design Flow Rate (set by EMS)
+        ,                                                                   !- Flow Rate per Zone Floor Area
+        ,                                                                   !- Flow Rate per Person
+        ,                                                                   !- Air Changes per Hour
+        #{Constants.LivingZone};                                            !- Source Zone Name"      
+     
+      ems << "
+      SurfaceProperty:ConvectionCoefficients,
+        RADuctWall_N,                                                       !- Surface Name
+        Inside,                                                             !- Convection Coefficient 1 Location
+        Value,                                                              !- Convection Coefficient 1 Type
+        999;                                                                !- Convection Coefficient 1 {W/m2-K}"        
+
+      ems << "
+      SurfaceProperty:ConvectionCoefficients,
+        RADuctWall_S,                                                       !- Surface Name
+        Inside,                                                             !- Convection Coefficient 1 Location
+        Value,                                                              !- Convection Coefficient 1 Type
+        999;                                                                !- Convection Coefficient 1 {W/m2-K}" 
+ 
+      ems << "
+      SurfaceProperty:ConvectionCoefficients,
+        RADuctWall_E,                                                       !- Surface Name
+        Inside,                                                             !- Convection Coefficient 1 Location
+        Value,                                                              !- Convection Coefficient 1 Type
+        999;                                                                !- Convection Coefficient 1 {W/m2-K}" 
+
+      ems << "
+      SurfaceProperty:ConvectionCoefficients,
+        RADuctWall_W,                                                       !- Surface Name
+        Inside,                                                             !- Convection Coefficient 1 Location
+        Value,                                                              !- Convection Coefficient 1 Type
+        999;                                                                !- Convection Coefficient 1 {W/m2-K}"  
+ 
+      ems << "
+      SurfaceProperty:ConvectionCoefficients,
+        RADuctCeiling,                                                      !- Surface Name
+        Inside,                                                             !- Convection Coefficient 1 Location
+        Value,                                                              !- Convection Coefficient 1 Type
+        999;                                                                !- Convection Coefficient 1 {W/m2-K}"  
+        
+      ems << "
+      SurfaceProperty:ConvectionCoefficients,
+        RADuctFloor,                                                        !- Surface Name
+        Inside,                                                             !- Convection Coefficient 1 Location
+        Value,                                                              !- Convection Coefficient 1 Type
+        999;                                                                !- Convection Coefficient 1 {W/m2-K}"
+    
+      # _processSystemDemandSideAir
+      
+      living_zone_return_air_node_name = nil
+      fbasement_zone_return_air_node_name = nil
+      workspace.getObjectsByType("ZoneHVAC:EquipmentConnections".to_IddObjectType).each do |zonehvac|
+        if zonehvac.getString(0).to_s == Constants.LivingZone
+          living_zone_return_air_node_name = zonehvac.getString(5)
+        elsif zonehvac.getString(0).to_s == Constants.FinishedBasementZone
+          fbasement_zone_return_air_node_name = zonehvac.getString(5)
+        end
+      end
+
+      demand_side_outlet_node_name = nil
+      demand_side_inlet_node_names = nil
+      workspace.getObjectsByType("AirLoopHVAC".to_IddObjectType).each do |airloop|
+        if airloop.getString(0).to_s.include? "Central Air System"
+          demand_side_outlet_node_name = airloop.getString(7).to_s
+          demand_side_inlet_node_names = airloop.getString(8).to_s
+        end
+      end
+      
+      demand_side_inlet_node_name = nil
+      workspace.getObjectsByType("NodeList".to_IddObjectType).each do |nodelist|
+        if nodelist.getString(0).to_s == demand_side_inlet_node_names
+          demand_side_inlet_node_name = nodelist.getString(1).to_s
+        end
+      end
+            
+      # Return Air
+      ems_returnplenum = "
+      AirLoopHVAC:ReturnPlenum,
+        Return Plenum,                                                      !- Name
+        RA Duct Zone,                                                       !- Zone Name
+        RA Plenum Air Node,                                                 !- Zone Node Name
+        #{demand_side_outlet_node_name},                                    !- Outlet Node Name" "Demand Side Outlet Node Name of AirLoopHVAC
+        ,                                                                   !- Induced Air Outlet Node or NodeList Name"
+        
+      if not fbasement_thermal_zone.nil?
+        ems_returnplenum += "
+        #{living_zone_return_air_node_name},                                !- Inlet 1 Node Name
+        #{fbasement_zone_return_air_node_name};                             !- Inlet 2 Node Name"
+      else
+        ems_returnplenum += "
+        #{living_zone_return_air_node_name};                                !- Inlet 1 Node Name"
+      end
+      
+      ems << ems_returnplenum
+    
+      # Other equipment objects to cancel out the supply air leakage directly into the return plenum
+      ems << "
+      OtherEquipment,
+        SupplySensibleLeakageToLiving,                                      !- Name
+        #{Constants.LivingZone},                                            !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"
+
+      ems << "
+      OtherEquipment,
+        SupplyLatentLeakageToLiving,                                        !- Name
+        #{Constants.LivingZone},                                            !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"
+
+      # Supply duct conduction load added to the living space
+      ems << "
+      OtherEquipment,
+        SupplyDuctConductionToLiving,                                       !- Name
+        #{Constants.LivingZone},                                            !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"        
+        
+      # Supply duct conduction impact on the air handler zone.
+      ems << "
+      OtherEquipment,
+        SupplyDuctConductionToAHZone,                                       !- Name
+        #{d.DuctLocation},                                                  !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"  
+      
+      # Return duct conduction load added to the return plenum zone
+      ems << "
+      OtherEquipment,
+        ReturnDuctConductionToPlenum,                                       !- Name
+        RA Duct Zone,                                                       !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"        
+      
+      # Return duct conduction impact on the air handler zone.
+      ems << "
+      OtherEquipment,
+        ReturnDuctConductionToAHZone,                                       !- Name
+        #{d.DuctLocation},                                                  !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"        
+      
+      # Supply duct sensible leakage impact on the air handler zone.
+      ems << "
+      OtherEquipment,
+        SupplySensibleLeakageToAHZone,                                      !- Name
+        #{d.DuctLocation},                                                  !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"        
+      
+      # Supply duct latent leakage impact on the air handler zone.
+      ems << "
+      OtherEquipment,
+        SupplyLatentLeakageToAHZone,                                        !- Name
+        #{d.DuctLocation},                                                  !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"        
+      
+      # Return duct sensible leakage impact on the return plenum
+      ems << "
+      OtherEquipment,
+        ReturnSensibleLeakageEquip,                                         !- Name
+        RA Duct Zone,                                                       !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"        
+      
+      # Return duct latent leakage impact on the return plenum
+      ems << "
+      OtherEquipment,
+        ReturnLatentLeakageEquip,                                           !- Name
+        RA Duct Zone,                                                       !- Zone Name
+        AlwaysOn,                                                           !- Schedule Name
+        EquipmentLevel,                                                     !- Design Level Calculation Method
+        0,                                                                  !- Design Level {W}
+        ,                                                                   !- Power per Zone Floor Area {W/m}
+        ,                                                                   !- Power per Person {W/person}
+        0,                                                                  !- Fraction Latent
+        0,                                                                  !- Fraction Radiant
+        0;                                                                  !- Fraction Lost"      
+      
+      # Sensor to report the air handler mass flow rate
+      ems << "
+      EnergyManagementSystem:Sensor,
+        AH_MFR_Sensor,                                                      !- Name
+        #{demand_side_inlet_node_name},                                     !- Output:Variable or Output:Meter Index Key Name
+        System Node Mass Flow Rate;                                         !- Output:Variable or Output:Meter Index Key Name"      
+    
+      # Sensor to report the supply fan runtime fraction
+      ems << "
+      EnergyManagementSystem:Sensor,
+        Fan_RTF_Sensor,                                                     !- Name
+        Supply Fan,                                                         !- Output:Variable or Output:Meter Index Key Name
+        Fan Runtime Fraction;                                               !- Output:Variable or Output:Meter Index Key Name"     
+    
+      # Sensor to report the air handler volume flow rate
+      ems << "
+      EnergyManagementSystem:Sensor,
+        AH_VFR_Sensor,                                                      !- Name
+        #{demand_side_inlet_node_name},                                     !- Output:Variable or Output:Meter Index Key Name
+        System Node Current Density Volume Flow Rate;                       !- Output:Variable or Output:Meter Index Key Name"       
+      
+      # Sensor to report the air handler outlet temperature
+      ems << "
+      EnergyManagementSystem:Sensor,
+        AH_Tout_Sensor,                                                     !- Name
+        #{demand_side_inlet_node_name},                                     !- Output:Variable or Output:Meter Index Key Name
+        System Node Temperature;                                            !- Output:Variable or Output:Meter Index Key Name"       
+      
+      # Sensor to report the air handler outlet humidity ratio
+      ems << "
+      EnergyManagementSystem:Sensor,
+        AH_Wout_Sensor,                                                     !- Name
+        #{demand_side_inlet_node_name},                                     !- Output:Variable or Output:Meter Index Key Name
+        System Node Humidity Ratio;                                         !- Output:Variable or Output:Meter Index Key Name" 
+    
+      # Sensor to report the return air temperature (assumed to be the living zone return temperature)
+      ems << "
+      EnergyManagementSystem:Sensor,
+        RA_T_Sensor,                                                        !- Name
+        #{living_zone_return_air_node_name},                                !- Output:Variable or Output:Meter Index Key Name
+        System Node Temperature;                                            !- Output:Variable or Output:Meter Index Key Name"      
+      
+      # Sensor to report the return air humidity ratio (assumed to be the living zone return temperature)
+      ems << "
+      EnergyManagementSystem:Sensor,
+        RA_W_Sensor,                                                        !- Name
+        #{living_zone_return_air_node_name},                                !- Output:Variable or Output:Meter Index Key Name
+        System Node Humidity Ratio;                                         !- Output:Variable or Output:Meter Index Key Name"    
+    
+      ems << "
+      EnergyManagementSystem:Sensor,
+        AHZone_T_Sensor,                                                    !- Name
+        #{d.DuctLocation},                                                  !- Output:Variable or Output:Meter Index Key Name
+        Zone Air Temperature;                                               !- Output:Variable or Output:Meter Index Key Name"    
+    
+      ems << "
+      EnergyManagementSystem:Sensor,
+        AHZone_W_Sensor,                                                    !- Name
+        #{d.DuctLocation},                                                  !- Output:Variable or Output:Meter Index Key Name
+        Zone Mean Air Humidity Ratio;                                       !- Output:Variable or Output:Meter Index Key Name"    
+    
+      # Global variable to store the air handler mass flow rate
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        AH_MFR;                                                             !- Name"
+    
+      # Global variable to store the supply fan runtime fraction
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        Fan_RTF;                                                            !- Name"    
+    
+      # Global variable to store the air handler volume flow rate
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        AH_VFR;                                                             !- Name"      
+    
+      # Global variable to store the air handler outlet temperature
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        AH_Tout;                                                            !- Name"    
+    
+      # Global variable to store the air handler outlet humidity ratio
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        AH_Wout;                                                            !- Name"      
+      
+      # Global variable to store the return air temperature (assumed to be the living zone return temperature)
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        RA_T;                                                               !- Name"      
+      
+      # Global variable to store the return air humidity ratio (assumed to be the living zone return temperature)
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        RA_W;                                                               !- Name"      
+      
+      # Global variable to store the air handlder zone temperature
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        AHZone_T;                                                           !- Name"      
+      
+      # Global variable to store the air handler zone humidity ratio
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        AHZone_W;                                                           !- Name"
+      
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        SupplyLeakSensibleLoad;                                             !- Name"      
+      
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        SupplyLeakLatentLoad;                                               !- Name"       
+      
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        SupplyDuctLoadToLiving;                                             !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        ConductionToAHZone;                                                 !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        ReturnConductionToAHZone;                                           !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        ReturnDuctLoadToPlenum;                                             !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        SensibleLeakageToAHZone;                                            !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        LatentLeakageToAHZone;                                              !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        AHZoneToLivingFlowRate;                                             !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        LivingToAHZoneFlowRate;                                             !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        ReturnSensibleLeakage;                                              !- Name" 
+
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        ReturnLatentLeakage;                                                !- Name"         
+    
+      ems << "
+      EnergyManagementSystem:Actuator,
+        SupplyLeakSensibleActuator,                                         !- Name
+        SupplySensibleLeakageToLiving,                                      !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"    
+    
+      ems << "
+      EnergyManagementSystem:Actuator,
+        SupplyLeakLatentActuator,                                           !- Name
+        SupplyLatentLeakageToLiving,                                        !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"     
+    
+      # Actuator to account for the load of the supply duct conduction on the living space
+      ems << "
+      EnergyManagementSystem:Actuator,
+        SupplyDuctLoadToLivingActuator,                                     !- Name
+        SupplyDuctConductionToLiving,                                       !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"       
+      
+      # Actuator to account for the load of the supply duct conduction on the air handler zone
+      ems << "
+      EnergyManagementSystem:Actuator,
+        ConductionToAHZoneActuator,                                         !- Name
+        SupplyDuctConductionToAHZone,                                       !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"       
+      
+      # Actuator to account for the load of the return duct conduction on the return plenum
+      ems << "
+      EnergyManagementSystem:Actuator,
+        ReturnDuctLoadToPlenumActuator,                                     !- Name
+        ReturnDuctConductionToPlenum,                                       !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"             
+      
+      # Actuator to account for the load of the return duct conduction on the air handler zone
+      ems << "
+      EnergyManagementSystem:Actuator,
+        ReturnConductionToAHZoneActuator,                                   !- Name
+        ReturnDuctConductionToAHZone,                                       !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"       
+      
+      # Actuator to account for the sensible leakage from the supply duct to the AH zone
+      ems << "
+      EnergyManagementSystem:Actuator,
+        SensibleLeakageToAHZoneActuator,                                    !- Name
+        SupplySensibleLeakageToAHZone,                                      !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"       
+      
+      # Actuator to account for the latent leakage from the supply duct to the AH zone
+      ems << "
+      EnergyManagementSystem:Actuator,
+        LatentLeakageToAHZoneActuator,                                      !- Name
+        SupplyLatentLeakageToAHZone,                                        !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"     
+    
+      # Actuator to account fot the sensible leakage from the AH zone to the return plenum
+      ems << "
+      EnergyManagementSystem:Actuator,
+        ReturnSensibleLeakageActuator,                                      !- Name
+        ReturnSensibleLeakageEquip,                                         !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"             
+      
+      # Actuator to account fot the latent leakage from the AH zone to the return plenum
+      ems << "
+      EnergyManagementSystem:Actuator,
+        ReturnLatentLeakageActuator,                                        !- Name
+        ReturnLatentLeakageEquip,                                           !- Actuated Component Unique Name
+        OtherEquipment,                                                     !- Actuated Component Type
+        Power Level;                                                        !- Actuated Component Control Type"       
+      
+      ems << "
+      EnergyManagementSystem:Actuator,
+        AHZoneToLivingFlowRateActuator,                                     !- Name
+        AHZoneToLivingZoneMixing,                                           !- Actuated Component Unique Name
+        ZoneMixing,                                                         !- Actuated Component Type
+        Air Exchange Flow Rate;                                             !- Actuated Component Control Type"       
+      
+      ems << "
+      EnergyManagementSystem:Actuator,
+        LivingToAHZoneFlowRateActuator,                                     !- Name
+        LivingZoneToAHZoneMixing,                                           !- Actuated Component Unique Name
+        ZoneMixing,                                                         !- Actuated Component Type
+        Air Exchange Flow Rate;                                             !- Actuated Component Control Type"       
+      
+      ems << "
+      EnergyManagementSystem:GlobalVariable,
+        DuctLeakSupplyFanEquivalent,                                        !- Name
+        DuctLeakExhaustFanEquivalent;                                       !- Name"
+      
+      ems_subroutine = "
+      EnergyManagementSystem:Subroutine,
+        CalculateDuctLeakage,                                         
+        Set f_sup = #{d.supply_duct_loss},
+        Set f_ret = #{d.return_duct_loss},
+        Set f_OA = #{d.frac_oa * d.total_duct_unbalance},
+        Set OAFlowRate = f_OA * AH_VFR,
+        Set SupplyLeakFlowRate = f_sup * AH_VFR,
+        Set ReturnLeakFlowRate = f_ret * AH_VFR,"
+
+      if d.return_duct_loss > d.supply_duct_loss
+        # Supply air flow rate is greater than return flow rate
+        # Living zone is pressurized in this case      
+        ems_subroutine += "
+          Set LivingToAHZoneFlowRate = (@Abs (ReturnLeakFlowRate - SupplyLeakFlowRate - OAFlowRate)),
+          Set AHZoneToLivingFlowRate = 0,
+          Set DuctLeakSupplyFanEquivalent = OAFlowRate,
+          Set DuctLeakExhaustFanEquivalent = 0,"
+      else
+        # Living zone is depressurized in this case
+        ems_subroutine += "
+        Set AHZoneToLivingFlowRate = (@Abs (SupplyLeakFlowRate - ReturnLeakFlowRate - OAFlowRate)),
+        Set LivingToAHZoneFlowRate = 0,
+        Set DuctLeakSupplyFanEquivalent = 0,
+        Set DuctLeakExhaustFanEquivalent = OAFlowRate,"        
+      end
+      
+      if d.ducts_not_in_living
+        ems_subroutine += "
+        Set h_SA = (@HFnTdbW AH_Tout AH_Wout),
+        Set h_AHZone = (@HFnTdbW AHZone_T AHZone_W),
+        Set h_RA = (@HFnTdbW RA_T RA_W),
+        Set h_fg = (@HfgAirFnWTdb AH_Wout AH_Tout),
+        Set SALeakageQtot = f_sup * AH_MFR * (h_RA - h_SA),
+        Set SupplyLeakLatentLoad = f_sup * AH_MFR * h_fg * (RA_W - AH_Wout),
+        Set SupplyLeakSensibleLoad = SALeakageQtot - SupplyLeakLatentLoad,
+        Set expTerm = (Fan_RTF / (AH_MFR * 1006.0)) * #{OpenStudio::convert(d.unconditioned_duct_ua,"Btu/h*F","W/K").get},
+        Set expTerm = 0 - expTerm,
+        Set Tsupply = AHZone_T + ((AH_Tout - AHZone_T) * (@Exp expTerm)),
+        Set SupplyDuctLoadToLiving = AH_MFR * 1006.0 * (Tsupply - AH_Tout),
+        Set ConductionToAHZone = 0 - SupplyDuctLoadToLiving,
+        Set expTerm = (Fan_RTF / (AH_MFR * 1006.0)) * #{OpenStudio::convert(d.return_duct_ua,"Btu/h*F","W/K").get},
+        Set expTerm = 0 - expTerm,
+        Set Treturn = AHZone_T + ((RA_T - AHZone_T) * (@Exp expTerm)),
+        Set ReturnDuctLoadToPlenum = AH_MFR * 1006.0 * (Treturn - RA_T),
+        Set ReturnConductionToAHZone = 0 - ReturnDuctLoadToPlenum,
+        Set ReturnLatentLeakage = 0,
+        Set ReturnSensibleLeakage = f_ret * AH_MFR * 1006.0 * (AHZone_T - RA_T),
+        Set QtotLeakageToAHZone = f_sup * AH_MFR * (h_SA - h_AHZone),
+        Set LatentLeakageToAHZone = f_sup * AH_MFR * h_fg * (AH_Wout - AHZone_W),
+        Set SensibleLeakageToAHZone = QtotLeakageToAHZone - LatentLeakageToAHZone;"
+      else
+        ems_subroutine += "
+        Set SupplyLeakLatentLoad = 0,
+        Set SupplyLeakSensibleLoad = 0,
+        Set SupplyDuctLoadToLiving = 0,
+        Set ConductionToAHZone = 0,
+        Set ReturnDuctLoadToPlenum = 0,
+        Set ReturnConductionToAHZone = 0,
+        Set ReturnLatentLeakage = 0,
+        Set ReturnSensibleLeakage = 0,
+        Set LatentLeakageToAHZone = 0,
+        Set SensibleLeakageToAHZone = 0;"
+      end
+      
+      ems << ems_subroutine      
+      
+      ems << "
+      EnergyManagementSystem:Program,
+        DuctLeakageProgram,                                         
+        Set AH_MFR = AH_MFR_Sensor,                              
+        Set Fan_RTF = Fan_RTF_Sensor,
+        Set AH_VFR = AH_VFR_Sensor,
+        Set AH_Tout = AH_Tout_Sensor,
+        Set AH_Wout = AH_Wout_Sensor,
+        Set RA_T = RA_T_Sensor,
+        Set RA_W = RA_W_Sensor,
+        Set AHZone_T = AHZone_T_Sensor,
+        Set AHZone_W = AHZone_W_Sensor,
+        Run CalculateDuctLeakage,
+        Set SupplyLeakSensibleActuator = SupplyLeakSensibleLoad,
+        Set SupplyLeakLatentActuator = SupplyLeakLatentLoad,
+        Set SupplyDuctLoadToLivingActuator = SupplyDuctLoadToLiving,
+        Set ConductionToAHZoneActuator = ConductionToAHZone,
+        Set SensibleLeakageToAHZoneActuator = SensibleLeakageToAHZone,
+        Set LatentLeakageToAHZoneActuator = LatentLeakageToAHZone,
+        Set ReturnSensibleLeakageActuator = ReturnSensibleLeakage,
+        Set ReturnLatentLeakageActuator = ReturnLatentLeakage,
+        Set ReturnDuctLoadToPlenumActuator = ReturnDuctLoadToPlenum,
+        Set ReturnConductionToAHZoneActuator = ReturnConductionToAHZone,
+        Set AHZoneToLivingFlowRateActuator = AHZoneToLivingFlowRate,
+        Set LivingToAHZoneFlowRateActuator = LivingToAHZoneFlowRate;"       
+      
+      ems << "
+      EnergyManagementSystem:ProgramCallingManager,
+        DuctLeakageCallingManager,                                          !- Name
+        EndOfSystemTimestepAfterHVACReporting,                              !- EnergyPlus Model Calling Point
+        DuctLeakageProgram;                                                 !- Program Name 1"
+        
+    end  
+    
     ems.each do |str|
       idfObject = OpenStudio::IdfObject::load(str)
       object = idfObject.get
       wsObject = workspace.addObject(object)
       runner.registerInfo("Set object '#{str.split("\n")[1].gsub(",","")} - #{str.split("\n")[2].split(",")[0]}'")
-    end
-
-    # Ducts
-    if duct_location == Constants.Auto
-      if not fbasement_thermal_zone.nil?
-        duct_location = Constants.FinishedBasementSpace
-      elsif not ufbasement_thermal_zone.nil?
-        duct_location = Constants.UnfinishedBasementSpace
-      elsif not crawl_thermal_zone.nil?
-        duct_location = Constants.CrawlSpace
-      elsif not ufattic_thermal_zone.nil?
-        duct_location = Constants.UnfinishedAtticSpace
-      else
-        duct_location = Constants.LivingSpace(1)
+    end    
+    
+    if not d.DuctLocation == Constants.LivingZone and not d.DuctLocation == "none" and hasForcedAirEquipment
+      workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Air Loop HVAC Zone Mixer"], "AirLoopHVAC:ZoneMixer", runner)
+      workspace.getObjectsByType("AirLoopHVAC:ReturnPath".to_IddObjectType).each do |return_path|
+        return_path.setString(2, "AirLoopHVAC:ReturnPlenum")
+        return_path.setString(3, "Return Plenum")
       end    
-    elsif duct_location == Constants.BasementSpace
-      if not fbasement_thermal_zone.nil?
-        duct_location = Constants.FinishedBasementSpace
-      elsif not ufbasement_thermal_zone.nil?
-        duct_location = Constants.UnfinishedBasementSpace
-      else
-        runner.registerError("Duct location is basement, but the building does not have a basement.")
-        return false
-      end
-    elsif duct_location == Constants.AtticSpace
-      if not ufattic_thermal_zone.nil?
-        duct_location = Constants.UnfinishedAtticSpace
-      else
-        duct_location = Constants.LivingSpace
-      end
     end
-    if [Constants.UnfinishedBasementSpace, Constants.CrawlSpace, Constants.GarageSpace, Constants.UnfinishedAtticSpace, Constants.PierBeamSpace].include? duct_location
-      
-    end
-    if duct_location == Constants.FinishedAtticSpace
-      duct_location = Constants.LivingSpace
-    elsif duct_location == Constants.PierBeamSpace
-      duct_location = Constants.CrawlSpace
-    end
-    d.DuctLocation = duct_location
-    d.has_ducts = true
     
     return true
  
   end #end the run method
 
+  def get_duct_location(duct_location, garage_thermal_zone, fbasement_thermal_zone, ufbasement_thermal_zone, crawl_thermal_zone, ufattic_thermal_zone)    
+    # raiseError=False is used for display values
+    if duct_location == Constants.Auto
+      if not fbasement_thermal_zone.nil?
+        duct_location = Constants.FinishedBasementZone
+      elsif not ufbasement_thermal_zone.nil?
+        duct_location = Constants.UnfinishedBasementZone
+      elsif not crawl_thermal_zone.nil?
+        duct_location = Constants.CrawlZone
+      elsif not ufattic_thermal_zone.nil?
+        duct_location = Constants.UnfinishedAtticZone
+      elsif not garage_thermal_zone.nil?
+        duct_location = Constants.GarageZone
+      else
+        duct_location = Constants.LivingZone
+      end    
+    elsif duct_location == Constants.BasementZone
+      if not fbasement_thermal_zone.nil?
+        duct_location = Constants.FinishedBasementZone
+      elsif not ufbasement_thermal_zone.nil?
+        duct_location = Constants.UnfinishedBasementZone
+      else
+        runner.registerError("Duct location is basement, but the building does not have a basement.")
+        return false
+      end
+    elsif duct_location == Constants.AtticZone
+      if not ufattic_thermal_zone.nil?
+        duct_location = Constants.UnfinishedAtticZone
+      else
+        duct_location = Constants.LivingZone
+      end
+    end
+    if duct_location == Constants.FinishedAtticZone
+      duct_location = Constants.LivingZone
+    elsif duct_location == Constants.PierBeamZone
+      duct_location = Constants.CrawlZone
+    end
+    return duct_location    
+  end
+  
+  def get_duct_supply_surface_area(mult, geometry, num_stories)
+    # Duct Surface Areas per 2010 BA Benchmark
+    ffa = geometry.finished_floor_area
+    if num_stories == 1
+      return 0.27 * ffa * mult # ft^2
+    else
+      return 0.2 * ffa * mult
+    end
+  end
+  
+  def get_duct_num_returns(duct_num_returns, num_stories)
+    if duct_num_returns.nil?
+      return 0
+    elsif duct_num_returns == Constants.Auto
+      # Duct Number Returns per 2010 BA Benchmark Addendum
+      return 1 + num_stories
+    end
+    return duct_num_returns
+  end  
+  
+  def get_duct_return_surface_area(mult, geometry, num_stories, duct_num_returns)
+    # Duct Surface Areas per 2010 BA Benchmark
+    ffa = geometry.finished_floor_area
+    if num_stories == 1
+      return [0.05 * duct_num_returns * ffa, 0.25 * ffa].min * mult
+    else
+      return [0.04 * duct_num_returns * ffa, 0.19 * ffa].min * mult
+    end
+  end
+  
+  def get_duct_insulation_rvalue(nominalR, isSupply)
+    # Insulated duct values based on "True R-Values of Round Residential Ductwork" 
+    # by Palmiter & Kruse 2006. Linear extrapolation from SEEM's "DuctTrueRValues"
+    # worksheet in, e.g., ExistingResidentialSingleFamily_SEEMRuns_v05.xlsm.
+    #
+    # Nominal | 4.2 | 6.0 | 8.0 | 11.0
+    # --------|-----|-----|-----|----
+    # Supply  | 4.5 | 5.7 | 6.8 | 8.4
+    # Return  | 4.9 | 6.3 | 7.8 | 9.7
+    #
+    # Uninsulated ducts are set to R-1.7 based on ASHRAE HOF and the above paper.
+    if nominalR <= 0
+      return 1.7
+    end
+    if isSupply
+      return 2.2438 + 0.5619*nominalR
+    else
+      return 2.0388 + 0.7053*nominalR
+    end
+  end
+  
+  def calc_duct_leakage_from_test(d, ffa, fan_airflowrate)
+    # Calculates duct leakage inputs based on duct blaster type leakage measurements (cfm @ 25 Pa per 100 ft2 conditioned floor area).
+    # Requires assumptions about supply/return leakage split, air handler leakage, and duct plenum (de)pressurization.
+    # Assumptions
+    supply_duct_leakage_frac = 0.67 # 2013 RESNET Standards, Appendix A, p.A-28
+    return_duct_leakage_frac = 0.33 # 2013 RESNET Standards, Appendix A, p.A-28
+    ah_leakage = 0.025 # 2.5% of air handler flow at 25 P (Reference: ASHRAE Standard 152-2004, Annex C, p 33; Walker et al 2010. "Air Leakage of Furnaces and Air Handlers") 
+    ah_supply_frac = 0.20 # (Reference: Walker et al 2010. "Air Leakage of Furnaces and Air Handlers") 
+    ah_return_frac = 0.80 # (Reference: Walker et al 2010. "Air Leakage of Furnaces and Air Handlers")
+    p_supply = 25 # Assume average operating pressure in ducts is 25 Pa, 
+    p_return = 25 # though it is likely lower (Reference: Pigg and Francisco 2008 "A Field Study of Exterior Duct Leakage in New Wisconsin Homes")
+    
+    # Conversion
+    cfm25 = d.DuctNormLeakageToOutside * ffa / 100.0 #denormalize leakage
+    ah_cfm25 = ah_leakage * fan_airflowrate # air handler leakage flow rate at 25 Pa
+    ah_supply_leak_cfm25 = [ah_cfm25 * ah_supply_frac, cfm25 * supply_duct_leakage_frac].min
+    ah_return_leak_cfm25 = [ah_cfm25 * ah_return_frac, cfm25 * return_duct_leakage_frac].min
+    supply_leak_cfm25 = [cfm25 * supply_duct_leakage_frac - ah_supply_leak_cfm25, 0].max
+    return_leak_cfm25 = [cfm25 * return_duct_leakage_frac - ah_return_leak_cfm25, 0].max
+    
+    d.supply_leak_oper = calc_duct_leakage_at_diff_pressure(supply_leak_cfm25, 25, P_supply) # cfm at operating pressure
+    d.return_leak_oper = calc_duct_leakage_at_diff_pressure(return_leak_cfm25, 25, P_return) # cfm at operating pressure
+    d.ah_supply_leak_oper = calc_duct_leakage_at_diff_pressure(AH_supply_leak_cfm25, 25, P_supply) # cfm at operating pressure
+    d.ah_return_leak_oper = calc_duct_leakage_at_diff_pressure(AH_return_leak_cfm25, 25, P_return) # cfm at operating pressure
+    
+    if fan_airflowrate == 0
+      d.DuctSupplyLeakage = 0
+      d.DuctReturnLeakage = 0
+      d.DuctAHSupplyLeakage = 0
+      d.DuctAHReturnLeakage = 0
+    else
+      d.DuctSupplyLeakage = d.supply_leak_oper / fan_airflowrate
+      d.DuctReturnLeakage = d.return_leak_oper / fan_airflowrate
+      d.DuctAHSupplyLeakage = d.ah_supply_leak_oper / fan_airflowrate
+      d.DuctAHReturnLeakage = d.ah_return_leak_oper / fan_airflowrate      
+    end
+    
+    d.supply_duct_loss = d.DuctSupplyLeakage + d.DuctAHSupplyLeakage
+    d.return_duct_loss = d.DuctReturnLeakage + d.DuctAHReturnLeakage
+    
+    # Leakage to outside was specified, so don't account for location fraction
+    d.DuctLocationFracLeakage = 1
+    
+    return d
+  end
+  
 end #end the measure
 
 #this allows the measure to be use by the application

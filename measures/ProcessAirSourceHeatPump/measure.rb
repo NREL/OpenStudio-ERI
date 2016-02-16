@@ -900,16 +900,6 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         setpoint_mgr.setControlZone(zone)
         setpoint_mgr.addToNode(air_supply_outlet_node)
 
-        # Return Air
-
-        # TODO: need to replace the mixer with a return plenum
-        # zone_mixer = air_loop.zoneMixer
-        # zone_mixer.disconnect
-        # return_plenum = OpenStudio::Model::AirLoopHVACReturnPlenum.new(model)
-        # return_plenum.setName("Return Plenum")
-        # return_plenum.addToNode(air_demand_outlet_node)
-        # air_loop.addBranchForZone(zone, return_plenum.to_StraightComponent)
-
         air_loop.addBranchForZone(zone)
         runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{zone.name}'")
 

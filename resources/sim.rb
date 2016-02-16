@@ -7,10 +7,10 @@ require "#{File.dirname(__FILE__)}/unit_conversions"
         
 class Sim
 
-    def initialize(model, runner)
-      @weather = WeatherProcess.new(model, runner)
-      @model = model
-    end
+  def initialize(model, runner)
+    @weather = WeatherProcess.new(model, runner)
+    @model = model
+  end
         
   def _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, selected_garage, selected_fbsmt, selected_ufbsmt, selected_crawl, selected_unfinattic, wind_speed, neighbors, site, geometry)
     # Infiltration calculations.
@@ -89,7 +89,7 @@ class Sim
           end
 
           # Leakage distributions per Iain Walker (LBL) recommendations
-          if hasCrawl and crawlspace.CrawlACH > 0
+          if not selected_crawl.nil? and crawlspace.CrawlACH > 0
             # 15% ceiling, 35% walls, 50% floor leakage distribution for vented crawl
             leakage_ceiling = 0.15
             leakage_walls = 0.35
@@ -139,7 +139,7 @@ class Sim
           si.stack_coef = si.f_s * (UnitConversion.lbm_fts22inH2O(outside_air_density * Constants.g * living_space.height) / (si.assumed_inside_temp + 460.0)) ** si.n_i # inH2O^n/R^n
 
           # Calculate wind coefficient
-          if hasCrawl and crawlspace.CrawlACH > 0
+          if not selected_crawl.nil? and crawlspace.CrawlACH > 0
 
             if si.X_i > 1.0 - 2.0 * si.Y_i
               # Critical floor to ceiling difference above which f_w does not change (eq. 25)

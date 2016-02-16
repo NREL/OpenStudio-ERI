@@ -38,11 +38,20 @@ class Constants
 
     # Strings --------------------
     
+    def self.AtticSpace
+        return 'attic space'
+    end
+    def self.AtticZone
+        return 'attic zone'
+    end
 	def self.Auto
 		return 'auto'
 	end
     def self.BasementSpace
         return 'basement space'
+    end
+    def self.BasementZone
+        return 'basement zone'
     end
 	def self.BAZoneCold
 		return 'Cold'
@@ -187,6 +196,9 @@ class Constants
 	end
     def self.FinishedAtticSpace
         return 'finished attic space'
+    end
+    def self.FinishedAtticZone
+        return 'finished attic zone'
     end
     def self.FinishedAtticSpaceType
         return 'finished attic space type'
@@ -608,6 +620,9 @@ class Constants
     def self.PierBeamSpace
         return 'pier and beam space'
     end
+    def self.PierBeamZone
+        return 'pier and beam zone'
+    end
     def self.PierBeamSpaceType
         return 'pier and beam space type'
     end
@@ -625,6 +640,9 @@ class Constants
 	end
     def self.PlantLoopDomesticWater
         return 'Domestic Hot Water Loop'
+    end
+    def self.RADuctZone
+        return 'RA Duct Zone'
     end
 	def self.RecircTypeTimer
 		return 'timer'
