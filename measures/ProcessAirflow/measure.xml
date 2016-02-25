@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>222a2ba8-2599-4d3b-8c22-224239074413</version_id>
+  <version_id>06258cd6-4f06-47ee-b298-a22575e55ec5</version_id>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -738,11 +738,11 @@
       <name>duct_norm_leakage_to_outside</name>
       <display_name>Ducts: Leakage to Outside at 25Pa</display_name>
       <description>Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.</description>
-      <type>Double</type>
+      <type>String</type>
       <units>cfm/100 ft^2</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>NA</default_value>
     </argument>
     <argument>
       <name>duct_location_frac</name>
@@ -837,12 +837,6 @@
       <checksum>79B0EC38</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>186696B1</checksum>
-    </file>
-    <file>
       <filename>sim.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -855,6 +849,12 @@
       <checksum>F642FD14</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7A25E77C</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -863,7 +863,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E9EDE6C8</checksum>
+      <checksum>124882E6</checksum>
     </file>
   </files>
 </measure>

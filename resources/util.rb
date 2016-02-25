@@ -220,7 +220,7 @@ class HelperMethods
 		    unless runner.nil?
 			  runner.registerInfo("Removed object '#{object_s} - #{n}'")
 		    end
-			break
+            break
 		  end
 		end
       end

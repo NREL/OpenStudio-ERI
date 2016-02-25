@@ -886,12 +886,12 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     duct_ah_ret_frac.setDefaultValue(0.267)
     args << duct_ah_ret_frac
     
-    #make a double argument for norm leakage to outside
-    duct_norm_leakage_to_outside = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("duct_norm_leakage_to_outside", false)
+    #make a string argument for norm leakage to outside
+    duct_norm_leakage_to_outside = OpenStudio::Ruleset::OSArgument::makeStringArgument("duct_norm_leakage_to_outside", false)
     duct_norm_leakage_to_outside.setDisplayName("Ducts: Leakage to Outside at 25Pa")
 	duct_norm_leakage_to_outside.setUnits("cfm/100 ft^2")
 	duct_norm_leakage_to_outside.setDescription("Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
-    duct_norm_leakage_to_outside.setDefaultValue(0)
+    duct_norm_leakage_to_outside.setDefaultValue("NA")
     args << duct_norm_leakage_to_outside
     
     #make a string argument for duct location frac    
@@ -970,12 +970,22 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["MechanicalVentilationDay", "MechanicalVentilationEnergyDay", "BathExhaustDay", "ClothesDryerExhaustDay", "RangeHoodDay", "NatVentOn-Day", "NatVentOff-Day", "NatVentHtgSsnTempWkDay", "NatVentHtgSsnTempWkEnd", "NatVentClgSsnTempWkDay", "NatVentClgSsnTempWkEnd", "NatVentOvlpSsnTempWkDay", "NatVentOvlpSsnTempWkEnd", "NatVentOvlpSsnTempWkEnd"], "Schedule:Day:Hourly", runner)
 	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Living Infiltration"], "ZoneInfiltration:FlowCoefficient", runner)
 	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Natural Ventilation"], "ZoneVentilation:DesignFlowRate", runner)
-	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Tout", "Hout", "Pbar", "Tin", "Phiin", "Win", "Wout", "Vwind", "WH_sch", "Range_sch", "Bath_sch", "Clothes_dryer_sch", "NVAvail", "NVSP"], "EnergyManagementSystem:Sensor", runner)
-	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["NatVentFlow", "InfilFlow"], "EnergyManagementSystem:Actuator", runner)
-	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["InfiltrationProgram", "NaturalVentilationProgram"], "EnergyManagementSystem:Program", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Tout", "Hout", "Pbar", "Tin", "Phiin", "Win", "Wout", "Vwind", "WH_sch", "Range_sch", "Bath_sch", "Clothes_dryer_sch", "NVAvail", "NVSP", "AH_MFR_Sensor", "Fan_RTF_Sensor", "AH_VFR_Sensor", "AH_Tout_Sensor", "AH_Wout_Sensor", "RA_T_Sensor", "RA_W_Sensor", "AHZone_T_Sensor", "AHZone_W_Sensor"], "EnergyManagementSystem:Sensor", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["NatVentFlow", "InfilFlow", "SupplyLeakSensibleActuator", "SupplyLeakLatentActuator", "SupplyDuctLoadToLivingActuator", "ConductionToAHZoneActuator", "ReturnDuctLoadToPlenumActuator", "ReturnConductionToAHZoneActuator", "SensibleLeakageToAHZoneActuator", "LatentLeakageToAHZoneActuator", "ReturnSensibleLeakageActuator", "ReturnLatentLeakageActuator", "AHZoneToLivingFlowRateActuator", "LivingToAHZoneFlowRateActuator"], "EnergyManagementSystem:Actuator", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["InfiltrationProgram", "NaturalVentilationProgram", "DuctLeakageProgram"], "EnergyManagementSystem:Program", runner)
 	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Zone Infil/MechVent Flow Rate", "Whole House Fan Vent Flow Rate", "Range Hood Fan Vent Flow Rate", "Bath Exhaust Fan Vent Flow Rate", "Clothes Dryer Exhaust Fan Vent Flow Rate", "Local Wind Speed", "Zone Natural Ventilation Flow Rate"], "EnergyManagementSystem:OutputVariable", runner)
-	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["AirflowCalculator"], "EnergyManagementSystem:ProgramCallingManager", runner)
+	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["AirflowCalculator", "DuctLeakageCallingManager"], "EnergyManagementSystem:ProgramCallingManager", runner)
 	workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["UAtcInfiltration"], "ZoneInfiltration:EffectiveLeakageArea", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["AH_MFR", "Fan_RTF", "AH_VFR", "AH_Tout", "AH_Wout", "RA_T", "RA_W", "AHZone_T", "AHZone_W", "SupplyLeakSensibleLoad", "SupplyLeakLatentLoad", "SupplyDuctLoadToLiving", "ConductionToAHZone", "ReturnConductionToAHZone", "ReturnDuctLoadToPlenum", "SensibleLeakageToAHZone", "LatentLeakageToAHZone", "AHZoneToLivingFlowRate", "LivingToAHZoneFlowRate", "ReturnSensibleLeakage", "ReturnLatentLeakage", "DuctLeakSupplyFanEquivalent"], "EnergyManagementSystem:GlobalVariable", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["CalculateDuctLeakage"], "EnergyManagementSystem:Subroutine", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["AdiabaticConst"], "Construction", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["RA Duct Zone"], "Zone", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["RADuctWall_N", "RADuctWall_S", "RADuctWall_E", "RADuctWall_W", "RADuctCeiling", "RADuctFloor"], "SurfaceProperty:ConvectionCoefficients", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["RADuctWall_N", "RADuctWall_E", "RADuctWall_S", "RADuctWall_W"], "Wall:Adiabatic", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["RADuctCeiling"], "Ceiling:Adiabatic", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["RADuctFloor"], "Floor:Adiabatic", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Return Plenum"], "AirLoopHVAC:ReturnPlenum", runner)
+    workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["SupplySensibleLeakageToLiving", "SupplyLatentLeakageToLiving", "SupplyDuctConductionToLiving", "SupplyDuctConductionToAHZone", "ReturnDuctConductionToPlenum", "ReturnDuctConductionTOAHZone", "SupplySensibleLeakageToAHZone", "SupplyLatentLeakageToAHZone", "ReturnSensibleLeakageEquip", "ReturnLatentLeakageEquip"], "OtherEquipment", runner)
     
     infiltrationLivingSpaceACH50 = runner.getDoubleArgumentValue("userdefinedinflivingspace",user_arguments)
     infiltrationLivingSpaceConstantACH = runner.getDoubleArgumentValue("userdefinedconstinflivingspace",user_arguments)
@@ -1033,9 +1043,11 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ductReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ret_frac",user_arguments)
     ductAHSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_sup_frac",user_arguments)
     ductAHReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_ret_frac",user_arguments)
-    ductNormLeakageToOutside = runner.getDoubleArgumentValue("duct_norm_leakage_to_outside",user_arguments)
-    if ductNormLeakageToOutside == 0
-        ductNormLeakageToOutside = nil
+    ductNormLeakageToOutside = runner.getStringArgumentValue("duct_norm_leakage_to_outside",user_arguments)
+    unless ductNormLeakageToOutside == "NA"
+      ductNormLeakageToOutside = ductNormLeakageToOutside.to_f
+    else
+      ductNormLeakageToOutside = nil
     end
     duct_location_frac = runner.getStringArgumentValue("duct_location",user_arguments)
     duct_num_returns = runner.getStringArgumentValue("duct_num_returns",user_arguments)
@@ -2611,12 +2623,12 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         Set SALeakageQtot = f_sup * AH_MFR * (h_RA - h_SA),
         Set SupplyLeakLatentLoad = f_sup * AH_MFR * h_fg * (RA_W - AH_Wout),
         Set SupplyLeakSensibleLoad = SALeakageQtot - SupplyLeakLatentLoad,
-        Set expTerm = (Fan_RTF / (AH_MFR * 1006.0)) * #{OpenStudio::convert(d.unconditioned_duct_ua,"Btu/h*F","W/K").get},
+        Set expTerm = (Fan_RTF / (AH_MFR * 1006.0)) * #{OpenStudio::convert(d.unconditioned_duct_ua,"Btu/hr*R","W/K").get},
         Set expTerm = 0 - expTerm,
         Set Tsupply = AHZone_T + ((AH_Tout - AHZone_T) * (@Exp expTerm)),
         Set SupplyDuctLoadToLiving = AH_MFR * 1006.0 * (Tsupply - AH_Tout),
         Set ConductionToAHZone = 0 - SupplyDuctLoadToLiving,
-        Set expTerm = (Fan_RTF / (AH_MFR * 1006.0)) * #{OpenStudio::convert(d.return_duct_ua,"Btu/h*F","W/K").get},
+        Set expTerm = (Fan_RTF / (AH_MFR * 1006.0)) * #{OpenStudio::convert(d.return_duct_ua,"Btu/hr*R","W/K").get},
         Set expTerm = 0 - expTerm,
         Set Treturn = AHZone_T + ((RA_T - AHZone_T) * (@Exp expTerm)),
         Set ReturnDuctLoadToPlenum = AH_MFR * 1006.0 * (Treturn - RA_T),

@@ -2,11 +2,11 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>834c2bd1-e639-4ea6-a23a-84d0f1e20188</version_id>
+  <version_id>3e35e5b6-5418-457a-b182-682c80c8e3db</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
   <display_name>AddOSWaterHeaterMixedStorageOil</display_name>
-  <description>This measure adds an OS:WaterHeater:Mixed object representing an Oil Storage Water Heater. Users will be asked to provide the following arguments: 1) Use case; 2) Plant Loop Assignment; 3) Number of Bedrooms; 4) Number of Bathrooms; 5) Tank Volume; 6) Energy Factor; 7) Water Heater Location; ) Setpoint Temperature Schedule; 9) Water Heater Capacity; 11) Recovery Efficiency&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
+  <description>This measure adds an OS:WaterHeater:Mixed object representing an Oil Storage Water Heater. Users will be asked to provide the following arguments: 1) Use case; 2) Plant Loop Assignment; 3) Number of Bedrooms; 4) Number of Bathrooms; 5) Tank Volume; 6) Energy Factor; 7) Water Heater Location; ) Setpoint Temperature Schedule; 9) Water Heater Capacity; 11) Recovery Efficiency&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
  </description>
   <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a #1 Oil Storage Water Heater. The object will either create a new plant loop, or be assigned to an existing plant loop. The object will be configured be to use the user arguments. The EIO file reports the industry standard ratings of Recovery Efficiency and Energy Factor for water heater objects.</modeler_description>
   <arguments>
@@ -176,12 +176,6 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>186696B1</checksum>
-    </file>
-    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -191,7 +185,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A71C0C4F</checksum>
+      <checksum>F642FD14</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7A25E77C</checksum>
     </file>
   </files>
 </measure>
