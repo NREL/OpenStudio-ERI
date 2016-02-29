@@ -1865,8 +1865,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         # d.has_ducts = true
     # end
     
+    d.num_stories_for_ducts = geometry.stories
     unless fbasement_thermal_zone.nil?
-      d.num_stories_for_ducts = geometry.stories + 1
+      d.num_stories_for_ducts += 1
     end
     
     d.num_stories = d.num_stories_for_ducts

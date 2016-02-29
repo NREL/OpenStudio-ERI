@@ -243,36 +243,13 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Check if has equipment
-    htg_coil = nil
-    airLoopHVACs = model.getAirLoopHVACs
-    airLoopHVACs.each do |airLoopHVAC|
-      thermalZones = airLoopHVAC.thermalZones
-      thermalZones.each do |thermalZone|
-        if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
-          supplyComponents = airLoopHVAC.supplyComponents
-          supplyComponents.each do |supplyComponent|
-            if supplyComponent.to_AirLoopHVACUnitarySystem.is_initialized
-              air_loop_unitary = supplyComponent.to_AirLoopHVACUnitarySystem.get
-              if air_loop_unitary.heatingCoil.is_initialized
-                htg_coil = air_loop_unitary.heatingCoil.get
-                if htg_coil.to_CoilHeatingGas.is_initialized
-                  htg_coil = htg_coil.clone
-                  htg_coil = htg_coil.to_CoilHeatingGas.get
-                end
-                if htg_coil.to_CoilHeatingElectric.is_initialized
-                  htg_coil = htg_coil.clone
-                  htg_coil = htg_coil.to_CoilHeatingElectric.get
-                end
-              end
-            end
-            runner.registerInfo("Removed '#{supplyComponent.name}' from air loop '#{airLoopHVAC.name}'")
-            supplyComponent.remove
-          end
-          runner.registerInfo("Removed air loop '#{airLoopHVAC.name}'")
-          airLoopHVAC.remove
-        end
-      end
-    end
+    htg_coil = HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_thermal_zone, "Furnace")
+    ptacs = model.getZoneHVACPackagedTerminalAirConditioners
+    ptacs.each do |ptac|
+      thermalZone = ptac.thermalZone.get
+      runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
+      ptac.remove
+    end     
 
     always_on = model.alwaysOnDiscreteSchedule
 
@@ -644,49 +621,36 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     runner.registerInfo("Added on/off fan '#{fan.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
     runner.registerInfo("Added cooling coil '#{clg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
 
-    zones = model.getThermalZones
-    zones.each do |zone|
+    air_loop_unitary.setControllingZoneorThermostatLocation(living_thermal_zone)
 
-      if living_thermal_zone.handle.to_s == zone.handle.to_s
+    # _processSystemDemandSideAir
+    # Demand Side
 
-        air_loop_unitary.setControllingZoneorThermostatLocation(zone)
+    # Supply Air
+    zone_splitter = air_loop.zoneSplitter
+    zone_splitter.setName("Zone Splitter")
 
-        # _processSystemDemandSideAir
-        # Demand Side
+    diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
+    diffuser_living.setName("Living Zone Direct Air")
+    # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
+    air_loop.addBranchForZone(living_thermal_zone, diffuser_living.to_StraightComponent)
 
-        # Supply Air
-        zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName("Zone Splitter")
+    setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
+    setpoint_mgr.setControlZone(living_thermal_zone)
+    setpoint_mgr.addToNode(air_supply_outlet_node)
 
-        diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
-        diffuser_living.setName("Living Zone Direct Air")
-        # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-        air_loop.addBranchForZone(zone, diffuser_living.to_StraightComponent)
+    air_loop.addBranchForZone(living_thermal_zone)
+    runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{living_thermal_zone.name}'")
 
-        setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
-        setpoint_mgr.setControlZone(zone)
-        setpoint_mgr.addToNode(air_supply_outlet_node)
+    if not fbasement_thermal_zone.nil?
 
-        air_loop.addBranchForZone(zone)
-        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{zone.name}'")
+        diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
+        diffuser_fbsmt.setName("FBsmt Zone Direct Air")
+        # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
+        air_loop.addBranchForZone(fbasement_thermal_zone, diffuser_fbsmt.to_StraightComponent)
 
-      end
-
-      if not fbasement_thermal_zone.nil?
-
-        if fbasement_thermal_zone.handle.to_s == zone.handle.to_s
-
-          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
-          diffuser_fbsmt.setName("FBsmt Zone Direct Air")
-          # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-          air_loop.addBranchForZone(zone, diffuser_fbsmt.to_StraightComponent)
-
-          air_loop.addBranchForZone(zone)
-          runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{zone.name}'")
-
-        end
-
-      end
+        air_loop.addBranchForZone(fbasement_thermal_zone)
+        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{fbasement_thermal_zone.name}'")
 
     end
 	

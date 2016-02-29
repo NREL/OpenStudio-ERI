@@ -335,6 +335,12 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
       baseboard.remove
     end
+    ptacs = model.getZoneHVACPackagedTerminalAirConditioners
+    ptacs.each do |ptac|
+      thermalZone = ptac.thermalZone.get
+      runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
+      ptac.remove
+    end     
 
     always_on = model.alwaysOnDiscreteSchedule
 
@@ -877,49 +883,36 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     runner.registerInfo("Added #{selected_hp} DX heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
     runner.registerInfo("Added electric heating coil '#{hp_supp_heater.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
 
-    zones = model.getThermalZones
-    zones.each do |zone|
+    air_loop_unitary.setControllingZone(zone)
 
-      if living_thermal_zone.handle.to_s == zone.handle.to_s
+    # _processSystemDemandSideAir
+    # Demand Side
 
-        air_loop_unitary.setControllingZone(zone)
+    # Supply Air
+    zone_splitter = air_loop.zoneSplitter
+    zone_splitter.setName("Zone Splitter")
 
-        # _processSystemDemandSideAir
-        # Demand Side
+    diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
+    diffuser_living.setName("Living Zone Direct Air")
+    # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
+    air_loop.addBranchForZone(living_thermal_zone, diffuser_living.to_StraightComponent)
 
-        # Supply Air
-        zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName("Zone Splitter")
+    setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
+    setpoint_mgr.setControlZone(living_thermal_zone)
+    setpoint_mgr.addToNode(air_supply_outlet_node)
 
-        diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
-        diffuser_living.setName("Living Zone Direct Air")
-        # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-        air_loop.addBranchForZone(zone, diffuser_living.to_StraightComponent)
+    air_loop.addBranchForZone(living_thermal_zone)
+    runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{living_thermal_zone.name}'")
 
-        setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
-        setpoint_mgr.setControlZone(zone)
-        setpoint_mgr.addToNode(air_supply_outlet_node)
+    unless fbasement_thermal_zone.nil?
 
-        air_loop.addBranchForZone(zone)
-        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{zone.name}'")
+        diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
+        diffuser_fbsmt.setName("FBsmt Zone Direct Air")
+        # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
+        air_loop.addBranchForZone(fbasement_thermal_zone, diffuser_fbsmt.to_StraightComponent)
 
-      end
-
-      unless fbasement_thermal_zone.nil?
-
-        if fbasement_thermal_zone.handle.to_s == zone.handle.to_s
-
-          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
-          diffuser_fbsmt.setName("FBsmt Zone Direct Air")
-          # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-          air_loop.addBranchForZone(zone, diffuser_fbsmt.to_StraightComponent)
-
-          air_loop.addBranchForZone(zone)
-          runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{zone.name}'")
-
-        end
-
-      end
+        air_loop.addBranchForZone(fbasement_thermal_zone)
+        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{fbasement_thermal_zone.name}'")
 
     end
 	

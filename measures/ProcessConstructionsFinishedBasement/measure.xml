@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_finished_basement</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>1f3cddbe-5028-4a56-bed4-bb608f935161</version_id>
+  <version_id>16045a69-5ce1-4633-8ff5-fa0750962c8a</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFinishedBasement</class_name>
   <display_name>Set Residential Finished Basement Constructions</display_name>
@@ -290,7 +290,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7A25E77C</checksum>
+      <checksum>80ECBA6E</checksum>
     </file>
   </files>
 </measure>

@@ -256,6 +256,60 @@ class HelperMethods
 			return "Propane"
 		end
 	end
+    
+    def self.remove_existing_hvac_equipment_except_for_specified_object(model, runner, thermal_zone, excepted_object=nil)
+        htg_coil = nil
+        clg_coil = nil
+        airLoopHVACs = model.getAirLoopHVACs
+        airLoopHVACs.each do |airLoopHVAC|
+          thermalZones = airLoopHVAC.thermalZones
+          thermalZones.each do |thermalZone|
+            if thermal_zone.handle.to_s == thermalZone.handle.to_s
+              supplyComponents = airLoopHVAC.supplyComponents
+              supplyComponents.each do |supplyComponent|
+                if supplyComponent.to_AirLoopHVACUnitarySystem.is_initialized
+                  air_loop_unitary = supplyComponent.to_AirLoopHVACUnitarySystem.get
+                  if excepted_object == "Furnace"
+                      if air_loop_unitary.heatingCoil.is_initialized
+                        htg_coil = air_loop_unitary.heatingCoil.get
+                        if htg_coil.to_CoilHeatingGas.is_initialized
+                          htg_coil = htg_coil.clone
+                          htg_coil = htg_coil.to_CoilHeatingGas.get
+                        end
+                        if htg_coil.to_CoilHeatingElectric.is_initialized
+                          htg_coil = htg_coil.clone
+                          htg_coil = htg_coil.to_CoilHeatingElectric.get
+                        end
+                      end
+                  elsif excepted_object == "Central Air Conditioner"
+                      if air_loop_unitary.coolingCoil.is_initialized
+                        clg_coil = air_loop_unitary.coolingCoil.get
+                        if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
+                          clg_coil = clg_coil.clone
+                          clg_coil = clg_coil.to_CoilCoolingDXSingleSpeed.get
+                        end
+                        if clg_coil.to_CoilCoolingDXTwoSpeed.is_initialized
+                          clg_coil = clg_coil.clone
+                          clg_coil = clg_coil.to_CoilCoolingDXTwoSpeed.get
+                        end
+                      end
+                  end
+                end
+                runner.registerInfo("Removed '#{supplyComponent.name}' from air loop '#{airLoopHVAC.name}'")
+                supplyComponent.remove
+              end
+              runner.registerInfo("Removed air loop '#{airLoopHVAC.name}'")
+              airLoopHVAC.remove
+            end
+          end
+        end     
+        unless htg_coil.nil?
+            return htg_coil
+        end
+        unless clg_coil.nil?
+            return clg_coil
+        end
+    end
 
 end
 
