@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>3771c404-d217-4a66-bcf1-0fccd480be33</version_id>
+  <version_id>b4936786-99b3-4518-9278-4dc3f499a9e6</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>
@@ -157,7 +157,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7A25E77C</checksum>
+      <checksum>80ECBA6E</checksum>
     </file>
   </files>
 </measure>

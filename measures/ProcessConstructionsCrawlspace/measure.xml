@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>0f74aedd-d895-4997-bc13-4f2d189c6fd9</version_id>
+  <version_id>d611317a-c651-4b09-a3d6-95726cafba09</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCrawlspace</class_name>
   <display_name>Set Residential Crawlspace Constructions</display_name>
@@ -272,7 +272,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7A25E77C</checksum>
+      <checksum>80ECBA6E</checksum>
     </file>
   </files>
 </measure>

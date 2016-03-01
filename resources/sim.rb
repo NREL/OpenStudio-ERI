@@ -1342,6 +1342,7 @@ class Sim
 
     # Supply Fan
     supply.fan_power = supplyFanPower
+    supply.fan_power_rated = supplyFanPower_Rated
     supply.eff = OpenStudio::convert(supply.static / supply.fan_power,"cfm","m^3/s").get # Overall Efficiency of the Supply Fan, Motor and Drive
     supply.min_flow_ratio = fanspeed_Ratio[0] / fanspeed_Ratio[-1]
 

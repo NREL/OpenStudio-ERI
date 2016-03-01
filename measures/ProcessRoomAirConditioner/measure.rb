@@ -57,7 +57,20 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     roomacairflow.setDisplayName("Airflow")
     roomacairflow.setUnits("cfm/ton")
     roomacairflow.setDefaultValue(350.0)
-    args << roomacairflow     
+    args << roomacairflow
+    
+    #make a choice argument for room air cooling output capacity
+    cap_display_names = OpenStudio::StringVector.new
+    cap_display_names << "Autosize"
+    (0.5..10.0).step(0.5) do |tons|
+      cap_display_names << "#{tons} tons"
+    end
+
+    #make a string argument for room air cooling output capacity
+    selected_accap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedaccap", cap_display_names, true)
+    selected_accap.setDisplayName("Cooling Output Capacity")
+    selected_accap.setDefaultValue("Autosize")
+    args << selected_accap    
     
     #make a choice argument for living thermal zone
     thermal_zones = model.getThermalZones
@@ -107,6 +120,10 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     roomaceer = runner.getDoubleArgumentValue("roomaceer",user_arguments)
     supply.shr_Rated = runner.getDoubleArgumentValue("roomacshr",user_arguments)
     supply.coolingCFMs = runner.getDoubleArgumentValue("roomacairflow",user_arguments)
+    acOutputCapacity = runner.getStringArgumentValue("selectedaccap",user_arguments)
+    unless acOutputCapacity == "Autosize"
+      acOutputCapacity = OpenStudio::convert(acOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
+    end    
 
     # Check if has equipment
     ptacs = model.getZoneHVACPackagedTerminalAirConditioners
@@ -206,6 +223,12 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     
     clg_coil = OpenStudio::Model::CoilCoolingDXSingleSpeed.new(model, coolingseasonschedule, roomac_cap_ft, roomac_cap_fff, roomac_eir_ft, roomcac_eir_fff, roomac_plf_fplr)
     clg_coil.setName("WindowAC Coil")
+    if acOutputCapacity != "Autosize"
+      clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(acOutputCapacity,"Btu/h","W").get)
+    end
+    if acOutputCapacity != "Autosize"
+      clg_coil.setRatedAirFlowRate(supply.cfm_TON_Rated[0] * acOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
+    end
     clg_coil.setRatedSensibleHeatRatio(supply.shr_Rated)
     clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(OpenStudio::convert(roomaceer, "Btu/h", "W").get))
     clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(773.3))
@@ -229,6 +252,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     supply_fan_operation.setValue(0)
     
     htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, model.alwaysOffDiscreteSchedule())
+    htg_coil.setName("Always Off Heating Coil for PTAC")
     
     ptac = OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner.new(model,coolingseasonschedule, fan_onoff, htg_coil, clg_coil)
     ptac.setName("Window AC")
