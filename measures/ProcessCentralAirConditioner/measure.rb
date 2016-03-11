@@ -233,13 +233,10 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     # Process the air system
     air_conditioner, supply = sim._processAirSystem(supply, nil, air_conditioner, nil, hasFurnace, hasCoolingEquipment, hasAirConditioner, hasHeatPump, hasMiniSplitHP, hasRoomAirConditioner, hasGroundSourceHP)
 
-    coolingseasonschedule = nil
-    scheduleRulesets = model.getScheduleRulesets
-    scheduleRulesets.each do |scheduleRuleset|
-      if scheduleRuleset.name.to_s == "CoolingSeasonSchedule"
-        coolingseasonschedule = scheduleRuleset
-        break
-      end
+    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "CoolingSeasonSchedule")
+    if coolingseasonschedule.nil?
+        runner.registerError("A cooling season schedule named 'CoolingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        return false
     end
 
     # Check if has equipment
@@ -369,8 +366,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         clg_part_load_ratio_object.setCoefficient3xPOW2(supply.COOL_CLOSS_FPLR_SPEC_coefficients[2])
         clg_part_load_ratio_object.setMinimumValueofx(0.0)
         clg_part_load_ratio_object.setMaximumValueofx(1.0)
-        # clg_part_load_ratio_object.setMinimumValueofy(0.7) # tk
-        # clg_part_load_ratio_object.setMaximumValueofy(1.0) # tk
+        clg_part_load_ratio_object.setMinimumCurveOutput(0.7)
+        clg_part_load_ratio_object.setMaximumCurveOutput(1.0)
         clg_part_load_ratio << clg_part_load_ratio_object
 
         # Cooling CAP f(FF) Convert DOE-2 curves to E+ curves
@@ -388,8 +385,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         end
         clg_cap_f_of_flow_object.setMinimumValueofx(0.0)
         clg_cap_f_of_flow_object.setMaximumValueofx(2.0)
-        # clg_cap_f_of_flow_object.setMinimumValueofy(0.0) # tk
-        # clg_cap_f_of_flow_object.setMaximumValueofy(2.0) # tk
+        clg_cap_f_of_flow_object.setMinimumCurveOutput(0.0)
+        clg_cap_f_of_flow_object.setMaximumCurveOutput(2.0)
         clg_cap_f_of_flow << clg_cap_f_of_flow_object
 
         # Cooling EIR f(FF) Convert DOE-2 curves to E+ curves
@@ -407,8 +404,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         end
         clg_energy_input_ratio_f_of_flow_object.setMinimumValueofx(0.0)
         clg_energy_input_ratio_f_of_flow_object.setMaximumValueofx(2.0)
-        # clg_energy_input_ratio_f_of_flow_object.setMinimumValueofy(0.0) # tk
-        # clg_energy_input_ratio_f_of_flow_object.setMaximumValueofy(2.0) # tk
+        clg_energy_input_ratio_f_of_flow_object.setMinimumCurveOutput(0.0)
+        clg_energy_input_ratio_f_of_flow_object.setMaximumCurveOutput(2.0)
         clg_energy_input_ratio_f_of_flow << clg_energy_input_ratio_f_of_flow_object
 
       end

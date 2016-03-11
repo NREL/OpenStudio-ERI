@@ -29,12 +29,24 @@ class Constants
 	def self.g
 		return 32.174    # gravity (ft/s2)
 	end
-	def self.MiniSplitNumSpeeds
+	def self.Num_Speeds_MSHP
 		return 10
 	end
+    def self.MSHP_Cd_Cooling
+        return 0.25
+    end
+    def self.MSHP_Cd_Heating
+        return 0.40
+    end
 	def self.MonthNumDays
 		return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 	end
+    def self.Patm
+        return 14.696 # standard atmospheric pressure (psia)
+    end
+    def self.small 
+        return 1e-9
+    end
 
     # Strings --------------------
     

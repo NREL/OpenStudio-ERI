@@ -310,6 +310,222 @@ class HelperMethods
             return clg_coil
         end
     end
+    
+    def self.get_heating_or_cooling_season_schedule_object(model, runner, name)
+        seasonschedule = nil
+        scheduleRulesets = model.getScheduleRulesets
+        scheduleRulesets.each do |scheduleRuleset|
+          if scheduleRuleset.name.to_s == name
+            seasonschedule = scheduleRuleset
+            break
+          end
+        end
+        return seasonschedule
+    end  
+
+    def self.Iterate(x0,f0,x1,f1,x2,f2,icount,cvg)
+        '''
+        Description:
+        ------------
+            Determine if a guess is within tolerance for convergence
+            if not, output a new guess using the Newton-Raphson method
+
+        Source:
+        -------
+            Based on XITERATE f77 code in ResAC (Brandemuehl)
+
+        Inputs:
+        -------
+            x0      float    current guess value
+            f0      float    value of function f(x) at current guess value
+
+            x1,x2   floats   previous two guess values, used to create quadratic
+                             (or linear fit)
+            f1,f2   floats   previous two values of f(x)
+
+            icount  int      iteration count
+            cvg     bool     Has the iteration reached convergence?
+
+        Outputs:
+        --------
+            x_new   float    new guess value
+            cvg     bool     Has the iteration reached convergence?
+
+            x1,x2   floats   updated previous two guess values, used to create quadratic
+                             (or linear fit)
+            f1,f2   floats   updated previous two values of f(x)
+
+        Example:
+        --------
+
+            # Find a value of x that makes f(x) equal to some specific value f:
+
+            # initial guess (all values of x)
+            x = 1.0
+            x1 = x
+            x2 = x
+
+            # initial error
+            error = f - f(x)
+            error1 = error
+            error2 = error
+
+            itmax = 50  # maximum iterations
+            cvg = False # initialize convergence to "False"
+
+            for i in range(1,itmax+1):
+                error = f - f(x)
+                x,cvg,x1,error1,x2,error2 = \
+                                         Iterate(x,error,x1,error1,x2,error2,i,cvg)
+
+                if cvg:
+                    break
+            if cvg:
+                print "x converged after", i, :iterations"
+            else:
+                print "x did NOT converge after", i, "iterations"
+
+            print "x, when f(x) is", f,"is", x
+        '''
+
+        tolRel = 1e-5
+        dx = 0.1
+
+        # Test for convergence
+        if ((x0-x1).abs < tolRel*[x0.abs,Constants.small].max and icount != 1) or f0 == 0
+            x_new = x0
+            cvg = true
+        else
+            cvg = false
+
+            if icount == 1 # Perturbation
+                mode = 1
+            elsif icount == 2 # Linear fit
+                mode = 2
+            else # Quadratic fit
+                mode = 3
+            end
+
+            if mode == 3
+                # Quadratic fit
+                if x0 == x1 # If two xi are equal, use a linear fit
+                    x1 = x2
+                    f1 = f2
+                    mode = 2
+                elsif x0 == x2  # If two xi are equal, use a linear fit
+                    mode = 2
+                else
+                    # Set up quadratic coefficients
+                    c = ((f2 - f0)/(x2 - x0) - (f1 - f0)/(x1 - x0))/(x2 - x1)
+                    b = (f1 - f0)/(x1 - x0) - (x1 + x0)*c
+                    a = f0 - (b + c*x0)*x0
+
+                    if c.abs < Constants.small # If points are co-linear, use linear fit
+                        mode = 2
+                    elsif ((a + (b + c*x1)*x1 - f1)/f1).abs > Constants.small
+                        # If coefficients do not accurately predict data points due to
+                        # round-off, use linear fit
+                        mode = 2
+                    else
+                        d = b**2 - 4.0*a*c # calculate discriminant to check for real roots
+                        if d < 0.0 # if no real roots, use linear fit
+                            mode = 2
+                        else
+                            if d > 0.0 # if real unequal roots, use nearest root to recent guess
+                                x_new = (-b + Math.sqrt(d))/(2*c)
+                                x_other = -x_new - b/c
+                                if (x_new - x0).abs > (x_other - x0).abs
+                                    x_new = x_other
+                                end
+                            else # If real equal roots, use that root
+                                x_new = -b/(2*c)
+                            end
+
+                            if f1*f0 > 0 and f2*f0 > 0 # If the previous two f(x) were the same sign as the new
+                                if f2.abs > f1.abs
+                                    x2 = x1
+                                    f2 = f1
+                                end
+                            else
+                                if f2*f0 > 0
+                                    x2 = x1
+                                    f2 = f1
+                                end
+                            end
+                            x1 = x0
+                            f1 = f0
+                        end
+                    end
+                end
+            end
+
+            if mode == 2
+                # Linear Fit
+                m = (f1-f0)/(x1-x0)
+                if m == 0 # If slope is zero, use perturbation
+                    mode = 1
+                else
+                    x_new = x0-f0/m
+                    x2 = x1
+                    f2 = f1
+                    x1 = x0
+                    f1 = f0
+                end
+            end
+
+            if mode == 1
+                # Perturbation
+                if x0.abs > Constants.small
+                    x_new = x0*(1+dx)
+                else
+                    x_new = dx
+                end
+                x2 = x1
+                f2 = f1
+                x1 = x0
+                f1 = f0
+            end
+        end
+        return x_new,cvg,x1,f1,x2,f2
+    end
+    
+    def self.biquadratic(x,y,c)
+        '''
+        Description:
+        ------------
+            Calculate the result of a biquadratic polynomial with independent variables
+            x and y, and a list of coefficients, C:
+
+            z = C[1] + C[2]*x + C[3]*x**2 + C[4]*y + C[5]*y**2 + C[6]*x*y
+
+        Inputs:
+        -------
+            x       float      independent variable 1
+            y       float      independent variable 2
+            C       tuple      list of 6 coeffients [floats]
+
+        Outputs:
+        --------
+            z       float      result of biquadratic polynomial
+        '''
+        if c.length != 6
+            puts "Error: There must be 6 coefficients in a biquadratic polynomial"
+        end
+        z = c[0] + c[1]*x + c[2]*x**2 + c[3]*y + c[4]*y**2 + c[5]*y*x
+        return z
+    end
+    
+end
+
+class HVAC
+
+    def self.calc_EIR_from_COP(cop, supplyFanPower_Rated)
+        return OpenStudio::convert((OpenStudio::convert(1,"Btu","W*h").get + supplyFanPower_Rated * 0.03333) / cop - supplyFanPower_Rated * 0.03333,"W*h","Btu").get
+    end
+  
+    def self.calc_EIR_from_EER(eer, supplyFanPower_Rated)
+        return OpenStudio::convert((1 - OpenStudio::convert(supplyFanPower_Rated * 0.03333,"W*h","Btu").get) / eer - supplyFanPower_Rated * 0.03333,"W*h","Btu").get
+    end
 
 end
 

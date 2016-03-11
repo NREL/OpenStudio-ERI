@@ -108,13 +108,10 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     supply = Supply.new
     curves = Curves.new
 
-    coolingseasonschedule = nil
-    scheduleRulesets = model.getScheduleRulesets
-    scheduleRulesets.each do |scheduleRuleset|
-      if scheduleRuleset.name.to_s == "CoolingSeasonSchedule"
-        coolingseasonschedule = scheduleRuleset
-        break
-      end
+    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "CoolingSeasonSchedule")
+    if coolingseasonschedule.nil?
+        runner.registerError("A cooling season schedule named 'CoolingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        return false
     end
     
     roomaceer = runner.getDoubleArgumentValue("roomaceer",user_arguments)
@@ -189,6 +186,8 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     roomac_cap_fff.setCoefficient3xPOW2(curves.cool_CAP_FFLOW_SPEC_coefficients[2])
     roomac_cap_fff.setMinimumValueofx(0)
     roomac_cap_fff.setMaximumValueofx(2)
+    roomac_cap_fff.setMinimumCurveOutput(0)
+    roomac_cap_fff.setMaximumCurveOutput(2)    
 
     roomac_eir_ft = OpenStudio::Model::CurveBiquadratic.new(model)
     roomac_eir_ft.setName("RoomAC-EIR-fT")
@@ -209,7 +208,9 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     roomcac_eir_fff.setCoefficient2x(curves.cool_EIR_FFLOW_SPEC_coefficients[1])
     roomcac_eir_fff.setCoefficient3xPOW2(curves.cool_EIR_FFLOW_SPEC_coefficients[2])
     roomcac_eir_fff.setMinimumValueofx(0)
-    roomcac_eir_fff.setMaximumValueofx(2)    
+    roomcac_eir_fff.setMaximumValueofx(2)
+    roomcac_eir_fff.setMinimumCurveOutput(0)
+    roomcac_eir_fff.setMaximumCurveOutput(2)
     
     roomac_plf_fplr = OpenStudio::Model::CurveQuadratic.new(model)
     roomac_plf_fplr.setName("RoomAC-PLF-fPLR")
@@ -218,6 +219,8 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     roomac_plf_fplr.setCoefficient3xPOW2(curves.cool_PLF_FPLR[2])
     roomac_plf_fplr.setMinimumValueofx(0)
     roomac_plf_fplr.setMaximumValueofx(1)
+    roomac_plf_fplr.setMinimumCurveOutput(0)
+    roomac_plf_fplr.setMaximumCurveOutput(1)    
     
     # _processSystemRoomAC
     

@@ -108,15 +108,12 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end
 
-    heatingseasonschedule = nil
-    scheduleRulesets = model.getScheduleRulesets
-    scheduleRulesets.each do |scheduleRuleset|
-      if scheduleRuleset.name.to_s == "HeatingSeasonSchedule"
-        heatingseasonschedule = scheduleRuleset
-        break
-      end
+    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
+    if heatingseasonschedule.nil?
+        runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        return false
     end
-
+    
     # Check if has equipment
     baseboards = model.getZoneHVACBaseboardConvectiveElectrics
     baseboards.each do |baseboard|

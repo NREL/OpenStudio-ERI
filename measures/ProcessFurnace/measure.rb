@@ -204,13 +204,10 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     # Process the air system
     furnace, air_conditioner, supply = sim._processAirSystem(supply, furnace, air_conditioner, nil, hasFurnace, hasCoolingEquipment, hasAirConditioner, hasHeatPump, hasMiniSplitHP, hasRoomAirConditioner, hasGroundSourceHP)
 
-    heatingseasonschedule = nil
-    scheduleRulesets = model.getScheduleRulesets
-    scheduleRulesets.each do |scheduleRuleset|
-      if scheduleRuleset.name.to_s == "HeatingSeasonSchedule"
-        heatingseasonschedule = scheduleRuleset
-        break
-      end
+    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
+    if heatingseasonschedule.nil?
+        runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        return false
     end
 
     # Check if has equipment
