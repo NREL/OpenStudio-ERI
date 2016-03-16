@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>residential_well_pump</name>
   <uid>13183743-6249-4762-8050-cf80f5d4650b</uid>
-  <version_id>30a41a86-28a2-432d-992a-fc68d403b97c</version_id>
+  <version_id>319d8e7f-c171-41fd-b8be-164a48a05507</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialWellPump</class_name>
   <display_name>Set Residential Well Pump</display_name>
   <description>Adds (or replaces) a residential well pump with the specified efficiency and schedule. The well is assumed to be outdoors.</description>
-  <modeler_description>Since there is no Well Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential well pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
+  <modeler_description>Since there is no Well Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential well pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
   <arguments>
     <argument>
       <name>base_energy</name>
@@ -119,19 +119,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C0119C9B</checksum>
+      <checksum>008CD388</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
+      <checksum>10602D47</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

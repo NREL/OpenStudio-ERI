@@ -7,8 +7,10 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
+require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/weather"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
@@ -72,24 +74,20 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    # Initialize hashes
-    constructions_to_surfaces = {"WindowConstruction"=>[]}
-    constructions_to_objects = Hash.new      
-    
     # loop thru all the spaces
+    sub_surfaces = []
     spaces = model.getSpaces
     spaces.each do |space|
-      surfaces = space.surfaces
-      surfaces.each do |surface|
-        surface.subSurfaces.each do |subSurface|
-          next unless subSurface.subSurfaceType.downcase.include? "window"
-          constructions_to_surfaces["WindowConstruction"] << subSurface
+        space.surfaces.each do |surface|
+            surface.subSurfaces.each do |subSurface|
+                next unless subSurface.subSurfaceType.downcase.include? "window"
+                sub_surfaces << subSurface
+            end
         end
-      end
     end
     
     # Continue if no applicable sub surfaces
-    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+    if sub_surfaces.empty?
       return true
     end    
     
@@ -115,11 +113,11 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
 
     # EnergyPlus doesn't like shades that absorb no heat, transmit no heat or reflect no heat.
     if intShadeCoolingMultiplier == 1
-      intShadeCoolingMultiplier = 0.999
+        intShadeCoolingMultiplier = 0.999
     end
 
     if intShadeHeatingMultiplier == 1
-      intShadeHeatingMultiplier = 0.999
+        intShadeHeatingMultiplier = 0.999
     end
 
     total_shade_trans = intShadeCoolingMultiplier / intShadeHeatingMultiplier * 0.999
@@ -143,27 +141,27 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
 
     ish_rule_days = []
     for m in 1..12
-      date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
-      date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
-      ish_rule = OpenStudio::Model::ScheduleRule.new(ish_ruleset)
-      ish_rule.setName("WindowShadingSchedule%02d" % m.to_s)
-      ish_rule_day = ish_rule.daySchedule
-      ish_rule_day.setName("WindowShadingSchedule%02dd" % m.to_s)
-      for h in 1..24
-        time = OpenStudio::Time.new(0,h,0,0)
-        val = window_shade_cooling_season[m - 1]
-        ish_rule_day.addValue(time,val)
-      end
-      ish_rule_days << ish_rule_day
-      ish_rule.setApplySunday(true)
-      ish_rule.setApplyMonday(true)
-      ish_rule.setApplyTuesday(true)
-      ish_rule.setApplyWednesday(true)
-      ish_rule.setApplyThursday(true)
-      ish_rule.setApplyFriday(true)
-      ish_rule.setApplySaturday(true)
-      ish_rule.setStartDate(date_s)
-      ish_rule.setEndDate(date_e)
+        date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
+        date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
+        ish_rule = OpenStudio::Model::ScheduleRule.new(ish_ruleset)
+        ish_rule.setName("WindowShadingSchedule%02d" % m.to_s)
+        ish_rule_day = ish_rule.daySchedule
+        ish_rule_day.setName("WindowShadingSchedule%02dd" % m.to_s)
+        for h in 1..24
+            time = OpenStudio::Time.new(0,h,0,0)
+            val = window_shade_cooling_season[m - 1]
+            ish_rule_day.addValue(time,val)
+        end
+        ish_rule_days << ish_rule_day
+        ish_rule.setApplySunday(true)
+        ish_rule.setApplyMonday(true)
+        ish_rule.setApplyTuesday(true)
+        ish_rule.setApplyWednesday(true)
+        ish_rule.setApplyThursday(true)
+        ish_rule.setApplyFriday(true)
+        ish_rule.setApplySaturday(true)
+        ish_rule.setStartDate(date_s)
+        ish_rule.setEndDate(date_e)
     end
 
     sumDesSch = ish_rule_days[6]
@@ -214,27 +212,27 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
 
     ish_rule_days = []
     for m in 1..12
-      date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
-      date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
-      ish_rule = OpenStudio::Model::ScheduleRule.new(ish_ruleset)
-      ish_rule.setName("WindowShades%02d" % m.to_s)
-      ish_rule_day = ish_rule.daySchedule
-      ish_rule_day.setName("WindowShades%02dd" % m.to_s)
-      for h in 1..24
-        time = OpenStudio::Time.new(0,h,0,0)
-        val = window_shade_multiplier[m - 1]
-        ish_rule_day.addValue(time,val)
-      end
-      ish_rule_days << ish_rule_day
-      ish_rule.setApplySunday(true)
-      ish_rule.setApplyMonday(true)
-      ish_rule.setApplyTuesday(true)
-      ish_rule.setApplyWednesday(true)
-      ish_rule.setApplyThursday(true)
-      ish_rule.setApplyFriday(true)
-      ish_rule.setApplySaturday(true)
-      ish_rule.setStartDate(date_s)
-      ish_rule.setEndDate(date_e)
+        date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
+        date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
+        ish_rule = OpenStudio::Model::ScheduleRule.new(ish_ruleset)
+        ish_rule.setName("WindowShades%02d" % m.to_s)
+        ish_rule_day = ish_rule.daySchedule
+        ish_rule_day.setName("WindowShades%02dd" % m.to_s)
+        for h in 1..24
+            time = OpenStudio::Time.new(0,h,0,0)
+            val = window_shade_multiplier[m - 1]
+            ish_rule_day.addValue(time,val)
+        end
+        ish_rule_days << ish_rule_day
+        ish_rule.setApplySunday(true)
+        ish_rule.setApplyMonday(true)
+        ish_rule.setApplyTuesday(true)
+        ish_rule.setApplyWednesday(true)
+        ish_rule.setApplyThursday(true)
+        ish_rule.setApplyFriday(true)
+        ish_rule.setApplySaturday(true)
+        ish_rule.setStartDate(date_s)
+        ish_rule.setEndDate(date_e)
     end
 
     sumDesSch = ish_rule_days[6]
@@ -246,32 +244,28 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     ish_winter = ish_ruleset.winterDesignDaySchedule
     ish_winter.setName("WindowShadesWinter")
 
-    # GlazingMaterial
-    sg = OpenStudio::Model::SimpleGlazing.new(model)
-    sg.setName("GlazingMaterial")
-    sg.setUFactor(ufactor)
-    sg.setSolarHeatGainCoefficient(shgc * intShadeHeatingMultiplier)
-          
-    # WindowConstruction
-    materials = []
-    materials << sg
-    unless constructions_to_surfaces["WindowConstruction"].empty?
-        c = OpenStudio::Model::Construction.new(materials)
-        c.setName("WindowConstruction")
-        constructions_to_objects["WindowConstruction"] = c
+    # Define materials
+    glaz_mat = GlazingMaterial.new(name="GlazingMaterial", ufactor=ufactor, shgc=shgc * intShadeHeatingMultiplier)
+    
+    # Set paths
+    path_fracs = [1]
+    
+    # Define construction
+    window = Construction.new(path_fracs)
+    window.addlayer(glaz_mat, true)
+    
+    # Create and apply construction to surfaces
+    if not window.create_and_assign_constructions(sub_surfaces, runner, model, "WindowConstruction")
+        return false
     end
     
-    # Apply constructions to sub surfaces
-    constructions_to_surfaces.each do |construction, surfaces|
-        surfaces.each do |surface|
-            surface.setConstruction(constructions_to_objects[construction])
-            surface.setShadingControl(sc)
-            runner.registerInfo("Sub Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_sub_surface(model, surface.name.to_s, runner)}' and with Sub Surface Type '#{surface.subSurfaceType}', was assigned Construction '#{construction}'")
-        end
+    # Apply shading controls
+    sub_surfaces.each do |sub_surface|
+        sub_surface.setShadingControl(sc)
     end
 
     # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials(model, runner)    
+    HelperMethods.remove_unused_materials_and_constructions(model, runner)    
     
     return true
  

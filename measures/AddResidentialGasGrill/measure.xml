@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>531450b5-bd66-4f9b-8a24-23465bf2171b</version_id>
+  <version_id>7fba1da1-7b8e-4694-996f-14e0d67c3816</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>
   <description>Adds (or replaces) a residential gas grill with the specified efficiency and schedule. The grill is assumed to be outdoors.</description>
-  <modeler_description>Since there is no Gas Grill object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas grill. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
+  <modeler_description>Since there is no Gas Grill object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas grill. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
   <arguments>
     <argument>
       <name>base_energy</name>
@@ -119,19 +119,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2AACC0D5</checksum>
+      <checksum>A56080F2</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
+      <checksum>10602D47</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

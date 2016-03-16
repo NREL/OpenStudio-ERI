@@ -13,6 +13,7 @@
 #load util.rb
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
@@ -85,7 +86,7 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
     end
 
 	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
-	living_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
+	living_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
     if living_thermal_zone.nil?
       return false
     end

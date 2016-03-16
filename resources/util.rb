@@ -4,251 +4,23 @@ require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/unit_conversions"
 
 class HelperMethods
-
-    # Retrieves the number of bedrooms and bathrooms from the space type
-    # They are assigned in the SetResidentialBedroomsAndBathrooms measure.
-    def self.get_bedrooms_bathrooms(model, runner=nil)
-        nbeds = nil
-        nbaths = nil
-        model.getSpaces.each do |space|
-            space_equipments = space.electricEquipment
-            space_equipments.each do |space_equipment|
-                name = space_equipment.electricEquipmentDefinition.name.get.to_s
-                br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
-                ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)	
-                if br_regexpr
-                    nbeds = br_regexpr[:br].to_f
-                elsif ba_regexpr
-                    nbaths = ba_regexpr[:ba].to_f
-                end
-            end
-        end
-        if nbeds.nil? or nbaths.nil?
-            if not runner.nil?
-                runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
-            end
-        end
-        return [nbeds, nbaths]
-    end
-	
-    def self.get_bedrooms_bathrooms_from_idf(workspace, runner=nil)
-        nbeds = nil
-        nbaths = nil
-		electricEquipments = workspace.getObjectsByType("ElectricEquipment".to_IddObjectType)
-        electricEquipments.each do |electricEquipment|
-            br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(electricEquipment.getString(0).to_s)
-            ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(electricEquipment.getString(0).to_s)	
-            if br_regexpr
-                nbeds = br_regexpr[:br].to_f
-            elsif ba_regexpr
-                nbaths = ba_regexpr[:ba].to_f
-            end
-        end
-        if nbeds.nil? or nbaths.nil?
-            if not runner.nil?
-                runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
-            end
-        end
-        return [nbeds, nbaths]
-    end	
-    
-	# Removes the number of bedrooms and bathrooms in the model
-    def self.remove_bedrooms_bathrooms(model)
-        model.getSpaces.each do |space|
-            space_equipments = space.electricEquipment
-            space_equipments.each do |space_equipment|
-                name = space_equipment.electricEquipmentDefinition.name.get.to_s
-                br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
-                ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)	
-                if br_regexpr
-                    space_equipment.electricEquipmentDefinition.remove
-                elsif ba_regexpr
-                    space_equipment.electricEquipmentDefinition.remove
-                end
-            end
-        end
-    end	
-	
-    # Retrieves the floor area of the specified space type
-    def self.get_floor_area_for_space_type(model, spacetype_handle)
-        floor_area = 0
-        model.getSpaceTypes.each do |spaceType|
-            if spaceType.handle.to_s == spacetype_handle.to_s
-                floor_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-            end
-        end
-        return floor_area
-    end
-    
-    # Retrieves the conditioned floor area for the building
-    def self.get_building_conditioned_floor_area(model, runner=nil)
-        floor_area = 0
-        model.getThermalZones.each do |zone|
-            if self.zone_is_conditioned(zone)
-                runner.registerWarning(zone.name.to_s)
-                floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
-            end
-        end
-        if floor_area == 0 and not runner.nil?
-            runner.registerError("Could not find any conditioned floor area. Please assign HVAC equipment first.")
-            return nil
-        end
-        return floor_area
-    end
-    
-    def self.zone_is_conditioned(zone)
-        # FIXME: Ugly hack until we can get conditioned floor area from OS
-        if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone
-            return true
-        end
-        return false
-    end
-    
-    def self.get_default_space(model, runner=nil)
-        space = nil
-        model.getSpaces.each do |s|
-            if s.name.to_s == Constants.LivingSpace(1) # Try to return our living space
-                return s
-            elsif space.nil? # Return first space in list if our living space not found
-                space = s
-            end
-        end
-        if space.nil? and not runner.nil?
-            runner.registerError("Could not find any spaces in the model.")
-        end
-        return space
-    end
-    
-    def self.get_space_type_from_string(model, spacetype_s, runner, print_err=true)
-        space_type = nil
-        model.getSpaceTypes.each do |st|
-            if st.name.to_s == spacetype_s
-                space_type = st
-                break
-            end
-        end
-        if space_type.nil?
-            if print_err
-                runner.registerError("Could not find space type with the name '#{spacetype_s}'.")
-            else
-                runner.registerWarning("Could not find space type with the name '#{spacetype_s}'.")
-            end
-        end
-        return space_type
-    end
-	
-    def self.get_space_from_string(model, space_s, runner, print_err=true)
-        space = nil
-        model.getSpaces.each do |s|
-            if s.name.to_s == space_s
-                space = s
-                break
-            end
-        end
-        if space.nil?
-            if print_err
-                runner.registerError("Could not find space with the name '#{space_s}'.")
-            else
-                runner.registerWarning("Could not find space with the name '#{space_s}'.")
-            end
-        end
-        return space
-    end
-
-    def self.get_thermal_zone_from_string(model, thermalzone_s, runner, print_err=true)
-        thermal_zone = nil
-        model.getThermalZones.each do |tz|
-            if tz.name.to_s == thermalzone_s
-                thermal_zone = tz
-                break
-            end
-        end
-        if thermal_zone.nil?
-            if print_err
-                runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
-            else
-                runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
-            end
-        end
-        return thermal_zone
-    end
-
-    def self.get_thermal_zone_from_string_from_idf(workspace, thermalzone_s, runner, print_err=true)
-        thermal_zone = nil
-        workspace.getObjectsByType("Zone".to_IddObjectType).each do |tz|
-            if tz.getString(0).to_s == thermalzone_s
-                thermal_zone = tz
-                break
-            end
-        end
-        if thermal_zone.nil?
-            if print_err
-                runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
-            else
-                runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
-            end
-        end
-        return thermal_zone
-    end		
-    
-	def self.get_space_type_from_surface(model, surface_s, runner, print_err=true)
-		space_type_r = nil
-		model.getSpaces.each do |space|
-			space.surfaces.each do |s|
-				if s.name.to_s == surface_s
-					space_type_r = space.spaceType.get.name.to_s
-					break
-				end
-			end
-		end
-        if space_type_r.nil?
-            if print_err
-                runner.registerError("Could not find surface with the name '#{surface_s}'.")
-            else
-                runner.registerWarning("Could not find surface with the name '#{surface_s}'.")
-            end
-        end		
-		return space_type_r
-	end
-    
-	def self.get_space_type_from_sub_surface(model, sub_surface_s, runner, print_err=true)
-		space_type_r = nil
-		model.getSpaces.each do |space|
-			space.surfaces.each do |surface|
-                surface.subSurfaces.each do |s|
-                    if s.name.to_s == sub_surface_s
-                        space_type_r = space.spaceType.get.name.to_s
-                        break
-                    end
-                end
-			end
-		end
-        if space_type_r.nil?
-            if print_err
-                runner.registerError("Could not find surface with the name '#{sub_surface_s}'.")
-            else
-                runner.registerWarning("Could not find surface with the name '#{sub_surface_s}'.")
-            end
-        end		
-		return space_type_r
-	end    
     
     def self.remove_object_from_idf_based_on_name(workspace, name_s, object_s, runner=nil)
       workspace.getObjectsByType(object_s.to_IddObjectType).each do |str|
         n = str.getString(0).to_s
         name_s.each do |name|
-		  if n.include? name
-		    str.remove
-		    unless runner.nil?
-			  runner.registerInfo("Removed object '#{object_s} - #{n}'")
-		    end
-			break
-		  end
-		end
+          if n.include? name
+            str.remove
+            unless runner.nil?
+              runner.registerInfo("Removed object '#{object_s} - #{n}'")
+            end
+            break
+          end
+        end
       end
       return workspace
     end
-	
+    
     def self.get_plant_loop_from_string(model, plantloop_s, runner, print_err=true)
         plant_loop = nil
         model.getPlantLoops.each do |pl|
@@ -294,7 +66,26 @@ class HelperMethods
         return wh_setpoint
     end
     
-    def self.remove_unused_materials(model, runner)
+    def self.remove_unused_materials_and_constructions(model, runner)
+        # Constructions not used by surfaces or subsurfaces:
+        used_constructions = []
+        model.getSpaces.each do |space|
+            space.surfaces.each do |surface|
+                next if not surface.construction.is_initialized
+                used_constructions << surface.construction.get
+                surface.subSurfaces.each do |subsurface|
+                    next if not subsurface.construction.is_initialized
+                    used_constructions << subsurface.construction.get
+                end
+            end
+        end
+        model.getConstructions.each do |construction|
+            if not used_constructions.include? construction
+                construction.remove
+                runner.registerInfo("Removed construction '#{construction.name}' because it was orphaned.")
+            end
+        end
+        # Materials not used by constructions:
         used_materials = []
         model.getConstructions.each do |construction|
             construction.layers.each do |material|
@@ -304,45 +95,59 @@ class HelperMethods
         model.getStandardOpaqueMaterials.each do |material|
             if not used_materials.include? material
                 material.remove
-                runner.registerInfo("Removed standard opaque material '#{material.name}' because it was orphaned.")
+                runner.registerInfo("Removed material '#{material.name}' because it was orphaned.")
             end
         end
         model.getMasslessOpaqueMaterials.each do |material|
             if not used_materials.include? material
                 material.remove
-                runner.registerInfo("Removed massless opaque material '#{material.name}' because it was orphaned.")
+                runner.registerInfo("Removed material '#{material.name}' because it was orphaned.")
             end
         end
     end
 
 end
 
+class SimpleMaterial
+
+    def initialize(name=nil, rvalue=nil)
+        @name = name
+        @rvalue = rvalue
+    end
+    
+    attr_accessor :name, :rvalue
+
+    def self.Adiabatic
+        return SimpleMaterial.new(name='Adiabatic', rvalue=1000)
+    end
+
+end
+
+class GlazingMaterial
+
+    def initialize(name=nil, ufactor=nil, shgc=nil)
+        @name = name
+        @ufactor = ufactor
+        @shgc = shgc
+    end
+    
+    attr_accessor :name, :ufactor, :shgc
+end
+
 class Material
 
-    def initialize(name=nil, type=nil, thick=nil, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=nil, dens=nil, sh=nil, tAbs=nil, sAbs=nil, vAbs=nil, rvalue=nil)
+    def initialize(name=nil, thick_in=nil, mat_base=nil, cond=nil, dens=nil, sh=nil, tAbs=nil, sAbs=nil, vAbs=nil, rvalue=nil)
         @name = name
-        @type = type
         
-        if !thick.nil?
-            @thick = thick
-            @thick_in = OpenStudio::convert(@thick,"ft","in").get
-        elsif !thick_in.nil?
+        if not thick_in.nil?
             @thick_in = thick_in
             @thick = OpenStudio::convert(@thick_in,"in","ft").get
-        end
-        
-        if not width.nil?
-            @width = width
-            @width_in = OpenStudio::convert(@width,"ft","in").get
-        elsif not width_in.nil?
-            @width_in = thick_in
-            @width = OpenStudio::convert(@width_in,"in","ft").get
         end
         
         if not mat_base.nil?
             @k = mat_base.k
             @rho = mat_base.rho
-            @cp = mat_base.Cp
+            @cp = mat_base.cp
         else
             @k = nil
             @rho = nil
@@ -370,82 +175,45 @@ class Material
         end
     end
     
-    def thick
-        return @thick
-    end
-
-    def thick_in
-        return @thick_in
-    end
-
-    def width
-        return @width
-    end
+    attr_accessor :name, :thick, :thick_in, :k, :rho, :cp, :rvalue, :tAbs, :sAbs, :vAbs
     
-    def width_in
-        return @width_in
-    end
-    
-    def k
-        return @k
-    end
-    
-    def rho
-        return @rho
-    end
-    
-    def Cp
-        return @cp
-    end
-    
-    def Rvalue
-        return @rvalue
-    end
-    
-    def TAbs
-        return @tAbs
-    end
-    
-    def SAbs
-        return @sAbs
-    end
-    
-    def VAbs
-        return @vAbs
+    def self.AirCavity(thick_in)
+        rvalue = Gas.AirGapRvalue
+        return Material.new(name=nil, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(thick_in,"in","ft").get/rvalue, dens=Gas.Air.rho, sh=Gas.Air.cp)
     end
     
     def self.AirFilmOutside
         rvalue = 0.197 # hr-ft-F/Btu
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmVertical
         rvalue = 0.68 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmFlatEnhanced
         rvalue = 0.61 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmFlatReduced
         rvalue = 0.92 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmFloorAverage
         # For floors between conditioned spaces where heat does not flow across
         # the floor; heat transfer is only important with regards to the thermal
-        rvalue = (Material.AirFilmFlatReduced.Rvalue + Material.AirFilmFlatEnhanced.Rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        rvalue = (Material.AirFilmFlatReduced.rvalue + Material.AirFilmFlatEnhanced.rvalue) / 2.0 # hr-ft-F/Btu
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmFloorReduced
         # For floors above unconditioned basement spaces, where heat will
         # always flow down through the floor.
-        rvalue = Material.AirFilmFlatReduced.Rvalue # hr-ft-F/Btu
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        rvalue = Material.AirFilmFlatReduced.rvalue # hr-ft-F/Btu
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmSlopeEnhanced(highest_roof_pitch)
@@ -454,7 +222,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
         rvalue = 0.002 * Math::exp(0.0398 * highest_roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmSlopeReduced(highest_roof_pitch)
@@ -463,7 +231,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
         rvalue = 0.32 * Math::exp(-0.0154 * highest_roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmSlopeEnhancedReflective(highest_roof_pitch)
@@ -472,7 +240,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
         rvalue = 0.00893 * Math::exp(0.0419 * highest_roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmSlopeReducedReflective(highest_roof_pitch)
@@ -481,106 +249,135 @@ class Material
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
         rvalue = 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmRoof(highest_roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return Material.AirFilmSlopeEnhanced(highest_roof_pitch).Rvalue * hdd_frac + Material.AirFilmSlopeReduced(highest_roof_pitch).Rvalue * cdd_frac # hr-ft-F/Btu
+        #return Material.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue * hdd_frac + Material.AirFilmSlopeReduced(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        rvalue = (Material.AirFilmSlopeEnhanced(highest_roof_pitch).Rvalue + Material.AirFilmSlopeReduced(highest_roof_pitch).Rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        rvalue = (Material.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue + Material.AirFilmSlopeReduced(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
     def self.AirFilmRoofRadiantBarrier(highest_roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).Rvalue * hdd_frac + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).Rvalue * cdd_frac # hr-ft-F/Btu
+        #return Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue * hdd_frac + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        rvalue = (Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).Rvalue + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).Rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, type=nil, thick=nil, thick_in=1.0, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        rvalue = (Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
-    def self.CarpetBare(carpetFloorFraction, carpetPadRValue)
+    def self.CarpetBare(carpetFloorFraction=0.8, carpetPadRValue=2.08)
         thickness = 0.5 # in
-        return Material.new(name=Constants.MaterialCarpetBareLayer, type=Constants.MaterialTypeProperties, thick=nil, thick_in=thickness, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (carpetPadRValue * carpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
+        return Material.new(name='CarpetBareLayer', thick_in=thickness, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (carpetPadRValue * carpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
     end
 
     def self.Concrete8in
-        return Material.new(name=Constants.MaterialConcrete8in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=8, width=nil, width_in=nil, mat_base=BaseMaterial.Concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
+        return Material.new(name='Concrete-8in', thick_in=8, mat_base=BaseMaterial.Concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
     end
 
     def self.Concrete4in
-        return Material.new(name=Constants.MaterialConcrete8in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=4, width=nil, width_in=nil, mat_base=BaseMaterial.Concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
+        return Material.new(name='Concrete-4in', thick_in=4, mat_base=BaseMaterial.Concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
+    end
+    
+    def self.DefaultCarpet
+        return Material.CarpetBare
     end
     
     def self.DefaultExteriorFinish
-        return Material.new(name=Constants.MaterialExteriorFinish, type=Constants.MaterialTypeProperties, thick=nil, thick_in=0.375, width=nil, width_in=nil, mat_base=nil, cond=0.375/0.6, dens=11.1, sh=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
+        thick_in = 0.375
+        return Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(thick_in,"in","ft").get/0.6, dens=11.1, sh=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
+    end
+    
+    def self.DefaultFloorMass
+        return Material.MassFloor(0.625, 0.8004, 34.0, 0.29) # Wood Surface
+    end
+    
+    def self.DefaultWallMass
+        mat = Material.GypsumWall1_2in
+        mat.name = Constants.MaterialWallMass
+        return mat
+    end
+    
+    def self.DefaultWallSheathing
+        mat = Material.Plywood1_2in
+        mat.name = Constants.MaterialWallSheathing
+        return mat
     end
 
-    def self.Gypsum1_2in
-        return Material.new(name=Constants.MaterialGypsumBoard1_2in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=0.5, width=nil, width_in=nil, mat_base=BaseMaterial.Gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    def self.GypsumWall1_2in
+        return Material.new(name='WallGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    end
+
+    def self.GypsumCeiling1_2in
+        return Material.new(name='CeilingGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
     end
 
     def self.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-        return Material.new(name=Constants.MaterialFloorMass, type=Constants.MaterialTypeProperties, thick=nil, thick_in=floorMassThickness, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(floorMassConductivity,"in","ft").get, dens=floorMassDensity, sh=floorMassSpecificHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
+        return Material.new(name='FloorMass', thick_in=floorMassThickness, mat_base=nil, cond=OpenStudio::convert(floorMassConductivity,"in","ft").get, dens=floorMassDensity, sh=floorMassSpecificHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
     end
 
     def self.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
-        return Material.new(name=Constants.MaterialPartitionWallMass, type=Constants.MaterialTypeProperties, thick=nil, thick_in=partitionWallMassThickness, width=nil, width_in=nil, mat_base=nil, cond=OpenStudio::convert(partitionWallMassConductivity,"in","ft").get, dens=partitionWallMassDensity, sh=partitionWallMassSpecHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+        return Material.new(name='PartitionWallMass', thick_in=partitionWallMassThickness, mat_base=nil, cond=OpenStudio::convert(partitionWallMassConductivity,"in","ft").get, dens=partitionWallMassDensity, sh=partitionWallMassSpecHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     end
 
     def self.Soil12in
-        return Material.new(name=Constants.MaterialSoil12in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=12, width=nil, width_in=nil, mat_base=BaseMaterial.Soil)
+        return Material.new(name='Soil-12in', thick_in=12, mat_base=BaseMaterial.Soil)
     end
 
-    def self.Stud2x(thickness)
-        return Material.new(name=Constants.Material2x, type=Constants.MaterialTypeProperties, thick=nil, thick_in=thickness, width=nil, width_in=1.5, mat_base=BaseMaterial.Wood)
+    def self.Stud2x(thick_in)
+        return Material.new(name="Stud2x#{thick_in.to_s}", thick_in=thick_in, mat_base=BaseMaterial.Wood)
     end
     
     def self.Stud2x4
-        return Material.new(name=Constants.Material2x4, type=Constants.MaterialTypeProperties, thick=nil, thick_in=3.5, width=nil, width_in=1.5, mat_base=BaseMaterial.Wood)
+        return Material.new(name='Stud2x4', thick_in=3.5, mat_base=BaseMaterial.Wood)
     end
 
     def self.Stud2x6
-        return Material.new(name=Constants.Material2x6, type=Constants.MaterialTypeProperties, thick=nil, thick_in=5.5, width=nil, width_in=1.5, mat_base=BaseMaterial.Wood)
+        return Material.new(name='Stud2x6', thick_in=5.5, mat_base=BaseMaterial.Wood)
     end
 
     def self.Plywood1_2in
-        return Material.new(name=Constants.MaterialPlywood1_2in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=0.5, width=nil, width_in=nil, mat_base=BaseMaterial.Wood)
+        return Material.new(name='Plywood-1_2in', thick_in=0.5, mat_base=BaseMaterial.Wood)
     end
 
     def self.Plywood3_4in
-        return Material.new(name=Constants.MaterialPlywood3_4in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=0.75, width=nil, width_in=nil, mat_base=BaseMaterial.Wood)
+        return Material.new(name='Plywood-3_4in', thick_in=0.75, mat_base=BaseMaterial.Wood)
     end
 
     def self.Plywood3_2in
-        return Material.new(name=Constants.MaterialPlywood3_2in, type=Constants.MaterialTypeProperties, thick=nil, thick_in=1.5, width=nil, width_in=nil, mat_base=BaseMaterial.Wood)
+        return Material.new(name='Plywood-3_2in', thick_in=1.5, mat_base=BaseMaterial.Wood)
     end
 
     def self.RadiantBarrier
-        return Material.new(name=Constants.MaterialRadiantBarrier, type=Constants.MaterialTypeProperties, thick=0.0007, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=135.8, dens=168.6, sh=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
+        return Material.new(name='RadiantBarrier', thick_in=0.00084, mat_base=nil, cond=135.8, dens=168.6, sh=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
     end
 
     def self.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
-        return Material.new(name=Constants.MaterialRoofingMaterial, type=Constants.MaterialTypeProperties, thick=0.031, thick_in=nil, width=nil, width_in=nil, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
+        return Material.new(name='RoofingMaterial', thick_in=0.375, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
     end
 
+    # TODO: Eventually remove
     def self.StudAndAir
         mat_2x4 = Material.Stud2x4
-        u_stud_path = Constants.DefaultFramingFactorInterior / Material.Stud2x4.Rvalue
+        u_stud_path = Constants.DefaultFramingFactorInterior / Material.Stud2x4.rvalue
         u_air_path = (1 - Constants.DefaultFramingFactorInterior) / Gas.AirGapRvalue
         stud_and_air_Rvalue = 1 / (u_stud_path + u_air_path)
-        mat_stud_and_air_wall = BaseMaterial.new(rho=(mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp, cp=((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.Cp * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp * Gas.Air.Cp) / ((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.Cp), k=(mat_2x4.thick / stud_and_air_Rvalue))
-        return Material.new(name=Constants.MaterialStudandAirWall, type=Constants.MaterialTypeProperties, thick=mat_2x4.thick, thick_in=nil, width=nil, width_in=nil, mat_base=mat_stud_and_air_wall)
+        mat_stud_and_air_wall = BaseMaterial.new(rho=(mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.cp, cp=((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.cp * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.cp * Gas.Air.cp) / ((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.cp), k=(mat_2x4.thick / stud_and_air_Rvalue))
+        return Material.new(name='StudAndAirWall', thick_in=mat_2x4.thick_in, mat_base=mat_stud_and_air_wall)
     end
 
 end
 
 class Construction
+
+    # Facilitates creating an OpenStudio construction (with accompanying OpenStudio Materials)
+    # from Material objects. Handles parallel paths as well.
 
     def initialize(path_widths, name=nil, type=nil)
         @name = name
@@ -589,88 +386,142 @@ class Construction
         @path_fracs = []
         path_widths.each do |path_width|
             @path_fracs << path_width / path_widths.inject{ |sum, n| sum + n }
-        end     
-        @layer_thicknesses = []
-        @cond_matrix = []
-        @matrix = []
+        end         
+        @layers_materials = []
+        @layers_includes = []
+        @layers_names = []
+        @remove_materials = []
     end
     
-    def addlayer(thickness=nil, conductivity_list=nil, material=nil, material_list=nil)
-        # Adds layer to the construction using a material name or a thickness and list of conductivities.
-        if material
-            thickness = material.thick
-            conductivity_list = [material.k]
-        end     
-        begin
-            if thickness and thickness > 0
-                @layer_thicknesses << thickness
-
-                if @layer_thicknesses.length == 1
-                    # First layer
-
-                    if conductivity_list.length == 1
-                        # continuous layer
-                        single_conductivity = conductivity_list[0] #strangely, this is necessary
-                        (0...@path_fracs.length).to_a.each do |i|
-                            @cond_matrix << [single_conductivity]
-                        end                     
-                    else
-                        # layer has multiple materials
-                        (0...@path_fracs.length).to_a.each do |i|
-                            @cond_matrix << [conductivity_list[i]]
-                        end
-                    end
-                else
-                    # not first layer
-                    if conductivity_list.length == 1
-                        # continuous layer
-                        (0...@path_fracs.length).to_a.each do |i|
-                            @cond_matrix[i] << conductivity_list[0]
-                        end
-                    else
-                        # layer has multiple materials
-                        (0...@path_fracs.length).to_a.each do |i|
-                            @cond_matrix[i] << conductivity_list[i]
-                        end
-                    end
-                end
-                
-            end
-        rescue
-            runner.registerError("Wrong number of conductivity values specified (#{conductivity_list.length} specified); should be one if a continuous layer, or one per path for non-continuous layers (#{@path_fracs.length} paths).")    
-            return false
+    def addlayer(materials, include_in_construction, name=nil)
+        # materials: Either a Material object or a list of Material objects
+        # include_in_construction: false if an assumed, default layer that should not be included 
+        #                          in the resulting construction but is used to calculate the 
+        #                          effective R-value.
+        # name: Name of the layer; required if multiple materials are provided. Otherwise the 
+        #       Material.name will be used.
+        if not materials.kind_of?(Array)
+            @layers_materials << [materials]
+        else
+            @layers_materials << materials
         end
-        
+        @layers_includes << include_in_construction
+        @layers_names << name
     end
-        
-    def Rvalue_parallel
-        # This generic function calculates the total r-value of a wall/roof/floor assembly using parallel paths (R_2D = infinity).
-         # layer_thicknesses = [0.5, 5.5, 0.5] # layer thicknesses
-         # path_widths = [22.5, 1.5]     # path widths
-
-        # gwb  =  Material(cond=0.17 *0.5779)
-        # stud =  Material(cond=0.12 *0.5779)
-        # osb  =  Material(cond=0.13 *0.5779)
-        # ins  =  Material(cond=0.04 *0.5779)
-
-        # cond_matrix = [[gwb.k, stud.k, osb.k],
-                       # [gwb.k, ins.k, osb.k]]
+    
+    def removelayer(name)
+        @remove_materials << name
+    end
+    
+    def printlayers(runner)
+        @path_fracs.each do |path_frac|
+            runner.registerInfo(path_frac.round(5).to_s)
+        end
+        runner.registerInfo("======")
+        @layers_materials.each do |layer_materials|
+            layer_materials.each do |mat|
+                runner.registerInfo(mat.thick.round(5).to_s)
+                runner.registerInfo(mat.k.round(5).to_s)
+            end
+            runner.registerInfo("------")
+        end
+    end
+    
+    def assembly_rvalue(runner)
+        # Calculate overall R-value for assembly
+        if not validated?(runner)
+            return nil
+        end
         u_overall = 0
         @path_fracs.each_with_index do |path_frac,path_num|
             # For each parallel path, sum series:
             r_path = 0
-            @layer_thicknesses.each_with_index do |layer_thickness,layer_num|
-                r_path += layer_thickness / @cond_matrix[path_num][layer_num]
+            @layers_materials.each do |layer_materials|
+                if layer_materials.size == 1
+                    # One material for this layer
+                    r_path += layer_materials[0].rvalue
+                else
+                    # Multiple parallel materials for this layer, use appropriate one
+                    r_path += layer_materials[path_num].rvalue
+                end
             end
-                
             u_overall += 1.0 / r_path * path_frac
-        
         end
-
-        return 1.0 / u_overall
+        r_overall = 1.0 / u_overall
+        return r_overall
+    end
+    
+    # Creates constructions as needed and assigns to surfaces.
+    # Leave name as nil if the materials (e.g., exterior finish) apply to multiple constructions.
+    def create_and_assign_constructions(surfaces, runner, model, name=nil)
+    
+        if not validated?(runner)
+            return false
+        end
         
-    end 
+        # Create materials
+        materials = []
+        @layers_materials.each_with_index do |layer_materials,layer_num|
+            next if not @layers_includes[layer_num]
+            if layer_materials.size == 1
+                if not @layers_names[layer_num].nil?
+                    mat_name = @layers_names[layer_num]
+                else
+                    mat_name = layer_materials[0].name
+                end
+                mat = create_os_material(model, runner, layer_materials[0], mat_name)
+            else
+                parallel_path_mat = get_parallel_material(layer_num, runner)
+                mat = create_os_material(model, runner, parallel_path_mat)
+            end
+            materials << mat
+        end
+        
+        construction_map = {} # Used to create new constructions only for each existing unique construction
+        rev_construction_map = {} # Used for adjacent surfaces, which get reverse constructions
+        surfaces.each do |surface|
+            # Get construction name, if available
+            constr_name = nil
+            if surface.construction.is_initialized
+                constr_name = surface.construction.get.name.to_s
+            end
 
+            # Assign construction to surface
+            if not construction_map.include? constr_name
+                # Create new construction
+                if not create_and_assign_construction(surface, materials, runner, model, name)
+                    return false
+                end
+                construction_map[constr_name] = surface.construction.get
+                runner.registerInfo("Construction '#{surface.construction.get.name.to_s}' was created.")
+            else
+                # Re-use recently created construction
+                surface.setConstruction(construction_map[constr_name])
+            end
+            runner.registerInfo("Surface '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
+            
+            # Assign reverse construction to adjacent surface as needed
+            if not surface.is_a? OpenStudio::Model::SubSurface and surface.adjacentSurface.is_initialized
+                rev_constr_name = "Rev#{surface.construction.get.name.to_s}"
+                adjacent_surface = surface.adjacentSurface.get
+                if not rev_construction_map.include? rev_constr_name
+                    # Create adjacent construction
+                    revconstr = surface.construction.get.to_Construction.get.reverseConstruction
+                    revconstr.setName(rev_constr_name)
+                    adjacent_surface.setConstruction(revconstr)
+                    rev_construction_map[rev_constr_name] = adjacent_surface.construction.get
+                    runner.registerInfo("Construction '#{revconstr.name.to_s}' was created.")
+                else
+                    # Re-use recently created adjacent construction
+                    adjacent_surface.setConstruction(rev_construction_map[rev_constr_name])
+                end
+                runner.registerInfo("Surface '#{adjacent_surface.name.to_s}' has been assigned construction '#{adjacent_surface.construction.get.name.to_s}'.")
+            end
+            
+        end
+        return true
+    end
+    
     def self.GetWallGapFactor(installGrade, framingFactor)
 
         if installGrade == 1
@@ -685,123 +536,9 @@ class Construction
 
     end
 
-    def self.GetWoodStudWallAssemblyR(wallCavityInsFillsCavity, wallCavityInsRvalueInstalled, 
-                                      wallInstallGrade, wallCavityDepth, wallFramingFactor, 
-                                      prefix, gypsumThickness, gypsumNumLayers, finishThickness, 
-                                      finishConductivty, rigidInsThickness, rigidInsRvalue, hasOSB)
-
-        if not wallCavityInsRvalueInstalled
-            wallCavityInsRvalueInstalled = 0
-        end
-        if not wallFramingFactor
-            wallFramingFactor = 0
-        end
-
-        # For foundation walls, only add OSB if there is wall insulation.
-        # This is consistent with the NREMDB costs.
-        if prefix != "WS" and wallCavityInsRvalueInstalled == 0 and rigidInsRvalue == 0
-            hasOSB = false
-        end
-
-        mat_wood = BaseMaterial.Wood
-
-        # Add air gap when insulation thickness < cavity depth
-        if not wallCavityInsFillsCavity
-            wallCavityInsRvalueInstalled += Gas.AirGapRvalue
-        end
-
-        gapFactor = Construction.GetWallGapFactor(wallInstallGrade, wallFramingFactor)
-
-        path_fracs = [wallFramingFactor, 1 - wallFramingFactor - gapFactor, gapFactor]
-        wood_stud_wall = Construction.new(path_fracs)
-
-        # Interior Film
-        wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmVertical.Rvalue])
-
-        # Interior Finish (GWB) - Currently only include if cavity depth > 0
-        if wallCavityDepth > 0
-            wood_stud_wall.addlayer(thickness=OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers, conductivity_list=[BaseMaterial.Gypsum.k])
-        end
-
-        # Only if cavity depth > 0, indicating a framed wall
-        if wallCavityDepth > 0
-            # Stud / Cavity Ins / Gap
-            ins_k = OpenStudio::convert(wallCavityDepth,"in","ft").get / wallCavityInsRvalueInstalled
-            gap_k = OpenStudio::convert(wallCavityDepth,"in","ft").get / Gas.AirGapRvalue
-            wood_stud_wall.addlayer(thickness=OpenStudio::convert(wallCavityDepth,"in","ft").get, conductivity_list=[mat_wood.k,ins_k,gap_k])       
-        end
-
-        # OSB sheathing
-        if hasOSB
-            wood_stud_wall.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood1_2in, material_list=nil)
-        end
-
-        # Rigid
-        if rigidInsRvalue > 0
-            rigid_k = OpenStudio::convert(rigidInsThickness,"in","ft").get / rigidInsRvalue
-            wood_stud_wall.addlayer(thickness=OpenStudio::convert(rigidInsThickness,"in","ft").get, conductivity_list=[rigid_k])
-        end
-
-        # Exterior Finish
-        if finishThickness > 0
-            wood_stud_wall.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(finishConductivty,"in","ft").get])
-            
-            # Exterior Film - Assume below-grade wall if FinishThickness = 0
-            wood_stud_wall.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmOutside.Rvalue])
-        end
-
-        # Get overall wall R-value using parallel paths:
-        return wood_stud_wall.Rvalue_parallel
-
-    end
-
+    # FIXME: Eventually remove
     def self.GetFloorNonStudLayerR(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, carpetFloorFraction, carpetPadRValue)
-        return (2.0 * Material.AirFilmFloorReduced.Rvalue + Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat).Rvalue + (carpetPadRValue * carpetFloorFraction) + Material.Plywood3_4in.Rvalue)
-    end
-    
-    def self.GetRimJoistAssmeblyR(rimJoistInsRvalue, ceilingJoistHeight, wallSheathingContInsThickness, wallSheathingContInsRvalue, drywallThickness, drywallNumLayers, rimjoist_framingfactor, finishThickness, finishConductivity)
-        # Returns assembly R-value for crawlspace or unfinished/finished basement rimjoist, including air films.
-        
-        framingFactor = rimjoist_framingfactor
-        
-        mat_wood = BaseMaterial.Wood
-        mat_2x = Material.Stud2x(ceilingJoistHeight)
-        
-        path_fracs = [framingFactor, 1 - framingFactor]
-        
-        prefix_rimjoist = Construction.new(path_fracs)
-        
-        # Interior Film 
-        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1.0,"in","ft").get / Material.AirFilmFloorReduced.Rvalue])
-
-        # Stud/cavity layer
-        if rimJoistInsRvalue == 0
-            cavity_k = (mat_2x.thick / air.R_air_gap)
-        else
-            cavity_k = (mat_2x.thick / rimJoistInsRvalue)
-        end
-            
-        prefix_rimjoist.addlayer(thickness=mat_2x.thick, conductivity_list=[mat_wood.k, cavity_k])
-        
-        # Rim Joist wood layer
-        prefix_rimjoist.addlayer(thickness=nil, conductivity_list=nil, material=Material.Plywood3_2in, material_list=nil)
-        
-        # Wall Sheathing
-        if wallSheathingContInsRvalue > 0
-            wallsh_k = (wallSheathingContInsThickness / wallSheathingContInsRvalue)
-            prefix_rimjoist.addlayer(thickness=OpenStudio::convert(wallSheathingContInsThickness,"in","ft").get, conductivity_list=[wallsh_k])
-        end
-        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(finishThickness,"in","ft").get, conductivity_list=[finishConductivity])
-        
-        # Exterior Film
-        prefix_rimjoist.addlayer(thickness=OpenStudio::convert(1.0,"in","ft").get, conductivity_list=[OpenStudio::convert(1,"in","ft").get / Material.AirFilmFloorReduced.Rvalue])
-        
-        return prefix_rimjoist.Rvalue_parallel
-
-    end 
-    
-    def self.GetRimJoistNonStudLayerR
-        return (Material.AirFilmVertical.Rvalue + Material.AirFilmOutside.Rvalue + Material.Plywood3_2in.Rvalue)
+        return (2.0 * Material.AirFilmFloorReduced.rvalue + Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat).rvalue + (carpetPadRValue * carpetFloorFraction) + Material.Plywood3_4in.rvalue)
     end
     
     def self.GetBasementConductionFactor(bsmtWallInsulationHeight, bsmtWallInsulRvalue)
@@ -811,28 +548,307 @@ class Construction
             return (2.494 / (1.673 + bsmtWallInsulRvalue) ** 0.488)
         end
     end
-
     
+    private
+    
+        def get_parallel_material(curr_layer_num, runner)
+            # Returns a Material object with effective properties for the specified
+            # parallel path layer of the construction.
+        
+            mat = Material.new(name=@layers_names[curr_layer_num])
+            
+            curr_layer_materials = @layers_materials[curr_layer_num]
+            
+            r_overall = assembly_rvalue(runner)
+            
+            # Calculate individual R-values for each layer
+            # Also calculate sum of R-values for individual parallel path layers
+            sum_r_parallels = 0
+            layer_rvalues = []
+            @layers_materials.each do |layer_materials|
+                r_path = 0
+                layer_materials.each do |layer_material|
+                    r_path += layer_material.thick / layer_material.k
+                end
+                layer_rvalues << r_path
+                if layer_materials.size > 1
+                    sum_r_parallels += r_path
+                end
+            end
+            
+            # Subtract out series layers to calculate R-value across all parallel 
+            # path layers
+            r_parallel = r_overall
+            @layers_materials.each_with_index do |layer_materials,layer_num|
+                if layer_materials.size == 1
+                    r_parallel -= layer_rvalues[layer_num]
+                end
+            end
+            
+            # Material R-value
+            # Apportion R-value to the current parallel path layer
+            mat.rvalue = layer_rvalues[curr_layer_num] / sum_r_parallels * r_parallel
+            
+            # Material thickness and conductivity
+            mat.thick_in = curr_layer_materials[0].thick_in # All paths have equal thickness
+            mat.thick = curr_layer_materials[0].thick # All paths have equal thickness
+            mat.k = mat.thick / mat.rvalue
+            
+            # Material density
+            mat.rho = 0
+            @path_fracs.each_with_index do |path_frac,path_num|
+                mat.rho += curr_layer_materials[path_num].rho * path_frac
+            end
+            
+            # Material specific heat
+            mat.cp = 0
+            @path_fracs.each_with_index do |path_frac,path_num|
+                mat.cp += (curr_layer_materials[path_num].cp * curr_layer_materials[path_num].rho * path_frac) / mat.rho
+            end
+            
+            return mat
+        end
+
+        def validated?(runner)
+            # Check if all materials are GlazingMaterial
+            all_glazing = true
+            @layers_materials.each do |layer_materials|
+                layer_materials.each do |mat|
+                    if not mat.is_a? GlazingMaterial
+                        all_glazing = false
+                    end
+                end
+            end
+            if all_glazing
+                # Check that no parallel materials
+                @layers_materials.each do |layer_materials|
+                    if layer_materials.size > 1
+                        runner.registerError("Invalid construction: Cannot have multiple GlazingMaterials in a single layer.")
+                        return false
+                    end
+                end
+                return true
+            end
+        
+            # Check for valid object types
+            @layers_materials.each do |layer_materials|
+                layer_materials.each do |mat|
+                    if not mat.is_a? SimpleMaterial and not mat.is_a? Material
+                        runner.registerError("Invalid construction: Materials must be instances of SimpleMaterial or Material classes.")
+                        return false
+                    end
+                end
+            end
+            
+            # Check if invalid number of materials in a layer
+            @layers_materials.each do |layer_materials|
+                if layer_materials.size > 1 and layer_materials.size < @path_fracs.size
+                    runner.registerError("Invalid construction: Layer must either have one material or same number of materials as paths.")
+                    return false
+                end
+            end
+        
+            # Check if multiple materials in a given layer have differing thicknesses
+            @layers_materials.each do |layer_materials|
+                if layer_materials.size > 1
+                    thick_in = nil
+                    layer_materials.each do |mat|
+                        if thick_in.nil?
+                            thick_in = mat.thick_in
+                        elsif thick_in != mat.thick_in
+                            runner.registerError("Invalid construction: Materials in a layer have different thicknesses.")
+                            return false
+                        end
+                    end
+                end
+            end
+            
+            # Check if multiple non-contiguous parallel layers
+            found_parallel = false
+            last_parallel = false
+            @layers_materials.each do |layer_materials|
+                if layer_materials.size > 1
+                    if not found_parallel
+                        found_parallel = true
+                    elsif not last_parallel
+                        runner.registerError("Invalid construction: Non-contiguous parallel layers found.")
+                        return false
+                    end
+                end
+                last_parallel = (layer_materials.size > 1)
+            end
+            
+            # Check if name not provided for a parallel layer
+            # Check if name not provided for non-parallel layer
+            @layers_materials.each_with_index do |layer_materials,layer_num|
+                next if not @layers_includes[layer_num]
+                if layer_materials.size > 1
+                    if @layers_names[layer_num].nil?
+                        runner.registerError("Invalid construction: No layer name provided for parallel layer.")
+                        return false
+                    end
+                else
+                    if @layers_names[layer_num].nil? and layer_materials[0].name.nil?
+                        runner.registerError("Invalid construction: Neither layer name nor material name provided for non-parallel layer.")
+                        return false
+                    end
+                end
+            end
+            
+            # If we got this far, we're good
+            return true
+        end
+        
+        # Returns a boolean denoting whether the execution was successful
+        def create_and_assign_construction(surface, materials, runner, model, name)
+        
+            if (not surface.construction.is_initialized or not surface.construction.get.to_LayeredConstruction.is_initialized) or materials[0].is_a? GlazingMaterial
+                # Assign new construction and return true
+                constr = OpenStudio::Model::Construction.new(materials)
+                if not name.nil?
+                    constr.setName(name)
+                end
+                surface.setConstruction(constr)
+                return true
+            end
+            
+            # Otherwise, clone construction and assign material layers as appropriate
+            constr = surface.construction.get.clone(model).to_LayeredConstruction.get
+            if not name.nil?
+                constr.setName(name)
+            end
+            materials.each do |material|
+                assign_material(constr, surface, material, runner, model)
+            end
+            @remove_materials.each do |material_name|
+                remove_material(constr, material_name)
+            end
+            surface.setConstruction(constr)
+            return true
+        end
+        
+        def assign_material(constr, surface, material, runner, model)
+            num_layers = constr.numLayers
+            
+            # Note: The only way to determine types of layers (exterior finish, etc.) is by name.
+            # Defines the target layer positions for the materials when the construction is complete.
+            # Position 0 is outside most layer.
+            target_positions_std = {Constants.MaterialWallExtFinish => 0, 
+                                    Constants.MaterialWallRigidIns => 1, 
+                                    Constants.MaterialWallSheathing => 2, 
+                                    Constants.MaterialWallMass => num_layers}
+            target_position_non_std = target_positions_std[Constants.MaterialWallSheathing] + 1
+
+            # Determine current positions of any standard materials
+            std_mat_positions = target_positions_std.clone
+            std_mat_positions.each { |k, v| std_mat_positions[k] = nil } #re-init
+            constr.layers.each_with_index do |layer, index|
+                std_mat_positions.keys.each do |layer_name|
+                    if layer.name.to_s.start_with? layer_name
+                        std_mat_positions[layer_name] = index
+                    end
+                end
+            end
+
+            # Is the current material a standard material?
+            standard_mat = nil
+            target_positions_std.keys.each do |std_mat|
+                if material.name.to_s.start_with? std_mat
+                    standard_mat = std_mat
+                end
+            end
+
+            if standard_mat.nil?
+                # Remove any layers other than standard materials
+                constr.layers.reverse.each_with_index do |layer, index|
+                    layer_index = num_layers - 1 - index
+                    if not std_mat_positions.values.include? layer_index
+                        constr.eraseLayer(layer_index)
+                    end
+                end
+            end
+            
+            if not standard_mat.nil? and not std_mat_positions[standard_mat].nil?
+                # Standard layer already exists, replace it
+                constr.setLayer(std_mat_positions[standard_mat], material)
+            else
+                # Add at appropriate position
+                if standard_mat.nil?
+                    final_pos = target_position_non_std
+                else
+                    final_pos = target_positions_std[standard_mat]
+                end
+                insert_pos = 0
+                for pos in (final_pos-1).downto(0)
+                    mat = target_positions_std.key(pos)
+                    next if not std_mat_positions.key? mat
+                    if not std_mat_positions[mat].nil?
+                        insert_pos = pos + 1
+                        break
+                    end
+                end
+                if insert_pos > constr.numLayers
+                    insert_pos = constr.numLayers
+                end
+                constr.insertLayer(insert_pos, material)
+            end
+
+        end
+
+        def remove_material(constr, material_name)
+            # Remove layer if it matches this name
+            num_layers = constr.numLayers
+            constr.layers.reverse.each_with_index do |layer, index|
+                layer_index = num_layers - 1 - index
+                if layer.name.to_s.start_with? material_name
+                    constr.eraseLayer(layer_index)
+                end
+            end
+        end
+        
+        # Creates an OpenStudio Material from our own Material object
+        def create_os_material(model, runner, material, name=nil)
+            if name.nil?
+                name = material.name
+            end
+            if material.is_a? SimpleMaterial
+                mat = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
+                mat.setName(name)
+                mat.setRoughness("Rough")
+                mat.setThermalResistance(OpenStudio::convert(material.rvalue,"hr*ft^2*R/Btu","m^2*K/W").get)
+            elsif material.is_a? GlazingMaterial
+                mat = OpenStudio::Model::SimpleGlazing.new(model)
+                mat.setName(name)
+                mat.setUFactor(material.ufactor)
+                mat.setSolarHeatGainCoefficient(material.shgc)
+            else
+                mat = OpenStudio::Model::StandardOpaqueMaterial.new(model)
+                mat.setName(name)
+                mat.setRoughness("Rough")
+                mat.setThickness(OpenStudio::convert(material.thick_in,"in","m").get)
+                mat.setConductivity(OpenStudio::convert(material.k,"Btu/hr*ft*R","W/m*K").get)
+                mat.setDensity(OpenStudio::convert(material.rho,"lb/ft^3","kg/m^3").get)
+                mat.setSpecificHeat(OpenStudio::convert(material.cp,"Btu/lb*R","J/kg*K").get)
+                if name == Constants.MaterialWallExtFinish
+                    mat.setThermalAbsorptance(material.tAbs)
+                    mat.setSolarAbsorptance(material.sAbs)
+                    mat.setVisibleAbsorptance(material.vAbs)
+                end
+            end
+            runner.registerInfo("Material '#{mat.name.to_s}' was created.")
+            return mat
+        end
+
 end
 
 class BaseMaterial
-	def initialize(rho, cp, k)
-		@rho = rho
-		@cp = cp
-		@k = k
-	end
-		
-	def rho
-		return @rho
-	end
-	
-	def Cp
-		return @cp
-	end
-	
-	def k
-		return @k
-	end
+    def initialize(rho, cp, k)
+        @rho = rho
+        @cp = cp
+        @k = k
+    end
+    
+    attr_accessor :rho, :cp, :k
 
     def self.Gypsum
         return BaseMaterial.new(rho=50.0, cp=0.2, k=0.0926)
@@ -896,39 +912,9 @@ class Liquid
         @t_boil = t_boil    # Boiling Temperature (degF)
         @t_crit = t_crit    # Critical Temperature (degF)
     end
+    
+    attr_accessor :rho, :cp, :k, :mu, :h_fg, :t_frz, :t_boil, :t_crit
 
-    def rho
-        return @rho
-    end
-
-    def Cp
-        return @cp
-    end
-
-    def k
-        return @k
-    end
-
-    def mu
-        return @mu
-    end
-
-    def H_fg
-        return @h_fg
-    end
-
-    def T_frz
-        return @t_frz
-    end
-
-    def T_boil
-        return @t_boil
-    end
-
-    def T_crit
-        return @t_crit
-    end
-  
     def self.H2O_l
         # From EES at STP
         return Liquid.new(62.32,0.9991,0.3386,2.424,1055,32.0,212.0,nil)
@@ -955,30 +941,8 @@ class Gas
             @r = nil
         end
     end
-
-    def rho
-        return @rho
-    end
-
-    def Cp
-        return @cp
-    end
-
-    def k
-        return @k
-    end
-
-    def mu
-        return @mu
-    end
-
-    def M
-        return @m
-    end
-
-    def R
-        return @r
-    end
+    
+    attr_accessor :rho, :cp, :k, :mu, :m, :r
   
     def self.Air
         # From EES at STP

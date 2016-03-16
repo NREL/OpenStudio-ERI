@@ -9,6 +9,7 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
@@ -16,15 +17,15 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Slab Construction"
+    return "Set Residential Finished Slab Construction"
   end
   
   def description
-    return "This measure assigns a construction to the living space slab."
+    return "This measure assigns a construction to finished slabs."
   end
   
   def modeler_description
-    return "Calculates material layer properties of slab constructions for the living space floor. Finds surfaces adjacent to the living space and sets applicable constructions."
+    return "Calculates and assigns material layer properties of slab constructions for floors between above-grade finished space and the ground."
   end  
   
   #define the arguments that the user will input
@@ -40,14 +41,14 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a choice argument for slab insulation type
 	selected_slabins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedslabins", slabins_display_names, true)
-	selected_slabins.setDisplayName("Slab: Insulation Type")
+	selected_slabins.setDisplayName("Insulation Type")
 	selected_slabins.setDescription("The type of insulation.")
 	selected_slabins.setDefaultValue("Uninsulated")
 	args << selected_slabins
 
 	#make a double argument for slab perimeter / exterior insulation R-value
 	userdefined_slabperiextr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabperiextr", false)
-	userdefined_slabperiextr.setDisplayName("Slab: Perimeter/Exterior Insulation Nominal R-value")
+	userdefined_slabperiextr.setDisplayName("Perimeter/Exterior Insulation Nominal R-value")
 	userdefined_slabperiextr.setUnits("hr-ft^2-R/Btu")
 	userdefined_slabperiextr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
 	userdefined_slabperiextr.setDefaultValue(0.0)
@@ -55,7 +56,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a double argument for slab perimeter insulation width / exterior insulation depth
 	userdefined_slabperiextwidthdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabperiextwidthdepth", false)
-	userdefined_slabperiextwidthdepth.setDisplayName("Slab: Perimeter/Exterior Insulation Width/Depth")
+	userdefined_slabperiextwidthdepth.setDisplayName("Perimeter/Exterior Insulation Width/Depth")
 	userdefined_slabperiextwidthdepth.setUnits("ft")
 	userdefined_slabperiextwidthdepth.setDescription("The width or depth of the perimeter or exterior insulation.")
 	userdefined_slabperiextwidthdepth.setDefaultValue(0.0)
@@ -63,7 +64,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	
 	#make a double argument for slab perimeter gap R-value
 	userdefined_slabgapr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabgapr", false)
-	userdefined_slabgapr.setDisplayName("Slab: Gap Insulation Nominal R-value")
+	userdefined_slabgapr.setDisplayName("Gap Insulation Nominal R-value")
 	userdefined_slabgapr.setUnits("hr-ft^2-R/Btu")
 	userdefined_slabgapr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
 	userdefined_slabgapr.setDefaultValue(0.0)
@@ -72,57 +73,11 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	# Whole Slab Insulation
 	#make a double argument for whole slab insulation R-value
 	userdefined_slabwholer = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabwholer", false)
-	userdefined_slabwholer.setDisplayName("Slab: Whole Slab Insulation Nominal R-value")
+	userdefined_slabwholer.setDisplayName("Whole Slab Insulation Nominal R-value")
 	userdefined_slabwholer.setUnits("hr-ft^2-R/Btu")
 	userdefined_slabwholer.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
 	userdefined_slabwholer.setDefaultValue(0.0)
 	args << userdefined_slabwholer
-	
-    #make a double argument for carpet pad R-value
-    userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
-    userdefined_carpetr.setDisplayName("Carpet: Carpet Pad R-value")
-	userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
-	userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
-    userdefined_carpetr.setDefaultValue(2.08)
-    args << userdefined_carpetr
-
-    #make a double argument for carpet floor fraction
-    userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
-    userdefined_carpetfrac.setDisplayName("Carpet: Floor Carpet Fraction")
-	userdefined_carpetfrac.setUnits("frac")
-	userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
-    userdefined_carpetfrac.setDefaultValue(0.8)
-    args << userdefined_carpetfrac
-
-    # Geometry
-    userdefinedslabarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabarea", true)
-    userdefinedslabarea.setDisplayName("Slab Area")
-	userdefinedslabarea.setUnits("ft^2")
-	userdefinedslabarea.setDescription("The area of the slab.")
-    userdefinedslabarea.setDefaultValue(1200.0)
-    args << userdefinedslabarea
-
-    userdefinedslabextperim = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedslabextperim", true)
-    userdefinedslabextperim.setDisplayName("Slab Perimeter")
-	userdefinedslabextperim.setUnits("ft")
-	userdefinedslabextperim.setDescription("The perimeter of the slab.")
-    userdefinedslabextperim.setDefaultValue(140.0)
-    args << userdefinedslabextperim
-	
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
-    end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type
 
     return args
   end #end the arguments method
@@ -136,34 +91,24 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-	slabPerimeterRvalue = 0
-	slabPerimeterInsWidth = nil
-	slabExtRvalue = 0
-	slabExistInsDepth = nil
-	slabGapRvalue = nil
-	slabWholeInsRvalue = 0
-	carpetPadRValue = 0
-
-    # Space Type
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
-        return false
+    surfaces = []
+    spaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_unfinished(space)
+        next if Geometry.space_is_below_grade(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "floor"
+            next if surface.outsideBoundaryCondition.downcase != "ground"
+            surfaces << surface
+            if not spaces.include? space
+                # Floors between above-grade finished space and ground
+                spaces << space
+            end
+        end
     end
-
-    # Initialize hashes
-    constructions_to_surfaces = {"Slab"=>[]}
-    constructions_to_objects = Hash.new    
-
-	living_space_type.spaces.each do |living_space|
-	  living_space.surfaces.each do |living_surface|
-	    next unless living_surface.surfaceType.downcase == "floor" and living_surface.outsideBoundaryCondition.downcase == "ground"
-        constructions_to_surfaces["Slab"] << living_surface
-	  end	
-	end
   
-   # Continue if no applicable surfaces
-    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+    # Continue if no applicable surfaces
+    if surfaces.empty?
       return true
     end     
   
@@ -186,11 +131,12 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 		userdefined_slabwholer = runner.getDoubleArgumentValue("userdefinedslabwholer",user_arguments)
 	end
 	
-	# Carpet
-	carpetPadRValue = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-	carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
-
 	# Insulation
+	slabPerimeterRvalue = 0
+	slabPerimeterInsWidth = nil
+	slabExtRvalue = 0
+	slabWholeInsRvalue = 0
+    slabExtInsDepth = 0
 	if selected_slabins == "Perimeter"
 		slabPerimeterRvalue = userdefined_slabperiextr
 		slabPerimeterInsWidth = userdefined_slabperiextwidthdepth
@@ -202,137 +148,67 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 	end
 
 	# Gap
+	slabGapRvalue = nil
 	if ["Perimeter", "Whole Slab"].include? selected_slabins.to_s
 		slabGapRvalue = userdefined_slabgapr
 	end
 	
-	# Create the material class instances
-	slabThickness = 4.0
-	slabConductivity = 9.1
-	slabDensity = 140.0
-	slabSpecificHeat = 0.2
-
-    slabArea = runner.getDoubleArgumentValue("userdefinedslabarea",user_arguments)
-    slabExtPerimeter = runner.getDoubleArgumentValue("userdefinedslabextperim",user_arguments)
-	
-	# Process the slab
-	fictitious_slab_Rvalue, slab_factor = _processConstructionsSlab(slabThickness, slabConductivity, slabDensity, slabSpecificHeat, slabPerimeterRvalue, slabPerimeterInsWidth, slabExtRvalue, slabExtInsDepth, slabGapRvalue, slabWholeInsRvalue, slabArea, slabExtPerimeter, carpetFloorFraction, carpetPadRValue)
-	
-	# Mat-Fic-Slab
-	if fictitious_slab_Rvalue > 0
-		# Fictitious layer below slab to achieve equivalent R-value. See Winkelmann article.
-		mfs = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-		mfs.setName("Mat-Fic-Slab")
-		mfs.setRoughness("Rough")
-		mfs.setThickness(OpenStudio::convert(1.0/12.0,"ft","m").get)
-		mfs.setConductivity(OpenStudio::convert(1.0/12.0,"ft","m").get / (0.1761 * fictitious_slab_Rvalue)) # tk used 0.1761 instead of OpenStudio::convert(fictitious_slab_Rvalue,"Btu/hr*ft*R","W/m*K").get because not getting correct value
-		mfs.setDensity(OpenStudio::convert(2.5,"lb/ft^3","kg/m^3").get)
-		mfs.setSpecificHeat(OpenStudio::convert(0.29,"Btu/lb*R","J/kg*K").get)
-	end
-	
-	# Slab Mass Material
-	sm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-	sm.setName("SlabMass")
-	sm.setRoughness("Rough")
-	sm.setThickness(OpenStudio::convert(slabThickness,"in","m").get)
-	sm.setConductivity(OpenStudio::convert(OpenStudio::convert(slabConductivity,"in","ft").get,"Btu/hr*ft*R","W/m*K").get)
-	sm.setDensity(OpenStudio::convert(slabDensity,"lb/ft^3","kg/m^3").get)
-	sm.setSpecificHeat(OpenStudio::convert(slabSpecificHeat,"Btu/lb*R","J/kg*K").get)
-	sm.setThermalAbsorptance(0.9)
-	sm.setSolarAbsorptance(Constants.DefaultSolarAbsFloor)
-	
-	if carpetFloorFraction > 0
-		# Equivalent carpeted/bare material
-		scbem = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-		scbem.setName("SlabCarpetBareEquivalentMaterial")
-		scbem.setRoughness("Rough")
-		scbem.setThickness(OpenStudio::convert(1.0/12.0,"ft","m").get)
-		scbem.setConductivity(OpenStudio::convert(1.0/12.0,"ft","m").get / (carpetPadRValue * carpetFloorFraction * slab_factor * 0.1761)) # tk the 0.1761 in place of OpenStudio::convert(1.0,"hr*ft^2*F/Btu","m^2*K/W").get because wasn't returning correct value
-		scbem.setDensity(OpenStudio::convert(2.5,"lb/ft^3","kg/m^3").get)
-		scbem.setSpecificHeat(OpenStudio::convert(0.29,"Btu/lb*R","J/kg*K").get)
-		scbem.setThermalAbsorptance(0.9)
-		scbem.setSolarAbsorptance(Constants.DefaultSolarAbsFloor)
-	end
-		
-	# Soil layer for simulated slab, copied from Winkelmann article
-	ss = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-	ss.setName("SlabSoil-12in")
-	ss.setRoughness("Rough")
-	ss.setThickness(OpenStudio::convert(slab_factor,"ft","m").get)
-	ss.setConductivity(OpenStudio::convert(1.0,"Btu/hr*ft*R","W/m*K").get)
-	ss.setDensity(OpenStudio::convert(115.0,"lb/ft^3","kg/m^3").get)
-	ss.setSpecificHeat(OpenStudio::convert(0.1,"Btu/lb*R","J/kg*K").get)
-	
-	# Living Area Slab with Equivalent Carpeted/Bare R-value
-	materials = []
-
-	if fictitious_slab_Rvalue > 0
-		materials << mfs
-	end
-    materials << ss
-    materials << sm
-	if carpetFloorFraction > 0
-		materials << scbem
-	end
-    unless constructions_to_surfaces["Slab"].empty?
-        s = OpenStudio::Model::Construction.new(materials)
-        s.setName("Slab")
-        constructions_to_objects["Slab"] = s
-    end
+    slabArea = Geometry.calculate_floor_area(spaces)
+    slabExtPerimeter = Geometry.calculate_perimeter_wall_area(spaces)
     
-    # Apply constructions to surfaces
-    constructions_to_surfaces.each do |construction, surfaces|
-        surfaces.each do |surface|
-            surface.setConstruction(constructions_to_objects[construction])
-            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
-        end
+	# Process the slab
+
+    # Define materials
+    slabCarpetPerimeterConduction, slabBarePerimeterConduction, slabHasWholeInsulation = SlabPerimeterConductancesByType(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabExtRvalue, slabWholeInsRvalue, slabExtInsDepth)
+
+    # Models one floor surface with an equivalent carpented/bare material (Better alternative
+    # to having two floors with twice the total area, compensated by thinning mass thickness.)
+    carpetFloorFraction = 0.8 # FIXME: Hard-coded
+    slab_perimeter_conduction = slabCarpetPerimeterConduction * carpetFloorFraction + slabBarePerimeterConduction * (1 - carpetFloorFraction)
+
+    if slabExtPerimeter > 0
+        effective_slab_Rvalue = slabArea / (slabExtPerimeter * slab_perimeter_conduction)
+    else
+        effective_slab_Rvalue = 1000 # hr*ft^2*F/Btu
+    end
+
+    slab_Rvalue = Material.Concrete4in.rvalue - Material.AirFilmFlatReduced.rvalue - Material.Soil12in.rvalue - Material.DefaultCarpet.rvalue
+    fictitious_slab_Rvalue = effective_slab_Rvalue - slab_Rvalue
+
+    slab_factor = 1.0
+    if fictitious_slab_Rvalue <= 0
+        runner.registerWarning("The slab foundation thickness will be automatically reduced to avoid simulation errors, but overall R-value will remain the same.")
+        slab_factor = effective_slab_Rvalue / slab_Rvalue
+    end
+
+    mat_fic = nil
+    if fictitious_slab_Rvalue > 0
+        # Fictitious layer below slab to achieve equivalent R-value. See Winkelmann article.
+        mat_fic = Material.new(name="Mat-Fic-Slab", thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/fictitious_slab_Rvalue, dens=2.5, sh=0.29)
+    end
+    mat_slab = Material.new(name='SlabMass', thick_in=Material.Concrete4in.thick_in*slab_factor, mat_base=Material.Concrete4in)
+
+    # Define construction
+    slab = Construction.new([1.0])
+    if not mat_fic.nil?
+        slab.addlayer(mat_fic, true)
+    end
+    slab.addlayer(Material.Soil12in, true)
+    slab.addlayer(mat_slab, true)
+    slab.addlayer(Material.DefaultCarpet, false) # carpet added in separate measure
+    slab.addlayer(Material.AirFilmFlatReduced, false)
+    
+    # Create and apply construction to surfaces
+    if not slab.create_and_assign_constructions(surfaces, runner, model, "Slab")
+        return false
     end
     
     # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials(model, runner)     
+    HelperMethods.remove_unused_materials_and_constructions(model, runner)     
 
-  return true
+    return true
  
   end #end the run method
-
-  def _processConstructionsSlab(slabThickness, slabConductivity, slabDensity, slabSpecificHeat, slabPerimeterRvalue, slabPerimeterInsWidth, slabExtRvalue, slabExtInsDepth, slabGapRvalue, slabWholeInsRvalue, slabArea, slabExtPerimeter, carpetFloorFraction, carpetPadRValue)
-
-        slab_concrete_Rvalue = OpenStudio::convert(slabThickness,"in","ft").get / slabConductivity
-        
-        slabCarpetPerimeterConduction, slabBarePerimeterConduction, slabHasWholeInsulation = SlabPerimeterConductancesByType(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabExtRvalue, slabWholeInsRvalue, slabExtInsDepth)
-
-        slab_carp_ext_perimeter = slabExtPerimeter * carpetFloorFraction
-        bare_ext_perimeter = slabExtPerimeter * (1 - carpetFloorFraction)
-        
-        # Calculate R-Values from conductances and geometry
-        slab_warning = false
-        
-        # Models one floor surface with an equivalent carpented/bare material (Better alternative
-        # to having two floors with twice the total area, compensated by thinning mass thickness.)
-        slab_perimeter_conduction = slabCarpetPerimeterConduction * carpetFloorFraction + slabBarePerimeterConduction * (1 - carpetFloorFraction)
-
-        if slabExtPerimeter > 0
-            effective_slab_Rvalue = slabArea / (slabExtPerimeter * slab_perimeter_conduction)
-        else
-            effective_slab_Rvalue = 1000 # hr*ft^2*F/Btu
-        end
-
-        fictitious_slab_Rvalue = effective_slab_Rvalue - slab_concrete_Rvalue - Material.AirFilmFlatReduced.Rvalue - Material.Soil12in.Rvalue - (carpetPadRValue * carpetFloorFraction)
-
-        if fictitious_slab_Rvalue <= 0
-            slab_warning = true
-            slab_factor = effective_slab_Rvalue / (slab_concrete_Rvalue + Material.AirFilmFlatReduced.Rvalue + Material.Soil12in.Rvalue + carpetPadRValue * carpetFloorFraction)
-        else
-            slab_factor = 1.0
-        end
-
-        if slab_warning
-            runner.registerWarning("The slab foundation thickness will be automatically reduced to avoid simulation errors, but overall R-value will remain the same.")
-        end
-        
-        return fictitious_slab_Rvalue, slab_factor
-        
-  end
 
   def SlabPerimeterConductancesByType(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabExtRvalue, slabWholeInsRvalue, slabExtInsDepth)
     slabWidth = 28 # Width (shorter dimension) of slab, feet, to match Winkelmann analysis.
@@ -420,14 +296,9 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
     if carpet == 0
         rc  = rca
         rse = rsea
-    else
-        if carpet == 1
-            rc  = rcp
-            rse = rsep
-        else
-            runner.registerError("In FullSlabInsulation, Carpet must be 0 or 1.")
-            return false
-        end
+    elsif carpet == 1
+        rc  = rcp
+        rse = rsep
     end
             
     rother = rc + r0 + rbottom   # Thermal resistance other than the soil (from inside air to soil)
@@ -460,16 +331,11 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
         b  = 8.20902
         e1 = 0.54383
         e2 = 0.74266
-    else
-        if carpet == 1
-            a  =  8.53957
-            b  = 11.09168
-            e1 =  0.57937
-            e2 =  0.80699
-        else
-            runner.registerError("In ExteriorSlabInsulation, Carpet must be 0 or 1.")
-            return false
-        end
+    elsif carpet == 1
+        a  =  8.53957
+        b  = 11.09168
+        e1 =  0.57937
+        e2 =  0.80699
     end
     perimeterConductance = a / (b + rvalue ** e1 * depth ** e2) 
     return perimeterConductance

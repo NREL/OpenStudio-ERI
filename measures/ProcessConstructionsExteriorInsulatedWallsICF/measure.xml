@@ -2,36 +2,16 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>de1076dd-6e6a-484f-b7f3-562504488f54</version_id>
+  <version_id>d2130525-6fad-4d5a-8793-c19bda3bde3e</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsICF</class_name>
-  <display_name>Set Residential Living Space ICF Wall Construction</display_name>
-  <description>This measure assigns an ICF construction to the living space exterior walls.</description>
-  <modeler_description>Calculates material layer properties of ICF constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <display_name>Set Residential Exterior ICF Wall Construction</display_name>
+  <description>This measure assigns an ICF construction to above-grade exterior walls adjacent to finished space.</description>
+  <modeler_description>Calculates and assigns material layer properties of ICF constructions for above-grade walls between finished space and outside.</modeler_description>
   <arguments>
     <argument>
-      <name>userdefinedgypthickness</name>
-      <display_name>Exterior Wall Mass: Thickness</display_name>
-      <description>Gypsum layer thickness.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.5</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedgyplayers</name>
-      <display_name>Exterior Wall Mass: Num Layers</display_name>
-      <description>Integer number of layers of gypsum.</description>
-      <type>Double</type>
-      <units>#</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1</default_value>
-    </argument>
-    <argument>
       <name>userdefinedframingfrac</name>
-      <display_name>ICF: Framing Factor</display_name>
+      <display_name>Framing Factor</display_name>
       <description>Total fraction of the wall that is framing for windows or doors.</description>
       <type>Double</type>
       <units>frac</units>
@@ -41,7 +21,7 @@
     </argument>
     <argument>
       <name>userdefinedicfinsthickness</name>
-      <display_name>ICF: Insulation Thickness</display_name>
+      <display_name>Insulation Thickness</display_name>
       <description>Thickness of each insulating layer of the form.</description>
       <type>Double</type>
       <units>in</units>
@@ -51,7 +31,7 @@
     </argument>
     <argument>
       <name>userdefinedicfinsr</name>
-      <display_name>ICF: Nominal Insulation R-value</display_name>
+      <display_name>Nominal Insulation R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
@@ -61,125 +41,13 @@
     </argument>
     <argument>
       <name>userdefinedicfconcth</name>
-      <display_name>ICF: Concrete Thickness</display_name>
+      <display_name>Concrete Thickness</display_name>
       <description>The thickness of the concrete core of the ICF.</description>
       <type>Double</type>
       <units>in</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>4</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedhasosb</name>
-      <display_name>Wall Sheathing: Has OSB</display_name>
-      <description>Specifies if the walls have a layer of structural shear OSB sheathing.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>userdefinedrigidinsthickness</name>
-      <display_name>Wall Sheathing: Continuous Insulation Thickness</display_name>
-      <description>The thickness of the continuous insulation.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedrigidinsr</name>
-      <display_name>Wall Sheathing: Continuous Insulation Nominal R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedextfinthickness</name>
-      <display_name>Exterior Finish: Thickness</display_name>
-      <description>Thickness of the exterior finish assembly.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.375</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedextfinr</name>
-      <display_name>Exterior Finish: R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.6</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedextfindensity</name>
-      <display_name>Exterior Finish: Density</display_name>
-      <description>Density of the exterior finish assembly.</description>
-      <type>Double</type>
-      <units>lb/ft^3</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>11.1</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedextfinspecheat</name>
-      <display_name>Exterior Finish: Specific Heat</display_name>
-      <description>Specific heat of the exterior finish assembly.</description>
-      <type>Double</type>
-      <units>Btu/lb-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.25</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedextfinthermalabs</name>
-      <display_name>Exterior Finish: Emissivity</display_name>
-      <description>The property that determines the fraction of the incident radiation that is absorbed.</description>
-      <type>Double</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.9</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedextfinabs</name>
-      <display_name>Exterior Finish: Solar Absorptivity</display_name>
-      <description>The property that determines the fraction of the incident radiation that is absorbed.</description>
-      <type>Double</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.3</default_value>
-    </argument>
-    <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -231,13 +99,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
       <version>
@@ -248,7 +110,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8D80FD50</checksum>
+      <checksum>577B1E18</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

@@ -2,16 +2,16 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_unfinished_basement</name>
   <uid>ebc21070-2d4b-4a2a-bd15-f18bf3e77b49</uid>
-  <version_id>3eefd932-63a0-4eab-960f-9125de80d25f</version_id>
+  <version_id>e24935a5-362f-4842-a77f-27fe2dac7a7a</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUnfinishedBasement</class_name>
   <display_name>Set Residential Unfinished Basement Constructions</display_name>
-  <description>This measure assigns constructions to the unfinished basement ceiling, walls, floor, and rim joists.</description>
-  <modeler_description>Calculates material layer properties of wood stud constructions for the exterior walls adjacent to the living space. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <description>This measure assigns constructions to the unfinished basement ceilings, walls, and floors.</description>
+  <modeler_description>Calculates and assigns material layer properties of constructions for: 1) ceilings above below-grade unfinished space, 2) walls between below-grade unfinished space and ground, and 3) floors below below-grade unfinished space. Below-grade spaces are assumed to be basements (and not crawlspaces) if the space height is greater than or equal to 7 ft.</modeler_description>
   <arguments>
     <argument>
       <name>selectedufbsmtins</name>
-      <display_name>Unfinished Basement: Insulation Type</display_name>
+      <display_name>Insulation Type</display_name>
       <description>The type of insulation.</description>
       <type>Choice</type>
       <required>true</required>
@@ -38,7 +38,7 @@
     </argument>
     <argument>
       <name>selectedstudsize</name>
-      <display_name>Unfinished Basement: Wall Cavity Depth</display_name>
+      <display_name>Wall Cavity Depth</display_name>
       <description>Depth of the study cavity.</description>
       <type>Choice</type>
       <units>in</units>
@@ -62,7 +62,7 @@
     </argument>
     <argument>
       <name>userdefinedufbsmtwallceilcavr</name>
-      <display_name>Unfinished Basement: Wall/Ceiling Cavity Insulation Nominal R-value</display_name>
+      <display_name>Wall/Ceiling Cavity Insulation Nominal R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
@@ -72,7 +72,7 @@
     </argument>
     <argument>
       <name>selectedinstallgrade</name>
-      <display_name>Unfinished Basement: Wall Cavity Install Grade</display_name>
+      <display_name>Wall Cavity Install Grade</display_name>
       <description>5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
       <required>true</required>
@@ -95,7 +95,7 @@
     </argument>
     <argument>
       <name>selectedinsfills</name>
-      <display_name>Unfinished Basement: Wall Insulation Fills Cavity</display_name>
+      <display_name>Wall Insulation Fills Cavity</display_name>
       <description>Specifies whether the cavity insulation completely fills the depth of the wall cavity.</description>
       <type>Boolean</type>
       <required>true</required>
@@ -114,7 +114,7 @@
     </argument>
     <argument>
       <name>userdefinedufbsmtwallcontth</name>
-      <display_name>Unfinished Basement: Wall Continuous Insulation Thickness</display_name>
+      <display_name>Wall Continuous Insulation Thickness</display_name>
       <description>The thickness of the continuous insulation.</description>
       <type>Double</type>
       <units>in</units>
@@ -124,7 +124,7 @@
     </argument>
     <argument>
       <name>userdefinedufbsmtwallcontr</name>
-      <display_name>Unfinished Basement: Wall Continuous Insulation Nominal R-value</display_name>
+      <display_name>Wall Continuous Insulation Nominal R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
@@ -134,7 +134,7 @@
     </argument>
     <argument>
       <name>selectedufbsmtceiljoistheight</name>
-      <display_name>Unfinished Basement: Ceiling Joist Height</display_name>
+      <display_name>Ceiling Joist Height</display_name>
       <description>Height of the joist member.</description>
       <type>Choice</type>
       <units>in</units>
@@ -150,113 +150,13 @@
     </argument>
     <argument>
       <name>userdefinedufbsmtceilff</name>
-      <display_name>Unfinished Basement: Ceiling Framing Factor</display_name>
+      <display_name>Ceiling Framing Factor</display_name>
       <description>Fraction of ceiling that is framing.</description>
       <type>Double</type>
       <units>frac</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.13</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedufbsmtrimjoistr</name>
-      <display_name>Unfinished Basement: Rim Joist Insulation R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>10</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfloormassth</name>
-      <display_name>Floor Mass: Thickness</display_name>
-      <description>Thickness of the floor mass.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.625</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfloormasscond</name>
-      <display_name>Floor Mass: Conductivity</display_name>
-      <description>Conductivity of the floor mass.</description>
-      <type>Double</type>
-      <units>Btu-in/h-ft^2-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.8004</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfloormassdens</name>
-      <display_name>Floor Mass: Density</display_name>
-      <description>Density of the floor mass.</description>
-      <type>Double</type>
-      <units>lb/ft^3</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>34</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfloormasssh</name>
-      <display_name>Floor Mass: Specific Heat</display_name>
-      <description>Specific heat of the floor mass.</description>
-      <type>Double</type>
-      <units>Btu/lb-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.29</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcarpetr</name>
-      <display_name>Carpet: Carpet Pad R-value</display_name>
-      <description>The combined R-value of the carpet and the pad.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2.08</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcarpetfrac</name>
-      <display_name>Carpet: Floor Carpet Fraction</display_name>
-      <description>Defines the fraction of a floor which is covered by carpet.</description>
-      <type>Double</type>
-      <units>frac</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.8</default_value>
-    </argument>
-    <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>ubasement_space_type</name>
-      <display_name>Unfinished basement space type</display_name>
-      <description>Select the unfinished basement space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>unfinished basement space type</default_value>
-      <choices>
-        <choice>
-          <value>unfinished basement space type</value>
-          <display_name>unfinished basement space type</display_name>
-        </choice>
-      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -292,13 +192,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>DC42456C</checksum>
     </file>
     <file>
       <version>
@@ -309,7 +209,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>ED23843B</checksum>
+      <checksum>ADEC5AF9</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

@@ -7,6 +7,8 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
+require "#{File.dirname(__FILE__)}/resources/geometry"
+
 #start the measure
 class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
   
@@ -169,14 +171,14 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
 	lfl_eff = runner.getDoubleArgumentValue("lfl_eff",user_arguments)
 
 	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    living_space_type = Geometry.get_space_type_from_string(model, living_space_type_r, runner)
     if living_space_type.nil?
         return false
     end
 	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
-    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
+    garage_space_type = Geometry.get_space_type_from_string(model, garage_space_type_r, runner, false)
 	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
-    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
+    fbasement_space_type = Geometry.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
     
     lfa = OpenStudio.convert(living_space_type.floorArea,"m^2","ft^2").get
     fbfa = 0

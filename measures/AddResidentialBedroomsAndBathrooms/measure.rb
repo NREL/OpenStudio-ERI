@@ -3,6 +3,7 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
 class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
@@ -66,7 +67,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments)
 	
 	# Remove any existing bedrooms and bathrooms
-	HelperMethods.remove_bedrooms_bathrooms(model)
+	Geometry.remove_bedrooms_bathrooms(model)
 	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f
@@ -92,7 +93,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     ba.setSchedule(sch)
 	
 	# Assign to an arbitrary space
-    space = HelperMethods.get_default_space(model, runner)
+    space = Geometry.get_default_space(model, runner)
     if space.nil?
         return false
     end
@@ -100,7 +101,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     ba.setSpace(space)
 	
 	# Test retrieving
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model)
     if not nbeds.nil?
         runner.registerInfo("Number of bedrooms set to #{nbeds}.")
     end

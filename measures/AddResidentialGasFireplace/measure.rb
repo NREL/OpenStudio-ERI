@@ -1,6 +1,7 @@
 require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
@@ -14,7 +15,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "Since there is no Gas Fireplace object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas fireplace. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned."
+    return "Since there is no Gas Fireplace object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas fireplace. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end
   
   #define the arguments that the user will input
@@ -65,7 +66,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
 	args << monthly_sch
 
     #make a choice argument for space
-    spaces = model.getSpaceTypes
+    spaces = model.getSpaces
     space_args = OpenStudio::StringVector.new
     spaces.each do |space|
         space_args << space.name.to_s
@@ -111,17 +112,17 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
 
 	# Space
 	space_r = runner.getStringArgumentValue("space",user_arguments)
-    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    space = Geometry.get_space_from_string(model, space_r, runner)
     if space.nil?
         return false
     end
 
-    # Get CFA and number of bedrooms/bathrooms
-    cfa = HelperMethods.get_building_conditioned_floor_area(model, runner)
-    if cfa.nil?
+    # Get FFA and number of bedrooms/bathrooms
+    ffa = Geometry.get_building_finished_floor_area(model, runner)
+    if ffa.nil?
         return false
     end
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -133,8 +134,8 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
         #Scale energy use by num beds and floor area
         constant = ann_g/2
         nbr_coef = ann_g/4/3
-        cfa_coef = ann_g/4/1920
-        gg_ann_g = constant + nbr_coef * nbeds + cfa_coef * cfa # therm/yr
+        ffa_coef = ann_g/4/1920
+        gg_ann_g = constant + nbr_coef * nbeds + ffa_coef * ffa # therm/yr
     else
         gg_ann_g = ann_g # therm/yr
     end

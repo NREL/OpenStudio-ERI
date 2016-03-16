@@ -1,6 +1,7 @@
 require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
@@ -14,7 +15,7 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "Since there is no Hot Tub Heater object in OpenStudio/EnergyPlus, we look for a GasEquipment or ElectricEquipment object with the name that denotes it is a residential hot tub heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned."
+    return "Since there is no Hot Tub Heater object in OpenStudio/EnergyPlus, we look for a GasEquipment or ElectricEquipment object with the name that denotes it is a residential hot tub heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end
   
   #define the arguments that the user will input
@@ -94,12 +95,12 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
 		return false
     end
     
-    # Get CFA and number of bedrooms/bathrooms
-    cfa = HelperMethods.get_building_conditioned_floor_area(model, runner)
-    if cfa.nil?
+    # Get FFA and number of bedrooms/bathrooms
+    ffa = Geometry.get_building_finished_floor_area(model, runner)
+    if ffa.nil?
         return false
     end
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -111,8 +112,8 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
         #Scale energy use by num beds and floor area
         constant = ann_g/2
         nbr_coef = ann_g/4/3
-        cfa_coef = ann_g/4/1920
-        hth_ann_g = constant + nbr_coef * nbeds + cfa_coef * cfa # therm/yr
+        ffa_coef = ann_g/4/1920
+        hth_ann_g = constant + nbr_coef * nbeds + ffa_coef * ffa # therm/yr
     else
         hth_ann_g = ann_g # therm/yr
     end
@@ -136,7 +137,7 @@ class ResidentialHotTubHeater < OpenStudio::Ruleset::ModelUserScript
 	has_gas_hth = 0
 	replace_gas_hth = 0
     replace_elec_hth = 0
-    space = HelperMethods.get_default_space(model, runner)
+    space = Geometry.get_default_space(model, runner)
     if space.nil?
         return false
     end

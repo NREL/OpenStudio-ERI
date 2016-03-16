@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_partition_wall</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>3f1bda07-0f45-469f-86aa-2d8e06b8e4ac</version_id>
+  <version_id>fe6c271b-021b-4109-baab-dc1d8d9af35a</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassPartitionWall</class_name>
   <display_name>Set Residential Partition Wall Thermal Mass</display_name>
@@ -52,7 +52,7 @@
     <argument>
       <name>partitionwallfrac</name>
       <display_name>Partition Wall Mass: Fraction of Floor Area</display_name>
-      <description>Ratio of exposed partition wall area to total conditioned floor area and accounts for the area of both sides of partition walls.</description>
+      <description>Ratio of exposed partition wall area to total finished floor area and accounts for the area of both sides of partition walls.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -127,19 +127,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>98460E7A</checksum>
+      <checksum>F107DDF3</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
+      <checksum>10602D47</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

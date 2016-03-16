@@ -2,16 +2,16 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>3a9ba121-d7d4-4b5f-a2b6-80e0ca7ea432</version_id>
+  <version_id>9e32c3d5-2afc-4795-b21b-609aa474be92</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCrawlspace</class_name>
   <display_name>Set Residential Crawlspace Constructions</display_name>
-  <description>This measure assigns constructions to the crawlspace ceiling, walls, floor, and rim joists.</description>
-  <modeler_description>Calculates material layer properties of constructions for the crawlspace ceiling, walls, floor, and rim joists. Finds surfaces adjacent to the crawlspace and sets applicable constructions.</modeler_description>
+  <description>This measure assigns constructions to the crawlspace ceilings, walls, and floors.</description>
+  <modeler_description>Calculates and assigns material layer properties of constructions for: 1) ceilings above below-grade unfinished space, 2) walls between below-grade unfinished space and ground, and 3) floors below below-grade unfinished space. Below-grade spaces are assumed to be crawlspaces (and not basements) if the space height is less than 7 ft.</modeler_description>
   <arguments>
     <argument>
       <name>selectedcsins</name>
-      <display_name>Crawlspace: Insulation Type</display_name>
+      <display_name>Insulation Type</display_name>
       <description>The type of insulation.</description>
       <type>Choice</type>
       <required>true</required>
@@ -34,7 +34,7 @@
     </argument>
     <argument>
       <name>userdefinedcswallceilr</name>
-      <display_name>Crawlspace: Wall/Ceiling Continuous/Cavity Insulation Nominal R-value</display_name>
+      <display_name>Wall/Ceiling Continuous/Cavity Insulation Nominal R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
@@ -44,7 +44,7 @@
     </argument>
     <argument>
       <name>selectedcsceiljoistheight</name>
-      <display_name>Crawlspace: Ceiling Joist Height</display_name>
+      <display_name>Ceiling Joist Height</display_name>
       <description>Height of the joist member.</description>
       <type>Choice</type>
       <units>in</units>
@@ -60,7 +60,7 @@
     </argument>
     <argument>
       <name>selectedinstallgrade</name>
-      <display_name>Crawlspace: Ceiling Cavity Install Grade</display_name>
+      <display_name>Ceiling Cavity Install Grade</display_name>
       <description>5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
       <required>true</required>
@@ -83,143 +83,13 @@
     </argument>
     <argument>
       <name>userdefinedcsceilff</name>
-      <display_name>Crawlspace: Ceiling Framing Factor</display_name>
+      <display_name>Ceiling Framing Factor</display_name>
       <description>Fraction of ceiling that is framing.</description>
       <type>Double</type>
       <units>frac</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0.13</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcsrimjoistr</name>
-      <display_name>Crawlspace: Rim Joist Insulation R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>5</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfloormassth</name>
-      <display_name>Floor Mass: Thickness</display_name>
-      <description>Thickness of the floor mass.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.625</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfloormasscond</name>
-      <display_name>Floor Mass: Conductivity</display_name>
-      <description>Conductivity of the floor mass.</description>
-      <type>Double</type>
-      <units>Btu-in/h-ft^2-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.8004</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfloormassdens</name>
-      <display_name>Floor Mass: Density</display_name>
-      <description>Density of the floor mass.</description>
-      <type>Double</type>
-      <units>lb/ft^3</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>34</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfloormasssh</name>
-      <display_name>Floor Mass: Specific Heat</display_name>
-      <description>Specific heat of the floor mass.</description>
-      <type>Double</type>
-      <units>Btu/lb-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.29</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcarpetr</name>
-      <display_name>Carpet: Carpet Pad R-value</display_name>
-      <description>The combined R-value of the carpet and the pad.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2.08</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcarpetfrac</name>
-      <display_name>Carpet: Floor Carpet Fraction</display_name>
-      <description>Defines the fraction of a floor which is covered by carpet.</description>
-      <type>Double</type>
-      <units>frac</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.8</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcsarea</name>
-      <display_name>Crawlspace Area</display_name>
-      <description>The area of the crawlspace.</description>
-      <type>Double</type>
-      <units>ft^2</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1200</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcsheight</name>
-      <display_name>Crawlspace Height</display_name>
-      <description>The height of the crawlspace.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>4</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcsextperim</name>
-      <display_name>Crawlspace Perimeter</display_name>
-      <description>The perimeter of the crawlspace.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>140</default_value>
-    </argument>
-    <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>crawl_space_type</name>
-      <display_name>Crawlspace space type</display_name>
-      <description>Select the crawlspace space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>crawl space type</default_value>
-      <choices>
-        <choice>
-          <value>crawl space type</value>
-          <display_name>crawl space type</display_name>
-        </choice>
-      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -255,13 +125,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
       <version>
@@ -272,7 +136,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>84EE2ECD</checksum>
+      <checksum>77352799</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

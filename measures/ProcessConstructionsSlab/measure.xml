@@ -2,16 +2,16 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>0107e944-1a43-4094-ac6c-e787585e1920</version_id>
+  <version_id>bfe94dd6-d4d2-4233-a01a-f358d56a5636</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsSlab</class_name>
-  <display_name>Set Residential Slab Construction</display_name>
-  <description>This measure assigns a construction to the living space slab.</description>
-  <modeler_description>Calculates material layer properties of slab constructions for the living space floor. Finds surfaces adjacent to the living space and sets applicable constructions.</modeler_description>
+  <display_name>Set Residential Finished Slab Construction</display_name>
+  <description>This measure assigns a construction to finished slabs.</description>
+  <modeler_description>Calculates and assigns material layer properties of slab constructions for floors between above-grade finished space and the ground.</modeler_description>
   <arguments>
     <argument>
       <name>selectedslabins</name>
-      <display_name>Slab: Insulation Type</display_name>
+      <display_name>Insulation Type</display_name>
       <description>The type of insulation.</description>
       <type>Choice</type>
       <required>true</required>
@@ -38,7 +38,7 @@
     </argument>
     <argument>
       <name>userdefinedslabperiextr</name>
-      <display_name>Slab: Perimeter/Exterior Insulation Nominal R-value</display_name>
+      <display_name>Perimeter/Exterior Insulation Nominal R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
@@ -48,7 +48,7 @@
     </argument>
     <argument>
       <name>userdefinedslabperiextwidthdepth</name>
-      <display_name>Slab: Perimeter/Exterior Insulation Width/Depth</display_name>
+      <display_name>Perimeter/Exterior Insulation Width/Depth</display_name>
       <description>The width or depth of the perimeter or exterior insulation.</description>
       <type>Double</type>
       <units>ft</units>
@@ -58,7 +58,7 @@
     </argument>
     <argument>
       <name>userdefinedslabgapr</name>
-      <display_name>Slab: Gap Insulation Nominal R-value</display_name>
+      <display_name>Gap Insulation Nominal R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
@@ -68,68 +68,13 @@
     </argument>
     <argument>
       <name>userdefinedslabwholer</name>
-      <display_name>Slab: Whole Slab Insulation Nominal R-value</display_name>
+      <display_name>Whole Slab Insulation Nominal R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcarpetr</name>
-      <display_name>Carpet: Carpet Pad R-value</display_name>
-      <description>The combined R-value of the carpet and the pad.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2.08</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedcarpetfrac</name>
-      <display_name>Carpet: Floor Carpet Fraction</display_name>
-      <description>Defines the fraction of a floor which is covered by carpet.</description>
-      <type>Double</type>
-      <units>frac</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.8</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedslabarea</name>
-      <display_name>Slab Area</display_name>
-      <description>The area of the slab.</description>
-      <type>Double</type>
-      <units>ft^2</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1200</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedslabextperim</name>
-      <display_name>Slab Perimeter</display_name>
-      <description>The perimeter of the slab.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>140</default_value>
-    </argument>
-    <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -165,13 +110,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>DC42456C</checksum>
     </file>
     <file>
       <version>
@@ -182,7 +127,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>39FDBCFD</checksum>
+      <checksum>CB41C344</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

@@ -121,7 +121,7 @@ class Psychrometrics
         '''
     w_star = Psychrometrics.w_fP(p, Psychrometrics.Psat_fT(twb))
 
-    w = ((Liquid.H2O_l.H_fg - (Liquid.H2O_l.Cp - Gas.H2O_v.Cp) * twb) * w_star - Gas.Air.Cp * (tdb - twb)) / (Liquid.H2O_l.H_fg + Gas.H2O_v.Cp * tdb - Liquid.H2O_l.Cp * twb) # (lbm/lbm)
+    w = ((Liquid.H2O_l.H_fg - (Liquid.H2O_l.cp - Gas.H2O_v.cp) * twb) * w_star - Gas.Air.cp * (tdb - twb)) / (Liquid.H2O_l.H_fg + Gas.H2O_v.cp * tdb - Liquid.H2O_l.cp * twb) # (lbm/lbm)
     return w
   end
 

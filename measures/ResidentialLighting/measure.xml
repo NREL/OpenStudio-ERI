@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>2c69a60e-501a-4516-a253-725d23808b2d</uid>
-  <version_id>3699ed3d-5780-4422-8341-291d9752d81a</version_id>
+  <version_id>dbbbc674-8287-4c5c-83bd-544f9b57a8b6</version_id>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -125,11 +125,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living</default_value>
+      <default_value>living space type</default_value>
       <choices>
         <choice>
-          <value>living</value>
-          <display_name>living</display_name>
+          <value>living space type</value>
+          <display_name>living space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -140,11 +140,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>garage</default_value>
+      <default_value>garage space type</default_value>
       <choices>
         <choice>
-          <value>garage</value>
-          <display_name>garage</display_name>
+          <value>garage space type</value>
+          <display_name>garage space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -155,11 +155,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>finished basement</default_value>
+      <default_value>finished basement space type</default_value>
       <choices>
         <choice>
-          <value>finished basement</value>
-          <display_name>finished basement</display_name>
+          <value>finished basement space type</value>
+          <display_name>finished basement space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -196,7 +196,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E7007DE0</checksum>
+      <checksum>44374290</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>10602D47</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
     </file>
   </files>
 </measure>

@@ -9,6 +9,7 @@
 
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
@@ -155,30 +156,30 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 
     # Space Type
 	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    living_space_type = Geometry.get_space_type_from_string(model, living_space_type_r, runner)
     if living_space_type.nil?
         return false
     end
 	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
-    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
+    fbasement_space_type = Geometry.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
 	ubasement_space_type_r = runner.getStringArgumentValue("ubasement_space_type",user_arguments)
-    ubasement_space_type = HelperMethods.get_space_type_from_string(model, ubasement_space_type_r, runner, false)
+    ubasement_space_type = Geometry.get_space_type_from_string(model, ubasement_space_type_r, runner, false)
 	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
-    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
+    garage_space_type = Geometry.get_space_type_from_string(model, garage_space_type_r, runner, false)
     
 	living_space_furn_area = 0
 	finished_basement_furn_area = 0
 	unfinished_basement_furn_area = 0
 	garage_furn_area = 0
-	living_space_furn_area = HelperMethods.get_floor_area_for_space_type(model, living_space_type.handle)
+	living_space_furn_area = Geometry.get_floor_area_for_space_type(model, living_space_type.handle)
 	unless fbasement_space_type.nil?
-		finished_basement_furn_area = HelperMethods.get_floor_area_for_space_type(model, fbasement_space_type.handle)
+		finished_basement_furn_area = Geometry.get_floor_area_for_space_type(model, fbasement_space_type.handle)
 	end
 	unless ubasement_space_type.nil?
-		unfinished_basement_furn_area = HelperMethods.get_floor_area_for_space_type(model, ubasement_space_type.handle)
+		unfinished_basement_furn_area = Geometry.get_floor_area_for_space_type(model, ubasement_space_type.handle)
 	end
 	unless garage_space_type.nil?
-		garage_furn_area = HelperMethods.get_floor_area_for_space_type(model, garage_space_type.handle)
+		garage_furn_area = Geometry.get_floor_area_for_space_type(model, garage_space_type.handle)
 	end
 
     # Process the furniture
@@ -225,7 +226,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 
       furn_type_ubsmt = Constants.FurnTypeLight
       if furn_type_ubsmt == Constants.FurnTypeLight
-        ubsmt_furn = Furniture.new(furn_type_ubsmt, 40.0, 0.0667, BaseMaterial.Wood.Cp, 0.4, 8.0, nil)
+        ubsmt_furn = Furniture.new(furn_type_ubsmt, 40.0, 0.0667, BaseMaterial.Wood.cp, 0.4, 8.0, nil)
       elsif furn_type_ubsmt == Constants.FurnTypeHeavy
         ubsmt_furn = Furniture.new(furn_type_ubsmt, 80.0, 0.0939, 0.35, 0.4, 8.0, nil)
       end
@@ -239,7 +240,7 @@ class ProcessThermalMassFurniture < OpenStudio::Ruleset::ModelUserScript
 
       furn_type_grg = Constants.FurnTypeLight
       if furn_type_grg == Constants.FurnTypeLight
-        garage_furn = Furniture.new(furn_type_grg, 40.0, 0.0667, BaseMaterial.Wood.Cp, 0.1, 2.0, nil)
+        garage_furn = Furniture.new(furn_type_grg, 40.0, 0.0667, BaseMaterial.Wood.cp, 0.1, 2.0, nil)
       elsif furn_type_grg == Constants.FurnTypeHeavy
         garage_furn = Furniture.new(furn_type_grg, 80.0, 0.0939, 0.35, 0.1, 2.0, nil)
       end

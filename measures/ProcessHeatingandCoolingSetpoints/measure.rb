@@ -10,6 +10,7 @@
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/weather"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
@@ -191,7 +192,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
 	
     # Thermal Zone
 	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
-    living_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
+    living_thermal_zone = Geometry.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
     if living_thermal_zone.nil?
         return false
     end

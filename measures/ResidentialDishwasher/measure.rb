@@ -3,6 +3,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/weather"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
@@ -93,7 +94,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	args << mult_hw
 	
     #make a choice argument for space
-    spaces = model.getSpaceTypes
+    spaces = model.getSpaces
     space_args = OpenStudio::StringVector.new
     spaces.each do |space|
         space_args << space.name.to_s
@@ -178,7 +179,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	end
     
     #Get space
-    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    space = Geometry.get_space_from_string(model, space_r, runner)
     if space.nil?
         return false
     end
@@ -190,7 +191,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -213,7 +214,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	dw_operating_water_temp = 140 # degF
 	
 	water_dens = Liquid.H2O_l.rho # lbm/ft^3
-	water_sh = Liquid.H2O_l.Cp  # Btu/lbm-R
+	water_sh = Liquid.H2O_l.cp  # Btu/lbm-R
 
 	# Use EnergyGuide Label test data to calculate per-cycle energy and
 	# water consumption. Calculations are based on "Method for

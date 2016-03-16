@@ -1,6 +1,7 @@
 require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
@@ -105,7 +106,7 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
     end
 	
     #Get space
-    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    space = Geometry.get_space_from_string(model, space_r, runner)
     if space.nil?
         return false
     end

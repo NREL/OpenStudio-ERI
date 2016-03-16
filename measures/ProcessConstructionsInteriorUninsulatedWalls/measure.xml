@@ -2,99 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_walls</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>a60a60ce-0cff-45bf-8480-ba56f78e6416</version_id>
+  <version_id>e52b75f5-7023-4d8c-8e05-911a1bd76bd8</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedWalls</class_name>
-  <display_name>Set Residential Uninsulated Wall Construction</display_name>
-  <description>This measure assigns constructions for the uninsulated walls between spaces.</description>
-  <modeler_description>Calculates material layer properties of uninsulated constructions for the walls between spaces. Finds surfaces adjacent to the space and sets applicable constructions.</modeler_description>
-  <arguments>
-    <argument>
-      <name>userdefinedpartitionwallmassth</name>
-      <display_name>Partition Wall Mass: Thickness</display_name>
-      <description>Thickness of the layer.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.5</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedpartitionwallmasscond</name>
-      <display_name>Partition Wall Mass: Conductivity</display_name>
-      <description>Conductivity of the layer.</description>
-      <type>Double</type>
-      <units>Btu-in/h-ft^2-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1.1112</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedpartitionwallmassdens</name>
-      <display_name>Partition Wall Mass: Density</display_name>
-      <description>Density of the layer.</description>
-      <type>Double</type>
-      <units>lb/ft^3</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>50</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedpartitionwallmasssh</name>
-      <display_name>Partition Wall Mass: Specific Heat</display_name>
-      <description>Specific heat of the layer.</description>
-      <type>Double</type>
-      <units>Btu/lb-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.2</default_value>
-    </argument>
-    <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>unfin_attic_space_type</name>
-      <display_name>Unfinished Attic space type</display_name>
-      <description>Select the unfinished attic space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>unfinished attic space type</default_value>
-      <choices>
-        <choice>
-          <value>unfinished attic space type</value>
-          <display_name>unfinished attic space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>garage_space_type</name>
-      <display_name>Garage space type</display_name>
-      <description>Select the garage space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>garage space type</default_value>
-      <choices>
-        <choice>
-          <value>garage space type</value>
-          <display_name>garage space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-  </arguments>
+  <display_name>Set Residential Partition Wall Construction</display_name>
+  <description>This measure assigns a construction to the walls between two unfinished spaces or two finished spaces.</description>
+  <modeler_description>Calculates and assigns material layer properties of uninsulated constructions for the walls 1) between two unfinished spaces, 2) between two finished spaces, or 3) with adiabatic outside boundary condition.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -128,13 +42,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
       <version>
@@ -145,7 +53,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A1EEF7B6</checksum>
+      <checksum>2649F182</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

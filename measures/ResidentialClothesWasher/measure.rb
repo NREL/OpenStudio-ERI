@@ -3,6 +3,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/weather"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
@@ -194,7 +195,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
 	end
 	
     #Get space
-    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    space = Geometry.get_space_from_string(model, space_r, runner)
     if space.nil?
         return false
     end
@@ -206,7 +207,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -306,7 +307,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     # test to heat the water and the temperature rise in the water heater in the test (eq. 6 
     # Eastment and Hendron, NREL/CP-550-39769, 2006).
     water_dens = Liquid.H2O_l.rho # lbm/ft^3
-    water_sh = Liquid.H2O_l.Cp  # Btu/lbm-R
+    water_sh = Liquid.H2O_l.cp  # Btu/lbm-R
     cw_dhw_use_per_cycle_test = ((OpenStudio.convert(cw_gas_consumption_for_dhw_per_cycle_test, "therm", "kWh").get * 
                                 cw_gas_dhw_heater_efficiency_test) / (cw_dhw_deltaT_test * 
                                 water_dens * water_sh * OpenStudio.convert(1.0, "Btu", "kWh").get / UnitConversion.ft32gal(1.0)))

@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>cf108abd-547a-488b-abc2-7b36f2078ad1</version_id>
+  <version_id>0e835bea-6e13-4b0e-9713-c8bc55a75479</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>Set Residential Door Construction</display_name>
-  <description>This measure assigns a construction to exterior doors adjacent to the living space as well as garage doors.</description>
-  <modeler_description>Calculates material layer properties of constructions for exterior doors adjacent to the living space as well as garage doors. Finds sub surfaces adjacent to the living space and garage and sets applicable constructions.</modeler_description>
+  <description>This measure assigns a construction to exterior doors adjacent to finished or unfinished space.</description>
+  <modeler_description>Calculates material layer properties of constructions for door sub-surfaces between 1) finished space and outside or 2) unfinished space and outside.</modeler_description>
   <arguments>
     <argument>
       <name>selecteddoor</name>
@@ -29,36 +29,6 @@
         <choice>
           <value>Fiberglass</value>
           <display_name>Fiberglass</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>garage_space_type</name>
-      <display_name>Garage space type</display_name>
-      <description>Select the garage space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>garage space type</default_value>
-      <choices>
-        <choice>
-          <value>garage space type</value>
-          <display_name>garage space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -96,13 +66,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
       <version>
@@ -113,7 +77,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7C670068</checksum>
+      <checksum>39486C97</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

@@ -9,6 +9,7 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::ModelUserScript
@@ -16,145 +17,21 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Uninsulated Floor Construction"
+    return "Set Residential Partition Floor Construction"
   end
   
   def description
-    return "This measure assigns a construction to the floors between living spaces and the floors between the living space and finished basement."
+    return "This measure assigns a construction to floors between two unfinished spaces or two finished spaces."
   end
   
   def modeler_description
-    return "Calculates material layer properties of uninsulated constructions for the floors between living spaces and the floors between the living space and finished basement. Finds surfaces adjacent to the living space and finished basement and sets applicable constructions."
+    return "Calculates and assigns material layer properties of uninsulated constructions for the floors 1) between two unfinished spaces, 2) between two finished spaces, or 3) with adiabatic outside boundary condition."
   end   
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a double argument for thickness of gypsum
-    userdefined_gypthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgypthickness", false)
-    userdefined_gypthickness.setDisplayName("Ceiling Mass: Thickness")
-    userdefined_gypthickness.setUnits("in")
-    userdefined_gypthickness.setDescription("Gypsum layer thickness.")
-    userdefined_gypthickness.setDefaultValue(0.5)
-    args << userdefined_gypthickness
-
-    #make a double argument for number of gypsum layers
-    userdefined_gyplayers = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgyplayers", false)
-    userdefined_gyplayers.setDisplayName("Ceiling Mass: Num Layers")
-    userdefined_gyplayers.setUnits("#")
-    userdefined_gyplayers.setDescription("Integer number of layers of gypsum.")
-    userdefined_gyplayers.setDefaultValue(1)
-    args << userdefined_gyplayers
-
-    #make a double argument for floor mass thickness
-    userdefined_floormassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassth", false)
-    userdefined_floormassth.setDisplayName("Floor Mass: Thickness")
-    userdefined_floormassth.setUnits("in")
-    userdefined_floormassth.setDescription("Thickness of the floor mass.")
-    userdefined_floormassth.setDefaultValue(0.625)
-    args << userdefined_floormassth
-
-    #make a double argument for floor mass conductivity
-    userdefined_floormasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasscond", false)
-    userdefined_floormasscond.setDisplayName("Floor Mass: Conductivity")
-    userdefined_floormasscond.setUnits("Btu-in/h-ft^2-R")
-    userdefined_floormasscond.setDescription("Conductivity of the floor mass.")
-    userdefined_floormasscond.setDefaultValue(0.8004)
-    args << userdefined_floormasscond
-
-    #make a double argument for floor mass density
-    userdefined_floormassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormassdens", false)
-    userdefined_floormassdens.setDisplayName("Floor Mass: Density")
-    userdefined_floormassdens.setUnits("lb/ft^3")
-    userdefined_floormassdens.setDescription("Density of the floor mass.")
-    userdefined_floormassdens.setDefaultValue(34.0)
-    args << userdefined_floormassdens
-
-    #make a double argument for floor mass specific heat
-    userdefined_floormasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfloormasssh", false)
-    userdefined_floormasssh.setDisplayName("Floor Mass: Specific Heat")
-    userdefined_floormasssh.setUnits("Btu/lb-R")
-    userdefined_floormasssh.setDescription("Specific heat of the floor mass.")
-    userdefined_floormasssh.setDefaultValue(0.29)
-    args << userdefined_floormasssh
-
-    #make a double argument for carpet pad R-value
-    userdefined_carpetr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetr", false)
-    userdefined_carpetr.setDisplayName("Carpet: Carpet Pad R-value")
-    userdefined_carpetr.setUnits("hr-ft^2-R/Btu")
-    userdefined_carpetr.setDescription("The combined R-value of the carpet and the pad.")
-    userdefined_carpetr.setDefaultValue(2.08)
-    args << userdefined_carpetr
-
-    #make a double argument for carpet floor fraction
-    userdefined_carpetfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcarpetfrac", false)
-    userdefined_carpetfrac.setDisplayName("Carpet: Floor Carpet Fraction")
-    userdefined_carpetfrac.setUnits("frac")
-    userdefined_carpetfrac.setDescription("Defines the fraction of a floor which is covered by carpet.")
-    userdefined_carpetfrac.setDefaultValue(0.8)
-    args << userdefined_carpetfrac
-
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
-    end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type
-
-    #make a choice argument for finished basement space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
-        space_type_args << Constants.FinishedBasementSpaceType
-    end
-    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
-    fbasement_space_type.setDisplayName("Finished Basement space type")
-    fbasement_space_type.setDescription("Select the finished basement space type")
-    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
-    args << fbasement_space_type    
-    
-    #make a choice argument for garage space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.GarageSpaceType)
-        space_type_args << Constants.GarageSpaceType
-    end
-    garage_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_space_type", space_type_args, true)
-    garage_space_type.setDisplayName("Garage space type")
-    garage_space_type.setDescription("Select the garage space type")
-    garage_space_type.setDefaultValue(Constants.GarageSpaceType)
-    args << garage_space_type   
-    
-    #make a choice argument for unfinished attic space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.UnfinishedAtticSpaceType)
-        space_type_args << Constants.UnfinishedAtticSpaceType
-    end
-    unfin_attic_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("unfin_attic_space_type", space_type_args, true)
-    unfin_attic_space_type.setDisplayName("Unfinished Attic space type")
-    unfin_attic_space_type.setDescription("Select the unfinished attic space type")
-    unfin_attic_space_type.setDefaultValue(Constants.UnfinishedAtticSpaceType)
-    args << unfin_attic_space_type  
-    
     return args
   end #end the arguments method
 
@@ -167,236 +44,78 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
       return false
     end
 
-    # Space Type
-    living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
-        return false
-    end
-    fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
-    fbasement_space_type = HelperMethods.get_space_type_from_string(model, fbasement_space_type_r, runner, false)
-    garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
-    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
-    unfin_attic_space_type_r = runner.getStringArgumentValue("unfin_attic_space_type",user_arguments)
-    unfin_attic_space_type = HelperMethods.get_space_type_from_string(model, unfin_attic_space_type_r, runner, false)   
-    
-    # Initialize hashes
-    constructions_to_surfaces = {"FinUninsFinFloor"=>[], "RevFinUninsFinFloor"=>[], "UnfinUninsUnfinFloor"=>[], "RevUnfinUninsUnfinFloor"=>[]}
-    constructions_to_objects = Hash.new
-    
-    # Floors between living spaces
-    living_space_type.spaces.each do |living_space|
-      living_space.surfaces.each do |living_surface|
-        next unless ["floor"].include? living_surface.surfaceType.downcase
-        adjacent_surface = living_surface.adjacentSurface
-        next unless adjacent_surface.is_initialized
-        adjacent_surface = adjacent_surface.get
-        adjacent_surface_r = adjacent_surface.name.to_s
-        adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r, runner)
-        next unless [living_space_type_r, fbasement_space_type_r].include? adjacent_space_type_r
-        constructions_to_surfaces["FinUninsFinFloor"] << living_surface
-        constructions_to_surfaces["RevFinUninsFinFloor"] << adjacent_surface
-      end   
-    end
-    
-    # Floors between living spaces
-    living_space_type.spaces.each do |living_space|
-      living_space.surfaces.each do |living_surface|
-        next unless living_surface.outsideBoundaryCondition.downcase == "adiabatic"
-        if living_surface.surfaceType.downcase == "floor"
-          constructions_to_surfaces["FinUninsFinFloor"] << living_surface
-        elsif living_surface.surfaceType.downcase == "roofceiling"
-          constructions_to_surfaces["RevFinUninsFinFloor"] << living_surface
+    finished_surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_unfinished(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "floor"
+            # Adiabatic floor adjacent to finished space
+            if surface.outsideBoundaryCondition.downcase == "adiabatic"
+                finished_surfaces << surface
+                next
+            end
+            next if not surface.adjacentSurface.is_initialized
+            adjacent_surface = surface.adjacentSurface.get
+            adjacent_space = Geometry.get_space_from_surface(model, adjacent_surface.name.to_s, runner)
+            next if Geometry.space_is_unfinished(adjacent_space)
+            # Floor between two finished spaces
+            finished_surfaces << surface
         end
-      end   
     end
     
-    # Floors between living spaces
-    unless fbasement_space_type.nil?
-      fbasement_space_type.spaces.each do |fbasement_space|
-        fbasement_space.surfaces.each do |fbasement_surface|
-          next unless fbasement_surface.outsideBoundaryCondition.downcase == "adiabatic"
-          if fbasement_surface.surfaceType.downcase == "roofceiling"
-            constructions_to_surfaces["RevFinUninsFinFloor"] << fbasement_surface
-          end
+    unfinished_surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_finished(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "floor"
+            # Adiabatic floor adjacent to unfinished space
+            if surface.outsideBoundaryCondition.downcase == "adiabatic"
+                unfinished_surfaces << surface
+                next
+            end
+            next if not surface.adjacentSurface.is_initialized
+            adjacent_surface = surface.adjacentSurface.get
+            adjacent_space = Geometry.get_space_from_surface(model, adjacent_surface.name.to_s, runner)
+            next if Geometry.space_is_finished(adjacent_space)
+            # Floor between two unfinished spaces
+            unfinished_surfaces << surface
         end
-      end   
-    end
-    
-    # Floors between unfinished attic and garage
-    unless unfin_attic_space_type.nil?
-      unfin_attic_space_type.spaces.each do |unfin_attic_space|
-        unfin_attic_space.surfaces.each do |unfin_attic_surface|
-          next unless ["floor"].include? unfin_attic_surface.surfaceType.downcase
-          adjacent_surface = unfin_attic_surface.adjacentSurface
-          next unless adjacent_surface.is_initialized
-          adjacent_surface = adjacent_surface.get
-          adjacent_surface_r = adjacent_surface.name.to_s
-          adjacent_space_type_r = HelperMethods.get_space_type_from_surface(model, adjacent_surface_r, runner)
-          next unless [garage_space_type_r].include? adjacent_space_type_r
-          constructions_to_surfaces["UnfinUninsUnfinFloor"] << unfin_attic_surface
-          constructions_to_surfaces["RevUnfinUninsUnfinFloor"] << adjacent_surfaces
-        end 
-      end
     end
     
     # Continue if no applicable surfaces
-    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+    if finished_surfaces.empty? and unfinished_surfaces.empty?
       return true
     end 
     
-    # Gypsum
-    selected_gypsum = runner.getOptionalWorkspaceObjectChoiceValue("selectedgypsum",user_arguments,model)
-    if selected_gypsum.empty?
-      gypsumThickness = runner.getDoubleArgumentValue("userdefinedgypthickness",user_arguments)
-      gypsumNumLayers = runner.getDoubleArgumentValue("userdefinedgyplayers",user_arguments)
-    end
-    gypsumConductivity = Material.Gypsum1_2in.k
-    gypsumDensity = Material.Gypsum1_2in.rho
-    gypsumSpecificHeat = Material.Gypsum1_2in.Cp
-    gypsumThermalAbs = Material.Gypsum1_2in.TAbs
-    gypsumSolarAbs = Material.Gypsum1_2in.SAbs
-    gypsumVisibleAbs = Material.Gypsum1_2in.VAbs
-    gypsumRvalue = (OpenStudio::convert(gypsumThickness,"in","ft").get * gypsumNumLayers / Material.Gypsum1_2in.k)
-
-    # Floor Mass
-    floorMassThickness = runner.getDoubleArgumentValue("userdefinedfloormassth",user_arguments)
-    floorMassConductivity = runner.getDoubleArgumentValue("userdefinedfloormasscond",user_arguments)
-    floorMassDensity = runner.getDoubleArgumentValue("userdefinedfloormassdens",user_arguments)
-    floorMassSpecificHeat = runner.getDoubleArgumentValue("userdefinedfloormasssh",user_arguments)
-
-    # Carpet
-    carpetPadRValue = runner.getDoubleArgumentValue("userdefinedcarpetr",user_arguments)
-    carpetFloorFraction = runner.getDoubleArgumentValue("userdefinedcarpetfrac",user_arguments)
-
-    # Process the interior uninsulated floor
-    sc_thick, sc_cond, sc_dens, sc_sh = _processConstructionsInteriorUninsulatedFloors()
-
-    # StudandAirFloor
-    saf = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    saf.setName("StudandAirFloor")
-    saf.setRoughness("Rough")
-    saf.setThickness(OpenStudio::convert(sc_thick,"ft","m").get)
-    saf.setConductivity(OpenStudio::convert(sc_cond,"Btu/hr*ft*R","W/m*K").get)
-    saf.setDensity(OpenStudio::convert(sc_dens,"lb/ft^3","kg/m^3").get)
-    saf.setSpecificHeat(OpenStudio::convert(sc_sh,"Btu/lb*R","J/kg*K").get)
-
-    # Gypsum
-    gypsum = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    gypsum.setName("GypsumBoard-Ceiling")
-    gypsum.setRoughness("Rough")
-    gypsum.setThickness(OpenStudio::convert(gypsumThickness,"in","m").get)
-    gypsum.setConductivity(OpenStudio::convert(gypsumConductivity,"Btu/hr*ft*R","W/m*K").get)
-    gypsum.setDensity(OpenStudio::convert(gypsumDensity,"lb/ft^3","kg/m^3").get)
-    gypsum.setSpecificHeat(OpenStudio::convert(gypsumSpecificHeat,"Btu/lb*R","J/kg*K").get)
-    gypsum.setThermalAbsorptance(gypsumThermalAbs)
-    gypsum.setSolarAbsorptance(gypsumSolarAbs)
-    gypsum.setVisibleAbsorptance(gypsumVisibleAbs)
-
-    # Plywood-3_4in
-    ply3_4 = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    ply3_4.setName("Plywood-3_4in")
-    ply3_4.setRoughness("Rough")
-    ply3_4.setThickness(OpenStudio::convert(Material.Plywood3_4in.thick,"ft","m").get)
-    ply3_4.setConductivity(OpenStudio::convert(Material.Plywood3_4in.k,"Btu/hr*ft*R","W/m*K").get)
-    ply3_4.setDensity(OpenStudio::convert(Material.Plywood3_4in.rho,"lb/ft^3","kg/m^3").get)
-    ply3_4.setSpecificHeat(OpenStudio::convert(Material.Plywood3_4in.Cp,"Btu/lb*R","J/kg*K").get)
-
-    # FloorMass
-    mat_floor_mass = Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-    fm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    fm.setName("FloorMass")
-    fm.setRoughness("Rough")
-    fm.setThickness(OpenStudio::convert(mat_floor_mass.thick,"ft","m").get)
-    fm.setConductivity(OpenStudio::convert(mat_floor_mass.k,"Btu/hr*ft*R","W/m*K").get)
-    fm.setDensity(OpenStudio::convert(mat_floor_mass.rho,"lb/ft^3","kg/m^3").get)
-    fm.setSpecificHeat(OpenStudio::convert(mat_floor_mass.Cp,"Btu/lb*R","J/kg*K").get)
-    fm.setThermalAbsorptance(mat_floor_mass.TAbs)
-    fm.setSolarAbsorptance(mat_floor_mass.SAbs)
-
-    # CarpetBareLayer
-    if carpetFloorFraction > 0
-      mat_carpet_bare = Material.CarpetBare(carpetFloorFraction, carpetPadRValue)
-      cbl = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-      cbl.setName("CarpetBareLayer")
-      cbl.setRoughness("Rough")
-      cbl.setThickness(OpenStudio::convert(mat_carpet_bare.thick,"ft","m").get)
-      cbl.setConductivity(OpenStudio::convert(mat_carpet_bare.k,"Btu/hr*ft*R","W/m*K").get)
-      cbl.setDensity(OpenStudio::convert(mat_carpet_bare.rho,"lb/ft^3","kg/m^3").get)
-      cbl.setSpecificHeat(OpenStudio::convert(mat_carpet_bare.Cp,"Btu/lb*R","J/kg*K").get)
-      cbl.setThermalAbsorptance(mat_carpet_bare.TAbs)
-      cbl.setSolarAbsorptance(mat_carpet_bare.SAbs)
-    end
-
-    # FinUninsFinFloor
-    materials = []
-    (0...gypsumNumLayers).to_a.each do |i|
-      materials << gypsum
-    end
-    materials << saf
-    materials << ply3_4
-    materials << fm
-    if carpetFloorFraction > 0
-      materials << cbl
-    end
-    unless constructions_to_surfaces["FinUninsFinFloor"].empty?
-        finuninsfinfloor = OpenStudio::Model::Construction.new(materials)
-        finuninsfinfloor.setName("FinUninsFinFloor")
-        constructions_to_objects["FinUninsFinFloor"] = finuninsfinfloor
-    end
+    # Process the floors
     
-    # RevFinUninsFinFloor
-    unless constructions_to_surfaces["RevFinUninsFinFloor"].empty?
-        revfinuninsfinfloor = finuninsfinfloor.reverseConstruction
-        revfinuninsfinfloor.setName("RevFinUninsFinFloor")
-        constructions_to_objects["RevFinUninsFinFloor"] = revfinuninsfinfloor
+    # Define materials
+    mat_cavity = Material.AirCavity(Material.Stud2x6.thick_in)
+    mat_framing = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.Wood)
+    
+    # Set paths
+    path_fracs = [Constants.DefaultFramingFactorFloor, 1 - Constants.DefaultFramingFactorFloor]
+
+    # Define construction
+    floor = Construction.new(path_fracs)
+    floor.addlayer([mat_framing, mat_cavity], true, "StudAndAirFloor")       
+
+    # Create and apply construction to unfinished surfaces
+    if not floor.create_and_assign_constructions(unfinished_surfaces, runner, model, "UnfinUninsUnfinFloor")
+        return false
     end
-    
-    # UnfinUninsUnfinFloor
-    materials = []
-    materials << saf
-    materials << ply3_4
-    unless constructions_to_surfaces["UnfinUninsUnfinFloor"].empty?
-        unfinuninsunfinfloor = OpenStudio::Model::Construction.new(materials)
-        unfinuninsunfinfloor.setName("UnfinUninsUnfinFloor")
-        constructions_to_objects["UnfinUninsUnfinFloor"] = unfinuninsunfinfloor
-    end
-    
-    # RevUnfinUninsUnfinFloor
-    unless constructions_to_surfaces["RevUnfinUninsUnfinFloor"].empty?
-        revunfinuninsunfinfloor = unfinuninsunfinfloor.reverseConstruction
-        revunfinuninsunfinfloor.setName("RevUnfinUninsUnfinFloor")
-        constructions_to_objects["RevUnfinUninsUnfinFloor"] = revunfinuninsunfinfloor
-    end 
-    
-    # Apply constructions to surfaces
-    constructions_to_surfaces.each do |construction, surfaces|
-        surfaces.each do |surface|
-            surface.setConstruction(constructions_to_objects[construction])
-            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
-        end
+
+    # Create and apply construction to finished surfaces
+    if not floor.create_and_assign_constructions(finished_surfaces, runner, model, "FinUninsFinFloor")
+        return false
     end
     
     # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials(model, runner)    
+    HelperMethods.remove_unused_materials_and_constructions(model, runner)    
     
     return true
  
   end #end the run method
-
-  def _processConstructionsInteriorUninsulatedFloors()
-    floor_part_U_cavity_path = (1 - Constants.DefaultFramingFactorFloor) / Gas.AirGapRvalue # Btu/hr*ft^2*F
-    floor_part_U_stud_path = Constants.DefaultFramingFactorFloor / Material.Stud2x6.Rvalue # Btu/hr*ft^2*F
-    floor_part_Rvalue = 1 / (floor_part_U_cavity_path + floor_part_U_stud_path) # hr*ft^2*F/Btu
-
-    sc_thick = Material.Stud2x4.thick # ft
-    sc_cond = sc_thick / floor_part_Rvalue # Btu/hr*ft*F
-    sc_dens = Constants.DefaultFramingFactorFloor * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Gas.Air.Cp # lbm/ft^3
-    sc_sh = (Constants.DefaultFramingFactorFloor * BaseMaterial.Wood.Cp * BaseMaterial.Wood.rho + (1 - Constants.DefaultFramingFactorFloor) * Gas.Air.Cp * Gas.Air.Cp) / sc_dens # Btu/lbm*F
-
-    return sc_thick, sc_cond, sc_dens, sc_sh
-  end
-
   
 end #end the measure
 

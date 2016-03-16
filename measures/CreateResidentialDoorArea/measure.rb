@@ -3,6 +3,7 @@
 
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
 class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
@@ -71,7 +72,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
     end
 	
 	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
+    living_space_type = Geometry.get_space_type_from_string(model, living_space_type_r, runner)
     if living_space_type.nil?
         return false
     end

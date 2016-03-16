@@ -9,6 +9,7 @@
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
@@ -20,11 +21,11 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
   end
   
   def description
-    return "This measure assigns a construction to exterior doors adjacent to the living space as well as garage doors."
+    return "This measure assigns a construction to exterior doors adjacent to finished or unfinished space."
   end
   
   def modeler_description
-    return "Calculates material layer properties of constructions for exterior doors adjacent to the living space as well as garage doors. Finds sub surfaces adjacent to the living space and garage and sets applicable constructions."
+    return "Calculates material layer properties of constructions for door sub-surfaces between 1) finished space and outside or 2) unfinished space and outside."
   end
   
   #define the arguments that the user will input
@@ -44,36 +45,6 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
     selected_door.setDefaultValue("Fiberglass")
     args << selected_door   
 
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
-    end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type
-
-    #make a choice argument for garage space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.GarageSpaceType)
-        space_type_args << Constants.GarageSpaceType
-    end
-    garage_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_space_type", space_type_args, true)
-    garage_space_type.setDisplayName("Garage space type")
-    garage_space_type.setDescription("Select the garage space type")
-    garage_space_type.setDefaultValue(Constants.GarageSpaceType)
-    args << garage_space_type
-
     return args
   end #end the arguments method
 
@@ -86,114 +57,85 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    # Space Type
-    living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = HelperMethods.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
-        return false
-    end
-    garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
-    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
-    
-    # Initialize hashes
-    constructions_to_surfaces = {"LivingDoors"=>[], "GarageDoors"=>[]}
-    constructions_to_objects = Hash.new    
-    
-    # Door between living and outdoors
-    living_space_type.spaces.each do |living_space|
-      living_space.surfaces.each do |living_surface|
-        next unless living_surface.surfaceType.downcase == "wall" and living_surface.outsideBoundaryCondition.downcase == "outdoors"
-        living_surface.subSurfaces.each do |living_sub_surface|
-          next unless living_sub_surface.subSurfaceType.downcase.include? "door"
-            constructions_to_surfaces["LivingDoors"] << living_sub_surface
+    # Sub-surface between finished space and outdoors
+    finished_sub_surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_unfinished(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+            surface.subSurfaces.each do |sub_surface|
+                next if not sub_surface.subSurfaceType.downcase.include? "door"
+                finished_sub_surfaces << sub_surface
+            end
         end
-      end   
-    end 
-    
-    # Garage door between living and outdoors
-    unless garage_space_type.nil?
-      garage_space_type.spaces.each do |garage_space|
-        garage_space.surfaces.each do |garage_surface|
-          next unless garage_surface.surfaceType.downcase == "wall" and garage_surface.outsideBoundaryCondition.downcase == "outdoors"
-          garage_surface.subSurfaces.each do |garage_sub_surface|
-            next unless garage_sub_surface.subSurfaceType.downcase.include? "door"
-            constructions_to_surfaces["GarageDoors"] << garage_sub_surface
-          end
-        end   
-      end
+    end
+
+    # Sub-surface between unfinished space and outdoors
+    unfinished_sub_surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_finished(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+            surface.subSurfaces.each do |sub_surface|
+                next if not sub_surface.subSurfaceType.downcase.include? "door"
+                unfinished_sub_surfaces << sub_surface
+            end
+        end
     end
     
     # Continue if no applicable sub surfaces
-    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+    if finished_sub_surfaces.empty? and unfinished_sub_surfaces.empty?
       return true
     end   
     
-    selected_door = runner.getStringArgumentValue("selecteddoor",user_arguments)
-    
-    doorUvalue = {"Wood"=>0.48, "Steel"=>0.2, "Fiberglass"=>0.2}[selected_door]
-
-    # Process the door construction
-    door_Uvalue_air_to_air = doorUvalue
-    garage_door_Uvalue_air_to_air = 0.2 # Btu/hr*ft^2*F, R-values typically vary from R5 to R10, from the Home Depot website
-
-    door_Rvalue_air_to_air = 1.0 / door_Uvalue_air_to_air
-    garage_door_Rvalue_air_to_air = 1.0 / garage_door_Uvalue_air_to_air
-
-    door_Rvalue = door_Rvalue_air_to_air - Material.AirFilmOutside.Rvalue - Material.AirFilmVertical.Rvalue
-    garage_door_Rvalue = garage_door_Rvalue_air_to_air - Material.AirFilmOutside.Rvalue - Material.AirFilmVertical.Rvalue
-
-    door_Uvalue = 1.0 / door_Rvalue
-    garage_door_Uvalue = 1.0 / garage_door_Rvalue
-
-    door_thickness = OpenStudio.convert(1.75,"in","ft").get # ft
-    garage_door_thickness = OpenStudio.convert(2.5,"in","ft").get # ft
-
-    # DoorMaterial
-    d = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    d.setName("DoorMaterial")
-    d.setRoughness("Rough")
-    d.setThickness(OpenStudio::convert(door_thickness,"ft","m").get)
-    d.setConductivity(OpenStudio::convert(door_Uvalue * door_thickness,"Btu/hr*ft*R","W/m*K").get)
-    d.setDensity(OpenStudio::convert(BaseMaterial.Wood.rho,"lb/ft^3","kg/m^3").get)
-    d.setSpecificHeat(OpenStudio::convert(BaseMaterial.Wood.Cp,"Btu/lb*R","J/kg*K").get)
-
-    # LivingDoors
-    materials = []
-    materials << d
-    unless constructions_to_surfaces["LivingDoors"].empty?
-        door = OpenStudio::Model::Construction.new(materials)
-        door.setName("LivingDoors")
-        constructions_to_objects["LivingDoors"] = door
+    if not finished_sub_surfaces.empty?
+        # Define materials
+        selected_door = runner.getStringArgumentValue("selecteddoor",user_arguments)
+        doorUvalue = {"Wood"=>0.48, "Steel"=>0.2, "Fiberglass"=>0.2}[selected_door]
+        door_Uvalue_air_to_air = doorUvalue
+        door_Rvalue_air_to_air = 1.0 / door_Uvalue_air_to_air
+        door_Rvalue = door_Rvalue_air_to_air - Material.AirFilmOutside.rvalue - Material.AirFilmVertical.rvalue
+        door_Uvalue = 1.0 / door_Rvalue
+        door_thickness = 1.75 # in
+        fin_door_mat = Material.new(name="DoorMaterial", thick_in=door_thickness, mat_base=BaseMaterial.Wood, cond=door_Uvalue * OpenStudio::convert(door_thickness, "in", "ft").get)
+        
+        # Set paths
+        path_fracs = [1]
+        
+        # Define construction
+        fin_door = Construction.new(path_fracs)
+        fin_door.addlayer(fin_door_mat, true)
+        
+        # Create and apply construction to surfaces
+        if not fin_door.create_and_assign_constructions(finished_sub_surfaces, runner, model, "LivingDoors")
+            return false
+        end
     end
 
-    # GarageDoorMaterial
-    gd = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    gd.setName("GarageDoorMaterial")
-    gd.setRoughness("Rough")
-    gd.setThickness(OpenStudio::convert(garage_door_thickness,"ft","m").get)
-    gd.setConductivity(OpenStudio::convert(garage_door_Uvalue * garage_door_thickness,"Btu/hr*ft*R","W/m*K").get)
-    gd.setDensity(OpenStudio::convert(BaseMaterial.Wood.rho,"lb/ft^3","kg/m^3").get)
-    gd.setSpecificHeat(OpenStudio::convert(BaseMaterial.Wood.Cp,"Btu/lb*R","J/kg*K").get)
-
-    # GarageDoors
-    materials = []
-    materials << gd
-    unless constructions_to_surfaces["GarageDoors"].empty?
-        garagedoor = OpenStudio::Model::Construction.new(materials)
-        garagedoor.setName("GarageDoors")
-        constructions_to_objects["GarageDoors"] = garagedoor
-    end
-
-    # Apply constructions to sub surfaces
-    constructions_to_surfaces.each do |construction, surfaces|
-        surfaces.each do |surface|
-            surface.setConstruction(constructions_to_objects[construction])
-            runner.registerInfo("Sub Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_sub_surface(model, surface.name.to_s, runner)}' and with Sub Surface Type '#{surface.subSurfaceType}', was assigned Construction '#{construction}'")
+    if not unfinished_sub_surfaces.empty?
+        # Define materials
+        garage_door_Uvalue_air_to_air = 0.2 # Btu/hr*ft^2*F, R-values typically vary from R5 to R10, from the Home Depot website
+        garage_door_Rvalue_air_to_air = 1.0 / garage_door_Uvalue_air_to_air
+        garage_door_Rvalue = garage_door_Rvalue_air_to_air - Material.AirFilmOutside.rvalue - Material.AirFilmVertical.rvalue
+        garage_door_Uvalue = 1.0 / garage_door_Rvalue
+        garage_door_thickness = 2.5 # in
+        unfin_door_mat = Material.new(name="GarageDoorMaterial", thick_in=garage_door_thickness, mat_base=BaseMaterial.Wood, cond=garage_door_Uvalue * OpenStudio::convert(garage_door_thickness, "in", "ft").get)
+        
+        # Set paths
+        path_fracs = [1]
+        
+        # Define construction
+        unfin_door = Construction.new(path_fracs)
+        unfin_door.addlayer(unfin_door_mat, true)
+        
+        # Create and apply construction to surfaces
+        if not unfin_door.create_and_assign_constructions(unfinished_sub_surfaces, runner, model, "GarageDoors")
+            return false
         end
     end
 
     # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials(model, runner)
+    HelperMethods.remove_unused_materials_and_constructions(model, runner)
     
     return true
  

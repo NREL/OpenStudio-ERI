@@ -13,6 +13,7 @@
 #load sim.rb
 require "#{File.dirname(__FILE__)}/resources/sim"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
@@ -901,20 +902,20 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
     # Zones
 	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
-	living_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
+	living_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
     if living_thermal_zone.nil?
         return false
     end
 	garage_thermal_zone_r = runner.getStringArgumentValue("garage_thermal_zone",user_arguments)
-	garage_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, garage_thermal_zone_r, runner, false)
+	garage_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, garage_thermal_zone_r, runner, false)
 	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
-	fbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, fbasement_thermal_zone_r, runner, false)
+	fbasement_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, fbasement_thermal_zone_r, runner, false)
 	ufbasement_thermal_zone_r = runner.getStringArgumentValue("ufbasement_thermal_zone",user_arguments)
-	ufbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, ufbasement_thermal_zone_r, runner, false)
+	ufbasement_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, ufbasement_thermal_zone_r, runner, false)
 	crawl_thermal_zone_r = runner.getStringArgumentValue("crawl_thermal_zone",user_arguments)
-	crawl_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, crawl_thermal_zone_r, runner, false)
+	crawl_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, crawl_thermal_zone_r, runner, false)
 	ufattic_thermal_zone_r = runner.getStringArgumentValue("ufattic_thermal_zone",user_arguments)
-	ufattic_thermal_zone = HelperMethods.get_thermal_zone_from_string_from_idf(workspace, ufattic_thermal_zone_r, runner, false)
+	ufattic_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, ufattic_thermal_zone_r, runner, false)
 
     # Remove existing airflow objects
     workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["NatVentProbability"], "Schedule:Constant", runner)
@@ -989,7 +990,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ductNormLeakageToOutside = runner.getDoubleArgumentValue("duct_norm_leakage_to_outside",user_arguments)
     
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms_from_idf(workspace, runner)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms_from_idf(workspace, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -1108,12 +1109,12 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     cooling_set_point.CoolingSetpointWeekend = cooling_set_point.CoolingSetpointWeekday
 
     # temp code for testing
-    geometry.finished_floor_area = runner.getDoubleArgumentValue("finished_floor_area",user_arguments)
-    geometry.above_grade_finished_floor_area = runner.getDoubleArgumentValue("above_grade_finished_floor_area",user_arguments)
-    geometry.building_height = runner.getDoubleArgumentValue("building_height",user_arguments)
-    geometry.stories = runner.getDoubleArgumentValue("stories",user_arguments)
-    geometry.window_area = runner.getDoubleArgumentValue("window_area",user_arguments)
-	geometry.num_units = 1
+    Geometry.finished_floor_area = runner.getDoubleArgumentValue("finished_floor_area",user_arguments)
+    Geometry.above_grade_finished_floor_area = runner.getDoubleArgumentValue("above_grade_finished_floor_area",user_arguments)
+    Geometry.building_height = runner.getDoubleArgumentValue("building_height",user_arguments)
+    Geometry.stories = runner.getDoubleArgumentValue("stories",user_arguments)
+    Geometry.window_area = runner.getDoubleArgumentValue("window_area",user_arguments)
+	Geometry.num_units = 1
     living_space.volume = runner.getDoubleArgumentValue("livingspacevolume",user_arguments)
     living_space.height = runner.getDoubleArgumentValue("livingspaceheight",user_arguments)
     living_space.area = runner.getDoubleArgumentValue("livingspacearea",user_arguments)

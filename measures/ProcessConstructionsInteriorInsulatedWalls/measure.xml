@@ -2,56 +2,16 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_walls</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>20c1a8d5-3c2a-4bb0-a7bc-ebf79381aa75</version_id>
+  <version_id>9f71ffb6-d568-4eff-81cb-c8fc17fd0049</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedWalls</class_name>
   <display_name>Set Residential Interzonal Wall Construction</display_name>
-  <description>This measure assigns a construction to the interzonal walls.</description>
-  <modeler_description>Calculates material layer properties of insulated constructions for the interzonal walls between the living space and the garage. Finds surfaces adjacent to the living space and garage and sets applicable constructions.</modeler_description>
+  <description>This measure assigns a construction to interzonal walls.</description>
+  <modeler_description>Calculates and assigns material layer properties of insulated constructions for walls between finished and unfinished spaces.</modeler_description>
   <arguments>
     <argument>
-      <name>userdefinedpartitionwallmassth</name>
-      <display_name>Partition Wall Mass: Thickness</display_name>
-      <description>Thickness of the layer.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.5</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedpartitionwallmasscond</name>
-      <display_name>Partition Wall Mass: Conductivity</display_name>
-      <description>Conductivity of the layer.</description>
-      <type>Double</type>
-      <units>Btu-in/h-ft^2-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1.1112</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedpartitionwallmassdens</name>
-      <display_name>Partition Wall Mass: Density</display_name>
-      <description>Density of the layer.</description>
-      <type>Double</type>
-      <units>lb/ft^3</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>50</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedpartitionwallmasssh</name>
-      <display_name>Partition Wall Mass: Specific Heat</display_name>
-      <description>Specific heat of the layer.</description>
-      <type>Double</type>
-      <units>Btu/lb-R</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.2</default_value>
-    </argument>
-    <argument>
       <name>selectedstudsize</name>
-      <display_name>Interzonal Walls: Cavity Depth</display_name>
+      <display_name>Cavity Depth</display_name>
       <description>Depth of the stud cavity.</description>
       <type>Choice</type>
       <units>in</units>
@@ -87,7 +47,7 @@
     </argument>
     <argument>
       <name>selectedspacing</name>
-      <display_name>Interzonal Walls: Stud Spacing</display_name>
+      <display_name>Stud Spacing</display_name>
       <description>The on-center spacing between studs in a wall assembly.</description>
       <type>Choice</type>
       <units>in</units>
@@ -107,7 +67,7 @@
     </argument>
     <argument>
       <name>userdefinedinstcavr</name>
-      <display_name>Interzonal Walls: Cavity Insulation Installed R-value</display_name>
+      <display_name>Cavity Insulation Installed R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
@@ -117,7 +77,7 @@
     </argument>
     <argument>
       <name>selectedinstallgrade</name>
-      <display_name>Interzonal Walls: Cavity Install Grade</display_name>
+      <display_name>Cavity Install Grade</display_name>
       <description>5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
       <required>true</required>
@@ -140,7 +100,7 @@
     </argument>
     <argument>
       <name>selectedinsfills</name>
-      <display_name>Interzonal Walls: Insulation Fills Cavity</display_name>
+      <display_name>Insulation Fills Cavity</display_name>
       <description>Specifies whether the cavity insulation completely fills the depth of the wall cavity.</description>
       <type>Boolean</type>
       <required>true</required>
@@ -154,56 +114,6 @@
         <choice>
           <value>false</value>
           <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>userdefinedrigidinsthickness</name>
-      <display_name>Interzonal Walls: Continuous Insulation Thickness</display_name>
-      <description>The thickness of the continuous insulation.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedrigidinsr</name>
-      <display_name>Interzonal Walls: Continuous Insulation Nominal R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>garage_space_type</name>
-      <display_name>Garage space type</display_name>
-      <description>Select the garage space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>garage space type</default_value>
-      <choices>
-        <choice>
-          <value>garage space type</value>
-          <display_name>garage space type</display_name>
         </choice>
       </choices>
     </argument>
@@ -241,13 +151,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
       <version>
@@ -258,7 +162,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>48B6C052</checksum>
+      <checksum>496DEDE2</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

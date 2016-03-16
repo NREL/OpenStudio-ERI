@@ -9,6 +9,7 @@
 
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
@@ -16,35 +17,20 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Garage Slab Construction"
+    return "Set Residential Unfinished Slab Construction"
   end
   
   def description
-    return "This measure creates slab constructions for the garage floor."
+    return "This measure assigns a construction to unfinished slabs."
   end
   
   def modeler_description
-    return "Calculates material layer properties of slab constructions for the garage floor. Finds surfaces adjacent to the garage and sets applicable constructions."
+    return "Calculates and assigns material layer properties of slab constructions for floors between above-grade unfinished space and ground."
   end    
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
-
-    #make a choice argument for garage space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.GarageSpaceType)
-        space_type_args << Constants.GarageSpaceType
-    end
-    garage_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_space_type", space_type_args, true)
-    garage_space_type.setDisplayName("Garage space type")
-    garage_space_type.setDescription("Select the garage space type")
-    garage_space_type.setDefaultValue(Constants.GarageSpaceType)
-    args << garage_space_type
 
     return args
   end #end the arguments method
@@ -58,77 +44,40 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    # Space Type
-	garage_space_type_r = runner.getStringArgumentValue("garage_space_type",user_arguments)
-    garage_space_type = HelperMethods.get_space_type_from_string(model, garage_space_type_r, runner, false)
-    if garage_space_type.nil?
-        # If the building has no garage, no constructions are assigned and we continue by returning True
-        return true
+    surfaces = []
+    spaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_finished(space)
+        next if Geometry.space_is_below_grade(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "floor"
+            next if surface.outsideBoundaryCondition.downcase != "ground"
+            # Floors between above-grade unfinished space and ground
+            surfaces << surface
+            if not spaces.include? space
+                spaces << space
+            end
+        end
     end
 
-    # Initialize hashes
-    constructions_to_surfaces = {"GrndUninsUnfinGrgFloor"=>[]}
-    constructions_to_objects = Hash.new     
-    
-    # Floor of garage
-    garage_space_type.spaces.each do |garage_space|
-      garage_space.surfaces.each do |garage_surface|
-        next unless garage_surface.surfaceType.downcase == "floor" and garage_surface.outsideBoundaryCondition.downcase == "ground"
-          constructions_to_surfaces["GrndUninsUnfinGrgFloor"] << garage_surface
-      end	
-    end
-    
     # Continue if no applicable surfaces
-    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+    if surfaces.empty?
       return true
     end       
     
-	# Adiabatic
-	adi = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
-	adi.setName("Adiabatic")
-	adi.setRoughness("Rough")
-	adi.setThermalResistance(OpenStudio::convert(1000,"hr*ft^2*R/Btu","m^2*K/W").get)
-	
-	# Soil-12in
-	soil = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-	soil.setName("Soil-12in")
-	soil.setRoughness("Rough")
-	soil.setThickness(OpenStudio::convert(Material.Soil12in.thick,"ft","m").get)
-	soil.setConductivity(OpenStudio::convert(Material.Soil12in.k,"Btu/hr*ft*R","W/m*K").get)
-	soil.setDensity(OpenStudio::convert(Material.Soil12in.rho,"lb/ft^3","kg/m^3").get)
-	soil.setSpecificHeat(OpenStudio::convert(Material.Soil12in.Cp,"Btu/lb*R","J/kg*K").get)	
-	
-	# Concrete-4in
-	conc = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-	conc.setName("Concrete-4in")
-	conc.setRoughness("Rough")
-	conc.setThickness(OpenStudio::convert(Material.Concrete4in.thick,"ft","m").get)
-	conc.setConductivity(OpenStudio::convert(Material.Concrete4in.k,"Btu/hr*ft*R","W/m*K").get)
-	conc.setDensity(OpenStudio::convert(Material.Concrete4in.rho,"lb/ft^3","kg/m^3").get)
-	conc.setSpecificHeat(OpenStudio::convert(Material.Concrete4in.Cp,"Btu/lb*R","J/kg*K").get)
-	conc.setThermalAbsorptance(Material.Concrete4in.TAbs)	
-	
-	# GrndUninsUnfinGrgFloor
-	materials = []
-	materials << adi
-	materials << soil
-	materials << conc
-    unless constructions_to_surfaces["GrndUninsUnfinGrgFloor"].empty?
-        grnduninsunfingrgfloor = OpenStudio::Model::Construction.new(materials)
-        grnduninsunfingrgfloor.setName("GrndUninsUnfinGrgFloor")
-        constructions_to_objects["GrndUninsUnfinGrgFloor"] = grnduninsunfingrgfloor
-    end
-	
-    # Apply constructions to surfaces
-    constructions_to_surfaces.each do |construction, surfaces|
-        surfaces.each do |surface|
-            surface.setConstruction(constructions_to_objects[construction])
-            runner.registerInfo("Surface '#{surface.name}', of Space Type '#{HelperMethods.get_space_type_from_surface(model, surface.name.to_s, runner)}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
-        end
+    # Define construction
+    slab = Construction.new([1.0])
+    slab.addlayer(SimpleMaterial.Adiabatic, true)
+    slab.addlayer(Material.Soil12in, true)
+    slab.addlayer(Material.Concrete4in, true)
+    
+    # Create and apply construction to surfaces
+    if not slab.create_and_assign_constructions(surfaces, runner, model, "GrndUninsUnfinGrgFloor")
+        return false
     end
     
     # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials(model, runner)     
+    HelperMethods.remove_unused_materials_and_constructions(model, runner)     
     
     return true
  

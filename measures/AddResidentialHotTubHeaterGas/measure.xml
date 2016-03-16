@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater</name>
   <uid>65550b9d-c0bf-405b-9229-dc63721eb887</uid>
-  <version_id>6d0b4b5c-ffba-4069-aa38-dfe0db431ddb</version_id>
+  <version_id>4ead949c-efe7-48a2-a256-80896deb2a81</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialHotTubHeater</class_name>
   <display_name>Set Residential Hot Tub Gas Heater</display_name>
   <description>Adds (or replaces) a residential hot tub heater with the specified efficiency and schedule. The hot tub is assumed to be outdoors.</description>
-  <modeler_description>Since there is no Hot Tub Heater object in OpenStudio/EnergyPlus, we look for a GasEquipment or ElectricEquipment object with the name that denotes it is a residential hot tub heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
+  <modeler_description>Since there is no Hot Tub Heater object in OpenStudio/EnergyPlus, we look for a GasEquipment or ElectricEquipment object with the name that denotes it is a residential hot tub heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
   <arguments>
     <argument>
       <name>base_energy</name>
@@ -119,19 +119,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CC7ED38C</checksum>
+      <checksum>28113624</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
+      <checksum>10602D47</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

@@ -10,6 +10,7 @@
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/schedules"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScript
@@ -21,11 +22,11 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
   end
   
   def description
-    return "Adds (or replaces) residential plug loads with the specified efficiency and schedule in all conditioned spaces."
+    return "Adds (or replaces) residential plug loads with the specified efficiency and schedule in all finished spaces."
   end
   
   def modeler_description
-    return "Since there is no Plug Loads object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is residential plug loads. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires HVAC equipment to have already been assigned so that the building conditioned floor area (CFA) can be calculated. This measure also requires the number of bedrooms/bathrooms to have already been assigned."
+    return "Since there is no Plug Loads object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is residential plug loads. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end
   
   def arguments(model)
@@ -84,12 +85,12 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
 		return false
     end
     
-    # Get CFA and number of bedrooms/bathrooms
-    cfa = HelperMethods.get_building_conditioned_floor_area(model, runner)
-    if cfa.nil?
+    # Get FFA and number of bedrooms/bathrooms
+    ffa = Geometry.get_building_finished_floor_area(model, runner)
+    if ffa.nil?
         return false
     end
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -101,7 +102,7 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
 	end
 	
 	#Calculate electric mel daily energy use
-    mel_ann = (1108.1 + 180.2 * nbeds + 0.2785 * cfa) * mult
+    mel_ann = (1108.1 + 180.2 * nbeds + 0.2785 * ffa) * mult
 	mel_daily = mel_ann / 365.0
     
 	#hard coded convective, radiative, latent, and lost fractions
@@ -118,11 +119,11 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
     
     model.getSpaces.each do |space|
         if space.thermalZone.is_initialized
-            if HelperMethods.zone_is_conditioned(space.thermalZone.get)
+            if Geometry.zone_is_finished(space.thermalZone.get)
                 obj_name_space = obj_name + space.name.to_s
-                space_energy_ann = mel_ann * space.floorArea/cfa
+                space_energy_ann = mel_ann * space.floorArea/ffa
                 space_design_level = sch.calcDesignLevelFromDailykWh(space_energy_ann/365.0)
-                #add mels to each conditioned space
+                #add mels to each finished space
                 has_elec_mel = 0
                 replace_mel = 0
                 space_equipments = space.electricEquipment

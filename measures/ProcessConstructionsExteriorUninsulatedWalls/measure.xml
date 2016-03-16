@@ -2,44 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_uninsulated_walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>be5f1f2a-8d9e-4892-ad61-62b74c4ff0af</version_id>
+  <version_id>d7383f04-ccef-4913-a8be-ff2137d89c3a</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorUninsulatedWalls</class_name>
-  <display_name>Set Residential Unfinished Attic and Garage Wall Constructions</display_name>
-  <description>This measure assigns a construction to the unfinished attic and garage exterior walls.</description>
-  <modeler_description>Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the exterior walls of the attic and garage. Finds surfaces adjacent to the attic and garage and sets applicable constructions.</modeler_description>
-  <arguments>
-    <argument>
-      <name>unfin_attic_space_type</name>
-      <display_name>Unfinished Attic space type</display_name>
-      <description>Select the unfinished attic space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>unfinished attic space type</default_value>
-      <choices>
-        <choice>
-          <value>unfinished attic space type</value>
-          <display_name>unfinished attic space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>garage_space_type</name>
-      <display_name>Garage space type</display_name>
-      <description>Select the garage space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>garage space type</default_value>
-      <choices>
-        <choice>
-          <value>garage space type</value>
-          <display_name>garage space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-  </arguments>
+  <display_name>Set Residential Exterior Unfinished Constructions</display_name>
+  <description>This measure assigns an uninsulated wood stud construction to above-grade exterior walls adjacent to unfinished space.</description>
+  <modeler_description>Calculates and assigns material layer properties of uninsulated wood stud constructions for above-grade walls between unfinished space and outside.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -73,13 +42,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
       <version>
@@ -90,7 +53,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>190E3A56</checksum>
+      <checksum>4CF4D116</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

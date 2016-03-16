@@ -2,29 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_slab</name>
   <uid>3da62049-50f9-4ed0-b05a-6b89a202482d</uid>
-  <version_id>a5c9c244-a1c8-405f-aaa3-91b00b1712ec</version_id>
+  <version_id>437a787c-e569-4861-a723-e64c298f2db7</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageSlab</class_name>
-  <display_name>Set Residential Garage Slab Construction</display_name>
-  <description>This measure creates slab constructions for the garage floor.</description>
-  <modeler_description>Calculates material layer properties of slab constructions for the garage floor. Finds surfaces adjacent to the garage and sets applicable constructions.</modeler_description>
-  <arguments>
-    <argument>
-      <name>garage_space_type</name>
-      <display_name>Garage space type</display_name>
-      <description>Select the garage space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>garage space type</default_value>
-      <choices>
-        <choice>
-          <value>garage space type</value>
-          <display_name>garage space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-  </arguments>
+  <display_name>Set Residential Unfinished Slab Construction</display_name>
+  <description>This measure assigns a construction to unfinished slabs.</description>
+  <modeler_description>Calculates and assigns material layer properties of slab constructions for floors between above-grade unfinished space and ground.</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -58,13 +42,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3993E7C9</checksum>
+      <checksum>10602D47</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E913FBAD</checksum>
+      <checksum>DC42456C</checksum>
     </file>
     <file>
       <version>
@@ -75,7 +59,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EE1B7174</checksum>
+      <checksum>38A1D83E</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6B6422CF</checksum>
     </file>
   </files>
 </measure>

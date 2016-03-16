@@ -1,6 +1,7 @@
 require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
@@ -108,13 +109,13 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 	space_r = runner.getStringArgumentValue("space",user_arguments)
 	
     #Get space
-    space = HelperMethods.get_space_from_string(model, space_r, runner)
+    space = Geometry.get_space_from_string(model, space_r, runner)
     if space.nil?
         return false
     end
 
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = HelperMethods.get_bedrooms_bathrooms(model, runner)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
