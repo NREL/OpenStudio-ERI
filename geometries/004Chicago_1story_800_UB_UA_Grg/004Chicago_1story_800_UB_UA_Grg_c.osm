@@ -1,7 +1,7 @@
 
 OS:Version,
-  {d072cfb8-e759-4bb2-8c5b-c76dd2028a17}, !- Handle
-  1.9.0;                                  !- Version Identifier
+  {39653169-ab70-4eb5-aeba-e9805e8da4e8}, !- Handle
+  1.10.0;                                 !- Version Identifier
 
 OS:Site,
   {918ee51b-a960-4418-bbdd-f6e40c2d880f}, !- Handle
@@ -24,23 +24,6 @@ OS:SimulationControl,
   FullExterior,                           !- Solar Distribution
   50;                                     !- Maximum Number of Warmup Days
 
-OS:Surface,
-  {bab5b126-624f-4967-8df6-68b809a0ff95}, !- Handle
-  Wall22,                                 !- Name
-  Wall,                                   !- Surface Type
-  {4e04b4c8-8c45-4086-8968-08965874298d}, !- Construction Name
-  {f7be142d-bba7-4b1f-a8e0-2154c3768001}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  0, 7.9248, 2.4384,                      !- X,Y,Z Vertex 1 {m}
-  0, 7.9248, 2.20345,                     !- X,Y,Z Vertex 2 {m}
-  0, 0, 2.20345,                          !- X,Y,Z Vertex 3 {m}
-  0, 0, 2.4384;                           !- X,Y,Z Vertex 4 {m}
-
 OS:Construction,
   {4e04b4c8-8c45-4086-8968-08965874298d}, !- Handle
   UFBsmtRimJoist,                         !- Name
@@ -51,7 +34,7 @@ OS:Construction,
 
 OS:Material,
   {b73ce70d-59ae-43bd-9f40-0512170dd52a}, !- Handle
-  ExteriorFinish,                         !- Name
+  ResExtFinish,                           !- Name
   Rough,                                  !- Roughness
   0.0254,                                 !- Thickness {m}
   0.649125,                               !- Conductivity {W/m-K}
@@ -270,7 +253,7 @@ OS:Material,
 
 OS:Material,
   {11425cb7-c4d3-4244-8e4d-a209f772a9c5}, !- Handle
-  ExtWallMass,                            !- Name
+  ResExtWallMass,                         !- Name
   Rough,                                  !- Roughness
   0.0127,                                 !- Thickness {m}
   0.1602906,                              !- Conductivity {W/m-K}
@@ -538,7 +521,7 @@ OS:Material,
 
 OS:Material,
   {0a8f0d0e-1ab7-43c1-b066-800964ef3b6d}, !- Handle
-  Plywood-1_2in,                          !- Name
+  ResExtWallSheathing,                    !- Name
   Rough,                                  !- Roughness
   0.0127,                                 !- Thickness {m}
   0.1154577,                              !- Conductivity {W/m-K}
@@ -756,45 +739,6 @@ OS:Construction,
   {14ce4c53-107c-431a-8bea-f05954e2fc68}; !- Layer 2
 
 OS:Material,
-  {a1a81661-4777-469d-be05-d11f62942221}, !- Handle
-  GarageFurnitureMaterial,                !- Name
-  Rough,                                  !- Roughness
-  0.1524,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  640.8,                                  !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
-
-OS:Material,
-  {971a65d3-9078-4bed-bd65-f9198918f814}, !- Handle
-  UBsmtFurnitureMaterial,                 !- Name
-  Rough,                                  !- Roughness
-  0.1524,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  640.8,                                  !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
-
-OS:Material,
-  {cbd76ad2-8a1a-4ad6-ba0d-8dfdca667bc0}, !- Handle
-  StudandAirRoof,                         !- Name
-  Rough,                                  !- Roughness
-  0.0889,                                 !- Thickness {m}
-  3.35597607004325,                       !- Conductivity {W/m-K}
-  57.4250678533926,                       !- Density {kg/m3}
-  1210.45799374551;                       !- Specific Heat {J/kg-K}
-
-OS:Material,
-  {12f693ef-f567-472b-bccc-57d4255be0aa}, !- Handle
-  GypsumBoard-1_2in,                      !- Name
-  Rough,                                  !- Roughness
-  0.0127,                                 !- Thickness {m}
-  0.1602906,                              !- Conductivity {W/m-K}
-  801,                                    !- Density {kg/m3}
-  837.4,                                  !- Specific Heat {J/kg-K}
-  0.9,                                    !- Thermal Absorptance
-  0.5,                                    !- Solar Absorptance
-  0.1;                                    !- Visible Absorptance
-
-OS:Material,
   {8a54b9a2-a01e-42b1-ad1c-08b5dbd33a6b}, !- Handle
   CarpetBareLayer,                        !- Name
   Rough,                                  !- Roughness
@@ -891,12 +835,6 @@ OS:Construction,
   {0a8f0d0e-1ab7-43c1-b066-800964ef3b6d}, !- Layer 2
   {790cd4c7-233f-43a3-b34f-7365563c568c}; !- Layer 3
 
-OS:Construction,
-  {c8171cf4-7661-4667-9bb2-3376981b612a}, !- Handle
-  GarageFurniture,                        !- Name
-  {bcfa58fd-f919-43fb-81d9-b58f9c8cd19f}, !- Surface Rendering Name
-  {a1a81661-4777-469d-be05-d11f62942221}; !- Layer 1
-
 OS:Surface,
   {87a441d8-f2ed-4dcf-b61f-ca696997d26a}, !- Handle
   Wall3,                                  !- Name
@@ -913,15 +851,6 @@ OS:Surface,
   5.7912, 0, 0,                           !- X,Y,Z Vertex 2 {m}
   5.7912, 3.048, 0,                       !- X,Y,Z Vertex 3 {m}
   5.7912, 3.048, 2.4384;                  !- X,Y,Z Vertex 4 {m}
-
-OS:Material,
-  {109ae2a1-af88-49a1-9860-6ed072a9dc9b}, !- Handle
-  2x4,                                    !- Name
-  Rough,                                  !- Roughness
-  0.0889,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  512.64,                                 !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
 
 OS:Surface,
   {a85145d8-5fc0-4571-a84c-6603f9a68f4d}, !- Handle
@@ -1165,12 +1094,6 @@ OS:Surface,
   6.096, 6.096, 2.4384,                   !- X,Y,Z Vertex 3 {m}
   6.096, 6.096, 4.2672;                   !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {79881ad0-4e30-44db-81a7-18b047bd1bad}, !- Handle
-  UBsmtFurniture,                         !- Name
-  {2141c0b5-6e72-4a8d-a86d-a9ac0817dae9}, !- Surface Rendering Name
-  {971a65d3-9078-4bed-bd65-f9198918f814}; !- Layer 1
-
 OS:Surface,
   {39e529e1-6c79-4c6a-9156-0f87ad523795}, !- Handle
   Wall4,                                  !- Name
@@ -1227,54 +1150,6 @@ OS:Building,
   ,                                       !- Standards Number of Living Units
   ,                                       !- Relocatable
   ;                                       !- Nominal Floor to Ceiling Height {m}
-
-OS:Construction,
-  {0356777a-b301-439c-8c02-fe6aa45d1d9e}, !- Handle
-  RevUnfinInsFinFloor,                    !- Name
-  {38d66e70-511b-4e72-a316-ee627916ada9}, !- Surface Rendering Name
-  {8a54b9a2-a01e-42b1-ad1c-08b5dbd33a6b}; !- Layer 1
-
-OS:Construction,
-  {f2a0461b-4039-46cb-8703-5a7c222ca321}, !- Handle
-  LivingFurniture,                        !- Name
-  {16f1debb-f4bf-4370-a487-ca95b1509791}, !- Surface Rendering Name
-  {6687be21-281b-4891-85f9-e553e5b785f0}; !- Layer 1
-
-OS:Material,
-  {6687be21-281b-4891-85f9-e553e5b785f0}, !- Handle
-  LivingFurnitureMaterial,                !- Name
-  Rough,                                  !- Roughness
-  0.1524,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  640.8,                                  !- Density {kg/m3}
-  1214.23,                                !- Specific Heat {J/kg-K}
-  0.9,                                    !- Thermal Absorptance
-  0.6,                                    !- Solar Absorptance
-  0.1;                                    !- Visible Absorptance
-
-OS:Construction,
-  {ca801003-fd76-4f87-8893-301d01cc40ca}, !- Handle
-  FinUninsFinWall,                        !- Name
-  {754e8d67-ab84-4d9e-9359-a7467924cb63}, !- Surface Rendering Name
-  {14ce4c53-107c-431a-8bea-f05954e2fc68}, !- Layer 1
-  {790cd4c7-233f-43a3-b34f-7365563c568c}, !- Layer 2
-  {14ce4c53-107c-431a-8bea-f05954e2fc68}; !- Layer 3
-
-OS:Material,
-  {6412c7fc-b0bf-4e39-ac5f-08ddf47b1165}, !- Handle
-  StudandAirFloor,                        !- Name
-  Rough,                                  !- Roughness
-  0.0889,                                 !- Thickness {m}
-  0.448792750636364,                      !- Conductivity {W/m-K}
-  67.654616890395,                        !- Density {kg/m3}
-  1211.10027824949;                       !- Specific Heat {J/kg-K}
-
-OS:Construction,
-  {f18fa92f-3f45-4a70-abf3-125977e42c20}, !- Handle
-  UnfinUninsUnfinFloor,                   !- Name
-  {3086605c-cb8d-4f9a-aa84-a70d98afa3ec}, !- Surface Rendering Name
-  {6412c7fc-b0bf-4e39-ac5f-08ddf47b1165}, !- Layer 1
-  {2af093b1-da73-4f3a-bcd6-c4d2c84f0c46}; !- Layer 2
 
 OS:Construction,
   {844b4a6f-5149-4f39-8622-2f350e4eb20e}, !- Handle
@@ -1349,12 +1224,6 @@ OS:Surface,
   11.8872, 7.9248, 0,                     !- X,Y,Z Vertex 3 {m}
   11.8872, 7.9248, 2.4384;                !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {250255f9-d16c-4284-99b8-52e4fd9ebcc8}, !- Handle
-  RevUnfinInsUnfinWall,                   !- Name
-  {30f5e657-7c48-4bf6-ae2e-bd62ee151497}, !- Surface Rendering Name
-  {c0e1272e-e024-4f8a-9ba4-24b582292776}; !- Layer 1
-
 OS:Surface,
   {b8c23a58-3b02-41f9-b93c-d76aa503354b}, !- Handle
   Wall8,                                  !- Name
@@ -1371,35 +1240,6 @@ OS:Surface,
   0, 0, 0,                                !- X,Y,Z Vertex 2 {m}
   5.7912, 0, 0,                           !- X,Y,Z Vertex 3 {m}
   5.7912, 0, 2.4384;                      !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {5225fb2b-408f-4b4c-8d66-5e2ac58199db}, !- Handle
-  AdiabaticConst,                         !- Name
-  {1bb5728d-c575-4a4b-93e8-449f944c325e}, !- Surface Rendering Name
-  {3af43053-fca9-4b2b-9d05-7df6d7fdfee2}; !- Layer 1
-
-OS:Construction,
-  {2a000e7e-7fbe-46bb-90df-746d86f46f47}, !- Handle
-  UnfinInsFinFloor,                       !- Name
-  {6c050c6a-4719-4f8b-90bd-f2821077a1eb}, !- Surface Rendering Name
-  {8a54b9a2-a01e-42b1-ad1c-08b5dbd33a6b}; !- Layer 1
-
-OS:Surface,
-  {808e82f7-d385-4a02-9af3-5f3bf12cd761}, !- Handle
-  Wall24,                                 !- Name
-  Wall,                                   !- Surface Type
-  {4e04b4c8-8c45-4086-8968-08965874298d}, !- Construction Name
-  {f7be142d-bba7-4b1f-a8e0-2154c3768001}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  5.7912, 0, 2.4384,                      !- X,Y,Z Vertex 1 {m}
-  5.7912, 0, 2.20345,                     !- X,Y,Z Vertex 2 {m}
-  5.7912, 3.048, 2.20345,                 !- X,Y,Z Vertex 3 {m}
-  5.7912, 3.048, 2.4384;                  !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
   {90b1585e-ccfe-4fce-b071-e8f862f6cbac}, !- Handle
@@ -1451,23 +1291,6 @@ OS:SubSurface,
   11.8872, 6.43128, 0.9144,               !- X,Y,Z Vertex 3 {m}
   11.8872, 6.43128, 2.1336;               !- X,Y,Z Vertex 4 {m}
 
-OS:Surface,
-  {bea241ba-78ea-46c7-9411-d74ee0809683}, !- Handle
-  Wall23,                                 !- Name
-  Wall,                                   !- Surface Type
-  {4e04b4c8-8c45-4086-8968-08965874298d}, !- Construction Name
-  {f7be142d-bba7-4b1f-a8e0-2154c3768001}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  0, 0, 2.4384,                           !- X,Y,Z Vertex 1 {m}
-  0, 0, 2.20345,                          !- X,Y,Z Vertex 2 {m}
-  5.7912, 0, 2.20345,                     !- X,Y,Z Vertex 3 {m}
-  5.7912, 0, 2.4384;                      !- X,Y,Z Vertex 4 {m}
-
 OS:SubSurface,
   {31c8a3d3-c283-4faf-9c71-dc0e2dc1ee86}, !- Handle
   Wall12-Window3,                         !- Name
@@ -1484,15 +1307,6 @@ OS:SubSurface,
   3.61696004064, 7.9248, 0.9144,          !- X,Y,Z Vertex 2 {m}
   2.70256004064, 7.9248, 0.9144,          !- X,Y,Z Vertex 3 {m}
   2.70256004064, 7.9248, 2.1336;          !- X,Y,Z Vertex 4 {m}
-
-OS:Material,
-  {6e703aef-8b89-4c2d-8baa-c31f6780f09e}, !- Handle
-  2x6,                                    !- Name
-  Rough,                                  !- Roughness
-  0.1397,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  512.64,                                 !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
 
 OS:SubSurface,
   {b5e8c390-8e16-400f-9996-b737ba8c153b}, !- Handle
@@ -1545,14 +1359,6 @@ OS:Material,
   36.9659697793878,                       !- Density {kg/m3}
   1208.10699295688;                       !- Specific Heat {J/kg-K}
 
-OS:Construction,
-  {0eee4b51-5d1d-48bd-98c1-e3c839567765}, !- Handle
-  UnfinUninsExtRoof,                      !- Name
-  {88481ec8-dacf-4759-ac05-dbaa04fcd649}, !- Surface Rendering Name
-  {e4b53b25-75ba-4719-a5b8-215dc4527175}, !- Layer 1
-  {2af093b1-da73-4f3a-bcd6-c4d2c84f0c46}, !- Layer 2
-  {cbd76ad2-8a1a-4ad6-ba0d-8dfdca667bc0}; !- Layer 3
-
 OS:Surface,
   {6dd0ccc6-8be9-459a-a1a6-34e2486e2681}, !- Handle
   Roof1,                                  !- Name
@@ -1587,13 +1393,6 @@ OS:SubSurface,
   7.29488002032, 7.9248, 0.9144,          !- X,Y,Z Vertex 3 {m}
   7.29488002032, 7.9248, 2.1336;          !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {6cd95ce7-9948-4ade-ba66-144c6b4611c1}, !- Handle
-  RevUnfinUninsFinWall,                   !- Name
-  {a73d184c-89bd-4382-80e7-68201b36eb92}, !- Surface Rendering Name
-  {14ce4c53-107c-431a-8bea-f05954e2fc68}, !- Layer 1
-  {790cd4c7-233f-43a3-b34f-7365563c568c}; !- Layer 2
-
 OS:Surface,
   {f6d5439e-9e05-4cdb-b7b2-73e52428a53e}, !- Handle
   Floor3,                                 !- Name
@@ -1610,21 +1409,6 @@ OS:Surface,
   6.096, 0, 0,                            !- X,Y,Z Vertex 2 {m}
   0, 0, 0,                                !- X,Y,Z Vertex 3 {m}
   0, 6.096, 0;                            !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {079a4e5c-c021-4f67-9803-eeb649020b34}, !- Handle
-  RevUnfinUninsUnfinFloor,                !- Name
-  {895c07bb-94bf-45be-849d-ed42d905f5d6}, !- Surface Rendering Name
-  {2af093b1-da73-4f3a-bcd6-c4d2c84f0c46}, !- Layer 1
-  {6412c7fc-b0bf-4e39-ac5f-08ddf47b1165}; !- Layer 2
-
-OS:Construction,
-  {010a634a-da03-4cad-a65d-6ae3b5d21e50}, !- Handle
-  RevFinUninsFinWall,                     !- Name
-  {7303f14d-023a-4da8-b43c-a715682530d2}, !- Surface Rendering Name
-  {14ce4c53-107c-431a-8bea-f05954e2fc68}, !- Layer 1
-  {790cd4c7-233f-43a3-b34f-7365563c568c}, !- Layer 2
-  {14ce4c53-107c-431a-8bea-f05954e2fc68}; !- Layer 3
 
 OS:Surface,
   {7ef4d27f-fc10-41be-a4e5-f90c1bfc95e8}, !- Handle
@@ -1683,29 +1467,6 @@ OS:Construction,
   Front-Glass,                            !- Name
   {0128ae5c-ca39-4ba0-8ee5-659ef4238cab}, !- Surface Rendering Name
   {6724bab3-4003-412e-8ed2-4a804f4bba37}; !- Layer 1
-
-OS:Construction,
-  {4bf0978d-06e9-49fc-9126-956e3bbaffb3}, !- Handle
-  ExtInsUnfinWall,                        !- Name
-  {52200d7a-8973-454c-9864-676470898dc6}, !- Surface Rendering Name
-  {b73ce70d-59ae-43bd-9f40-0512170dd52a}, !- Layer 1
-  {a0ffcf4e-11f7-4425-b307-f4f14afeb394}; !- Layer 2
-
-OS:Construction,
-  {7587dc6c-09f6-4ba7-89f5-d5e7c9d4e787}, !- Handle
-  UnfinInsUnfinWall,                      !- Name
-  {d24c92e7-ae2b-4c4f-b69e-9d5e8435d7fa}, !- Surface Rendering Name
-  {c0e1272e-e024-4f8a-9ba4-24b582292776}; !- Layer 1
-
-OS:Construction,
-  {8d02a2d4-38d4-4aed-857c-fcb6f33a5d18}, !- Handle
-  RevFinUninsFinFloor,                    !- Name
-  {6f6cde02-dd25-48b7-a320-090bbb041c9c}, !- Surface Rendering Name
-  {8a54b9a2-a01e-42b1-ad1c-08b5dbd33a6b}, !- Layer 1
-  {5c4bc2aa-9afa-49a5-a336-40db9acd14d5}, !- Layer 2
-  {2af093b1-da73-4f3a-bcd6-c4d2c84f0c46}, !- Layer 3
-  {6412c7fc-b0bf-4e39-ac5f-08ddf47b1165}, !- Layer 4
-  {f880105f-583b-4167-b9c6-df1339fc9a56}; !- Layer 5
 
 OS:Surface,
   {90ccdf50-616b-4a69-8667-041fd508dfea}, !- Handle
@@ -1844,58 +1605,6 @@ OS:Surface,
   0, 7.9248, 2.4384,                      !- X,Y,Z Vertex 5 {m}
   0, 0, 2.4384;                           !- X,Y,Z Vertex 6 {m}
 
-OS:Material,
-  {005aadef-c6f8-4708-99c7-58ebda924f36}, !- Handle
-  WoodFlooring,                           !- Name
-  Rough,                                  !- Roughness
-  0.01905,                                !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  512.64,                                 !- Density {kg/m3}
-  1214.23,                                !- Specific Heat {J/kg-K}
-  0.9,                                    !- Thermal Absorptance
-  0.6;                                    !- Solar Absorptance
-
-OS:Surface,
-  {3648860d-3ea9-43fe-8deb-504cb558d75d}, !- Handle
-  Wall26,                                 !- Name
-  Wall,                                   !- Surface Type
-  {4e04b4c8-8c45-4086-8968-08965874298d}, !- Construction Name
-  {f7be142d-bba7-4b1f-a8e0-2154c3768001}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  11.8872, 3.048, 2.4384,                 !- X,Y,Z Vertex 1 {m}
-  11.8872, 3.048, 2.20345,                !- X,Y,Z Vertex 2 {m}
-  11.8872, 7.9248, 2.20345,               !- X,Y,Z Vertex 3 {m}
-  11.8872, 7.9248, 2.4384;                !- X,Y,Z Vertex 4 {m}
-
-OS:Surface,
-  {9c2f18e7-a8c6-4f9d-af0b-f81880e89570}, !- Handle
-  Wall25,                                 !- Name
-  Wall,                                   !- Surface Type
-  {4e04b4c8-8c45-4086-8968-08965874298d}, !- Construction Name
-  {f7be142d-bba7-4b1f-a8e0-2154c3768001}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  5.7912, 3.048, 2.4384,                  !- X,Y,Z Vertex 1 {m}
-  5.7912, 3.048, 2.20345,                 !- X,Y,Z Vertex 2 {m}
-  11.8872, 3.048, 2.20345,                !- X,Y,Z Vertex 3 {m}
-  11.8872, 3.048, 2.4384;                 !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {07173d5b-3c67-4ad1-94df-1100b77086ea}, !- Handle
-  UnfinUninsFinWall,                      !- Name
-  {e12d2e8e-cd4a-4928-8077-5c64cddfa86f}, !- Surface Rendering Name
-  {790cd4c7-233f-43a3-b34f-7365563c568c}, !- Layer 1
-  {14ce4c53-107c-431a-8bea-f05954e2fc68}; !- Layer 2
-
 OS:Surface,
   {cf8b59d2-f120-4d0c-861c-656a62906da6}, !- Handle
   Roof2,                                  !- Name
@@ -1914,23 +1623,6 @@ OS:Surface,
   0, 3.9624, 2.286;                       !- X,Y,Z Vertex 4 {m}
 
 OS:Surface,
-  {abfd6fd6-db8f-46e3-87cd-9e0bdbf80a7f}, !- Handle
-  Wall27,                                 !- Name
-  Wall,                                   !- Surface Type
-  {4e04b4c8-8c45-4086-8968-08965874298d}, !- Construction Name
-  {f7be142d-bba7-4b1f-a8e0-2154c3768001}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  11.8872, 7.9248, 2.4384,                !- X,Y,Z Vertex 1 {m}
-  11.8872, 7.9248, 2.20345,               !- X,Y,Z Vertex 2 {m}
-  0, 7.9248, 2.20345,                     !- X,Y,Z Vertex 3 {m}
-  0, 7.9248, 2.4384;                      !- X,Y,Z Vertex 4 {m}
-
-OS:Surface,
   {e760e6e2-10f7-4550-8c51-5c34799f1812}, !- Handle
   Wall1,                                  !- Name
   Wall,                                   !- Surface Type
@@ -1946,16 +1638,6 @@ OS:Surface,
   0, 7.9248, 0,                           !- X,Y,Z Vertex 2 {m}
   0, 0, 0,                                !- X,Y,Z Vertex 3 {m}
   0, 0, 2.4384;                           !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {ff1f6a03-83bd-439c-95b7-260b9d1b6589}, !- Handle
-  FinUninsFinFloor,                       !- Name
-  {404c4392-264f-4790-b1f7-82597e82faa6}, !- Surface Rendering Name
-  {f880105f-583b-4167-b9c6-df1339fc9a56}, !- Layer 1
-  {6412c7fc-b0bf-4e39-ac5f-08ddf47b1165}, !- Layer 2
-  {2af093b1-da73-4f3a-bcd6-c4d2c84f0c46}, !- Layer 3
-  {5c4bc2aa-9afa-49a5-a336-40db9acd14d5}, !- Layer 4
-  {8a54b9a2-a01e-42b1-ad1c-08b5dbd33a6b}; !- Layer 5
 
 OS:Surface,
   {6d84c1bd-45f5-4b48-9d8c-0290d1d8ef74}, !- Handle
@@ -1990,15 +1672,6 @@ OS:SubSurface,
   9.1846398984, 7.9248, 0.9144,           !- X,Y,Z Vertex 2 {m}
   8.2702398984, 7.9248, 0.9144,           !- X,Y,Z Vertex 3 {m}
   8.2702398984, 7.9248, 2.1336;           !- X,Y,Z Vertex 4 {m}
-
-OS:Material,
-  {758eb9b6-8d34-47a2-9c3c-ed23aac0f318}, !- Handle
-  2x,                                     !- Name
-  Rough,                                  !- Roughness
-  0.23495,                                !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  512.64,                                 !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
 
 OS:SubSurface,
   {7464f128-30fa-4881-9e7a-a2f5e5f8715a}, !- Handle

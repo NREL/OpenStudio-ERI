@@ -1,7 +1,7 @@
 
 OS:Version,
-  {f2e58355-0aa3-4d34-b7de-a99c4797f992}, !- Handle
-  1.9.0;                                  !- Version Identifier
+  {8ce349f2-0a8a-4741-a774-1647b3c0b941}, !- Handle
+  1.10.0;                                 !- Version Identifier
 
 OS:Site,
   {bd79afaa-91de-41e8-a8fd-d98b1f7c020b}, !- Handle
@@ -217,7 +217,7 @@ OS:SubSurface,
 
 OS:ThermalZone,
   {521e5b47-c4fd-4548-92a7-6004b34e58bc}, !- Handle
-  crawl zone,                        !- Name
+  crawl zone,                             !- Name
   1,                                      !- Multiplier
   1.2192,                                 !- Ceiling Height {m}
   103.299857856,                          !- Volume {m3}
@@ -291,7 +291,7 @@ OS:ZoneHVAC:EquipmentList,
 
 OS:Space,
   {a826dde8-ec82-4506-ade0-18d33841d466}, !- Handle
-  crawl space,                       !- Name
+  crawl space,                            !- Name
   {105ab0ba-28d1-4d5f-ad64-4383a3da5146}, !- Space Type Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
@@ -794,23 +794,6 @@ OS:Surface,
   0, 7.9248, 4.8768,                      !- X,Y,Z Vertex 2 {m}
   0, -0.6096, 4.8768;                     !- X,Y,Z Vertex 3 {m}
 
-OS:Surface,
-  {0c76cc29-cf34-434a-b77e-22a5b1aff7fb}, !- Handle
-  Wall16,                                 !- Name
-  Wall,                                   !- Surface Type
-  ,                                       !- Construction Name
-  {a826dde8-ec82-4506-ade0-18d33841d466}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  0, 0, 1.2192,                           !- X,Y,Z Vertex 1 {m}
-  0, 0, 0.98425,                          !- X,Y,Z Vertex 2 {m}
-  11.5824, 0, 0.98425,                    !- X,Y,Z Vertex 3 {m}
-  11.5824, 0, 1.2192;                     !- X,Y,Z Vertex 4 {m}
-
 OS:SubSurface,
   {f06fbd47-2c44-42f3-82ef-30e779fd1fbf}, !- Handle
   Wall12-Window3,                         !- Name
@@ -1032,23 +1015,6 @@ OS:SubSurface,
   2.475043988688, 7.3152, 3.410168154504, !- X,Y,Z Vertex 3 {m}
   2.475043988688, 7.3152, 4.572;          !- X,Y,Z Vertex 4 {m}
 
-OS:Surface,
-  {a17f437a-4ac8-44b8-b89c-4c79c453419e}, !- Handle
-  Wall18,                                 !- Name
-  Wall,                                   !- Surface Type
-  ,                                       !- Construction Name
-  {a826dde8-ec82-4506-ade0-18d33841d466}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  11.5824, 7.3152, 1.2192,                !- X,Y,Z Vertex 1 {m}
-  11.5824, 7.3152, 0.98425,               !- X,Y,Z Vertex 2 {m}
-  0, 7.3152, 0.98425,                     !- X,Y,Z Vertex 3 {m}
-  0, 7.3152, 1.2192;                      !- X,Y,Z Vertex 4 {m}
-
 OS:SubSurface,
   {adfd87c9-c2c9-4eff-918b-f34f27d5a961}, !- Handle
   Wall7-Window2,                          !- Name
@@ -1082,23 +1048,6 @@ OS:Surface,
   11.5824, 0, 2.4384,                     !- X,Y,Z Vertex 2 {m}
   0, 0, 2.4384,                           !- X,Y,Z Vertex 3 {m}
   0, 7.3152, 2.4384;                      !- X,Y,Z Vertex 4 {m}
-
-OS:Surface,
-  {4a18b033-f5b0-4d2e-92e4-94943fbadd0b}, !- Handle
-  Wall17,                                 !- Name
-  Wall,                                   !- Surface Type
-  ,                                       !- Construction Name
-  {a826dde8-ec82-4506-ade0-18d33841d466}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  11.5824, 0, 1.2192,                     !- X,Y,Z Vertex 1 {m}
-  11.5824, 0, 0.98425,                    !- X,Y,Z Vertex 2 {m}
-  11.5824, 7.3152, 0.98425,               !- X,Y,Z Vertex 3 {m}
-  11.5824, 7.3152, 1.2192;                !- X,Y,Z Vertex 4 {m}
 
 OS:SubSurface,
   {d5780650-fd76-4dab-90a3-a3a54c3608ce}, !- Handle
@@ -1185,23 +1134,6 @@ OS:Surface,
   0, 0, 0,                                !- X,Y,Z Vertex 3 {m}
   0, 7.3152, 0;                           !- X,Y,Z Vertex 4 {m}
 
-OS:Surface,
-  {baabd2b8-6785-4758-bf56-4db4de2fba6d}, !- Handle
-  Wall15,                                 !- Name
-  Wall,                                   !- Surface Type
-  ,                                       !- Construction Name
-  {a826dde8-ec82-4506-ade0-18d33841d466}, !- Space Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  0, 7.3152, 1.2192,                      !- X,Y,Z Vertex 1 {m}
-  0, 7.3152, 0.98425,                     !- X,Y,Z Vertex 2 {m}
-  0, 0, 0.98425,                          !- X,Y,Z Vertex 3 {m}
-  0, 0, 1.2192;                           !- X,Y,Z Vertex 4 {m}
-
 OS:Facility,
   {b160e29b-4fc2-4d92-8320-5d4d0ae4837a}; !- Handle
 
@@ -1235,7 +1167,7 @@ OS:Rendering:Color,
 
 OS:SpaceType,
   {105ab0ba-28d1-4d5f-ad64-4383a3da5146}, !- Handle
-  crawl space type,                  !- Name
+  crawl space type,                       !- Name
   ,                                       !- Default Construction Set Name
   ,                                       !- Default Schedule Set Name
   {5392128f-dc5b-4ce0-b719-ebe6c2e17e99}; !- Group Rendering Name

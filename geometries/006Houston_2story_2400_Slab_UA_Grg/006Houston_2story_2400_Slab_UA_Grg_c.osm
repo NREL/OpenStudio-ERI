@@ -1,7 +1,7 @@
 
 OS:Version,
-  {85e33d85-0990-4c90-89fa-3cba02bb3d31}, !- Handle
-  1.9.0;                                  !- Version Identifier
+  {f9dd2d0a-a642-426a-8c23-aa7005bcb7ae}, !- Handle
+  1.10.0;                                 !- Version Identifier
 
 OS:Site,
   {06a98a83-5bc0-47b8-a8b5-c16f80d62518}, !- Handle
@@ -118,7 +118,7 @@ OS:Construction,
 
 OS:Material,
   {ebeb8044-0a0e-4cc4-a8ef-80078c80989e}, !- Handle
-  ExteriorFinish,                         !- Name
+  ResExtFinish,                           !- Name
   Rough,                                  !- Roughness
   0.0254,                                 !- Thickness {m}
   0.649125,                               !- Conductivity {W/m-K}
@@ -139,7 +139,7 @@ OS:Material,
 
 OS:Material,
   {9f927be8-4bf9-41cf-81ee-942495b34dc4}, !- Handle
-  ExtWallMass,                            !- Name
+  ResExtWallMass,                         !- Name
   Rough,                                  !- Roughness
   0.0127,                                 !- Thickness {m}
   0.1602906,                              !- Conductivity {W/m-K}
@@ -265,7 +265,7 @@ OS:Construction,
 
 OS:Material,
   {a59cda18-d2a9-4436-b24c-d5cd83290240}, !- Handle
-  Plywood-1_2in,                          !- Name
+  ResExtWallSheathing,                    !- Name
   Rough,                                  !- Roughness
   0.0127,                                 !- Thickness {m}
   0.1154577,                              !- Conductivity {W/m-K}
@@ -781,13 +781,6 @@ OS:Surface,
   7.62, 0, 0,                             !- X,Y,Z Vertex 3 {m}
   7.62, 0, 2.4384;                        !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {38b61708-6ac9-473a-9648-7f58f7d994a2}, !- Handle
-  RevUnfinUninsFinWall,                   !- Name
-  {b7ac958a-a3c4-4eef-bebb-3616f408efbb}, !- Surface Rendering Name
-  {e0d6f628-30eb-452d-8269-32047ab3cd71}, !- Layer 1
-  {227e8cc4-988d-44ec-8ae0-ff8045e1922e}; !- Layer 2
-
 OS:Material:NoMass,
   {6f428fb2-9088-4a5b-b68d-bef4c32bc67c}, !- Handle
   Adiabatic,                              !- Name
@@ -1021,15 +1014,6 @@ OS:Construction,
   {3225feb2-91eb-4436-8a59-19a767e3c105}, !- Layer 3
   {3100adaf-d2b1-401b-8652-d192845bf6b9}; !- Layer 4
 
-OS:Material,
-  {5382476a-3170-48d3-8f75-994ebf958c21}, !- Handle
-  Plywood-3_2in,                          !- Name
-  Rough,                                  !- Roughness
-  0.0381,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  512.64,                                 !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
-
 OS:Surface,
   {1b80b28b-6562-410c-abbd-cf4f6c69537a}, !- Handle
   Wall1,                                  !- Name
@@ -1124,13 +1108,6 @@ OS:SubSurface,
   2.7432, 0, 0,                           !- X,Y,Z Vertex 3 {m}
   2.7432, 0, 2.1336;                      !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {85403c9f-9959-49fb-a3ba-33f0a71ef057}, !- Handle
-  RevUnfinUninsUnfinFloor,                !- Name
-  {88fe8d58-3219-4d1d-8c79-6f8275e5f048}, !- Surface Rendering Name
-  {ace91dce-fe66-4ddf-96de-dba784176ce2}, !- Layer 1
-  {eb000550-1050-4b60-8830-a40b2cc033ba}; !- Layer 2
-
 OS:SubSurface,
   {b7351f66-e69c-4966-a7d9-26f85fd04480}, !- Handle
   Wall14-Window1,                         !- Name
@@ -1188,12 +1165,6 @@ OS:Surface,
   7.62, 0, 2.4384,                        !- X,Y,Z Vertex 3 {m}
   7.62, 0, 4.8768;                        !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {5a60db66-82bc-44f0-b7f8-9444c8138c3f}, !- Handle
-  RevUnfinInsUnfinWall,                   !- Name
-  {c03d2f19-a2dd-4fbe-8278-a9441b74331e}, !- Surface Rendering Name
-  {d81af241-4284-425a-bea1-ac0c27c453a0}; !- Layer 1
-
 OS:SubSurface,
   {42f708d6-7a59-4636-877c-ee90c0605415}, !- Handle
   Wall2-Window3,                          !- Name
@@ -1211,13 +1182,6 @@ OS:SubSurface,
   4.86823582104, 0, 1.1273354136,         !- X,Y,Z Vertex 3 {m}
   4.86823582104, 0, 2.1336;               !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {bc84592b-f597-4031-b07c-e4f8a818161f}, !- Handle
-  UnfinUninsFinWall,                      !- Name
-  {04d44906-b356-4e47-bfdc-7d55eb1b76a5}, !- Surface Rendering Name
-  {227e8cc4-988d-44ec-8ae0-ff8045e1922e}, !- Layer 1
-  {e0d6f628-30eb-452d-8269-32047ab3cd71}; !- Layer 2
-
 OS:Surface,
   {228c43a2-8232-43da-ba6d-cfc7d7e72afa}, !- Handle
   IntWall4,                               !- Name
@@ -1234,17 +1198,6 @@ OS:Surface,
   6.096, 6.096, 0,                        !- X,Y,Z Vertex 2 {m}
   0, 6.096, 0,                            !- X,Y,Z Vertex 3 {m}
   0, 6.096, 2.4384;                       !- X,Y,Z Vertex 4 {m}
-
-OS:Material,
-  {5839c5ab-4781-434c-9f5b-9a7917fdf5e7}, !- Handle
-  WoodFlooring,                           !- Name
-  Rough,                                  !- Roughness
-  0.01905,                                !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  512.64,                                 !- Density {kg/m3}
-  1214.23,                                !- Specific Heat {J/kg-K}
-  0.9,                                    !- Thermal Absorptance
-  0.6;                                    !- Solar Absorptance
 
 OS:Surface,
   {eb885130-16ea-4ec0-8307-37ae168c455e}, !- Handle
@@ -1431,21 +1384,6 @@ OS:SubSurface,
   2.519680065024, 0, 3.450958544856,      !- X,Y,Z Vertex 3 {m}
   2.519680065024, 0, 4.572;               !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {7aba2dea-2f74-4d07-bd11-c937809295e0}, !- Handle
-  GarageFurniture,                        !- Name
-  {f732b9b3-6465-4fb4-bc7b-b2941a49c2b3}, !- Surface Rendering Name
-  {6a752ec0-699b-48d2-ad14-e6a4890d0155}; !- Layer 1
-
-OS:Material,
-  {6a752ec0-699b-48d2-ad14-e6a4890d0155}, !- Handle
-  GarageFurnitureMaterial,                !- Name
-  Rough,                                  !- Roughness
-  0.1524,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  640.8,                                  !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
-
 OS:Surface,
   {e0323e30-0877-4f1f-af10-f75d9c376040}, !- Handle
   Roof1,                                  !- Name
@@ -1479,23 +1417,6 @@ OS:SubSurface,
   0, 6.05536004064, 1.006942388448,       !- X,Y,Z Vertex 2 {m}
   0, 5.21015543184, 1.006942388448,       !- X,Y,Z Vertex 3 {m}
   0, 5.21015543184, 2.1336;               !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {144c1fbd-2850-4915-b03b-72fedacd70c9}, !- Handle
-  UnfinUninsExtRoof,                      !- Name
-  {cf29c117-759c-4eee-8db8-1e661dd28610}, !- Surface Rendering Name
-  {0f7d6205-f98f-4fe1-b93e-9f85bf7808f4}, !- Layer 1
-  {ace91dce-fe66-4ddf-96de-dba784176ce2}, !- Layer 2
-  {2657e1eb-1e55-4596-8864-e4fa55139eed}; !- Layer 3
-
-OS:Material,
-  {2657e1eb-1e55-4596-8864-e4fa55139eed}, !- Handle
-  StudandAirRoof,                         !- Name
-  Rough,                                  !- Roughness
-  0.0889,                                 !- Thickness {m}
-  3.22457136998082,                       !- Conductivity {W/m-K}
-  57.4467788311138,                       !- Density {kg/m3}
-  1210.38029923708;                       !- Specific Heat {J/kg-K}
 
 OS:Construction,
   {480d4c17-860b-43df-b4cc-d6a945dc9e73}, !- Handle
@@ -1629,18 +1550,6 @@ OS:Surface,
   13.716, 9.144, 0,                       !- X,Y,Z Vertex 3 {m}
   13.716, 9.144, 2.4384;                  !- X,Y,Z Vertex 4 {m}
 
-OS:Material,
-  {7474e974-f65f-46c6-baa9-0ab669ae0fd1}, !- Handle
-  LivingFurnitureMaterial,                !- Name
-  Rough,                                  !- Roughness
-  0.1524,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  640.8,                                  !- Density {kg/m3}
-  1214.23,                                !- Specific Heat {J/kg-K}
-  0.9,                                    !- Thermal Absorptance
-  0.6,                                    !- Solar Absorptance
-  0.1;                                    !- Visible Absorptance
-
 OS:Surface,
   {1d14e728-c863-4685-a8d6-7311eaa0ffbc}, !- Handle
   Floor1,                                 !- Name
@@ -1717,18 +1626,6 @@ OS:SubSurface,
   0, 5.21015543184, 3.445342388448,       !- X,Y,Z Vertex 3 {m}
   0, 5.21015543184, 4.572;                !- X,Y,Z Vertex 4 {m}
 
-OS:Material,
-  {07da8c55-c1b4-4679-bba2-607c87f2c5b0}, !- Handle
-  GypsumBoard-1_2in,                      !- Name
-  Rough,                                  !- Roughness
-  0.0127,                                 !- Thickness {m}
-  0.1602906,                              !- Conductivity {W/m-K}
-  801,                                    !- Density {kg/m3}
-  837.4,                                  !- Specific Heat {J/kg-K}
-  0.9,                                    !- Thermal Absorptance
-  0.5,                                    !- Solar Absorptance
-  0.1;                                    !- Visible Absorptance
-
 OS:SubSurface,
   {3162d7fd-0cab-417d-9e7e-686ca9ea60e0}, !- Handle
   Wall11-Window2,                         !- Name
@@ -1745,36 +1642,6 @@ OS:SubSurface,
   2.5806397968, 0, 3.450958544856,        !- X,Y,Z Vertex 2 {m}
   3.421631194824, 0, 3.450958544856,      !- X,Y,Z Vertex 3 {m}
   3.421631194824, 0, 4.572;               !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {0cdaf00c-53f7-4177-a31b-a079c1cb14b6}, !- Handle
-  UnfinUninsUnfinWall,                    !- Name
-  {a70407d3-3fca-4335-9efe-eb73147ce316}, !- Surface Rendering Name
-  {227e8cc4-988d-44ec-8ae0-ff8045e1922e}, !- Layer 1
-  {a59cda18-d2a9-4436-b24c-d5cd83290240}; !- Layer 2
-
-OS:Material,
-  {6fbe6db4-c4b8-4920-abc7-c9b11c0000e6}, !- Handle
-  2x4,                                    !- Name
-  Rough,                                  !- Roughness
-  0.0889,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  512.64,                                 !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
-
-OS:Construction,
-  {6b570629-e9c5-4672-a423-e166f0c00903}, !- Handle
-  FinUninsFinWall,                        !- Name
-  {e3756e77-9dc0-464d-a00a-6a31a534667e}, !- Surface Rendering Name
-  {e0d6f628-30eb-452d-8269-32047ab3cd71}, !- Layer 1
-  {227e8cc4-988d-44ec-8ae0-ff8045e1922e}, !- Layer 2
-  {e0d6f628-30eb-452d-8269-32047ab3cd71}; !- Layer 3
-
-OS:Construction,
-  {2b1feae5-00ba-4899-b87d-74ec2541023c}, !- Handle
-  AdiabaticConst,                         !- Name
-  {c84b43d2-e9d6-4d4d-b6e7-ef9e71755ad7}, !- Surface Rendering Name
-  {6f428fb2-9088-4a5b-b68d-bef4c32bc67c}; !- Layer 1
 
 OS:Surface,
   {9ec653d8-dd05-4f3a-9804-a04d61ebc239}, !- Handle
@@ -1810,20 +1677,6 @@ OS:SubSurface,
   9.849157848, 9.144, 1.006942388448,     !- X,Y,Z Vertex 3 {m}
   9.849157848, 9.144, 2.1336;             !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {b42401e4-c377-4c84-a83d-851bf13fa274}, !- Handle
-  UnfinInsUnfinFloor,                     !- Name
-  {29f0c66f-4945-40c3-9b2b-7e64d93ddab8}, !- Surface Rendering Name
-  {429ccaf3-ba57-4450-a1a6-2dd41ae17ec6}, !- Layer 1
-  {ace91dce-fe66-4ddf-96de-dba784176ce2}; !- Layer 2
-
-OS:Construction,
-  {e716b311-e288-4f0b-a7d4-dc7a2ede20d3}, !- Handle
-  RevUnfinUninsUnfinWall,                 !- Name
-  {c97ef2a5-62ec-4c01-905d-37913731d9ba}, !- Surface Rendering Name
-  {a59cda18-d2a9-4436-b24c-d5cd83290240}, !- Layer 1
-  {227e8cc4-988d-44ec-8ae0-ff8045e1922e}; !- Layer 2
-
 OS:SubSurface,
   {a4a36b9d-3d6c-4cdf-8b18-727e036a04f5}, !- Handle
   Wall14-Window5,                         !- Name
@@ -1840,13 +1693,6 @@ OS:SubSurface,
   2.960677848, 9.144, 3.445342388448,     !- X,Y,Z Vertex 2 {m}
   2.1154732392, 9.144, 3.445342388448,    !- X,Y,Z Vertex 3 {m}
   2.1154732392, 9.144, 4.572;             !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {156a3109-0e1d-4835-b31e-4f039558605c}, !- Handle
-  ExtInsUnfinWall,                        !- Name
-  {3890de49-c657-4dcd-86d0-10b950f23c2a}, !- Surface Rendering Name
-  {ebeb8044-0a0e-4cc4-a8ef-80078c80989e}, !- Layer 1
-  {9c1ada04-ea8a-4656-8a6f-c95c3f335674}; !- Layer 2
 
 OS:SubSurface,
   {44152401-078b-4373-93e8-981ae9b6b51e}, !- Handle
@@ -1865,16 +1711,6 @@ OS:SubSurface,
   0, 2.18247510672, 1.006942388448,       !- X,Y,Z Vertex 3 {m}
   0, 2.18247510672, 2.1336;               !- X,Y,Z Vertex 4 {m}
 
-OS:Material,
-  {33d2109d-6eeb-4179-8613-8d78b06e212d}, !- Handle
-  Concrete-8in,                           !- Name
-  Rough,                                  !- Roughness
-  0.2032,                                 !- Thickness {m}
-  1.3114056,                              !- Conductivity {W/m-K}
-  2242.8,                                 !- Density {kg/m3}
-  837.4,                                  !- Specific Heat {J/kg-K}
-  0.9;                                    !- Thermal Absorptance
-
 OS:SubSurface,
   {70eff64f-43ae-48ad-8741-bf8e767c9986}, !- Handle
   Wall6-Window6,                          !- Name
@@ -1891,13 +1727,6 @@ OS:SubSurface,
   3.866842152, 9.144, 1.006942388448,     !- X,Y,Z Vertex 2 {m}
   3.0216375432, 9.144, 1.006942388448,    !- X,Y,Z Vertex 3 {m}
   3.0216375432, 9.144, 2.1336;            !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {ff09a202-b677-4ee7-b344-89f8a6763bf1}, !- Handle
-  RevUnfinInsUnfinFloor,                  !- Name
-  {3a9eda51-065e-494e-832d-ee61062aadf1}, !- Surface Rendering Name
-  {ace91dce-fe66-4ddf-96de-dba784176ce2}, !- Layer 1
-  {429ccaf3-ba57-4450-a1a6-2dd41ae17ec6}; !- Layer 2
 
 OS:SubSurface,
   {9438ab06-49c4-47c6-9dd3-fa1c2f9618fa}, !- Handle
@@ -1916,13 +1745,6 @@ OS:SubSurface,
   13.716, 6.827520124968, 1.006942388448, !- X,Y,Z Vertex 3 {m}
   13.716, 6.827520124968, 2.1336;         !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {8df63179-40ed-4dbf-9467-21d8ff587052}, !- Handle
-  UnfinUninsUnfinFloor,                   !- Name
-  {e13a5f8b-efbf-48ac-996c-fb359f5cf701}, !- Surface Rendering Name
-  {eb000550-1050-4b60-8830-a40b2cc033ba}, !- Layer 1
-  {ace91dce-fe66-4ddf-96de-dba784176ce2}; !- Layer 2
-
 OS:SubSurface,
   {c8d81b2a-1c5b-4ddc-89a5-a093be118d23}, !- Handle
   Wall6-Window2,                          !- Name
@@ -1939,12 +1761,6 @@ OS:SubSurface,
   11.6005267608, 9.144, 1.006942388448,   !- X,Y,Z Vertex 2 {m}
   10.755322152, 9.144, 1.006942388448,    !- X,Y,Z Vertex 3 {m}
   10.755322152, 9.144, 2.1336;            !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {923909a5-8a16-4fbd-9815-0c9a26a5329a}, !- Handle
-  UnfinInsUnfinWall,                      !- Name
-  {442050ad-8a01-437c-9ee8-5d89e70045e3}, !- Surface Rendering Name
-  {d81af241-4284-425a-bea1-ac0c27c453a0}; !- Layer 1
 
 OS:SubSurface,
   {d96029d1-0afc-4f62-8c96-1d7a45de57b0}, !- Handle
@@ -1963,12 +1779,6 @@ OS:SubSurface,
   3.0216375432, 9.144, 3.445342388448,    !- X,Y,Z Vertex 3 {m}
   3.0216375432, 9.144, 4.572;             !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {6d1ff9f8-bbdc-4ef7-9520-ce54fb093922}, !- Handle
-  LivingFurniture,                        !- Name
-  {df109aea-66a5-4348-9b16-2b32488b0f94}, !- Surface Rendering Name
-  {7474e974-f65f-46c6-baa9-0ab669ae0fd1}; !- Layer 1
-
 OS:SubSurface,
   {801531f6-f911-49c0-976c-ea396133b4b3}, !- Handle
   Wall2-Window2,                          !- Name
@@ -1985,16 +1795,6 @@ OS:SubSurface,
   2.0871542712, 0, 1.1273354136,          !- X,Y,Z Vertex 2 {m}
   2.8420414584, 0, 1.1273354136,          !- X,Y,Z Vertex 3 {m}
   2.8420414584, 0, 2.1336;                !- X,Y,Z Vertex 4 {m}
-
-OS:Construction,
-  {3ef406c4-64dd-441c-81ab-4c7a6429c107}, !- Handle
-  RevFinUninsFinFloor,                    !- Name
-  {e40bd630-984e-4022-ba66-2d96065e7e95}, !- Surface Rendering Name
-  {3100adaf-d2b1-401b-8652-d192845bf6b9}, !- Layer 1
-  {3225feb2-91eb-4436-8a59-19a767e3c105}, !- Layer 2
-  {ace91dce-fe66-4ddf-96de-dba784176ce2}, !- Layer 3
-  {eb000550-1050-4b60-8830-a40b2cc033ba}, !- Layer 4
-  {f26a3cf0-ff63-426a-b069-c9bb6281e9f5}; !- Layer 5
 
 OS:SubSurface,
   {e7720a5a-cbd9-496e-afe8-66170ac3db57}, !- Handle
@@ -2030,14 +1830,6 @@ OS:SubSurface,
   2.02619417976, 0, 1.1273354136,         !- X,Y,Z Vertex 3 {m}
   2.02619417976, 0, 2.1336;               !- X,Y,Z Vertex 4 {m}
 
-OS:Construction,
-  {35ef2c10-6c4d-4864-a102-2e7458fd830b}, !- Handle
-  RevFinUninsFinWall,                     !- Name
-  {a43d06d5-b26c-4b00-b0be-b19706e67b48}, !- Surface Rendering Name
-  {e0d6f628-30eb-452d-8269-32047ab3cd71}, !- Layer 1
-  {227e8cc4-988d-44ec-8ae0-ff8045e1922e}, !- Layer 2
-  {e0d6f628-30eb-452d-8269-32047ab3cd71}; !- Layer 3
-
 OS:SubSurface,
   {3cda5bb2-7416-4e70-9b98-c1ccfdc7c0cf}, !- Handle
   Wall10-Window3,                         !- Name
@@ -2071,15 +1863,6 @@ OS:SubSurface,
   6.82752, 9.144, 1.006942388448,         !- X,Y,Z Vertex 2 {m}
   5.9823153912, 9.144, 1.006942388448,    !- X,Y,Z Vertex 3 {m}
   5.9823153912, 9.144, 2.1336;            !- X,Y,Z Vertex 4 {m}
-
-OS:Material,
-  {5692240e-e75b-4a5a-b5e5-d74216dd38a5}, !- Handle
-  2x6,                                    !- Name
-  Rough,                                  !- Roughness
-  0.1397,                                 !- Thickness {m}
-  0.1154577,                              !- Conductivity {W/m-K}
-  512.64,                                 !- Density {kg/m3}
-  1214.23;                                !- Specific Heat {J/kg-K}
 
 OS:Facility,
   {159bfac3-22e4-4cdb-994a-4041ce0e39d7}; !- Handle
