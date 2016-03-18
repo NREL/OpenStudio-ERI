@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>8dc682aa-c53e-4f78-8388-a377d4886702</version_id>
+  <version_id>7a060446-c437-4dd8-b7ae-a4677a6e5d79</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsCMU</class_name>
   <display_name>Set Residential Exterior CMU Wall Construction</display_name>
   <description>This measure assigns a CMU construction to above-grade exterior walls adjacent to finished space.</description>
-  <modeler_description>Calculates and assigns material layer properties of CMU constructions for above-grade walls between finished space and outside.</modeler_description>
+  <modeler_description>Calculates and assigns material layer properties of CMU constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
       <name>userdefinedcmuthickness</name>
@@ -132,6 +132,12 @@
       <checksum>10602D47</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -140,19 +146,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A24A31EA</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
+      <checksum>382ADD99</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6B6422CF</checksum>
+      <checksum>97C0CDF8</checksum>
     </file>
   </files>
 </measure>

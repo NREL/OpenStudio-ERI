@@ -156,6 +156,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     
     # Continue if no applicable surfaces
     if wall_surfaces.empty? and floor_surfaces.empty?
+      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end           
     
@@ -246,7 +247,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
         end
 
         # Set paths
-        gapFactor = Construction.GetWallGapFactor(fbsmtWallInstallGrade, fbsmtWallFramingFactor)
+        gapFactor = Construction.GetWallGapFactor(fbsmtWallInstallGrade, fbsmtWallFramingFactor, fbsmtWallCavityInsRvalueInstalled)
         path_fracs = [fbsmtWallFramingFactor, 1 - fbsmtWallFramingFactor - gapFactor, gapFactor]
         
         # Define construction (only used to calculate assembly R-value)

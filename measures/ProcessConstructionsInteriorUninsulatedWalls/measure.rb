@@ -82,6 +82,7 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 
     # Continue if no applicable surfaces
     if unfinished_surfaces.empty? and finished_surfaces.empty?
+      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end     
     

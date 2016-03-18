@@ -384,6 +384,7 @@ class Construction
         @type = type
         @path_widths = path_widths
         @path_fracs = []
+        @sum_path_fracs = @path_widths.inject(:+)
         path_widths.each do |path_width|
             @path_fracs << path_width / path_widths.inject{ |sum, n| sum + n }
         end         
@@ -415,13 +416,13 @@ class Construction
     
     def printlayers(runner)
         @path_fracs.each do |path_frac|
-            runner.registerInfo(path_frac.round(5).to_s)
+            runner.registerInfo("path_frac: #{path_frac.round(5).to_s}")
         end
         runner.registerInfo("======")
         @layers_materials.each do |layer_materials|
+            runner.registerInfo("layer thick: #{layer_materials[0].thick.round(5).to_s}")
             layer_materials.each do |mat|
-                runner.registerInfo(mat.thick.round(5).to_s)
-                runner.registerInfo(mat.k.round(5).to_s)
+                runner.registerInfo("layer cond:  #{mat.k.round(5).to_s}")
             end
             runner.registerInfo("------")
         end
@@ -458,6 +459,9 @@ class Construction
         if not validated?(runner)
             return false
         end
+        
+        # Uncomment the following line to debug
+        #printlayers(runner)
         
         # Create materials
         materials = []
@@ -522,9 +526,11 @@ class Construction
         return true
     end
     
-    def self.GetWallGapFactor(installGrade, framingFactor)
+    def self.GetWallGapFactor(installGrade, framingFactor, cavityInsulRvalue)
 
-        if installGrade == 1
+        if cavityInsulRvalue <= 0
+            return 0 # Gap factor only applies when there is cavity insulation
+        elsif installGrade == 1
             return 0
         elsif installGrade == 2
             return 0.02 * (1 - framingFactor)
@@ -610,6 +616,20 @@ class Construction
         end
 
         def validated?(runner)
+            # Check that sum of path fracs equal 1
+            if @sum_path_fracs <= 0.99 or @sum_path_fracs >= 1.01
+                runner.registerError("Invalid construction: Sum of path fractions (#{@sum_path_fracs.to_s}) is not 1.")
+                return false
+            end
+            
+            # Check that all path fractions are not negative
+            @path_fracs.each do |path_frac|
+                if path_frac < 0
+                    runner.registerError("Invalid construction: Path fraction (#{path_frac.to_s}) must be greater than or equal to 0.")
+                    return false
+                end
+            end
+            
             # Check if all materials are GlazingMaterial
             all_glazing = true
             @layers_materials.each do |layer_materials|

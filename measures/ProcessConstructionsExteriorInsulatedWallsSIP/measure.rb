@@ -20,7 +20,7 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
 
   # human readable description of modeling approach
   def modeler_description
-    return "Calculates and assigns material layer properties of SIP constructions for above-grade walls between finished space and outside."
+    return "Calculates and assigns material layer properties of SIP constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures."
   end
 
   # define the arguments that the user will input
@@ -98,6 +98,7 @@ class ProcessConstructionsExteriorInsulatedWallsSIP < OpenStudio::Ruleset::Model
     
     # Continue if no applicable surfaces
     if surfaces.empty?
+      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end     
     

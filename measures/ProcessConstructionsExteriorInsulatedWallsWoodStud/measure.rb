@@ -15,51 +15,25 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
   end
   
   def description
-    return "This measure assigns a wood stud constructions to above-grade exterior walls adjacent to finished space."
+    return "This measure assigns a wood stud construction to above-grade exterior walls adjacent to finished space."
   end
   
   def modeler_description
-    return "Calculates and assigns material layer properties of wood stud constructions for above-grade walls between finished space and outside."
+    return "Calculates and assigns material layer properties of wood stud constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures."
   end  
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    studsize_display_names = OpenStudio::StringVector.new
-    studsize_display_names << "2x4"
-    studsize_display_names << "2x6"
-    
-    #make a string argument for wood stud size of wall cavity
-    selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, true)
-    selected_studsize.setDisplayName("Cavity Depth")
-    selected_studsize.setUnits("in")
-    selected_studsize.setDescription("Depth of the stud cavity.")
-    selected_studsize.setDefaultValue("2x4")
-    args << selected_studsize
-    
-    #make a choice argument for model objects
-    spacing_display_names = OpenStudio::StringVector.new
-    spacing_display_names << "16 in o.c."
-    spacing_display_names << "24 in o.c."
-    
-    #make a choice argument for wood stud spacing
-    selected_spacing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedspacing", spacing_display_names, true)
-    selected_spacing.setDisplayName("Stud Spacing")
-    selected_spacing.setUnits("in")
-    selected_spacing.setDescription("The on-center spacing between studs in a wall assembly.")
-    selected_spacing.setDefaultValue("16 in o.c.")
-    args << selected_spacing
-    
     #make a double argument for nominal R-value of installed cavity insulation
     userdefined_instcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinstcavr", true)
     userdefined_instcavr.setDisplayName("Cavity Insulation Installed R-value")
     userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
-    userdefined_instcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    userdefined_instcavr.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly. If batt insulation must be compressed to fit within the cavity (e.g., R19 in a 5.5\" 2x6 cavity), use an R-value that accounts for this effect (see HUD Mobile Home Construction and Safety Standards 3280.509 for reference).")
     userdefined_instcavr.setDefaultValue(13.0)
     args << userdefined_instcavr
-    
+
     #make a choice argument for model objects
     installgrade_display_names = OpenStudio::StringVector.new
     installgrade_display_names << "I"
@@ -69,9 +43,17 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     #make a choice argument for wall cavity insulation installation grade
     selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
     selected_installgrade.setDisplayName("Cavity Install Grade")
-    selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    selected_installgrade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     selected_installgrade.setDefaultValue("I")
     args << selected_installgrade
+
+    #make a double argument for wall cavity depth
+    selected_cavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedcavitydepth", true)
+    selected_cavdepth.setDisplayName("Cavity Depth")
+    selected_cavdepth.setUnits("in")
+    selected_cavdepth.setDescription("Depth of the stud cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
+    selected_cavdepth.setDefaultValue("3.5")
+    args << selected_cavdepth
     
     #make a bool argument for whether the cavity insulation fills the cavity
     selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
@@ -79,14 +61,22 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     selected_insfills.setDescription("Specifies whether the cavity insulation completely fills the depth of the wall cavity.")
     selected_insfills.setDefaultValue(true)
     args << selected_insfills
-    
+
+    #make a double argument for framing factor
+    selected_ffactor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedffactor", true)
+    selected_ffactor.setDisplayName("Framing Factor")
+    selected_ffactor.setUnits("frac")
+    selected_ffactor.setDescription("The fraction of a wall assembly that is comprised of structural framing.")
+    selected_ffactor.setDefaultValue("0.25")
+    args << selected_ffactor
+        
     return args
   end #end the arguments method
 
   #define what happens when the measure is run
   def run(model, runner, user_arguments)
     super(model, runner, user_arguments)
-        
+    
     #use the built-in error checking 
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
@@ -106,16 +96,31 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     
     # Continue if no applicable surfaces
     if surfaces.empty?
+      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end 
     
-    # Cavity
-    wsWallCavityDepth = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}[runner.getStringArgumentValue("selectedstudsize",user_arguments)]
-    wsWallFramingFactor = {"16 in o.c."=>0.25, "24 in o.c."=>0.22}[runner.getStringArgumentValue("selectedspacing",user_arguments)]
+    # Get inputs
     wsWallCavityInsRvalueInstalled = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
     wsWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)]
+    wsWallCavityDepth = runner.getDoubleArgumentValue("selectedcavitydepth",user_arguments)
     wsWallCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
+    wsWallFramingFactor = runner.getDoubleArgumentValue("selectedffactor",user_arguments)
     
+    # Validate inputs
+    if wsWallCavityInsRvalueInstalled < 0.0
+        runner.registerError("Cavity Insulation Installed R-value must be greater than or equal to 0.")
+        return false
+    end
+    if wsWallCavityDepth <= 0.0
+        runner.registerError("Cavity Depth must be greater than 0.")
+        return false
+    end
+    if wsWallFramingFactor < 0.0 or wsWallFramingFactor >= 1.0
+        runner.registerError("Framing Factor must be greater than or equal to 0 and less than 1.")
+        return false
+    end
+
     # Process the wood stud walls
 
     # Define materials
@@ -135,7 +140,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     mat_gap = Material.AirCavity(wsWallCavityDepth)
 
     # Set paths
-    gapFactor = Construction.GetWallGapFactor(wsWallInstallGrade, wsWallFramingFactor)
+    gapFactor = Construction.GetWallGapFactor(wsWallInstallGrade, wsWallFramingFactor, wsWallCavityInsRvalueInstalled)
     path_fracs = [wsWallFramingFactor, 1 - wsWallFramingFactor - gapFactor, gapFactor]
     
     # Define construction

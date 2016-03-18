@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_wall_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>9a53c9b1-f61c-4564-9c9d-cd7c049343eb</version_id>
+  <version_id>ddda4dd7-b647-4835-b7f7-17e24e663719</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>SetResidentialWallSheathing</class_name>
   <display_name>Set Residential Wall Sheathing</display_name>
@@ -121,7 +121,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6B6422CF</checksum>
+      <checksum>97C0CDF8</checksum>
     </file>
   </files>
 </measure>

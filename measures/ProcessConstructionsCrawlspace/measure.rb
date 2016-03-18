@@ -126,6 +126,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     
     # Continue if no applicable surfaces
     if wall_surfaces.empty? and floor_surfaces.empty? and ceiling_surfaces.empty?
+      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end    
     
@@ -245,7 +246,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         mat_gap = Material.AirCavity(mat_2x.thick_in)
         
         # Set paths
-        csGapFactor = Construction.GetWallGapFactor(crawlCeilingInstallGrade, crawlCeilingFramingFactor)
+        csGapFactor = Construction.GetWallGapFactor(crawlCeilingInstallGrade, crawlCeilingFramingFactor, crawlCeilingCavityInsRvalueNominal)
         path_fracs = [crawlCeilingFramingFactor, 1 - crawlCeilingFramingFactor - csGapFactor, csGapFactor]
         
         # Define construction

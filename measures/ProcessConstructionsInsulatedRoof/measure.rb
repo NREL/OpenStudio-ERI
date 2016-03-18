@@ -128,6 +128,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     
     # Continue if no applicable surfaces
     if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
+      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end       
     

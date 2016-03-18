@@ -62,6 +62,7 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
 
     # Continue if no applicable surfaces
     if surfaces.empty?
+      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end       
     

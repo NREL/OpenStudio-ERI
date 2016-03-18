@@ -117,6 +117,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     
     # Continue if no applicable surfaces
     if surfaces.empty?
+        runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
         return true
     end        
     
@@ -150,7 +151,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     mat_gap = Material.AirCavity(intWallCavityDepth)
     
     # Set paths
-    gapFactor = Construction.GetWallGapFactor(intWallInstallGrade, intWallFramingFactor)
+    gapFactor = Construction.GetWallGapFactor(intWallInstallGrade, intWallFramingFactor, intWallCavityInsRvalueInstalled)
     path_fracs = [intWallFramingFactor, 1 - intWallFramingFactor - gapFactor, gapFactor]
     
     # Define construction
