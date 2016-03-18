@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>7a060446-c437-4dd8-b7ae-a4677a6e5d79</version_id>
+  <version_id>7002c856-fbe4-4c25-9e92-d554bad3744e</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsCMU</class_name>
   <display_name>Set Residential Exterior CMU Wall Construction</display_name>
@@ -25,7 +25,7 @@
       <description>Overall conductivity of the finished CMU block.</description>
       <type>Double</type>
       <units>Btu-in/hr-ft^2-R</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>5.33</default_value>
     </argument>
@@ -35,7 +35,7 @@
       <description>The density of the finished CMU block.</description>
       <type>Double</type>
       <units>lb/ft^3</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>119</default_value>
     </argument>
@@ -45,7 +45,7 @@
       <description>Total fraction of the wall that is framing for windows or doors.</description>
       <type>Double</type>
       <units>frac</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.076</default_value>
     </argument>
@@ -55,7 +55,7 @@
       <description>R-value of the insulation filling the furring cavity.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
@@ -65,7 +65,7 @@
       <description>The depth of the interior furring cavity. User zero for no furring strips.</description>
       <type>Double</type>
       <units>in</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
     </argument>
@@ -75,7 +75,7 @@
       <description>Spacing of studs in the furring.</description>
       <type>Double</type>
       <units>in</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>24</default_value>
     </argument>
@@ -146,7 +146,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>382ADD99</checksum>
+      <checksum>1C84B902</checksum>
     </file>
     <file>
       <filename>util.rb</filename>

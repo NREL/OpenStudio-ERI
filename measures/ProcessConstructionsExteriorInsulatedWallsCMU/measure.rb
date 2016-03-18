@@ -36,7 +36,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     args << userdefined_cmuthickness
     
     #make a double argument for conductivity of the cmu block
-    userdefined_cmuconductivity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcmuconductivity", false)
+    userdefined_cmuconductivity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcmuconductivity", true)
     userdefined_cmuconductivity.setDisplayName("CMU Conductivity")
     userdefined_cmuconductivity.setUnits("Btu-in/hr-ft^2-R")
     userdefined_cmuconductivity.setDescription("Overall conductivity of the finished CMU block.")
@@ -44,7 +44,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     args << userdefined_cmuconductivity 
     
     #make a double argument for density of the cmu block
-    userdefined_cmudensity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcmudensity", false)
+    userdefined_cmudensity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcmudensity", true)
     userdefined_cmudensity.setDisplayName("CMU Density")
     userdefined_cmudensity.setUnits("lb/ft^3")
     userdefined_cmudensity.setDescription("The density of the finished CMU block.")
@@ -52,7 +52,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     args << userdefined_cmudensity      
     
     #make a double argument for framing factor
-    userdefined_framingfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedframingfrac", false)
+    userdefined_framingfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedframingfrac", true)
     userdefined_framingfrac.setDisplayName("Framing Factor")
     userdefined_framingfrac.setUnits("frac")
     userdefined_framingfrac.setDescription("Total fraction of the wall that is framing for windows or doors.")
@@ -60,7 +60,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     args << userdefined_framingfrac
     
     #make a double argument for furring insulation R-value
-    userdefined_furringr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringr", false)
+    userdefined_furringr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringr", true)
     userdefined_furringr.setDisplayName("Furring Insulation R-value")
     userdefined_furringr.setUnits("hr-ft^2-R/Btu")
     userdefined_furringr.setDescription("R-value of the insulation filling the furring cavity.")
@@ -68,7 +68,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     args << userdefined_furringr
     
     #make a double argument for furring cavity depth
-    userdefined_furringcavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringcavdepth", false)
+    userdefined_furringcavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringcavdepth", true)
     userdefined_furringcavdepth.setDisplayName("Furring Cavity Depth")
     userdefined_furringcavdepth.setUnits("in")
     userdefined_furringcavdepth.setDescription("The depth of the interior furring cavity. User zero for no furring strips.")
@@ -76,7 +76,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     args << userdefined_furringcavdepth 
     
     #make a double argument for furring stud spacing
-    userdefined_furringstudspacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringstudspacing", false)
+    userdefined_furringstudspacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfurringstudspacing", true)
     userdefined_furringstudspacing.setDisplayName("Furring Stud Spacing")
     userdefined_furringstudspacing.setUnits("in")
     userdefined_furringstudspacing.setDescription("Spacing of studs in the furring.")
@@ -113,7 +113,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
       return true
     end     
         
-    # CMU / Furring
+    # Get inputs
     cmuThickness = runner.getDoubleArgumentValue("userdefinedcmuthickness",user_arguments)
     cmuConductivity = runner.getDoubleArgumentValue("userdefinedcmuconductivity",user_arguments)
     cmuDensity = runner.getDoubleArgumentValue("userdefinedcmudensity",user_arguments)
@@ -122,14 +122,46 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     cmuFurringCavityDepth = runner.getDoubleArgumentValue("userdefinedfurringcavdepth",user_arguments)
     cmuFurringStudSpacing = runner.getDoubleArgumentValue("userdefinedfurringstudspacing",user_arguments)
 
+    # Validate inputs
+    if cmuThickness <= 0.0
+        runner.registerError("CMU Block Thickness must be greater than 0.")
+        return false
+    end
+    if cmuConductivity <= 0.0
+        runner.registerError("CMU Conductivity must be greater than 0.")
+        return false
+    end
+    if cmuDensity <= 0.0
+        runner.registerError("CMU Density must be greater than 0.")
+        return false
+    end
+    if cmuFramingFactor < 0.0 or cmuFramingFactor >= 1.0
+        runner.registerError("Framing Factor must be greater than or equal to 0 and less than 1.")
+        return false
+    end
+    if cmuFurringInsRvalue < 0.0
+        runner.registerError("Furring Insulation R-value must be greater than or equal to 0.")
+        return false
+    end
+    if cmuFurringCavityDepth < 0.0
+        runner.registerError("Furring Cavity Depth must be greater than or equal to 0.")
+        return false
+    end
+    if cmuFurringStudSpacing <= 0.0
+        runner.registerError("Furring Stud Spacing must be greater than 0.")
+        return false
+    end
+
     # Process the CMU walls
     
     # Define materials
     mat_cmu = Material.new(name=nil, thick_in=cmuThickness, mat_base=BaseMaterial.Concrete, cond=OpenStudio.convert(cmuConductivity,"in","ft").get, dens=cmuDensity)
     mat_framing = Material.new(name=nil, thick_in=cmuThickness, mat_base=BaseMaterial.Wood)
+    mat_furring = nil
+    mat_furring_cavity = nil
     if cmuFurringCavityDepth != 0
-        mat_furring = Material.new(name=nil, thick_in=cmuFurringCavityDepth, mat_base=BaseMaterial.Wood, cond=OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get / cmuFurringInsRvalue)
-        if cmuFurringInsRvalue.nil? or cmuFurringInsRvalue == 0
+        mat_furring = Material.new(name=nil, thick_in=cmuFurringCavityDepth, mat_base=BaseMaterial.Wood)
+        if cmuFurringInsRvalue == 0
             mat_furring_cavity = Material.AirCavity(cmuFurringCavityDepth)
         else
             mat_furring_cavity = Material.new(name=nil, thick_in=cmuFurringCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get / cmuFurringInsRvalue)
@@ -137,7 +169,7 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     end
     
     # Set paths
-    if cmuFurringCavityDepth != 0
+    if not mat_furring.nil?
         stud_frac = 1.5 / cmuFurringStudSpacing
         cavity_frac = 1.0 - (stud_frac + cmuFramingFactor)
         path_fracs = [cmuFramingFactor, stud_frac, cavity_frac]
@@ -149,11 +181,11 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
     cmu_wall = Construction.new(path_fracs)
     cmu_wall.addlayer(Material.AirFilmVertical, false)
     cmu_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    if cmuFurringCavityDepth != 0
+    if not mat_furring.nil?
         cmu_wall.addlayer([mat_furring, mat_furring, mat_furring_cavity], true, "Furring")
         cmu_wall.addlayer([mat_framing, mat_cmu, mat_cmu], true, "CMU")
     else
-        cmu_wall.addlayer([mat_framing, mat_cmu], true)
+        cmu_wall.addlayer([mat_framing, mat_cmu], true, "CMU")
     end
     cmu_wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
     cmu_wall.addlayer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
