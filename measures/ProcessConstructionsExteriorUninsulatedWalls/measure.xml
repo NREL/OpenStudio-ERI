@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_uninsulated_walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>29637d18-e748-421e-a4bb-c31f626ca88f</version_id>
+  <version_id>cb669ebb-ec50-4097-82bb-834096380ba0</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorUninsulatedWalls</class_name>
   <display_name>Set Residential Unfinished Attic and Garage Wall Constructions</display_name>
@@ -90,7 +90,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BA28B07</checksum>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

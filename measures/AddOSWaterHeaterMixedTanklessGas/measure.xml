@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_gas</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>d808f5b7-b96a-41d6-b8b7-57540b07bc55</version_id>
+  <version_id>081d558a-18ba-4372-8cc4-d781fe20d47a</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessGas</class_name>
   <display_name>AddOSWaterHeaterMixedTanklessGas</display_name>
@@ -137,7 +137,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BA28B07</checksum>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

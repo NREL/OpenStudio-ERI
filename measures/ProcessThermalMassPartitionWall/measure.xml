@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_partition_wall</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>303f7d35-17ad-435a-b0f9-bd6dafb153ec</version_id>
+  <version_id>e6c8e247-4954-4379-a216-171af87f1658</version_id>
   <xml_checksum>45097B60</xml_checksum>
   <class_name>ProcessThermalMassPartitionWall</class_name>
   <display_name>Set Residential Partition Wall Thermal Mass</display_name>
@@ -139,7 +139,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BA28B07</checksum>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

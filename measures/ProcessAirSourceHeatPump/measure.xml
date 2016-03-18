@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>3e048985-2c71-455c-97cd-7537f178f249</version_id>
+  <version_id>5d0b7a1b-17c8-4866-abd5-4abcedc6a218</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
   <display_name>Set Residential Air Source Heat Pump</display_name>
@@ -38,6 +38,25 @@
         <choice>
           <value>SEER 15, 8.5 HSPF</value>
           <display_name>SEER 15, 8.5 HSPF</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>selectedcchp</name>
+      <display_name>Is Cold Climate</display_name>
+      <description>Specifies whether the heat pump is a so called 'cold climate heat pump'.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
         </choice>
       </choices>
     </argument>
@@ -342,10 +361,10 @@
       <checksum>FA86825B</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>64D0A73F</checksum>
+      <checksum>5D628229</checksum>
     </file>
     <file>
       <version>
@@ -356,13 +375,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CB926E28</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AAD6884C</checksum>
+      <checksum>D29C0BC9</checksum>
     </file>
   </files>
 </measure>

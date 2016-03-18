@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>812caaa5-1507-44a2-9aba-af8b3f839621</version_id>
+  <version_id>8d843309-7d84-4a09-bde7-b618806a5ba4</version_id>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -843,18 +843,6 @@
       <checksum>FA86825B</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2139E513</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>64D0A73F</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -864,6 +852,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>065F56FA</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

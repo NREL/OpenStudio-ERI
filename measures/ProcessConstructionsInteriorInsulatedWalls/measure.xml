@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_walls</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>65b31f82-3ca0-48b6-9f79-365572a8f640</version_id>
+  <version_id>31ab797d-5b90-4c37-8940-254759aa3d6b</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedWalls</class_name>
   <display_name>Set Residential Interzonal Wall Construction</display_name>
@@ -258,7 +258,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BA28B07</checksum>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

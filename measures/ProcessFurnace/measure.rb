@@ -7,9 +7,10 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/psychrometrics"
+require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 
 #start the measure
 class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
@@ -190,20 +191,45 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     air_conditioner = AirConditioner.new(nil)
     supply = Supply.new
 
-    # Create the sim object
-    sim = Sim.new(model, runner)
+    # _processAirSystem
+    
+    if air_conditioner.ACCoolingInstalledSEER == 999
+      air_conditioner.hasIdealAC = true
+    else
+      air_conditioner.hasIdealAC = false
+    end
 
-    hasFurnace = true
-    hasCoolingEquipment = false
-    hasAirConditioner = false
-    hasHeatPump = false
-    hasMiniSplitHP = false
-    hasRoomAirConditioner = false
-    hasGroundSourceHP = false
+    supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
-    # Process the air system
-    furnace, air_conditioner, supply = sim._processAirSystem(supply, furnace, air_conditioner, nil, hasFurnace, hasCoolingEquipment, hasAirConditioner, hasHeatPump, hasMiniSplitHP, hasRoomAirConditioner, hasGroundSourceHP)
+    # Flow rate through AC units - hardcoded assumption of 400 cfm/ton
+    supply.cfm_ton = 400 # cfm / ton
 
+    supply.HPCoolingOversizingFactor = 1 # Default to a value of 1 (currently only used for MSHPs)
+    supply.SpaceConditionedMult = 1 # Default used for central equipment
+
+    # Before we allowed systems with no cooling equipment, the system
+    # fan was defined by the cooling equipment option. For systems
+    # with only a furnace, the system fan is (for the time being) hard
+    # coded here.
+
+    supply.fan_power = furnace.FurnaceSupplyFanPowerInstalled # Based on 2010 BA Benchmark
+    supply.eff = OpenStudio::convert(supply.static / supply.fan_power,"cfm","m^3/s").get # Overall Efficiency of the Supply Fan, Motor and Drive
+    # self.supply.delta_t = 0.00055000 / units.Btu2kWh(1.0) / (self.mat.air.inside_air_dens * self.mat.air.inside_air_sh * units.hr2min(1.0))
+    supply.min_flow_ratio = 1.00000000
+    supply.FAN_EIR_FPLR_SPEC_coefficients = [0.00000000, 1.00000000, 0.00000000, 0.00000000]
+
+    supply.max_temp = furnace.FurnaceMaxSupplyTemp
+
+    furnace.hir = get_furnace_hir(furnace.FurnaceInstalledAFUE)
+
+    # Parasitic Electricity (Source: DOE. (2007). Technical Support Document: Energy Efficiency Program for Consumer Products: "Energy Conservation Standards for Residential Furnaces and Boilers". www.eere.energy.gov/buildings/appliance_standards/residential/furnaces_boilers.html)
+    #             FurnaceParasiticElecDict = {Constants.FuelTypeGas     :  76, # W during operation
+    #                                         Constants.FuelTypeOil     : 220}
+    #             f.aux_elec = FurnaceParasiticElecDict[f.FurnaceFuelType]
+    furnace.aux_elec = 0.0 # set to zero until we figure out a way to distribute to the correct end uses (DOE-2 limitation?)    
+
+    supply.compressor_speeds = nil
+    
     heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
     if heatingseasonschedule.nil?
         runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
@@ -223,13 +249,6 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     # Air System
 
-    if not hasCoolingEquipment
-      # Initialize simulation variables not being used
-      supply.Number_Speeds = 1.0
-      supply.fanspeed_ratio = [1.0]
-      supply.compressor_speeds = 1.0
-    end
-
     air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
     air_loop.setName("Central Air System")
     # if air_conditioner.hasIdealAC
@@ -248,46 +267,26 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     # _processSystemHeatingCoil
     # Heating Coil
 
-    if hasFurnace
+    if furnace.FurnaceFuelType == Constants.FuelTypeElectric
 
-      if furnace.FurnaceFuelType == Constants.FuelTypeElectric
-
-        htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, heatingseasonschedule)
-        htg_coil.setName("Furnace Heating Coil")
-        htg_coil.setEfficiency(1.0 / furnace.hir)
-        if furnaceOutputCapacity != "Autosize"
-          htg_coil.setNominalCapacity(OpenStudio::convert(furnaceOutputCapacity,"Btu/h","W").get)
-        end
-
-        if hasAirConditioner and supply.compressor_speeds == 1
-
-        elsif hasAirConditioner and supply.compressor_speeds > 1
-
-        else
-
-        end
-
-      elsif furnace.FurnaceFuelType != Constants.FuelTypeElectric
-
-        htg_coil = OpenStudio::Model::CoilHeatingGas.new(model, heatingseasonschedule)
-        htg_coil.setName("Furnace Heating Coil")
-        htg_coil.setGasBurnerEfficiency(1.0 / furnace.hir)
-        if furnaceOutputCapacity != "Autosize"
-          htg_coil.setNominalCapacity(OpenStudio::convert(furnaceOutputCapacity,"Btu/h","W").get)
-        end
-
-        if hasAirConditioner and supply.compressor_speeds == 1
-
-        elsif hasAirConditioner and supply.compressor_speeds > 1
-
-        else
-
-        end
-
-        htg_coil.setParasiticElectricLoad(furnace.aux_elec) # set to zero until we figure out a way to distribute to the correct end uses (DOE-2 limitation?)
-        htg_coil.setParasiticGasLoad(0)
-
+      htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, heatingseasonschedule)
+      htg_coil.setName("Furnace Heating Coil")
+      htg_coil.setEfficiency(1.0 / furnace.hir)
+      if furnaceOutputCapacity != "Autosize"
+        htg_coil.setNominalCapacity(OpenStudio::convert(furnaceOutputCapacity,"Btu/h","W").get)
       end
+
+    elsif furnace.FurnaceFuelType != Constants.FuelTypeElectric
+
+      htg_coil = OpenStudio::Model::CoilHeatingGas.new(model, heatingseasonschedule)
+      htg_coil.setName("Furnace Heating Coil")
+      htg_coil.setGasBurnerEfficiency(1.0 / furnace.hir)
+      if furnaceOutputCapacity != "Autosize"
+        htg_coil.setNominalCapacity(OpenStudio::convert(furnaceOutputCapacity,"Btu/h","W").get)
+      end
+
+      htg_coil.setParasiticElectricLoad(furnace.aux_elec) # set to zero until we figure out a way to distribute to the correct end uses (DOE-2 limitation?)
+      htg_coil.setParasiticGasLoad(0)
 
     end
 
@@ -393,12 +392,24 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         air_loop.addBranchForZone(fbasement_thermal_zone)
         runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{fbasement_thermal_zone.name}'")
 
-  end
+    end
       
     return true
  
   end #end the run method
 
+  def get_furnace_hir(furnaceInstalledAFUE)
+    # Based on DOE2 Volume 5 Compliance Analysis manual.
+    # This is not used until we have a better way of disaggregating AFUE
+    # if FurnaceInstalledAFUE <= 0.835:
+    #     hir = 1 / (0.2907 * FurnaceInstalledAFUE + 0.5787)
+    # else:
+    #     hir = 1 / (1.1116 * FurnaceInstalledAFUE - 0.098185)
+
+    hir = 1.0 / furnaceInstalledAFUE
+    return hir
+  end  
+  
 end #end the measure
 
 #this allows the measure to be use by the application

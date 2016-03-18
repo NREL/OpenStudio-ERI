@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>33d8c300-8f2b-4d36-b6cc-545422c7b407</uid>
-  <version_id>23c7086c-b432-47ea-b653-81a3dbdf787d</version_id>
+  <version_id>329fcedb-b3d9-4f8b-88b3-00388cd051c9</version_id>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Set Residential Gas Cooking Range</display_name>
@@ -154,7 +154,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BA28B07</checksum>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

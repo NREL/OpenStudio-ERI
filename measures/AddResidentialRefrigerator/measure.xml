@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>f0259bdc-1391-41eb-80eb-efc10bd1bc02</uid>
-  <version_id>79bc21c7-0c86-4627-a600-a00715271694</version_id>
+  <version_id>80cd7488-1056-4903-b74c-9565f9d82575</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Set Residential Refrigerator</display_name>
@@ -127,7 +127,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BA28B07</checksum>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

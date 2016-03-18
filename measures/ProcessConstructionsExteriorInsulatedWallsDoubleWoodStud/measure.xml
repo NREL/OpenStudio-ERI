@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_double_wood_stud</name>
   <uid>d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651</uid>
-  <version_id>c6baa8ad-f29b-46bf-9e9b-ec8c8c02f330</version_id>
+  <version_id>46d25610-7dad-4c59-8bdb-e39e530b4687</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud</class_name>
   <display_name>Set Residential Living Space Double Wood Stud Wall Construction</display_name>
@@ -286,7 +286,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BA28B07</checksum>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

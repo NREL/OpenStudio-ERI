@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>8d181219-7602-4d82-82e9-e6b89ab8eda1</version_id>
+  <version_id>c8371bf4-f8ff-4a2e-873c-4004ad501025</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageRoof</class_name>
   <display_name>Set Residential Garage Roof Construction</display_name>
@@ -112,7 +112,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BA28B07</checksum>
+      <checksum>AAD6884C</checksum>
     </file>
   </files>
 </measure>

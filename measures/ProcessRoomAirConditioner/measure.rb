@@ -48,7 +48,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     #make a double argument for room air shr
     roomacshr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("roomacshr", true)
     roomacshr.setDisplayName("Rated SHR")
-	roomacshr.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.")
+    roomacshr.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.")
     roomacshr.setDefaultValue(0.65)
     args << roomacshr
 
