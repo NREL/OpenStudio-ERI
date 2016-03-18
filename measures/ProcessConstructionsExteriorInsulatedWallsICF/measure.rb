@@ -27,14 +27,14 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a double argument for framing factor
-    userdefined_framingfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedframingfrac", false)
-    userdefined_framingfrac.setDisplayName("Framing Factor")
-    userdefined_framingfrac.setUnits("frac")
-    userdefined_framingfrac.setDescription("Total fraction of the wall that is framing for windows or doors.")
-    userdefined_framingfrac.setDefaultValue(0.076)
-    args << userdefined_framingfrac 
-    
+    #make a double argument for nominal R-value of the icf insulation
+    userdefined_icfinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedicfinsr", true)
+    userdefined_icfinsr.setDisplayName("Nominal Insulation R-value")
+    userdefined_icfinsr.setUnits("hr-ft^2-R/Btu")
+    userdefined_icfinsr.setDescription("R-value of each insulating layer of the form.")
+    userdefined_icfinsr.setDefaultValue(10.0)
+    args << userdefined_icfinsr
+
     #make a double argument for thickness of the icf insulation
     userdefined_icfinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedicfinsthickness", true)
     userdefined_icfinsthickness.setDisplayName("Insulation Thickness")
@@ -42,14 +42,6 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
     userdefined_icfinsthickness.setDescription("Thickness of each insulating layer of the form.")
     userdefined_icfinsthickness.setDefaultValue(2.0)
     args << userdefined_icfinsthickness 
-    
-    #make a double argument for nominal R-value of the icf insulation
-    userdefined_icfinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedicfinsr", false)
-    userdefined_icfinsr.setDisplayName("Nominal Insulation R-value")
-    userdefined_icfinsr.setUnits("hr-ft^2-R/Btu")
-    userdefined_icfinsr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-    userdefined_icfinsr.setDefaultValue(10.0)
-    args << userdefined_icfinsr
 
     #make a double argument for thickness of the concrete
     userdefined_sipintsheathingthick = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedicfconcth", true)
@@ -59,6 +51,14 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
     userdefined_sipintsheathingthick.setDefaultValue(4.0)
     args << userdefined_sipintsheathingthick
 
+    #make a double argument for framing factor
+    userdefined_framingfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedframingfrac", true)
+    userdefined_framingfrac.setDisplayName("Framing Factor")
+    userdefined_framingfrac.setUnits("frac")
+    userdefined_framingfrac.setDescription("Total fraction of the wall that is framing for windows or doors.")
+    userdefined_framingfrac.setDefaultValue(0.076)
+    args << userdefined_framingfrac 
+        
     return args
   end
 
@@ -89,11 +89,29 @@ class ProcessConstructionsExteriorInsulatedWallsICF < OpenStudio::Ruleset::Model
       return true
     end     
     
-    # ICF
-    icfFramingFactor = runner.getDoubleArgumentValue("userdefinedframingfrac",user_arguments)
-    icfInsThickness = runner.getDoubleArgumentValue("userdefinedicfinsthickness",user_arguments)
+    # Get inputs
     icfInsRvalue = runner.getDoubleArgumentValue("userdefinedicfinsr",user_arguments)
+    icfInsThickness = runner.getDoubleArgumentValue("userdefinedicfinsthickness",user_arguments)
     icfConcreteThickness = runner.getDoubleArgumentValue("userdefinedicfconcth",user_arguments)
+    icfFramingFactor = runner.getDoubleArgumentValue("userdefinedframingfrac",user_arguments)
+
+    # Validate inputs
+    if icfInsRvalue <= 0.0
+        runner.registerError("Nominal Insulation R-value must be greater than 0.")
+        return false
+    end
+    if icfInsThickness <= 0.0
+        runner.registerError("Insulation Thickness must be greater than 0.")
+        return false
+    end
+    if icfConcreteThickness <= 0.0
+        runner.registerError("Concrete Thickness must be greater than 0.")
+        return false
+    end
+    if icfFramingFactor < 0.0 or icfFramingFactor >= 1.0
+        runner.registerError("Framing Factor must be greater than or equal to 0 and less than 1.")
+        return false
+    end
 
     # Process the ICF walls
     

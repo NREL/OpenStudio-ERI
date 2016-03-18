@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>45d2c120-d8e6-4ef6-9a5d-941ba758a795</version_id>
+  <version_id>ca329866-9a51-400c-b6ab-37fb11836382</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsICF</class_name>
   <display_name>Set Residential Exterior ICF Wall Construction</display_name>
@@ -10,14 +10,14 @@
   <modeler_description>Calculates and assigns material layer properties of ICF constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
-      <name>userdefinedframingfrac</name>
-      <display_name>Framing Factor</display_name>
-      <description>Total fraction of the wall that is framing for windows or doors.</description>
+      <name>userdefinedicfinsr</name>
+      <display_name>Nominal Insulation R-value</display_name>
+      <description>R-value of each insulating layer of the form.</description>
       <type>Double</type>
-      <units>frac</units>
-      <required>false</required>
+      <units>hr-ft^2-R/Btu</units>
+      <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.076</default_value>
+      <default_value>10</default_value>
     </argument>
     <argument>
       <name>userdefinedicfinsthickness</name>
@@ -30,16 +30,6 @@
       <default_value>2</default_value>
     </argument>
     <argument>
-      <name>userdefinedicfinsr</name>
-      <display_name>Nominal Insulation R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>10</default_value>
-    </argument>
-    <argument>
       <name>userdefinedicfconcth</name>
       <display_name>Concrete Thickness</display_name>
       <description>The thickness of the concrete core of the ICF.</description>
@@ -48,6 +38,16 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>4</default_value>
+    </argument>
+    <argument>
+      <name>userdefinedframingfrac</name>
+      <display_name>Framing Factor</display_name>
+      <description>Total fraction of the wall that is framing for windows or doors.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.076</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -116,13 +116,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E6F9826A</checksum>
+      <checksum>D34C67CC</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>97C0CDF8</checksum>
+      <checksum>3E8402D8</checksum>
     </file>
   </files>
 </measure>

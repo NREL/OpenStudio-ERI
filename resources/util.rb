@@ -505,22 +505,26 @@ class Construction
             runner.registerInfo("Surface '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
             
             # Assign reverse construction to adjacent surface as needed
-            if not surface.is_a? OpenStudio::Model::SubSurface and surface.adjacentSurface.is_initialized
-                rev_constr_name = "Rev#{surface.construction.get.name.to_s}"
-                adjacent_surface = surface.adjacentSurface.get
-                if not rev_construction_map.include? rev_constr_name
-                    # Create adjacent construction
-                    revconstr = surface.construction.get.to_Construction.get.reverseConstruction
+            next if not surface.adjacentSurface.is_initialized or surface.is_a? OpenStudio::Model::SubSurface
+            rev_constr_name = "Rev#{surface.construction.get.name.to_s}"
+            adjacent_surface = surface.adjacentSurface.get
+            if not rev_construction_map.include? rev_constr_name
+                # Create adjacent construction
+                num_prev_constructions = model.getConstructions.size
+                revconstr = surface.construction.get.to_Construction.get.reverseConstruction
+                if model.getConstructions.size != num_prev_constructions
+                    # If the reverse construction already found (or the construction has 
+                    # only a single layer), we won't get a new construction here.
                     revconstr.setName(rev_constr_name)
-                    adjacent_surface.setConstruction(revconstr)
-                    rev_construction_map[rev_constr_name] = adjacent_surface.construction.get
-                    runner.registerInfo("Construction '#{revconstr.name.to_s}' was created.")
-                else
-                    # Re-use recently created adjacent construction
-                    adjacent_surface.setConstruction(rev_construction_map[rev_constr_name])
+                    runner.registerInfo("Construction '#{adjacent_surface.construction.get.name.to_s}' was created.")
                 end
-                runner.registerInfo("Surface '#{adjacent_surface.name.to_s}' has been assigned construction '#{adjacent_surface.construction.get.name.to_s}'.")
+                adjacent_surface.setConstruction(revconstr)
+                rev_construction_map[rev_constr_name] = adjacent_surface.construction.get
+            else
+                # Re-use recently created adjacent construction
+                adjacent_surface.setConstruction(rev_construction_map[rev_constr_name])
             end
+            runner.registerInfo("Surface '#{adjacent_surface.name.to_s}' has been assigned construction '#{adjacent_surface.construction.get.name.to_s}'.")
             
         end
         return true

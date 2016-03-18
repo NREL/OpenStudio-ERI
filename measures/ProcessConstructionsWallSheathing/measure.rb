@@ -38,7 +38,7 @@ class SetResidentialWallSheathing < OpenStudio::Ruleset::ModelUserScript
 	rigid_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("rigid_rvalue",true)
 	rigid_rvalue.setDisplayName("Continuous Insulation Nominal R-value")
     rigid_rvalue.setUnits("h-ft^2-R/Btu")
-    rigid_rvalue.setDescription("Insulation levels are specified by R-value. R-value is a measure of insulation's ability to resist heat traveling through it. The higher the R-value the better the thermal performance of the insulation. Nominal R-value refers to the R-value of the continuous insulation and not the overall R-value of the assembly.")
+    rigid_rvalue.setDescription("The R-value of the continuous insulation.")
 	rigid_rvalue.setDefaultValue(0.0)
 	args << rigid_rvalue
 
@@ -83,11 +83,21 @@ class SetResidentialWallSheathing < OpenStudio::Ruleset::ModelUserScript
         return true
     end
 
-    # assign the user inputs to variables
+    # Get inputs
     has_osb = runner.getBoolArgumentValue("has_osb",user_arguments)
     rigid_rvalue = runner.getDoubleArgumentValue("rigid_rvalue",user_arguments)
     rigid_thick_in = runner.getDoubleArgumentValue("rigid_thick_in",user_arguments)
 
+    # Validate inputs
+    if rigid_rvalue < 0.0
+        runner.registerError("Continuous Insulation Nominal R-value must be greater than or equal to 0.")
+        return false
+    end
+    if rigid_thick_in < 0.0
+        runner.registerError("Continuous Insulation Thickness must be greater than or equal to 0.")
+        return false
+    end
+    
     # Define materials
     if has_osb
         mat_osb = Material.DefaultWallSheathing
@@ -110,8 +120,10 @@ class SetResidentialWallSheathing < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Create and apply construction to surfaces
-    if not wall_sh.create_and_assign_constructions(surfaces, runner, model)
-        return false
+    if not mat_rigid.nil? or not mat_osb.nil?
+        if not wall_sh.create_and_assign_constructions(surfaces, runner, model)
+            return false
+        end
     end
 
     # Remove any materials which aren't used in any constructions
