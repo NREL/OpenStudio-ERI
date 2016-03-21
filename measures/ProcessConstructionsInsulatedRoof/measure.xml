@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_insulated_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>c7bda68c-648b-4d61-baaa-1aa67859468f</version_id>
+  <version_id>985b0c69-e64c-47d6-9381-4b7981000d07</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInsulatedRoof</class_name>
   <display_name>Set Residential Finished Roof Construction</display_name>
@@ -22,7 +22,7 @@
     <argument>
       <name>selectedinsfills</name>
       <display_name>Insulation Fills Cavity</display_name>
-      <description>Specifies whether the cavity insulation completely fills the depth of the wall cavity.</description>
+      <description>When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -135,16 +135,16 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>10602D47</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DC42456C</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>443EF579</checksum>
     </file>
     <file>
       <version>
@@ -155,13 +155,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7C2E3D25</checksum>
+      <checksum>B3CAD37E</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>97C0CDF8</checksum>
+      <checksum>4AA16F97</checksum>
     </file>
   </files>
 </measure>

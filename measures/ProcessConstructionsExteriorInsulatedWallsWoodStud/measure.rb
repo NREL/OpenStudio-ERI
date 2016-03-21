@@ -26,7 +26,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a double argument for nominal R-value of installed cavity insulation
+    #make a double argument for R-value of installed cavity insulation
     userdefined_instcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinstcavr", true)
     userdefined_instcavr.setDisplayName("Cavity Insulation Installed R-value")
     userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
@@ -58,7 +58,7 @@ class ProcessConstructionsExteriorInsulatedWallsWoodStud < OpenStudio::Ruleset::
     #make a bool argument for whether the cavity insulation fills the cavity
     selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
     selected_insfills.setDisplayName("Insulation Fills Cavity")
-    selected_insfills.setDescription("Specifies whether the cavity insulation completely fills the depth of the wall cavity.")
+    selected_insfills.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
     selected_insfills.setDefaultValue(true)
     args << selected_insfills
 

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>5c272105-6ca7-4124-8483-dc51b2b590c5</version_id>
+  <version_id>a24e2535-8a33-4402-9138-abacf617fe90</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsWoodStud</class_name>
   <display_name>Set Residential Exterior Wood Stud Wall Construction</display_name>
@@ -55,7 +55,7 @@
     <argument>
       <name>selectedinsfills</name>
       <display_name>Insulation Fills Cavity</display_name>
-      <description>Specifies whether the cavity insulation completely fills the depth of the wall cavity.</description>
+      <description>When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -112,22 +112,16 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>10602D47</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DC42456C</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>97C0CDF8</checksum>
+      <checksum>443EF579</checksum>
     </file>
     <file>
       <version>
@@ -138,7 +132,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9B43C306</checksum>
+      <checksum>4FEF3FC6</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4AA16F97</checksum>
     </file>
   </files>
 </measure>

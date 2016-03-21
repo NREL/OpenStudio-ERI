@@ -516,10 +516,13 @@ class Construction
                     # If the reverse construction already found (or the construction has 
                     # only a single layer), we won't get a new construction here.
                     revconstr.setName(rev_constr_name)
-                    runner.registerInfo("Construction '#{adjacent_surface.construction.get.name.to_s}' was created.")
+                    runner.registerInfo("Construction '#{revconstr.name.to_s}' was created.")
                 end
                 adjacent_surface.setConstruction(revconstr)
                 rev_construction_map[rev_constr_name] = adjacent_surface.construction.get
+                if model.getConstructions.size != num_prev_constructions
+                
+                end
             else
                 # Re-use recently created adjacent construction
                 adjacent_surface.setConstruction(rev_construction_map[rev_constr_name])
@@ -757,10 +760,11 @@ class Construction
             # Note: The only way to determine types of layers (exterior finish, etc.) is by name.
             # Defines the target layer positions for the materials when the construction is complete.
             # Position 0 is outside most layer.
-            target_positions_std = {Constants.MaterialWallExtFinish => 0, 
-                                    Constants.MaterialWallRigidIns => 1, 
+            target_positions_std = {Constants.MaterialWallExtFinish => 0,
+                                    Constants.MaterialWallRigidIns => 1,
                                     Constants.MaterialWallSheathing => 2, 
-                                    Constants.MaterialWallMass => num_layers}
+                                    Constants.MaterialWallMass => num_layers,
+                                    Constants.MaterialWallMass2 => num_layers+1}
             target_position_non_std = target_positions_std[Constants.MaterialWallSheathing] + 1
 
             # Determine current positions of any standard materials
@@ -853,9 +857,15 @@ class Construction
                 mat.setConductivity(OpenStudio::convert(material.k,"Btu/hr*ft*R","W/m*K").get)
                 mat.setDensity(OpenStudio::convert(material.rho,"lb/ft^3","kg/m^3").get)
                 mat.setSpecificHeat(OpenStudio::convert(material.cp,"Btu/lb*R","J/kg*K").get)
-                mat.setThermalAbsorptance(material.tAbs)
-                mat.setSolarAbsorptance(material.sAbs)
-                mat.setVisibleAbsorptance(material.vAbs)
+                if not material.tAbs.nil?
+                    mat.setThermalAbsorptance(material.tAbs)
+                end
+                if not material.sAbs.nil?
+                    mat.setSolarAbsorptance(material.sAbs)
+                end
+                if not material.vAbs.nil?
+                    mat.setVisibleAbsorptance(material.vAbs)
+                end
             end
             runner.registerInfo("Material '#{mat.name.to_s}' was created.")
             return mat

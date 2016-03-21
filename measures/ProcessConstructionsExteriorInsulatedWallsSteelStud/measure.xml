@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>223d335d-2f43-447f-9ca3-73204adb0e93</version_id>
+  <version_id>770a6dfd-fe94-4f39-9e0a-3d3229a8f4d3</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsSteelStud</class_name>
   <display_name>Set Residential Exterior Steel Stud Wall Construction</display_name>
@@ -55,7 +55,7 @@
     <argument>
       <name>selectedinsfills</name>
       <display_name>Insulation Fills Cavity</display_name>
-      <description>Specifies whether the cavity insulation completely fills the depth of the wall cavity.</description>
+      <description>When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -137,22 +137,16 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>10602D47</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DC42456C</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>97C0CDF8</checksum>
+      <checksum>443EF579</checksum>
     </file>
     <file>
       <version>
@@ -163,7 +157,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4AD1E02D</checksum>
+      <checksum>15E71199</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4AA16F97</checksum>
     </file>
   </files>
 </measure>

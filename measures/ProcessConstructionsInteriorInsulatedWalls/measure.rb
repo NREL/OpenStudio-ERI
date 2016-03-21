@@ -1,11 +1,5 @@
 #see the URL below for information on how to write OpenStudio measures
-# http://openstudio.nrel.gov/openstudio-measure-writing-guide
-
-#see the URL below for information on using life cycle cost objects in OpenStudio
-# http://openstudio.nrel.gov/openstudio-life-cycle-examples
-
-#see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
-# http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
+# http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
@@ -17,56 +11,26 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Interzonal Wall Construction"
+    return "Set Residential Interzonal Wood Stud Wall Construction"
   end
   
   def description
-    return "This measure assigns a construction to interzonal walls."
+    return "This measure assigns a wood stud construction to walls between finished space and unfinished space."
   end
   
   def modeler_description
-    return "Calculates and assigns material layer properties of insulated constructions for walls between finished and unfinished spaces."
+    return "Calculates and assigns material layer properties of wood stud constructions for walls between finished and unfinished spaces. If the walls have an existing construction, the layers (other than wall sheathing and partition wall mass) are replaced. This measure is intended to be used in conjunction with Wall Sheathing and Partition Wall Mass measures."
   end  
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    studsize_display_names = OpenStudio::StringVector.new
-    studsize_display_names << "2x4"
-    studsize_display_names << "2x6"
-    studsize_display_names << "2x8"
-    studsize_display_names << "2x10"
-    studsize_display_names << "2x12"
-    studsize_display_names << "2x14"
-
-    #make a string argument for wood stud size of wall cavity
-    selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, true)
-    selected_studsize.setDisplayName("Cavity Depth")
-    selected_studsize.setUnits("in")
-    selected_studsize.setDescription("Depth of the stud cavity.")
-    selected_studsize.setDefaultValue("2x4")
-    args << selected_studsize
-
-    #make a choice argument for model objects
-    spacing_display_names = OpenStudio::StringVector.new
-    spacing_display_names << "16 in o.c."
-    spacing_display_names << "24 in o.c."
-
-    #make a choice argument for wood stud spacing
-    selected_spacing = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedspacing", spacing_display_names, true)
-    selected_spacing.setDisplayName("Stud Spacing")
-    selected_spacing.setUnits("in")
-    selected_spacing.setDescription("The on-center spacing between studs in a wall assembly.")
-    selected_spacing.setDefaultValue("16 in o.c.")
-    args << selected_spacing
-
-    #make a double argument for nominal R-value of installed cavity insulation
+    #make a double argument for R-value of installed cavity insulation
     userdefined_instcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinstcavr", true)
     userdefined_instcavr.setDisplayName("Cavity Insulation Installed R-value")
     userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
-    userdefined_instcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    userdefined_instcavr.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly. If batt insulation must be compressed to fit within the cavity (e.g., R19 in a 5.5\" 2x6 cavity), use an R-value that accounts for this effect (see HUD Mobile Home Construction and Safety Standards 3280.509 for reference).")
     userdefined_instcavr.setDefaultValue(13.0)
     args << userdefined_instcavr
 
@@ -75,20 +39,36 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
     installgrade_display_names << "I"
     installgrade_display_names << "II"
     installgrade_display_names << "III"
-
+    
     #make a choice argument for wall cavity insulation installation grade
     selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
     selected_installgrade.setDisplayName("Cavity Install Grade")
-    selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    selected_installgrade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     selected_installgrade.setDefaultValue("I")
     args << selected_installgrade
 
+    #make a double argument for wall cavity depth
+    selected_cavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedcavitydepth", true)
+    selected_cavdepth.setDisplayName("Cavity Depth")
+    selected_cavdepth.setUnits("in")
+    selected_cavdepth.setDescription("Depth of the stud cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
+    selected_cavdepth.setDefaultValue("3.5")
+    args << selected_cavdepth
+    
     #make a bool argument for whether the cavity insulation fills the cavity
     selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
     selected_insfills.setDisplayName("Insulation Fills Cavity")
-    selected_insfills.setDescription("Specifies whether the cavity insulation completely fills the depth of the wall cavity.")
+    selected_insfills.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
     selected_insfills.setDefaultValue(true)
     args << selected_insfills
+
+    #make a double argument for framing factor
+    selected_ffactor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedffactor", true)
+    selected_ffactor.setDisplayName("Framing Factor")
+    selected_ffactor.setUnits("frac")
+    selected_ffactor.setDescription("The fraction of a wall assembly that is comprised of structural framing.")
+    selected_ffactor.setDefaultValue("0.25")
+    args << selected_ffactor
 
     return args
   end #end the arguments method
@@ -102,6 +82,7 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
       return false
     end
 
+    # Walls between finished space and unfinished space
     surfaces = []
     model.getSpaces.each do |space|
         next if Geometry.space_is_unfinished(space)
@@ -110,7 +91,6 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
             next if not surface.adjacentSurface.is_initialized
             adjacent_space = Geometry.get_space_from_surface(model, surface.adjacentSurface.get.name.to_s, runner)
             next if Geometry.space_is_finished(adjacent_space)
-            # Wall between finished space and unfinished space
             surfaces << surface
         end
     end
@@ -121,53 +101,62 @@ class ProcessConstructionsInteriorInsulatedWalls < OpenStudio::Ruleset::ModelUse
         return true
     end        
     
-    # Cavity
-    intWallCavityDepth = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}[runner.getStringArgumentValue("selectedstudsize",user_arguments)]
-    intWallFramingFactor = {"16 in o.c."=>0.25, "24 in o.c."=>0.22}[runner.getStringArgumentValue("selectedspacing",user_arguments)]
-    intWallCavityInsRvalueInstalled = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
-    intWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)]
-    intWallCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
-    if not ( intWallFramingFactor > 0.0 and intWallFramingFactor < 1.0 )
-        runner.registerError("Invalid framing factor.")
+    # Get inputs
+    wsWallCavityInsRvalueInstalled = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
+    wsWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)]
+    wsWallCavityDepth = runner.getDoubleArgumentValue("selectedcavitydepth",user_arguments)
+    wsWallCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
+    wsWallFramingFactor = runner.getDoubleArgumentValue("selectedffactor",user_arguments)
+    
+    # Validate inputs
+    if wsWallCavityInsRvalueInstalled < 0.0
+        runner.registerError("Cavity Insulation Installed R-value must be greater than or equal to 0.")
+        return false
+    end
+    if wsWallCavityDepth <= 0.0
+        runner.registerError("Cavity Depth must be greater than 0.")
+        return false
+    end
+    if wsWallFramingFactor < 0.0 or wsWallFramingFactor >= 1.0
+        runner.registerError("Framing Factor must be greater than or equal to 0 and less than 1.")
         return false
     end
 
-    # Process the walls
+    # Process the wood stud walls
 
     # Define materials
-    if intWallCavityInsRvalueInstalled > 0
-        if intWallCavityInsFillsCavity
+    if wsWallCavityInsRvalueInstalled > 0
+        if wsWallCavityInsFillsCavity
             # Insulation
-            mat_cavity = Material.new(name=nil, thick_in=intWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(intWallCavityDepth,"in","ft").get / intWallCavityInsRvalueInstalled)
+            mat_cavity = Material.new(name=nil, thick_in=wsWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(wsWallCavityDepth,"in","ft").get / wsWallCavityInsRvalueInstalled)
         else
             # Insulation plus air gap when insulation thickness < cavity depth
-            mat_cavity = Material.new(name=nil, thick_in=intWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(intWallCavityDepth,"in","ft").get / (intWallCavityInsRvalueInstalled + Gas.AirGapRvalue))
+            mat_cavity = Material.new(name=nil, thick_in=wsWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(wsWallCavityDepth,"in","ft").get / (wsWallCavityInsRvalueInstalled + Gas.AirGapRvalue))
         end
     else
         # Empty cavity
-        mat_cavity = Material.AirCavity(intWallCavityDepth)
+        mat_cavity = Material.AirCavity(wsWallCavityDepth)
     end
-    mat_framing = Material.new(name=nil, thick_in=intWallCavityDepth, mat_base=BaseMaterial.Wood)
-    mat_gap = Material.AirCavity(intWallCavityDepth)
-    
+    mat_framing = Material.new(name=nil, thick_in=wsWallCavityDepth, mat_base=BaseMaterial.Wood)
+    mat_gap = Material.AirCavity(wsWallCavityDepth)
+
     # Set paths
-    gapFactor = Construction.GetWallGapFactor(intWallInstallGrade, intWallFramingFactor, intWallCavityInsRvalueInstalled)
-    path_fracs = [intWallFramingFactor, 1 - intWallFramingFactor - gapFactor, gapFactor]
+    gapFactor = Construction.GetWallGapFactor(wsWallInstallGrade, wsWallFramingFactor, wsWallCavityInsRvalueInstalled)
+    path_fracs = [wsWallFramingFactor, 1 - wsWallFramingFactor - gapFactor, gapFactor]
     
     # Define construction
     interzonal_wall = Construction.new(path_fracs)
     interzonal_wall.addlayer(Material.AirFilmVertical, false)
     interzonal_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    interzonal_wall.addlayer([mat_framing, mat_cavity, mat_gap], true, "IntWallIns")
+    interzonal_wall.addlayer([mat_framing, mat_cavity, mat_gap], true, "IntWallIns")       
     interzonal_wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    interzonal_wall.addlayer(Material.AirFilmVertical, false)
+    interzonal_wall.addlayer(Material.AirFilmOutside, false)
 
     # Create and apply construction to surfaces
     if not interzonal_wall.create_and_assign_constructions(surfaces, runner, model, "UnfinInsFinWall")
         return false
     end
 
-    
     # Remove any materials which aren't used in any constructions
     HelperMethods.remove_unused_materials_and_constructions(model, runner)
 
