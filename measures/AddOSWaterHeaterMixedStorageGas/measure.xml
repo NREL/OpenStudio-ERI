@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>4e86da00-0b0c-46f6-866a-402aff8c00e6</version_id>
+  <version_id>0aa4f06d-6c8e-4508-99a7-2ab020b14bad</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageGas</class_name>
   <display_name>AddOSWaterHeaterMixedStorageGas</display_name>
@@ -75,8 +75,8 @@
     </argument>
     <argument>
       <name>offcyc_power</name>
-      <display_name>Forced Draft Fan Power</display_name>
-      <description>On cycle electric power draw from the forced draft fan motor.</description>
+      <display_name>Parasitic Electric Power</display_name>
+      <description>Off cycle electric power draw for controls, etc.</description>
       <type>Double</type>
       <units>W</units>
       <required>true</required>
@@ -85,8 +85,8 @@
     </argument>
     <argument>
       <name>oncyc_power</name>
-      <display_name>Parasitic Electric Power</display_name>
-      <description>Off cycle electric power draw for controls, etc.</description>
+      <display_name>Forced Draft Fan Power</display_name>
+      <description>On cycle electric power draw from the forced draft fan motor.</description>
       <type>Double</type>
       <units>W</units>
       <required>true</required>
@@ -118,10 +118,22 @@
       <checksum>896E9F53</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CAB5233C</checksum>
+      <checksum>058A19F9</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>72AE833A</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>186696B1</checksum>
     </file>
     <file>
       <version>
@@ -132,25 +144,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1EE3DDE7</checksum>
+      <checksum>7628F10F</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FA86825B</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AAD6884C</checksum>
+      <checksum>B516C87F</checksum>
     </file>
   </files>
 </measure>

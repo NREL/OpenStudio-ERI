@@ -15,20 +15,20 @@ require"#{File.dirname(__FILE__)}/resources/constants"
 require"#{File.dirname(__FILE__)}/resources/unit_conversions"
 
 #start the measure
-class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScript
+class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
 
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
     def name
-        return "AddOSWaterHeaterTanklessElectric"
+        return "AddOSWaterHeaterMixedStorageGas"
     end
   
     def description
-        return "This measure adds a new residential electric tankless water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced."
+        return "This measure adds a new residential gas storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced."
     end
   
     def modeler_description
-        return "The measure will create a new instance of the OS:WaterHeater:Mixed object representing a electric tankless water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created."
+        return "The measure will create a new instance of the OS:WaterHeater:Mixed object representing a gas storage water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created."
     end
 
     OS = OpenStudio
@@ -41,6 +41,14 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
         osargument = ruleset::OSArgument
     
         args = ruleset::OSArgumentVector.new
+
+        # make an argument for the storage tank volume
+        storage_tank_volume = osargument::makeStringArgument("storage_tank_volume", true)
+        storage_tank_volume.setDisplayName("Tank Volume")
+        storage_tank_volume.setDescription("Nominal volume of the of the water heater tank. Set to #{Constants.Auto} to have volume autosized.")
+        storage_tank_volume.setUnits("gal")
+        storage_tank_volume.setDefaultValue(Constants.Auto)
+        args << storage_tank_volume
 
         # make an argument for hot water setpoint temperature
         dhw_setpoint = osargument::makeDoubleArgument("dhw_setpoint_temperature", true)
@@ -66,25 +74,41 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
         # make an argument for water_heater_capacity
         water_heater_capacity = osargument::makeStringArgument("water_heater_capacity", true)
         water_heater_capacity.setDisplayName("Input Capacity")
-        water_heater_capacity.setDescription("The maximum energy input rating of the water heater.")
-        water_heater_capacity.setUnits("kW")
-        water_heater_capacity.setDefaultValue("1000000.0")
+        water_heater_capacity.setDescription("The maximum energy input rating of the water heater. Set to #{Constants.Auto} to have this field autosized.")
+        water_heater_capacity.setUnits("kBtu/hr")
+        water_heater_capacity.setDefaultValue("40.0")
         args << water_heater_capacity
 
         # make an argument for the rated energy factor
         rated_energy_factor = osargument::makeStringArgument("rated_energy_factor", true)
         rated_energy_factor.setDisplayName("Rated Energy Factor")
-        rated_energy_factor.setDescription("For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procesdures to thes the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B.")
-        rated_energy_factor.setDefaultValue("0.99")
+        rated_energy_factor.setDescription("For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procesdures to thes the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B. Enter #{Constants.Auto} for a water heater that meets the minimum federal efficiency requirements.")
+        rated_energy_factor.setDefaultValue("0.59")
         args << rated_energy_factor
 
-        # make an argument for cycling_derate
-        water_heater_cycling_derate = osargument::makeDoubleArgument("water_heater_cycling_derate", true)
-        water_heater_cycling_derate.setDisplayName("Cycling Derate")
-        water_heater_cycling_derate.setDescription("Annual energy derate for cycling inefficiencies -- accounts for the impact of thermal cycling and small hot water draws on the heat exchanger. CEC's 2008 Title24 implemented an 8% derate for tankless water heaters. ")
-        water_heater_cycling_derate.setUnits("Frac")
-        water_heater_cycling_derate.setDefaultValue(0.08)
-        args << water_heater_cycling_derate
+        # make an argument for water_heater_recovery_efficiency
+        water_heater_recovery_efficiency = osargument::makeDoubleArgument("water_heater_recovery_efficiency", true)
+        water_heater_recovery_efficiency.setDisplayName("Recovery Efficiency")
+        water_heater_recovery_efficiency.setDescription("For water heaters, the recovery efficiency is the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the Department of Energy in 10 Code of Federal Regulations Part 430, Appendix E to Subpart B. This information can often be found in the AHRI Certification Directory or on the EnergyStar website.")
+        water_heater_recovery_efficiency.setUnits("Frac")
+        water_heater_recovery_efficiency.setDefaultValue(0.76)
+        args << water_heater_recovery_efficiency
+	
+        # make an argument on cycle electricity consumption
+        offcyc_power = osargument::makeDoubleArgument("offcyc_power", true)
+        offcyc_power.setDisplayName("Forced Draft Fan Power")
+        offcyc_power.setDescription("On cycle electric power draw from the forced draft fan motor.")
+        offcyc_power.setUnits("W")
+        offcyc_power.setDefaultValue(0)
+        args << offcyc_power
+	
+        # make an argument on cycle electricity consumption
+        oncyc_power = osargument::makeDoubleArgument("oncyc_power", true)
+        oncyc_power.setDisplayName("Parasitic Electric Power")
+        oncyc_power.setDescription("Off cycle electric power draw for controls, etc.")
+        oncyc_power.setUnits("W")
+        oncyc_power.setDefaultValue(0)
+        args << oncyc_power
     
         return args
     end #end the arguments method
@@ -96,12 +120,13 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
 	
         #Assign user inputs to variables
         cap = runner.getStringArgumentValue("water_heater_capacity",user_arguments)
+        vol = runner.getStringArgumentValue("storage_tank_volume",user_arguments)
         ef = runner.getStringArgumentValue("rated_energy_factor",user_arguments)
-        cd = runner.getDoubleArgumentValue("water_heater_cycling_derate",user_arguments)
+        re = runner.getDoubleArgumentValue("water_heater_recovery_efficiency",user_arguments)
         water_heater_tz = runner.getStringArgumentValue("water_heater_location",user_arguments)
         t_set = runner.getDoubleArgumentValue("dhw_setpoint_temperature",user_arguments).to_f
-        
-        tanktype = Constants.WaterHeaterTypeTankless
+        oncycle_p = runner.getDoubleArgumentValue("oncyc_power",user_arguments)
+        offcycle_p = runner.getDoubleArgumentValue("offcyc_power",user_arguments)
 	
         #Validate inputs
         if not runner.validateUserArguments(arguments(model), user_arguments)
@@ -109,6 +134,10 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
         end
 	
         # Validate inputs further
+        valid_vol = validate_storage_tank_volume(vol, runner)
+        if valid_vol.nil?
+            return false
+        end
         valid_ef = validate_rated_energy_factor(ef, runner)
         if valid_ef.nil?
             return false
@@ -121,8 +150,12 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
         if valid_cap.nil?
             return false
         end
-        valid_cd = validate_water_heater_cycling_derate(cd, runner)
-        if valid_cd.nil?
+        valid_re = validate_water_heater_recovery_efficiency(re, runner)
+        if valid_re.nil?
+            return false
+        end
+        valid_epar = validate_parasitic_elec(oncycle_p, offcycle_p, runner)
+	    if valid_epar.nil?
             return false
         end
     
@@ -138,7 +171,7 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
 	
         model.getPlantLoops.each do |pl|
             if pl.name.to_s == Constants.PlantLoopDomesticWater
-                runner.registerInfo("A electric tankless water heater will be added to the existing DHW plant loop")
+                runner.registerInfo("A gas water heater will be added to the existing DHW plant loop")
                 loop = HelperMethods.get_plant_loop_from_string(model, Constants.PlantLoopDomesticWater, runner)
                 if loop.nil?
                     return false
@@ -176,7 +209,7 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
         end
 	
 			
-        new_heater = Waterheater.create_new_heater(cap, Constants.FuelTypeElectric, 1, nbeds, nbaths, ef, 0, t_set, water_heater_tz, 0, 0, tanktype, cd, model, runner)
+        new_heater = Waterheater.create_new_heater(cap, Constants.FuelTypeGas, vol, nbeds, nbaths, ef, re, t_set, water_heater_tz, oncycle_p, offcycle_p, model, runner)
 	
         loop.addSupplyBranchForComponent(new_heater)
         
@@ -216,15 +249,33 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
             loopname = heater.plantLoop.get.name.get
 
             capacity_si = heater.getHeaterMaximumCapacity.get
-            capacity = OpenStudio.convert(capacity_si.value, capacity_si.units.standardString, "kW").get
+            capacity = OpenStudio.convert(capacity_si.value, capacity_si.units.standardString, "kBtu/hr").get
             volume_si = heater.getTankVolume.get
             volume = OpenStudio.convert(volume_si.value, volume_si.units.standardString, "gal").get
-            te = heater.getHeaterThermalEfficiency.get.value
+            te = heater.getHeaterThermalEfficiency
           
-            water_heaters << "Water heater '#{heatername}' added to plant loop '#{loopname}', with a capacity of #{capacity.round(1)} kW." +
-            " and a burner efficiency of  #{te.round(2)}."
+            water_heaters << "Water heater '#{heatername}' added to plant loop '#{loopname}', with a capacity of #{capacity.round(1)} kBtu/hr" +
+            " and an actual tank volume of #{volume.round(1)} gal."
         end
         water_heaters
+    end
+
+    
+    def validate_storage_tank_volume(vol, runner)
+        return true if (vol == Constants.Auto)  # flag for autosizing
+        vol = vol.to_f
+
+        if vol <= 0
+            runner.registerError("Storage tank volume must be greater than 0 gallons. Make sure that the volume entered is a number > 0 or #{Constants.Auto}.")   
+            return nil
+        end
+        if vol < 25
+            runner.registerWarning("A storage tank volume of less than 25 gallons and a certified rating is not commercially available. Please review the input.")
+        end     
+        if vol > 120
+            runner.registerWarning("A water heater with a storage tank volume of greater than 120 gallons and a certified rating is not commercially available. Please review the input.")
+        end    
+        return true
     end
 
     def validate_rated_energy_factor(ef, runner)
@@ -232,15 +283,18 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
         ef = ef.to_f
 
         if (ef >= 1)
-            runner.registerError("Rated energy factor has a maximum value of 1.0 for electric water heaters.")
+            runner.registerError("Rated energy factor has a maximum value of 1.0 for gas water heaters.")
             return nil
         end
         if (ef <= 0)
-            runner.registerError("Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0.0")
+            runner.registerError("Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0 or #{Constants.Auto}.")
             return nil
         end
-        if (ef <0.82)
-            runner.registerWarning("Rated energy factor for commercially available electric tankless water heaters should be greater than 0.82")
+        if (ef >0.82)
+            runner.registerWarning("Rated energy factor for commercially available gas storage water heaters should be less than 0.82")
+        end    
+        if (ef <0.48)
+            runner.registerWarning("Rated energy factor for commercially available gas storage water heaters should be greater than 0.48")
         end    
         return true
     end
@@ -268,26 +322,50 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
         cap = cap.to_f
 
         if cap <= 0
-            runner.registerError("Electric tankless water heater nominal capacity must be greater than 0 kBtu/hr. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
+            runner.registerError("Gas storage water heater nominal capacity must be greater than 0 kBtu/hr. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
             return nil
         end
-        if cap < 120
-            runner.registerWarning("Commercially available residential electric tankless water heaters should have a nominal capacity greater than 120 kBtu/h.")
+        if cap < 25
+            runner.registerWarning("Commercially available residential gas storage water heaters should have a minimum nominal capacity of 25 kBtu/h.")
+        end
+        if cap > 75
+            runner.registerWarning("Commercially available residential gas storage water heaters should have a maximum nominal capacity of 75 kBtu/h.")
         end
         return true
     end
     
-    def validate_water_heater_cycling_derate(cd, runner)
-        if (cd < 0)
-            runner.registerError("Gas tankless water heater cycling derate must be at least 0 and at most 1.")
+    def validate_water_heater_recovery_efficiency(re, runner)
+        if (re < 0)
+            runner.registerError("Gas storage water heater recovery efficiency must be at least 0 and at most 1.")
             return nil
         end
-        if (cd > 1)
-            runner.registerError("Gas tankless water heater cycling derate must be at least 0 and at most 1.")
+        if (re > 1)
+            runner.registerError("Gas storage water heater recovery efficiency must be at least 0 and at most 1.")
             return nil
         end
-        if (cd > 0.20)
-            runner.registerWarning("Most tankless water heaters have a cycling derate of about 0.08, double check inputs.")
+        if (re < 0.70)
+            runner.registerWarning("Commercially available gas storage water heaters should have a minimum rated recovery efficiency of 0.70.")
+        end
+        if (re > 0.90)
+            runner.registerWarning("Commercially available gas storage water heaters should have a maximum rated recovery efficiency of 0.90.")
+        end
+        return true
+    end
+  
+    def validate_parasitic_elec(oncycle_p, offcycle_p, runner)
+        if oncycle_p < 0
+            runner.registerError("Forced draft fan power must be greater than 0")
+            return nil
+        end
+        if offcycle_p < 0
+            runner.registerError("Parasitic electricity power must be greater than 0")
+            return nil
+        end
+        if oncycle_p > 100
+            runner.registerWarning("Forced draft power consumption is larger than typically seen for residential water heaters, double check inputs")
+        end
+        if offcycle_p > 30
+            runner.registerWarning("Parasitic power consumption is larger than typically seen for residential water heaters, double check inputs")
         end
         return true
     end
@@ -296,4 +374,4 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
 end #end the measure
 
 #this allows the measure to be use by the application
-AddOSWaterHeaterMixedTanklessElectric.new.registerWithApplication
+AddOSWaterHeaterMixedStorageGas.new.registerWithApplication

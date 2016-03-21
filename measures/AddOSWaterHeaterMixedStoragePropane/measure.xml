@@ -1,13 +1,13 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>add_os_water_heater_mixed_storage_oil</name>
-  <uid>8b8e557b-1e49-49f4-aad2-a5db6e84995d</uid>
-  <version_id>e9cc058f-b967-4bb4-842c-890df54ca8d3</version_id>
+  <name>add_os_water_heater_mixed_storage_gas</name>
+  <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
+  <version_id>6666e6c2-86cd-41b2-a3a1-a0516b1ca61e</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
-  <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
-  <display_name>AddOSWaterHeaterMixedStorageOil</display_name>
-  <description>This measure adds a new residential oil storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced.</description>
-  <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a oil storage water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created.</modeler_description>
+  <class_name>AddOSWaterHeaterMixedStorageGas</class_name>
+  <display_name>AddOSWaterHeaterMixedStorageGas</display_name>
+  <description>This measure adds a new residential gas storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced.</description>
+  <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a gas storage water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created.</modeler_description>
   <arguments>
     <argument>
       <name>storage_tank_volume</name>
@@ -47,21 +47,21 @@
     <argument>
       <name>water_heater_capacity</name>
       <display_name>Input Capacity</display_name>
-      <description>The maximum energy input rating of the water heater.</description>
-      <type>Double</type>
+      <description>The maximum energy input rating of the water heater. Set to auto to have this field autosized.</description>
+      <type>String</type>
       <units>kBtu/hr</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>90</default_value>
+      <default_value>40.0</default_value>
     </argument>
     <argument>
       <name>rated_energy_factor</name>
       <display_name>Rated Energy Factor</display_name>
       <description>For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procesdures to thes the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B. Enter auto for a water heater that meets the minimum federal efficiency requirements.</description>
-      <type>Double</type>
+      <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.62</default_value>
+      <default_value>0.59</default_value>
     </argument>
     <argument>
       <name>water_heater_recovery_efficiency</name>
@@ -71,12 +71,12 @@
       <units>Frac</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.78</default_value>
+      <default_value>0.76</default_value>
     </argument>
     <argument>
       <name>offcyc_power</name>
-      <display_name>Parasitic Electric Power</display_name>
-      <description>Off cycle electric power draw for controls, etc.</description>
+      <display_name>Forced Draft Fan Power</display_name>
+      <description>On cycle electric power draw from the forced draft fan motor.</description>
       <type>Double</type>
       <units>W</units>
       <required>true</required>
@@ -85,8 +85,8 @@
     </argument>
     <argument>
       <name>oncyc_power</name>
-      <display_name>Forced Draft Fan Power</display_name>
-      <description>On cycle electric power draw from the forced draft fan motor.</description>
+      <display_name>Parasitic Electric Power</display_name>
+      <description>Off cycle electric power draw for controls, etc.</description>
       <type>Double</type>
       <units>W</units>
       <required>true</required>
@@ -112,6 +112,12 @@
   </attributes>
   <files>
     <file>
+      <filename>AddOSWaterHeaterMixedStorageGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>896E9F53</checksum>
+    </file>
+    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -130,18 +136,6 @@
       <checksum>186696B1</checksum>
     </file>
     <file>
-      <filename>AddOSWaterHeaterMixedStorageOil_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1304F290</checksum>
-    </file>
-    <file>
-      <filename>ba_protocol_table_8_page_13.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>61747C72</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -150,13 +144,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>297E9A8F</checksum>
+      <checksum>1EE3DDE7</checksum>
     </file>
     <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B516C87F</checksum>
+      <checksum>E61D41D4</checksum>
     </file>
   </files>
 </measure>

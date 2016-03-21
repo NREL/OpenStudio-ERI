@@ -96,16 +96,16 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
 	
         # make an argument on cycle electricity consumption
         offcyc_power = osargument::makeDoubleArgument("offcyc_power", true)
-        offcyc_power.setDisplayName("Forced Draft Fan Power")
-        offcyc_power.setDescription("On cycle electric power draw from the forced draft fan motor.")
+        offcyc_power.setDisplayName("Parasitic Electric Power")
+        offcyc_power.setDescription("Off cycle electric power draw for controls, etc.")
         offcyc_power.setUnits("W")
         offcyc_power.setDefaultValue(0)
         args << offcyc_power
 	
         # make an argument on cycle electricity consumption
         oncyc_power = osargument::makeDoubleArgument("oncyc_power", true)
-        oncyc_power.setDisplayName("Parasitic Electric Power")
-        oncyc_power.setDescription("Off cycle electric power draw for controls, etc.")
+        oncyc_power.setDisplayName("Forced Draft Fan Power")
+        oncyc_power.setDescription("On cycle electric power draw from the forced draft fan motor.")
         oncyc_power.setUnits("W")
         oncyc_power.setDefaultValue(0)
         args << oncyc_power
@@ -209,7 +209,7 @@ class AddOSWaterHeaterMixedStorageGas < OpenStudio::Ruleset::ModelUserScript
         end
 	
 			
-        new_heater = Waterheater.create_new_heater(cap, Constants.FuelTypeGas, vol, nbeds, nbaths, ef, re, t_set, water_heater_tz, oncycle_p, offcycle_p, model, runner)
+        new_heater = Waterheater.create_new_heater(cap, Constants.FuelTypeGas, vol, nbeds, nbaths, ef, re, t_set, water_heater_tz, oncycle_p, offcycle_p, Constants.WaterHeaterTypeTank, 0, model, runner)
 	
         loop.addSupplyBranchForComponent(new_heater)
         
