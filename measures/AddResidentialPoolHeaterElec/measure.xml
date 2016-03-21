@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater</name>
   <uid>29865d0a-e979-4f09-87b9-7fa7154b9833</uid>
-  <version_id>e5274a11-ef91-47be-b44c-9e9f6c6e1163</version_id>
+  <version_id>dc96d975-6a13-4aa6-a6af-e93edd78eb59</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolHeater</class_name>
   <display_name>Set Residential Pool Electric Heater</display_name>
@@ -122,22 +122,22 @@
       <checksum>FDE8F768</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>10602D47</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DC42456C</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4ECCF987</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>97C0CDF8</checksum>
+      <checksum>587FC02E</checksum>
     </file>
   </files>
 </measure>

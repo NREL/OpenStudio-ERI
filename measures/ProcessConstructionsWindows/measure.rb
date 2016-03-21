@@ -254,7 +254,7 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     window = Construction.new(path_fracs)
     window.addlayer(glaz_mat, true)
     
-    # Create and apply construction to surfaces
+    # Create and assign construction to surfaces
     if not window.create_and_assign_constructions(sub_surfaces, runner, model, "WindowConstruction")
         return false
     end

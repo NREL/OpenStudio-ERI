@@ -194,7 +194,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         cs_wall.addlayer(mat_ins, true)
         cs_wall.addlayer(Material.AirFilmVertical, false)
         
-        # Create and apply construction to surfaces
+        # Create and assign construction to surfaces
         if not cs_wall.create_and_assign_constructions(wall_surfaces, runner, model, "GrndInsUnfinCSWall")
             return false
         end
@@ -224,7 +224,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         cs_floor.addlayer(mat_fic_floor, true)
         cs_floor.addlayer(Material.Soil12in, true)
         
-        # Create and apply construction to surfaces
+        # Create and assign construction to surfaces
         if not cs_floor.create_and_assign_constructions(floor_surfaces, runner, model, "GrndUninsUnfinCSFloor")
             return false
         end
@@ -258,7 +258,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         cs_ceiling.addlayer(Material.DefaultCarpet, false) # carpet added in separate measure
         cs_ceiling.addlayer(Material.AirFilmFloorReduced, false)
 
-        # Create and apply construction to surfaces
+        # Create and assign construction to surfaces
         if not cs_ceiling.create_and_assign_constructions(ceiling_surfaces, runner, model, "UnfinCSInsFinFloor")
             return false
         end

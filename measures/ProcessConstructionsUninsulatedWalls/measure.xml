@@ -1,0 +1,71 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>process_constructions_exterior_uninsulated_walls</name>
+  <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
+  <version_id>1cc9705c-3936-4568-888d-241e654b769d</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
+  <class_name>ProcessConstructionsExteriorUninsulatedWalls</class_name>
+  <display_name>Set Residential Exterior Unfinished Wood Stud Constructions</display_name>
+  <description>This measure assigns an uninsulated wood stud construction to above-grade exterior walls adjacent to unfinished space.</description>
+  <modeler_description>Calculates and assigns material layer properties of uninsulated wood stud constructions for above-grade walls between unfinished space and outside.</modeler_description>
+  <arguments/>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Opaque</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>ProcessConstructionsExteriorUninsulatedWalls_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2DF2E77C</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>058A19F9</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC42456C</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4ECCF987</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>587FC02E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>1.3.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8113D0CB</checksum>
+    </file>
+  </files>
+</measure>

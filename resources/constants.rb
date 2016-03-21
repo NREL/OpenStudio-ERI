@@ -320,6 +320,18 @@ class Constants
 	def self.MaterialOSB
 		return 'osb'
 	end
+    def self.MaterialCeilingMass
+        return 'ResCeilingMass'
+    end
+    def self.MaterialCeilingMass2
+        return 'ResCeilingMass2'
+    end
+    def self.MaterialFloorMass
+        return 'ResFloorMass'
+    end
+    def self.MaterialFloorCarpet
+        return 'ResFloorCarpet'
+    end
     def self.MaterialWallExtFinish
         return 'ResExtFinish'
     end

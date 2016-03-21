@@ -274,7 +274,7 @@ class Material
 
     def self.CarpetBare(carpetFloorFraction=0.8, carpetPadRValue=2.08)
         thickness = 0.5 # in
-        return Material.new(name='CarpetBareLayer', thick_in=thickness, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (carpetPadRValue * carpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
+        return Material.new(name=Constants.MaterialFloorCarpet, thick_in=thickness, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (carpetPadRValue * carpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
     end
 
     def self.Concrete8in
@@ -289,13 +289,21 @@ class Material
         return Material.CarpetBare
     end
     
+    def self.DefaultCeilingMass
+        mat = Material.GypsumWall1_2in
+        mat.name = Constants.MaterialCeilingMass
+        return mat
+    end
+    
     def self.DefaultExteriorFinish
         thick_in = 0.375
         return Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(thick_in,"in","ft").get/0.6, dens=11.1, sh=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
     end
     
     def self.DefaultFloorMass
-        return Material.MassFloor(0.625, 0.8004, 34.0, 0.29) # Wood Surface
+        mat = Material.MassFloor(0.625, 0.8004, 34.0, 0.29) # Wood Surface
+        mat.name = Constants.MaterialFloorMass
+        return mat
     end
     
     def self.DefaultWallMass
@@ -760,12 +768,22 @@ class Construction
             # Note: The only way to determine types of layers (exterior finish, etc.) is by name.
             # Defines the target layer positions for the materials when the construction is complete.
             # Position 0 is outside most layer.
-            target_positions_std = {Constants.MaterialWallExtFinish => 0,
-                                    Constants.MaterialWallRigidIns => 1,
-                                    Constants.MaterialWallSheathing => 2, 
-                                    Constants.MaterialWallMass => num_layers,
-                                    Constants.MaterialWallMass2 => num_layers+1}
-            target_position_non_std = target_positions_std[Constants.MaterialWallSheathing] + 1
+            if surface.surfaceType.downcase == "wall"
+                target_positions_std = {Constants.MaterialWallExtFinish => 0,
+                                        Constants.MaterialWallRigidIns => 1,
+                                        Constants.MaterialWallSheathing => 2, 
+                                        Constants.MaterialWallMass => num_layers,
+                                        Constants.MaterialWallMass2 => num_layers+1}
+                target_position_non_std = target_positions_std[Constants.MaterialWallSheathing] + 1
+            elsif surface.surfaceType.downcase == "floor"
+                target_positions_std = {Constants.MaterialCeilingMass => 0,
+                                        Constants.MaterialCeilingMass2 => 1,
+                                        Constants.MaterialFloorMass => num_layers,
+                                        Constants.MaterialFloorCarpet => num_layers+1}
+                target_position_non_std = target_positions_std[Constants.MaterialCeilingMass2] + 1
+            elsif surface.surfaceType.downcase == "roofceiling"
+                
+            end
 
             # Determine current positions of any standard materials
             std_mat_positions = target_positions_std.clone

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>e68b9dc1-dd31-4c1a-a0f4-e934632a6753</version_id>
-  <xml_checksum>45097B60</xml_checksum>
+  <version_id>4a5bea6c-1a58-4863-acf8-ae79e6ff24fe</version_id>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>
   <description>This measure assigns furniture mass to the living space, finished basement, unfinished basement, and garage.</description>
@@ -72,7 +72,7 @@
   </arguments>
   <provenances/>
   <tags>
-    <tag>Envelope.Form</tag>
+    <tag>Envelope.Opaque</tag>
   </tags>
   <attributes>
     <attribute>
@@ -111,22 +111,22 @@
       <checksum>D6DA451D</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>10602D47</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DC42456C</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4ECCF987</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>97C0CDF8</checksum>
+      <checksum>587FC02E</checksum>
     </file>
   </files>
 </measure>
