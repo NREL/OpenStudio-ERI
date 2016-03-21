@@ -853,11 +853,9 @@ class Construction
                 mat.setConductivity(OpenStudio::convert(material.k,"Btu/hr*ft*R","W/m*K").get)
                 mat.setDensity(OpenStudio::convert(material.rho,"lb/ft^3","kg/m^3").get)
                 mat.setSpecificHeat(OpenStudio::convert(material.cp,"Btu/lb*R","J/kg*K").get)
-                if name == Constants.MaterialWallExtFinish
-                    mat.setThermalAbsorptance(material.tAbs)
-                    mat.setSolarAbsorptance(material.sAbs)
-                    mat.setVisibleAbsorptance(material.vAbs)
-                end
+                mat.setThermalAbsorptance(material.tAbs)
+                mat.setSolarAbsorptance(material.sAbs)
+                mat.setVisibleAbsorptance(material.vAbs)
             end
             runner.registerInfo("Material '#{mat.name.to_s}' was created.")
             return mat

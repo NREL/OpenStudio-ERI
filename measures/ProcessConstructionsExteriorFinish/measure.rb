@@ -96,16 +96,43 @@ class SetResidentialExteriorFinish < OpenStudio::Ruleset::ModelUserScript
         end
     end
     if surfaces.empty?
+        runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
         return true
     end
     
-    # assign the user inputs to variables
+    # Get inputs
     solar_abs = runner.getDoubleArgumentValue("solar_abs",user_arguments)
     cond = runner.getDoubleArgumentValue("cond",user_arguments)
     dens = runner.getDoubleArgumentValue("dens",user_arguments)
     specheat = runner.getDoubleArgumentValue("specheat",user_arguments)
     thick_in = runner.getDoubleArgumentValue("thick_in",user_arguments)
     emiss = runner.getDoubleArgumentValue("emiss",user_arguments)
+    
+    # Validate inputs
+    if solar_abs < 0.0 or solar_abs > 1.0
+        runner.registerError("Solar Absorptivity must be greater than or equal to 0 and less than or equal to 1.")
+        return false
+    end
+    if cond <= 0.0
+        runner.registerError("Conductivity must be greater than 0.")
+        return false
+    end
+    if dens <= 0.0
+        runner.registerError("Density must be greater than 0.")
+        return false
+    end
+    if specheat <= 0.0
+        runner.registerError("Specific Heat must be greater than 0.")
+        return false
+    end
+    if thick_in <= 0.0
+        runner.registerError("Thickness must be greater than 0.")
+        return false
+    end
+    if emiss < 0.0 or emiss > 1.0
+        runner.registerError("Emissivity must be greater than 0.")
+        return false
+    end
 
     # Define materials
     mat = Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(cond,"in","ft").get, dens=dens, sh=specheat, tAbs=emiss, sAbs=solar_abs, vAbs=solar_abs)

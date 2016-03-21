@@ -80,6 +80,7 @@ class SetResidentialWallSheathing < OpenStudio::Ruleset::ModelUserScript
         end
     end
     if surfaces.empty?
+        runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
         return true
     end
 

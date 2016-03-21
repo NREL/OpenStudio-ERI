@@ -70,3 +70,4 @@ AddResidentialFreezer,constants.rb,schedules.rb,util.rb,unit_conversions.rb,geom
 SetResidentialSizingPeriod,,,,,,,,,,,,,
 ProcessConstructionsExteriorFinish,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
 ProcessConstructionsWallSheathing,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
+ProcessConstructionsExteriorInsulatedWallsGeneric,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
