@@ -109,7 +109,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
   
     # Continue if no applicable surfaces
     if surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end     
   
@@ -200,7 +200,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
     slab.addlayer(Material.AirFilmFlatReduced, false)
     
     # Create and assign construction to surfaces
-    if not slab.create_and_assign_constructions(surfaces, runner, model, "Slab")
+    if not slab.create_and_assign_constructions(surfaces, runner, model, name="Slab")
         return false
     end
     

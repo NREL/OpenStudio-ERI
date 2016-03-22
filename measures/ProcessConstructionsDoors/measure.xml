@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>261de48d-57b1-4e98-a1f2-8b46584d2f75</version_id>
+  <version_id>c4d935b2-4a7c-4c8d-bce9-1fb2dabc4633</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>Set Residential Door Construction</display_name>
@@ -66,19 +66,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -89,7 +77,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>468D960D</checksum>
+      <checksum>CB8B45B5</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>26F142FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

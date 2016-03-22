@@ -156,7 +156,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
     
     # Continue if no applicable surfaces
     if wall_surfaces.empty? and floor_surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end           
     
@@ -301,7 +301,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
         fic_fbsmt_wall.addlayer(Material.AirFilmVertical, false)
 
         # Create and assign construction to surfaces
-        if not fic_fbsmt_wall.create_and_assign_constructions(wall_surfaces, runner, model, "GrndInsFinWall")
+        if not fic_fbsmt_wall.create_and_assign_constructions(wall_surfaces, runner, model, name="GrndInsFinWall")
             return false
         end
     end
@@ -332,7 +332,7 @@ class ProcessConstructionsFinishedBasement < OpenStudio::Ruleset::ModelUserScrip
         fb_floor.addlayer(Material.Concrete4in, true)
         
         # Create and assign construction to surfaces
-        if not fb_floor.create_and_assign_constructions(floor_surfaces, runner, model, "GrndUninsFinBFloor")
+        if not fb_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsFinBFloor")
             return false
         end
     end

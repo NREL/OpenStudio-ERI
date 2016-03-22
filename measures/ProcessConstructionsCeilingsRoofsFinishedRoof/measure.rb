@@ -1,11 +1,5 @@
 #see the URL below for information on how to write OpenStudio measures
-# http://openstudio.nrel.gov/openstudio-measure-writing-guide
-
-#see the URL below for information on using life cycle cost objects in OpenStudio
-# http://openstudio.nrel.gov/openstudio-life-cycle-examples
-
-#see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
-# http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
+# http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/constants"
@@ -33,37 +27,41 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make a double argument for finished roof insulation R-value
-    userdefined_frroofr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfrroofr", false)
-    userdefined_frroofr.setDisplayName("Cavity Insulation Installed R-value")
-	userdefined_frroofr.setUnits("hr-ft^2-R/Btu")
-	userdefined_frroofr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-    userdefined_frroofr.setDefaultValue(30.0)
-    args << userdefined_frroofr
+    cavity_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_r", true)
+    cavity_r.setDisplayName("Cavity Insulation Installed R-value")
+	cavity_r.setUnits("hr-ft^2-R/Btu")
+	cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly. If batt insulation must be compressed to fit within the cavity (e.g., R19 in a 5.5\" 2x6 cavity), use an R-value that accounts for this effect (see HUD Mobile Home Construction and Safety Standards 3280.509 for reference).")
+    cavity_r.setDefaultValue(30.0)
+    args << cavity_r
+    
+    #make a choice argument for model objects
+    installgrade_display_names = OpenStudio::StringVector.new
+    installgrade_display_names << "I"
+    installgrade_display_names << "II"
+    installgrade_display_names << "III"
+    
+    #make a choice argument for wall cavity insulation installation grade
+    selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
+    selected_installgrade.setDisplayName("Cavity Install Grade")
+    selected_installgrade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    selected_installgrade.setDefaultValue("I")
+    args << selected_installgrade
 
+    #make a double argument for wall cavity depth
+    selected_cavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedcavitydepth", true)
+    selected_cavdepth.setDisplayName("Cavity Depth")
+    selected_cavdepth.setUnits("in")
+    selected_cavdepth.setDescription("Depth of the roof cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
+    selected_cavdepth.setDefaultValue("9.25")
+    args << selected_cavdepth
+    
 	#make a bool argument for whether the cavity insulation fills the cavity
 	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
 	selected_insfills.setDisplayName("Insulation Fills Cavity")
 	selected_insfills.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
     selected_insfills.setDefaultValue(false)
 	args << selected_insfills
-
-    #make a choice argument for model objects
-    studsize_display_names = OpenStudio::StringVector.new
-    studsize_display_names << "2x4"
-    studsize_display_names << "2x6"
-    studsize_display_names << "2x8"
-    studsize_display_names << "2x10"
-    studsize_display_names << "2x12"
-    studsize_display_names << "2x14"
-
-    #make a string argument for thickness of roof framing
-    selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, true)
-    selected_studsize.setDisplayName("Cavity Depth")
-	selected_studsize.setUnits("in")
-	selected_studsize.setDescription("Thickness of roof framing.")
-	selected_studsize.setDefaultValue("2x10")
-    args << selected_studsize
-
+    
     #make a choice argument for finished roof framing factor
     userdefined_frroofff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfrroofff", false)
     userdefined_frroofff.setDisplayName("Framing Factor")
@@ -71,6 +69,12 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
 	userdefined_frroofff.setDescription("The framing factor of the finished roof.")
     userdefined_frroofff.setDefaultValue(0.07)
     args << userdefined_frroofff
+    
+    
+    
+    
+    
+
 
     #make a double argument for rigid insulation thickness of roof cavity
     userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)
@@ -100,22 +104,8 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    frRoofCavityInsRvalueInstalled = 0
-    rigidInsThickness = 0
-    rigidInsRvalue = 0
-
-    # Space Type
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = Geometry.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
-        return false
-    end
-
-    # Initialize hashes
-    constructions_to_surfaces = {"FinInsExtRoof"=>[]}
-    constructions_to_objects = Hash.new   
-
     # Roof above finished space
+    surfaces = []
     model.getSpaces.each do |space|
         next if Geometry.space_is_unfinished(space)
         next if Geometry.space_is_below_grade(space)
@@ -127,84 +117,55 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Continue if no applicable surfaces
-    if constructions_to_surfaces.all? {|construction, surfaces| surfaces.empty?}
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+    if surfaces.empty?
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end       
     
-    # Roof Insulation
-    selected_frroof = runner.getOptionalWorkspaceObjectChoiceValue("selectedfrroof",user_arguments,model)
-    if selected_frroof.empty?
-      frRoofCavityInsRvalueInstalled = runner.getDoubleArgumentValue("userdefinedfrroofr",user_arguments)
-    end
-
-    # Cavity
-    frRoofCavityDepth = {"2x4"=>3.5, "2x6"=>5.5, "2x8"=>7.25, "2x10"=>9.25, "2x12"=>11.25, "2x14"=>13.25, "2x16"=>15.25}[runner.getStringArgumentValue("selectedstudsize",user_arguments)]
+    # Get Inputs
+    frRoofCavityInsRvalueInstalled = runner.getDoubleArgumentValue("cavity_r",user_arguments)
+    frRoofCavityInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)]
+    frRoofCavityDepth = runner.getDoubleArgumentValue("selectedcavitydepth",user_arguments)    
     frRoofCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
-
-    # Roof Framing Factor
     frRoofFramingFactor = runner.getDoubleArgumentValue("userdefinedfrroofff",user_arguments)
-    if not ( frRoofFramingFactor > 0.0 and frRoofFramingFactor < 1.0 )
-      runner.registerError("Invalid finished roof framing factor")
-      return false
-    end
+    
+    # Validate Inputs FIXME
+    
 
-    # Rigid
-    frRoofContInsThickness = runner.getDoubleArgumentValue("userdefinedrigidinsthickness",user_arguments)
-    frRoofContInsRvalue = runner.getDoubleArgumentValue("userdefinedrigidinsr",user_arguments)
 
     # Process the finished roof
+    
     highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
     
-    unless constructions_to_surfaces["FinInsExtRoof"].empty?
-        # Define materials
-        if frRoofCavityInsRvalueInstalled > 0
-            if frRoofCavityInsFillsCavity
-                # Insulation
-                mat_cavity = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(frRoofCavityDepth,"in","ft").get / frRoofCavityInsRvalueInstalled)
-            else
-                # Insulation plus air gap when insulation thickness < cavity depth
-                mat_cavity = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(frRoofCavityDepth,"in","ft").get / (frRoofCavityInsRvalueInstalled + Gas.AirGapRvalue))
-            end
+    # Define materials
+    if frRoofCavityInsRvalueInstalled > 0
+        if frRoofCavityInsFillsCavity
+            # Insulation
+            mat_cavity = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(frRoofCavityDepth,"in","ft").get / frRoofCavityInsRvalueInstalled)
         else
-            # Empty cavity
-            mat_cavity = Material.AirCavity(frRoofCavityDepth)
+            # Insulation plus air gap when insulation thickness < cavity depth
+            mat_cavity = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(frRoofCavityDepth,"in","ft").get / (frRoofCavityInsRvalueInstalled + Gas.AirGapRvalue))
         end
-        mat_framing = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.Wood)
-        mat_rigid = nil
-        if frRoofContInsThickness > 0
-            mat_rigid = Material.new(name="RigidRoofIns", thick_in=frRoofContInsThickness, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio::convert(frRoofContInsThickness,"in","ft").get / frRoofContInsRvalue)
-        end
-        
-        # Set paths
-        path_fracs = [frRoofFramingFactor, 1 - frRoofFramingFactor]
-        
-        # Define construction
-        roof = Construction.new(path_fracs)
-        roof.addlayer(Material.AirFilmRoof(highest_roof_pitch), false)
-        roof.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-        roof.addlayer([mat_framing, mat_cavity], true, "RoofIns")
-        roof.addlayer(Material.Plywood3_4in, true)
-        if not mat_rigid.nil?
-            roof.addlayer(thickness=OpenStudio::convert(frRoofContInsThickness,"in","ft").get, conductivity_list=[OpenStudio::convert(frRoofContInsThickness,"in","ft").get / frRoofContInsRvalue])
-            roof.addlayer(Material.Plywood3_4in, true)
-        end
-        roof.addlayer(Material.AirFilmOutside, false)
-            
-        # Create construction
-        constr = roof.create_construction(runner, model, "FinInsExtRoof")
-        if constr.nil?
-            return false
-        end
-        constructions_to_objects["FinInsExtRoof"] = constr
+    else
+        # Empty cavity
+        mat_cavity = Material.AirCavity(frRoofCavityDepth)
     end
+    mat_framing = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.Wood)
     
-    # Apply constructions to surfaces
-    constructions_to_surfaces.each do |construction, surfaces|
-        surfaces.each do |surface|
-            surface.setConstruction(constructions_to_objects[construction])
-            runner.registerInfo("Surface '#{surface.name}', of Space '#{Geometry.get_space_from_surface(model, surface.name.to_s, runner).name.to_s}' and with Surface Type '#{surface.surfaceType}' and Outside Boundary Condition '#{surface.outsideBoundaryCondition}', was assigned Construction '#{construction}'")
-        end
+    # Set paths
+    path_fracs = [frRoofFramingFactor, 1 - frRoofFramingFactor]
+    
+    # Define construction
+    roof = Construction.new(path_fracs)
+    roof.addlayer(Material.AirFilmRoof(highest_roof_pitch), false)
+    roof.addlayer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
+    roof.addlayer([mat_framing, mat_cavity], true, "RoofIns")
+    roof.addlayer(Material.DefaultRoofSheathing, false) # roof sheathing added in separate measure
+    roof.addlayer(Material.AirFilmOutside, false)
+    
+    # Create and assign construction to surfaces
+    if not roof.create_and_assign_constructions(surfaces, runner, model, name="FinInsExtRoof")
+        return false
     end
     
     # Remove any materials which aren't used in any constructions

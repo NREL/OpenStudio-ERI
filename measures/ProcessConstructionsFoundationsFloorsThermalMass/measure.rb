@@ -83,7 +83,7 @@ class SetResidentialFloorThermalMass < OpenStudio::Ruleset::ModelUserScript
     
     # Continue if no applicable surfaces
     if surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end        
     
@@ -121,7 +121,7 @@ class SetResidentialFloorThermalMass < OpenStudio::Ruleset::ModelUserScript
     floor.addlayer(mat, true)
     
     # Create and assign construction to surfaces
-    if not floor.create_and_assign_constructions(surfaces, runner, model)
+    if not floor.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
     end
     

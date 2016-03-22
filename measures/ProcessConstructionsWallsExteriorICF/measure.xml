@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>764e4268-306b-4719-9594-a861524b2232</version_id>
+  <version_id>be49bfcf-f86e-4f09-b103-82d92905448f</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsICF</class_name>
   <display_name>Set Residential Exterior ICF Wall Construction</display_name>
@@ -99,19 +99,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -122,7 +110,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B3419BA4</checksum>
+      <checksum>5A4CE59E</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>26F142FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

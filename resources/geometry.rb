@@ -144,16 +144,27 @@ class Geometry
         return false
     end
     
-    def self.space_is_below_roof(space)
+    def self.space_has_roof(space)
         space.surfaces.each do |surface|
             next if surface.surfaceType.downcase != "roofceiling"
             next if surface.outsideBoundaryCondition.downcase != "outdoors"
-            next if surface.tilt != 0
+            next if surface.tilt == 0
             return true
         end
         return false
     end
     
+    def self.space_below_is_finished(space, model)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "floor"
+            next if not surface.adjacentSurface.is_initialized
+            adjacent_space = Geometry.get_space_from_surface(model, surface.adjacentSurface.get.name.to_s, nil, false)
+            next if not Geometry.space_is_finished(adjacent_space)
+            return true
+        end
+        return false
+    end
+
     def self.get_default_space(model, runner=nil)
         space = nil
         model.getSpaces.each do |s|
@@ -437,7 +448,8 @@ class Geometry
         spaces = []
         model.getSpaces.each do |space|
             next if Geometry.space_is_finished(space)
-            next if !Geometry.space_is_below_roof(space)
+            next if not Geometry.space_has_roof(space)
+            next if not Geometry.space_below_is_finished(space, model)
             spaces << space
         end
         return spaces
@@ -447,7 +459,20 @@ class Geometry
         spaces = []
         model.getSpaces.each do |space|
             next if Geometry.space_is_unfinished(space)
-            next if !Geometry.space_is_below_roof(space)
+            next if not Geometry.space_has_roof(space)
+            next if not Geometry.space_below_is_finished(space, model)
+            spaces << space
+        end
+        return spaces
+    end
+    
+    def self.get_non_attic_unfinished_roof_spaces(model)
+        spaces = []
+        unfinished_attic_spaces = Geometry.get_unfinished_attic_spaces(model)
+        model.getSpaces.each do |space|
+            next if Geometry.space_is_finished(space)
+            next if not Geometry.space_has_roof(space)
+            next if not Geometry.space_below_is_finished(space, model)
             spaces << space
         end
         return spaces

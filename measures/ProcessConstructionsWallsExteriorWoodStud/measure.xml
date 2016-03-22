@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>99a78d68-ab46-4810-ac4e-fec8bcda52dc</version_id>
+  <version_id>686d4266-af94-45f9-a103-5e349028d989</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsWoodStud</class_name>
   <display_name>Set Residential Exterior Wood Stud Wall Construction</display_name>
@@ -115,19 +115,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -138,7 +126,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>54599064</checksum>
+      <checksum>795D8032</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>26F142FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

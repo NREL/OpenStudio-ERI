@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_walls</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>c885ef6d-88f6-4af6-a97f-594346310657</version_id>
+  <version_id>cf262344-7d4c-493e-b26c-b712d04c759d</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedWalls</class_name>
   <display_name>Set Residential Interzonal Wood Stud Wall Construction</display_name>
@@ -115,19 +115,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -138,7 +126,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F7AB15EE</checksum>
+      <checksum>21C6C1B4</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>26F142FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

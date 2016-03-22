@@ -76,7 +76,7 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 
     # Continue if no applicable surfaces
     if unfinished_surfaces.empty? and finished_surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end     
     
@@ -94,12 +94,12 @@ class ProcessConstructionsInteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
     wall.addlayer([mat_framing, mat_cavity], true, "UnfinStudAndAirWall")       
 
     # Create and apply construction to unfinished surfaces
-    if not wall.create_and_assign_constructions(unfinished_surfaces, runner, model, "UnfinUninsUnfinWall")
+    if not wall.create_and_assign_constructions(unfinished_surfaces, runner, model, name="UnfinUninsUnfinWall")
         return false
     end
 
     # Create and apply construction to finished surfaces
-    if not wall.create_and_assign_constructions(finished_surfaces, runner, model, "FinUninsFinWall")
+    if not wall.create_and_assign_constructions(finished_surfaces, runner, model, name="FinUninsFinWall")
         return false
     end
 

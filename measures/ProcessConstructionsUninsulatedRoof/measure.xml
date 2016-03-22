@@ -2,66 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>efff2a14-fe1a-4639-b263-4c1bd61d32d2</version_id>
+  <version_id>d980f81a-a0bd-4a86-8daf-6e8a11a30d44</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageRoof</class_name>
-  <display_name>Set Residential Garage Roof Construction</display_name>
-  <description>This measure assigns a construction to the garage roof.</description>
-  <modeler_description>Calculates material layer properties of uninsulated, unfinished, stud and air constructions for the garage roof. Finds surfaces adjacent to the garage and sets applicable constructions.</modeler_description>
-  <arguments>
-    <argument>
-      <name>userdefinedhasradiantbarrier</name>
-      <display_name>Has Radiant Barrier</display_name>
-      <description>Layers of reflective material used to reduce heat transfer between the attic roof and the ceiling insulation and ductwork (if present).</description>
-      <type>Boolean</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>false</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>userdefinedroofmatthermalabs</name>
-      <display_name>Roof Material: Emissivity</display_name>
-      <description>Infrared emissivity of the outside surface of the roof.</description>
-      <type>Double</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.91</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedroofmatabs</name>
-      <display_name>Roof Material: Absorptivity</display_name>
-      <description>The solar radiation absorptance of the outside roof surface, specified as a value between 0 and 1.</description>
-      <type>Double</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.85</default_value>
-    </argument>
-    <argument>
-      <name>garage_space_type</name>
-      <display_name>Garage space type</display_name>
-      <description>Select the garage space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>garage space type</default_value>
-      <choices>
-        <choice>
-          <value>garage space type</value>
-          <display_name>garage space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-  </arguments>
+  <display_name>Set Residential Uninsulated Roof Construction</display_name>
+  <description>This measure assigns a construction to uninsulated roofs.</description>
+  <modeler_description>Calculates and assigns material layer properties of uninsulated constructions for roofs over unfinished spaces (excluding attics).</modeler_description>
+  <arguments/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -95,7 +42,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -106,19 +53,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>702557B9</checksum>
+      <checksum>9AEE3EEB</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
+      <checksum>26F142FF</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

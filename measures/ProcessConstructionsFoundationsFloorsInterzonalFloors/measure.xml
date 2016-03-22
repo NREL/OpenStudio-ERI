@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_insulated_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>e1207dd6-cfae-4080-9cbb-e968dccd361c</version_id>
+  <version_id>3cef3e3d-4f83-45b1-bc08-c8b0d9f490ec</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorInsulatedFloors</class_name>
   <display_name>Set Residential Interzonal Wood Stud Floor Construction</display_name>
@@ -86,19 +86,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -109,7 +97,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>735BCA04</checksum>
+      <checksum>93088A1B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>26F142FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

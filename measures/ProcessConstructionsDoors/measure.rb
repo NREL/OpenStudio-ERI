@@ -107,7 +107,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
         fin_door.addlayer(fin_door_mat, true)
         
         # Create and assign construction to surfaces
-        if not fin_door.create_and_assign_constructions(finished_sub_surfaces, runner, model, "LivingDoors")
+        if not fin_door.create_and_assign_constructions(finished_sub_surfaces, runner, model, name="LivingDoors")
             return false
         end
     end
@@ -129,7 +129,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
         unfin_door.addlayer(unfin_door_mat, true)
         
         # Create and assign construction to surfaces
-        if not unfin_door.create_and_assign_constructions(unfinished_sub_surfaces, runner, model, "GarageDoors")
+        if not unfin_door.create_and_assign_constructions(unfinished_sub_surfaces, runner, model, name="UnfinDoors")
             return false
         end
     end

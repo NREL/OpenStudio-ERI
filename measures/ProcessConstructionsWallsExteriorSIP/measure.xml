@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>26c69408-c852-4fb1-a807-90ab14a70255</version_id>
+  <version_id>7386224a-f030-43b5-9a9c-0b7b40ec9846</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsSIP</class_name>
   <display_name>Set Residential Exterior SIP Wall Construction</display_name>
@@ -122,19 +122,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -145,7 +133,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>77BC26B5</checksum>
+      <checksum>CA948A66</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>26F142FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

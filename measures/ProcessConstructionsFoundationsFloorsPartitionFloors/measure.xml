@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_interior_uninsulated_floors</name>
   <uid>477cfef1-0c37-4b16-9cfd-82d617472e43</uid>
-  <version_id>dae02731-24c2-4907-a7c2-d22bd5050a2b</version_id>
+  <version_id>29afd0a9-5a5e-449c-a22a-9fd6071f5fde</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInteriorUninsulatedFloors</class_name>
   <display_name>Set Residential Partition Floor Construction</display_name>
@@ -42,7 +42,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -53,19 +53,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FD6E429D</checksum>
+      <checksum>BCDBFC15</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
+      <checksum>26F142FF</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

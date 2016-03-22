@@ -27,12 +27,13 @@ class SetResidentialWallSheathing < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a boolean argument for Has OSB
-	has_osb = OpenStudio::Ruleset::OSArgument::makeBoolArgument("has_osb",true)
-	has_osb.setDisplayName("Has OSB")
-	has_osb.setDescription("Specifies if the walls have a layer of structural shear OSB sheathing; alternatively, the wall may have other means to handle the shear load on the wall such as cross-bracing.")
-	has_osb.setDefaultValue(true)
-	args << has_osb
+    #make a double argument for OSB/Plywood Thickness
+	osb_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("osb_thick_in",true)
+	osb_thick_in.setDisplayName("OSB/Plywood Thickness")
+    osb_thick_in.setUnits("in")
+	osb_thick_in.setDescription("Specifies the thickness of the walls' structural shear OSB sheathing. Enter 0 for no sheathing (if the wall has other means to handle the shear load on the wall such as cross-bracing).")
+	osb_thick_in.setDefaultValue(0.5)
+	args << osb_thick_in
     
 	#make a double argument for Rigid Insulation R-value
 	rigid_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("rigid_rvalue",true)
@@ -80,16 +81,20 @@ class SetResidentialWallSheathing < OpenStudio::Ruleset::ModelUserScript
         end
     end
     if surfaces.empty?
-        runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+        runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
         return true
     end
 
     # Get inputs
-    has_osb = runner.getBoolArgumentValue("has_osb",user_arguments)
+    osb_thick_in = runner.getDoubleArgumentValue("osb_thick_in",user_arguments)
     rigid_rvalue = runner.getDoubleArgumentValue("rigid_rvalue",user_arguments)
     rigid_thick_in = runner.getDoubleArgumentValue("rigid_thick_in",user_arguments)
 
     # Validate inputs
+    if osb_thick_in < 0.0
+        runner.registerError("OSB/Plywood Thickness must be greater than or equal to 0.")
+        return false
+    end
     if rigid_rvalue < 0.0
         runner.registerError("Continuous Insulation Nominal R-value must be greater than or equal to 0.")
         return false
@@ -100,8 +105,10 @@ class SetResidentialWallSheathing < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Define materials
+    mat_osb = nil
+    mat_rigid = nil
     if has_osb
-        mat_osb = Material.DefaultWallSheathing
+        mat_osb = Material.new(name=Constants.MaterialWallSheathing, thick_in=osb_thick_in, mat_base=BaseMaterial.Plywood)
     end
     if rigid_rvalue > 0 and rigid_thick_in > 0
         mat_rigid = Material.new(name=Constants.MaterialWallRigidIns, thick_in=rigid_thick_in, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio::convert(rigid_thick_in,"in","ft").get/rigid_rvalue)
@@ -117,14 +124,12 @@ class SetResidentialWallSheathing < OpenStudio::Ruleset::ModelUserScript
     if not mat_osb.nil?
         wall_sh.addlayer(mat_osb, true)
     else
-        wall_sh.removelayer(Material.DefaultWallSheathing.name)
+        wall_sh.removelayer(Constants.MaterialWallSheathing)
     end
     
     # Create and assign construction to surfaces
-    if not mat_rigid.nil? or not mat_osb.nil?
-        if not wall_sh.create_and_assign_constructions(surfaces, runner, model)
-            return false
-        end
+    if not wall_sh.create_and_assign_constructions(surfaces, runner, model, name=nil)
+        return false
     end
 
     # Remove any materials which aren't used in any constructions

@@ -126,7 +126,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
     
     # Continue if no applicable surfaces
     if wall_surfaces.empty? and floor_surfaces.empty? and ceiling_surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end    
     
@@ -195,7 +195,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         cs_wall.addlayer(Material.AirFilmVertical, false)
         
         # Create and assign construction to surfaces
-        if not cs_wall.create_and_assign_constructions(wall_surfaces, runner, model, "GrndInsUnfinCSWall")
+        if not cs_wall.create_and_assign_constructions(wall_surfaces, runner, model, name="GrndInsUnfinCSWall")
             return false
         end
     end
@@ -225,7 +225,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         cs_floor.addlayer(Material.Soil12in, true)
         
         # Create and assign construction to surfaces
-        if not cs_floor.create_and_assign_constructions(floor_surfaces, runner, model, "GrndUninsUnfinCSFloor")
+        if not cs_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsUnfinCSFloor")
             return false
         end
     end
@@ -259,7 +259,7 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
         cs_ceiling.addlayer(Material.AirFilmFloorReduced, false)
 
         # Create and assign construction to surfaces
-        if not cs_ceiling.create_and_assign_constructions(ceiling_surfaces, runner, model, "UnfinCSInsFinFloor")
+        if not cs_ceiling.create_and_assign_constructions(ceiling_surfaces, runner, model, name="UnfinCSInsFinFloor")
             return false
         end
     end

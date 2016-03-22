@@ -112,7 +112,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     
     # Continue if no applicable surfaces
     if surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end 
     
@@ -188,7 +188,7 @@ class ProcessConstructionsExteriorInsulatedWallsDoubleWoodStud < OpenStudio::Rul
     double_stud_wall.addlayer(Material.AirFilmOutside, false)
 
     # Create and assign construction to surfaces
-    if not double_stud_wall.create_and_assign_constructions(surfaces, runner, model, "ExtInsFinWall")
+    if not double_stud_wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
         return false
     end
 

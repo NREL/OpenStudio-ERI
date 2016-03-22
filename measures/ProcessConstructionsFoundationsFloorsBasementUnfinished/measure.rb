@@ -164,7 +164,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
 
     # Continue if no applicable surfaces
     if wall_surfaces.empty? and floor_surfaces.empty? and ceiling_surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end   
     
@@ -315,7 +315,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
         fic_ufbsmt_wall.addlayer(Material.AirFilmVertical, false)
 
         # Create and assign construction to surfaces
-        if not fic_ufbsmt_wall.create_and_assign_constructions(wall_surfaces, runner, model, "GrndInsUnfinBWall")
+        if not fic_ufbsmt_wall.create_and_assign_constructions(wall_surfaces, runner, model, name="GrndInsUnfinBWall")
             return false
         end
     end
@@ -346,7 +346,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
         ub_floor.addlayer(Material.Concrete4in, true)
         
         # Create and assign construction to surfaces
-        if not ub_floor.create_and_assign_constructions(floor_surfaces, runner, model, "GrndUninsUnfinBFloor")
+        if not ub_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsUnfinBFloor")
             return false
         end
     end
@@ -378,7 +378,7 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
         ub_ceiling.addlayer(Material.AirFilmFloorReduced, false)
         
         # Create and assign construction to surfaces
-        if not ub_ceiling.create_and_assign_constructions(ceiling_surfaces, runner, model, "UnfinBInsFinFloor")
+        if not ub_ceiling.create_and_assign_constructions(ceiling_surfaces, runner, model, name="UnfinBInsFinFloor")
             return false
         end
     end

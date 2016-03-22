@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>3400ecfe-f53c-4dfa-8931-419a14f50793</version_id>
+  <version_id>8e5eeb79-3e2c-4ffa-80d8-dc02beaaba6e</version_id>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -92,19 +92,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -115,7 +103,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>66022687</checksum>
+      <checksum>8E73BC90</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>26F142FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

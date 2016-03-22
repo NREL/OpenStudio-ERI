@@ -274,7 +274,7 @@ class Material
 
     def self.CarpetBare(carpetFloorFraction=0.8, carpetPadRValue=2.08)
         thickness = 0.5 # in
-        return Material.new(name=Constants.MaterialFloorCarpet, thick_in=thickness, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (carpetPadRValue * carpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
+        return Material.new(name=Constants.MaterialFloorCovering, thick_in=thickness, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (carpetPadRValue * carpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
     end
 
     def self.Concrete8in
@@ -303,6 +303,18 @@ class Material
     def self.DefaultFloorMass
         mat = Material.MassFloor(0.625, 0.8004, 34.0, 0.29) # Wood Surface
         mat.name = Constants.MaterialFloorMass
+        return mat
+    end
+    
+    def self.DefaultRoofMaterial
+        mat = Material.RoofMaterial(0.91, 0.85)
+        mat.name = Constants.MaterialRoofMaterial
+        return mat
+    end
+    
+    def self.DefaultRoofSheathing
+        mat = Material.Plywood3_4in
+        mat.name = Constants.MaterialRoofSheathing
         return mat
     end
     
@@ -363,11 +375,11 @@ class Material
     end
 
     def self.RadiantBarrier
-        return Material.new(name='RadiantBarrier', thick_in=0.00084, mat_base=nil, cond=135.8, dens=168.6, sh=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
+        return Material.new(name=Constants.MaterialRadiantBarrier, thick_in=0.00084, mat_base=nil, cond=135.8, dens=168.6, sh=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
     end
 
     def self.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
-        return Material.new(name='RoofingMaterial', thick_in=0.375, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
+        return Material.new(name=Constants.MaterialRoofMaterial, thick_in=0.375, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
     end
 
     # TODO: Eventually remove
@@ -501,16 +513,20 @@ class Construction
             # Assign construction to surface
             if not construction_map.include? constr_name
                 # Create new construction
+                num_prev_constructions = model.getConstructions.size
                 if not create_and_assign_construction(surface, materials, runner, model, name)
                     return false
                 end
-                construction_map[constr_name] = surface.construction.get
-                runner.registerInfo("Construction '#{surface.construction.get.name.to_s}' was created.")
+                if model.getConstructions.size != num_prev_constructions
+                    construction_map[constr_name] = surface.construction.get
+                    runner.registerInfo("Construction '#{surface.construction.get.name.to_s}' was created.")
+                    runner.registerInfo("Surface '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
+                end
             else
                 # Re-use recently created construction
                 surface.setConstruction(construction_map[constr_name])
+                runner.registerInfo("Surface '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
             end
-            runner.registerInfo("Surface '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
             
             # Assign reverse construction to adjacent surface as needed
             next if not surface.adjacentSurface.is_initialized or surface.is_a? OpenStudio::Model::SubSurface
@@ -524,18 +540,18 @@ class Construction
                     # If the reverse construction already found (or the construction has 
                     # only a single layer), we won't get a new construction here.
                     revconstr.setName(rev_constr_name)
-                    runner.registerInfo("Construction '#{revconstr.name.to_s}' was created.")
                 end
                 adjacent_surface.setConstruction(revconstr)
                 rev_construction_map[rev_constr_name] = adjacent_surface.construction.get
                 if model.getConstructions.size != num_prev_constructions
-                
+                    runner.registerInfo("Construction '#{adjacent_surface.construction.get.name.to_s}' was created.")
+                    runner.registerInfo("Surface '#{adjacent_surface.name.to_s}' has been assigned construction '#{adjacent_surface.construction.get.name.to_s}'.")
                 end
             else
                 # Re-use recently created adjacent construction
                 adjacent_surface.setConstruction(rev_construction_map[rev_constr_name])
+                runner.registerInfo("Surface '#{adjacent_surface.name.to_s}' has been assigned construction '#{adjacent_surface.construction.get.name.to_s}'.")
             end
-            runner.registerInfo("Surface '#{adjacent_surface.name.to_s}' has been assigned construction '#{adjacent_surface.construction.get.name.to_s}'.")
             
         end
         return true
@@ -738,51 +754,67 @@ class Construction
         def create_and_assign_construction(surface, materials, runner, model, name)
         
             if (not surface.construction.is_initialized or not surface.construction.get.to_LayeredConstruction.is_initialized) or materials[0].is_a? GlazingMaterial
-                # Assign new construction and return true
-                constr = OpenStudio::Model::Construction.new(materials)
-                if not name.nil?
-                    constr.setName(name)
+                if materials.size > 0
+                    # Assign new construction and return true
+                    constr = OpenStudio::Model::Construction.new(materials)
+                    if not name.nil?
+                        constr.setName(name)
+                    end
+                    surface.setConstruction(constr)
                 end
-                surface.setConstruction(constr)
                 return true
             end
             
             # Otherwise, clone construction and assign material layers as appropriate
             constr = surface.construction.get.clone(model).to_LayeredConstruction.get
+            is_modified = false
             if not name.nil?
                 constr.setName(name)
             end
             materials.each do |material|
-                assign_material(constr, surface, material, runner, model)
+                is_modified = is_modified || assign_material(constr, surface, material, runner, model)
             end
             @remove_materials.each do |material_name|
-                remove_material(constr, material_name)
+                is_modified = is_modified || remove_material(constr, material_name)
             end
-            surface.setConstruction(constr)
+            if is_modified
+                surface.setConstruction(constr)
+            else
+                constr.remove
+            end
             return true
         end
         
         def assign_material(constr, surface, material, runner, model)
             num_layers = constr.numLayers
             
-            # Note: The only way to determine types of layers (exterior finish, etc.) is by name.
-            # Defines the target layer positions for the materials when the construction is complete.
-            # Position 0 is outside most layer.
-            if surface.surfaceType.downcase == "wall"
-                target_positions_std = {Constants.MaterialWallExtFinish => 0,
+            # Note: We determine types of layers (exterior finish, etc.) by name.
+            # The code below defines the target layer positions for the materials when the 
+            # construction is complete.
+            if surface.surfaceType.downcase == "wall" # Wall
+                target_positions_std = {Constants.MaterialWallExtFinish => 0, # outside
                                         Constants.MaterialWallRigidIns => 1,
                                         Constants.MaterialWallSheathing => 2, 
+                                        # non-std middle layer(s)
                                         Constants.MaterialWallMass => num_layers,
-                                        Constants.MaterialWallMass2 => num_layers+1}
+                                        Constants.MaterialWallMass2 => num_layers+1} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialWallSheathing] + 1
-            elsif surface.surfaceType.downcase == "floor"
-                target_positions_std = {Constants.MaterialCeilingMass => 0,
-                                        Constants.MaterialCeilingMass2 => 1,
+            elsif surface.surfaceType.downcase == "floor" # Floor
+                target_positions_std = {Constants.MaterialCeilingMass2 => 0, # outside
+                                        Constants.MaterialCeilingMass => 1,
+                                        # non-std middle layer(s)
                                         Constants.MaterialFloorMass => num_layers,
-                                        Constants.MaterialFloorCarpet => num_layers+1}
-                target_position_non_std = target_positions_std[Constants.MaterialCeilingMass2] + 1
-            elsif surface.surfaceType.downcase == "roofceiling"
-                
+                                        Constants.MaterialFloorCovering => num_layers+1} # inside
+                target_position_non_std = target_positions_std[Constants.MaterialCeilingMass] + 1
+            elsif surface.surfaceType.downcase == "roofceiling" # Roof
+                target_positions_std = {Constants.MaterialRoofMaterial => 0, # outside
+                                        Constants.MaterialRoofRigidIns => 1,
+                                        Constants.MaterialRoofSheathing => 2,
+                                        # non-std middle layer(s)
+                                        Constants.MaterialRadiantBarrier => num_layers,
+                                        Constants.MaterialCeilingMass => num_layers+1,
+                                        Constants.MaterialCeilingMass2 => num_layers+2} # inside
+                target_position_non_std = target_positions_std[Constants.MaterialRoofSheathing] + 1
             end
 
             # Determine current positions of any standard materials
@@ -838,9 +870,10 @@ class Construction
                 end
                 constr.insertLayer(insert_pos, material)
             end
-
+            return true
         end
 
+        # Returns true if the material was removed
         def remove_material(constr, material_name)
             # Remove layer if it matches this name
             num_layers = constr.numLayers
@@ -848,8 +881,10 @@ class Construction
                 layer_index = num_layers - 1 - index
                 if layer.name.to_s.start_with? material_name
                     constr.eraseLayer(layer_index)
+                    return true
                 end
             end
+            return false
         end
         
         # Creates an OpenStudio Material from our own Material object

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_slab</name>
   <uid>3da62049-50f9-4ed0-b05a-6b89a202482d</uid>
-  <version_id>d7adb481-b5ea-4a0e-87f3-1053129601ee</version_id>
+  <version_id>a3db3578-9666-4bf8-840c-ad82ef9432fe</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageSlab</class_name>
   <display_name>Set Residential Unfinished Slab Construction</display_name>
@@ -42,19 +42,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>FB6B06AA</checksum>
     </file>
     <file>
       <version>
@@ -65,7 +53,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7BFBD1E7</checksum>
+      <checksum>1CC6E3B4</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>26F142FF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2C56ED48</checksum>
     </file>
   </files>
 </measure>

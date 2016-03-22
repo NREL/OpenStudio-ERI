@@ -321,7 +321,7 @@ class Constants
 		return 'osb'
 	end
     def self.MaterialCeilingMass
-        return 'ResCeilingMass'
+        return 'ResCeilingMass1'
     end
     def self.MaterialCeilingMass2
         return 'ResCeilingMass2'
@@ -329,14 +329,26 @@ class Constants
     def self.MaterialFloorMass
         return 'ResFloorMass'
     end
-    def self.MaterialFloorCarpet
-        return 'ResFloorCarpet'
+    def self.MaterialFloorCovering
+        return 'ResFloorCovering'
+    end
+    def self.MaterialRadiantBarrier
+        return 'ResRadiantBarrier'
+    end
+    def self.MaterialRoofMaterial
+        return 'ResRoofMaterial'
+    end
+    def self.MaterialRoofRigidIns
+        return 'ResRoofRigidIns'
+    end
+    def self.MaterialRoofSheathing
+        return 'ResRoofSheathing'
     end
     def self.MaterialWallExtFinish
         return 'ResExtFinish'
     end
     def self.MaterialWallMass
-        return 'ResExtWallMass'
+        return 'ResExtWallMass1'
     end
     def self.MaterialWallMass2
         return 'ResExtWallMass2'

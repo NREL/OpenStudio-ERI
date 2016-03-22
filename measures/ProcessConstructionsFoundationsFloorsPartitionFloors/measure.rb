@@ -78,7 +78,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
     
     # Continue if no applicable surfaces
     if finished_surfaces.empty? and unfinished_surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end 
     
@@ -103,7 +103,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
         fin_floor.addlayer(Material.AirFilmFloorAverage, false)
 
         # Create and apply construction to finished surfaces
-        if not fin_floor.create_and_assign_constructions(finished_surfaces, runner, model, "FinUninsFinFloor")
+        if not fin_floor.create_and_assign_constructions(finished_surfaces, runner, model, name="FinUninsFinFloor")
             return false
         end
     end
@@ -117,7 +117,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
         unfin_floor.addlayer(Material.AirFilmFloorAverage, false)
 
         # Create and apply construction to unfinished surfaces
-        if not unfin_floor.create_and_assign_constructions(unfinished_surfaces, runner, model, "UnfinUninsUnfinFloor")
+        if not unfin_floor.create_and_assign_constructions(unfinished_surfaces, runner, model, name="UnfinUninsUnfinFloor")
             return false
         end
     end

@@ -96,7 +96,7 @@ class SetResidentialExteriorFinish < OpenStudio::Ruleset::ModelUserScript
         end
     end
     if surfaces.empty?
-        runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+        runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
         return true
     end
     
@@ -142,7 +142,7 @@ class SetResidentialExteriorFinish < OpenStudio::Ruleset::ModelUserScript
     ext_fin.addlayer(mat, true)
     
     # Create and assign construction to surfaces
-    if not ext_fin.create_and_assign_constructions(surfaces, runner, model)
+    if not ext_fin.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
     end
     

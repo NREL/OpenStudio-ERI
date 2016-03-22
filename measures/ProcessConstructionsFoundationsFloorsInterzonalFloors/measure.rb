@@ -88,7 +88,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     
     # Continue if no applicable surfaces
     if surfaces.empty?
-      runner.registerNotApplicable("Measure not applied because no applicable surfaces were found.")
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end        
     
@@ -132,7 +132,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     izf_const.addlayer(Material.AirFilmFloorReduced, false)
     
     # Create and assign construction to surfaces
-    if not izf_const.create_and_assign_constructions(surfaces, runner, model, "UnfinInsFinFloor")
+    if not izf_const.create_and_assign_constructions(surfaces, runner, model, name="UnfinInsFinFloor")
         return false
     end
     
