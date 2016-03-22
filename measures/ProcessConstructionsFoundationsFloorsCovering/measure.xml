@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_floor_carpet</name>
   <uid>c0a10f27-c095-4b45-91f8-faee094a1d42</uid>
-  <version_id>c5e76da4-337f-45ec-937c-f249c6c2a8e6</version_id>
+  <version_id>1338531b-7c5c-426a-ad87-0a51a0c5d15b</version_id>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>SetResidentialFloorCarpet</class_name>
   <display_name> Set Residential Floor Carpet</display_name>
@@ -59,12 +59,6 @@
       <checksum>2C86A51E</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FB6B06AA</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -76,16 +70,22 @@
       <checksum>79B65CA9</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8AEE7968</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>26F142FF</checksum>
+      <checksum>B207F3E7</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2C56ED48</checksum>
+      <checksum>A679FD01</checksum>
     </file>
   </files>
 </measure>

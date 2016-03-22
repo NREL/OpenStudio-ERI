@@ -1,13 +1,13 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>set_residential_exterior_wall_thermal_mass</name>
-  <uid>b2da04af-0f9f-4a30-b2a0-cc2dbc20d5aa</uid>
-  <version_id>20f13f34-99f5-4122-84fe-f1938c3283ad</version_id>
+  <name>set_residential_ceiling_thermal_mass</name>
+  <uid>efe35222-f47d-43e9-b096-6bd18bfe1100</uid>
+  <version_id>4197cc48-c91f-4200-a980-245ad3ff7f3a</version_id>
   <xml_checksum>5091078B</xml_checksum>
-  <class_name>SetResidentialExteriorWallThermalMass</class_name>
-  <display_name>Set Residential Exterior Wall Thermal Mass</display_name>
-  <description>This measure assigns wall mass to above-grade exterior walls adjacent to finished space.</description>
-  <modeler_description>Assigns material layer properties for above-grade walls between finished space and outside.</modeler_description>
+  <class_name>SetResidentialCeilingThermalMass</class_name>
+  <display_name>Set Residential Ceiling Thermal Mass</display_name>
+  <description>This measure assigns thermal mass to ceilings adjacent to finished space.</description>
+  <modeler_description>Assigns material layer properties for ceilings adjacent to finished space.</modeler_description>
   <arguments>
     <argument>
       <name>thick_in1</name>
@@ -113,24 +113,13 @@
       <filename>ProcessThermalMassPartitionWall_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>FF372AA3</checksum>
+      <checksum>6F45F515</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8AEE7968</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>93F8578E</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -143,6 +132,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>A679FD01</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>2854964A</checksum>
     </file>
   </files>
 </measure>

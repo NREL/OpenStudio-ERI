@@ -19,7 +19,7 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "Calculates and assigns material layer properties of uninsulated constructions for roofs over unfinished spaces (excluding attics)."
+    return "Calculates and assigns material layer properties of uninsulated constructions for roofs of unfinished spaces (e.g., garage roof), excluding attics."
   end   
   
   #define the arguments that the user will input
@@ -55,8 +55,6 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
       return true
     end   
     
-    highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
-    
     # Define materials
     mat_cavity = Material.AirCavity(Material.Stud2x4.thick_in)
     mat_framing = Material.new(name=nil, thick_in=Material.Stud2x4.thick_in, mat_base=BaseMaterial.Wood)
@@ -67,10 +65,10 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
     # Define construction
     roof_const = Construction.new(path_fracs)
     roof_const.addlayer(Material.AirFilmOutside, false)
-    roof_const.addlayer(Material.DefaultRoofMaterial, false)
-    roof_const.addlayer(Material.Plywood3_4in, true)
+    roof_const.addlayer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
+    roof_const.addlayer(Material.DefaultRoofSheathing, false) # sheathing added in separate measure
     roof_const.addlayer([mat_framing, mat_cavity], true, "StudAndAirRoof")
-    roof_const.addlayer(Material.AirFilmRoof(highest_roof_pitch), false)
+    roof_const.addlayer(Material.AirFilmRoof(Geometry.calculate_avg_roof_pitch(spaces)), false)
 
     # Create and assign construction to surfaces
     if not roof_const.create_and_assign_constructions(surfaces, runner, model, name="UnfinUninsExtRoof")

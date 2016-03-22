@@ -77,3 +77,4 @@ ProcessConstructionsFoundationsFloorsCarpet,util.rb,constants.rb,unit_conversion
 ProcessConstructionsCeilingsRoofsRoofingMaterial,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
 ProcessConstructionsCeilingsRoofsRadiantBarrier,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
 ProcessConstructionsCeilingsRoofsSheathing,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
+ProcessConstructionsCeilingsRoofsThermalMass,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,

@@ -19,7 +19,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
   end
   
   def modeler_description
-    return "Calculates and assigns material layer properties of uninsulated constructions for the floors 1) between two unfinished spaces, 2) between two finished spaces, or 3) with adiabatic outside boundary condition. If the floors have an existing construction, the layers (other than carpet, floor mass, and ceiling mass) are replaced. This measure is intended to be used in conjunction with Carpet, Floor Mass, and Ceiling Mass measures."
+    return "Calculates and assigns material layer properties of uninsulated constructions for the floors 1) between two unfinished spaces, 2) between two finished spaces, or 3) with adiabatic outside boundary condition. If the floors have an existing construction, the layers (other than floor covering, floor mass, and ceiling mass) are replaced. This measure is intended to be used in conjunction with Floor Covering, Floor Mass, and Ceiling Mass measures."
   end   
   
   #define the arguments that the user will input
@@ -97,9 +97,9 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
         fin_floor.addlayer(Material.AirFilmFloorAverage, false)
         fin_floor.addlayer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
         fin_floor.addlayer([mat_framing, mat_cavity], true, "StudAndAirFloor")
-        fin_floor.addlayer(Material.Plywood3_4in, true)
+        fin_floor.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
         fin_floor.addlayer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
-        fin_floor.addlayer(Material.DefaultCarpet, false) # carpet added in separate measure
+        fin_floor.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
         fin_floor.addlayer(Material.AirFilmFloorAverage, false)
 
         # Create and apply construction to finished surfaces
@@ -113,7 +113,7 @@ class ProcessConstructionsInteriorUninsulatedFloors < OpenStudio::Ruleset::Model
         unfin_floor = Construction.new(path_fracs)
         unfin_floor.addlayer(Material.AirFilmFloorAverage, false)
         unfin_floor.addlayer([mat_framing, mat_cavity], true, "StudAndAirFloor")
-        unfin_floor.addlayer(Material.Plywood3_4in, true)
+        unfin_floor.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
         unfin_floor.addlayer(Material.AirFilmFloorAverage, false)
 
         # Create and apply construction to unfinished surfaces

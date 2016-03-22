@@ -134,7 +134,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
     
     spaces = Geometry.get_unfinished_attic_spaces(model)
     spaces.each do |space|
-        lspace.surfaces.each do |surface|
+        space.surfaces.each do |surface|
             next unless ["roofceiling"].include? surface.surfaceType.downcase
             adjacent_surface = surface.adjacentSurface
             next unless adjacent_surface.is_initialized
@@ -147,10 +147,10 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
         end   
     end 
     
-    unfin_attic_space_type.spaces.each do |unfin_attic_space|
-        unfin_attic_space.surfaces.each do |unfin_attic_surface|
-            next unless unfin_attic_surface.surfaceType.downcase == "roofceiling" and unfin_attic_surface.outsideBoundaryCondition.downcase == "outdoors"
-            constructions_to_surfaces["UnfinInsExtRoof"] << unfin_attic_surface
+    spaces.each do |space|
+        space.surfaces.each do |surface|
+            next unless surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
+            constructions_to_surfaces["UnfinInsExtRoof"] << surface
         end   
     end
 
@@ -215,8 +215,7 @@ class ProcessConstructionsUnfinishedAttic < OpenStudio::Ruleset::ModelUserScript
         uARoofInsRvalueNominal = userdefined_uaceilroofr
     end
 
-    highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
-    mat_film_roof = Material.AirFilmRoof(highest_roof_pitch)
+    mat_film_roof = Material.AirFilmRoof(Geometry.calculate_avg_roof_pitch(spaces))
 
     # -------------------------------
     # Process the attic ceiling

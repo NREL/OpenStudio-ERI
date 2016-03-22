@@ -11,11 +11,11 @@ class SetResidentialFloorCarpet < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return " Set Residential Floor Carpet"
+    return " Set Residential Floor Covering"
   end
   
   def description
-    return "This measure assigns carpet to floors of above-grade finished spaces."
+    return "This measure assigns a covering to floors of above-grade finished spaces."
   end
   
   def modeler_description
@@ -26,20 +26,20 @@ class SetResidentialFloorCarpet < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a double argument for floor carpet fraction
-    carpet_frac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("carpet_frac", true)
-    carpet_frac.setDisplayName("Floor Carpet Fraction")
-    carpet_frac.setDescription("Fraction of floors that are carpeted.")
-    carpet_frac.setDefaultValue(0.8)
-    args << carpet_frac
+    #make a double argument for floor covering fraction
+    covering_frac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("covering_frac", true)
+    covering_frac.setDisplayName("Floor Covering Fraction")
+    covering_frac.setDescription("Fraction of floors that are covered.")
+    covering_frac.setDefaultValue(0.8)
+    args << covering_frac
     
-    #make a double argument for carpet pad r-value
-    carpet_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("carpet_r", true)
-    carpet_r.setDisplayName("Carpet R-value")
-    carpet_r.setUnits("h-ft^2-R/Btu")
-    carpet_r.setDescription("The combined R-value of the carpet and pad.")
-    carpet_r.setDefaultValue(2.08)
-    args << carpet_r
+    #make a double argument for floor covering r-value
+    covering_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("covering_r", true)
+    covering_r.setDisplayName("Covering R-value")
+    covering_r.setUnits("h-ft^2-R/Btu")
+    covering_r.setDescription("The total R-value of the covering.")
+    covering_r.setDefaultValue(2.08)
+    args << covering_r
     
     return args
   end #end the arguments method
@@ -71,16 +71,16 @@ class SetResidentialFloorCarpet < OpenStudio::Ruleset::ModelUserScript
     end        
     
     # Get Inputs
-    carpet_frac = runner.getDoubleArgumentValue("carpet_frac",user_arguments)
-    carpet_r = runner.getDoubleArgumentValue("carpet_r",user_arguments)
+    covering_frac = runner.getDoubleArgumentValue("covering_frac",user_arguments)
+    covering_r = runner.getDoubleArgumentValue("covering_r",user_arguments)
     
     # Validate Inputs
-    if carpet_frac < 0.0 or carpet_frac > 1.0
-        runner.registerError("Floor Carpet Fraction must be greater than or equal to 0 and less than or equal to 1.")
+    if covering_frac < 0.0 or covering_frac > 1.0
+        runner.registerError("Floor Covering Fraction must be greater than or equal to 0 and less than or equal to 1.")
         return false
     end
-    if carpet_r < 0.0
-        runner.registerError("Carpet R-value must be greater than or equal to 0.")
+    if covering_r < 0.0
+        runner.registerError("Covering R-value must be greater than or equal to 0.")
         return false
     end
     
@@ -88,8 +88,8 @@ class SetResidentialFloorCarpet < OpenStudio::Ruleset::ModelUserScript
     
     # Define Materials
     mat = nil
-    if carpet_frac > 0 and carpet_r > 0
-        mat = Material.CarpetBare(carpet_frac, carpet_r)
+    if covering_frac > 0 and covering_r > 0
+        mat = Material.CoveringBare(covering_frac, covering_r)
     end
     
     # Define construction

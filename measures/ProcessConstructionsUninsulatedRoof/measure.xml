@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_garage_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>d980f81a-a0bd-4a86-8daf-6e8a11a30d44</version_id>
+  <version_id>a41dc291-36ae-4531-b8a6-4d3b2bdc84c2</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsGarageRoof</class_name>
   <display_name>Set Residential Uninsulated Roof Construction</display_name>
   <description>This measure assigns a construction to uninsulated roofs.</description>
-  <modeler_description>Calculates and assigns material layer properties of uninsulated constructions for roofs over unfinished spaces (excluding attics).</modeler_description>
+  <modeler_description>Calculates and assigns material layer properties of uninsulated constructions for roofs of unfinished spaces (e.g., garage roof), excluding attics.</modeler_description>
   <arguments/>
   <provenances/>
   <tags>
@@ -42,7 +42,19 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB6B06AA</checksum>
+      <checksum>8AEE7968</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B207F3E7</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A679FD01</checksum>
     </file>
     <file>
       <version>
@@ -53,19 +65,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9AEE3EEB</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>26F142FF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2C56ED48</checksum>
+      <checksum>11A4C5D8</checksum>
     </file>
   </files>
 </measure>

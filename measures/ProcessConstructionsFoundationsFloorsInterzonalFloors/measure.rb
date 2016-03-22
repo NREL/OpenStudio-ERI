@@ -19,7 +19,7 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
   end
   
   def modeler_description
-    return "Calculates and assigns material layer properties of wood stud constructions for floors 1) between finished and unfinished spaces or 2) between finished spaces and outside. If the floors have an existing construction, the layers (other than carpet and floor mass) are replaced. This measure is intended to be used in conjunction with Carpet and Floor Mass measures."
+    return "Calculates and assigns material layer properties of wood stud constructions for floors 1) between finished and unfinished spaces or 2) between finished spaces and outside. If the floors have an existing construction, the layers (other than floor covering and floor mass) are replaced. This measure is intended to be used in conjunction with Floor Covering and Floor Mass measures."
   end    
   
   #define the arguments that the user will input
@@ -126,9 +126,9 @@ class ProcessConstructionsInteriorInsulatedFloors < OpenStudio::Ruleset::ModelUs
     izf_const = Construction.new(path_fracs)
     izf_const.addlayer(Material.AirFilmFloorReduced, false)
     izf_const.addlayer([mat_framing, mat_cavity, mat_gap], true, "IntFloorIns")
-    izf_const.addlayer(Material.Plywood3_4in, true)
+    izf_const.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
     izf_const.addlayer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
-    izf_const.addlayer(Material.DefaultCarpet, false) # carpet added in separate measure
+    izf_const.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
     izf_const.addlayer(Material.AirFilmFloorReduced, false)
     
     # Create and assign construction to surfaces

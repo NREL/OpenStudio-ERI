@@ -372,9 +372,9 @@ class ProcessConstructionsUnfinishedBasement < OpenStudio::Ruleset::ModelUserScr
         ub_ceiling = Construction.new(path_fracs)
         ub_ceiling.addlayer(Material.AirFilmFloorReduced, false)
         ub_ceiling.addlayer([mat_framing, mat_cavity], true, "UFBsmtCeilingIns")
-        ub_ceiling.addlayer(Material.Plywood3_4in, true)
+        ub_ceiling.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
         ub_ceiling.addlayer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
-        ub_ceiling.addlayer(Material.DefaultCarpet, false) # carpet added in separate measure
+        ub_ceiling.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
         ub_ceiling.addlayer(Material.AirFilmFloorReduced, false)
         
         # Create and assign construction to surfaces

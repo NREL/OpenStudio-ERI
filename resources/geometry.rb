@@ -357,6 +357,23 @@ class Geometry
         return OpenStudio.convert(wall_area, "m^2", "ft^2").get
     end
     
+    def self.calculate_avg_roof_pitch(spaces)
+        sum_tilt = 0
+        num_surf = 0
+        spaces.each do |space|
+            space.surfaces.each do |surface|
+                if surface.surfaceType.downcase == "roofceiling"
+                    sum_tilt += surface.tilt
+                    num_surf += 1
+                end
+            end
+        end
+        if num_surf == 0
+            return nil
+        end
+        return sum_tilt/num_surf.to_f
+    end
+    
     # Takes in a list of spaces and returns the wall area for the exterior perimeter
     def self.calculate_perimeter_wall_area(spaces)
         return Geometry.calculate_perimeter(spaces) * Geometry.calculate_wall_area(spaces)

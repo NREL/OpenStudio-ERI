@@ -6,20 +6,20 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class SetResidentialExteriorWallThermalMass < OpenStudio::Ruleset::ModelUserScript
+class SetResidentialCeilingThermalMass < OpenStudio::Ruleset::ModelUserScript
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Exterior Wall Thermal Mass"
+    return "Set Residential Ceiling Thermal Mass"
   end
   
   def description
-    return "This measure assigns wall mass to above-grade exterior walls adjacent to finished space."
+    return "This measure assigns thermal mass to ceilings adjacent to finished space."
   end
   
   def modeler_description
-    return "Assigns material layer properties for above-grade walls between finished space and outside."
+    return "Assigns material layer properties for ceilings adjacent to finished space."
   end    
   
   #define the arguments that the user will input
@@ -98,13 +98,12 @@ class SetResidentialExteriorWallThermalMass < OpenStudio::Ruleset::ModelUserScri
       return false
     end
     
-    # Above-grade wall between finished space and outdoors
+    # Ceilings of finished space
     surfaces = []
     model.getSpaces.each do |space|
         next if Geometry.space_is_unfinished(space)
-        next if Geometry.space_is_below_grade(space)
         space.surfaces.each do |surface|
-            if surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors"
+            if surface.surfaceType.downcase == "roofceiling"
                 surfaces << surface
             end
         end
@@ -164,26 +163,26 @@ class SetResidentialExteriorWallThermalMass < OpenStudio::Ruleset::ModelUserScri
         return false
     end
 
-    # Process the exterior thermal mass
+    # Process the ceiling thermal mass
     
     # Define materials
-    mat1 = Material.new(name=Constants.MaterialWallMass, thick_in=thick_in1, mat_base=nil, cond=OpenStudio::convert(cond1,"in","ft").get, dens=dens1, sh=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    mat1 = Material.new(name=Constants.MaterialCeilingMass, thick_in=thick_in1, mat_base=nil, cond=OpenStudio::convert(cond1,"in","ft").get, dens=dens1, sh=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     mat2 = nil
     if not thick_in2.empty?
-        mat2 = Material.new(name=Constants.MaterialWallMass2, thick_in=thick_in2.get, mat_base=nil, cond=OpenStudio::convert(cond2.get,"in","ft").get, dens=dens2.get, sh=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+        mat2 = Material.new(name=Constants.MaterialCeilingMass2, thick_in=thick_in2.get, mat_base=nil, cond=OpenStudio::convert(cond2.get,"in","ft").get, dens=dens2.get, sh=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     end
 
     # Define construction
-    wall = Construction.new([1])
-    wall.addlayer(mat1, true)
+    ceiling = Construction.new([1])
+    ceiling.addlayer(mat1, true)
     if not mat2.nil?
-        wall.addlayer(mat2, true)
+        ceiling.addlayer(mat2, true)
     else
-        wall.removelayer(Constants.MaterialWallMass2)
+        ceiling.removelayer(Constants.MaterialCeilingMass2)
     end
     
     # Create and assign construction to surfaces
-    if not wall.create_and_assign_constructions(surfaces, runner, model, name=nil)
+    if not ceiling.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
     end
 
@@ -197,4 +196,4 @@ class SetResidentialExteriorWallThermalMass < OpenStudio::Ruleset::ModelUserScri
 end #end the measure
 
 #this allows the measure to be use by the application
-SetResidentialExteriorWallThermalMass.new.registerWithApplication
+SetResidentialCeilingThermalMass.new.registerWithApplication

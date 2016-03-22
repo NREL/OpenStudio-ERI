@@ -164,7 +164,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
 
     # Models one floor surface with an equivalent carpented/bare material (Better alternative
     # to having two floors with twice the total area, compensated by thinning mass thickness.)
-    carpetFloorFraction = 0.8 # FIXME: Hard-coded
+    carpetFloorFraction = Material.CoveringBare/Material.CoveringBare(floorFraction=1.0)
     slab_perimeter_conduction = slabCarpetPerimeterConduction * carpetFloorFraction + slabBarePerimeterConduction * (1 - carpetFloorFraction)
 
     if slabExtPerimeter > 0
@@ -173,7 +173,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
         effective_slab_Rvalue = 1000 # hr*ft^2*F/Btu
     end
 
-    slab_Rvalue = Material.Concrete4in.rvalue - Material.AirFilmFlatReduced.rvalue - Material.Soil12in.rvalue - Material.DefaultCarpet.rvalue
+    slab_Rvalue = Material.Concrete4in.rvalue - Material.AirFilmFlatReduced.rvalue - Material.Soil12in.rvalue - Material.DefaultFloorCovering.rvalue
     fictitious_slab_Rvalue = effective_slab_Rvalue - slab_Rvalue
 
     slab_factor = 1.0
@@ -196,7 +196,7 @@ class ProcessConstructionsSlab < OpenStudio::Ruleset::ModelUserScript
     end
     slab.addlayer(Material.Soil12in, true)
     slab.addlayer(mat_slab, true)
-    slab.addlayer(Material.DefaultCarpet, false) # carpet added in separate measure
+    slab.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
     slab.addlayer(Material.AirFilmFlatReduced, false)
     
     # Create and assign construction to surfaces

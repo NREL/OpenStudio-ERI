@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_insulated_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>7581c95b-baed-4b75-ae69-c70a6d92ec94</version_id>
+  <version_id>075989bd-10ec-415f-88ef-35630a3ada36</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsInsulatedRoof</class_name>
   <display_name>Set Residential Finished Roof Construction</display_name>
@@ -81,26 +81,6 @@
       <model_dependent>false</model_dependent>
       <default_value>0.07</default_value>
     </argument>
-    <argument>
-      <name>userdefinedrigidinsthickness</name>
-      <display_name>Continuous Insulation Thickness</display_name>
-      <description>Thickness of rigid insulation added to the roof.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedrigidinsr</name>
-      <display_name>Continuous Insulation Nominal R-value</display_name>
-      <description>The nominal R-value of the continuous insulation.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -135,7 +115,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB6B06AA</checksum>
+      <checksum>8AEE7968</checksum>
     </file>
     <file>
       <version>
@@ -146,19 +126,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6294C06E</checksum>
+      <checksum>0488984A</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>26F142FF</checksum>
+      <checksum>B207F3E7</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2C56ED48</checksum>
+      <checksum>A679FD01</checksum>
     </file>
   </files>
 </measure>

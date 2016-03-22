@@ -272,9 +272,10 @@ class Material
         return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
     end
 
-    def self.CarpetBare(carpetFloorFraction=0.8, carpetPadRValue=2.08)
+    def self.CoveringBare(floorFraction=0.8, rvalue=2.08)
+        # Combined layer of, e.g., carpet and bare floor
         thickness = 0.5 # in
-        return Material.new(name=Constants.MaterialFloorCovering, thick_in=thickness, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (carpetPadRValue * carpetFloorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
+        return Material.new(name=Constants.MaterialFloorCovering, thick_in=thickness, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (rvalue * floorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
     end
 
     def self.Concrete8in
@@ -283,10 +284,6 @@ class Material
 
     def self.Concrete4in
         return Material.new(name='Concrete-4in', thick_in=4, mat_base=BaseMaterial.Concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
-    end
-    
-    def self.DefaultCarpet
-        return Material.CarpetBare
     end
     
     def self.DefaultCeilingMass
@@ -300,9 +297,21 @@ class Material
         return Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(thick_in,"in","ft").get/0.6, dens=11.1, sh=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
     end
     
+    def self.DefaultFloorCovering
+        mat = Material.CoveringBare
+        mat.name = Constants.MaterialFloorCovering
+        return mat
+    end
+
     def self.DefaultFloorMass
         mat = Material.MassFloor(0.625, 0.8004, 34.0, 0.29) # Wood Surface
         mat.name = Constants.MaterialFloorMass
+        return mat
+    end
+    
+    def self.DefaultFloorSheathing
+        mat = Material.Plywood3_4in
+        mat.name = Constants.MaterialFloorSheathing
         return mat
     end
     
@@ -573,11 +582,6 @@ class Construction
 
     end
 
-    # FIXME: Eventually remove
-    def self.GetFloorNonStudLayerR(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat, carpetFloorFraction, carpetPadRValue)
-        return (2.0 * Material.AirFilmFloorReduced.rvalue + Material.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat).rvalue + (carpetPadRValue * carpetFloorFraction) + Material.Plywood3_4in.rvalue)
-    end
-    
     def self.GetBasementConductionFactor(bsmtWallInsulationHeight, bsmtWallInsulRvalue)
         if bsmtWallInsulationHeight == 4
             return (1.689 / (0.430 + bsmtWallInsulRvalue) ** 0.164)
@@ -803,8 +807,9 @@ class Construction
                 target_positions_std = {Constants.MaterialCeilingMass2 => 0, # outside
                                         Constants.MaterialCeilingMass => 1,
                                         # non-std middle layer(s)
-                                        Constants.MaterialFloorMass => num_layers,
-                                        Constants.MaterialFloorCovering => num_layers+1} # inside
+                                        Constants.MaterialFloorSheathing => num_layers,
+                                        Constants.MaterialFloorMass => num_layers+1,
+                                        Constants.MaterialFloorCovering => num_layers+2} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialCeilingMass] + 1
             elsif surface.surfaceType.downcase == "roofceiling" # Roof
                 target_positions_std = {Constants.MaterialRoofMaterial => 0, # outside

@@ -2,31 +2,22 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_roofl_sheathing</name>
   <uid>f9125155-4fe6-4dae-b5a6-e1249eb2da3c</uid>
-  <version_id>e0beece1-c442-4f35-8c87-41e25d6836c0</version_id>
+  <version_id>36ca48a4-56ef-4c35-ab6b-a5187472cfd6</version_id>
   <xml_checksum>A465C8A5</xml_checksum>
   <class_name>SetResidentialRooflSheathing</class_name>
-  <display_name>Set Residential Roofl Sheathing</display_name>
+  <display_name>Set Residential Roof Sheathing</display_name>
   <description>This measure assigns roof sheathing to all attic roofs.</description>
   <modeler_description>Assigns material layer properties for all attic roofs.</modeler_description>
   <arguments>
     <argument>
-      <name>has_osb</name>
-      <display_name>Has OSB</display_name>
-      <description>Specifies if the walls have a layer of structural shear OSB sheathing; alternatively, the wall may have other means to handle the shear load on the wall such as cross-bracing.</description>
-      <type>Boolean</type>
+      <name>osb_thick_in</name>
+      <display_name>OSB/Plywood Thickness</display_name>
+      <description>Specifies the thickness of the roof OSB/plywood sheathing. Enter 0 for no sheathing.</description>
+      <type>Double</type>
+      <units>in</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
+      <default_value>0.75</default_value>
     </argument>
     <argument>
       <name>rigid_rvalue</name>
@@ -104,22 +95,28 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>set_residential_roofl_sheathing_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5A7886D5</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB6B06AA</checksum>
+      <checksum>8AEE7968</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>26F142FF</checksum>
+      <checksum>B207F3E7</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2C56ED48</checksum>
+      <checksum>A679FD01</checksum>
     </file>
     <file>
       <version>
@@ -130,13 +127,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C13AC0ED</checksum>
-    </file>
-    <file>
-      <filename>set_residential_roofl_sheathing_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5A7886D5</checksum>
+      <checksum>1510A076</checksum>
     </file>
   </files>
 </measure>

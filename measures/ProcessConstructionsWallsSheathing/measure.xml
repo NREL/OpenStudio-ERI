@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_wall_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>61d76fd7-c714-4f52-a431-6ea4b5442355</version_id>
+  <version_id>345edaac-ef5d-433f-a362-846c8cb8b925</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>SetResidentialWallSheathing</class_name>
   <display_name>Set Residential Wall Sheathing</display_name>
@@ -10,23 +10,14 @@
   <modeler_description>Assigns material layer properties for all above-grade walls between finished space and outside or between finished space and unfinished space.</modeler_description>
   <arguments>
     <argument>
-      <name>has_osb</name>
-      <display_name>Has OSB</display_name>
-      <description>Specifies if the walls have a layer of structural shear OSB sheathing; alternatively, the wall may have other means to handle the shear load on the wall such as cross-bracing.</description>
-      <type>Boolean</type>
+      <name>osb_thick_in</name>
+      <display_name>OSB/Plywood Thickness</display_name>
+      <description>Specifies the thickness of the walls' structural shear OSB sheathing. Enter 0 for no sheathing (if the wall has other means to handle the shear load on the wall such as cross-bracing).</description>
+      <type>Double</type>
+      <units>in</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
+      <default_value>0.5</default_value>
     </argument>
     <argument>
       <name>rigid_rvalue</name>
@@ -98,7 +89,19 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB6B06AA</checksum>
+      <checksum>8AEE7968</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B207F3E7</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A679FD01</checksum>
     </file>
     <file>
       <version>
@@ -109,19 +112,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0C971491</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>26F142FF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2C56ED48</checksum>
+      <checksum>5C41D8F6</checksum>
     </file>
   </files>
 </measure>

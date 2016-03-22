@@ -70,28 +70,6 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     userdefined_frroofff.setDefaultValue(0.07)
     args << userdefined_frroofff
     
-    
-    
-    
-    
-
-
-    #make a double argument for rigid insulation thickness of roof cavity
-    userdefined_rigidinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsthickness", false)
-    userdefined_rigidinsthickness.setDisplayName("Continuous Insulation Thickness")
-	userdefined_rigidinsthickness.setUnits("in")
-	userdefined_rigidinsthickness.setDescription("Thickness of rigid insulation added to the roof.")
-    userdefined_rigidinsthickness.setDefaultValue(0)
-    args << userdefined_rigidinsthickness
-
-    #make a double argument for rigid insulation R-value of roof cavity
-    userdefined_rigidinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedrigidinsr", false)
-    userdefined_rigidinsr.setDisplayName("Continuous Insulation Nominal R-value")
-	userdefined_rigidinsr.setUnits("hr-ft^2-R/Btu")
-	userdefined_rigidinsr.setDescription("The nominal R-value of the continuous insulation.")
-    userdefined_rigidinsr.setDefaultValue(0)
-    args << userdefined_rigidinsr
-
     return args
   end #end the arguments method
 
@@ -105,6 +83,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Roof above finished space
+    spaces = []
     surfaces = []
     model.getSpaces.each do |space|
         next if Geometry.space_is_unfinished(space)
@@ -113,6 +92,9 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
             next if surface.surfaceType.downcase != "roofceiling"
             next if surface.outsideBoundaryCondition.downcase != "outdoors"
             constructions_to_surfaces["FinInsExtRoof"] << surface
+            if not spaces.include? space
+                spaces << space
+            end
         end
     end
     
@@ -157,7 +139,7 @@ class ProcessConstructionsInsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     
     # Define construction
     roof = Construction.new(path_fracs)
-    roof.addlayer(Material.AirFilmRoof(highest_roof_pitch), false)
+    roof.addlayer(Material.AirFilmRoof(Geometry.calculate_avg_roof_pitch(spaces)), false)
     roof.addlayer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
     roof.addlayer([mat_framing, mat_cavity], true, "RoofIns")
     roof.addlayer(Material.DefaultRoofSheathing, false) # roof sheathing added in separate measure
