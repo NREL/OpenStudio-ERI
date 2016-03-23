@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_unfinished_attic</name>
+  <name>process_constructions_ceilings_roofs_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>582c1da6-265e-45bc-8111-c58a7092b72c</version_id>
+  <version_id>b1f0d1a9-26f0-45cf-bab9-738e2f266b8d</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsUnfinishedAttic</class_name>
-  <display_name>Set Residential Unfinished Attic Constructions</display_name>
+  <class_name>ProcessConstructionsCeilingsRoofsUnfinishedAttic</class_name>
+  <display_name>Set Residential Ceilings/Roofs - Unfinished Attic Constructions</display_name>
   <description>This measure assigns constructions to unfinished attic floors and ceilings.</description>
   <modeler_description>Calculates and assigns material layer properties of constructions for 1) floors between unfinished space under a roof and finished space and 2) roofs of unfinished space.</modeler_description>
   <arguments>
@@ -142,22 +142,10 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsUnfinishedAttic_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8EE7482E</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8AEE7968</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -169,7 +157,13 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A679FD01</checksum>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>ProcessConstructionsUnfinishedAttic_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E32FAE53</checksum>
     </file>
     <file>
       <version>
@@ -180,7 +174,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7C8253B6</checksum>
+      <checksum>5F4A8AFE</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62C1330C</checksum>
     </file>
   </files>
 </measure>

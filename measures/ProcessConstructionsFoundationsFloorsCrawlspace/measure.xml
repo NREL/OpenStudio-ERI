@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_crawlspace</name>
+  <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>6c3f64e6-1fc4-4cdc-b50a-6a654ff5981b</version_id>
+  <version_id>03a3c1b7-6bca-4863-b382-3007c59fc600</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsCrawlspace</class_name>
-  <display_name>Set Residential Crawlspace Constructions</display_name>
+  <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
+  <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
   <description>This measure assigns constructions to the crawlspace ceilings, walls, and floors.</description>
   <modeler_description>Calculates and assigns material layer properties of constructions for: 1) ceilings above below-grade unfinished space, 2) walls between below-grade unfinished space and ground, and 3) floors below below-grade unfinished space. Below-grade spaces are assumed to be crawlspaces (and not basements) if the space height is less than 7 ft.</modeler_description>
   <arguments>
@@ -110,33 +110,10 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsCrawlspace_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B4DF5010</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8AEE7968</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.3.0</identifier>
-        <min_compatible>1.3.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DB76E4FA</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -148,7 +125,30 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A679FD01</checksum>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>ProcessConstructionsCrawlspace_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D77A4C9E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>1.3.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>30B5896B</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62C1330C</checksum>
     </file>
   </files>
 </measure>

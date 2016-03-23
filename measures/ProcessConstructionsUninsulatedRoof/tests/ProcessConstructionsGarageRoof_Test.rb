@@ -12,7 +12,7 @@ class ProcessConstructionsGarageRoof_Test < Test::Unit::TestCase
   def test_ProcessConstructionsGarageRoof
      
     # create an instance of the measure
-    measure = ProcessConstructionsGarageRoof.new
+    measure = ProcessConstructionsUninsulatedRoof.new
     
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

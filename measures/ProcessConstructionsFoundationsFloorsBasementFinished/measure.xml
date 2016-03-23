@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_finished_basement</name>
+  <name>process_constructions_foundations_floors_basement_finished</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>7c2255b7-9b76-48dd-98f2-b192adf40193</version_id>
+  <version_id>cd29cf18-b650-4ccb-a0b2-553c4d8f4965</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsFinishedBasement</class_name>
-  <display_name>Set Residential Finished Basement Constructions</display_name>
+  <class_name>ProcessConstructionsFoundationsFloorsBasementFinished</class_name>
+  <display_name>Set Residential Foundations/Floors - Finished Basement Constructions</display_name>
   <description>This measure assigns constructions to finished basement walls and floors.</description>
   <modeler_description>Calculates and assigns material layer properties of constructions for: 1) walls between below-grade finished space and ground, and 2) floors below below-grade finished space. Below-grade spaces are assumed to be basements (and not crawlspaces) if the space height is greater than or equal to 7 ft.</modeler_description>
   <arguments>
@@ -173,22 +173,28 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsFinishedBasement_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>695FAA9D</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB6B06AA</checksum>
+      <checksum>B207F3E7</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>ProcessConstructionsFinishedBasement_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D01C7C56</checksum>
     </file>
     <file>
       <version>
@@ -199,19 +205,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A58EEC7A</checksum>
+      <checksum>B5380AEB</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>26F142FF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2C56ED48</checksum>
+      <checksum>62C1330C</checksum>
     </file>
   </files>
 </measure>

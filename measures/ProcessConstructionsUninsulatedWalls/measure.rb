@@ -6,12 +6,12 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsUninsulatedWalls < OpenStudio::Ruleset::ModelUserScript
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Exterior Unfinished Wood Stud Constructions"
+    return "Set Residential Uninsulated Wall Constructions"
   end
   
   def description
@@ -88,4 +88,4 @@ class ProcessConstructionsExteriorUninsulatedWalls < OpenStudio::Ruleset::ModelU
 end #end the measure
 
 #this allows the measure to be use by the application
-ProcessConstructionsExteriorUninsulatedWalls.new.registerWithApplication
+ProcessConstructionsUninsulatedWalls.new.registerWithApplication

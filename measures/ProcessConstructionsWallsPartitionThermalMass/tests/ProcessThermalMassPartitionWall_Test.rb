@@ -12,7 +12,7 @@ class ProcessThermalMassPartitionWall_Test < Test::Unit::TestCase
   def test_ProcessThermalMassPartitionWall
      
     # create an instance of the measure
-    measure = ProcessThermalMassPartitionWall.new
+    measure = ProcessConstructionsWallsPartitionThermalMass.new
     
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

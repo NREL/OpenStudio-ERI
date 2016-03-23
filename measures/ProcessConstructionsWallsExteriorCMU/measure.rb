@@ -6,11 +6,11 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScript
     
   # human readable name
   def name
-    return "Set Residential Exterior CMU Wall Construction"
+    return "Set Residential Walls - CMU Construction"
   end
 
   # human readable description
@@ -206,4 +206,4 @@ class ProcessConstructionsExteriorInsulatedWallsCMU < OpenStudio::Ruleset::Model
 end
 
 # register the measure to be used by the application
-ProcessConstructionsExteriorInsulatedWallsCMU.new.registerWithApplication
+ProcessConstructionsWallsExteriorCMU.new.registerWithApplication

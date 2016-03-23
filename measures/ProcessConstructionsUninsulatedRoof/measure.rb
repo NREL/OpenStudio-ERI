@@ -6,7 +6,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsUninsulatedRoof < OpenStudio::Ruleset::ModelUserScript
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
@@ -85,4 +85,4 @@ class ProcessConstructionsGarageRoof < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ProcessConstructionsGarageRoof.new.registerWithApplication
+ProcessConstructionsUninsulatedRoof.new.registerWithApplication

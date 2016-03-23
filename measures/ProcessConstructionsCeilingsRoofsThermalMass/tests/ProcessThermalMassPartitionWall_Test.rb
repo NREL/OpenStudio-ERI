@@ -12,7 +12,7 @@ class SetResidentialCeilingThermalMass_Test < Test::Unit::TestCase
   def test_SetResidentialCeilingThermalMass
      
     # create an instance of the measure
-    measure = SetResidentialCeilingThermalMass.new
+    measure = ProcessConstructionsCeilingsRoofsThermalMass.new
     
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

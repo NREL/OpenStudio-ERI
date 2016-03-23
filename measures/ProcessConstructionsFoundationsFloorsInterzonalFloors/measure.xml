@@ -1,13 +1,13 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_interior_insulated_floors</name>
+  <name>process_constructions_foundations_floors_interzonal_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>8b958469-9899-48ec-aefc-bab96f60bdb4</version_id>
+  <version_id>c4c1dbf6-c981-4b1f-804e-83ee72163c7f</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsInteriorInsulatedFloors</class_name>
-  <display_name>Set Residential Interzonal Wood Stud Floor Construction</display_name>
+  <class_name>ProcessConstructionsFoundationsFloorsInterzonalFloors</class_name>
+  <display_name>Set Residential Foundations/Floors - Interzonal Floor Construction</display_name>
   <description>This measure assigns a wood stud construction to floors between finished space and unfinished space or floors below cantilevered finished space.</description>
-  <modeler_description>Calculates and assigns material layer properties of wood stud constructions for floors 1) between finished and unfinished spaces or 2) between finished spaces and outside. If the floors have an existing construction, the layers (other than carpet and floor mass) are replaced. This measure is intended to be used in conjunction with Carpet and Floor Mass measures.</modeler_description>
+  <modeler_description>Calculates and assigns material layer properties of wood stud constructions for floors 1) between finished and unfinished spaces or 2) between finished spaces and outside. If the floors have an existing construction, the layers (other than floor covering and floor mass) are replaced. This measure is intended to be used in conjunction with Floor Covering and Floor Mass measures.</modeler_description>
   <arguments>
     <argument>
       <name>userdefinedinstcavr</name>
@@ -71,33 +71,10 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsInteriorInsulatedFloors_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CCAC69DB</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8AEE7968</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>3C7A8054</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -109,7 +86,30 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A679FD01</checksum>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>ProcessConstructionsInteriorInsulatedFloors_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DCAB9AC2</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4A076FEA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62C1330C</checksum>
     </file>
   </files>
 </measure>

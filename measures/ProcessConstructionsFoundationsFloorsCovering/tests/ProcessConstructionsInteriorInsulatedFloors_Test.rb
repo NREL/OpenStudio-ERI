@@ -12,7 +12,7 @@ class SetResidentialFloorCarpet_Test < Test::Unit::TestCase
   def test_SetResidentialFloorCarpet
      
     # create an instance of the measure
-    measure = SetResidentialFloorCarpet.new
+    measure = ProcessConstructionsFoundationsFloorsCovering.new
     
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

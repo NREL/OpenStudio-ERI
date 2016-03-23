@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_thermal_mass_partition_wall</name>
+  <name>process_constructions_walls_partition_thermal_mass</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>2e2c4071-789a-4c07-912a-3776a4f7663d</version_id>
+  <version_id>67b6144a-4353-4637-90a0-7f0228839001</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessThermalMassPartitionWall</class_name>
-  <display_name>Set Residential Partition Wall Thermal Mass</display_name>
+  <class_name>ProcessConstructionsWallsPartitionThermalMass</class_name>
+  <display_name>Set Residential Walls - Partition Thermal Mass</display_name>
   <description>This measure assigns partition wall mass to the living space and finished basement.</description>
   <modeler_description>This measure creates constructions representing the internal mass of partition walls in the living space and finished basement. The constructions are set to define the internal mass objects of their respective spaces.</modeler_description>
   <arguments>
@@ -107,16 +107,28 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessThermalMassPartitionWall_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F8535F2F</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>058A19F9</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B207F3E7</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>ProcessThermalMassPartitionWall_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4618C0F3</checksum>
     </file>
     <file>
       <version>
@@ -127,25 +139,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F107DDF3</checksum>
+      <checksum>6D9B735D</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>62C1330C</checksum>
     </file>
   </files>
 </measure>

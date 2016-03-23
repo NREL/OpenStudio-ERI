@@ -6,12 +6,12 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::ModelUserScript
   
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Crawlspace Constructions"
+    return "Set Residential Foundations/Floors - Crawlspace Constructions"
   end
   
   def description
@@ -268,4 +268,4 @@ class ProcessConstructionsCrawlspace < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ProcessConstructionsCrawlspace.new.registerWithApplication
+ProcessConstructionsFoundationsFloorsCrawlspace.new.registerWithApplication

@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_unfinished_basement</name>
+  <name>process_constructions_foundations_floors_basement_unfinished</name>
   <uid>ebc21070-2d4b-4a2a-bd15-f18bf3e77b49</uid>
-  <version_id>197a622a-1bbb-4bac-821c-7d89f4db38d8</version_id>
+  <version_id>b8f982f7-70d3-4c6c-abce-ab3338bcda99</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsUnfinishedBasement</class_name>
-  <display_name>Set Residential Unfinished Basement Constructions</display_name>
+  <class_name>ProcessConstructionsFoundationsFloorsBasementUnfinished</class_name>
+  <display_name>Set Residential Foundations/Floors - Unfinished Basement Constructions</display_name>
   <description>This measure assigns constructions to the unfinished basement ceilings, walls, and floors.</description>
   <modeler_description>Calculates and assigns material layer properties of constructions for: 1) ceilings above below-grade unfinished space, 2) walls between below-grade unfinished space and ground, and 3) floors below below-grade unfinished space. Below-grade spaces are assumed to be basements (and not crawlspaces) if the space height is greater than or equal to 7 ft.</modeler_description>
   <arguments>
@@ -177,33 +177,10 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsUnfinishedBasement_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D2D6B54B</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8AEE7968</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.3.0</identifier>
-        <min_compatible>1.3.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>996B8516</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -215,7 +192,30 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A679FD01</checksum>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>ProcessConstructionsUnfinishedBasement_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B68F5B5E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>1.3.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>76D0EB0E</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62C1330C</checksum>
     </file>
   </files>
 </measure>

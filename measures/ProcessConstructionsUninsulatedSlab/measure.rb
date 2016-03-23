@@ -1,27 +1,21 @@
 #see the URL below for information on how to write OpenStudio measures
-# http://openstudio.nrel.gov/openstudio-measure-writing-guide
-
-#see the URL below for information on using life cycle cost objects in OpenStudio
-# http://openstudio.nrel.gov/openstudio-life-cycle-examples
-
-#see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
-# http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
+# http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsUninsulatedSlab < OpenStudio::Ruleset::ModelUserScript
   
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Unfinished Slab Construction"
+    return "Set Residential Uninsulated Slab Construction"
   end
   
   def description
-    return "This measure assigns a construction to unfinished slabs."
+    return "This measure assigns a construction to uninsulated slabs (e.g., under the garage)."
   end
   
   def modeler_description
@@ -87,4 +81,4 @@ class ProcessConstructionsGarageSlab < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ProcessConstructionsGarageSlab.new.registerWithApplication
+ProcessConstructionsUninsulatedSlab.new.registerWithApplication

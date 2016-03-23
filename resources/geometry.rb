@@ -252,6 +252,7 @@ class Geometry
         return thermal_zone
     end     
     
+    # FIXME: Remove method; use surface.space instead
     def self.get_space_from_surface(model, surface_s, runner, print_err=true)
         space_r = nil
         model.getSpaces.each do |space|
@@ -272,48 +273,6 @@ class Geometry
         return space_r
     end
 
-    def self.get_space_type_from_surface(model, surface_s, runner, print_err=true)
-        space_type_r = nil
-        model.getSpaces.each do |space|
-            space.surfaces.each do |s|
-                if s.name.to_s == surface_s
-                    space_type_r = space.spaceType.get
-                    break
-                end
-            end
-        end
-        if space_type_r.nil?
-            if print_err
-                runner.registerError("Could not find surface with the name '#{surface_s}'.")
-            else
-                runner.registerWarning("Could not find surface with the name '#{surface_s}'.")
-            end
-        end     
-        return space_type_r
-    end
-    
-    def self.get_space_type_from_sub_surface(model, sub_surface_s, runner, print_err=true)
-        space_type_r = nil
-        model.getSpaces.each do |space|
-            space.surfaces.each do |surface|
-                surface.subSurfaces.each do |s|
-                    if s.name.to_s == sub_surface_s
-                        space_type_r = space.spaceType.get
-                        break
-                    end
-                end
-            end
-        end
-        if space_type_r.nil?
-            if print_err
-                runner.registerError("Could not find surface with the name '#{sub_surface_s}'.")
-            else
-                runner.registerWarning("Could not find surface with the name '#{sub_surface_s}'.")
-            end
-        end     
-        return space_type_r
-    end
-   
     # Return an array of z values for surfaces passed in. The values will be relative to the parent origin. This was intended for spaces.
     def self.getSurfaceZValues(surfaceArray)
         zValueArray = []
@@ -342,6 +301,15 @@ class Geometry
             floor_area += space.floorArea
         end
         return OpenStudio.convert(floor_area, "m^2", "ft^2").get
+    end
+    
+    # Takes in a list of surfaces and returns the total gross area
+    def self.calculate_total_area_from_surfaces(surfaces)
+        total_area = 0
+        surfaces.each do |surface|
+            total_area += surface.grossArea
+        end
+        return OpenStudio.convert(total_area, "m^2", "ft^2").get
     end
     
     # Takes in a list of spaces and returns the total wall area
@@ -374,12 +342,27 @@ class Geometry
         return sum_tilt/num_surf.to_f
     end
     
+    # Checks if the surface is between finished and unfinished space
+    def self.is_interzonal_surface(surface)
+        if surface.outsideBoundaryCondition.downcase != "surface" or not surface.space.is_initialized or not surface.adjacentSurface.is_initialized
+            return false
+        end
+        adjacent_surface = surface.adjacentSurface.get
+        if not adjacent_surface.space.is_initialized
+            return false
+        end
+        if Geometry.space_is_finished(surface.space.get) == Geometry.space_is_finished(adjacent_surface.space.get)
+            return false
+        end
+        return true
+    end
+    
     # Takes in a list of spaces and returns the wall area for the exterior perimeter
     def self.calculate_perimeter_wall_area(spaces)
         return Geometry.calculate_perimeter(spaces) * Geometry.calculate_wall_area(spaces)
     end
    
-    # Takes in a list of spaces and checks for edges shared by a ground exposed floor and exterior exposed wall.
+    # Takes in a list of spaces and checks for edges shared by a ground exposed floor and exterior exposed or interzonal wall.
     def self.calculate_perimeter(spaces)
 
         perimeter = 0
@@ -410,11 +393,11 @@ class Geometry
 
             # check edges for matches (need opposite vertices and proper boundary conditions)
             edge_hash.each do |k1,v1|
-                next if v1[3] != "Ground" # skip if not ground exposed floor
-                next if v1[4] != "Floor"
+                next if not v1[3].downcase == "ground" # skip if not ground exposed floor
+                next if not v1[4].downcase == "floor"
                 edge_hash.each do |k2,v2|
-                    next if v2[3] != "Outdoors" # skip if not exterior exposed wall (todo - update to handle basement)
-                    next if v2[4] != "Wall"
+                    next if not v2[4].downcase == "wall"
+                    next if not (v2[3].downcase == "outdoors" or Geometry.is_interzonal_surface(v2[2])) # skip if not exterior exposed wall or interzonal wall
                     # see if edges have same geometry
                     next if not v1[0] == v2[1] # next if not same geometry reversed
                     next if not v1[1] == v2[0]

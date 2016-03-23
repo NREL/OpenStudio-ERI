@@ -12,7 +12,7 @@ class ProcessConstructionsCrawlspace_Test < Test::Unit::TestCase
   def test_ProcessConstructionsCrawlspace
      
     # create an instance of the measure
-    measure = ProcessConstructionsCrawlspace.new
+    measure = ProcessConstructionsFoundationsFloorsCrawlspace.new
     
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

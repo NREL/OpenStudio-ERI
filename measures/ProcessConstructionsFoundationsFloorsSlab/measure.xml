@@ -1,80 +1,113 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_slab</name>
+  <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>32e6937d-a9a9-4ab4-bfb3-db0f709cb258</version_id>
+  <version_id>733571ae-d15c-4ef0-8dd3-e7ea628c8e72</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsSlab</class_name>
-  <display_name>Set Residential Finished Slab Construction</display_name>
-  <description>This measure assigns a construction to finished slabs.</description>
+  <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
+  <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
+  <description>This measure assigns a construction to slabs-on-grade.</description>
   <modeler_description>Calculates and assigns material layer properties of slab constructions for floors between above-grade finished space and the ground.</modeler_description>
   <arguments>
     <argument>
-      <name>selectedslabins</name>
-      <display_name>Insulation Type</display_name>
-      <description>The type of insulation.</description>
-      <type>Choice</type>
+      <name>perim_r</name>
+      <display_name>Perimeter Insulation Nominal R-value</display_name>
+      <description>Perimeter insulation is placed horizontally below the perimeter of the slab.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Uninsulated</default_value>
-      <choices>
-        <choice>
-          <value>Uninsulated</value>
-          <display_name>Uninsulated</display_name>
-        </choice>
-        <choice>
-          <value>Perimeter</value>
-          <display_name>Perimeter</display_name>
-        </choice>
-        <choice>
-          <value>Exterior</value>
-          <display_name>Exterior</display_name>
-        </choice>
-        <choice>
-          <value>Whole Slab</value>
-          <display_name>Whole Slab</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>userdefinedslabperiextr</name>
-      <display_name>Perimeter/Exterior Insulation Nominal R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
-      <name>userdefinedslabperiextwidthdepth</name>
-      <display_name>Perimeter/Exterior Insulation Width/Depth</display_name>
-      <description>The width or depth of the perimeter or exterior insulation.</description>
+      <name>perim_width</name>
+      <display_name>Perimeter Insulation Width</display_name>
+      <description>The distance from the perimeter of the house where the perimeter insulation ends.</description>
       <type>Double</type>
       <units>ft</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
-      <name>userdefinedslabgapr</name>
-      <display_name>Gap Insulation Nominal R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedslabwholer</name>
+      <name>whole_r</name>
       <display_name>Whole Slab Insulation Nominal R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <description>Whole slab insulation is placed horizontally below the entire slab.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>gap_r</name>
+      <display_name>Gap Insulation Nominal R-value</display_name>
+      <description>Gap insulation is placed vertically between the edge of the slab and the foundation wall.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>ext_r</name>
+      <display_name>Exterior Insulation Nominal R-value</display_name>
+      <description>Exterior insulation is placed vertically on the exterior of the foundation wall.</description>
+      <type>Double</type>
+      <units>hr-ft^2-R/Btu</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>ext_depth</name>
+      <display_name>Exterior Insulation Depth</display_name>
+      <description>The depth of the exterior foundation insulation.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>mass_thick_in</name>
+      <display_name>Mass Thickness</display_name>
+      <description>Thickness of the slab foundation mass.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>4</default_value>
+    </argument>
+    <argument>
+      <name>mass_cond</name>
+      <display_name>Mass Conductivity</display_name>
+      <description>Conductivity of the slab foundation mass.</description>
+      <type>Double</type>
+      <units>Btu-in/h-ft^2-R</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>9.1</default_value>
+    </argument>
+    <argument>
+      <name>mass_dens</name>
+      <display_name>Mass Density</display_name>
+      <description>Density of the slab foundation mass.</description>
+      <type>Double</type>
+      <units>lb/ft^3</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>140</default_value>
+    </argument>
+    <argument>
+      <name>mass_specheat</name>
+      <display_name>Mass Specific Heat</display_name>
+      <description>Specific heat of the slab foundation mass.</description>
+      <type>Double</type>
+      <units>Btu/lb-R</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.2</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -95,22 +128,10 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsSlab_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5E27ABD3</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8AEE7968</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -122,7 +143,19 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A679FD01</checksum>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>ProcessConstructionsSlab_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3A2301EE</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62C1330C</checksum>
     </file>
     <file>
       <version>
@@ -133,7 +166,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>910C60C0</checksum>
+      <checksum>4AE32ED3</checksum>
     </file>
   </files>
 </measure>

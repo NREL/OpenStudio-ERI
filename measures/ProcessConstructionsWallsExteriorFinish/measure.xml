@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>set_residential_exterior_finish</name>
+  <name>process_constructions_walls_exterior_finish</name>
   <uid>d7e5d5a3-38bf-40ea-abc9-2d50024a7090</uid>
-  <version_id>0c373e5d-f52b-4a95-8b25-a9c5503eab46</version_id>
+  <version_id>e1a8e00d-a69b-4f13-8f30-447340a5754c</version_id>
   <xml_checksum>2609226D</xml_checksum>
-  <class_name>SetResidentialExteriorFinish</class_name>
-  <display_name>Set Residential Exterior Finish</display_name>
+  <class_name>ProcessConstructionsWallsExteriorFinish</class_name>
+  <display_name>Set Residential Walls - Exterior Finish</display_name>
   <description>This measure assigns the exterior finish to all above-grade exterior walls.</description>
   <modeler_description>Assigns material layer properties for all above-grade walls adjacent to outside.</modeler_description>
   <arguments>
@@ -96,12 +96,6 @@
   </attributes>
   <files>
     <file>
-      <filename>set_residential_exterior_finish_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2732AD6D</checksum>
-    </file>
-    <file>
       <filename>example_model.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -114,10 +108,22 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB6B06AA</checksum>
+      <checksum>B207F3E7</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>set_residential_exterior_finish_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AEBC2B24</checksum>
     </file>
     <file>
       <version>
@@ -128,19 +134,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>565C44C9</checksum>
+      <checksum>F5918902</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>26F142FF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2C56ED48</checksum>
+      <checksum>62C1330C</checksum>
     </file>
   </files>
 </measure>

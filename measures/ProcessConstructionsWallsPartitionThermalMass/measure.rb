@@ -12,7 +12,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsWallsPartitionThermalMass < OpenStudio::Ruleset::ModelUserScript
 
   class PartitionWallMass
     def initialize(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
@@ -56,7 +56,7 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Partition Wall Thermal Mass"
+    return "Set Residential Walls - Partition Thermal Mass"
   end
   
   def description
@@ -289,4 +289,4 @@ class ProcessThermalMassPartitionWall < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ProcessThermalMassPartitionWall.new.registerWithApplication
+ProcessConstructionsWallsPartitionThermalMass.new.registerWithApplication

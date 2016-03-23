@@ -1,12 +1,12 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_garage_slab</name>
+  <name>process_constructions_uninsulated_slab</name>
   <uid>3da62049-50f9-4ed0-b05a-6b89a202482d</uid>
-  <version_id>a3db3578-9666-4bf8-840c-ad82ef9432fe</version_id>
+  <version_id>15a5b475-1f91-4498-bd0b-7c6dbaa5d7e3</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsGarageSlab</class_name>
-  <display_name>Set Residential Unfinished Slab Construction</display_name>
-  <description>This measure assigns a construction to unfinished slabs.</description>
+  <class_name>ProcessConstructionsUninsulatedSlab</class_name>
+  <display_name>Set Residential Uninsulated Slab Construction</display_name>
+  <description>This measure assigns a construction to uninsulated slabs (e.g., under the garage).</description>
   <modeler_description>Calculates and assigns material layer properties of slab constructions for floors between above-grade unfinished space and ground.</modeler_description>
   <arguments/>
   <provenances/>
@@ -27,22 +27,28 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsGarageSlab_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5F3B09D0</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FB6B06AA</checksum>
+      <checksum>B207F3E7</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C5D00E99</checksum>
+    </file>
+    <file>
+      <filename>ProcessConstructionsGarageSlab_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>606FA4F5</checksum>
     </file>
     <file>
       <version>
@@ -53,19 +59,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1CC6E3B4</checksum>
+      <checksum>D2A52EC4</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>26F142FF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2C56ED48</checksum>
+      <checksum>62C1330C</checksum>
     </file>
   </files>
 </measure>

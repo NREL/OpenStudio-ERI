@@ -14,7 +14,7 @@ class SetResidentialRoofingMaterialTest < MiniTest::Unit::TestCase
 
   def test_number_of_arguments_and_argument_names
     # create an instance of the measure
-    measure = SetResidentialRoofingMaterial.new
+    measure = ProcessConstructionsCeilingsRoofsRoofingMaterial.new
 
     # make an empty model
     model = OpenStudio::Model::Model.new
@@ -27,7 +27,7 @@ class SetResidentialRoofingMaterialTest < MiniTest::Unit::TestCase
 
   def test_bad_argument_values
     # create an instance of the measure
-    measure = SetResidentialRoofingMaterial.new
+    measure = ProcessConstructionsCeilingsRoofsRoofingMaterial.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -65,7 +65,7 @@ class SetResidentialRoofingMaterialTest < MiniTest::Unit::TestCase
 
   def test_good_argument_values
     # create an instance of the measure
-    measure = SetResidentialRoofingMaterial.new
+    measure = ProcessConstructionsCeilingsRoofsRoofingMaterial.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

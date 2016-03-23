@@ -6,12 +6,12 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class SetResidentialFloorThermalMass < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsFoundationsFloorsThermalMass < OpenStudio::Ruleset::ModelUserScript
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Floor Thermal Mass"
+    return "Set Residential Foundations/Floors - Floor Thermal Mass"
   end
   
   def description
@@ -135,4 +135,4 @@ class SetResidentialFloorThermalMass < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-SetResidentialFloorThermalMass.new.registerWithApplication
+ProcessConstructionsFoundationsFloorsThermalMass.new.registerWithApplication
