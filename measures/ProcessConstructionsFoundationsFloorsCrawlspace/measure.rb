@@ -26,61 +26,58 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    csins_display_names = OpenStudio::StringVector.new
-    csins_display_names << "Uninsulated"
-    csins_display_names << "Wall"
-    csins_display_names << "Ceiling"
-    
-    #make a choice argument for cs insulation type
-    selected_csins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcsins", csins_display_names, true)
-    selected_csins.setDisplayName("Insulation Type")
-    selected_csins.setDescription("The type of insulation.")
-    selected_csins.setDefaultValue("Wall")
-    args << selected_csins  
+    #make a double argument for wall continuous insulation R-value
+    wall_rigid_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_rigid_r", true)
+    wall_rigid_r.setDisplayName("Wall Continuous Insulation Nominal R-value")
+	wall_rigid_r.setUnits("hr-ft^2-R/Btu")
+	wall_rigid_r.setDescription("The R-value of the continuous insulation.")
+    wall_rigid_r.setDefaultValue(10.0)
+    args << wall_rigid_r
 
-    #make a double argument for crawlspace ceiling / wall insulation R-value
-    userdefined_cswallceilr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcswallceilr", false)
-    userdefined_cswallceilr.setDisplayName("Wall/Ceiling Continuous/Cavity Insulation Nominal R-value")
-    userdefined_cswallceilr.setUnits("hr-ft^2-R/Btu")
-    userdefined_cswallceilr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-    userdefined_cswallceilr.setDefaultValue(5.0)
-    args << userdefined_cswallceilr
-    
-    # Ceiling Joist Height
-    #make a choice argument for model objects
-    joistheight_display_names = OpenStudio::StringVector.new
-    joistheight_display_names << "2x10" 
-    
-    #make a choice argument for crawlspace ceiling joist height
-    selected_csceiljoistheight = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedcsceiljoistheight", joistheight_display_names, true)
-    selected_csceiljoistheight.setDisplayName("Ceiling Joist Height")
-    selected_csceiljoistheight.setUnits("in")
-    selected_csceiljoistheight.setDescription("Height of the joist member.")
-    selected_csceiljoistheight.setDefaultValue("2x10")
-    args << selected_csceiljoistheight  
-    
+    #make a double argument for wall continuous insulation thickness
+    wall_rigid_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_rigid_thick_in", true)
+    wall_rigid_thick_in.setDisplayName("Wall Continuous Insulation Thickness")
+	wall_rigid_thick_in.setUnits("in")
+	wall_rigid_thick_in.setDescription("The thickness of the continuous insulation.")
+    wall_rigid_thick_in.setDefaultValue(2.0)
+    args << wall_rigid_thick_in
+
+    #make a double argument for ceiling cavity R-value
+    ceil_cavity_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ceil_cavity_r", true)
+    ceil_cavity_r.setDisplayName("Ceiling Cavity Insulation Nominal R-value")
+	ceil_cavity_r.setUnits("h-ft^2-R/Btu")
+	ceil_cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
+    ceil_cavity_r.setDefaultValue(0)
+    args << ceil_cavity_r
+
     #make a choice argument for model objects
     installgrade_display_names = OpenStudio::StringVector.new
     installgrade_display_names << "I"
     installgrade_display_names << "II"
     installgrade_display_names << "III"
-    
-    #make a choice argument for wall cavity insulation installation grade
-    selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
-    selected_installgrade.setDisplayName("Ceiling Cavity Install Grade")
-    selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
-    selected_installgrade.setDefaultValue("I")
-    args << selected_installgrade   
-    
-    # Ceiling Framing Factor
-    #make a choice argument for crawlspace ceiling framing factor
-    userdefined_csceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcsceilff", false)
-    userdefined_csceilff.setDisplayName("Ceiling Framing Factor")
-    userdefined_csceilff.setUnits("frac")
-    userdefined_csceilff.setDescription("Fraction of ceiling that is framing.")
-    userdefined_csceilff.setDefaultValue(0.13)
-    args << userdefined_csceilff
+
+	#make a choice argument for ceiling cavity insulation installation grade
+	ceil_cavity_grade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ceil_cavity_grade", installgrade_display_names, true)
+	ceil_cavity_grade.setDisplayName("Ceiling Cavity Install Grade")
+	ceil_cavity_grade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    ceil_cavity_grade.setDefaultValue("I")
+	args << ceil_cavity_grade
+
+	#make a choice argument for ceiling framing factor
+	ceil_ff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ceil_ff", true)
+    ceil_ff.setDisplayName("Ceiling Framing Factor")
+	ceil_ff.setUnits("frac")
+	ceil_ff.setDescription("Fraction of ceiling that is framing.")
+    ceil_ff.setDefaultValue(0.13)
+	args << ceil_ff
+
+	#make a choice argument for ceiling joist height
+	ceil_joist_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ceil_joist_height", true)
+	ceil_joist_height.setDisplayName("Ceiling Joist Height")
+	ceil_joist_height.setUnits("in")
+	ceil_joist_height.setDescription("Height of the joist member.")
+	ceil_joist_height.setDefaultValue("9.25")
+	args << ceil_joist_height	
     
     return args
   end #end the arguments method
@@ -124,39 +121,41 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
       return true
     end    
     
-    crawlWallContInsRvalueNominal = 0
-    crawlCeilingCavityInsRvalueNominal = 0
-
-    # Crawlspace Insulation
-    selected_csins = runner.getStringArgumentValue("selectedcsins",user_arguments)
-    crawlCeilingInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)] 
+    # Get Inputs
+    crawlWallContInsRvalueNominal = runner.getDoubleArgumentValue("wall_rigid_r",user_arguments)
+    crawlWallContInsThickness = runner.getDoubleArgumentValue("wall_rigid_thick_in",user_arguments)
+    crawlCeilingCavityInsRvalueNominal = runner.getDoubleArgumentValue("ceil_cavity_r",user_arguments)
+    crawlCeilingInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("ceil_cavity_grade",user_arguments)]
+    crawlCeilingFramingFactor = runner.getDoubleArgumentValue("ceil_ff",user_arguments)
+    crawlCeilingJoistHeight = runner.getDoubleArgumentValue("ceil_joist_height",user_arguments)
     
-    # Wall / Ceiling Insulation
-    if ["Wall", "Ceiling"].include? selected_csins.to_s
-        userdefined_cswallceilr = runner.getDoubleArgumentValue("userdefinedcswallceilr",user_arguments)
+    # Validate Inputs
+    if crawlWallContInsRvalueNominal < 0.0
+        runner.registerError("Wall Continuous Insulation Nominal R-value must be greater than or equal to 0.")
+        return false
     end
-    
-    # Ceiling Joist Height
-    crawlCeilingJoistHeight = {"2x10"=>9.25}[runner.getStringArgumentValue("selectedcsceiljoistheight",user_arguments)] 
-    
-    # Ceiling Framing Factor
-    crawlCeilingFramingFactor = runner.getDoubleArgumentValue("userdefinedcsceilff",user_arguments)
-    if not ( crawlCeilingFramingFactor > 0.0 and crawlCeilingFramingFactor < 1.0 )
-      runner.registerError("Invalid crawlspace ceiling framing factor")
-      return false
+    if crawlWallContInsThickness < 0.0
+        runner.registerError("Wall Continuous Insulation Thickness must be greater than or equal to 0.")
+        return false
     end
-
-    # Insulation
-    if selected_csins.to_s == "Wall"
-        crawlWallContInsRvalueNominal = userdefined_cswallceilr
-    elsif selected_csins.to_s == "Ceiling"
-        crawlCeilingCavityInsRvalueNominal = userdefined_cswallceilr
+    if crawlCeilingCavityInsRvalueNominal < 0.0
+        runner.registerError("Ceiling Cavity Insulation Nominal R-value must be greater than or equal to 0.")
+        return false
     end
+    if crawlCeilingFramingFactor < 0.0 or crawlCeilingFramingFactor >= 1.0
+        runner.registerError("Ceiling Framing Factor must be greater than or equal to 0 and less than 1.")
+        return false
+    end
+    if crawlCeilingJoistHeight <= 0.0
+        runner.registerError("Ceiling Joist Height must be greater than 0.")
+        return false
+    end    
     
+    # Get geometry values
     csHeight = Geometry.spaces_avg_height(spaces)
-    csArea = Geometry.calculate_floor_area(spaces)
-    csExtPerimeter = Geometry.calculate_perimeter(spaces)
-    csExtWallArea = Geometry.calculate_perimeter_wall_area(spaces)
+    csFloorArea = Geometry.calculate_floor_area(spaces)
+    csExtPerimeter = Geometry.calculate_perimeter(model, floor_surfaces, has_foundation_walls=true)
+    csExtWallArea = csExtPerimeter * Geometry.spaces_avg_height(spaces)
 
     # -------------------------------
     # Process the crawl walls
@@ -177,15 +176,25 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         crawlspace_fictitious_Rvalue = crawlspace_effective_Rvalue - Material.Soil12in.rvalue - crawlspace_US_Rvalue
 
         # Define materials
-        mat_ins = Material.new(name="CWallIns", thick_in=crawlWallContInsRvalueNominal/BaseMaterial.InsulationRigid.k, mat_base=BaseMaterial.InsulationRigid)
-        mat_fic_wall = SimpleMaterial.new(name="CWall-FicR", rvalue=crawlspace_fictitious_Rvalue)
+        mat_ins = nil
+        if crawlWallContInsThickness > 0
+            mat_ins = Material.new(name="CWallIns", thick_in=crawlWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio::convert(crawlWallContInsThickness,"in","ft").get / crawlWallContInsRvalueNominal)
+        end
+        mat_fic_wall = nil
+        if crawlspace_fictitious_Rvalue > 0
+            mat_fic_wall = SimpleMaterial.new(name="CWall-FicR", rvalue=crawlspace_fictitious_Rvalue)
+        end
         
         # Define construction
         cs_wall = Construction.new([1.0])
-        cs_wall.addlayer(mat_fic_wall, true)
+        if not mat_fic_wall.nil?
+            cs_wall.addlayer(mat_fic_wall, true)
+        end
         cs_wall.addlayer(Material.Soil12in, true)
         cs_wall.addlayer(Material.Concrete8in, true)
-        cs_wall.addlayer(mat_ins, true)
+        if not mat_ins.nil?
+            cs_wall.addlayer(mat_ins, true)
+        end
         cs_wall.addlayer(Material.AirFilmVertical, false)
         
         # Create and assign construction to surfaces
@@ -205,7 +214,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         
         # Fictitious layer below crawlspace floor to achieve equivalent R-value. See Winklemann article.
         if crawlspace_fictitious_Rvalue < 0 # Not enough cond through walls, need to add in floor conduction
-            crawlspace_floor_Rvalue = csArea / (crawlspace_total_UA - crawlspace_wall_UA) - Material.Soil12in.rvalue # hr*ft^2*F/Btu (assumes crawlspace floor is dirt with no concrete slab)
+            crawlspace_floor_Rvalue = csFloorArea / (crawlspace_total_UA - crawlspace_wall_UA) - Material.Soil12in.rvalue # hr*ft^2*F/Btu (assumes crawlspace floor is dirt with no concrete slab)
         else
             crawlspace_floor_Rvalue = 1000 # hr*ft^2*F/Btu
         end

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>03a3c1b7-6bca-4863-b382-3007c59fc600</version_id>
+  <version_id>33baa163-01d5-4e90-a74c-0a972de9df85</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
@@ -10,58 +10,39 @@
   <modeler_description>Calculates and assigns material layer properties of constructions for: 1) ceilings above below-grade unfinished space, 2) walls between below-grade unfinished space and ground, and 3) floors below below-grade unfinished space. Below-grade spaces are assumed to be crawlspaces (and not basements) if the space height is less than 7 ft.</modeler_description>
   <arguments>
     <argument>
-      <name>selectedcsins</name>
-      <display_name>Insulation Type</display_name>
-      <description>The type of insulation.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>Wall</default_value>
-      <choices>
-        <choice>
-          <value>Uninsulated</value>
-          <display_name>Uninsulated</display_name>
-        </choice>
-        <choice>
-          <value>Wall</value>
-          <display_name>Wall</display_name>
-        </choice>
-        <choice>
-          <value>Ceiling</value>
-          <display_name>Ceiling</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>userdefinedcswallceilr</name>
-      <display_name>Wall/Ceiling Continuous/Cavity Insulation Nominal R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <name>wall_rigid_r</name>
+      <display_name>Wall Continuous Insulation Nominal R-value</display_name>
+      <description>The R-value of the continuous insulation.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>5</default_value>
+      <default_value>10</default_value>
     </argument>
     <argument>
-      <name>selectedcsceiljoistheight</name>
-      <display_name>Ceiling Joist Height</display_name>
-      <description>Height of the joist member.</description>
-      <type>Choice</type>
+      <name>wall_rigid_thick_in</name>
+      <display_name>Wall Continuous Insulation Thickness</display_name>
+      <description>The thickness of the continuous insulation.</description>
+      <type>Double</type>
       <units>in</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>2x10</default_value>
-      <choices>
-        <choice>
-          <value>2x10</value>
-          <display_name>2x10</display_name>
-        </choice>
-      </choices>
+      <default_value>2</default_value>
     </argument>
     <argument>
-      <name>selectedinstallgrade</name>
+      <name>ceil_cavity_r</name>
+      <display_name>Ceiling Cavity Insulation Nominal R-value</display_name>
+      <description>Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.</description>
+      <type>Double</type>
+      <units>h-ft^2-R/Btu</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>ceil_cavity_grade</name>
       <display_name>Ceiling Cavity Install Grade</display_name>
-      <description>5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
+      <description>Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -82,14 +63,24 @@
       </choices>
     </argument>
     <argument>
-      <name>userdefinedcsceilff</name>
+      <name>ceil_ff</name>
       <display_name>Ceiling Framing Factor</display_name>
       <description>Fraction of ceiling that is framing.</description>
       <type>Double</type>
       <units>frac</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.13</default_value>
+    </argument>
+    <argument>
+      <name>ceil_joist_height</name>
+      <display_name>Ceiling Joist Height</display_name>
+      <description>Height of the joist member.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>9.25</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -122,16 +113,22 @@
       <checksum>B207F3E7</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C5D00E99</checksum>
-    </file>
-    <file>
       <filename>ProcessConstructionsCrawlspace_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>D77A4C9E</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>96062542</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8189464F</checksum>
     </file>
     <file>
       <version>
@@ -142,13 +139,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>30B5896B</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>62C1330C</checksum>
+      <checksum>39B9188D</checksum>
     </file>
   </files>
 </measure>
