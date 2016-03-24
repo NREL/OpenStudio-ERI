@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_finished</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>cd29cf18-b650-4ccb-a0b2-553c4d8f4965</version_id>
+  <version_id>75b527b2-1b06-4217-9bc5-bdca1da8d7e6</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementFinished</class_name>
   <display_name>Set Residential Foundations/Floors - Finished Basement Constructions</display_name>
@@ -10,66 +10,29 @@
   <modeler_description>Calculates and assigns material layer properties of constructions for: 1) walls between below-grade finished space and ground, and 2) floors below below-grade finished space. Below-grade spaces are assumed to be basements (and not crawlspaces) if the space height is greater than or equal to 7 ft.</modeler_description>
   <arguments>
     <argument>
-      <name>selectedfbsmtins</name>
-      <display_name>Insulation Type</display_name>
-      <description>The type of insulation.</description>
-      <type>Choice</type>
+      <name>wall_ins_height</name>
+      <display_name>Wall Insulation Height</display_name>
+      <description>Height of the insulation on the basement wall.</description>
+      <type>Double</type>
+      <units>ft</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Whole Wall</default_value>
-      <choices>
-        <choice>
-          <value>Uninsulated</value>
-          <display_name>Uninsulated</display_name>
-        </choice>
-        <choice>
-          <value>Half Wall</value>
-          <display_name>Half Wall</display_name>
-        </choice>
-        <choice>
-          <value>Whole Wall</value>
-          <display_name>Whole Wall</display_name>
-        </choice>
-      </choices>
+      <default_value>8</default_value>
     </argument>
     <argument>
-      <name>selectedstudsize</name>
-      <display_name>Cavity Depth</display_name>
-      <description>Depth of the stud cavity.</description>
-      <type>Choice</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>None</default_value>
-      <choices>
-        <choice>
-          <value>None</value>
-          <display_name>None</display_name>
-        </choice>
-        <choice>
-          <value>2x4, 16 in o.c.</value>
-          <display_name>2x4, 16 in o.c.</display_name>
-        </choice>
-        <choice>
-          <value>2x6, 24 in o.c.</value>
-          <display_name>2x6, 24 in o.c.</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>userdefinedfbsmtwallcavr</name>
-      <display_name>Cavity Insulation Installed R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <name>wall_cavity_r</name>
+      <display_name>Wall Cavity Insulation Installed R-value</display_name>
+      <description>Refers to the R-value of the cavity insulation as installed and not the overall R-value of the assembly. If batt insulation must be compressed to fit within the cavity (e.g. R19 in a 5.5" 2x6 cavity), use an R-value that accounts for this effect (see HUD Mobile Home Construction and Safety Standards 3280.509 for reference).</description>
       <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
+      <units>h-ft^2-R/Btu</units>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
     <argument>
-      <name>selectedinstallgrade</name>
-      <display_name>Cavity Install Grade</display_name>
-      <description>5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
+      <name>wall_cavity_grade</name>
+      <display_name>Wall Cavity Install Grade</display_name>
+      <description>Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -90,8 +53,18 @@
       </choices>
     </argument>
     <argument>
-      <name>selectedinsfills</name>
-      <display_name>Insulation Fills Cavity</display_name>
+      <name>wall_cavity_depth</name>
+      <display_name>Wall Cavity Depth</display_name>
+      <description>Depth of the stud cavity. 3.5" for 2x4s, 5.5" for 2x6s, etc.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>wall_cavity_insfills</name>
+      <display_name>Wall Insulation Fills Cavity</display_name>
       <description>When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.</description>
       <type>Boolean</type>
       <required>true</required>
@@ -109,50 +82,54 @@
       </choices>
     </argument>
     <argument>
-      <name>userdefinedfbsmtwallcontth</name>
-      <display_name>Continuous Insulation Thickness</display_name>
-      <description>The thickness of the continuous insulation.</description>
+      <name>wall_ff</name>
+      <display_name>Wall Framing Factor</display_name>
+      <description>The fraction of a basement wall assembly that is comprised of structural framing.</description>
       <type>Double</type>
-      <units>in</units>
-      <required>false</required>
+      <units>frac</units>
+      <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>2</default_value>
+      <default_value>0</default_value>
     </argument>
     <argument>
-      <name>userdefinedfbsmtwallcontr</name>
-      <display_name>Continuous Insulation Nominal R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
+      <name>wall_rigid_r</name>
+      <display_name>Wall Continuous Insulation Nominal R-value</display_name>
+      <description>The R-value of the continuous insulation.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>10</default_value>
     </argument>
     <argument>
-      <name>selectedfbsmtceiljoistheight</name>
-      <display_name>Ceiling Joist Height</display_name>
-      <description>Height of the joist member.</description>
-      <type>Choice</type>
+      <name>wall_rigid_thick_in</name>
+      <display_name>Wall Continuous Insulation Thickness</display_name>
+      <description>The thickness of the continuous insulation.</description>
+      <type>Double</type>
       <units>in</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>2x10</default_value>
-      <choices>
-        <choice>
-          <value>2x10</value>
-          <display_name>2x10</display_name>
-        </choice>
-      </choices>
+      <default_value>2</default_value>
     </argument>
     <argument>
-      <name>userdefinedfbsmtceilff</name>
+      <name>ceil_ff</name>
       <display_name>Ceiling Framing Factor</display_name>
       <description>Fraction of ceiling that is framing.</description>
       <type>Double</type>
       <units>frac</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.13</default_value>
+    </argument>
+    <argument>
+      <name>ceil_joist_height</name>
+      <display_name>Ceiling Joist Height</display_name>
+      <description>Height of the joist member.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>9.25</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -185,16 +162,22 @@
       <checksum>B207F3E7</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C5D00E99</checksum>
-    </file>
-    <file>
       <filename>ProcessConstructionsFinishedBasement_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>D01C7C56</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>96062542</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8189464F</checksum>
     </file>
     <file>
       <version>
@@ -205,13 +188,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B5380AEB</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>62C1330C</checksum>
+      <checksum>7537B585</checksum>
     </file>
   </files>
 </measure>

@@ -26,41 +26,22 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for model objects
-    fbsmtins_display_names = OpenStudio::StringVector.new
-    fbsmtins_display_names << "Uninsulated"
-    fbsmtins_display_names << "Half Wall"
-    fbsmtins_display_names << "Whole Wall"
+    #make a double argument for wall insulation height
+    wall_ins_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_ins_height", true)
+    wall_ins_height.setDisplayName("Wall Insulation Height")
+	wall_ins_height.setUnits("ft")
+	wall_ins_height.setDescription("Height of the insulation on the basement wall.")
+    wall_ins_height.setDefaultValue(8)
+    args << wall_ins_height
 
-    #make a choice argument for finished basement insulation type
-    selected_fbsmtins = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtins", fbsmtins_display_names, true)
-    selected_fbsmtins.setDisplayName("Insulation Type")
-	selected_fbsmtins.setDescription("The type of insulation.")
-	selected_fbsmtins.setDefaultValue("Whole Wall")
-    args << selected_fbsmtins
-
-    #make a choice argument for model objects
-    studsize_display_names = OpenStudio::StringVector.new
-    studsize_display_names << "None"
-    studsize_display_names << "2x4, 16 in o.c."
-    studsize_display_names << "2x6, 24 in o.c."
-
-    #make a string argument for wood stud size of wall cavity
-    selected_studsize = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedstudsize", studsize_display_names, false)
-    selected_studsize.setDisplayName("Cavity Depth")
-	selected_studsize.setUnits("in")
-	selected_studsize.setDescription("Depth of the stud cavity.")
-    selected_studsize.setDefaultValue("None")
-    args << selected_studsize
-
-    #make a double argument for unfinished basement whole wall cavity insulation R-value
-    userdefined_fbsmtwallcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtwallcavr", false)
-    userdefined_fbsmtwallcavr.setDisplayName("Cavity Insulation Installed R-value")
-	userdefined_fbsmtwallcavr.setUnits("hr-ft^2-R/Btu")
-	userdefined_fbsmtwallcavr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-    userdefined_fbsmtwallcavr.setDefaultValue(0)
-    args << userdefined_fbsmtwallcavr
-
+    #make a double argument for wall cavity R-value
+    wall_cavity_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_cavity_r", true)
+    wall_cavity_r.setDisplayName("Wall Cavity Insulation Installed R-value")
+	wall_cavity_r.setUnits("h-ft^2-R/Btu")
+	wall_cavity_r.setDescription("Refers to the R-value of the cavity insulation as installed and not the overall R-value of the assembly. If batt insulation must be compressed to fit within the cavity (e.g. R19 in a 5.5\" 2x6 cavity), use an R-value that accounts for this effect (see HUD Mobile Home Construction and Safety Standards 3280.509 for reference).")
+    wall_cavity_r.setDefaultValue(0)
+    args << wall_cavity_r
+    
     #make a choice argument for model objects
     installgrade_display_names = OpenStudio::StringVector.new
     installgrade_display_names << "I"
@@ -68,56 +49,66 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     installgrade_display_names << "III"
 
 	#make a choice argument for wall cavity insulation installation grade
-	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
-	selected_installgrade.setDisplayName("Cavity Install Grade")
-	selected_installgrade.setDescription("5% of the wall is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
-    selected_installgrade.setDefaultValue("I")
-	args << selected_installgrade
+	wall_cavity_grade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("wall_cavity_grade", installgrade_display_names, true)
+	wall_cavity_grade.setDisplayName("Wall Cavity Install Grade")
+	wall_cavity_grade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    wall_cavity_grade.setDefaultValue("I")
+	args << wall_cavity_grade
+    
+    #make a double argument for wall cavity depth
+    wall_cavity_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_cavity_depth", true)
+    wall_cavity_depth.setDisplayName("Wall Cavity Depth")
+	wall_cavity_depth.setUnits("in")
+	wall_cavity_depth.setDescription("Depth of the stud cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
+    wall_cavity_depth.setDefaultValue(0)
+    args << wall_cavity_depth
+    
+	#make a bool argument for whether the cavity insulation fills the wall cavity
+	wall_cavity_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("wall_cavity_insfills", true)
+	wall_cavity_insfills.setDisplayName("Wall Insulation Fills Cavity")
+	wall_cavity_insfills.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
+    wall_cavity_insfills.setDefaultValue(false)
+	args << wall_cavity_insfills
+    
+    #make a double argument for wall framing factor
+    wall_ff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_ff", true)
+    wall_ff.setDisplayName("Wall Framing Factor")
+	wall_ff.setUnits("frac")
+	wall_ff.setDescription("The fraction of a basement wall assembly that is comprised of structural framing.")
+    wall_ff.setDefaultValue(0)
+    args << wall_ff
+    
+    #make a double argument for wall continuous insulation R-value
+    wall_rigid_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_rigid_r", true)
+    wall_rigid_r.setDisplayName("Wall Continuous Insulation Nominal R-value")
+	wall_rigid_r.setUnits("hr-ft^2-R/Btu")
+	wall_rigid_r.setDescription("The R-value of the continuous insulation.")
+    wall_rigid_r.setDefaultValue(10.0)
+    args << wall_rigid_r
 
-	#make a bool argument for whether the cavity insulation fills the cavity
-	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
-	selected_insfills.setDisplayName("Insulation Fills Cavity")
-	selected_insfills.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
-    selected_insfills.setDefaultValue(false)
-	args << selected_insfills
+    #make a double argument for wall continuous insulation thickness
+    wall_rigid_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_rigid_thick_in", true)
+    wall_rigid_thick_in.setDisplayName("Wall Continuous Insulation Thickness")
+	wall_rigid_thick_in.setUnits("in")
+	wall_rigid_thick_in.setDescription("The thickness of the continuous insulation.")
+    wall_rigid_thick_in.setDefaultValue(2.0)
+    args << wall_rigid_thick_in
+    
+	#make a choice argument for ceiling framing factor
+	ceil_ff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ceil_ff", true)
+    ceil_ff.setDisplayName("Ceiling Framing Factor")
+	ceil_ff.setUnits("frac")
+	ceil_ff.setDescription("Fraction of ceiling that is framing.")
+    ceil_ff.setDefaultValue(0.13)
+	args << ceil_ff
 
-    #make a double argument for finished basement wall continuous R-value
-    userdefined_fbsmtwallcontth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtwallcontth", false)
-    userdefined_fbsmtwallcontth.setDisplayName("Continuous Insulation Thickness")
-	userdefined_fbsmtwallcontth.setUnits("in")
-	userdefined_fbsmtwallcontth.setDescription("The thickness of the continuous insulation.")
-    userdefined_fbsmtwallcontth.setDefaultValue(2.0)
-    args << userdefined_fbsmtwallcontth
-
-    #make a double argument for finished basement wall continuous insulation R-value
-    userdefined_fbsmtwallcontr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtwallcontr", false)
-    userdefined_fbsmtwallcontr.setDisplayName("Continuous Insulation Nominal R-value")
-	userdefined_fbsmtwallcontr.setUnits("hr-ft^2-R/Btu")
-	userdefined_fbsmtwallcontr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-    userdefined_fbsmtwallcontr.setDefaultValue(10.0)
-    args << userdefined_fbsmtwallcontr
-
-    # Ceiling Joist Height
-    #make a choice argument for model objects
-    joistheight_display_names = OpenStudio::StringVector.new
-    joistheight_display_names << "2x10"
-
-	#make a choice argument for finished basement ceiling joist height
-	selected_fbsmtceiljoistheight = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedfbsmtceiljoistheight", joistheight_display_names, true)
-	selected_fbsmtceiljoistheight.setDisplayName("Ceiling Joist Height")
-	selected_fbsmtceiljoistheight.setUnits("in")
-	selected_fbsmtceiljoistheight.setDescription("Height of the joist member.")
-	selected_fbsmtceiljoistheight.setDefaultValue("2x10")
-	args << selected_fbsmtceiljoistheight	
-
-    # Ceiling Framing Factor
-	#make a choice argument for finished basement ceiling framing factor
-	userdefined_fbsmtceilff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfbsmtceilff", false)
-    userdefined_fbsmtceilff.setDisplayName("Ceiling Framing Factor")
-	userdefined_fbsmtceilff.setUnits("frac")
-	userdefined_fbsmtceilff.setDescription("Fraction of ceiling that is framing.")
-    userdefined_fbsmtceilff.setDefaultValue(0.13)
-	args << userdefined_fbsmtceilff
+	#make a choice argument for ceiling joist height
+	ceil_joist_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ceil_joist_height", true)
+	ceil_joist_height.setDisplayName("Ceiling Joist Height")
+	ceil_joist_height.setUnits("in")
+	ceil_joist_height.setDescription("Height of the joist member.")
+	ceil_joist_height.setDefaultValue("9.25")
+	args << ceil_joist_height	
 
     return args
   end #end the arguments method
@@ -152,63 +143,27 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     if wall_surfaces.empty? and floor_surfaces.empty?
       runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
-    end           
+    end
+
+    # Get Inputs
+    fbsmtWallInsHeight = runner.getDoubleArgumentValue("wall_ins_height",user_arguments)
+    fbsmtWallCavityInsRvalueInstalled = runner.getDoubleArgumentValue("wall_cavity_r",user_arguments)
+    fbsmtWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("wall_cavity_grade",user_arguments)]
+    fbsmtWallCavityDepth = runner.getDoubleArgumentValue("wall_cavity_depth",user_arguments)
+    fbsmtWallCavityInsFillsCavity = runner.getBoolArgumentValue("wall_cavity_insfills",user_arguments)
+    fbsmtWallFramingFactor = runner.getDoubleArgumentValue("wall_ff",user_arguments)
+    fbsmtWallContInsRvalue = runner.getDoubleArgumentValue("wall_rigid_r",user_arguments)
+    fbsmtWallContInsThickness = runner.getDoubleArgumentValue("wall_rigid_thick_in",user_arguments)
+    fbsmtCeilingFramingFactor = runner.getDoubleArgumentValue("ceil_ff",user_arguments)
+    fbsmtCeilingJoistHeight = runner.getDoubleArgumentValue("ceil_joist_height",user_arguments)
     
-    fbsmtWallContInsRvalue = 0
-    fbsmtWallCavityInsRvalueInstalled = 0
-    fbsmtWallInsHeight = 0
+    # Validate Inputs FIXME FIXME FIXME
 
-    # Finished Basement Insulation
-    selected_fbsmtins = runner.getStringArgumentValue("selectedfbsmtins",user_arguments)
-
-    # Wall Cavity
-    selected_studsize = runner.getStringArgumentValue("selectedstudsize",user_arguments)
-    userdefined_fbsmtwallcavr = runner.getDoubleArgumentValue("userdefinedfbsmtwallcavr",user_arguments)
-    fbsmtWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)]
-    fbsmtWallCavityDepth = {"None"=>0, "2x4, 16 in o.c."=>3.5, "2x6, 24 in o.c."=>5.5}[selected_studsize]
-    fbsmtWallFramingFactor = {"None"=>0, "2x4, 16 in o.c."=>0.25, "2x6, 24 in o.c."=>0.22}[selected_studsize]
-    fbsmtWallCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
-
-    # Whole Wall Cavity Insulation
-    if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
-      userdefined_fbsmtwallcavr = runner.getDoubleArgumentValue("userdefinedfbsmtwallcavr",user_arguments)
-    end
-
-    # Wall Continuous Insulation
-    if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
-      userdefined_fbsmtwallcontth = runner.getDoubleArgumentValue("userdefinedfbsmtwallcontth",user_arguments)
-      userdefined_fbsmtwallcontr = runner.getDoubleArgumentValue("userdefinedfbsmtwallcontr",user_arguments)
-      if selected_fbsmtins.to_s == "Half Wall"
-        fbsmtWallInsHeight = 4
-      elsif selected_fbsmtins.to_s == "Whole Wall"
-        fbsmtWallInsHeight = 8
-      end
-    end
-
-    # Ceiling Joist Height
-    fbsmtCeilingJoistHeight = {"2x10"=>9.25}[runner.getStringArgumentValue("selectedfbsmtceiljoistheight",user_arguments)]
-
-    # Ceiling Framing Factor
-    fbsmtCeilingFramingFactor = runner.getDoubleArgumentValue("userdefinedfbsmtceilff",user_arguments)
-    if not ( fbsmtCeilingFramingFactor > 0.0 and fbsmtCeilingFramingFactor < 1.0 )
-      runner.registerError("Invalid finished basement ceiling framing factor")
-      return false
-    end
-
-    # Cavity Insulation
-    if selected_fbsmtins.to_s == "Half Wall" or selected_fbsmtins.to_s == "Whole Wall"
-      fbsmtWallCavityInsRvalueInstalled = userdefined_fbsmtwallcavr
-    end
-
-    # Continuous Insulation
-    if ["Half Wall", "Whole Wall"].include? selected_fbsmtins.to_s
-      fbsmtWallContInsThickness = userdefined_fbsmtwallcontth
-      fbsmtWallContInsRvalue = userdefined_fbsmtwallcontr
-    end
-
-    fbExtPerimeter = Geometry.calculate_perimeter(spaces)
+    
+    # Get geometry values
     fbFloorArea = Geometry.calculate_floor_area(spaces)
-    fbExtWallArea = Geometry.calculate_perimeter_wall_area(spaces)
+    fbExtPerimeter = Geometry.calculate_perimeter(model, floor_surfaces, has_foundation_walls=true)
+    fbExtWallArea = fbExtPerimeter * Geometry.spaces_avg_height(spaces)
     
     # -------------------------------
     # Process the basement walls
@@ -281,11 +236,16 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
         end
         fb_US_Rvalue = Material.Concrete8in.rvalue + Material.AirFilmVertical.rvalue + insul_layer_rvalue + Material.DefaultWallMass.rvalue
         fb_fictitious_Rvalue = fb_effective_Rvalue - Material.Soil12in.rvalue - fb_US_Rvalue
-        mat_fic_wall = SimpleMaterial.new(name="FBaseWall-FicR", rvalue=fb_fictitious_Rvalue)
+        mat_fic_wall = nil
+        if fb_fictitious_Rvalue > 0
+            mat_fic_wall = SimpleMaterial.new(name="FBaseWall-FicR", rvalue=fb_fictitious_Rvalue)
+        end
         
         # Define actual construction
         fic_fbsmt_wall = Construction.new([1])
-        fic_fbsmt_wall.addlayer(mat_fic_wall, true)
+        if not mat_fic_wall.nil?
+            fic_fbsmt_wall.addlayer(mat_fic_wall, true)
+        end
         fic_fbsmt_wall.addlayer(Material.Soil12in, true)
         fic_fbsmt_wall.addlayer(Material.Concrete8in, true)
         if not mat_fic_insul_layer.nil?
@@ -317,7 +277,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
         end
         
         # Define materials
-        mat_fic_floor = SimpleMaterial.new(name="CFloor-FicR", rvalue=fb_floor_Rvalue)
+        mat_fic_floor = SimpleMaterial.new(name="FBaseFloor-FicR", rvalue=fb_floor_Rvalue)
 
         # Define construction
         fb_floor = Construction.new([1.0])

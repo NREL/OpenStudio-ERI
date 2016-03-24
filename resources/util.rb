@@ -894,6 +894,7 @@ class Construction
         
         # Creates an OpenStudio Material from our own Material object
         def create_os_material(model, runner, material, name=nil)
+            # TODO: Check for identical existing material
             if name.nil?
                 name = material.name
             end

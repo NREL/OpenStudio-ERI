@@ -140,17 +140,6 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
       return true
     end
 
-    # Get excluded slab spaces
-    excluded_slab_spaces = []
-    model.getSpaces.each do |space|
-        space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "floor"
-            next if surface.outsideBoundaryCondition.downcase != "ground"
-            next if spaces.include? space
-            excluded_slab_spaces << space
-        end
-    end
-  
 	# Get Inputs
     slabPerimeterRvalue = runner.getDoubleArgumentValue("perim_r",user_arguments)
     slabPerimeterInsWidth = runner.getDoubleArgumentValue("perim_width",user_arguments)
@@ -217,18 +206,19 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
         (slabWholeInsRvalue > 0.0 and slabExtRvalue > 0.0) or 
         (slabExtRvalue > 0.0 and slabGapRvalue > 0.0) or
         (slabGapRvalue > 0.0 and slabPerimeterRvalue == 0 and slabWholeInsRvalue == 0 and slabExtRvalue == 0))
-        runner.registerError("Invalid insulation configuration. The only valid configurations are: Perimeter, Perimeter+Gap, Whole, Whole+Gap, or Exterior.")
+        runner.registerError("Invalid insulation configuration. The only valid configurations are: Exterior, Perimeter+Gap, Whole+Gap, Perimeter, or Whole.")
         return false    
     end
     
-	# Process the slab
+    # Get geometry values
     slabArea = Geometry.calculate_total_area_from_surfaces(surfaces)
-    slabExtPerimeter = Geometry.calculate_perimeter(model.getSpaces - excluded_slab_spaces)
+    slabExtPerimeter = Geometry.calculate_perimeter(model, surfaces)
+    
+	# Process the slab
 
     # Define materials
     slabCarpetPerimeterConduction, slabBarePerimeterConduction, slabHasWholeInsulation = SlabPerimeterConductancesByType(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabExtRvalue, slabWholeInsRvalue, slabExtInsDepth)
     mat_slab = Material.new(name='SlabMass', thick_in=slabMassThickIn, mat_base=nil, cond=OpenStudio.convert(slabMassCond,"in","ft").get, dens=slabMassDens, sh=slabMassSpecHeat)
-    runner.registerInfo("mat_slab #{mat_slab.thick_in.to_s} #{mat_slab.rvalue.to_s} #{mat_slab.k.to_s}")
 
     # Models one floor surface with an equivalent carpented/bare material (Better alternative
     # to having two floors with twice the total area, compensated by thinning mass thickness.)

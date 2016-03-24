@@ -317,9 +317,8 @@ class Geometry
         wall_area = 0
         spaces.each do |space|
             space.surfaces.each do |surface|
-                if surface.surfaceType.downcase == "wall"
-                    wall_area += surface.grossArea
-                end
+                next if surface.surfaceType.downcase != "wall"
+                wall_area += surface.grossArea
             end
         end
         return OpenStudio.convert(wall_area, "m^2", "ft^2").get
@@ -357,59 +356,90 @@ class Geometry
         return true
     end
     
-    # Takes in a list of spaces and returns the wall area for the exterior perimeter
-    def self.calculate_perimeter_wall_area(spaces)
-        return Geometry.calculate_perimeter(spaces) * Geometry.calculate_wall_area(spaces)
-    end
-   
-    # Takes in a list of spaces and checks for edges shared by a ground exposed floor and exterior exposed or interzonal wall.
-    def self.calculate_perimeter(spaces)
+    # Takes in a list of ground exposed floor surfaces for which to calculate the perimeter; 
+    # checks for edges shared by a ground exposed floor and 1) exterior exposed or 2) interzonal wall.
+    # FIXME: test on buildings with multiple foundations
+    def self.calculate_perimeter(model, ground_floor_surfaces, has_foundation_walls=false)
 
         perimeter = 0
-        spaces.each do |space|
-            # counter to use later
-            edge_hash = {}
-            edge_counter = 0
-            space.surfaces.each do |surface|
-                # get vertices
-                vertex_hash = {}
-                vertex_counter = 0
-                surface.vertices.each do |vertex|
-                    vertex_counter += 1
-                    vertex_hash[vertex_counter] = [vertex.x,vertex.y,vertex.z]
-                end
-                # make edges
-                counter = 0
-                vertex_hash.each do |k,v|
-                    edge_counter += 1
-                    counter += 1
-                    if vertex_hash.size != counter
-                        edge_hash[edge_counter] = [v,vertex_hash[counter+1],surface,surface.outsideBoundaryCondition,surface.surfaceType]
-                    else # different code for wrap around vertex
-                        edge_hash[edge_counter] = [v,vertex_hash[1],surface,surface.outsideBoundaryCondition,surface.surfaceType]
-                    end
+
+        # Get ground edges
+        if not has_foundation_walls
+            # Use edges from floor surface
+            ground_edge_hash = Geometry.get_edges_for_surfaces(ground_floor_surfaces)
+        else
+            # Use top edges from foundation walls instead
+            surfaces = []
+            ground_floor_surfaces.each do |ground_floor_surface|
+                next if not ground_floor_surface.space.is_initialized
+                foundation_space = ground_floor_surface.space.get
+                foundation_space.surfaces.each do |surface|
+                    next if not surface.surfaceType.downcase == "wall"
+                    next if surfaces.include? surface
+                    surfaces << surface
                 end
             end
-
-            # check edges for matches (need opposite vertices and proper boundary conditions)
-            edge_hash.each do |k1,v1|
-                next if not v1[3].downcase == "ground" # skip if not ground exposed floor
-                next if not v1[4].downcase == "floor"
-                edge_hash.each do |k2,v2|
-                    next if not v2[4].downcase == "wall"
-                    next if not (v2[3].downcase == "outdoors" or Geometry.is_interzonal_surface(v2[2])) # skip if not exterior exposed wall or interzonal wall
-                    # see if edges have same geometry
-                    next if not v1[0] == v2[1] # next if not same geometry reversed
-                    next if not v1[1] == v2[0]
-                    point_one = OpenStudio::Point3d.new(v1[0][0],v1[0][1],v1[0][2])
-                    point_two = OpenStudio::Point3d.new(v1[1][0],v1[1][1],v1[1][2])
-                    length = OpenStudio::Vector3d.new(point_one - point_two).length
-                    perimeter += length
-                end
+            ground_edge_hash = Geometry.get_edges_for_surfaces(surfaces, true)
+        end
+        
+        # Get bottom edges of exterior exposed walls or interzonal walls
+        surfaces = []
+        model.getSurfaces.each do |surface|
+            next if not surface.surfaceType.downcase == "wall"
+            next if not (surface.outsideBoundaryCondition.downcase == "outdoors" or Geometry.is_interzonal_surface(surface))
+            surfaces << surface
+        end
+        model_edge_hash = Geometry.get_edges_for_surfaces(surfaces)
+        
+        # check edges for matches
+        ground_edge_hash.each do |k1,v1|
+            model_edge_hash.each do |k2,v2|
+                # see if edges have same geometry
+                # FIXME: This doesn't handle overlapping edges
+                next if not ((v1[0] == v2[1] and v1[1] == v2[0]) or (v1[0] == v2[0] and v1[1] == v2[1]))
+                point_one = OpenStudio::Point3d.new(v1[0][0],v1[0][1],v1[0][2])
+                point_two = OpenStudio::Point3d.new(v1[1][0],v1[1][1],v1[1][2])
+                length = OpenStudio::Vector3d.new(point_one - point_two).length
+                perimeter += length
             end
         end
     
         return OpenStudio.convert(perimeter, "m", "ft").get
+    end
+    
+    def self.get_edges_for_surfaces(surfaces, use_top_edge=false)
+        edge_hash = {}
+        edge_counter = 0
+        surfaces.each do |surface|
+            # ensure we only process bottom or top edge of wall surfaces
+            if use_top_edge
+                matchz = Geometry.getSurfaceZValues([surface]).max
+            else
+                matchz = Geometry.getSurfaceZValues([surface]).min
+            end
+            # get vertices
+            vertex_hash = {}
+            vertex_counter = 0
+            surface.vertices.each do |vertex|
+                next if not vertex.z == matchz
+                vertex_counter += 1
+                vertex_hash[vertex_counter] = [vertex.x + surface.space.get.xOrigin,
+                                               vertex.y + surface.space.get.yOrigin,
+                                               vertex.z + surface.space.get.zOrigin]
+            end
+            # make edges
+            counter = 0
+            vertex_hash.each do |k,v|
+                edge_counter += 1
+                counter += 1
+                if vertex_hash.size != counter
+                    edge_hash[edge_counter] = [v,vertex_hash[counter+1],surface,surface.outsideBoundaryCondition,surface.surfaceType]
+                elsif vertex_hash.size > 2 # different code for wrap around vertex (if > 2 vertices)
+                    edge_hash[edge_counter] = [v,vertex_hash[1],surface,surface.outsideBoundaryCondition,surface.surfaceType]
+                end
+            end
+        end
+        return edge_hash
     end
     
     def self.get_crawl_spaces(model)
