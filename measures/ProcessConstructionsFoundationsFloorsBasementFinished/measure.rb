@@ -157,9 +157,40 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     fbsmtCeilingFramingFactor = runner.getDoubleArgumentValue("ceil_ff",user_arguments)
     fbsmtCeilingJoistHeight = runner.getDoubleArgumentValue("ceil_joist_height",user_arguments)
     
-    # Validate Inputs FIXME FIXME FIXME
+    # Validate Inputs
+    if fbsmtWallInsHeight < 0.0
+        runner.registerError("Wall Insulation Height must be greater than or equal to 0.")
+        return false
+    end
+    if fbsmtWallCavityInsRvalueInstalled < 0.0
+        runner.registerError("Wall Cavity Insulation Installed R-value must be greater than or equal to 0.")
+        return false
+    end
+    if fbsmtWallCavityDepth < 0.0
+        runner.registerError("Wall Cavity Depth must be greater than or equal to 0.")
+        return false
+    end
+    if fbsmtWallFramingFactor < 0.0 or fbsmtWallFramingFactor >= 1.0
+        runner.registerError("Wall Framing Factor must be greater than or equal to 0 and less than 1.")
+        return false
+    end
+    if fbsmtWallContInsRvalue < 0.0
+        runner.registerError("Wall Continuous Insulation Nominal R-value must be greater than or equal to 0.")
+        return false
+    end
+    if fbsmtWallContInsThickness < 0.0
+        runner.registerError("Wall Continuous Insulation Thickness must be greater than or equal to 0.")
+        return false
+    end
+    if fbsmtCeilingFramingFactor < 0.0 or fbsmtCeilingFramingFactor >= 1.0
+        runner.registerError("Ceiling Framing Factor must be greater than or equal to 0 and less than 1.")
+        return false
+    end
+    if fbsmtCeilingJoistHeight <= 0.0
+        runner.registerError("Ceiling Joist Height must be greater than 0.")
+        return false
+    end
 
-    
     # Get geometry values
     fbFloorArea = Geometry.calculate_floor_area(spaces)
     fbExtPerimeter = Geometry.calculate_perimeter(model, floor_surfaces, has_foundation_walls=true)
