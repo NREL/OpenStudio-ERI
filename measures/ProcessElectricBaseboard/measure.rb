@@ -34,8 +34,8 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     #make an argument for entering furnace installed afue
     userdefined_eff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedeff",true)
     userdefined_eff.setDisplayName("Efficiency")
-	userdefined_eff.setUnits("Btu/Btu")
-	userdefined_eff.setDescription("The efficiency of the electric baseboard.")
+	  userdefined_eff.setUnits("Btu/Btu")
+	  userdefined_eff.setDescription("The efficiency of the electric baseboard.")
     userdefined_eff.setDefaultValue(1.0)
     args << userdefined_eff
 
@@ -94,12 +94,12 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+	  living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
     living_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
     if living_thermal_zone.nil?
         return false
     end
-	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
+	  fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
     fbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, fbasement_thermal_zone_r, runner, false)
 	
     baseboardEfficiency = runner.getDoubleArgumentValue("userdefinedeff",user_arguments)
@@ -143,6 +143,10 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
                   htg_coil.remove
                 end
               end
+            # TODO: this removes multispeed central AC (which we don't want to happen), but there's no way to distinguish between ASHP/Minisplit and multispeed central AC.
+            elsif supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAir.is_initialized or supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAirMultiSpeed.is_initialized
+              supplyComponent.remove
+              airLoopHVAC.remove
             end
           end
         end

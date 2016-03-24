@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>5d0b7a1b-17c8-4866-abd5-4abcedc6a218</version_id>
+  <version_id>5af495ef-0f26-4898-b12c-7e664e14178d</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
   <display_name>Set Residential Air Source Heat Pump</display_name>
@@ -38,6 +38,26 @@
         <choice>
           <value>SEER 15, 8.5 HSPF</value>
           <display_name>SEER 15, 8.5 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 16, 8.6 HSPF</value>
+          <display_name>SEER 16, 8.6 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 17, 8.7 HSPF</value>
+          <display_name>SEER 17, 8.7 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 18, 9.3 HSPF</value>
+          <display_name>SEER 18, 9.3 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 19, 9.5 HSPF</value>
+          <display_name>SEER 19, 9.5 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 22, 10 HSPF</value>
+          <display_name>SEER 22, 10 HSPF</display_name>
         </choice>
       </choices>
     </argument>
@@ -361,12 +381,6 @@
       <checksum>FA86825B</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5D628229</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -375,7 +389,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D29C0BC9</checksum>
+      <checksum>4B2727EC</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F43A5089</checksum>
     </file>
   </files>
 </measure>

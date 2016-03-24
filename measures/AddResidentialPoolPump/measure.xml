@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_pump</name>
   <uid>b5648903-279f-4e58-9139-c44134c0cf76</uid>
-  <version_id>005dbbdf-4b06-4de1-8807-d330318e3747</version_id>
+  <version_id>080baaf4-571e-4eb7-bb8c-e47a6d2aa3ba</version_id>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolPump</class_name>
   <display_name>Set Residential Pool Pump</display_name>
@@ -131,7 +131,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AAD6884C</checksum>
+      <checksum>F43A5089</checksum>
     </file>
   </files>
 </measure>

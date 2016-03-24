@@ -11,7 +11,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
   class Supply
     def initialize
     end
-    attr_accessor(:HPCoolingOversizingFactor, :SpaceConditionedMult, :MiniSplitHPHeatingCapacityOffset, :CoolingEIR, :Capacity_Ratio_Cooling, :CoolingCFMs, :SHR_Rated, :fanspeed_ratio, :min_flow_ratio, :static, :fan_power, :eff, :HeatingEIR, :Capacity_Ratio_Heating, :HeatingCFMs, :htg_supply_air_temp, :supp_htg_max_supply_temp, :min_hp_temp, :supp_htg_max_outdoor_temp, :max_defrost_temp)
+    attr_accessor(:HPCoolingOversizingFactor, :SpaceConditionedMult, :CoolingEIR, :Capacity_Ratio_Cooling, :CoolingCFMs, :SHR_Rated, :fanspeed_ratio, :min_flow_ratio, :static, :fan_power, :eff, :HeatingEIR, :Capacity_Ratio_Heating, :HeatingCFMs, :htg_supply_air_temp, :supp_htg_max_supply_temp, :min_hp_temp, :supp_htg_max_outdoor_temp, :max_defrost_temp)
   end
   
   class Curves
@@ -176,7 +176,21 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     miniSplitCoolingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("miniSplitCoolingOutputCapacity", cap_display_names, true)
     miniSplitCoolingOutputCapacity.setDisplayName("Cooling Output Capacity")
     miniSplitCoolingOutputCapacity.setDefaultValue("Autosize")
-    args << miniSplitCoolingOutputCapacity       
+    args << miniSplitCoolingOutputCapacity
+
+    #make a choice argument for supplemental heating output capacity
+    cap_display_names = OpenStudio::StringVector.new
+    cap_display_names << "NO SUPP HEAT"
+    cap_display_names << "Autosize"
+    (5..150).step(5) do |kbtu|
+      cap_display_names << "#{kbtu} kBtu/hr"
+    end
+    
+    #make a string argument for minisplit supplemental heating output capacity
+    miniSplitSupplementalHeatingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("miniSplitSupplementalHeatingOutputCapacity", cap_display_names, true)
+    miniSplitSupplementalHeatingOutputCapacity.setDisplayName("Supplemental Heating Output Capacity")
+    miniSplitSupplementalHeatingOutputCapacity.setDefaultValue("Autosize")
+    args << miniSplitSupplementalHeatingOutputCapacity    
     
     #make a choice argument for living thermal zone
     thermal_zones = model.getThermalZones
@@ -220,12 +234,12 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+	  living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
     living_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
     if living_thermal_zone.nil?
         return false
     end
-	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
+	  fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
     fbasement_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, fbasement_thermal_zone_r, runner, false)    
     
     curves = Curves.new
@@ -250,7 +264,12 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     miniSplitCoolingOutputCapacity = runner.getStringArgumentValue("miniSplitCoolingOutputCapacity",user_arguments)
     unless miniSplitCoolingOutputCapacity == "Autosize"
       miniSplitCoolingOutputCapacity = OpenStudio::convert(miniSplitCoolingOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
-    end       
+      miniSplitHeatingOutputCapacity = miniSplitCoolingOutputCapacity + miniSplitHPHeatingCapacityOffset
+    end
+    miniSplitSupplementalHeatingOutputCapacity = runner.getStringArgumentValue("miniSplitSupplementalHeatingOutputCapacity",user_arguments)
+    if not miniSplitSupplementalHeatingOutputCapacity == "Autosize" and not miniSplitSupplementalHeatingOutputCapacity == "NO SUPP HEAT"
+      miniSplitSupplementalHeatingOutputCapacity = OpenStudio::convert(miniSplitSupplementalHeatingOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
+    end
     
     heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
     coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "CoolingSeasonSchedule")
@@ -260,31 +279,19 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     end    
     
     # Check if has equipment
+    HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_thermal_zone)
     ptacs = model.getZoneHVACPackagedTerminalAirConditioners
     ptacs.each do |ptac|
       thermalZone = ptac.thermalZone.get
       runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
       ptac.remove
     end
-    airLoopHVACs = model.getAirLoopHVACs
-    airLoopHVACs.each do |airLoopHVAC|
-      thermalZones = airLoopHVAC.thermalZones
-      thermalZones.each do |thermalZone|
-        if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
-          supplyComponents = airLoopHVAC.supplyComponents
-          supplyComponents.each do |supplyComponent|
-            runner.registerInfo("Removed '#{supplyComponent.name}' from air loop '#{airLoopHVAC.name}'")
-            supplyComponent.remove
-          end
-          runner.registerInfo("Removed air loop '#{airLoopHVAC.name}'")
-          airLoopHVAC.remove
-        end
-      end
-    end
-    hasElecBaseboard = false
-    if model.getZoneHVACBaseboardConvectiveElectrics.length > 0
-      hasElecBaseboard = true
-    end    
+    baseboards = model.getZoneHVACBaseboardConvectiveElectrics
+    baseboards.each do |baseboard|
+      thermalZone = baseboard.thermalZone.get
+      runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
+      baseboard.remove
+    end   
         
     # _processAirSystem       
         
@@ -298,11 +305,6 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     curves, supply = _processAirSystemMiniSplitCooling(runner, miniSplitHPCoolingRatedSEER, miniSplitHPCoolingMinCapacity, miniSplitHPCoolingMaxCapacity, miniSplitHPCoolingMinAirflow, miniSplitHPCoolingMaxAirflow, miniSplitHPRatedSHR, miniSplitHPSupplyFanPower, curves, supply)
                                            
     supply.HPCoolingOversizingFactor = miniSplitHPCoolingOversizeFactor
-    supply.MiniSplitHPHeatingCapacityOffset = miniSplitHPHeatingCapacityOffset                                           
-    
-    if not hasElecBaseboard
-        runner.registerWarning("Mini-split heat pumps are not simulated with back-up electric resistance heaters. Consider adding an Electric Baseboard heater, if desired.")
-    end
     
     # Heating Coil
     curves = HVAC.get_heating_coefficients(runner, Constants.Num_Speeds_MSHP, false, curves, miniSplitHPMinT)
@@ -387,9 +389,11 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         hp_heat_plf_fplr.setMaximumCurveOutput(1)        
         
         stage_data = OpenStudio::Model::CoilHeatingDXMultiSpeedStageData.new(model, hp_heat_cap_ft, hp_heat_cap_fff, hp_heat_eir_ft, hp_heat_eir_fff, hp_heat_plf_fplr, const_biquadratic)
-        # stage_data.setGrossRatedHeatingCapacity(units.Btu_h2W(unit.supply.Heat_Capacity) * unit.supply.Capacity_Ratio_Heating[i])
-        stage_data.setGrossRatedHeatingCOP(1 / supply.HeatingEIR[i])
-        # stage_data.setRatedAirFlowRate(units.cfm2m3_s(unit.supply.HeatingCFMs[i] * units.Btu_h2Ton(unit.supply.Heat_Capacity)))
+        if miniSplitCoolingOutputCapacity != "Autosize"
+          stage_data.setGrossRatedHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[i])
+          stage_data.setRatedAirFlowRate(OpenStudio::convert(supply.HeatingCFMs[i] * OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","ton").get,"cfm","m^3/s").get)
+        end
+        stage_data.setGrossRatedHeatingCOP(1.0 / supply.HeatingEIR[i])
         stage_data.setRatedWasteHeatFractionofPowerInput(0.2)
         htg_coil_stage_data[i] = stage_data
     end 
@@ -455,19 +459,21 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         cool_plf_fplr.setMaximumCurveOutput(1)        
         
         stage_data = OpenStudio::Model::CoilCoolingDXMultiSpeedStageData.new(model, cool_cap_ft, cool_cap_fff, cool_eir_ft, cool_eir_fff, cool_plf_fplr, const_biquadratic)
-        # stage_data.setGrossRatedTotalCoolingCapacity(units.Btu_h2W(unit.supply.Cool_Capacity)*unit.supply.Capacity_Ratio_Cooling[i])
+        if miniSplitCoolingOutputCapacity != "Autosize"
+          stage_data.setGrossRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[i])
+          stage_data.setRatedAirFlowRate(OpenStudio::convert(supply.CoolingCFMs[i] * OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","ton").get,"cfm","m^3/s").get)
+        end
         stage_data.setGrossRatedSensibleHeatRatio(supply.SHR_Rated[i])
-        stage_data.setGrossRatedCoolingCOP(1 / supply.CoolingEIR[i])
-        # stage_data.setRatedAirFlowRate(units.cfm2m3_s(unit.supply.CoolingCFMs[i] * units.Btu_h2Ton(unit.supply.Cool_Capacity))) 
+        stage_data.setGrossRatedCoolingCOP(1.0 / supply.CoolingEIR[i])
         stage_data.setNominalTimeforCondensateRemovaltoBegin(1000)
         stage_data.setRatioofInitialMoistureEvaporationRateandSteadyStateLatentCapacity(1.5)
         stage_data.setMaximumCyclingRate(3)
         stage_data.setLatentCapacityTimeConstant(45)
         stage_data.setRatedWasteHeatFractionofPowerInput(0.2)
-        clg_coil_stage_data[i] = stage_data        
+        clg_coil_stage_data[i] = stage_data    
     end
     
-    # Cooling EIR f(T). These curves were designed for E+ and do not require unit conversion
+    # Heating defrost curve for reverse cycle
     defrosteir = OpenStudio::Model::CurveBiquadratic.new(model)
     defrosteir.setName("DefrostEIR")
     defrosteir.setCoefficient1Constant(0.1528)
@@ -503,6 +509,11 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     supp_htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, heatingseasonschedule)
     supp_htg_coil.setName("HeatPump Supp Heater")
     supp_htg_coil.setEfficiency(1)
+    if miniSplitSupplementalHeatingOutputCapacity == "NO SUPP HEAT"
+      supp_htg_coil.setNominalCapacity(0)
+    elsif miniSplitSupplementalHeatingOutputCapacity != "Autosize"
+      supp_htg_coil.setNominalCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get)
+    end
    
     # _processSystemCoolingCoil
     
@@ -520,7 +531,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         clg_coil.addStage(clg_coil_stage_data[i])
     end   
     
-    # _processSystemFan    
+    # _processSystemFan
     
     supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
     supply_fan_availability.setName("SupplyFanAvailability")
@@ -609,8 +620,8 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         
     curves.Number_Speeds = Constants.Num_Speeds_MSHP
     c_d = Constants.MSHP_Cd_Cooling
-    cops_Norm = [1.901, 1.859, 1.746, 1.609, 1.474, 1.353, 1.247, 1.156, 1.079, 1]
-    fanPows_Norm = [0.604, 0.634, 0.670, 0.711, 0.754, 0.800, 0.848, 0.898, 0.948, 1]
+    cops_Norm = [1.901, 1.859, 1.746, 1.609, 1.474, 1.353, 1.247, 1.156, 1.079, 1.0]
+    fanPows_Norm = [0.604, 0.634, 0.670, 0.711, 0.754, 0.800, 0.848, 0.898, 0.948, 1.0]
     
     dB_rated = 80.0      
     wB_rated = 67.0
@@ -619,13 +630,13 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     cfm_ton_nom = ((cfm_ton_max - cfm_ton_min)/(cap_max_per - cap_min_per)) * (cap_nom_per - cap_min_per) + cfm_ton_min
     ao = Psychrometrics.CoilAoFactor(dB_rated, wB_rated, Constants.Patm, OpenStudio::convert(1,"ton","kBtu/h").get, cfm_ton_nom, shr)
     
-    supply.CoolingEIR = [0] * Constants.Num_Speeds_MSHP
-    supply.Capacity_Ratio_Cooling = [0] * Constants.Num_Speeds_MSHP
-    supply.CoolingCFMs = [0] * Constants.Num_Speeds_MSHP
-    supply.SHR_Rated = [0] * Constants.Num_Speeds_MSHP
+    supply.CoolingEIR = [0.0] * Constants.Num_Speeds_MSHP
+    supply.Capacity_Ratio_Cooling = [0.0] * Constants.Num_Speeds_MSHP
+    supply.CoolingCFMs = [0.0] * Constants.Num_Speeds_MSHP
+    supply.SHR_Rated = [0.0] * Constants.Num_Speeds_MSHP
     
-    fanPowsRated = [0] * Constants.Num_Speeds_MSHP
-    eers_Rated = [0] * Constants.Num_Speeds_MSHP
+    fanPowsRated = [0.0] * Constants.Num_Speeds_MSHP
+    eers_Rated = [0.0] * Constants.Num_Speeds_MSHP
     
     cop_maxSpeed = 3.5  # 3.5 is an initial guess, final value solved for below
     
@@ -669,7 +680,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     end
 
     if not cvg or final_n > itmax
-        cop_maxSpeed = OpenStudio::Convert(0.547*coolingSEER - 0.104,"Btu/h","W").get  # Correlation developed from JonW's MatLab scripts. Only used is an EER cannot be found.   
+        cop_maxSpeed = OpenStudio::convert(0.547*coolingSEER - 0.104,"Btu/h","W").get  # Correlation developed from JonW's MatLab scripts. Only used is an EER cannot be found.   
         runner.registerWarning('Mini-split heat pump COP iteration failed to converge. Setting to default value.')
     end
         
@@ -697,14 +708,14 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     
     curves = HVAC.get_cooling_coefficients(runner, num_speeds, false, isHeatPump, curves)
 
-    n_max = (eer_A.length-1)-3 # Don't use max speed
-    n_min = 0
+    n_max = (eer_A.length-1.0)-3.0 # Don't use max speed
+    n_min = 0.0
     n_int = (n_min + (n_max-n_min)/3.0).ceil.to_i
 
-    wBin = 67
-    tout_B = 82
-    tout_E = 87
-    tout_F = 67
+    wBin = 67.0
+    tout_B = 82.0
+    tout_E = 87.0
+    tout_F = 67.0
     if num_speeds == Constants.Num_Speeds_MSHP
         wBin = OpenStudio::convert(wBin,"F","C").get
         tout_B = OpenStudio::convert(tout_B,"F","C").get
@@ -740,34 +751,34 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     p_B1 = OpenStudio::convert(q_B1 * eir_B1,"Btu","W*h").get + supplyFanPower_Rated[n_min] * cfm_Tons[n_min] / OpenStudio::convert(1,"ton","Btu/h").get
     p_F1 = OpenStudio::convert(q_F1 * eir_F1,"Btu","W*h").get + supplyFanPower_Rated[n_min] * cfm_Tons[n_min] / OpenStudio::convert(1,"ton","Btu/h").get
     
-    q_k1_87 = q_F1_net + (q_B1_net - q_F1_net) / (82 - 67) * (87 - 67)
-    q_k2_87 = q_B2_net + (q_A2_net - q_B2_net) / (95 - 82) * (87 - 82)
+    q_k1_87 = q_F1_net + (q_B1_net - q_F1_net) / (82.0 - 67.0) * (87 - 67.0)
+    q_k2_87 = q_B2_net + (q_A2_net - q_B2_net) / (95.0 - 82.0) * (87.0 - 82.0)
     n_Q = (q_Ev_net - q_k1_87) / (q_k2_87 - q_k1_87)
-    m_Q = (q_B1_net - q_F1_net) / (82 - 67) * (1 - n_Q) + (q_A2_net - q_B2_net) / (95 - 82) * n_Q    
-    p_k1_87 = p_F1 + (p_B1 - p_F1) / (82 - 67) * (87 - 67)
-    p_k2_87 = p_B2 + (p_A2 - p_B2) / (95 - 82) * (87 - 82)
+    m_Q = (q_B1_net - q_F1_net) / (82.0 - 67.0) * (1.0 - n_Q) + (q_A2_net - q_B2_net) / (95.0 - 82.0) * n_Q    
+    p_k1_87 = p_F1 + (p_B1 - p_F1) / (82.0 - 67.0) * (87.0 - 67.0)
+    p_k2_87 = p_B2 + (p_A2 - p_B2) / (95.0 - 82.0) * (87.0 - 82.0)
     n_E = (p_Ev - p_k1_87) / (p_k2_87 - p_k1_87)
-    m_E = (p_B1 - p_F1) / (82 - 67) * (1 - n_E) + (p_A2 - p_B2) / (95 - 82) * n_E
+    m_E = (p_B1 - p_F1) / (82.0 - 67.0) * (1.0 - n_E) + (p_A2 - p_B2) / (95.0 - 82.0) * n_E
     
-    c_T_1_1 = q_A2_net / (1.1 * (95 - 65))
+    c_T_1_1 = q_A2_net / (1.1 * (95.0 - 65.0))
     c_T_1_2 = q_F1_net
-    c_T_1_3 = (q_B1_net - q_F1_net) / (82 - 67)
-    t_1 = (c_T_1_2 - 67*c_T_1_3 + 65*c_T_1_1) / (c_T_1_1 - c_T_1_3)
-    q_T_1 = q_F1_net + (q_B1_net - q_F1_net) / (82 - 67) * (t_1 - 67)
-    p_T_1 = p_F1 + (p_B1 - p_F1) / (82 - 67) * (t_1 - 67)
+    c_T_1_3 = (q_B1_net - q_F1_net) / (82.0 - 67.0)
+    t_1 = (c_T_1_2 - 67.0*c_T_1_3 + 65.0*c_T_1_1) / (c_T_1_1 - c_T_1_3)
+    q_T_1 = q_F1_net + (q_B1_net - q_F1_net) / (82.0 - 67.0) * (t_1 - 67.0)
+    p_T_1 = p_F1 + (p_B1 - p_F1) / (82.0 - 67.0) * (t_1 - 67.0)
     eer_T_1 = q_T_1 / p_T_1 
      
-    t_v = (q_Ev_net - 87*m_Q + 65*c_T_1_1) / (c_T_1_1 - m_Q)
-    q_T_v = q_Ev_net + m_Q * (t_v - 87)
-    p_T_v = p_Ev + m_E * (t_v - 87)
+    t_v = (q_Ev_net - 87.0*m_Q + 65.0*c_T_1_1) / (c_T_1_1 - m_Q)
+    q_T_v = q_Ev_net + m_Q * (t_v - 87.0)
+    p_T_v = p_Ev + m_E * (t_v - 87.0)
     eer_T_v = q_T_v / p_T_v
     
     c_T_2_1 = c_T_1_1
     c_T_2_2 = q_B2_net
-    c_T_2_3 = (q_A2_net - q_B2_net) / (95 - 82)
-    t_2 = (c_T_2_2 - 82*c_T_2_3 + 65*c_T_2_1) / (c_T_2_1 - c_T_2_3)
-    q_T_2 = q_B2_net + (q_A2_net - q_B2_net) / (95 - 82) * (t_2 - 82)
-    p_T_2 = p_B2 + (p_A2 - p_B2) / (95 - 82) * (t_2 - 82)
+    c_T_2_3 = (q_A2_net - q_B2_net) / (95.0 - 82.0)
+    t_2 = (c_T_2_2 - 82.0*c_T_2_3 + 65.0*c_T_2_1) / (c_T_2_1 - c_T_2_3)
+    q_T_2 = q_B2_net + (q_A2_net - q_B2_net) / (95.0 - 82.0) * (t_2 - 82.0)
+    p_T_2 = p_B2 + (p_A2 - p_B2) / (95.0 - 82.0) * (t_2 - 82.0)
     eer_T_2 = q_T_2 / p_T_2 
     
     d = (t_2**2 - t_1**2) / (t_v**2 - t_1**2)
@@ -777,15 +788,15 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     
     e_tot = 0
     q_tot = 0    
-    t_bins = [67,72,77,82,87,92,97,102]
+    t_bins = [67.0,72.0,77.0,82.0,87.0,92.0,97.0,102.0]
     frac_hours = [0.214,0.231,0.216,0.161,0.104,0.052,0.018,0.004]    
     
     (0...8).each do |_i|
-        bL = ((t_bins[_i] - 65) / (95 - 65)) * (q_A2_net / 1.1)
-        q_k1 = q_F1_net + (q_B1_net - q_F1_net) / (82 - 67) * (t_bins[_i] - 67)
-        p_k1 = p_F1 + (p_B1 - p_F1) / (82 - 67) * (t_bins[_i] - 67)                                
-        q_k2 = q_B2_net + (q_A2_net - q_B2_net) / (95 - 82) * (t_bins[_i] - 82)
-        p_k2 = p_B2 + (p_A2 - p_B2) / (95 - 82) * (t_bins[_i] - 82)
+        bL = ((t_bins[_i] - 65.0) / (95.0 - 65.0)) * (q_A2_net / 1.1)
+        q_k1 = q_F1_net + (q_B1_net - q_F1_net) / (82.0 - 67.0) * (t_bins[_i] - 67.0)
+        p_k1 = p_F1 + (p_B1 - p_F1) / (82.0 - 67.0) * (t_bins[_i] - 67)                                
+        q_k2 = q_B2_net + (q_A2_net - q_B2_net) / (95.0 - 82.0) * (t_bins[_i] - 82.0)
+        p_k2 = p_B2 + (p_A2 - p_B2) / (95.0 - 82.0) * (t_bins[_i] - 82.0)
                 
         if bL <= q_k1
             x_k1 = bL / q_k1        
@@ -819,12 +830,12 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     
     fanPows_Norm = [0.577, 0.625, 0.673, 0.720, 0.768, 0.814, 0.861, 0.907, 0.954, 1]
 
-    supply.HeatingEIR = [0] * Constants.Num_Speeds_MSHP
-    supply.Capacity_Ratio_Heating = [0] * Constants.Num_Speeds_MSHP
-    supply.HeatingCFMs = [0] * Constants.Num_Speeds_MSHP      
+    supply.HeatingEIR = [0.0] * Constants.Num_Speeds_MSHP
+    supply.Capacity_Ratio_Heating = [0.0] * Constants.Num_Speeds_MSHP
+    supply.HeatingCFMs = [0.0] * Constants.Num_Speeds_MSHP      
     
-    fanPowsRated = [0] * Constants.Num_Speeds_MSHP
-    cops_Rated = [0] * Constants.Num_Speeds_MSHP
+    fanPowsRated = [0.0] * Constants.Num_Speeds_MSHP
+    cops_Rated = [0.0] * Constants.Num_Speeds_MSHP
     
     cop_maxSpeed = 3.25  # 3.35 is an initial guess, final value solved for below
     
@@ -877,11 +888,11 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     curves.HEAT_CLOSS_FPLR_SPEC_coefficients = [(1 - c_d), c_d, 0]    # Linear part load model
             
     # Supply Air Tempteratures     
-    supply.htg_supply_air_temp = 105 # used for sizing heating flow rate
-    supply.supp_htg_max_supply_temp = 200 # Setting to 200F since MSHPs use electric baseboard for backup, which shouldn't be limited by a supply air temperature limit
+    supply.htg_supply_air_temp = 105.0 # used for sizing heating flow rate
+    supply.supp_htg_max_supply_temp = 200.0 # Setting to 200F since MSHPs use electric baseboard for backup, which shouldn't be limited by a supply air temperature limit
     supply.min_hp_temp = min_T          # Minimum temperature for Heat Pump operation
-    supply.supp_htg_max_outdoor_temp = 40   # Moved from DOE-2. DOE-2 Default
-    supply.max_defrost_temp = 40        # Moved from DOE-2. DOE-2 Default
+    supply.supp_htg_max_outdoor_temp = 40.0   # Moved from DOE-2. DOE-2 Default
+    supply.max_defrost_temp = 40.0        # Moved from DOE-2. DOE-2 Default
 
     return curves, supply
     

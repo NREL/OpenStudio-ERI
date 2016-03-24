@@ -99,7 +99,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+    living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
     living_thermal_zone = HelperMethods.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
     if living_thermal_zone.nil?
         return false
@@ -145,12 +145,15 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
                   air_loop_unitary.resetCoolingCoil
                   clg_coil.remove
                 end
-                if clg_coil.to_CoilCoolingDXTwoSpeed.is_initialized
+                if clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
                   runner.registerInfo("Removed '#{clg_coil.name}' from air loop '#{airLoopHVAC.name}'")
                   air_loop_unitary.resetCoolingCoil
                   clg_coil.remove
                 end
               end
+            elsif supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAir.is_initialized or supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAirMultiSpeed.is_initialized
+              supplyComponent.remove
+              airLoopHVAC.remove            
             end
           end
         end

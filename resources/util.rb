@@ -288,9 +288,9 @@ class HelperMethods
                           clg_coil = clg_coil.clone
                           clg_coil = clg_coil.to_CoilCoolingDXSingleSpeed.get
                         end
-                        if clg_coil.to_CoilCoolingDXTwoSpeed.is_initialized
+                        if clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
                           clg_coil = clg_coil.clone
-                          clg_coil = clg_coil.to_CoilCoolingDXTwoSpeed.get
+                          clg_coil = clg_coil.to_CoilCoolingDXMultiSpeed.get
                         end
                       end
                   end
@@ -663,7 +663,7 @@ class HVAC
 
         elsif num_speeds == 2
             
-            if min_compressor_temp is None or not is_cold_climate_hp(num_speeds, min_compressor_temp)
+            if min_compressor_temp.nil? or not HVAC.is_cold_climate_hp(num_speeds, min_compressor_temp)
             
                 # one set for low, one set for high
                 curves.HEAT_CAP_FT_SPEC_coefficients = [[0.335690634, 0.002405123, -0.0000464, 0.013498735, 0.0000499, -0.00000725], [0.306358843, 0.005376987, -0.0000579, 0.011645092, 0.0000591, -0.0000203]]
@@ -704,6 +704,297 @@ class HVAC
     end
     return curves
     end  
+  
+    def self._processCurvesSupplyFan(model)
+      const_biquadratic = OpenStudio::Model::CurveBiquadratic.new(model)
+      const_biquadratic.setName("ConstantBiquadratic")
+      const_biquadratic.setCoefficient1Constant(1)
+      const_biquadratic.setCoefficient2x(0)
+      const_biquadratic.setCoefficient3xPOW2(0)
+      const_biquadratic.setCoefficient4y(0)
+      const_biquadratic.setCoefficient5yPOW2(0)
+      const_biquadratic.setCoefficient6xTIMESY(0)
+      const_biquadratic.setMinimumValueofx(-100)
+      const_biquadratic.setMaximumValueofx(100)
+      const_biquadratic.setMinimumValueofy(-100)
+      const_biquadratic.setMaximumValueofy(100)   
+      return const_biquadratic
+    end
+  
+    def self._processCurvesDXCooling(model, supply, outputCapacity)
+
+      const_biquadratic = HVAC._processCurvesSupplyFan(model)
+    
+      clg_coil_stage_data = []
+      (0...supply.Number_Speeds).to_a.each do |speed|
+        # Cooling Capacity f(T). Convert DOE-2 curves to E+ curves
+        if supply.Number_Speeds > 1.0
+          c = supply.COOL_CAP_FT_SPEC_coefficients[speed]
+        else
+          c = supply.COOL_CAP_FT_SPEC_coefficients
+        end
+        cool_Cap_fT_coeff = Array.new
+        cool_Cap_fT_coeff << c[0] + 32.0 * (c[1] + c[3]) + 1024.0 * (c[2] + c[4] + c[5])
+        cool_Cap_fT_coeff << 9.0 / 5.0 * c[1] + 576.0 / 5.0 * c[2] + 288.0 / 5.0 * c[5]
+        cool_Cap_fT_coeff << 81.0 / 25.0 * c[2]
+        cool_Cap_fT_coeff << 9.0 / 5.0 * c[3] + 576.0 / 5.0 * c[4] + 288.0 / 5.0 * c[5]
+        cool_Cap_fT_coeff << 81.0 / 25.0 * c[4]
+        cool_Cap_fT_coeff << 81.0 / 25.0 * c[5]
+
+        cool_cap_ft = OpenStudio::Model::CurveBiquadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          cool_cap_ft.setName("Cool-Cap-fT#{speed + 1}")
+        else
+          cool_cap_ft.setName("Cool-Cap-fT")
+        end
+        cool_cap_ft.setCoefficient1Constant(cool_Cap_fT_coeff[0])
+        cool_cap_ft.setCoefficient2x(cool_Cap_fT_coeff[1])
+        cool_cap_ft.setCoefficient3xPOW2(cool_Cap_fT_coeff[2])
+        cool_cap_ft.setCoefficient4y(cool_Cap_fT_coeff[3])
+        cool_cap_ft.setCoefficient5yPOW2(cool_Cap_fT_coeff[4])
+        cool_cap_ft.setCoefficient6xTIMESY(cool_Cap_fT_coeff[5])
+        cool_cap_ft.setMinimumValueofx(13.88)
+        cool_cap_ft.setMaximumValueofx(23.88)
+        cool_cap_ft.setMinimumValueofy(18.33)
+        cool_cap_ft.setMaximumValueofy(51.66)
+
+        # Cooling EIR f(T) Convert DOE-2 curves to E+ curves
+        if supply.Number_Speeds > 1.0
+          c = supply.COOL_EIR_FT_SPEC_coefficients[speed]
+        else
+          c = supply.COOL_EIR_FT_SPEC_coefficients
+        end
+        cool_EIR_fT_coeff = Array.new
+        cool_EIR_fT_coeff << c[0] + 32.0 * (c[1] + c[3]) + 1024.0 * (c[2] + c[4] + c[5])
+        cool_EIR_fT_coeff << 9.0 / 5 * c[1] + 576.0 / 5 * c[2] + 288.0 / 5.0 * c[5]
+        cool_EIR_fT_coeff << 81.0 / 25.0 * c[2]
+        cool_EIR_fT_coeff << 9.0 / 5.0 * c[3] + 576.0 / 5.0 * c[4] + 288.0 / 5.0 * c[5]
+        cool_EIR_fT_coeff << 81.0 / 25.0 * c[4]
+        cool_EIR_fT_coeff << 81.0 / 25.0 * c[5]
+
+        cool_eir_ft = OpenStudio::Model::CurveBiquadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          cool_eir_ft.setName("Cool-EIR-fT#{speed + 1}")
+        else
+          cool_eir_ft.setName("Cool-EIR-fT")
+        end
+        cool_eir_ft.setCoefficient1Constant(cool_EIR_fT_coeff[0])
+        cool_eir_ft.setCoefficient2x(cool_EIR_fT_coeff[1])
+        cool_eir_ft.setCoefficient3xPOW2(cool_EIR_fT_coeff[2])
+        cool_eir_ft.setCoefficient4y(cool_EIR_fT_coeff[3])
+        cool_eir_ft.setCoefficient5yPOW2(cool_EIR_fT_coeff[4])
+        cool_eir_ft.setCoefficient6xTIMESY(cool_EIR_fT_coeff[5])
+        cool_eir_ft.setMinimumValueofx(13.88)
+        cool_eir_ft.setMaximumValueofx(23.88)
+        cool_eir_ft.setMinimumValueofy(18.33)
+        cool_eir_ft.setMaximumValueofy(51.66)
+
+        # Cooling PLF f(PLR) Convert DOE-2 curves to E+ curves
+        cool_plf_fplr = OpenStudio::Model::CurveQuadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          cool_plf_fplr.setName("Cool-PLF-fPLR#{speed + 1}")
+        else
+          cool_plf_fplr.setName("Cool-PLF-fPLR")
+        end
+        cool_plf_fplr.setCoefficient1Constant(supply.COOL_CLOSS_FPLR_SPEC_coefficients[0])
+        cool_plf_fplr.setCoefficient2x(supply.COOL_CLOSS_FPLR_SPEC_coefficients[1])
+        cool_plf_fplr.setCoefficient3xPOW2(supply.COOL_CLOSS_FPLR_SPEC_coefficients[2])
+        cool_plf_fplr.setMinimumValueofx(0.0)
+        cool_plf_fplr.setMaximumValueofx(1.0)
+        cool_plf_fplr.setMinimumCurveOutput(0.7)
+        cool_plf_fplr.setMaximumCurveOutput(1.0)
+
+        # Cooling CAP f(FF) Convert DOE-2 curves to E+ curves
+        cool_cap_fff = OpenStudio::Model::CurveQuadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          cool_cap_fff.setName("Cool-Cap-fFF#{speed + 1}")
+          cool_cap_fff.setCoefficient1Constant(supply.COOL_CAP_FFLOW_SPEC_coefficients[speed][0])
+          cool_cap_fff.setCoefficient2x(supply.COOL_CAP_FFLOW_SPEC_coefficients[speed][1])
+          cool_cap_fff.setCoefficient3xPOW2(supply.COOL_CAP_FFLOW_SPEC_coefficients[speed][2])
+        else
+          cool_cap_fff.setName("Cool-CAP-fFF")
+          cool_cap_fff.setCoefficient1Constant(supply.COOL_CAP_FFLOW_SPEC_coefficients[0])
+          cool_cap_fff.setCoefficient2x(supply.COOL_CAP_FFLOW_SPEC_coefficients[1])
+          cool_cap_fff.setCoefficient3xPOW2(supply.COOL_CAP_FFLOW_SPEC_coefficients[2])
+        end
+        cool_cap_fff.setMinimumValueofx(0.0)
+        cool_cap_fff.setMaximumValueofx(2.0)
+        cool_cap_fff.setMinimumCurveOutput(0.0)
+        cool_cap_fff.setMaximumCurveOutput(2.0)
+
+        # Cooling EIR f(FF) Convert DOE-2 curves to E+ curves
+        cool_eir_fff = OpenStudio::Model::CurveQuadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          cool_eir_fff.setName("Cool-EIR-fFF#{speed + 1}")
+          cool_eir_fff.setCoefficient1Constant(supply.COOL_EIR_FFLOW_SPEC_coefficients[speed][0])
+          cool_eir_fff.setCoefficient2x(supply.COOL_EIR_FFLOW_SPEC_coefficients[speed][1])
+          cool_eir_fff.setCoefficient3xPOW2(supply.COOL_EIR_FFLOW_SPEC_coefficients[speed][2])
+        else
+          cool_eir_fff.setName("Cool-EIR-fFF")
+          cool_eir_fff.setCoefficient1Constant(supply.COOL_EIR_FFLOW_SPEC_coefficients[0])
+          cool_eir_fff.setCoefficient2x(supply.COOL_EIR_FFLOW_SPEC_coefficients[1])
+          cool_eir_fff.setCoefficient3xPOW2(supply.COOL_EIR_FFLOW_SPEC_coefficients[2])
+        end
+        cool_eir_fff.setMinimumValueofx(0.0)
+        cool_eir_fff.setMaximumValueofx(2.0)
+        cool_eir_fff.setMinimumCurveOutput(0.0)
+        cool_eir_fff.setMaximumCurveOutput(2.0)
+
+        stage_data = OpenStudio::Model::CoilCoolingDXMultiSpeedStageData.new(model, cool_cap_ft, cool_cap_fff, cool_eir_ft, cool_eir_fff, cool_plf_fplr, const_biquadratic)
+        if outputCapacity != "Autosize"
+          stage_data.setGrossRatedTotalCoolingCapacity(outputCapacity * OpenStudio::convert(1.0,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[speed])
+          stage_data.setRatedAirFlowRate(supply.CFM_TON_Rated[speed] * outputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * supply.Capacity_Ratio_Cooling[speed]) 
+        end      
+        stage_data.setGrossRatedSensibleHeatRatio(supply.SHR_Rated[speed])
+        stage_data.setGrossRatedCoolingCOP(1.0 / supply.CoolingEIR[speed])
+        stage_data.setNominalTimeforCondensateRemovaltoBegin(1000)
+        stage_data.setRatioofInitialMoistureEvaporationRateandSteadyStateLatentCapacity(1.5)
+        stage_data.setMaximumCyclingRate(3)
+        stage_data.setLatentCapacityTimeConstant(45)
+        stage_data.setRatedWasteHeatFractionofPowerInput(0.2)
+        clg_coil_stage_data[speed] = stage_data
+      end
+      return clg_coil_stage_data
+    end
+      
+    def self._processCurvesDXHeating(model, supply, outputCapacity)
+    
+      const_biquadratic = HVAC._processCurvesSupplyFan(model)
+    
+      htg_coil_stage_data = []
+      # Loop through speeds to create curves for each speed
+      (0...supply.Number_Speeds).to_a.each do |speed|
+        # Heating Capacity f(T). Convert DOE-2 curves to E+ curves
+        if supply.Number_Speeds > 1.0
+          c = supply.HEAT_CAP_FT_SPEC_coefficients[speed]
+        else
+          c = supply.HEAT_CAP_FT_SPEC_coefficients
+        end
+        heat_Cap_fT_coeff = Array.new
+        heat_Cap_fT_coeff << c[0] + 32.0 * (c[1] + c[3]) + 1024.0 * (c[2] + c[4] + c[5])
+        heat_Cap_fT_coeff << 9.0 / 5.0 * c[1] + 576.0 / 5.0 * c[2] + 288.0 / 5.0 * c[5]
+        heat_Cap_fT_coeff << 81.0 / 25.0 * c[2]
+        heat_Cap_fT_coeff << 9.0 / 5.0 * c[3] + 576.0 / 5.0 * c[4] + 288.0 / 5.0 * c[5]
+        heat_Cap_fT_coeff << 81.0 / 25.0 * c[4]
+        heat_Cap_fT_coeff << 81.0 / 25.0 * c[5]
+
+        hp_heat_cap_ft = OpenStudio::Model::CurveBiquadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          hp_heat_cap_ft.setName("HP_Heat-Cap-fT#{speed + 1}")
+        else
+          hp_heat_cap_ft.setName("HP_Heat-Cap-fT")
+        end
+        hp_heat_cap_ft.setCoefficient1Constant(heat_Cap_fT_coeff[0])
+        hp_heat_cap_ft.setCoefficient2x(heat_Cap_fT_coeff[1])
+        hp_heat_cap_ft.setCoefficient3xPOW2(heat_Cap_fT_coeff[2])
+        hp_heat_cap_ft.setCoefficient4y(heat_Cap_fT_coeff[3])
+        hp_heat_cap_ft.setCoefficient5yPOW2(heat_Cap_fT_coeff[4])
+        hp_heat_cap_ft.setCoefficient6xTIMESY(heat_Cap_fT_coeff[5])
+        hp_heat_cap_ft.setMinimumValueofx(-100)
+        hp_heat_cap_ft.setMaximumValueofx(100)
+        hp_heat_cap_ft.setMinimumValueofy(-100)
+        hp_heat_cap_ft.setMaximumValueofy(100)
+
+        # Heating EIR f(T) Convert DOE-2 curves to E+ curves
+        if supply.Number_Speeds > 1.0
+          c = supply.HEAT_EIR_FT_SPEC_coefficients[speed]
+        else
+          c = supply.HEAT_EIR_FT_SPEC_coefficients
+        end
+        hp_heat_EIR_fT_coeff = Array.new
+        hp_heat_EIR_fT_coeff << c[0] + 32.0 * (c[1] + c[3]) + 1024.0 * (c[2] + c[4] + c[5])
+        hp_heat_EIR_fT_coeff << 9.0 / 5 * c[1] + 576.0 / 5 * c[2] + 288.0 / 5.0 * c[5]
+        hp_heat_EIR_fT_coeff << 81.0 / 25.0 * c[2]
+        hp_heat_EIR_fT_coeff << 9.0 / 5.0 * c[3] + 576.0 / 5.0 * c[4] + 288.0 / 5.0 * c[5]
+        hp_heat_EIR_fT_coeff << 81.0 / 25.0 * c[4]
+        hp_heat_EIR_fT_coeff << 81.0 / 25.0 * c[5]
+
+        hp_heat_eir_ft = OpenStudio::Model::CurveBiquadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          hp_heat_eir_ft.setName("HP_Heat-EIR-fT#{speed + 1}")
+        else
+          hp_heat_eir_ft.setName("HP_Heat-EIR-fT")
+        end
+        hp_heat_eir_ft.setCoefficient1Constant(hp_heat_EIR_fT_coeff[0])
+        hp_heat_eir_ft.setCoefficient2x(hp_heat_EIR_fT_coeff[1])
+        hp_heat_eir_ft.setCoefficient3xPOW2(hp_heat_EIR_fT_coeff[2])
+        hp_heat_eir_ft.setCoefficient4y(hp_heat_EIR_fT_coeff[3])
+        hp_heat_eir_ft.setCoefficient5yPOW2(hp_heat_EIR_fT_coeff[4])
+        hp_heat_eir_ft.setCoefficient6xTIMESY(hp_heat_EIR_fT_coeff[5])
+        hp_heat_eir_ft.setMinimumValueofx(-100)
+        hp_heat_eir_ft.setMaximumValueofx(100)
+        hp_heat_eir_ft.setMinimumValueofy(-100)
+        hp_heat_eir_ft.setMaximumValueofy(100)
+
+        hp_heat_plf_fplr = OpenStudio::Model::CurveQuadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          hp_heat_plf_fplr.setName("HP_Heat-PLF-fPLR#{speed + 1}")
+        else
+          hp_heat_plf_fplr.setName("HP_Heat-PLF-fPLR")
+        end
+        hp_heat_plf_fplr.setCoefficient1Constant(supply.HEAT_CLOSS_FPLR_SPEC_coefficients[0])
+        hp_heat_plf_fplr.setCoefficient2x(supply.HEAT_CLOSS_FPLR_SPEC_coefficients[1])
+        hp_heat_plf_fplr.setCoefficient3xPOW2(supply.HEAT_CLOSS_FPLR_SPEC_coefficients[2])
+        hp_heat_plf_fplr.setMinimumValueofx(-100)
+        hp_heat_plf_fplr.setMaximumValueofx(100)
+        hp_heat_plf_fplr.setMinimumCurveOutput(-100)
+        hp_heat_plf_fplr.setMaximumCurveOutput(100)
+
+        # Heating CAP f(FF) Convert DOE-2 curves to E+ curves
+        hp_heat_cap_fff = OpenStudio::Model::CurveQuadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          hp_heat_cap_fff.setName("HP_Heat-Cap-fFF#{speed + 1}")
+          hp_heat_cap_fff.setCoefficient1Constant(supply.HEAT_CAP_FFLOW_SPEC_coefficients[speed][0])
+          hp_heat_cap_fff.setCoefficient2x(supply.HEAT_CAP_FFLOW_SPEC_coefficients[speed][1])
+          hp_heat_cap_fff.setCoefficient3xPOW2(supply.HEAT_CAP_FFLOW_SPEC_coefficients[speed][2])
+        else
+          hp_heat_cap_fff.setName("HP_Heat-CAP-fFF")
+          hp_heat_cap_fff.setCoefficient1Constant(supply.HEAT_CAP_FFLOW_SPEC_coefficients[0])
+          hp_heat_cap_fff.setCoefficient2x(supply.HEAT_CAP_FFLOW_SPEC_coefficients[1])
+          hp_heat_cap_fff.setCoefficient3xPOW2(supply.HEAT_CAP_FFLOW_SPEC_coefficients[2])
+        end
+        hp_heat_cap_fff.setMinimumValueofx(0.0)
+        hp_heat_cap_fff.setMaximumValueofx(2.0)
+        hp_heat_cap_fff.setMinimumCurveOutput(0.0)
+        hp_heat_cap_fff.setMaximumCurveOutput(2.0)
+
+        # Heating EIR f(FF) Convert DOE-2 curves to E+ curves
+        hp_heat_eir_fff = OpenStudio::Model::CurveQuadratic.new(model)
+        if supply.Number_Speeds > 1.0
+          hp_heat_eir_fff.setName("HP_Heat-EIR-fFF#{speed + 1}")
+          hp_heat_eir_fff.setCoefficient1Constant(supply.HEAT_EIR_FFLOW_SPEC_coefficients[speed][0])
+          hp_heat_eir_fff.setCoefficient2x(supply.HEAT_EIR_FFLOW_SPEC_coefficients[speed][1])
+          hp_heat_eir_fff.setCoefficient3xPOW2(supply.HEAT_EIR_FFLOW_SPEC_coefficients[speed][2])
+        else
+          hp_heat_eir_fff.setName("HP_Heat-EIR-fFF")
+          hp_heat_eir_fff.setCoefficient1Constant(supply.HEAT_EIR_FFLOW_SPEC_coefficients[0])
+          hp_heat_eir_fff.setCoefficient2x(supply.HEAT_EIR_FFLOW_SPEC_coefficients[1])
+          hp_heat_eir_fff.setCoefficient3xPOW2(supply.HEAT_EIR_FFLOW_SPEC_coefficients[2])
+        end
+        hp_heat_eir_fff.setMinimumValueofx(0.0)
+        hp_heat_eir_fff.setMaximumValueofx(2.0)
+        hp_heat_eir_fff.setMinimumCurveOutput(0.0)
+        hp_heat_eir_fff.setMaximumCurveOutput(2.0)
+
+        stage_data = OpenStudio::Model::CoilHeatingDXMultiSpeedStageData.new(model, hp_heat_cap_ft, hp_heat_cap_fff, hp_heat_eir_ft, hp_heat_eir_fff, hp_heat_plf_fplr, const_biquadratic)
+        if outputCapacity != "Autosize"
+          stage_data.setGrossRatedHeatingCapacity(outputCapacity * OpenStudio::convert(1.0,"Btu/h","W").get * supply.Capacity_Ratio_Heating[speed])
+          stage_data.setRatedAirFlowRate(supply.CFM_TON_Rated_Heat[speed] * outputCapacity * OpenStudio::convert(1.0,"Btu/h","W").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * supply.Capacity_Ratio_Heating[speed]) 
+        end   
+        stage_data.setGrossRatedHeatingCOP(1.0 / supply.HeatingEIR[speed])
+        stage_data.setRatedWasteHeatFractionofPowerInput(0.2)
+        htg_coil_stage_data[speed] = stage_data
+      end
+      return htg_coil_stage_data
+    end
+  
+    def self.is_cold_climate_hp(num_speeds, min_compressor_temp)
+        if num_speeds == 2.0 and min_compressor_temp == -99.9
+            return true
+        else
+            return false
+        end
+    end
   
     def self._processAirSystemCoolingCoil(number_Speeds, coolingEER, coolingSEER, supplyFanPower, supplyFanPower_Rated, shr_Rated, capacity_Ratio, fanspeed_Ratio, condenserType, crankcase, crankcase_MaxT, eer_CapacityDerateFactor, air_conditioner, supply, hasHeatPump)
 
@@ -812,11 +1103,15 @@ class HVAC
 
     supply.Capacity_Ratio_Heating = capacity_Ratio
     supply.fanspeed_ratio_heating = fanspeed_Ratio_Heating
-    supply.max_temp = 105               # Hardcoded due to all heat pumps options having this value. Also effects the sizing so it shouldn't be a user variable
+    supply.max_temp = 105.0             # Hardcoded due to all heat pumps options having this value. Also effects the sizing so it shouldn't be a user variable
     supply.min_hp_temp = min_T          # Minimum temperature for Heat Pump operation
-    supply.max_supp_heating_temp = 40   # Moved from DOE-2. DOE-2 Default
-    supply.max_defrost_temp = 40        # Moved from DOE-2. DOE-2 Default
+    supply.supp_htg_max_outdoor_temp = 40.0 # Moved from DOE-2. DOE-2 Default
+    supply.max_defrost_temp = 40.0      # Moved from DOE-2. DOE-2 Default
 
+    # Supply Air Tempteratures
+    supply.htg_supply_air_temp = 105.0 # used for sizing heating flow rate
+    supply.supp_htg_max_supply_temp = 170.0 # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
+    
     supply.COP_CapacityDerateFactor = cop_CapacityDerateFactor
 
     return supply

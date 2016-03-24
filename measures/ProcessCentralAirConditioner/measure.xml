@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>200469dd-0bae-4ea0-b270-d10899e86664</version_id>
+  <version_id>f76a5ea7-4e0d-449f-8193-c63915033aa1</version_id>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -58,6 +58,10 @@
         <choice>
           <value>SEER 21</value>
           <display_name>SEER 21</display_name>
+        </choice>
+        <choice>
+          <value>SEER 24.5</value>
+          <display_name>SEER 24.5</display_name>
         </choice>
       </choices>
     </argument>
@@ -231,7 +235,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B4244D4E</checksum>
+      <checksum>F43A5089</checksum>
     </file>
     <file>
       <version>
@@ -242,7 +246,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>918668C1</checksum>
+      <checksum>B8C2BD2C</checksum>
     </file>
   </files>
 </measure>

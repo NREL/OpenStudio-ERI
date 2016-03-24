@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_exterior_insulated_walls_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>ce36e78d-4284-4cce-a15e-0043a507d917</version_id>
+  <version_id>9056ab43-9f89-46a0-a79e-7c3d48cc92f5</version_id>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsExteriorInsulatedWallsCMU</class_name>
   <display_name>Set Residential Living Space CMU Wall Construction</display_name>
@@ -278,7 +278,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AAD6884C</checksum>
+      <checksum>F43A5089</checksum>
     </file>
   </files>
 </measure>
