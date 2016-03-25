@@ -91,7 +91,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
         space.surfaces.each do |surface|
             next if surface.surfaceType.downcase != "roofceiling"
             next if surface.outsideBoundaryCondition.downcase != "outdoors"
-            constructions_to_surfaces["FinInsExtRoof"] << surface
+            surfaces << surface
             if not spaces.include? space
                 spaces << space
             end
@@ -112,12 +112,20 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     frRoofFramingFactor = runner.getDoubleArgumentValue("userdefinedfrroofff",user_arguments)
     
     # Validate Inputs FIXME
-    
-
+    if frRoofCavityInsRvalueInstalled < 0.0
+        runner.registerError("Cavity Insulation Installed R-value must be greater than or equal to 0.")
+        return false
+    end
+    if frRoofCavityDepth <= 0.0
+        runner.registerError("Cavity Depth must be greater than 0.")
+        return false
+    end    
+    if frRoofFramingFactor < 0.0 or frRoofFramingFactor >= 1.0
+        runner.registerError("Framing Factor must be greater than or equal to 0 and less than 1.")
+        return false
+    end
 
     # Process the finished roof
-    
-    highest_roof_pitch = 26.565 # FIXME: Currently hardcoded
     
     # Define materials
     if frRoofCavityInsRvalueInstalled > 0
@@ -143,6 +151,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     roof.addlayer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
     roof.addlayer([mat_framing, mat_cavity], true, "RoofIns")
     roof.addlayer(Material.DefaultRoofSheathing, false) # roof sheathing added in separate measure
+    roof.addlayer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
     roof.addlayer(Material.AirFilmOutside, false)
     
     # Create and assign construction to surfaces

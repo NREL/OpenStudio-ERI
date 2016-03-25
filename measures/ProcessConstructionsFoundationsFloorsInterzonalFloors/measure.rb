@@ -111,7 +111,7 @@ class ProcessConstructionsFoundationsFloorsInterzonalFloors < OpenStudio::Rulese
     
     # Define Materials
     if intFloorCavityInsRvalueNominal == 0
-        mat_cavity = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=1000000000)
+        mat_cavity = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=Constants.InfiniteConductivity)
     else
         mat_cavity = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=Material.Stud2x6.thick / intFloorCavityInsRvalueNominal)
     end

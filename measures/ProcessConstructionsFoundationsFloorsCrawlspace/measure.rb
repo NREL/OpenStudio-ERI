@@ -241,7 +241,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         # Define materials
         mat_2x = Material.Stud2x(crawlCeilingJoistHeight)
         if crawlCeilingCavityInsRvalueNominal == 0
-            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=1000000000)
+            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=Constants.InfiniteConductivity)
         else    
             mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=mat_2x.thick / crawlCeilingCavityInsRvalueNominal)
         end

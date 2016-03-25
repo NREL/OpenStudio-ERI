@@ -338,7 +338,7 @@ class Geometry
         if num_surf == 0
             return nil
         end
-        return sum_tilt/num_surf.to_f
+        return sum_tilt/num_surf.to_f*180.0/3.14159
     end
     
     # Checks if the surface is between finished and unfinished space

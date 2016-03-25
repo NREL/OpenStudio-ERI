@@ -107,7 +107,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 		attic_increase = 0.0
 		attic_run = 0.0
 		space.surfaces.each do |surface|
-			if surface.surfaceType == "Floor" and surface.outsideBoundaryCondition == "Surface"
+			if surface.surfaceType.downcase == "floor" and surface.outsideBoundaryCondition.downcase == "surface"
 				least_x = 1000
 				greatest_x = -1000
 				least_y = 1000
@@ -140,7 +140,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 		end
 		if roof_structure == "Truss, Cantilever"
 			space.surfaces.each do |surface|
-				if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Outdoors"
+				if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
 					# raise the roof
 					m = initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
 					m[2,3] = attic_increase
@@ -148,7 +148,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 					vertices = surface.vertices
 					new_vertices = transformation * vertices
 					surface.setVertices(new_vertices)				
-				elsif surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
+				elsif surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors"
 					x_s = []
 					y_s = []
 					z_s = []
@@ -181,7 +181,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 		end
 		shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
 		space.surfaces.each do |surface|
-			if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Outdoors"
+			if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
 				
 				# add the shading surfaces
 				new_surface_down = surface.clone.to_Surface.get
@@ -479,7 +479,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 		# if roof_structure == "Truss, Cantilever"
 			# shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
 			# space.surfaces.each do |surface|
-				# if surface.surfaceType == "RoofCeiling" and surface.outsideBoundaryCondition == "Outdoors"
+				# if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
 					
 					# raise the roof
 					# m = initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
@@ -703,7 +703,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 					# shading_surface.setShadingSurfaceGroup(shading_surface_group)								
 					# new_surface_right.remove					
 					
-				# elsif surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors"
+				# elsif surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors"
 					# x_s = []
 					# y_s = []
 					# z_s = []

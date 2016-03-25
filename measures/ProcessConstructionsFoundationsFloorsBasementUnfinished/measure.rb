@@ -361,7 +361,7 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         # Define materials
         mat_2x = Material.Stud2x(ufbsmtCeilingJoistHeight)
         if ufbsmtCeilingCavityInsRvalueNominal == 0
-            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=1000000000)
+            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=Constants.InfiniteConductivity)
         else    
             mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=mat_2x.thick / ufbsmtCeilingCavityInsRvalueNominal)
         end

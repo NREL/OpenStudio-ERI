@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_interzonal_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>c4c1dbf6-c981-4b1f-804e-83ee72163c7f</version_id>
+  <version_id>891799e1-2e85-440e-8ff7-6c3ac5d9038b</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsInterzonalFloors</class_name>
   <display_name>Set Residential Foundations/Floors - Interzonal Floor Construction</display_name>
@@ -77,22 +77,16 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B207F3E7</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C5D00E99</checksum>
-    </file>
-    <file>
       <filename>ProcessConstructionsInteriorInsulatedFloors_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>DCAB9AC2</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C8C24795</checksum>
     </file>
     <file>
       <version>
@@ -103,13 +97,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4A076FEA</checksum>
+      <checksum>C2A90D75</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>62C1330C</checksum>
+      <checksum>923E10CB</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B95DB6E1</checksum>
     </file>
   </files>
 </measure>

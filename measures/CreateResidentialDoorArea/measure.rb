@@ -102,7 +102,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
 		next if not story == "First"
 		surfaces = space.surfaces
 		surfaces.each do |surface|
-			next if not ( surface.surfaceType == "Wall" and surface.outsideBoundaryCondition == "Outdoors" )
+			next if not ( surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors" )
 			# get surface azimuth to determine facade
 			wall_azimuth = OpenStudio::Quantity.new(surface.azimuth, OpenStudio::createSIAngle)
 			wall_orientation = (OpenStudio.convert(wall_azimuth, OpenStudio::createIPAngle).get.value + building_orientation).round			

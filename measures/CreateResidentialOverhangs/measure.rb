@@ -145,7 +145,7 @@ class CreateResidentialOverhangs < OpenStudio::Ruleset::ModelUserScript
 	subsurfaces = model.getSubSurfaces
 	subsurfaces.each do |subsurface|
 		
-		next if not subsurface.subSurfaceType.include? "Window"
+		next if not subsurface.subSurfaceType.downcase.include? "window"
 	
 		# get subsurface azimuth to determine facade
 		window_azimuth = OpenStudio::Quantity.new(subsurface.azimuth, OpenStudio::createSIAngle)

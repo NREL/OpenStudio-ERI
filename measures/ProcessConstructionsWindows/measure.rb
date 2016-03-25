@@ -183,7 +183,7 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     sm.setThermalHemisphericalEmissivity(total_shade_abs)
     sm.setThermalTransmittance(total_shade_trans)
     sm.setThickness(0.0001)
-    sm.setConductivity(10000.0)
+    sm.setConductivity(Constants.InfiniteConductivity)
     sm.setShadetoGlassDistance(0.001)
     sm.setTopOpeningMultiplier(0)
     sm.setBottomOpeningMultiplier(0)

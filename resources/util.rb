@@ -510,6 +510,10 @@ class Construction
             materials << mat
         end
         
+        if materials.size == 0
+            return true
+        end
+        
         construction_map = {} # Used to create new constructions only for each existing unique construction
         rev_construction_map = {} # Used for adjacent surfaces, which get reverse constructions
         surfaces.each do |surface|
@@ -518,7 +522,7 @@ class Construction
             if surface.construction.is_initialized
                 constr_name = surface.construction.get.name.to_s
             end
-
+            
             # Assign construction to surface
             if not construction_map.include? constr_name
                 # Create new construction
@@ -536,7 +540,7 @@ class Construction
                 surface.setConstruction(construction_map[constr_name])
                 runner.registerInfo("Surface '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
             end
-            
+
             # Assign reverse construction to adjacent surface as needed
             next if not surface.adjacentSurface.is_initialized or surface.is_a? OpenStudio::Model::SubSurface
             rev_constr_name = "Rev#{surface.construction.get.name.to_s}"

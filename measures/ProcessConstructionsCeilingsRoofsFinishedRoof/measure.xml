@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_finished_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>e1b615eb-e101-4ffc-9906-ddffc86f64a8</version_id>
+  <version_id>dc997979-0f22-4a5c-8bed-f01b80d59928</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsFinishedRoof</class_name>
   <display_name>Set Residential Ceilings/Roofs - Finished Roof Construction</display_name>
@@ -106,22 +106,16 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B207F3E7</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C5D00E99</checksum>
-    </file>
-    <file>
       <filename>ProcessConstructionsInsulatedRoof_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>E58E176A</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C8C24795</checksum>
     </file>
     <file>
       <version>
@@ -132,13 +126,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4E0EA3B0</checksum>
+      <checksum>42C58A2E</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>62C1330C</checksum>
+      <checksum>923E10CB</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B95DB6E1</checksum>
     </file>
   </files>
 </measure>

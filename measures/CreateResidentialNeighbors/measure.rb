@@ -84,7 +84,7 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
 	# get x and y minima and maxima of wall surfaces
 	surfaces = model.getSurfaces
 	surfaces.each do |surface|
-		if surface.surfaceType == "Wall"
+		if surface.surfaceType.downcase == "wall"
 			vertices = surface.vertices
 			vertices.each do |vertex|
 				if vertex.x > greatest_x
@@ -125,7 +125,7 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
 				new_space.changeTransformation(OpenStudio::Transformation.new(m))
 				runner.registerInfo("Translated space #{space.name} by #{OpenStudio::convert((x_offset+y_offset).abs,"m","ft").get.round(2)} ft to the #{dir} into neighbor space #{new_space.name}.")
 				new_space.surfaces.each do |surface|
-					if surface.outsideBoundaryCondition == "Outdoors"
+					if surface.outsideBoundaryCondition.downcase == "outdoors"
 						shading_surface = OpenStudio::Model::ShadingSurface.new(surface.vertices, model)
 						shading_surface.setName("#{dir} Neighbor")
 						shading_surface.setShadingSurfaceGroup(shading_surface_group)

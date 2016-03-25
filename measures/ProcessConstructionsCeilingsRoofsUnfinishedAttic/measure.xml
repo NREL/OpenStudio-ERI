@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>b1f0d1a9-26f0-45cf-bab9-738e2f266b8d</version_id>
+  <version_id>ec52611b-8d30-429a-a4c4-9de9f189d883</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsUnfinishedAttic</class_name>
   <display_name>Set Residential Ceilings/Roofs - Unfinished Attic Constructions</display_name>
@@ -10,118 +10,130 @@
   <modeler_description>Calculates and assigns material layer properties of constructions for 1) floors between unfinished space under a roof and finished space and 2) roofs of unfinished space.</modeler_description>
   <arguments>
     <argument>
-      <name>selecteduains</name>
-      <display_name>Insulation Type</display_name>
-      <description>The type of insulation.</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>Ceiling</default_value>
-      <choices>
-        <choice>
-          <value>Uninsulated</value>
-          <display_name>Uninsulated</display_name>
-        </choice>
-        <choice>
-          <value>Ceiling</value>
-          <display_name>Ceiling</display_name>
-        </choice>
-        <choice>
-          <value>Roof</value>
-          <display_name>Roof</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>userdefinedceilroofinsthickness</name>
-      <display_name>Ceiling/Roof Insulation Thickness</display_name>
-      <description>The thickness in inches of insulation required to obtain a certain R-value.</description>
+      <name>ceil_r</name>
+      <display_name>Ceiling Insulation Nominal R-value</display_name>
+      <description>Refers to the R-value of the insulation and not the overall R-value of the assembly.</description>
       <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>8.55</default_value>
-    </argument>
-    <argument>
-      <name>userdefineduaceilroofr</name>
-      <display_name>Ceiling/Roof Insulation Nominal R-value</display_name>
-      <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
+      <units>h-ft^2-R/Btu</units>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>30</default_value>
     </argument>
     <argument>
-      <name>selecteduaceiljoistthickness</name>
-      <display_name>Ceiling Joist Thickness</display_name>
-      <description>Thickness of joists in the ceiling.</description>
+      <name>ceil_grade</name>
+      <display_name>Ceiling Install Grade</display_name>
+      <description>Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
-      <required>false</required>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>I</default_value>
+      <choices>
+        <choice>
+          <value>I</value>
+          <display_name>I</display_name>
+        </choice>
+        <choice>
+          <value>II</value>
+          <display_name>II</display_name>
+        </choice>
+        <choice>
+          <value>III</value>
+          <display_name>III</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>ceil_ins_thick_in</name>
+      <display_name>Ceiling Insulation Thickness</display_name>
+      <description>The thickness in inches of insulation required to obtain the specified R-value.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>8.55</default_value>
+    </argument>
+    <argument>
+      <name>ceil_ff</name>
+      <display_name>Ceiling Framing Factor</display_name>
+      <description>Fraction of ceiling that is framing.</description>
+      <type>Double</type>
+      <units>frac</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.07</default_value>
+    </argument>
+    <argument>
+      <name>ceil_joist_height</name>
+      <display_name>Ceiling Joist Height</display_name>
+      <description>Height of the joist member.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>3.5</default_value>
+    </argument>
+    <argument>
+      <name>roof_cavity_r</name>
+      <display_name>Roof Cavity Insulation Nominal R-value</display_name>
+      <description>Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.</description>
+      <type>Double</type>
+      <units>h-ft^2-R/Btu</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>roof_cavity_grade</name>
+      <display_name>Roof Cavity Install Grade</display_name>
+      <description>Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>I</default_value>
       <choices>
         <choice>
-          <value>3.5</value>
-          <display_name>3.5</display_name>
+          <value>I</value>
+          <display_name>I</display_name>
+        </choice>
+        <choice>
+          <value>II</value>
+          <display_name>II</display_name>
+        </choice>
+        <choice>
+          <value>III</value>
+          <display_name>III</display_name>
         </choice>
       </choices>
     </argument>
     <argument>
-      <name>userdefineduaceilff</name>
-      <display_name>Ceiling Framing Factor</display_name>
-      <description>The framing factor of the ceiling.</description>
+      <name>roof_cavity_ins_thick_in</name>
+      <display_name>Roof Cavity Insulation Thickness</display_name>
+      <description>The thickness in inches of insulation required to obtain the specified R-value.</description>
+      <type>Double</type>
+      <units>in</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>roof_ff</name>
+      <display_name>Roof Framing Factor</display_name>
+      <description>Fraction of roof that is framing.</description>
       <type>Double</type>
       <units>frac</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.07</default_value>
     </argument>
     <argument>
-      <name>selecteduaroofframethickness</name>
+      <name>roof_fram_thick_in</name>
       <display_name>Roof Framing Thickness</display_name>
       <description>Thickness of roof framing.</description>
-      <type>Choice</type>
+      <type>Double</type>
       <units>in</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>7.25</default_value>
-      <choices>
-        <choice>
-          <value>7.25</value>
-          <display_name>7.25</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>userdefineduaroofff</name>
-      <display_name>Roof Framing Factor</display_name>
-      <description>Fraction of roof that is made up of framing elements.</description>
-      <type>Double</type>
-      <units>frac</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.07</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedrigidinsthickness</name>
-      <display_name>Roof Continuous Insulation Thickness</display_name>
-      <description>Thickness of rigid insulation added to the roof.</description>
-      <type>Double</type>
-      <units>in</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedrigidinsr</name>
-      <display_name>Roof Continuous Insulation Nominal R-value</display_name>
-      <description>The nominal R-value of the continuous insulation.</description>
-      <type>Double</type>
-      <units>hr-ft^2-R/Btu</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -148,22 +160,28 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
+      <filename>ProcessConstructionsUnfinishedAttic_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E32FAE53</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C8C24795</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B207F3E7</checksum>
+      <checksum>923E10CB</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C5D00E99</checksum>
-    </file>
-    <file>
-      <filename>ProcessConstructionsUnfinishedAttic_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E32FAE53</checksum>
+      <checksum>B95DB6E1</checksum>
     </file>
     <file>
       <version>
@@ -174,13 +192,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5F4A8AFE</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>62C1330C</checksum>
+      <checksum>A63115A0</checksum>
     </file>
   </files>
 </measure>
