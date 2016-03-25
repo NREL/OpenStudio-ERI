@@ -1,70 +1,70 @@
 class Constants
 
-    # Numbers --------------------
-    
-    def self.AssumedInsideTemp
-        return 73.5 # deg-F
-    end
-    def self.DefaultFramingFactorCeiling
-        return 0.11
-    end
-    def self.DefaultFramingFactorFloor
-        return 0.13
-    end
-    def self.DefaultFramingFactorInterior
-        return 0.16
-    end
-	def self.DefaultSolarAbsCeiling
-		return 0.3
-	end
-	def self.DefaultSolarAbsFloor
-		return 0.6
-	end
-	def self.DefaultSolarAbsWall
-		return 0.5
-	end
-    def self.DefaultStudSpacing
-        return 16.0 # in
-    end
-	def self.g
-		return 32.174    # gravity (ft/s2)
-	end
-	def self.Num_Speeds_MSHP
-		return 10
-	end
-    def self.MSHP_Cd_Cooling
-        return 0.25
-    end
-    def self.MSHP_Cd_Heating
-        return 0.40
-    end
-	def self.MonthNumDays
-		return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-	end
-    def self.Patm
-        return 14.696 # standard atmospheric pressure (psia)
-    end
-    def self.small 
-        return 1e-9
-    end
+  # Numbers --------------------
+  
+  def self.AssumedInsideTemp
+      return 73.5 # deg-F
+  end
+  def self.DefaultFramingFactorCeiling
+      return 0.11
+  end
+  def self.DefaultFramingFactorFloor
+      return 0.13
+  end
+  def self.DefaultFramingFactorInterior
+      return 0.16
+  end
+  def self.DefaultSolarAbsCeiling
+    return 0.3
+  end
+  def self.DefaultSolarAbsFloor
+    return 0.6
+  end
+  def self.DefaultSolarAbsWall
+    return 0.5
+  end
+  def self.DefaultStudSpacing
+      return 16.0 # in
+  end
+  def self.g
+    return 32.174    # gravity (ft/s2)
+  end
+  def self.Num_Speeds_MSHP
+    return 10
+  end
+  def self.MSHP_Cd_Cooling
+      return 0.25
+  end
+  def self.MSHP_Cd_Heating
+      return 0.40
+  end
+  def self.MonthNumDays
+    return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  end
+  def self.Patm
+      return 14.696 # standard atmospheric pressure (psia)
+  end
+  def self.small 
+      return 1e-9
+  end
 
-    # Strings --------------------
-    
-    def self.AtticSpace
-        return 'attic space'
-    end
-    def self.AtticZone
-        return 'attic zone'
-    end
-	def self.Auto
-		return 'auto'
-	end
-    def self.BasementSpace
-        return 'basement space'
-    end
-    def self.BasementZone
-        return 'basement zone'
-    end
+  # Strings --------------------
+  
+  def self.AtticSpace
+      return 'attic space'
+  end
+  def self.AtticZone
+      return 'attic zone'
+  end
+  def self.Auto
+    return 'auto'
+  end
+  def self.BasementSpace
+      return 'basement space'
+  end
+  def self.BasementZone
+      return 'basement zone'
+  end
 	def self.BAZoneCold
 		return 'Cold'
 	end
@@ -152,15 +152,15 @@ class Constants
 	def self.CondenserTypeAir
 		return 'aircooled'
 	end
-    def self.CrawlSpace
-        return 'crawl space'
-    end
-    def self.CrawlSpaceType
-        return 'crawl space type'
-    end
-    def self.CrawlZone
-        return 'crawl zone'
-    end
+  def self.CrawlSpace
+      return 'crawl space'
+  end
+  def self.CrawlSpaceType
+      return 'crawl space type'
+  end
+  def self.CrawlZone
+      return 'crawl zone'
+  end
 	def self.DehumidDucted
 		return 'ducted'
 	end
@@ -206,24 +206,24 @@ class Constants
 	def self.FanControlSmart
 		return 'smart'
 	end
-    def self.FinishedAtticSpace
-        return 'finished attic space'
-    end
-    def self.FinishedAtticZone
-        return 'finished attic zone'
-    end
-    def self.FinishedAtticSpaceType
-        return 'finished attic space type'
-    end
-    def self.FinishedBasementSpace
-        return 'finished basement space'
-    end
-    def self.FinishedBasementSpaceType
-        return 'finished basement space type'
-    end
-    def self.FinishedBasementZone
-        return 'finished basement zone'
-    end
+  def self.FinishedAtticSpace
+      return 'finished attic space'
+  end
+  def self.FinishedAtticZone
+      return 'finished attic zone'
+  end
+  def self.FinishedAtticSpaceType
+      return 'finished attic space type'
+  end
+  def self.FinishedBasementSpace
+      return 'finished basement space'
+  end
+  def self.FinishedBasementSpaceType
+      return 'finished basement space type'
+  end
+  def self.FinishedBasementZone
+      return 'finished basement zone'
+  end
 	def self.FluidWater
 		return 'water'
 	end
@@ -257,15 +257,15 @@ class Constants
 	def self.FurnTypeHeavy
 		return 'HEAVY'
 	end
-    def self.GarageSpace
-        return 'garage space'
-    end
-    def self.GarageSpaceType
-        return 'garage space type'
-    end
-    def self.GarageZone
-        return 'garage zone'
-    end
+  def self.GarageSpace
+      return 'garage space'
+  end
+  def self.GarageSpaceType
+      return 'garage space type'
+  end
+  def self.GarageZone
+      return 'garage zone'
+  end
 	def self.HeatTransferMethodCTF
 		return 'ctf'
 	end
@@ -311,18 +311,18 @@ class Constants
 	def self.InsulationXPS
 		return 'xps'
 	end
-    def self.LivingSpace(story)
-        if story == 1
-            return 'living space'
-        end
-        return 'living space ' + story.to_s
-    end
-    def self.LivingSpaceType
-        return 'living space type'
-    end
-    def self.LivingZone
-        return 'living zone'
-    end
+  def self.LivingSpace(story)
+      if story == 1
+          return 'living space'
+      end
+      return 'living space ' + story.to_s
+  end
+  def self.LivingSpaceType
+      return 'living space type'
+  end
+  def self.LivingZone
+      return 'living zone'
+  end
 	def self.LocationInterior
 		return 'interior'
 	end
@@ -593,51 +593,51 @@ class Constants
 	def self.ObjectNameDishwasher
 		return 'residential dishwasher'
 	end
-    def self.ObjectNameExtraRefrigerator
-        return 'residential extra refrigerator'
-    end
-    def self.ObjectNameFreezer
-        return 'residential freezer'
-    end
-    def self.ObjectNameGasFireplace
-        return 'residential gas fireplace'
-    end
-    def self.ObjectNameGasGrill
-        return 'residential gas grill'
-    end
-    def self.ObjectNameGasLighting
-        return 'residential gas lighting'
-    end
-    def self.ObjectNameHotTubHeater
-        return 'residential hot tub heater'
-    end
-    def self.ObjectNameHotTubPump
-        return 'residential hot tub pump'
-    end
-    def self.ObjectNameMiscPlugLoads
-        return 'residential misc plug loads'
-    end
-    def self.ObjectNamePoolHeater
-        return 'residential pool heater'
-    end
-    def self.ObjectNamePoolPump
-        return 'residential pool pump'
-    end
+  def self.ObjectNameExtraRefrigerator
+      return 'residential extra refrigerator'
+  end
+  def self.ObjectNameFreezer
+      return 'residential freezer'
+  end
+  def self.ObjectNameGasFireplace
+      return 'residential gas fireplace'
+  end
+  def self.ObjectNameGasGrill
+      return 'residential gas grill'
+  end
+  def self.ObjectNameGasLighting
+      return 'residential gas lighting'
+  end
+  def self.ObjectNameHotTubHeater
+      return 'residential hot tub heater'
+  end
+  def self.ObjectNameHotTubPump
+      return 'residential hot tub pump'
+  end
+  def self.ObjectNameMiscPlugLoads
+      return 'residential misc plug loads'
+  end
+  def self.ObjectNamePoolHeater
+      return 'residential pool heater'
+  end
+  def self.ObjectNamePoolPump
+      return 'residential pool pump'
+  end
 	def self.ObjectNameRefrigerator
 		return 'residential refrigerator'
 	end
-    def self.ObjectNameWellPump
-        return 'residential well pump'
-    end
-    def self.PierBeamSpace
-        return 'pier and beam space'
-    end
-    def self.PierBeamZone
-        return 'pier and beam zone'
-    end
-    def self.PierBeamSpaceType
-        return 'pier and beam space type'
-    end
+  def self.ObjectNameWellPump
+      return 'residential well pump'
+  end
+  def self.PierBeamSpace
+      return 'pier and beam space'
+  end
+  def self.PierBeamZone
+      return 'pier and beam zone'
+  end
+  def self.PierBeamSpaceType
+      return 'pier and beam space type'
+  end
 	def self.PipeTypeTrunkBranch
 		return 'trunkbranch'
 	end
@@ -650,12 +650,12 @@ class Constants
 	def self.PCMtypeConcentrated
 		return 'concentrated'
 	end
-    def self.PlantLoopDomesticWater
-        return 'Domestic Hot Water Loop'
-    end
-    def self.RADuctZone
-        return 'RA Duct Zone'
-    end
+  def self.PlantLoopDomesticWater
+      return 'Domestic Hot Water Loop'
+  end
+  def self.RADuctZone
+      return 'RA Duct Zone'
+  end
 	def self.RecircTypeTimer
 		return 'timer'
 	end
@@ -767,9 +767,12 @@ class Constants
 	def self.SizingAuto
 		return 'autosize'
 	end
-    def self.SlabSpaceType
-        return 'slab space type'
-    end
+  def self.SlabSpace
+    return 'slab space'
+  end
+  def self.SlabSpaceType
+      return 'slab space type'
+  end
 	def self.SurfaceTypeExtInsFinWall
 		return 'ExtInsFinWall'
 	end
@@ -944,24 +947,24 @@ class Constants
 	def self.TubeSpacingAS
 		return 'as'
 	end
-    def self.UnfinishedAtticSpace
-        return 'unfinished attic space'
-    end
-    def self.UnfinishedAtticSpaceType
-        return 'unfinished attic space type'
-    end
-    def self.UnfinishedAtticZone
-        return 'unfinished attic zone'
-    end
-    def self.UnfinishedBasementSpace
-        return 'unfinished basement space'
-    end
-    def self.UnfinishedBasementSpaceType
-        return 'unfinished basement space type'
-    end
-    def self.UnfinishedBasementZone
-        return 'unfinished basement zone'
-    end
+  def self.UnfinishedAtticSpace
+      return 'unfinished attic space'
+  end
+  def self.UnfinishedAtticSpaceType
+      return 'unfinished attic space type'
+  end
+  def self.UnfinishedAtticZone
+      return 'unfinished attic zone'
+  end
+  def self.UnfinishedBasementSpace
+      return 'unfinished basement space'
+  end
+  def self.UnfinishedBasementSpaceType
+      return 'unfinished basement space type'
+  end
+  def self.UnfinishedBasementZone
+      return 'unfinished basement zone'
+  end
 	def self.VentTypeExhaust
 		return 'exhaust'
 	end
