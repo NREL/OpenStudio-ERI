@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_finished</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>4c1c3c40-3723-4b0f-8235-94f369b1f41c</version_id>
+  <version_id>531c287a-0fef-48b5-b0fa-b766021c76d2</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementFinished</class_name>
   <display_name>Set Residential Foundations/Floors - Finished Basement Constructions</display_name>
@@ -156,12 +156,6 @@
       <checksum>058A19F9</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B207F3E7</checksum>
-    </file>
-    <file>
       <filename>ProcessConstructionsFinishedBasement_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -171,7 +165,13 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>96062542</checksum>
+      <checksum>C8C24795</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>25D920D9</checksum>
     </file>
     <file>
       <version>
@@ -182,13 +182,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CE89BDCD</checksum>
+      <checksum>D62E6A36</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8189464F</checksum>
+      <checksum>67537815</checksum>
     </file>
   </files>
 </measure>

@@ -136,84 +136,103 @@ end
 
 class Material
 
-    def initialize(name=nil, thick_in=nil, mat_base=nil, cond=nil, dens=nil, sh=nil, tAbs=nil, sAbs=nil, vAbs=nil, rvalue=nil)
+    # thick_in - Thickness [in]
+    # mat_base - Material object that defines k, rho, and cp. Can be overridden with values for those arguments.
+    # k_in - Conductivity [Btu-in/h-ft^2-F]
+    # rho - Density [lb/ft^3]
+    # cp - Specific heat [Btu/lb*F]
+    # rvalue - R-value [h-ft^2-F/Btu]
+    def initialize(name=nil, thick_in=nil, mat_base=nil, k_in=nil, rho=nil, cp=nil, tAbs=nil, sAbs=nil, vAbs=nil, rvalue=nil)
         @name = name
         
         if not thick_in.nil?
-            @thick_in = thick_in
-            @thick = OpenStudio::convert(@thick_in,"in","ft").get
+            @thick_in = thick_in # in
+            @thick = OpenStudio::convert(thick_in,"in","ft").get # ft
         end
         
         if not mat_base.nil?
-            @k = mat_base.k
+            @k_in = mat_base.k_in # Btu-in/h-ft^2-F
+            if not mat_base.k_in.nil?
+                @k = OpenStudio::convert(mat_base.k_in,"in","ft").get # Btu/h-ft-F
+            else
+                @k = nil
+            end
             @rho = mat_base.rho
             @cp = mat_base.cp
         else
+            @k_in = nil
             @k = nil
             @rho = nil
             @cp = nil
         end
-        # override the base material if both are included
-        if not cond.nil?
-            @k = cond
+        
+        # Override the base material if both are included
+        if not k_in.nil?
+            @k_in = k_in # Btu-in/h-ft^2-F
+            @k = OpenStudio::convert(k_in,"in","ft").get # Btu/h-ft-F
         end
-        if not dens.nil?
-            @rho = dens
+        if not rho.nil?
+            @rho = rho # lb/ft^3
         end
-        if not sh.nil?
-            @cp = sh
+        if not cp.nil?
+            @cp = cp # Btu/lb*F
         end
+
         @tAbs = tAbs
         @sAbs = sAbs
         @vAbs = vAbs
+        
+        # Calculate R-value
         if not rvalue.nil?
-            @rvalue = rvalue
-        elsif not @thick.nil? and not @k.nil?
-            if @k != 0
-                @rvalue = @thick / @k
+            @rvalue = rvalue # h-ft^2-F/Btu
+        elsif not @thick_in.nil? and not @k_in.nil?
+            if @k_in > 0
+                @rvalue = @thick_in / @k_in # h-ft^2-F/Btu
+            else
+                @rvalue = Constants.InfiniteConductivity # h-ft^2-F/Btu
             end
         end
     end
     
-    attr_accessor :name, :thick, :thick_in, :k, :rho, :cp, :rvalue, :tAbs, :sAbs, :vAbs
+    attr_accessor :name, :thick, :thick_in, :k, :k_in, :rho, :cp, :rvalue, :tAbs, :sAbs, :vAbs
     
     def self.AirCavity(thick_in)
         rvalue = Gas.AirGapRvalue
-        return Material.new(name=nil, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(thick_in,"in","ft").get/rvalue, dens=Gas.Air.rho, sh=Gas.Air.cp)
+        return Material.new(name=nil, thick_in=thick_in, mat_base=nil, k_in=thick_in/rvalue, rho=Gas.Air.rho, cp=Gas.Air.cp)
     end
     
     def self.AirFilmOutside
         rvalue = 0.197 # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmVertical
         rvalue = 0.68 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmFlatEnhanced
         rvalue = 0.61 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmFlatReduced
         rvalue = 0.92 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmFloorAverage
         # For floors between conditioned spaces where heat does not flow across
         # the floor; heat transfer is only important with regards to the thermal
         rvalue = (Material.AirFilmFlatReduced.rvalue + Material.AirFilmFlatEnhanced.rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmFloorReduced
         # For floors above unconditioned basement spaces, where heat will
         # always flow down through the floor.
         rvalue = Material.AirFilmFlatReduced.rvalue # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmSlopeEnhanced(highest_roof_pitch)
@@ -222,7 +241,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
         rvalue = 0.002 * Math::exp(0.0398 * highest_roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmSlopeReduced(highest_roof_pitch)
@@ -231,7 +250,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
         rvalue = 0.32 * Math::exp(-0.0154 * highest_roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmSlopeEnhancedReflective(highest_roof_pitch)
@@ -240,7 +259,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
         rvalue = 0.00893 * Math::exp(0.0419 * highest_roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmSlopeReducedReflective(highest_roof_pitch)
@@ -249,7 +268,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
         rvalue = 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmRoof(highest_roof_pitch)
@@ -259,7 +278,7 @@ class Material
         #return Material.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue * hdd_frac + Material.AirFilmSlopeReduced(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
         rvalue = (Material.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue + Material.AirFilmSlopeReduced(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmRoofRadiantBarrier(highest_roof_pitch)
@@ -269,21 +288,21 @@ class Material
         #return Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue * hdd_frac + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
         rvalue = (Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/rvalue)
+        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.CoveringBare(floorFraction=0.8, rvalue=2.08)
         # Combined layer of, e.g., carpet and bare floor
         thickness = 0.5 # in
-        return Material.new(name=Constants.MaterialFloorCovering, thick_in=thickness, mat_base=nil, cond=OpenStudio::convert(thickness,"in","ft").get / (rvalue * floorFraction), dens=3.4, sh=0.32, tAbs=0.9, sAbs=0.9)
+        return Material.new(name=Constants.MaterialFloorCovering, thick_in=thickness, mat_base=nil, k_in=thickness / (rvalue * floorFraction), rho=3.4, cp=0.32, tAbs=0.9, sAbs=0.9)
     end
 
     def self.Concrete8in
-        return Material.new(name='Concrete-8in', thick_in=8, mat_base=BaseMaterial.Concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
+        return Material.new(name='Concrete-8in', thick_in=8, mat_base=BaseMaterial.Concrete, k_in=nil, rho=nil, cp=nil, tAbs=0.9)
     end
 
     def self.Concrete4in
-        return Material.new(name='Concrete-4in', thick_in=4, mat_base=BaseMaterial.Concrete, cond=nil, dens=nil, sh=nil, tAbs=0.9)
+        return Material.new(name='Concrete-4in', thick_in=4, mat_base=BaseMaterial.Concrete, k_in=nil, rho=nil, cp=nil, tAbs=0.9)
     end
     
     def self.DefaultCeilingMass
@@ -294,7 +313,7 @@ class Material
     
     def self.DefaultExteriorFinish
         thick_in = 0.375
-        return Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(thick_in,"in","ft").get/0.6, dens=11.1, sh=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
+        return Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, k_in=thick_in/0.6, rho=11.1, cp=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
     end
     
     def self.DefaultFloorCovering
@@ -340,19 +359,19 @@ class Material
     end
 
     def self.GypsumWall1_2in
-        return Material.new(name='WallGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+        return Material.new(name='WallGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, k_in=nil, rho=nil, cp=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     end
 
     def self.GypsumCeiling1_2in
-        return Material.new(name='CeilingGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, cond=nil, dens=nil, sh=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
+        return Material.new(name='CeilingGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, k_in=nil, rho=nil, cp=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
     end
 
     def self.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-        return Material.new(name='FloorMass', thick_in=floorMassThickness, mat_base=nil, cond=OpenStudio::convert(floorMassConductivity,"in","ft").get, dens=floorMassDensity, sh=floorMassSpecificHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
+        return Material.new(name='FloorMass', thick_in=floorMassThickness, mat_base=nil, k_in=floorMassConductivity, rho=floorMassDensity, cp=floorMassSpecificHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
     end
 
     def self.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
-        return Material.new(name='PartitionWallMass', thick_in=partitionWallMassThickness, mat_base=nil, cond=OpenStudio::convert(partitionWallMassConductivity,"in","ft").get, dens=partitionWallMassDensity, sh=partitionWallMassSpecHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+        return Material.new(name='PartitionWallMass', thick_in=partitionWallMassThickness, mat_base=nil, k_in=partitionWallMassConductivity, rho=partitionWallMassDensity, cp=partitionWallMassSpecHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     end
 
     def self.Soil12in
@@ -384,21 +403,11 @@ class Material
     end
 
     def self.RadiantBarrier
-        return Material.new(name=Constants.MaterialRadiantBarrier, thick_in=0.00084, mat_base=nil, cond=135.8, dens=168.6, sh=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
+        return Material.new(name=Constants.MaterialRadiantBarrier, thick_in=0.00084, mat_base=nil, k_in=1629.6, rho=168.6, cp=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
     end
 
     def self.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
-        return Material.new(name=Constants.MaterialRoofMaterial, thick_in=0.375, mat_base=nil, cond=0.094, dens=70, sh=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
-    end
-
-    # TODO: Eventually remove
-    def self.StudAndAir
-        mat_2x4 = Material.Stud2x4
-        u_stud_path = Constants.DefaultFramingFactorInterior / Material.Stud2x4.rvalue
-        u_air_path = (1 - Constants.DefaultFramingFactorInterior) / Gas.AirGapRvalue
-        stud_and_air_Rvalue = 1 / (u_stud_path + u_air_path)
-        mat_stud_and_air_wall = BaseMaterial.new(rho=(mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.cp, cp=((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.cp * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.cp * Gas.Air.cp) / ((mat_2x4.width_in / Constants.DefaultStudSpacing) * mat_2x4.rho + (1 - mat_2x4.width_in / Constants.DefaultStudSpacing) * Gas.Air.cp), k=(mat_2x4.thick / stud_and_air_Rvalue))
-        return Material.new(name='StudAndAirWall', thick_in=mat_2x4.thick_in, mat_base=mat_stud_and_air_wall)
+        return Material.new(name=Constants.MaterialRoofMaterial, thick_in=0.375, mat_base=nil, k_in=1.128, rho=70, cp=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
     end
 
 end
@@ -937,33 +946,33 @@ class Construction
 end
 
 class BaseMaterial
-    def initialize(rho, cp, k)
+    def initialize(rho, cp, k_in)
         @rho = rho
         @cp = cp
-        @k = k
+        @k_in = k_in
     end
     
-    attr_accessor :rho, :cp, :k
+    attr_accessor :rho, :cp, :k_in
 
     def self.Gypsum
-        return BaseMaterial.new(rho=50.0, cp=0.2, k=0.0926)
+        return BaseMaterial.new(rho=50.0, cp=0.2, k_in=1.1112)
     end
 
     def self.Wood
-        return BaseMaterial.new(rho=32.0, cp=0.29, k=0.0667)
+        return BaseMaterial.new(rho=32.0, cp=0.29, k_in=0.8004)
     end
     
     def self.Concrete
-        return BaseMaterial.new(rho=140.0, cp=0.2, k=0.7576)
+        return BaseMaterial.new(rho=140.0, cp=0.2, k_in=9.0912)
     end
 
     def self.Gypcrete
         # http://www.maxxon.com/gyp-crete/data
-        return BaseMaterial.new(rho=100.0, cp=0.223, k=0.3952)
+        return BaseMaterial.new(rho=100.0, cp=0.223, k_in=4.7424)
     end
 
     def self.InsulationRigid
-        return BaseMaterial.new(rho=2.0, cp=0.29, k=0.017)
+        return BaseMaterial.new(rho=2.0, cp=0.29, k_in=0.204)
     end
     
     def self.InsulationCelluloseDensepack
@@ -991,7 +1000,7 @@ class BaseMaterial
     end
 
     def self.Soil
-        return BaseMaterial.new(rho=115.0, cp=0.1, k=1)
+        return BaseMaterial.new(rho=115.0, cp=0.1, k_in=12.0)
     end
 
 end

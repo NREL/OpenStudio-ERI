@@ -141,10 +141,10 @@ class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUse
     if eR > 0
         if ssWallCavityInsFillsCavity
             # Insulation
-            mat_cavity = Material.new(name=nil, thick_in=ssWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(ssWallCavityDepth,"in","ft").get / eR)
+            mat_cavity = Material.new(name=nil, thick_in=ssWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=ssWallCavityDepth / eR)
         else
             # Insulation plus air gap when insulation thickness < cavity depth
-            mat_cavity = Material.new(name=nil, thick_in=ssWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(ssWallCavityDepth,"in","ft").get / (eR + Gas.AirGapRvalue))
+            mat_cavity = Material.new(name=nil, thick_in=ssWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=ssWallCavityDepth / (eR + Gas.AirGapRvalue))
         end
     else
         # Empty cavity

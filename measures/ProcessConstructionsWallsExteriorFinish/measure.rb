@@ -135,7 +135,7 @@ class ProcessConstructionsWallsExteriorFinish < OpenStudio::Ruleset::ModelUserSc
     end
 
     # Define materials
-    mat = Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(cond,"in","ft").get, dens=dens, sh=specheat, tAbs=emiss, sAbs=solar_abs, vAbs=solar_abs)
+    mat = Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, k_in=cond, dens=dens, cp=specheat, tAbs=emiss, sAbs=solar_abs, vAbs=solar_abs)
     
     # Define construction
     ext_fin = Construction.new([1])

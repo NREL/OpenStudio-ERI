@@ -111,7 +111,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     frRoofCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
     frRoofFramingFactor = runner.getDoubleArgumentValue("userdefinedfrroofff",user_arguments)
     
-    # Validate Inputs FIXME
+    # Validate Inputs
     if frRoofCavityInsRvalueInstalled < 0.0
         runner.registerError("Cavity Insulation Installed R-value must be greater than or equal to 0.")
         return false
@@ -131,10 +131,10 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     if frRoofCavityInsRvalueInstalled > 0
         if frRoofCavityInsFillsCavity
             # Insulation
-            mat_cavity = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(frRoofCavityDepth,"in","ft").get / frRoofCavityInsRvalueInstalled)
+            mat_cavity = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=frRoofCavityDepth / frRoofCavityInsRvalueInstalled)
         else
             # Insulation plus air gap when insulation thickness < cavity depth
-            mat_cavity = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(frRoofCavityDepth,"in","ft").get / (frRoofCavityInsRvalueInstalled + Gas.AirGapRvalue))
+            mat_cavity = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=frRoofCavityDepth / (frRoofCavityInsRvalueInstalled + Gas.AirGapRvalue))
         end
     else
         # Empty cavity

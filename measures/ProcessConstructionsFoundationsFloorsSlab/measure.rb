@@ -218,7 +218,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 
     # Define materials
     slabCarpetPerimeterConduction, slabBarePerimeterConduction, slabHasWholeInsulation = SlabPerimeterConductancesByType(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabExtRvalue, slabWholeInsRvalue, slabExtInsDepth)
-    mat_slab = Material.new(name='SlabMass', thick_in=slabMassThickIn, mat_base=nil, cond=OpenStudio.convert(slabMassCond,"in","ft").get, dens=slabMassDens, sh=slabMassSpecHeat)
+    mat_slab = Material.new(name='SlabMass', thick_in=slabMassThickIn, mat_base=nil, k_in=slabMassCond, dens=slabMassDens, cp=slabMassSpecHeat)
 
     # Models one floor surface with an equivalent carpented/bare material (Better alternative
     # to having two floors with twice the total area, compensated by thinning mass thickness.)
@@ -243,7 +243,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
     mat_fic = nil
     if fictitious_slab_Rvalue > 0
         # Fictitious layer below slab to achieve equivalent R-value. See Winkelmann article.
-        mat_fic = Material.new(name="Mat-Fic-Slab", thick_in=1.0, mat_base=nil, cond=OpenStudio::convert(1.0,"in","ft").get/fictitious_slab_Rvalue, dens=2.5, sh=0.29)
+        mat_fic = Material.new(name="Mat-Fic-Slab", thick_in=1.0, mat_base=nil, k_in=1.0/fictitious_slab_Rvalue, dens=2.5, cp=0.29)
     end
 
     # Define construction

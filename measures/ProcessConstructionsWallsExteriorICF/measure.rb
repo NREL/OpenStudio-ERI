@@ -116,7 +116,7 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     # Process the ICF walls
     
     # Define materials
-    mat_ins = Material.new(name=nil, thick_in=icfInsThickness, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio.convert(icfInsThickness,"in","ft").get / icfInsRvalue)
+    mat_ins = Material.new(name=nil, thick_in=icfInsThickness, mat_base=BaseMaterial.InsulationRigid, k_in=icfInsThickness / icfInsRvalue)
     mat_conc = Material.new(name=nil, thick_in=icfConcreteThickness, mat_base=BaseMaterial.Concrete)
     mat_framing_inner_outer = Material.new(name=nil, thick_in=icfInsThickness, mat_base=BaseMaterial.Wood)
     mat_framing_middle = Material.new(name=nil, thick_in=icfConcreteThickness, mat_base=BaseMaterial.Wood)

@@ -166,10 +166,10 @@ class ProcessConstructionsCeilingsRoofsThermalMass < OpenStudio::Ruleset::ModelU
     # Process the ceiling thermal mass
     
     # Define materials
-    mat1 = Material.new(name=Constants.MaterialCeilingMass, thick_in=thick_in1, mat_base=nil, cond=OpenStudio::convert(cond1,"in","ft").get, dens=dens1, sh=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    mat1 = Material.new(name=Constants.MaterialCeilingMass, thick_in=thick_in1, mat_base=nil, k_in=cond1, dens=dens1, cp=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     mat2 = nil
     if not thick_in2.empty?
-        mat2 = Material.new(name=Constants.MaterialCeilingMass2, thick_in=thick_in2.get, mat_base=nil, cond=OpenStudio::convert(cond2.get,"in","ft").get, dens=dens2.get, sh=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+        mat2 = Material.new(name=Constants.MaterialCeilingMass2, thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, dens=dens2.get, cp=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     end
 
     # Define construction

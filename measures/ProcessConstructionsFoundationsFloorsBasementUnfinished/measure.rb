@@ -238,10 +238,10 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
             if ufbsmtWallCavityInsRvalueInstalled > 0
                 if ufbsmtWallCavityInsFillsCavity
                     # Insulation
-                    mat_cavity = Material.new(name=nil, thick_in=ufbsmtWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(ufbsmtWallCavityDepth,"in","ft").get / ufbsmtWallCavityInsRvalueInstalled)
+                    mat_cavity = Material.new(name=nil, thick_in=ufbsmtWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=ufbsmtWallCavityDepth / ufbsmtWallCavityInsRvalueInstalled)
                 else
                     # Insulation plus air gap when insulation thickness < cavity depth
-                    mat_cavity = Material.new(name=nil, thick_in=ufbsmtWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(ufbsmtWallCavityDepth,"in","ft").get / (ufbsmtWallCavityInsRvalueInstalled + Gas.AirGapRvalue))
+                    mat_cavity = Material.new(name=nil, thick_in=ufbsmtWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=ufbsmtWallCavityDepth / (ufbsmtWallCavityInsRvalueInstalled + Gas.AirGapRvalue))
                 end
             else
                 # Empty cavity
@@ -251,7 +251,7 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
             mat_gap = Material.AirCavity(ufbsmtWallCavityDepth)
         end
         if ufbsmtWallContInsThickness > 0
-            mat_rigid = Material.new(name=nil, thick_in=ufbsmtWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio::convert(ufbsmtWallContInsThickness,"in","ft").get / ufbsmtWallContInsRvalue)
+            mat_rigid = Material.new(name=nil, thick_in=ufbsmtWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, k_in=ufbsmtWallContInsThickness / ufbsmtWallContInsRvalue)
         end
         
         # Set paths
@@ -290,7 +290,7 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         # Insulation of 4ft height inside a 8ft basement is modeled completely in the fictitious layer
         mat_fic_insul_layer = nil
         if ufbsmtWallContInsRvalue > 0 and ufbsmtWallInsHeight == 8
-            thick_in = OpenStudio::convert(ufbsmtWallContInsRvalue*BaseMaterial.InsulationRigid.k, "ft", "in").get
+            thick_in = ufbsmtWallContInsRvalue*BaseMaterial.InsulationRigid.k_in
             mat_fic_insul_layer = Material.new(name="UFBaseWallIns", thick_in=thick_in, mat_base=BaseMaterial.InsulationRigid)
             insul_layer_rvalue = ufbsmtWallContInsRvalue
         else
@@ -361,9 +361,9 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         # Define materials
         mat_2x = Material.Stud2x(ufbsmtCeilingJoistHeight)
         if ufbsmtCeilingCavityInsRvalueNominal == 0
-            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=Constants.InfiniteConductivity)
+            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=Constants.InfiniteConductivity)
         else    
-            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=mat_2x.thick / ufbsmtCeilingCavityInsRvalueNominal)
+            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=mat_2x.thick_in / ufbsmtCeilingCavityInsRvalueNominal)
         end
         mat_framing = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.Wood)
         mat_gap = Material.AirCavity(ufbsmtCeilingJoistHeight)

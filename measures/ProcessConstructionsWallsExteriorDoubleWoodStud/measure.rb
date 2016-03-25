@@ -151,14 +151,14 @@ class ProcessConstructionsWallsExteriorDoubleWoodStud < OpenStudio::Ruleset::Mod
     
     # Define materials
     cavityDepth = 2.0 * dsWallStudDepth + dsWallGapDepth
-    mat_ins_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(cavityDepth,"in","ft").get / dsWallCavityInsRvalue)
-    mat_ins_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(cavityDepth,"in","ft").get / dsWallCavityInsRvalue)
+    mat_ins_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=cavityDepth / dsWallCavityInsRvalue)
+    mat_ins_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=cavityDepth / dsWallCavityInsRvalue)
     mat_framing_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=BaseMaterial.Wood)
     mat_framing_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=BaseMaterial.Wood)
     mat_stud = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=BaseMaterial.Wood)
     mat_gap_total = Material.AirCavity(cavityDepth)
-    mat_gap_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=nil, cond=OpenStudio::convert(dsWallStudDepth,"in","ft").get / (mat_gap_total.rvalue * dsWallStudDepth / cavityDepth), dens=Gas.Air.rho, sh=Gas.Air.cp)
-    mat_gap_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=nil, cond=OpenStudio::convert(dsWallGapDepth,"in","ft").get / (mat_gap_total.rvalue * dsWallGapDepth / cavityDepth), dens=Gas.Air.rho, sh=Gas.Air.cp)
+    mat_gap_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=nil, k_in=dsWallStudDepth / (mat_gap_total.rvalue * dsWallStudDepth / cavityDepth), dens=Gas.Air.rho, cp=Gas.Air.cp)
+    mat_gap_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=nil, k_in=dsWallGapDepth / (mat_gap_total.rvalue * dsWallGapDepth / cavityDepth), dens=Gas.Air.rho, cp=Gas.Air.cp)
     
     # Set paths
     stud_frac = 1.5 / dsWallStudSpacing

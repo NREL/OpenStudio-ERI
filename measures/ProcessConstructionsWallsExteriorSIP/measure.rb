@@ -142,8 +142,8 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
     mat_framing_inner_outer = Material.new(name=nil, thick_in=spline_thick_in, mat_base=BaseMaterial.Wood)
     mat_framing_middle = Material.new(name=nil, thick_in=ins_thick_in, mat_base=BaseMaterial.Wood)
     mat_spline = Material.new(name=nil, thick_in=spline_thick_in, mat_base=BaseMaterial.Wood)
-    mat_ins_inner_outer = Material.new(name=nil, thick_in=spline_thick_in, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio.convert(sipInsThickness,"in","ft").get / sipInsRvalue)
-    mat_ins_middle = Material.new(name=nil, thick_in=ins_thick_in, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio.convert(sipInsThickness,"in","ft").get / sipInsRvalue)
+    mat_ins_inner_outer = Material.new(name=nil, thick_in=spline_thick_in, mat_base=BaseMaterial.InsulationRigid, k_in=sipInsThickness / sipInsRvalue)
+    mat_ins_middle = Material.new(name=nil, thick_in=ins_thick_in, mat_base=BaseMaterial.InsulationRigid, k_in=sipInsThickness / sipInsRvalue)
     
     # Set paths
     spline_frac = 4.0 / 48.0 # One 4" spline for every 48" wide panel

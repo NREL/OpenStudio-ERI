@@ -97,7 +97,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
         door_Rvalue = door_Rvalue_air_to_air - Material.AirFilmOutside.rvalue - Material.AirFilmVertical.rvalue
         door_Uvalue = 1.0 / door_Rvalue
         door_thickness = 1.75 # in
-        fin_door_mat = Material.new(name="DoorMaterial", thick_in=door_thickness, mat_base=BaseMaterial.Wood, cond=door_Uvalue * OpenStudio::convert(door_thickness, "in", "ft").get)
+        fin_door_mat = Material.new(name="DoorMaterial", thick_in=door_thickness, mat_base=BaseMaterial.Wood, k_in=door_Uvalue * door_thickness)
         
         # Set paths
         path_fracs = [1]
@@ -119,7 +119,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
         garage_door_Rvalue = garage_door_Rvalue_air_to_air - Material.AirFilmOutside.rvalue - Material.AirFilmVertical.rvalue
         garage_door_Uvalue = 1.0 / garage_door_Rvalue
         garage_door_thickness = 2.5 # in
-        unfin_door_mat = Material.new(name="GarageDoorMaterial", thick_in=garage_door_thickness, mat_base=BaseMaterial.Wood, cond=garage_door_Uvalue * OpenStudio::convert(garage_door_thickness, "in", "ft").get)
+        unfin_door_mat = Material.new(name="GarageDoorMaterial", thick_in=garage_door_thickness, mat_base=BaseMaterial.Wood, k_in=garage_door_Uvalue * garage_door_thickness)
         
         # Set paths
         path_fracs = [1]

@@ -27,10 +27,10 @@ class Constants
         return 16.0 # in
     end
 	def self.g
-		return 32.174    # gravity (ft/s2)
+		return 32.174 # gravity (ft/s2)
 	end
     def self.InfiniteConductivity
-        return 10000000
+        return 10000000 # h-ft^2-F/Btu
     end
 	def self.MiniSplitNumSpeeds
 		return 10

@@ -323,22 +323,22 @@ class ProcessConstructionsWallsExteriorGeneric < OpenStudio::Ruleset::ModelUserS
     # Process the generic walls
 
     # Define materials
-    mat1 = Material.new(name="Layer1", thick_in=thick_in1, mat_base=nil, cond=OpenStudio::convert(cond1,"in","ft").get, dens=dens1, sh=specheat1)
+    mat1 = Material.new(name="Layer1", thick_in=thick_in1, mat_base=nil, k_in=cond1, dens=dens1, cp=specheat1)
     mat2 = nil
     if not thick_in2.empty?
-        mat2 = Material.new(name="Layer2", thick_in=thick_in2.get, mat_base=nil, cond=OpenStudio::convert(cond2.get,"in","ft").get, dens=dens2.get, sh=specheat2.get)
+        mat2 = Material.new(name="Layer2", thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, dens=dens2.get, cp=specheat2.get)
     end
     mat3 = nil
     if not thick_in3.empty?
-        mat3 = Material.new(name="Layer3", thick_in=thick_in3.get, mat_base=nil, cond=OpenStudio::convert(cond3.get,"in","ft").get, dens=dens3.get, sh=specheat3.get)
+        mat3 = Material.new(name="Layer3", thick_in=thick_in3.get, mat_base=nil, k_in=cond3.get, dens=dens3.get, cp=specheat3.get)
     end
     mat4 = nil
     if not thick_in4.empty?
-        mat4 = Material.new(name="Layer4", thick_in=thick_in4.get, mat_base=nil, cond=OpenStudio::convert(cond4.get,"in","ft").get, dens=dens4.get, sh=specheat4.get)
+        mat4 = Material.new(name="Layer4", thick_in=thick_in4.get, mat_base=nil, k_in=cond4.get, dens=dens4.get, cp=specheat4.get)
     end
     mat5 = nil
     if not thick_in5.empty?
-        mat5 = Material.new(name="Layer5", thick_in=thick_in5.get, mat_base=nil, cond=OpenStudio::convert(cond5.get,"in","ft").get, dens=dens5.get, sh=specheat5.get)
+        mat5 = Material.new(name="Layer5", thick_in=thick_in5.get, mat_base=nil, k_in=cond5.get, dens=dens5.get, cp=specheat5.get)
     end
 
     # Define construction

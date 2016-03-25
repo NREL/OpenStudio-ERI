@@ -178,7 +178,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         # Define materials
         mat_ins = nil
         if crawlWallContInsThickness > 0
-            mat_ins = Material.new(name="CWallIns", thick_in=crawlWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio::convert(crawlWallContInsThickness,"in","ft").get / crawlWallContInsRvalueNominal)
+            mat_ins = Material.new(name="CWallIns", thick_in=crawlWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, k_in=crawlWallContInsThickness / crawlWallContInsRvalueNominal)
         end
         mat_fic_wall = nil
         if crawlspace_fictitious_Rvalue > 0
@@ -241,9 +241,9 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         # Define materials
         mat_2x = Material.Stud2x(crawlCeilingJoistHeight)
         if crawlCeilingCavityInsRvalueNominal == 0
-            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=Constants.InfiniteConductivity)
+            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=Constants.InfiniteConductivity)
         else    
-            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=mat_2x.thick / crawlCeilingCavityInsRvalueNominal)
+            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=mat_2x.thick_in / crawlCeilingCavityInsRvalueNominal)
         end
         mat_framing = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.Wood)
         mat_gap = Material.AirCavity(mat_2x.thick_in)

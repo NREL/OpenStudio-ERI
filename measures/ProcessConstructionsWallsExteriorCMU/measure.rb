@@ -155,7 +155,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     # Process the CMU walls
     
     # Define materials
-    mat_cmu = Material.new(name=nil, thick_in=cmuThickness, mat_base=BaseMaterial.Concrete, cond=OpenStudio.convert(cmuConductivity,"in","ft").get, dens=cmuDensity)
+    mat_cmu = Material.new(name=nil, thick_in=cmuThickness, mat_base=BaseMaterial.Concrete, k_in=cmuConductivity, dens=cmuDensity)
     mat_framing = Material.new(name=nil, thick_in=cmuThickness, mat_base=BaseMaterial.Wood)
     mat_furring = nil
     mat_furring_cavity = nil
@@ -164,7 +164,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
         if cmuFurringInsRvalue == 0
             mat_furring_cavity = Material.AirCavity(cmuFurringCavityDepth)
         else
-            mat_furring_cavity = Material.new(name=nil, thick_in=cmuFurringCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio.convert(cmuFurringCavityDepth,"in","ft").get / cmuFurringInsRvalue)
+            mat_furring_cavity = Material.new(name=nil, thick_in=cmuFurringCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=cmuFurringCavityDepth / cmuFurringInsRvalue)
         end
     end
     

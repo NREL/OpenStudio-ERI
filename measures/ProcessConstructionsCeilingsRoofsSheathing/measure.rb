@@ -103,7 +103,7 @@ class ProcessConstructionsCeilingsRoofsSheathing < OpenStudio::Ruleset::ModelUse
         mat_osb = Material.new(name=Constants.MaterialRoofSheathing, thick_in=osb_thick_in, mat_base=BaseMaterial.Wood)
     end
     if rigid_rvalue > 0 and rigid_thick_in > 0
-        mat_rigid = Material.new(name=Constants.MaterialRoofRigidIns, thick_in=rigid_thick_in, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio::convert(rigid_thick_in,"in","ft").get/rigid_rvalue)
+        mat_rigid = Material.new(name=Constants.MaterialRoofRigidIns, thick_in=rigid_thick_in, mat_base=BaseMaterial.InsulationRigid, k_in=rigid_thick_in/rigid_rvalue)
     end
     
     # Define construction

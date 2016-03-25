@@ -210,10 +210,10 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
             if fbsmtWallCavityInsRvalueInstalled > 0
                 if fbsmtWallCavityInsFillsCavity
                     # Insulation
-                    mat_cavity = Material.new(name=nil, thick_in=fbsmtWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(fbsmtWallCavityDepth,"in","ft").get / fbsmtWallCavityInsRvalueInstalled)
+                    mat_cavity = Material.new(name=nil, thick_in=fbsmtWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=fbsmtWallCavityDepth / fbsmtWallCavityInsRvalueInstalled)
                 else
                     # Insulation plus air gap when insulation thickness < cavity depth
-                    mat_cavity = Material.new(name=nil, thick_in=fbsmtWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, cond=OpenStudio::convert(fbsmtWallCavityDepth,"in","ft").get / (fbsmtWallCavityInsRvalueInstalled + Gas.AirGapRvalue))
+                    mat_cavity = Material.new(name=nil, thick_in=fbsmtWallCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=fbsmtWallCavityDepth / (fbsmtWallCavityInsRvalueInstalled + Gas.AirGapRvalue))
                 end
             else
                 # Empty cavity
@@ -223,7 +223,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
             mat_gap = Material.AirCavity(fbsmtWallCavityDepth)
         end
         if fbsmtWallContInsThickness > 0
-            mat_rigid = Material.new(name=nil, thick_in=fbsmtWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, cond=OpenStudio::convert(fbsmtWallContInsThickness,"in","ft").get / fbsmtWallContInsRvalue)
+            mat_rigid = Material.new(name=nil, thick_in=fbsmtWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, k_in=fbsmtWallContInsThickness / fbsmtWallContInsRvalue)
         end
 
         # Set paths
@@ -259,7 +259,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
         end
         mat_fic_insul_layer = nil
         if fbsmtWallContInsRvalue > 0 and fbsmtWallInsHeight == 8 # Insulation of 4ft height inside a 8ft basement is modeled completely in the fictitious layer
-            thick_in = OpenStudio::convert(fbsmtWallContInsRvalue*BaseMaterial.InsulationRigid.k, "ft", "in").get
+            thick_in = fbsmtWallContInsRvalue*BaseMaterial.InsulationRigid.k_in
             mat_fic_insul_layer = Material.new(name="FBaseWallIns", thick_in=thick_in, mat_base=BaseMaterial.InsulationRigid)
             insul_layer_rvalue = fbsmtWallContInsRvalue
         else

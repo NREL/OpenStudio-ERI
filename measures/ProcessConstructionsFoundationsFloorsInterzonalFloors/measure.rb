@@ -111,9 +111,9 @@ class ProcessConstructionsFoundationsFloorsInterzonalFloors < OpenStudio::Rulese
     
     # Define Materials
     if intFloorCavityInsRvalueNominal == 0
-        mat_cavity = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=Constants.InfiniteConductivity)
+        mat_cavity = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=Constants.InfiniteConductivity)
     else
-        mat_cavity = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, cond=Material.Stud2x6.thick / intFloorCavityInsRvalueNominal)
+        mat_cavity = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=Material.Stud2x6.thick_in / intFloorCavityInsRvalueNominal)
     end
     mat_framing = Material.new(name=nil, thick_in=Material.Stud2x6.thick_in, mat_base=BaseMaterial.Wood)
     mat_gap = Material.AirCavity(Material.Stud2x6.thick_in)

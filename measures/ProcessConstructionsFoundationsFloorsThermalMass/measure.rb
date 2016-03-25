@@ -114,7 +114,7 @@ class ProcessConstructionsFoundationsFloorsThermalMass < OpenStudio::Ruleset::Mo
     # Process the floors mass
     
     # Define Materials
-    mat = Material.new(name=Constants.MaterialFloorMass, thick_in=thick_in, mat_base=nil, cond=OpenStudio::convert(cond,"in","ft").get, dens=dens, sh=specheat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
+    mat = Material.new(name=Constants.MaterialFloorMass, thick_in=thick_in, mat_base=nil, k_in=cond, dens=dens, cp=specheat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
     
     # Define construction
     floor = Construction.new([1])
