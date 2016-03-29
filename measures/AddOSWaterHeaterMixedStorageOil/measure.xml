@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>8b8e557b-1e49-49f4-aad2-a5db6e84995d</uid>
-  <version_id>305f7c0f-4e9a-44e8-85a9-decb335fa574</version_id>
-  <version_modified>20160325T214446Z</version_modified>
+  <version_id>a321aef7-8d8f-419a-8482-79b1e9b6647a</version_id>
+  <version_modified>20160328T150007Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
   <display_name>AddOSWaterHeaterMixedStorageOil</display_name>
@@ -117,12 +117,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>1304F290</checksum>
-    </file>
-    <file>
-      <filename>ba_protocol_table_8_page_13.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>61747C72</checksum>
     </file>
     <file>
       <version>

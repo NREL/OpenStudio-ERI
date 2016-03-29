@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>3fd0ebe1-745d-4e71-8795-a0f9495dff46</version_id>
-  <version_modified>20160325T214446Z</version_modified>
+  <version_id>e038b957-8a0c-4e5e-97a3-981daf072f3b</version_id>
+  <version_modified>20160328T150007Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageElectric</class_name>
   <display_name>AddOSWaterHeaterMixedStorageElectric</display_name>
@@ -87,12 +87,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>1FD33CE2</checksum>
-    </file>
-    <file>
-      <filename>ba_protocol_table_8_page_13.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>61747C72</checksum>
     </file>
     <file>
       <version>

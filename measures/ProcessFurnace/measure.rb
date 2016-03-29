@@ -19,7 +19,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       @furnaceInstalledAFUE = furnaceInstalledAFUE
       @furnaceMaxSupplyTemp = furnaceMaxSupplyTemp
       @furnaceFuelType = furnaceFuelType
-	  @furnaceInstalledSupplyFanPower = furnaceInstalledSupplyFanPower
+      @furnaceInstalledSupplyFanPower = furnaceInstalledSupplyFanPower
     end
 
     attr_accessor(:hir, :aux_elec)
@@ -36,9 +36,9 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       return @furnaceFuelType
     end
 	
-	def FurnaceSupplyFanPowerInstalled
-	  return @furnaceInstalledSupplyFanPower
-	end
+    def FurnaceSupplyFanPowerInstalled
+      return @furnaceInstalledSupplyFanPower
+    end
   end
 
   class AirConditioner

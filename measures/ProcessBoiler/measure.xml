@@ -1,17 +1,17 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_furnace</name>
-  <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>f0b05501-efce-4ec4-a81c-6969829245b1</version_id>
-  <version_modified>20160328T201128Z</version_modified>
-  <xml_checksum>0DA5C9E6</xml_checksum>
-  <class_name>ProcessFurnace</class_name>
-  <display_name>Set Residential Furnace</display_name>
-  <description>This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop.</description>
-  <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule. Any supply components or baseboard convective electrics, except for cooling DX coils, are removed from any existing air loops or zones. Any existing air loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists.</modeler_description>
+  <name>process_boiler</name>
+  <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
+  <version_id>420eada5-7983-4923-85cc-ebf032be552c</version_id>
+  <version_modified>20160328T210235Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
+  <class_name>ProcessBoiler</class_name>
+  <display_name>Set Residential Boiler</display_name>
+  <description></description>
+  <modeler_description></modeler_description>
   <arguments>
     <argument>
-      <name>selectedfurnacefuel</name>
+      <name>boilerFuelType</name>
       <display_name>Fuel Type</display_name>
       <description>Type of fuel used for heating.</description>
       <type>Choice</type>
@@ -27,20 +27,120 @@
           <value>electric</value>
           <display_name>electric</display_name>
         </choice>
+        <choice>
+          <value>oil</value>
+          <display_name>oil</display_name>
+        </choice>
+        <choice>
+          <value>propane</value>
+          <display_name>propane</display_name>
+        </choice>
       </choices>
     </argument>
     <argument>
-      <name>userdefinedafue</name>
+      <name>boilerType</name>
+      <display_name>System Type</display_name>
+      <description>The system type of the boiler.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>hot water, forced draft</default_value>
+      <choices>
+        <choice>
+          <value>hot water, forced draft</value>
+          <display_name>hot water, forced draft</display_name>
+        </choice>
+        <choice>
+          <value>hot water, condensing</value>
+          <display_name>hot water, condensing</display_name>
+        </choice>
+        <choice>
+          <value>hot water, natural draft</value>
+          <display_name>hot water, natural draft</display_name>
+        </choice>
+        <choice>
+          <value>steam</value>
+          <display_name>steam</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>boilerInstalledAFUE</name>
       <display_name>Installed AFUE</display_name>
-      <description>The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value.</description>
+      <description>The installed Annual Fuel Utilization Efficiency (AFUE) of the boiler, which can be used to account for performance derating or degradation relative to the rated value.</description>
       <type>Double</type>
       <units>Btu/Btu</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.78</default_value>
+      <default_value>0.8</default_value>
     </argument>
     <argument>
-      <name>selectedfurnacecap</name>
+      <name>boilerOATResetEnabled</name>
+      <display_name>Outside Air Reset Enabled</display_name>
+      <description>Outside Air Reset Enabled on Hot Water Supply Temperature.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>boilerOATHigh</name>
+      <display_name>High Outside Air Temp</display_name>
+      <description>High Outside Air Temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>boilerOATLow</name>
+      <display_name>Low Outside Air Temp</display_name>
+      <description>Low Outside Air Temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>boilerOATHighHWST</name>
+      <display_name>Hot Water Supply Temp High Outside Air</display_name>
+      <description>Hot Water Supply Temperature corresponding to High Outside Air Temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>boilerOATLowHWST</name>
+      <display_name>Hot Water Supply Temp Low Outside Air</display_name>
+      <description>Hot Water Supply Temperature corresponding to Low Outside Air Temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>boilerDesignTemp</name>
+      <display_name>Design Temperature</display_name>
+      <description>Temperature of the outlet water.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>180</default_value>
+    </argument>
+    <argument>
+      <name>boilerOutputCapacity</name>
       <display_name>Heating Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
@@ -174,26 +274,6 @@
       </choices>
     </argument>
     <argument>
-      <name>userdefinedmaxtemp</name>
-      <display_name>Max Supply Temp</display_name>
-      <description>Maximum supply air temperature.</description>
-      <type>Double</type>
-      <units>F</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>120</default_value>
-    </argument>
-    <argument>
-      <name>userdefinedfanpower</name>
-      <display_name>Installed Supply Fan Power</display_name>
-      <description>Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.</description>
-      <type>Double</type>
-      <units>W/cfm</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.5</default_value>
-    </argument>
-    <argument>
       <name>living_thermal_zone</name>
       <display_name>Living thermal zone</display_name>
       <description>Select the living thermal zone</description>
@@ -235,35 +315,33 @@
       <datatype>string</datatype>
     </attribute>
     <attribute>
-      <name>Uses SketchUp API</name>
-      <value>false</value>
-      <datatype>boolean</datatype>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
     </attribute>
   </attributes>
   <files>
     <file>
-      <filename>ProcessFurnace_Test.rb</filename>
+      <filename>process_boiler_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>E0F0A29D</checksum>
+      <checksum>1C5139B0</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E1D3EF8</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F43A5089</checksum>
+      <filename>example_model.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4F35230</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -272,15 +350,27 @@
       <checksum>027D38A5</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F43A5089</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCBEF242</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
+        <identifier>1.10.6</identifier>
+        <min_compatible>1.10.6</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>08069038</checksum>
+      <checksum>AD1B7D3D</checksum>
     </file>
   </files>
 </measure>
