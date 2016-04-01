@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_foundations_floors_partition_floors</name>
+  <name>process_constructions_uninsulated_floor</name>
   <uid>477cfef1-0c37-4b16-9cfd-82d617472e43</uid>
-  <version_id>9334749d-ae99-41ec-b8fc-d9332d004a15</version_id>
+  <version_id>ce36fd9b-b2f6-4304-929c-6946808f19f3</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsFoundationsFloorsPartitionFloors</class_name>
-  <display_name>Set Residential Foundations/Floors - Partition Floor Construction</display_name>
+  <class_name>ProcessConstructionsUninsulatedFloor</class_name>
+  <display_name>Set Residential Uninsulated Floor Construction</display_name>
   <description>This measure assigns a construction to floors between two unfinished spaces or two finished spaces.</description>
   <modeler_description>Calculates and assigns material layer properties of uninsulated constructions for the floors 1) between two unfinished spaces, 2) between two finished spaces, or 3) with adiabatic outside boundary condition. If the floors have an existing construction, the layers (other than floor covering, floor mass, and ceiling mass) are replaced. This measure is intended to be used in conjunction with Floor Covering, Floor Mass, and Ceiling Mass measures.</modeler_description>
   <arguments/>
@@ -59,13 +59,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F29BF1E4</checksum>
+      <checksum>CDCE152B</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>55697569</checksum>
+      <checksum>D5DFB2A1</checksum>
     </file>
   </files>
 </measure>

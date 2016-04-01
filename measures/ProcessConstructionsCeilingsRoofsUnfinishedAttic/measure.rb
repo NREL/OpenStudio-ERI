@@ -242,13 +242,13 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
       # Define construction
       attic_floor = Construction.new(path_fracs)
       attic_floor.add_layer(Material.AirFilmFloorAverage, false)
-      attic_floor.add_layer(Material.GypsumCeiling1_2in, false) # thermal mass added in separate measure
-      if not mat_framing.nil? and not mat_cavity.nil? and not mat_gap.nil?
-          attic_floor.add_layer([mat_framing, mat_cavity, mat_gap], true, "UATrussandIns")
-      end
       if not mat_addtl_ins.nil?
           attic_floor.add_layer(mat_addtl_ins, true)
       end
+      if not mat_framing.nil? and not mat_cavity.nil? and not mat_gap.nil?
+          attic_floor.add_layer([mat_framing, mat_cavity, mat_gap], true, "UATrussandIns")
+      end
+      attic_floor.add_layer(Material.GypsumCeiling1_2in, false) # thermal mass added in separate measure
       attic_floor.add_layer(Material.AirFilmFloorAverage, false)
       
       # Create and assign construction to ceiling surfaces

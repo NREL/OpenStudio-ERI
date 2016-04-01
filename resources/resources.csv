@@ -28,7 +28,7 @@ ProcessConstructionsUninsulatedSlab,util.rb,constants.rb,unit_conversions.rb,geo
 ProcessConstructionsCeilingsRoofsFinishedRoof,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
 ProcessConstructionsFoundationsFloorsInterzonalFloors,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
 ProcessConstructionsWallsInterzonal,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
-ProcessConstructionsFoundationsFloorsPartitionFloors,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
+ProcessConstructionsUninsulatedFloor,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
 ProcessConstructionsWallsPartition,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
 ProcessConstructionsFoundationsFloorsSlab,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,
 ProcessConstructionsCeilingsRoofsUnfinishedAttic,util.rb,constants.rb,unit_conversions.rb,geometry.rb,,,,,,,,,

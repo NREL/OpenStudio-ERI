@@ -811,13 +811,13 @@ class Construction
             if not name.nil?
                 constr.setName(name)
             end
-            
+
             # Assign material layers as appropriate
             # If multiple non standard layers being assigned, ensure we only remove
             # the existing non standard layers the first time.
             remove_non_std_layers = true
             materials.each do |material|
-                if assign_material(constr, material, surface, remove_non_std_layers)
+                if assign_material(constr, material, surface, remove_non_std_layers, runner)
                     is_modified = true
                 end
                 remove_non_std_layers = false
@@ -825,7 +825,7 @@ class Construction
             
             # Remove material layers as appropriate
             @remove_materials.each do |material_name|
-                if remove_material(constr, material_name)
+                if remove_material(constr, material_name, runner)
                     is_modified = true
                 end
             end
@@ -840,7 +840,7 @@ class Construction
         end
         
         # Returns true if the material was assigned
-        def assign_material(constr, material, surface, remove_non_std_layers)
+        def assign_material(constr, material, surface, remove_non_std_layers, runner)
             num_layers = constr.numLayers
             
             if not surface.respond_to?("surfaceType")
@@ -855,12 +855,12 @@ class Construction
                 target_positions_std = {Constants.MaterialWallExtFinish => 0, # outside
                                         Constants.MaterialWallRigidIns => 1,
                                         Constants.MaterialWallSheathing => 2, 
-                                        Constants.MaterialWallMassOtherSide => 3,
-                                        Constants.MaterialWallMassOtherSide2 => 4,
+                                        Constants.MaterialWallMassOtherSide2 => 3,
+                                        Constants.MaterialWallMassOtherSide => 4,
                                         # non-std middle layer(s)
                                         Constants.MaterialWallMass => num_layers,
                                         Constants.MaterialWallMass2 => num_layers+1} # inside
-                target_position_non_std = target_positions_std[Constants.MaterialWallSheathing] + 1
+                target_position_non_std = target_positions_std[Constants.MaterialWallMassOtherSide] + 1
             elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors" # Roof
                 target_positions_std = {Constants.MaterialRoofMaterial => 0, # outside
                                         Constants.MaterialRoofRigidIns => 1,
@@ -870,7 +870,7 @@ class Construction
                                         Constants.MaterialCeilingMass => num_layers+1,
                                         Constants.MaterialCeilingMass2 => num_layers+2} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialRoofSheathing] + 1
-            elsif surface.surfaceType.downcase == "floor" or surface.surfaceType.downcase == "roofceiling" # Floor/ceiling
+            elsif surface.surfaceType.downcase == "floor" # Floor
                 target_positions_std = {Constants.MaterialCeilingMass2 => 0, # outside
                                         Constants.MaterialCeilingMass => 1,
                                         # non-std middle layer(s)
@@ -878,21 +878,36 @@ class Construction
                                         Constants.MaterialFloorMass => num_layers+1,
                                         Constants.MaterialFloorCovering => num_layers+2} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialCeilingMass] + 1
+            elsif surface.surfaceType.downcase == "roofceiling" # Ceiling
+                target_positions_std = {Constants.MaterialFloorCovering => 0, # outside
+                                        Constants.MaterialFloorMass => 1,
+                                        Constants.MaterialFloorSheathing => 2,
+                                        # non-std middle layer(s)
+                                        Constants.MaterialCeilingMass => num_layers,
+                                        Constants.MaterialCeilingMass2 => num_layers+1} # inside
+                target_position_non_std = target_positions_std[Constants.MaterialFloorSheathing] + 1
             else
                 runner.registeError("Unexpected surface type '#{surface.surfaceType.to_s}'.")
             end
 
             # Determine current positions of any standard materials
+            # Also, determine max position of any non-standard materials
             std_mat_positions = target_positions_std.clone
             std_mat_positions.each { |k, v| std_mat_positions[k] = nil } #re-init
+            max_non_std_position = nil
             constr.layers.each_with_index do |layer, index|
+                layer_is_std = false
                 std_mat_positions.keys.each do |layer_name|
                     if layer.name.to_s.start_with? layer_name
                         std_mat_positions[layer_name] = index
+                        layer_is_std = true
                     end
                 end
+                if not layer_is_std
+                    max_non_std_position = index
+                end
             end
-
+            
             # Is the current material a standard material?
             standard_mat = nil
             target_positions_std.keys.each do |std_mat|
@@ -926,7 +941,13 @@ class Construction
                     mat = target_positions_std.key(pos)
                     next if not std_mat_positions.key? mat
                     if not std_mat_positions[mat].nil?
-                        insert_pos = pos + 1
+                        insert_pos = std_mat_positions[mat] + 1
+                        if not standard_mat.nil? and not max_non_std_position.nil?
+                            if target_positions_std[standard_mat] > target_position_non_std and insert_pos <= max_non_std_position
+                                # Ensure we put std layer after non-std layer as appropriate
+                                insert_pos = max_non_std_position + 1
+                            end
+                        end
                         break
                     end
                 end
@@ -939,7 +960,7 @@ class Construction
         end
 
         # Returns true if the material was removed
-        def remove_material(constr, material_name)
+        def remove_material(constr, material_name, runner)
             # Remove layer if it matches this name
             num_layers = constr.numLayers
             constr.layers.reverse.each_with_index do |layer, index|

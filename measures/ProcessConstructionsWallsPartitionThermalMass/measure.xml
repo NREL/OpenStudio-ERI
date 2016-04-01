@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition_thermal_mass</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>c54340ec-08ab-40e5-bcc5-4f3712a62fef</version_id>
+  <version_id>21083701-dfe2-493b-bceb-5d30c3c2b562</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsPartitionThermalMass</class_name>
   <display_name>Set Residential Walls - Partition Thermal Mass</display_name>
@@ -145,13 +145,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6CFCC4E9</checksum>
+      <checksum>7D56BCCE</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>55697569</checksum>
+      <checksum>D5DFB2A1</checksum>
     </file>
   </files>
 </measure>

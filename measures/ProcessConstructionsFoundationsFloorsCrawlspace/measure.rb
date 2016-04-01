@@ -187,13 +187,13 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         
         # Define construction
         cs_wall = Construction.new([1.0])
-        if not mat_fic_wall.nil?
-            cs_wall.add_layer(mat_fic_wall, true)
-        end
-        cs_wall.add_layer(Material.Soil12in, true)
-        cs_wall.add_layer(Material.Concrete8in, true)
         if not mat_ins.nil?
             cs_wall.add_layer(mat_ins, true)
+        end
+        cs_wall.add_layer(Material.Concrete8in, true)
+        cs_wall.add_layer(Material.Soil12in, true)
+        if not mat_fic_wall.nil?
+            cs_wall.add_layer(mat_fic_wall, true)
         end
         cs_wall.add_layer(Material.AirFilmVertical, false)
         
@@ -224,8 +224,8 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         
         # Define construction
         cs_floor = Construction.new([1.0])
-        cs_floor.add_layer(mat_fic_floor, true)
         cs_floor.add_layer(Material.Soil12in, true)
+        cs_floor.add_layer(mat_fic_floor, true)
         
         # Create and assign construction to surfaces
         if not cs_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsUnfinCSFloor")

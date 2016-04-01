@@ -210,19 +210,25 @@ class ProcessConstructionsWallsPartitionThermalMass < OpenStudio::Ruleset::Model
     if not surfaces.empty?
         # Define construction
         wall = Construction.new([1])
+        if not mat2.nil?
+            wall.add_layer(mat2, true, Constants.MaterialWallMassOtherSide2)
+        else
+            wall.remove_layer(Constants.MaterialWallMassOtherSide2)
+        end
         if not mat1.nil?
-            wall.add_layer(mat1, true)
             wall.add_layer(mat1, true, Constants.MaterialWallMassOtherSide)
         else
-            wall.remove_layer(Constants.MaterialWallMass)
             wall.remove_layer(Constants.MaterialWallMassOtherSide)
+        end
+        if not mat1.nil?
+            wall.add_layer(mat1, true)
+        else
+            wall.remove_layer(Constants.MaterialWallMass)
         end
         if not mat2.nil?
             wall.add_layer(mat2, true)
-            wall.add_layer(mat2, true, Constants.MaterialWallMassOtherSide2)
         else
             wall.remove_layer(Constants.MaterialWallMass2)
-            wall.remove_layer(Constants.MaterialWallMassOtherSide2)
         end
         
         if not wall.create_and_assign_constructions(surfaces, runner, model, name=nil)
@@ -274,20 +280,26 @@ class ProcessConstructionsWallsPartitionThermalMass < OpenStudio::Ruleset::Model
     
     # Define construction
     int_mass = Construction.new(path_fracs)
+    if not mat2.nil?
+        int_mass.add_layer(mat2, true, Constants.MaterialWallMassOtherSide2)
+    else
+        int_mass.remove_layer(Constants.MaterialWallMassOtherSide2)
+    end
+    if not mat1.nil?
+        int_mass.add_layer(mat1, true, Constants.MaterialWallMassOtherSide)
+    else
+        int_mass.remove_layer(Constants.MaterialWallMassOtherSide)
+    end
     int_mass.add_layer([mat_framing, mat_cavity], true, "StudAndAirWall")
     if not mat1.nil?
         int_mass.add_layer(mat1, true)
-        int_mass.add_layer(mat1, true, Constants.MaterialWallMassOtherSide)
     else
         int_mass.remove_layer(Constants.MaterialWallMass)
-        int_mass.remove_layer(Constants.MaterialWallMassOtherSide)
     end
     if not mat2.nil?
         int_mass.add_layer(mat2, true)
-        int_mass.add_layer(mat2, true, Constants.MaterialWallMassOtherSide2)
     else
         int_mass.remove_layer(Constants.MaterialWallMass2)
-        int_mass.remove_layer(Constants.MaterialWallMassOtherSide2)
     end
 
     if not int_mass.create_and_assign_constructions(imdefs, runner, model, name="FinUninsFinWall")
