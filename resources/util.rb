@@ -166,16 +166,20 @@ class Material
             if @k_in > 0
                 @rvalue = @thick_in / @k_in # h-ft^2-F/Btu
             else
-                @rvalue = Constants.InfiniteConductivity # h-ft^2-F/Btu
+                @rvalue = @thick_in / 10000000.0 # h-ft^2-F/Btu
             end
         end
     end
     
     attr_accessor :name, :thick, :thick_in, :k, :k_in, :rho, :cp, :rvalue, :tAbs, :sAbs, :vAbs
     
-    def self.AirCavity(thick_in)
+    def self.AirCavityClosed(thick_in)
         rvalue = Gas.AirGapRvalue
         return Material.new(name=nil, thick_in=thick_in, mat_base=nil, k_in=thick_in/rvalue, rho=Gas.Air.rho, cp=Gas.Air.cp)
+    end
+    
+    def self.AirCavityOpen(thick_in)
+        return Material.new(name=nil, thick_in=thick_in, mat_base=nil, k_in=10000000.0, rho=Gas.Air.rho, cp=Gas.Air.cp)
     end
     
     def self.AirFilmOutside
@@ -425,9 +429,9 @@ class Construction
         end
         runner.registerInfo("======")
         @layers_materials.each do |layer_materials|
-            runner.registerInfo("layer thick: #{layer_materials[0].thick.round(5).to_s}")
+            runner.registerInfo("layer thick: #{OpenStudio::convert(layer_materials[0].thick_in,"in","ft").get.round(5).to_s}")
             layer_materials.each do |mat|
-                runner.registerInfo("layer cond:  #{mat.k.round(5).to_s}")
+                runner.registerInfo("layer cond:  #{OpenStudio::convert(mat.k_in,"in","ft").get.round(5).to_s}")
             end
             runner.registerInfo("------")
         end
@@ -467,6 +471,7 @@ class Construction
         
         # Uncomment the following line to debug
         #print_layers(runner)
+        #runner.registerInfo("Assembly R-vale: #{assembly_rvalue(runner).to_s}")
         
         materials = construct_materials(model, runner)
         
@@ -851,40 +856,41 @@ class Construction
             # Note: We determine types of layers (exterior finish, etc.) by name.
             # The code below defines the target layer positions for the materials when the 
             # construction is complete.
+            # FIXME: This is all a huge hack until we can use StandardsInfo to classify layers.
             if surface.surfaceType.downcase == "wall" # Wall
                 target_positions_std = {Constants.MaterialWallExtFinish => 0, # outside
                                         Constants.MaterialWallRigidIns => 1,
                                         Constants.MaterialWallSheathing => 2, 
                                         Constants.MaterialWallMassOtherSide2 => 3,
                                         Constants.MaterialWallMassOtherSide => 4,
-                                        # non-std middle layer(s)
-                                        Constants.MaterialWallMass => num_layers,
-                                        Constants.MaterialWallMass2 => num_layers+1} # inside
+                                        # non-std middle layer(s) => 5...
+                                        Constants.MaterialWallMass => [num_layers,6].max,
+                                        Constants.MaterialWallMass2 => [num_layers+1,7].max} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialWallMassOtherSide] + 1
             elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors" # Roof
                 target_positions_std = {Constants.MaterialRoofMaterial => 0, # outside
                                         Constants.MaterialRoofRigidIns => 1,
                                         Constants.MaterialRoofSheathing => 2,
-                                        # non-std middle layer(s)
-                                        Constants.MaterialRadiantBarrier => num_layers,
-                                        Constants.MaterialCeilingMass => num_layers+1,
-                                        Constants.MaterialCeilingMass2 => num_layers+2} # inside
+                                        # non-std middle layer(s) => 3...
+                                        Constants.MaterialRadiantBarrier => [num_layers,4].max,
+                                        Constants.MaterialCeilingMass => [num_layers+1,5].max,
+                                        Constants.MaterialCeilingMass2 => [num_layers+2,6].max} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialRoofSheathing] + 1
             elsif surface.surfaceType.downcase == "floor" # Floor
                 target_positions_std = {Constants.MaterialCeilingMass2 => 0, # outside
                                         Constants.MaterialCeilingMass => 1,
-                                        # non-std middle layer(s)
-                                        Constants.MaterialFloorSheathing => num_layers,
-                                        Constants.MaterialFloorMass => num_layers+1,
-                                        Constants.MaterialFloorCovering => num_layers+2} # inside
+                                        # non-std middle layer(s) => 2...
+                                        Constants.MaterialFloorSheathing => [num_layers,3].max,
+                                        Constants.MaterialFloorMass => [num_layers+1,4].max,
+                                        Constants.MaterialFloorCovering => [num_layers+2,5].max} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialCeilingMass] + 1
-            elsif surface.surfaceType.downcase == "roofceiling" # Ceiling
+            elsif surface.surfaceType.downcase == "roofceiling" # Ceiling (must be reverse of floor)
                 target_positions_std = {Constants.MaterialFloorCovering => 0, # outside
                                         Constants.MaterialFloorMass => 1,
                                         Constants.MaterialFloorSheathing => 2,
-                                        # non-std middle layer(s)
-                                        Constants.MaterialCeilingMass => num_layers,
-                                        Constants.MaterialCeilingMass2 => num_layers+1} # inside
+                                        # non-std middle layer(s) => 3...
+                                        Constants.MaterialCeilingMass => [num_layers,4].max,
+                                        Constants.MaterialCeilingMass2 => [num_layers+1,5].max} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialFloorSheathing] + 1
             else
                 runner.registeError("Unexpected surface type '#{surface.surfaceType.to_s}'.")
@@ -944,7 +950,7 @@ class Construction
                         insert_pos = std_mat_positions[mat] + 1
                         if not standard_mat.nil? and not max_non_std_position.nil?
                             if target_positions_std[standard_mat] > target_position_non_std and insert_pos <= max_non_std_position
-                                # Ensure we put std layer after non-std layer as appropriate
+                                # Ensure we put std layer after non-std layer in this situation
                                 insert_pos = max_non_std_position + 1
                             end
                         end

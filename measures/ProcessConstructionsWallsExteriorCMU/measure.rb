@@ -162,7 +162,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     if cmuFurringCavityDepth != 0
         mat_furring = Material.new(name=nil, thick_in=cmuFurringCavityDepth, mat_base=BaseMaterial.Wood)
         if cmuFurringInsRvalue == 0
-            mat_furring_cavity = Material.AirCavity(cmuFurringCavityDepth)
+            mat_furring_cavity = Material.AirCavityClosed(cmuFurringCavityDepth)
         else
             mat_furring_cavity = Material.new(name=nil, thick_in=cmuFurringCavityDepth, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=cmuFurringCavityDepth / cmuFurringInsRvalue)
         end

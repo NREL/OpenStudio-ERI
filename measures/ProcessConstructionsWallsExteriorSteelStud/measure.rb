@@ -148,9 +148,9 @@ class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUse
         end
     else
         # Empty cavity
-        mat_cavity = Material.AirCavity(ssWallCavityDepth)
+        mat_cavity = Material.AirCavityClosed(ssWallCavityDepth)
     end
-    mat_gap = Material.AirCavity(ssWallCavityDepth)
+    mat_gap = Material.AirCavityClosed(ssWallCavityDepth)
     
     # Set paths
     gapFactor = Construction.get_wall_gap_factor(ssWallInstallGrade, ssWallFramingFactor, ssWallCavityInsRvalueNominal)

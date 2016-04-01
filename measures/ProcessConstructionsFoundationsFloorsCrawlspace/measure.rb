@@ -177,7 +177,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
 
         # Define materials
         mat_ins = nil
-        if crawlWallContInsThickness > 0
+        if crawlWallContInsThickness > 0 and crawlWallContInsRvalueNominal > 0
             mat_ins = Material.new(name="CWallIns", thick_in=crawlWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, k_in=crawlWallContInsThickness / crawlWallContInsRvalueNominal)
         end
         mat_fic_wall = nil
@@ -241,12 +241,12 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         # Define materials
         mat_2x = Material.Stud2x(crawlCeilingJoistHeight)
         if crawlCeilingCavityInsRvalueNominal == 0
-            mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=Constants.InfiniteConductivity)
+            mat_cavity = Material.AirCavityOpen(thick_in=mat_2x.thick_in)
         else    
             mat_cavity = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=mat_2x.thick_in / crawlCeilingCavityInsRvalueNominal)
         end
         mat_framing = Material.new(name=nil, thick_in=mat_2x.thick_in, mat_base=BaseMaterial.Wood)
-        mat_gap = Material.AirCavity(mat_2x.thick_in)
+        mat_gap = Material.AirCavityOpen(mat_2x.thick_in)
         
         # Set paths
         csGapFactor = Construction.get_wall_gap_factor(crawlCeilingInstallGrade, crawlCeilingFramingFactor, crawlCeilingCavityInsRvalueNominal)

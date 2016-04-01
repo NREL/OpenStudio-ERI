@@ -210,30 +210,25 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
     
       # Define materials
       mat_addtl_ins = nil
-      mat_cavity = nil
-      mat_framing = nil
-      mat_gap = nil
-      if uACeilingInsRvalueNominal > 0 and uACeilingInsThickness > 0
-          if uACeilingInsThickness >= uACeilingJoistHeight
-              # If the ceiling insulation thickness is greater than the joist thickness
-              cavity_k = uACeilingInsThickness / uACeilingInsRvalueNominal
-              if uACeilingInsThickness > uACeilingJoistHeight
-                  # If there is additional insulation beyond the rafter height,
-                  # these inputs are used for defining an additional layer
-                  mat_addtl_ins = Material.new(name="UAAdditionalCeilingIns", thick_in=(uACeilingInsThickness - uACeilingJoistHeight), mat_base=BaseMaterial.InsulationGenericLoosefill, k_in=cavity_k)
-              end
-          else
-              # Else the joist thickness is greater than the ceiling insulation thickness
-              if uACeilingInsRvalueNominal == 0
-                  cavity_k = Constants.InfiniteConductivity
-              else
-                  cavity_k = uACeilingJoistHeight / uACeilingInsRvalueNominal
-              end
+      if uACeilingInsThickness >= uACeilingJoistHeight
+          # If the ceiling insulation thickness is greater than the joist thickness
+          cavity_k = uACeilingInsThickness / uACeilingInsRvalueNominal
+          if uACeilingInsThickness > uACeilingJoistHeight
+              # If there is additional insulation beyond the rafter height,
+              # these inputs are used for defining an additional layer
+              mat_addtl_ins = Material.new(name="UAAdditionalCeilingIns", thick_in=(uACeilingInsThickness - uACeilingJoistHeight), mat_base=BaseMaterial.InsulationGenericLoosefill, k_in=cavity_k)
           end
-          mat_cavity = Material.new(name=nil, thick_in=uACeilingJoistHeight, mat_base=BaseMaterial.InsulationGenericLoosefill, cond=cavity_k)
-          mat_framing = Material.new(name=nil, thick_in=uACeilingJoistHeight, mat_base=BaseMaterial.Wood)
-          mat_gap = Material.AirCavity(uACeilingJoistHeight)
+          mat_cavity = Material.new(name=nil, thick_in=uACeilingJoistHeight, mat_base=BaseMaterial.InsulationGenericLoosefill, k_in=cavity_k)
+      else
+          # Else the joist thickness is greater than the ceiling insulation thickness
+          if uACeilingInsRvalueNominal == 0
+              mat_cavity = Material.AirCavityOpen(uACeilingJoistHeight)
+          else
+              mat_cavity = Material.new(name=nil, thick_in=uACeilingJoistHeight, mat_base=BaseMaterial.InsulationGenericLoosefill, k_in=uACeilingJoistHeight / uACeilingInsRvalueNominal)
+          end
       end
+      mat_framing = Material.new(name=nil, thick_in=uACeilingJoistHeight, mat_base=BaseMaterial.Wood)
+      mat_gap = Material.AirCavityOpen(uACeilingJoistHeight)
       
       # Set paths
       gapFactor = Construction.get_wall_gap_factor(uACeilingInstallGrade, uACeilingFramingFactor, uACeilingInsRvalueNominal)
@@ -245,9 +240,7 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
       if not mat_addtl_ins.nil?
           attic_floor.add_layer(mat_addtl_ins, true)
       end
-      if not mat_framing.nil? and not mat_cavity.nil? and not mat_gap.nil?
-          attic_floor.add_layer([mat_framing, mat_cavity, mat_gap], true, "UATrussandIns")
-      end
+      attic_floor.add_layer([mat_framing, mat_cavity, mat_gap], true, "UATrussandIns")
       attic_floor.add_layer(Material.GypsumCeiling1_2in, false) # thermal mass added in separate measure
       attic_floor.add_layer(Material.AirFilmFloorAverage, false)
       
@@ -265,13 +258,13 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
         # Define materials
         uA_roof_ins_thickness_in = [uARoofInsThickness, uARoofFramingThickness].max
         if uARoofInsRvalueNominal == 0
-            mat_cavity = Material.new(name=nil, thick_in=uA_roof_ins_thickness_in, mat_base=BaseMaterial.InsulationGenericLoosefill, cond=Constants.InfiniteConductivity, rho=Gas.Air.rho, cp=Gas.Air.cp)
+            mat_cavity = Material.AirCavityOpen(uA_roof_ins_thickness_in)
         else
-            cavity_k = OpenStudio::convert(uARoofInsThickness,"in","ft").get / uARoofInsRvalueNominal
+            cavity_k = uARoofInsThickness / uARoofInsRvalueNominal
             if uARoofInsThickness < uARoofFramingThickness
                 cavity_k = cavity_k * uARoofFramingThickness / uARoofInsThickness
             end
-            mat_cavity = Material.new(name=nil, thick_in=uA_roof_ins_thickness_in, mat_base=BaseMaterial.InsulationGenericLoosefill, cond=cavity_k)
+            mat_cavity = Material.new(name=nil, thick_in=uA_roof_ins_thickness_in, mat_base=BaseMaterial.InsulationGenericDensepack, k_in=cavity_k)
         end
         if uARoofInsThickness > uARoofFramingThickness and uARoofFramingThickness > 0
             wood_k = BaseMaterial.Wood.k_in * uARoofInsThickness / uARoofFramingThickness
@@ -279,7 +272,7 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
             wood_k = BaseMaterial.Wood.k_in
         end
         mat_framing = Material.new(name=nil, thick_in=uA_roof_ins_thickness_in, mat_base=BaseMaterial.Wood, k_in=wood_k)
-        mat_gap = Material.AirCavity(uA_roof_ins_thickness_in)
+        mat_gap = Material.AirCavityOpen(uA_roof_ins_thickness_in)
         
         # Set paths
         gapFactor = Construction.get_wall_gap_factor(uARoofInstallGrade, uARoofFramingFactor, uARoofInsRvalueNominal)

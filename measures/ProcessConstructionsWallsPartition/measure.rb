@@ -83,7 +83,7 @@ class ProcessConstructionsWallsPartition < OpenStudio::Ruleset::ModelUserScript
     # Process the walls
 
     # Define materials
-    mat_cavity = Material.AirCavity(Material.Stud2x4.thick_in)
+    mat_cavity = Material.AirCavityClosed(Material.Stud2x4.thick_in)
     mat_framing = Material.new(name=nil, thick_in=Material.Stud2x4.thick_in, mat_base=BaseMaterial.Wood)
     
     # Set paths
@@ -91,7 +91,7 @@ class ProcessConstructionsWallsPartition < OpenStudio::Ruleset::ModelUserScript
     
     # Define construction
     wall = Construction.new(path_fracs)
-    wall.add_layer([mat_framing, mat_cavity], true, "StudAndAirWall")
+    wall.add_layer([mat_framing, mat_cavity], true, "IntStudAndAirWall")
 
     # Create and apply construction to unfinished surfaces
     if not wall.create_and_assign_constructions(unfinished_surfaces, runner, model, name="UnfinUninsUnfinWall")

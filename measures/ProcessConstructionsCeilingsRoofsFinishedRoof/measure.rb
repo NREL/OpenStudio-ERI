@@ -138,7 +138,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
         end
     else
         # Empty cavity
-        mat_cavity = Material.AirCavity(frRoofCavityDepth)
+        mat_cavity = Material.AirCavityClosed(frRoofCavityDepth)
     end
     mat_framing = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.Wood)
     

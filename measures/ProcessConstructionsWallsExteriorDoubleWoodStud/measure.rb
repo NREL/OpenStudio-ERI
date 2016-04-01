@@ -156,7 +156,7 @@ class ProcessConstructionsWallsExteriorDoubleWoodStud < OpenStudio::Ruleset::Mod
     mat_framing_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=BaseMaterial.Wood)
     mat_framing_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=BaseMaterial.Wood)
     mat_stud = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=BaseMaterial.Wood)
-    mat_gap_total = Material.AirCavity(cavityDepth)
+    mat_gap_total = Material.AirCavityClosed(cavityDepth)
     mat_gap_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=nil, k_in=dsWallStudDepth / (mat_gap_total.rvalue * dsWallStudDepth / cavityDepth), rho=Gas.Air.rho, cp=Gas.Air.cp)
     mat_gap_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=nil, k_in=dsWallGapDepth / (mat_gap_total.rvalue * dsWallGapDepth / cavityDepth), rho=Gas.Air.rho, cp=Gas.Air.cp)
     

@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>4634a83f-ede5-4dd4-8716-9525ab11e9dc</version_id>
+  <version_id>87bd9549-8f2b-466a-b9b9-d509ef0d541e</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
@@ -122,7 +122,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0FA9D8F0</checksum>
+      <checksum>8BF04C9E</checksum>
     </file>
     <file>
       <version>
@@ -133,13 +133,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2BB871F8</checksum>
+      <checksum>903706CD</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>D5DFB2A1</checksum>
+      <checksum>5E270FB3</checksum>
     </file>
   </files>
 </measure>

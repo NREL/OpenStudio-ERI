@@ -56,7 +56,7 @@ class ProcessConstructionsUninsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     end   
     
     # Define materials
-    mat_cavity = Material.AirCavity(Material.Stud2x4.thick_in)
+    mat_cavity = Material.AirCavityClosed(Material.Stud2x4.thick_in)
     mat_framing = Material.new(name=nil, thick_in=Material.Stud2x4.thick_in, mat_base=BaseMaterial.Wood)
 
     # Set paths
@@ -64,11 +64,12 @@ class ProcessConstructionsUninsulatedRoof < OpenStudio::Ruleset::ModelUserScript
     
     # Define construction
     roof_const = Construction.new(path_fracs)
-    roof_const.add_layer(Material.AirFilmOutside, false)
-    roof_const.add_layer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
-    roof_const.add_layer(Material.DefaultRoofSheathing, false) # sheathing added in separate measure
+    # FIXME: Commented out layers for comparison to BEopt
+    #roof_const.add_layer(Material.AirFilmOutside, false)
+    #roof_const.add_layer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
+    #roof_const.add_layer(Material.DefaultRoofSheathing, false) # sheathing added in separate measure
     roof_const.add_layer([mat_framing, mat_cavity], true, "StudAndAirRoof")
-    roof_const.add_layer(Material.AirFilmRoof(Geometry.calculate_avg_roof_pitch(spaces)), false)
+    #roof_const.add_layer(Material.AirFilmRoof(Geometry.calculate_avg_roof_pitch(spaces)), false)
 
     # Create and assign construction to surfaces
     if not roof_const.create_and_assign_constructions(surfaces, runner, model, name="UnfinUninsExtRoof")

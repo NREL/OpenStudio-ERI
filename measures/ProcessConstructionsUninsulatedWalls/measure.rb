@@ -59,7 +59,7 @@ class ProcessConstructionsUninsulatedWalls < OpenStudio::Ruleset::ModelUserScrip
     # Process the walls
     
     # Define materials
-    mat_cavity = Material.AirCavity(Material.Stud2x4.thick_in)
+    mat_cavity = Material.AirCavityClosed(Material.Stud2x4.thick_in)
     mat_framing = Material.new(name=nil, thick_in=Material.Stud2x4.thick_in, mat_base=BaseMaterial.Wood)
     
     # Set paths
@@ -67,11 +67,12 @@ class ProcessConstructionsUninsulatedWalls < OpenStudio::Ruleset::ModelUserScrip
     
     # Define construction
     wall = Construction.new(path_fracs)
-    wall.add_layer(Material.AirFilmVertical, false)
-    wall.add_layer([mat_framing, mat_cavity], true, "StudAndAirWall")
-    wall.add_layer(Material.DefaultWallSheathing, true)
-    wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    wall.add_layer(Material.AirFilmOutside, false)
+    # FIXME: Commented out layers for comparison to BEopt
+    #wall.add_layer(Material.AirFilmVertical, false)
+    wall.add_layer([mat_framing, mat_cavity], true, "ExtStudAndAirWall")
+    #wall.add_layer(Material.DefaultWallSheathing, true)
+    #wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    #wall.add_layer(Material.AirFilmOutside, false)
 
     # Create and assign construction to surfaces
     if not wall.create_and_assign_constructions(surfaces, runner, model, name="ExtUninsUnfinWall")

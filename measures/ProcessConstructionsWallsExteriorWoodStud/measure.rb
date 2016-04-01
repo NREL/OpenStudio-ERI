@@ -134,10 +134,10 @@ class ProcessConstructionsWallsExteriorWoodStud < OpenStudio::Ruleset::ModelUser
         end
     else
         # Empty cavity
-        mat_cavity = Material.AirCavity(wsWallCavityDepth)
+        mat_cavity = Material.AirCavityClosed(wsWallCavityDepth)
     end
     mat_framing = Material.new(name=nil, thick_in=wsWallCavityDepth, mat_base=BaseMaterial.Wood)
-    mat_gap = Material.AirCavity(wsWallCavityDepth)
+    mat_gap = Material.AirCavityClosed(wsWallCavityDepth)
 
     # Set paths
     gapFactor = Construction.get_wall_gap_factor(wsWallInstallGrade, wsWallFramingFactor, wsWallCavityInsRvalueInstalled)

@@ -272,7 +272,7 @@ class ProcessConstructionsWallsPartitionThermalMass < OpenStudio::Ruleset::Model
     end
     
     # Define materials
-    mat_cavity = Material.AirCavity(Material.Stud2x4.thick_in)
+    mat_cavity = Material.AirCavityClosed(Material.Stud2x4.thick_in)
     mat_framing = Material.new(name=nil, thick_in=Material.Stud2x4.thick_in, mat_base=BaseMaterial.Wood)
 
     # Set paths
@@ -290,7 +290,7 @@ class ProcessConstructionsWallsPartitionThermalMass < OpenStudio::Ruleset::Model
     else
         int_mass.remove_layer(Constants.MaterialWallMassOtherSide)
     end
-    int_mass.add_layer([mat_framing, mat_cavity], true, "StudAndAirWall")
+    int_mass.add_layer([mat_framing, mat_cavity], true, "IntMassStudAndAirWall")
     if not mat1.nil?
         int_mass.add_layer(mat1, true)
     else

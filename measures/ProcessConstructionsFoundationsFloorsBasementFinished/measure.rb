@@ -217,10 +217,10 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
                 end
             else
                 # Empty cavity
-                mat_cavity = Material.AirCavity(fbsmtWallCavityDepth)
+                mat_cavity = Material.AirCavityClosed(fbsmtWallCavityDepth)
             end
             mat_framing = Material.new(name=nil, thick_in=fbsmtWallCavityDepth, mat_base=BaseMaterial.Wood)
-            mat_gap = Material.AirCavity(fbsmtWallCavityDepth)
+            mat_gap = Material.AirCavityClosed(fbsmtWallCavityDepth)
         end
         if fbsmtWallContInsThickness > 0
             mat_rigid = Material.new(name=nil, thick_in=fbsmtWallContInsThickness, mat_base=BaseMaterial.InsulationRigid, k_in=fbsmtWallContInsThickness / fbsmtWallContInsRvalue)
