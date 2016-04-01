@@ -227,22 +227,22 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
         end
 
         # Set paths
-        gapFactor = Construction.GetWallGapFactor(fbsmtWallInstallGrade, fbsmtWallFramingFactor, fbsmtWallCavityInsRvalueInstalled)
+        gapFactor = Construction.get_wall_gap_factor(fbsmtWallInstallGrade, fbsmtWallFramingFactor, fbsmtWallCavityInsRvalueInstalled)
         path_fracs = [fbsmtWallFramingFactor, 1 - fbsmtWallFramingFactor - gapFactor, gapFactor]
         
         # Define construction (only used to calculate assembly R-value)
         fbsmt_wall = Construction.new(path_fracs)
-        fbsmt_wall.addlayer(Material.AirFilmVertical, false)
-        fbsmt_wall.addlayer(Material.DefaultWallMass, false)
+        fbsmt_wall.add_layer(Material.AirFilmVertical, false)
+        fbsmt_wall.add_layer(Material.DefaultWallMass, false)
         if not mat_framing.nil? and not mat_cavity.nil? and not mat_gap.nil?
-            fbsmt_wall.addlayer([mat_framing, mat_cavity, mat_gap], false)
+            fbsmt_wall.add_layer([mat_framing, mat_cavity, mat_gap], false)
         end
         if fbsmtWallCavityInsRvalueInstalled > 0 or fbsmtWallContInsRvalue > 0
             # For foundation walls, only add OSB if there is wall insulation.
-            fbsmt_wall.addlayer(Material.DefaultWallSheathing, false)
+            fbsmt_wall.add_layer(Material.DefaultWallSheathing, false)
         end
         if not mat_rigid.nil?
-            fbsmt_wall.addlayer(mat_rigid, false)
+            fbsmt_wall.add_layer(mat_rigid, false)
         end
 
         overall_wall_Rvalue = fbsmt_wall.assembly_rvalue(runner)
@@ -251,7 +251,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
         end
         
         # Calculate fictitious layer behind finished basement wall to achieve equivalent R-value. See Winkelmann article.
-        conduction_factor = Construction.GetBasementConductionFactor(fbsmtWallInsHeight, overall_wall_Rvalue)
+        conduction_factor = Construction.get_basement_conduction_factor(fbsmtWallInsHeight, overall_wall_Rvalue)
         if fbExtPerimeter > 0
             fb_effective_Rvalue = fbExtWallArea / (conduction_factor * fbExtPerimeter) # hr*ft^2*F/Btu
         else
@@ -275,15 +275,15 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
         # Define actual construction
         fic_fbsmt_wall = Construction.new([1])
         if not mat_fic_wall.nil?
-            fic_fbsmt_wall.addlayer(mat_fic_wall, true)
+            fic_fbsmt_wall.add_layer(mat_fic_wall, true)
         end
-        fic_fbsmt_wall.addlayer(Material.Soil12in, true)
-        fic_fbsmt_wall.addlayer(Material.Concrete8in, true)
+        fic_fbsmt_wall.add_layer(Material.Soil12in, true)
+        fic_fbsmt_wall.add_layer(Material.Concrete8in, true)
         if not mat_fic_insul_layer.nil?
-            fic_fbsmt_wall.addlayer(mat_fic_insul_layer, true)
+            fic_fbsmt_wall.add_layer(mat_fic_insul_layer, true)
         end
-        fic_fbsmt_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-        fic_fbsmt_wall.addlayer(Material.AirFilmVertical, false)
+        fic_fbsmt_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+        fic_fbsmt_wall.add_layer(Material.AirFilmVertical, false)
 
         # Create and assign construction to surfaces
         if not fic_fbsmt_wall.create_and_assign_constructions(wall_surfaces, runner, model, name="GrndInsFinWall")
@@ -312,9 +312,9 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
 
         # Define construction
         fb_floor = Construction.new([1.0])
-        fb_floor.addlayer(mat_fic_floor, true)
-        fb_floor.addlayer(Material.Soil12in, true)
-        fb_floor.addlayer(Material.Concrete4in, true)
+        fb_floor.add_layer(mat_fic_floor, true)
+        fb_floor.add_layer(Material.Soil12in, true)
+        fb_floor.add_layer(Material.Concrete4in, true)
         
         # Create and assign construction to surfaces
         if not fb_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsFinBFloor")
@@ -322,8 +322,8 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
         end
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)    
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
 

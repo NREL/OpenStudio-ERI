@@ -140,25 +140,25 @@ class ProcessConstructionsWallsExteriorWoodStud < OpenStudio::Ruleset::ModelUser
     mat_gap = Material.AirCavity(wsWallCavityDepth)
 
     # Set paths
-    gapFactor = Construction.GetWallGapFactor(wsWallInstallGrade, wsWallFramingFactor, wsWallCavityInsRvalueInstalled)
+    gapFactor = Construction.get_wall_gap_factor(wsWallInstallGrade, wsWallFramingFactor, wsWallCavityInsRvalueInstalled)
     path_fracs = [wsWallFramingFactor, 1 - wsWallFramingFactor - gapFactor, gapFactor]
     
     # Define construction
     wood_stud_wall = Construction.new(path_fracs)
-    wood_stud_wall.addlayer(Material.AirFilmVertical, false)
-    wood_stud_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    wood_stud_wall.addlayer([mat_framing, mat_cavity, mat_gap], true, "StudAndCavity")       
-    wood_stud_wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    wood_stud_wall.addlayer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    wood_stud_wall.addlayer(Material.AirFilmOutside, false)
+    wood_stud_wall.add_layer(Material.AirFilmVertical, false)
+    wood_stud_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+    wood_stud_wall.add_layer([mat_framing, mat_cavity, mat_gap], true, "StudAndCavity")       
+    wood_stud_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+    wood_stud_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    wood_stud_wall.add_layer(Material.AirFilmOutside, false)
 
     # Create and assign construction to surfaces
     if not wood_stud_wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
  

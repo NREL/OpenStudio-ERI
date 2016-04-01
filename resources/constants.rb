@@ -359,6 +359,12 @@ class Constants
     def self.MaterialWallMass2
         return 'ResExtWallMass2'
     end
+    def self.MaterialWallMassOtherSide
+        return 'ResExtWallMassOtherSide1'
+    end
+    def self.MaterialWallMassOtherSide2
+        return 'ResExtWallMassOtherSide2'
+    end
     def self.MaterialWallRigidIns
         return 'ResExtWallRigidIns'
     end

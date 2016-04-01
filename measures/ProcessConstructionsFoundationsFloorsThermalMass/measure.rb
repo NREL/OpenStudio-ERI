@@ -114,19 +114,19 @@ class ProcessConstructionsFoundationsFloorsThermalMass < OpenStudio::Ruleset::Mo
     # Process the floors mass
     
     # Define Materials
-    mat = Material.new(name=Constants.MaterialFloorMass, thick_in=thick_in, mat_base=nil, k_in=cond, dens=dens, cp=specheat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
+    mat = Material.new(name=Constants.MaterialFloorMass, thick_in=thick_in, mat_base=nil, k_in=cond, rho=dens, cp=specheat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
     
     # Define construction
     floor = Construction.new([1])
-    floor.addlayer(mat, true)
+    floor.add_layer(mat, true)
     
     # Create and assign construction to surfaces
     if not floor.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)    
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
 

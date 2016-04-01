@@ -135,19 +135,19 @@ class ProcessConstructionsWallsExteriorFinish < OpenStudio::Ruleset::ModelUserSc
     end
 
     # Define materials
-    mat = Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, k_in=cond, dens=dens, cp=specheat, tAbs=emiss, sAbs=solar_abs, vAbs=solar_abs)
+    mat = Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, k_in=cond, rho=dens, cp=specheat, tAbs=emiss, sAbs=solar_abs, vAbs=solar_abs)
     
     # Define construction
     ext_fin = Construction.new([1])
-    ext_fin.addlayer(mat, true)
+    ext_fin.add_layer(mat, true)
     
     # Create and assign construction to surfaces
     if not ext_fin.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
 

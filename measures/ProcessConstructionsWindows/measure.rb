@@ -252,7 +252,7 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     
     # Define construction
     window = Construction.new(path_fracs)
-    window.addlayer(glaz_mat, true)
+    window.add_layer(glaz_mat, true)
     
     # Create and assign construction to surfaces
     if not window.create_and_assign_constructions(sub_surfaces, runner, model, name="WindowConstruction")
@@ -264,8 +264,8 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
         sub_surface.setShadingControl(sc)
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)    
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
  

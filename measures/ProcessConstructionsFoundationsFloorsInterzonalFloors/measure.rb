@@ -119,25 +119,25 @@ class ProcessConstructionsFoundationsFloorsInterzonalFloors < OpenStudio::Rulese
     mat_gap = Material.AirCavity(Material.Stud2x6.thick_in)
     
     # Set paths
-    izfGapFactor = Construction.GetWallGapFactor(intFloorInstallGrade, intFloorFramingFactor, intFloorCavityInsRvalueNominal)
+    izfGapFactor = Construction.get_wall_gap_factor(intFloorInstallGrade, intFloorFramingFactor, intFloorCavityInsRvalueNominal)
     path_fracs = [intFloorFramingFactor, 1 - intFloorFramingFactor - izfGapFactor, izfGapFactor]
     
     # Define construction
     izf_const = Construction.new(path_fracs)
-    izf_const.addlayer(Material.AirFilmFloorReduced, false)
-    izf_const.addlayer([mat_framing, mat_cavity, mat_gap], true, "IntFloorIns")
-    izf_const.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
-    izf_const.addlayer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
-    izf_const.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
-    izf_const.addlayer(Material.AirFilmFloorReduced, false)
+    izf_const.add_layer(Material.AirFilmFloorReduced, false)
+    izf_const.add_layer([mat_framing, mat_cavity, mat_gap], true, "IntFloorIns")
+    izf_const.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
+    izf_const.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
+    izf_const.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
+    izf_const.add_layer(Material.AirFilmFloorReduced, false)
     
     # Create and assign construction to surfaces
     if not izf_const.create_and_assign_constructions(surfaces, runner, model, name="UnfinInsFinFloor")
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)    
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
 

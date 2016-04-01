@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_interzonal</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>cbbfc5e8-be67-4f4c-809c-0eee89a5edd8</version_id>
+  <version_id>7e017870-f165-43aa-8c6e-565d1c898012</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsInterzonal</class_name>
   <display_name>Set Residential Walls - Interzonal Construction</display_name>
@@ -115,7 +115,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C8C24795</checksum>
+      <checksum>A2F0AE9C</checksum>
     </file>
     <file>
       <version>
@@ -126,19 +126,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1E823DBD</checksum>
+      <checksum>A412EC6A</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>25D920D9</checksum>
+      <checksum>0FA9D8F0</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>67537815</checksum>
+      <checksum>55697569</checksum>
     </file>
   </files>
 </measure>

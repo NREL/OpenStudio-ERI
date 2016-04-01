@@ -167,19 +167,26 @@ class ProcessConstructionsWallsExteriorThermalMass < OpenStudio::Ruleset::ModelU
     # Process the exterior thermal mass
     
     # Define materials
-    mat1 = Material.new(name=Constants.MaterialWallMass, thick_in=thick_in1, mat_base=nil, k_in=cond1, dens=dens1, cp=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    mat1 = nil
+    if thick_in1 > 0 and cond1 > 0
+        mat1 = Material.new(name=Constants.MaterialWallMass, thick_in=thick_in1, mat_base=nil, k_in=cond1, rho=dens1, cp=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    end
     mat2 = nil
-    if not thick_in2.empty?
-        mat2 = Material.new(name=Constants.MaterialWallMass2, thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, dens=dens2.get, cp=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    if not thick_in2.empty? and thick_in2.get > 0 and cond2.get > 0
+        mat2 = Material.new(name=Constants.MaterialWallMass2, thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, rho=dens2.get, cp=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     end
 
     # Define construction
     wall = Construction.new([1])
-    wall.addlayer(mat1, true)
-    if not mat2.nil?
-        wall.addlayer(mat2, true)
+    if not mat1.nil?
+        wall.add_layer(mat1, true)
     else
-        wall.removelayer(Constants.MaterialWallMass2)
+        wall.remove_layer(Constants.MaterialWallMass)
+    end
+    if not mat2.nil?
+        wall.add_layer(mat2, true)
+    else
+        wall.remove_layer(Constants.MaterialWallMass2)
     end
     
     # Create and assign construction to surfaces
@@ -187,8 +194,8 @@ class ProcessConstructionsWallsExteriorThermalMass < OpenStudio::Ruleset::ModelU
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
 

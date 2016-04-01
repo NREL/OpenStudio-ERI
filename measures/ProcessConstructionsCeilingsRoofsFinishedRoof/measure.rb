@@ -147,20 +147,20 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     
     # Define construction
     roof = Construction.new(path_fracs)
-    roof.addlayer(Material.AirFilmRoof(Geometry.calculate_avg_roof_pitch(spaces)), false)
-    roof.addlayer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
-    roof.addlayer([mat_framing, mat_cavity], true, "RoofIns")
-    roof.addlayer(Material.DefaultRoofSheathing, false) # roof sheathing added in separate measure
-    roof.addlayer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
-    roof.addlayer(Material.AirFilmOutside, false)
+    roof.add_layer(Material.AirFilmRoof(Geometry.calculate_avg_roof_pitch(spaces)), false)
+    roof.add_layer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
+    roof.add_layer([mat_framing, mat_cavity], true, "RoofIns")
+    roof.add_layer(Material.DefaultRoofSheathing, false) # roof sheathing added in separate measure
+    roof.add_layer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
+    roof.add_layer(Material.AirFilmOutside, false)
     
     # Create and assign construction to surfaces
     if not roof.create_and_assign_constructions(surfaces, runner, model, name="FinInsExtRoof")
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
  

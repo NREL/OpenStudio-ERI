@@ -188,14 +188,14 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         # Define construction
         cs_wall = Construction.new([1.0])
         if not mat_fic_wall.nil?
-            cs_wall.addlayer(mat_fic_wall, true)
+            cs_wall.add_layer(mat_fic_wall, true)
         end
-        cs_wall.addlayer(Material.Soil12in, true)
-        cs_wall.addlayer(Material.Concrete8in, true)
+        cs_wall.add_layer(Material.Soil12in, true)
+        cs_wall.add_layer(Material.Concrete8in, true)
         if not mat_ins.nil?
-            cs_wall.addlayer(mat_ins, true)
+            cs_wall.add_layer(mat_ins, true)
         end
-        cs_wall.addlayer(Material.AirFilmVertical, false)
+        cs_wall.add_layer(Material.AirFilmVertical, false)
         
         # Create and assign construction to surfaces
         if not cs_wall.create_and_assign_constructions(wall_surfaces, runner, model, name="GrndInsUnfinCSWall")
@@ -224,8 +224,8 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         
         # Define construction
         cs_floor = Construction.new([1.0])
-        cs_floor.addlayer(mat_fic_floor, true)
-        cs_floor.addlayer(Material.Soil12in, true)
+        cs_floor.add_layer(mat_fic_floor, true)
+        cs_floor.add_layer(Material.Soil12in, true)
         
         # Create and assign construction to surfaces
         if not cs_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsUnfinCSFloor")
@@ -249,17 +249,17 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         mat_gap = Material.AirCavity(mat_2x.thick_in)
         
         # Set paths
-        csGapFactor = Construction.GetWallGapFactor(crawlCeilingInstallGrade, crawlCeilingFramingFactor, crawlCeilingCavityInsRvalueNominal)
+        csGapFactor = Construction.get_wall_gap_factor(crawlCeilingInstallGrade, crawlCeilingFramingFactor, crawlCeilingCavityInsRvalueNominal)
         path_fracs = [crawlCeilingFramingFactor, 1 - crawlCeilingFramingFactor - csGapFactor, csGapFactor]
         
         # Define construction
         cs_ceiling = Construction.new(path_fracs)
-        cs_ceiling.addlayer(Material.AirFilmFloorReduced, false)
-        cs_ceiling.addlayer([mat_framing, mat_cavity, mat_gap], true, "CrawlCeilingIns")
-        cs_ceiling.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
-        cs_ceiling.addlayer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
-        cs_ceiling.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
-        cs_ceiling.addlayer(Material.AirFilmFloorReduced, false)
+        cs_ceiling.add_layer(Material.AirFilmFloorReduced, false)
+        cs_ceiling.add_layer([mat_framing, mat_cavity, mat_gap], true, "CrawlCeilingIns")
+        cs_ceiling.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
+        cs_ceiling.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
+        cs_ceiling.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
+        cs_ceiling.add_layer(Material.AirFilmFloorReduced, false)
 
         # Create and assign construction to surfaces
         if not cs_ceiling.create_and_assign_constructions(ceiling_surfaces, runner, model, name="UnfinCSInsFinFloor")
@@ -267,8 +267,8 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         end
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
 

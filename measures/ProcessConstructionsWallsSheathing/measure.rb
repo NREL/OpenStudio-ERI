@@ -117,14 +117,14 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
     # Define construction
     wall_sh = Construction.new([1])
     if not mat_rigid.nil?
-        wall_sh.addlayer(mat_rigid, true)
+        wall_sh.add_layer(mat_rigid, true)
     else
-        wall_sh.removelayer(Constants.MaterialWallRigidIns)
+        wall_sh.remove_layer(Constants.MaterialWallRigidIns)
     end
     if not mat_osb.nil?
-        wall_sh.addlayer(mat_osb, true)
+        wall_sh.add_layer(mat_osb, true)
     else
-        wall_sh.removelayer(Constants.MaterialWallSheathing)
+        wall_sh.remove_layer(Constants.MaterialWallSheathing)
     end
     
     # Create and assign construction to surfaces
@@ -132,8 +132,8 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
 

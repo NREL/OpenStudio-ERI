@@ -94,13 +94,13 @@ class ProcessConstructionsFoundationsFloorsPartitionFloors < OpenStudio::Ruleset
     if not finished_surfaces.empty?
         # Define construction
         fin_floor = Construction.new(path_fracs)
-        fin_floor.addlayer(Material.AirFilmFloorAverage, false)
-        fin_floor.addlayer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
-        fin_floor.addlayer([mat_framing, mat_cavity], true, "StudAndAirFloor")
-        fin_floor.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
-        fin_floor.addlayer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
-        fin_floor.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
-        fin_floor.addlayer(Material.AirFilmFloorAverage, false)
+        fin_floor.add_layer(Material.AirFilmFloorAverage, false)
+        fin_floor.add_layer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
+        fin_floor.add_layer([mat_framing, mat_cavity], true, "StudAndAirFloor")
+        fin_floor.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
+        fin_floor.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
+        fin_floor.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
+        fin_floor.add_layer(Material.AirFilmFloorAverage, false)
 
         # Create and apply construction to finished surfaces
         if not fin_floor.create_and_assign_constructions(finished_surfaces, runner, model, name="FinUninsFinFloor")
@@ -111,10 +111,10 @@ class ProcessConstructionsFoundationsFloorsPartitionFloors < OpenStudio::Ruleset
     if not unfinished_surfaces.empty?
         # Define construction
         unfin_floor = Construction.new(path_fracs)
-        unfin_floor.addlayer(Material.AirFilmFloorAverage, false)
-        unfin_floor.addlayer([mat_framing, mat_cavity], true, "StudAndAirFloor")
-        unfin_floor.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
-        unfin_floor.addlayer(Material.AirFilmFloorAverage, false)
+        unfin_floor.add_layer(Material.AirFilmFloorAverage, false)
+        unfin_floor.add_layer([mat_framing, mat_cavity], true, "StudAndAirFloor")
+        unfin_floor.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
+        unfin_floor.add_layer(Material.AirFilmFloorAverage, false)
 
         # Create and apply construction to unfinished surfaces
         if not unfin_floor.create_and_assign_constructions(unfinished_surfaces, runner, model, name="UnfinUninsUnfinFloor")
@@ -122,8 +122,8 @@ class ProcessConstructionsFoundationsFloorsPartitionFloors < OpenStudio::Ruleset
         end
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)    
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
  

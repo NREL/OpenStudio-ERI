@@ -67,19 +67,19 @@ class ProcessConstructionsUninsulatedWalls < OpenStudio::Ruleset::ModelUserScrip
     
     # Define construction
     wall = Construction.new(path_fracs)
-    wall.addlayer(Material.AirFilmVertical, false)
-    wall.addlayer([mat_framing, mat_cavity], true, "StudAndAirWall")       
-    wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    wall.addlayer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    wall.addlayer(Material.AirFilmOutside, false)
+    wall.add_layer(Material.AirFilmVertical, false)
+    wall.add_layer([mat_framing, mat_cavity], true, "StudAndAirWall")
+    wall.add_layer(Material.DefaultWallSheathing, true)
+    wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    wall.add_layer(Material.AirFilmOutside, false)
 
     # Create and assign construction to surfaces
     if not wall.create_and_assign_constructions(surfaces, runner, model, name="ExtUninsUnfinWall")
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 	
     return true
  

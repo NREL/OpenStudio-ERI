@@ -152,23 +152,23 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
 
     # Define construction
     sip_wall = Construction.new(path_fracs)
-    sip_wall.addlayer(Material.AirFilmVertical, false)
-    sip_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    sip_wall.addlayer(mat_int_sheath, true, "IntSheathing")
-    sip_wall.addlayer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerInner")
-    sip_wall.addlayer([mat_framing_middle, mat_ins_middle, mat_ins_middle], true, "WallIns")
-    sip_wall.addlayer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerOuter")
-    sip_wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    sip_wall.addlayer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    sip_wall.addlayer(Material.AirFilmOutside, false)
+    sip_wall.add_layer(Material.AirFilmVertical, false)
+    sip_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+    sip_wall.add_layer(mat_int_sheath, true, "IntSheathing")
+    sip_wall.add_layer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerInner")
+    sip_wall.add_layer([mat_framing_middle, mat_ins_middle, mat_ins_middle], true, "WallIns")
+    sip_wall.add_layer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerOuter")
+    sip_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+    sip_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    sip_wall.add_layer(Material.AirFilmOutside, false)
 
     # Create and assign construction to surfaces
     if not sip_wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner) 
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
 

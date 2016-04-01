@@ -126,22 +126,22 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     
     # Define construction
     icf_wall = Construction.new(path_fracs)
-    icf_wall.addlayer(Material.AirFilmVertical, false)
-    icf_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    icf_wall.addlayer([mat_framing_inner_outer, mat_ins], true, "ICFInsFormInner")
-    icf_wall.addlayer([mat_framing_middle, mat_conc], true, "ICFConcrete")
-    icf_wall.addlayer([mat_framing_inner_outer, mat_ins], true, "ICFInsFormOuter")
-    icf_wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    icf_wall.addlayer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    icf_wall.addlayer(Material.AirFilmOutside, false)
+    icf_wall.add_layer(Material.AirFilmVertical, false)
+    icf_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+    icf_wall.add_layer([mat_framing_inner_outer, mat_ins], true, "ICFInsFormInner")
+    icf_wall.add_layer([mat_framing_middle, mat_conc], true, "ICFConcrete")
+    icf_wall.add_layer([mat_framing_inner_outer, mat_ins], true, "ICFInsFormOuter")
+    icf_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+    icf_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    icf_wall.add_layer(Material.AirFilmOutside, false)
     
     # Create and assign construction to surfaces
     if not icf_wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner) 
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
 

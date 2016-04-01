@@ -95,9 +95,9 @@ class ProcessConstructionsFoundationsFloorsCovering < OpenStudio::Ruleset::Model
     # Define construction
     floor = Construction.new([1])
     if not mat.nil?
-        floor.addlayer(mat, true)
+        floor.add_layer(mat, true)
     else
-        floor.removelayer(Constants.MaterialFloorCovering)
+        floor.remove_layer(Constants.MaterialFloorCovering)
     end
     
     # Create and assign construction to surfaces
@@ -105,8 +105,8 @@ class ProcessConstructionsFoundationsFloorsCovering < OpenStudio::Ruleset::Model
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)    
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
 

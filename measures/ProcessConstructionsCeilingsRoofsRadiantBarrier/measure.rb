@@ -72,9 +72,9 @@ class ProcessConstructionsCeilingsRoofsRadiantBarrier < OpenStudio::Ruleset::Mod
     # Define construction
     rb = Construction.new([1])
     if not mat.nil?
-        rb.addlayer(mat, true)
+        rb.add_layer(mat, true)
     else
-        rb.removelayer(Material.RadiantBarrier.name)
+        rb.remove_layer(Material.RadiantBarrier.name)
     end
     
     # Create and assign construction to surfaces
@@ -82,8 +82,8 @@ class ProcessConstructionsCeilingsRoofsRadiantBarrier < OpenStudio::Ruleset::Mod
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
 

@@ -323,52 +323,52 @@ class ProcessConstructionsWallsExteriorGeneric < OpenStudio::Ruleset::ModelUserS
     # Process the generic walls
 
     # Define materials
-    mat1 = Material.new(name="Layer1", thick_in=thick_in1, mat_base=nil, k_in=cond1, dens=dens1, cp=specheat1)
+    mat1 = Material.new(name="Layer1", thick_in=thick_in1, mat_base=nil, k_in=cond1, rho=dens1, cp=specheat1)
     mat2 = nil
     if not thick_in2.empty?
-        mat2 = Material.new(name="Layer2", thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, dens=dens2.get, cp=specheat2.get)
+        mat2 = Material.new(name="Layer2", thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, rho=dens2.get, cp=specheat2.get)
     end
     mat3 = nil
     if not thick_in3.empty?
-        mat3 = Material.new(name="Layer3", thick_in=thick_in3.get, mat_base=nil, k_in=cond3.get, dens=dens3.get, cp=specheat3.get)
+        mat3 = Material.new(name="Layer3", thick_in=thick_in3.get, mat_base=nil, k_in=cond3.get, rho=dens3.get, cp=specheat3.get)
     end
     mat4 = nil
     if not thick_in4.empty?
-        mat4 = Material.new(name="Layer4", thick_in=thick_in4.get, mat_base=nil, k_in=cond4.get, dens=dens4.get, cp=specheat4.get)
+        mat4 = Material.new(name="Layer4", thick_in=thick_in4.get, mat_base=nil, k_in=cond4.get, rho=dens4.get, cp=specheat4.get)
     end
     mat5 = nil
     if not thick_in5.empty?
-        mat5 = Material.new(name="Layer5", thick_in=thick_in5.get, mat_base=nil, k_in=cond5.get, dens=dens5.get, cp=specheat5.get)
+        mat5 = Material.new(name="Layer5", thick_in=thick_in5.get, mat_base=nil, k_in=cond5.get, rho=dens5.get, cp=specheat5.get)
     end
 
     # Define construction
     wall = Construction.new([1])
-    wall.addlayer(Material.AirFilmVertical, false)
-    wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    wall.addlayer(mat1, true)
+    wall.add_layer(Material.AirFilmVertical, false)
+    wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+    wall.add_layer(mat1, true)
     if not mat2.nil?
-        wall.addlayer(mat2, true)
+        wall.add_layer(mat2, true)
     end
     if not mat3.nil?
-        wall.addlayer(mat3, true)
+        wall.add_layer(mat3, true)
     end
     if not mat4.nil?
-        wall.addlayer(mat4, true)
+        wall.add_layer(mat4, true)
     end
     if not mat5.nil?
-        wall.addlayer(mat5, true)
+        wall.add_layer(mat5, true)
     end
-    wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    wall.addlayer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    wall.addlayer(Material.AirFilmOutside, false)
+    wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+    wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    wall.add_layer(Material.AirFilmOutside, false)
 
     # Create and assign construction to surfaces
     if not wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
  

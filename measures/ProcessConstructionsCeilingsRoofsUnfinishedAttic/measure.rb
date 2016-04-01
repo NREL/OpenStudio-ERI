@@ -147,7 +147,7 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
     if ceiling_surfaces.empty? and roof_surfaces.empty?
         runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
         return true
-    end   
+    end
     
     # Get Inputs
     uACeilingInsRvalueNominal = runner.getDoubleArgumentValue("ceil_r",user_arguments)
@@ -236,20 +236,20 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
       end
       
       # Set paths
-      gapFactor = Construction.GetWallGapFactor(uACeilingInstallGrade, uACeilingFramingFactor, uACeilingInsRvalueNominal)
+      gapFactor = Construction.get_wall_gap_factor(uACeilingInstallGrade, uACeilingFramingFactor, uACeilingInsRvalueNominal)
       path_fracs = [uACeilingFramingFactor, 1 - uACeilingFramingFactor - gapFactor, gapFactor]
       
       # Define construction
       attic_floor = Construction.new(path_fracs)
-      attic_floor.addlayer(Material.AirFilmFloorAverage, false)
-      attic_floor.addlayer(Material.GypsumCeiling1_2in, false) # thermal mass added in separate measure
+      attic_floor.add_layer(Material.AirFilmFloorAverage, false)
+      attic_floor.add_layer(Material.GypsumCeiling1_2in, false) # thermal mass added in separate measure
       if not mat_framing.nil? and not mat_cavity.nil? and not mat_gap.nil?
-          attic_floor.addlayer([mat_framing, mat_cavity, mat_gap], true, "UATrussandIns")
+          attic_floor.add_layer([mat_framing, mat_cavity, mat_gap], true, "UATrussandIns")
       end
       if not mat_addtl_ins.nil?
-          attic_floor.addlayer(mat_addtl_ins, true)
+          attic_floor.add_layer(mat_addtl_ins, true)
       end
-      attic_floor.addlayer(Material.AirFilmFloorAverage, false)
+      attic_floor.add_layer(Material.AirFilmFloorAverage, false)
       
       # Create and assign construction to ceiling surfaces
       if not attic_floor.create_and_assign_constructions(ceiling_surfaces, runner, model, name="FinInsUnfinUAFloor")
@@ -264,35 +264,34 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
     if not roof_surfaces.empty?
         # Define materials
         uA_roof_ins_thickness_in = [uARoofInsThickness, uARoofFramingThickness].max
-        uA_roof_ins_thickness = OpenStudio::convert(uA_roof_ins_thickness_in,"in","ft").get
         if uARoofInsRvalueNominal == 0
-            cavity_k = Constants.InfiniteConductivity
+            mat_cavity = Material.new(name=nil, thick_in=uA_roof_ins_thickness_in, mat_base=BaseMaterial.InsulationGenericLoosefill, cond=Constants.InfiniteConductivity, rho=Gas.Air.rho, cp=Gas.Air.cp)
         else
             cavity_k = OpenStudio::convert(uARoofInsThickness,"in","ft").get / uARoofInsRvalueNominal
             if uARoofInsThickness < uARoofFramingThickness
                 cavity_k = cavity_k * uARoofFramingThickness / uARoofInsThickness
             end
+            mat_cavity = Material.new(name=nil, thick_in=uA_roof_ins_thickness_in, mat_base=BaseMaterial.InsulationGenericLoosefill, cond=cavity_k)
         end
         if uARoofInsThickness > uARoofFramingThickness and uARoofFramingThickness > 0
             wood_k = BaseMaterial.Wood.k_in * uARoofInsThickness / uARoofFramingThickness
         else
             wood_k = BaseMaterial.Wood.k_in
         end
-        mat_cavity = Material.new(name=nil, thick_in=uA_roof_ins_thickness_in, mat_base=BaseMaterial.InsulationGenericLoosefill, cond=cavity_k)
         mat_framing = Material.new(name=nil, thick_in=uA_roof_ins_thickness_in, mat_base=BaseMaterial.Wood, k_in=wood_k)
         mat_gap = Material.AirCavity(uA_roof_ins_thickness_in)
         
         # Set paths
-        gapFactor = Construction.GetWallGapFactor(uARoofInstallGrade, uARoofFramingFactor, uARoofInsRvalueNominal)
+        gapFactor = Construction.get_wall_gap_factor(uARoofInstallGrade, uARoofFramingFactor, uARoofInsRvalueNominal)
         path_fracs = [uARoofFramingFactor, 1 - uARoofFramingFactor - gapFactor, gapFactor]
         
         # Define construction
         roof = Construction.new(path_fracs)
-        roof.addlayer(mat_film_roof, false)
-        roof.addlayer([mat_framing, mat_cavity, mat_gap], true, "UARoofIns")
-        roof.addlayer(Material.DefaultRoofSheathing, false) # roof sheathing added in separate measure
-        roof.addlayer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
-        roof.addlayer(Material.AirFilmOutside, false)
+        roof.add_layer(mat_film_roof, false)
+        roof.add_layer([mat_framing, mat_cavity, mat_gap], true, "UARoofIns")
+        roof.add_layer(Material.DefaultRoofSheathing, false) # roof sheathing added in separate measure
+        roof.add_layer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
+        roof.add_layer(Material.AirFilmOutside, false)
 
         # Create and assign construction to roof surfaces
         if not roof.create_and_assign_constructions(roof_surfaces, runner, model, name="UnfinInsExtRoof")
@@ -301,8 +300,8 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Ruleset::Mo
         
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)     
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
  

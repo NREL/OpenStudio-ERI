@@ -66,42 +66,19 @@ class HelperMethods
         return wh_setpoint
     end
     
-    def self.remove_unused_materials_and_constructions(model, runner)
-        # Constructions not used by surfaces or subsurfaces:
-        used_constructions = []
-        model.getSpaces.each do |space|
-            space.surfaces.each do |surface|
-                next if not surface.construction.is_initialized
-                used_constructions << surface.construction.get
-                surface.subSurfaces.each do |subsurface|
-                    next if not subsurface.construction.is_initialized
-                    used_constructions << subsurface.construction.get
-                end
+    def self.remove_unused_constructions_and_materials(model, runner)
+        # Code from https://bcl.nrel.gov/node/82267 (remove_orphan_objects_and_unused_resources measure)
+        model.getConstructions.sort.each do |resource|
+            if resource.directUseCount == 0
+                runner.registerInfo("Removed construction '#{resource.name}' because it was orphaned.")
+                resource.remove
             end
         end
-        model.getConstructions.each do |construction|
-            if not used_constructions.include? construction
-                construction.remove
-                runner.registerInfo("Removed construction '#{construction.name}' because it was orphaned.")
-            end
-        end
-        # Materials not used by constructions:
-        used_materials = []
-        model.getConstructions.each do |construction|
-            construction.layers.each do |material|
-                used_materials << material
-            end
-        end
-        model.getStandardOpaqueMaterials.each do |material|
-            if not used_materials.include? material
-                material.remove
-                runner.registerInfo("Removed material '#{material.name}' because it was orphaned.")
-            end
-        end
-        model.getMasslessOpaqueMaterials.each do |material|
-            if not used_materials.include? material
-                material.remove
-                runner.registerInfo("Removed material '#{material.name}' because it was orphaned.")
+
+        model.getMaterials.sort.each do |resource|
+            if resource.directUseCount == 0
+                runner.registerInfo("Removed material '#{resource.name}' because it was orphaned.")
+                resource.remove
             end
         end
     end
@@ -323,9 +300,7 @@ class Material
     end
 
     def self.DefaultFloorMass
-        mat = Material.MassFloor(0.625, 0.8004, 34.0, 0.29) # Wood Surface
-        mat.name = Constants.MaterialFloorMass
-        return mat
+        return Material.new(name=Constants.MaterialFloorMass, thick_in=0.625, mat_base=nil, k_in=0.8004, rho=34.0, cp=0.29) # wood surface
     end
     
     def self.DefaultFloorSheathing
@@ -364,14 +339,6 @@ class Material
 
     def self.GypsumCeiling1_2in
         return Material.new(name='CeilingGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, k_in=nil, rho=nil, cp=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
-    end
-
-    def self.MassFloor(floorMassThickness, floorMassConductivity, floorMassDensity, floorMassSpecificHeat)
-        return Material.new(name='FloorMass', thick_in=floorMassThickness, mat_base=nil, k_in=floorMassConductivity, rho=floorMassDensity, cp=floorMassSpecificHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsFloor)
-    end
-
-    def self.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
-        return Material.new(name='PartitionWallMass', thick_in=partitionWallMassThickness, mat_base=nil, k_in=partitionWallMassConductivity, rho=partitionWallMassDensity, cp=partitionWallMassSpecHeat, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     end
 
     def self.Soil12in
@@ -414,8 +381,8 @@ end
 
 class Construction
 
-    # Facilitates creating an OpenStudio construction (with accompanying OpenStudio Materials)
-    # from Material objects. Handles parallel paths as well.
+    # Facilitates creating and assigning an OpenStudio construction (with accompanying 
+    # OpenStudio Materials) from Material objects. Handles parallel paths as well.
 
     def initialize(path_widths, name=nil, type=nil)
         @name = name
@@ -432,7 +399,7 @@ class Construction
         @remove_materials = []
     end
     
-    def addlayer(materials, include_in_construction, name=nil)
+    def add_layer(materials, include_in_construction, name=nil)
         # materials: Either a Material object or a list of Material objects
         # include_in_construction: false if an assumed, default layer that should not be included 
         #                          in the resulting construction but is used to calculate the 
@@ -448,11 +415,11 @@ class Construction
         @layers_names << name
     end
     
-    def removelayer(name)
+    def remove_layer(name)
         @remove_materials << name
     end
     
-    def printlayers(runner)
+    def print_layers(runner)
         @path_fracs.each do |path_frac|
             runner.registerInfo("path_frac: #{path_frac.round(5).to_s}")
         end
@@ -499,25 +466,9 @@ class Construction
         end
         
         # Uncomment the following line to debug
-        #printlayers(runner)
+        #print_layers(runner)
         
-        # Create materials
-        materials = []
-        @layers_materials.each_with_index do |layer_materials,layer_num|
-            next if not @layers_includes[layer_num]
-            if layer_materials.size == 1
-                if not @layers_names[layer_num].nil?
-                    mat_name = @layers_names[layer_num]
-                else
-                    mat_name = layer_materials[0].name
-                end
-                mat = create_os_material(model, runner, layer_materials[0], mat_name)
-            else
-                parallel_path_mat = get_parallel_material(layer_num, runner)
-                mat = create_os_material(model, runner, parallel_path_mat)
-            end
-            materials << mat
-        end
+        materials = construct_materials(model, runner)
         
         if materials.size == 0
             return true
@@ -541,18 +492,25 @@ class Construction
                 end
                 if model.getConstructions.size != num_prev_constructions
                     construction_map[constr_name] = surface.construction.get
-                    runner.registerInfo("Construction '#{surface.construction.get.name.to_s}' was created.")
-                    runner.registerInfo("Surface '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
+                    print_construction_creation(runner, surface)
+                    print_construction_assignment(runner, surface)
                 end
             else
                 # Re-use recently created construction
                 surface.setConstruction(construction_map[constr_name])
-                runner.registerInfo("Surface '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
+                print_construction_assignment(runner, surface)
             end
 
             # Assign reverse construction to adjacent surface as needed
-            next if not surface.adjacentSurface.is_initialized or surface.is_a? OpenStudio::Model::SubSurface
-            rev_constr_name = "Rev#{surface.construction.get.name.to_s}"
+            next if surface.is_a? OpenStudio::Model::SubSurface or surface.is_a? OpenStudio::Model::InternalMassDefinition or not surface.adjacentSurface.is_initialized
+            if surface.construction.get.name.to_s.start_with?("Rev")
+                # Strip "Rev" at beginning
+                rev_constr_name = surface.construction.get.name.to_s
+                rev_constr_name.slice!(0..2)
+            else
+                # Add "Rev" to beginning
+                rev_constr_name = "Rev#{surface.construction.get.name.to_s}"
+            end
             adjacent_surface = surface.adjacentSurface.get
             if not rev_construction_map.include? rev_constr_name
                 # Create adjacent construction
@@ -566,20 +524,20 @@ class Construction
                 adjacent_surface.setConstruction(revconstr)
                 rev_construction_map[rev_constr_name] = adjacent_surface.construction.get
                 if model.getConstructions.size != num_prev_constructions
-                    runner.registerInfo("Construction '#{adjacent_surface.construction.get.name.to_s}' was created.")
-                    runner.registerInfo("Surface '#{adjacent_surface.name.to_s}' has been assigned construction '#{adjacent_surface.construction.get.name.to_s}'.")
+                    print_construction_creation(runner, adjacent_surface)
                 end
+                print_construction_assignment(runner, adjacent_surface)
             else
                 # Re-use recently created adjacent construction
                 adjacent_surface.setConstruction(rev_construction_map[rev_constr_name])
-                runner.registerInfo("Surface '#{adjacent_surface.name.to_s}' has been assigned construction '#{adjacent_surface.construction.get.name.to_s}'.")
+                print_construction_assignment(runner, adjacent_surface)
             end
             
         end
         return true
     end
     
-    def self.GetWallGapFactor(installGrade, framingFactor, cavityInsulRvalue)
+    def self.get_wall_gap_factor(installGrade, framingFactor, cavityInsulRvalue)
 
         if cavityInsulRvalue <= 0
             return 0 # Gap factor only applies when there is cavity insulation
@@ -595,7 +553,7 @@ class Construction
 
     end
 
-    def self.GetBasementConductionFactor(bsmtWallInsulationHeight, bsmtWallInsulRvalue)
+    def self.get_basement_conduction_factor(bsmtWallInsulationHeight, bsmtWallInsulRvalue)
         if bsmtWallInsulationHeight == 4
             return (1.689 / (0.430 + bsmtWallInsulRvalue) ** 0.164)
         else
@@ -603,7 +561,53 @@ class Construction
         end
     end
     
+    def self.get_constructions_from_surfaces(surfaces)
+        constructions = []
+        surfaces.each do |surface|
+            next if not surface.construction.is_initialized
+            next if constructions.include?(surface.construction.get)
+            constructions << surface.construction.get
+        end
+        return constructions
+    end
+    
+    def self.get_materials_from_constructions(constructions)
+        materials = []
+        constructions.each do |construction|
+            construction.to_LayeredConstruction.get.layers.each do |material|
+                next if materials.include?(material)
+                materials << material
+            end
+        end
+        return materials
+    end
+    
     private
+    
+        def print_construction_creation(runner, surface)
+            s = ""
+            num_layers = surface.construction.get.to_LayeredConstruction.get.layers.size
+            if num_layers > 1
+                s = "s"
+            end
+            mats_s = ""
+            surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
+                mats_s += layer.name.to_s + ", "
+            end
+            mats_s.chomp!(", ")
+            runner.registerInfo("Construction '#{surface.construction.get.name.to_s}' was created with #{num_layers.to_s} material#{s.to_s} (#{mats_s.to_s}).")
+        end
+    
+        def print_construction_assignment(runner, surface)
+            if surface.is_a? OpenStudio::Model::SubSurface
+                type_s = "SubSurface"
+            elsif surface.is_a? OpenStudio::Model::InternalMassDefinition
+                type_s = "InternalMassDefinition"
+            else
+                type_s = "Surface"
+            end
+            runner.registerInfo("#{type_s.to_s} '#{surface.name.to_s}' has been assigned construction '#{surface.construction.get.name.to_s}'.")
+        end
     
         def get_parallel_material(curr_layer_num, runner)
             # Returns a Material object with effective properties for the specified
@@ -663,6 +667,27 @@ class Construction
             return mat
         end
 
+        def construct_materials(model, runner)
+            # Create materials
+            materials = []
+            @layers_materials.each_with_index do |layer_materials,layer_num|
+                next if not @layers_includes[layer_num]
+                if layer_materials.size == 1
+                    if not @layers_names[layer_num].nil?
+                        mat_name = @layers_names[layer_num]
+                    else
+                        mat_name = layer_materials[0].name
+                    end
+                    mat = create_os_material(model, runner, layer_materials[0], mat_name)
+                else
+                    parallel_path_mat = get_parallel_material(layer_num, runner)
+                    mat = create_os_material(model, runner, parallel_path_mat)
+                end
+                materials << mat
+            end
+            return materials
+        end
+        
         def validated?(runner)
             # Check that sum of path fracs equal 1
             if @sum_path_fracs <= 0.99 or @sum_path_fracs >= 1.01
@@ -770,40 +795,58 @@ class Construction
         # Returns a boolean denoting whether the execution was successful
         def create_and_assign_construction(surface, materials, runner, model, name)
         
-            if (not surface.construction.is_initialized or not surface.construction.get.to_LayeredConstruction.is_initialized) or materials[0].is_a? GlazingMaterial
-                if materials.size > 0
-                    # Assign new construction and return true
-                    constr = OpenStudio::Model::Construction.new(materials)
-                    if not name.nil?
-                        constr.setName(name)
-                    end
-                    surface.setConstruction(constr)
-                end
+            if materials.size == 0
                 return true
             end
+        
+            if (not surface.construction.is_initialized or not surface.construction.get.to_LayeredConstruction.is_initialized) or materials[0].is_a? GlazingMaterial
+                # Create new construction
+                constr = OpenStudio::Model::Construction.new(model)
+            else
+                # Otherwise, clone construction
+                constr = surface.construction.get.clone(model).to_LayeredConstruction.get
+            end
             
-            # Otherwise, clone construction and assign material layers as appropriate
-            constr = surface.construction.get.clone(model).to_LayeredConstruction.get
             is_modified = false
             if not name.nil?
                 constr.setName(name)
             end
+            
+            # Assign material layers as appropriate
+            # If multiple non standard layers being assigned, ensure we only remove
+            # the existing non standard layers the first time.
+            remove_non_std_layers = true
             materials.each do |material|
-                is_modified = is_modified || assign_material(constr, surface, material, runner, model)
+                if assign_material(constr, material, surface, remove_non_std_layers)
+                    is_modified = true
+                end
+                remove_non_std_layers = false
             end
+            
+            # Remove material layers as appropriate
             @remove_materials.each do |material_name|
-                is_modified = is_modified || remove_material(constr, material_name)
+                if remove_material(constr, material_name)
+                    is_modified = true
+                end
             end
+            
             if is_modified
-                surface.setConstruction(constr)
+                surface.setConstruction(constr) # use the constr
             else
-                constr.remove
+                constr.remove # constr not used, remove
             end
+            
             return true
         end
         
-        def assign_material(constr, surface, material, runner, model)
+        # Returns true if the material was assigned
+        def assign_material(constr, material, surface, remove_non_std_layers)
             num_layers = constr.numLayers
+            
+            if not surface.respond_to?("surfaceType")
+                constr.insertLayer(num_layers, material)
+                return true
+            end
             
             # Note: We determine types of layers (exterior finish, etc.) by name.
             # The code below defines the target layer positions for the materials when the 
@@ -812,19 +855,13 @@ class Construction
                 target_positions_std = {Constants.MaterialWallExtFinish => 0, # outside
                                         Constants.MaterialWallRigidIns => 1,
                                         Constants.MaterialWallSheathing => 2, 
+                                        Constants.MaterialWallMassOtherSide => 3,
+                                        Constants.MaterialWallMassOtherSide2 => 4,
                                         # non-std middle layer(s)
                                         Constants.MaterialWallMass => num_layers,
                                         Constants.MaterialWallMass2 => num_layers+1} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialWallSheathing] + 1
-            elsif surface.surfaceType.downcase == "floor" # Floor
-                target_positions_std = {Constants.MaterialCeilingMass2 => 0, # outside
-                                        Constants.MaterialCeilingMass => 1,
-                                        # non-std middle layer(s)
-                                        Constants.MaterialFloorSheathing => num_layers,
-                                        Constants.MaterialFloorMass => num_layers+1,
-                                        Constants.MaterialFloorCovering => num_layers+2} # inside
-                target_position_non_std = target_positions_std[Constants.MaterialCeilingMass] + 1
-            elsif surface.surfaceType.downcase == "roofceiling" # Roof
+            elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors" # Roof
                 target_positions_std = {Constants.MaterialRoofMaterial => 0, # outside
                                         Constants.MaterialRoofRigidIns => 1,
                                         Constants.MaterialRoofSheathing => 2,
@@ -833,6 +870,16 @@ class Construction
                                         Constants.MaterialCeilingMass => num_layers+1,
                                         Constants.MaterialCeilingMass2 => num_layers+2} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialRoofSheathing] + 1
+            elsif surface.surfaceType.downcase == "floor" or surface.surfaceType.downcase == "roofceiling" # Floor/ceiling
+                target_positions_std = {Constants.MaterialCeilingMass2 => 0, # outside
+                                        Constants.MaterialCeilingMass => 1,
+                                        # non-std middle layer(s)
+                                        Constants.MaterialFloorSheathing => num_layers,
+                                        Constants.MaterialFloorMass => num_layers+1,
+                                        Constants.MaterialFloorCovering => num_layers+2} # inside
+                target_position_non_std = target_positions_std[Constants.MaterialCeilingMass] + 1
+            else
+                runner.registeError("Unexpected surface type '#{surface.surfaceType.to_s}'.")
             end
 
             # Determine current positions of any standard materials
@@ -854,7 +901,7 @@ class Construction
                 end
             end
 
-            if standard_mat.nil?
+            if remove_non_std_layers and standard_mat.nil?
                 # Remove any layers other than standard materials
                 constr.layers.reverse.each_with_index do |layer, index|
                     layer_index = num_layers - 1 - index
@@ -905,23 +952,53 @@ class Construction
             return false
         end
         
-        # Creates an OpenStudio Material from our own Material object
+        # Creates (or returns an existing) OpenStudio Material from our own Material object
         def create_os_material(model, runner, material, name=nil)
-            # TODO: Check for identical existing material
             if name.nil?
                 name = material.name
             end
+            tolerance = 0.0001
             if material.is_a? SimpleMaterial
+                # Material already exists?
+                model.getMasslessOpaqueMaterials.each do |mat|
+                    next if mat.name.to_s != name.to_s
+                    next if mat.roughness.downcase.to_s != "rough"
+                    next if (mat.thermalResistance - OpenStudio::convert(material.rvalue,"hr*ft^2*R/Btu","m^2*K/W").get) > tolerance
+                    return mat
+                end
+                # New material
                 mat = OpenStudio::Model::MasslessOpaqueMaterial.new(model)
                 mat.setName(name)
                 mat.setRoughness("Rough")
                 mat.setThermalResistance(OpenStudio::convert(material.rvalue,"hr*ft^2*R/Btu","m^2*K/W").get)
             elsif material.is_a? GlazingMaterial
+                # Material already exists?
+                model.getSimpleGlazings.each do |mat|
+                    next if mat.name.to_s != name.to_s
+                    next if (mat.uFactor - material.ufactor) > tolerance
+                    next if (mat.solarHeatGainCoefficient - material.shgc) > tolerance
+                    return mat
+                end
+                # New material
                 mat = OpenStudio::Model::SimpleGlazing.new(model)
                 mat.setName(name)
                 mat.setUFactor(material.ufactor)
                 mat.setSolarHeatGainCoefficient(material.shgc)
             else
+                # Material already exists?
+                model.getStandardOpaqueMaterials.each do |mat|
+                    next if mat.name.to_s != name.to_s
+                    next if mat.roughness.downcase.to_s != "rough"
+                    next if (mat.thickness - OpenStudio::convert(material.thick_in,"in","m").get) > tolerance
+                    next if (mat.conductivity - OpenStudio::convert(material.k,"Btu/hr*ft*R","W/m*K").get) > tolerance
+                    next if (mat.density - OpenStudio::convert(material.rho,"lb/ft^3","kg/m^3").get) > tolerance
+                    next if (mat.specificHeat - OpenStudio::convert(material.cp,"Btu/lb*R","J/kg*K").get) > tolerance
+                    next if not material.tAbs.nil? and (mat.thermalAbsorptance - material.tAbs) > tolerance
+                    next if not material.sAbs.nil? and (mat.solarAbsorptance - material.sAbs) > tolerance
+                    next if not material.vAbs.nil? and (mat.visibleAbsorptance - material.vAbs) > tolerance
+                    return mat
+                end
+                # New material
                 mat = OpenStudio::Model::StandardOpaqueMaterial.new(model)
                 mat.setName(name)
                 mat.setRoughness("Rough")

@@ -104,7 +104,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
         
         # Define construction
         fin_door = Construction.new(path_fracs)
-        fin_door.addlayer(fin_door_mat, true)
+        fin_door.add_layer(fin_door_mat, true)
         
         # Create and assign construction to surfaces
         if not fin_door.create_and_assign_constructions(finished_sub_surfaces, runner, model, name="LivingDoors")
@@ -126,7 +126,7 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
         
         # Define construction
         unfin_door = Construction.new(path_fracs)
-        unfin_door.addlayer(unfin_door_mat, true)
+        unfin_door.add_layer(unfin_door_mat, true)
         
         # Create and assign construction to surfaces
         if not unfin_door.create_and_assign_constructions(unfinished_sub_surfaces, runner, model, name="UnfinDoors")
@@ -134,8 +134,8 @@ class ProcessConstructionsDoors < OpenStudio::Ruleset::ModelUserScript
         end
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
  

@@ -105,6 +105,10 @@ class ProcessConstructionsCeilingsRoofsThermalMass < OpenStudio::Ruleset::ModelU
         space.surfaces.each do |surface|
             if surface.surfaceType.downcase == "roofceiling"
                 surfaces << surface
+            elsif surface.surfaceType.downcase == "floor" and surface.outsideBoundaryCondition.downcase == "adiabatic"
+                # For example, a partition floor surface between two living space stories from BEopt
+                # FIXME: Remove this elsif and split the spaces in our BEopt geometry files
+                surfaces << surface
             end
         end
     end
@@ -166,19 +170,19 @@ class ProcessConstructionsCeilingsRoofsThermalMass < OpenStudio::Ruleset::ModelU
     # Process the ceiling thermal mass
     
     # Define materials
-    mat1 = Material.new(name=Constants.MaterialCeilingMass, thick_in=thick_in1, mat_base=nil, k_in=cond1, dens=dens1, cp=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    mat1 = Material.new(name=Constants.MaterialCeilingMass, thick_in=thick_in1, mat_base=nil, k_in=cond1, rho=dens1, cp=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
     mat2 = nil
     if not thick_in2.empty?
-        mat2 = Material.new(name=Constants.MaterialCeilingMass2, thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, dens=dens2.get, cp=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+        mat2 = Material.new(name=Constants.MaterialCeilingMass2, thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, rho=dens2.get, cp=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
     end
 
     # Define construction
     ceiling = Construction.new([1])
-    ceiling.addlayer(mat1, true)
+    ceiling.add_layer(mat1, true)
     if not mat2.nil?
-        ceiling.addlayer(mat2, true)
+        ceiling.add_layer(mat2, true)
     else
-        ceiling.removelayer(Constants.MaterialCeilingMass2)
+        ceiling.remove_layer(Constants.MaterialCeilingMass2)
     end
     
     # Create and assign construction to surfaces
@@ -186,8 +190,8 @@ class ProcessConstructionsCeilingsRoofsThermalMass < OpenStudio::Ruleset::ModelU
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
 

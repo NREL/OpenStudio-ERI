@@ -452,6 +452,15 @@ class Geometry
         return spaces
     end
     
+    def self.get_finished_spaces(model)
+        spaces = []
+        model.getSpaces.each do |space|
+            next if Geometry.space_is_unfinished(space)
+            spaces << space
+        end
+        return spaces
+    end
+    
     def self.get_finished_basement_spaces(model)
         spaces = []
         model.getSpaces.each do |space|
@@ -503,6 +512,7 @@ class Geometry
             next if Geometry.space_is_finished(space)
             next if not Geometry.space_has_roof(space)
             next if not Geometry.space_below_is_finished(space, model)
+            next if unfinished_attic_spaces.include?(space)
             spaces << space
         end
         return spaces

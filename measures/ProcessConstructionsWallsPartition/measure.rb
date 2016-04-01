@@ -91,7 +91,7 @@ class ProcessConstructionsWallsPartition < OpenStudio::Ruleset::ModelUserScript
     
     # Define construction
     wall = Construction.new(path_fracs)
-    wall.addlayer([mat_framing, mat_cavity], true, "UnfinStudAndAirWall")       
+    wall.add_layer([mat_framing, mat_cavity], true, "StudAndAirWall")
 
     # Create and apply construction to unfinished surfaces
     if not wall.create_and_assign_constructions(unfinished_surfaces, runner, model, name="UnfinUninsUnfinWall")
@@ -103,8 +103,8 @@ class ProcessConstructionsWallsPartition < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)     
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
  

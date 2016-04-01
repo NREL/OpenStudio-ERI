@@ -86,15 +86,15 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterial < OpenStudio::Ruleset::Mo
     
     # Define construction
     roof_mat = Construction.new([1])
-    roof_mat.addlayer(mat, true)
+    roof_mat.add_layer(mat, true)
     
     # Create and assign construction to surfaces
     if not roof_mat.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
 

@@ -157,8 +157,8 @@ class ProcessConstructionsWallsExteriorDoubleWoodStud < OpenStudio::Ruleset::Mod
     mat_framing_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=BaseMaterial.Wood)
     mat_stud = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=BaseMaterial.Wood)
     mat_gap_total = Material.AirCavity(cavityDepth)
-    mat_gap_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=nil, k_in=dsWallStudDepth / (mat_gap_total.rvalue * dsWallStudDepth / cavityDepth), dens=Gas.Air.rho, cp=Gas.Air.cp)
-    mat_gap_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=nil, k_in=dsWallGapDepth / (mat_gap_total.rvalue * dsWallGapDepth / cavityDepth), dens=Gas.Air.rho, cp=Gas.Air.cp)
+    mat_gap_inner_outer = Material.new(name=nil, thick_in=dsWallStudDepth, mat_base=nil, k_in=dsWallStudDepth / (mat_gap_total.rvalue * dsWallStudDepth / cavityDepth), rho=Gas.Air.rho, cp=Gas.Air.cp)
+    mat_gap_middle = Material.new(name=nil, thick_in=dsWallGapDepth, mat_base=nil, k_in=dsWallGapDepth / (mat_gap_total.rvalue * dsWallGapDepth / cavityDepth), rho=Gas.Air.rho, cp=Gas.Air.cp)
     
     # Set paths
     stud_frac = 1.5 / dsWallStudSpacing
@@ -167,33 +167,33 @@ class ProcessConstructionsWallsExteriorDoubleWoodStud < OpenStudio::Ruleset::Mod
         runner.registerError("Framing Factor (#{dsWallFramingFactor.to_s}) is less than the framing solely provided by the studs (#{stud_frac.to_s}).")
         return false
     end
-    dsGapFactor = Construction.GetWallGapFactor(dsWallInstallGrade, dsWallFramingFactor, dsWallCavityInsRvalue)
+    dsGapFactor = Construction.get_wall_gap_factor(dsWallInstallGrade, dsWallFramingFactor, dsWallCavityInsRvalue)
     path_fracs = [dsWallMiscFramingFactor, stud_frac, stud_frac, dsGapFactor, (1.0 - (2 * stud_frac + dsWallMiscFramingFactor + dsGapFactor))] 
     
     # Define construction
     double_stud_wall = Construction.new(path_fracs)
-    double_stud_wall.addlayer(Material.AirFilmVertical, false)
-    double_stud_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    double_stud_wall.addlayer([mat_framing_inner_outer, mat_stud, mat_ins_inner_outer, mat_gap_inner_outer, mat_ins_inner_outer], true, "StudandCavityInner")
+    double_stud_wall.add_layer(Material.AirFilmVertical, false)
+    double_stud_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+    double_stud_wall.add_layer([mat_framing_inner_outer, mat_stud, mat_ins_inner_outer, mat_gap_inner_outer, mat_ins_inner_outer], true, "StudandCavityInner")
     if dsWallGapDepth > 0
-        double_stud_wall.addlayer([mat_framing_middle, mat_ins_middle, mat_ins_middle, mat_gap_middle, mat_ins_middle], true, "Cavity")
+        double_stud_wall.add_layer([mat_framing_middle, mat_ins_middle, mat_ins_middle, mat_gap_middle, mat_ins_middle], true, "Cavity")
     end
     if dsWallIsStaggered
-        double_stud_wall.addlayer([mat_framing_inner_outer, mat_ins_inner_outer, mat_stud, mat_gap_inner_outer, mat_ins_inner_outer], true, "StudandCavityOuter")
+        double_stud_wall.add_layer([mat_framing_inner_outer, mat_ins_inner_outer, mat_stud, mat_gap_inner_outer, mat_ins_inner_outer], true, "StudandCavityOuter")
     else
-        double_stud_wall.addlayer([mat_framing_inner_outer, mat_stud, mat_ins_inner_outer, mat_gap_inner_outer, mat_ins_inner_outer], true, "StudandCavityOuter")
+        double_stud_wall.add_layer([mat_framing_inner_outer, mat_stud, mat_ins_inner_outer, mat_gap_inner_outer, mat_ins_inner_outer], true, "StudandCavityOuter")
     end
-    double_stud_wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    double_stud_wall.addlayer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    double_stud_wall.addlayer(Material.AirFilmOutside, false)
+    double_stud_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+    double_stud_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    double_stud_wall.add_layer(Material.AirFilmOutside, false)
 
     # Create and assign construction to surfaces
     if not double_stud_wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
  

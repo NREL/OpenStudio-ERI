@@ -62,17 +62,17 @@ class ProcessConstructionsUninsulatedSlab < OpenStudio::Ruleset::ModelUserScript
     
     # Define construction
     slab = Construction.new([1.0])
-    slab.addlayer(SimpleMaterial.Adiabatic, true)
-    slab.addlayer(Material.Soil12in, true)
-    slab.addlayer(Material.Concrete4in, true)
+    slab.add_layer(SimpleMaterial.Adiabatic, true)
+    slab.add_layer(Material.Soil12in, true)
+    slab.add_layer(Material.Concrete4in, true)
     
     # Create and assign construction to surfaces
     if not slab.create_and_assign_constructions(surfaces, runner, model, name="GrndUninsUnfinGrgFloor")
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)     
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     return true
  

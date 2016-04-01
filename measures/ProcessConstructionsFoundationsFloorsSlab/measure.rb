@@ -218,7 +218,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 
     # Define materials
     slabCarpetPerimeterConduction, slabBarePerimeterConduction, slabHasWholeInsulation = SlabPerimeterConductancesByType(slabPerimeterRvalue, slabGapRvalue, slabPerimeterInsWidth, slabExtRvalue, slabWholeInsRvalue, slabExtInsDepth)
-    mat_slab = Material.new(name='SlabMass', thick_in=slabMassThickIn, mat_base=nil, k_in=slabMassCond, dens=slabMassDens, cp=slabMassSpecHeat)
+    mat_slab = Material.new(name='SlabMass', thick_in=slabMassThickIn, mat_base=nil, k_in=slabMassCond, rho=slabMassDens, cp=slabMassSpecHeat)
 
     # Models one floor surface with an equivalent carpented/bare material (Better alternative
     # to having two floors with twice the total area, compensated by thinning mass thickness.)
@@ -243,26 +243,26 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
     mat_fic = nil
     if fictitious_slab_Rvalue > 0
         # Fictitious layer below slab to achieve equivalent R-value. See Winkelmann article.
-        mat_fic = Material.new(name="Mat-Fic-Slab", thick_in=1.0, mat_base=nil, k_in=1.0/fictitious_slab_Rvalue, dens=2.5, cp=0.29)
+        mat_fic = Material.new(name="Mat-Fic-Slab", thick_in=1.0, mat_base=nil, k_in=1.0/fictitious_slab_Rvalue, rho=2.5, cp=0.29)
     end
 
     # Define construction
     slab = Construction.new([1.0])
     if not mat_fic.nil?
-        slab.addlayer(mat_fic, true)
+        slab.add_layer(mat_fic, true)
     end
-    slab.addlayer(Material.Soil12in, true)
-    slab.addlayer(mat_slab, true)
-    slab.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
-    slab.addlayer(Material.AirFilmFlatReduced, false)
+    slab.add_layer(Material.Soil12in, true)
+    slab.add_layer(mat_slab, true)
+    slab.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
+    slab.add_layer(Material.AirFilmFlatReduced, false)
     
     # Create and assign construction to surfaces
     if not slab.create_and_assign_constructions(surfaces, runner, model, name="Slab")
         return false
     end
     
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)     
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
  

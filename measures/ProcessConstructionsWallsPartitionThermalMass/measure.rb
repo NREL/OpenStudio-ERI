@@ -14,45 +14,6 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 #start the measure
 class ProcessConstructionsWallsPartitionThermalMass < OpenStudio::Ruleset::ModelUserScript
 
-  class PartitionWallMass
-    def initialize(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecHeat)
-      @partitionWallMassThickness = partitionWallMassThickness
-      @partitionWallMassConductivity = partitionWallMassConductivity
-      @partitionWallMassDensity = partitionWallMassDensity
-      @partitionWallMassSpecHeat = partitionWallMassSpecHeat
-    end
-
-    def PartitionWallMassThickness
-      return @partitionWallMassThickness
-    end
-
-    def PartitionWallMassConductivity
-      return @partitionWallMassConductivity
-    end
-
-    def PartitionWallMassDensity
-      return @partitionWallMassDensity
-    end
-
-    def PartitionWallMassSpecificHeat
-      return @partitionWallMassSpecHeat
-    end
-
-    attr_accessor(:living_space_area, :finished_basement_area)
-  end
-
-  class LivingSpace
-    def initialize
-    end
-    attr_accessor(:area)
-  end
-
-  class FinishedBasement
-    def initialize
-    end
-    attr_accessor(:area)
-  end
-
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -60,85 +21,83 @@ class ProcessConstructionsWallsPartitionThermalMass < OpenStudio::Ruleset::Model
   end
   
   def description
-    return "This measure assigns partition wall mass to the living space and finished basement."
+    return "This measure assigns partition wall mass to finished spaces."
   end
   
   def modeler_description
-    return "This measure creates constructions representing the internal mass of partition walls in the living space and finished basement. The constructions are set to define the internal mass objects of their respective spaces."
+    return "This measure creates constructions representing the internal mass of partition walls for finished spaces. The constructions are set to define the internal mass objects of their respective spaces."
   end    
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a double argument for partition wall mass thickness
-    partitionwallmassth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmassth", false)
-    partitionwallmassth.setDisplayName("Partition Wall Mass: Thickness")
-	partitionwallmassth.setUnits("in")
-	partitionwallmassth.setDescription("Thickness of the layer.")
-    partitionwallmassth.setDefaultValue(0.5)
-    args << partitionwallmassth
+    #make a double argument for fraction of floor area
+    frac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("frac", true)
+    frac.setDisplayName("Fraction of Floor Area")
+	frac.setDescription("Ratio of exposed partition wall area to total finished floor area and accounts for the area of both sides of partition walls.")
+    frac.setDefaultValue(1.0)
+    args << frac
 
-    #make a double argument for partition wall mass conductivity
-    partitionwallmasscond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmasscond", false)
-    partitionwallmasscond.setDisplayName("Partition Wall Mass: Conductivity")
-	partitionwallmasscond.setUnits("Btu-in/h-ft^2-R")
-	partitionwallmasscond.setDescription("Conductivity of the layer.")
-    partitionwallmasscond.setDefaultValue(1.1112)
-    args << partitionwallmasscond
+    #make a double argument for layer 1: thickness
+    thick_in1 = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("thick_in1", true)
+    thick_in1.setDisplayName("Thickness 1")
+    thick_in1.setUnits("in")
+    thick_in1.setDescription("Thickness of the layer.")
+    thick_in1.setDefaultValue(0.5)
+    args << thick_in1
+    
+    #make a double argument for layer 2: thickness
+    thick_in2 = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("thick_in2", false)
+    thick_in2.setDisplayName("Thickness 2")
+    thick_in2.setUnits("in")
+    thick_in2.setDescription("Thickness of the second layer. Leave blank if no second layer.")
+    args << thick_in2
+    
+    #make a double argument for layer 1: conductivity
+    cond1 = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cond1", true)
+    cond1.setDisplayName("Conductivity 1")
+    cond1.setUnits("Btu-in/h-ft^2-R")
+    cond1.setDescription("Conductivity of the layer.")
+    cond1.setDefaultValue(1.1112)
+    args << cond1
+    
+    #make a double argument for layer 2: conductivity
+    cond2 = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cond2", false)
+    cond2.setDisplayName("Conductivity 2")
+    cond2.setUnits("Btu-in/h-ft^2-R")
+    cond2.setDescription("Conductivity of the second layer. Leave blank if no second layer.")
+    args << cond2
 
-    #make a double argument for partition wall mass density
-    partitionwallmassdens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmassdens", false)
-    partitionwallmassdens.setDisplayName("Partition Wall Mass: Density")
-	partitionwallmassdens.setUnits("lb/ft^3")
-	partitionwallmassdens.setDescription("Density of the layer.")
-    partitionwallmassdens.setDefaultValue(50.0)
-    args << partitionwallmassdens
-
-    #make a double argument for partition wall mass specific heat
-    partitionwallmasssh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallmasssh", false)
-    partitionwallmasssh.setDisplayName("Partition Wall Mass: Specific Heat")
-	partitionwallmasssh.setUnits("Btu/lb-R")
-	partitionwallmasssh.setDescription("Specific heat of the layer.")
-    partitionwallmasssh.setDefaultValue(0.2)
-    args << partitionwallmasssh
-
-    #make a double argument for partition wall fraction of floor area
-    partitionwallfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("partitionwallfrac", false)
-    partitionwallfrac.setDisplayName("Partition Wall Mass: Fraction of Floor Area")
-	partitionwallfrac.setDescription("Ratio of exposed partition wall area to total finished floor area and accounts for the area of both sides of partition walls.")
-    partitionwallfrac.setDefaultValue(1.0)
-    args << partitionwallfrac
-
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
-    end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type	
-	
-    #make a choice argument for finished basement space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
-    end
-    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
-        space_type_args << Constants.FinishedBasementSpaceType
-    end
-    fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
-    fbasement_space_type.setDisplayName("Finished basement space type")
-    fbasement_space_type.setDescription("Select the finished basement space type")
-    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
-    args << fbasement_space_type	
+    #make a double argument for layer 1: density
+    dens1 = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("dens1", true)
+    dens1.setDisplayName("Density 1")
+    dens1.setUnits("lb/ft^3")
+    dens1.setDescription("Density of the layer.")
+    dens1.setDefaultValue(50.0)
+    args << dens1
+    
+    #make a double argument for layer 2: density
+    dens2 = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("dens2", false)
+    dens2.setDisplayName("Density 2")
+    dens2.setUnits("lb/ft^3")
+    dens2.setDescription("Density of the second layer. Leave blank if no second layer.")
+    args << dens2
+    
+    #make a double argument for layer 1: specific heat
+    specheat1 = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("specheat1", true)
+    specheat1.setDisplayName("Specific Heat 1")
+    specheat1.setUnits("Btu/lb-R")
+    specheat1.setDescription("Specific heat of the layer.")
+    specheat1.setDefaultValue(0.2)
+    args << specheat1
+    
+    #make a double argument for layer 2: specific heat
+    specheat2 = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("specheat2", false)
+    specheat2.setDisplayName("Specific Heat 2")
+    specheat2.setUnits("Btu/lb-R")
+    specheat2.setDescription("Specific heat of the second layer. Leave blank if no second layer.")
+    args << specheat2
 	
     return args
   end #end the arguments method
@@ -151,140 +110,196 @@ class ProcessConstructionsWallsPartitionThermalMass < OpenStudio::Ruleset::Model
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
+    
+    surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_unfinished(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "wall"
+            # Adiabatic wall adjacent to finished space
+            if surface.outsideBoundaryCondition.downcase == "adiabatic"
+                surfaces << surface
+                next
+            end
+            next if not surface.adjacentSurface.is_initialized
+            adjacent_space = Geometry.get_space_from_surface(model, surface.adjacentSurface.get.name.to_s, runner)
+            next if Geometry.space_is_unfinished(adjacent_space)
+            # Wall between two finished spaces
+            surfaces << surface
+        end
+    end
 
-    # Space Type
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = Geometry.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
+    # Get Inputs
+    fractionOfFloorArea = runner.getDoubleArgumentValue("frac",user_arguments)
+    thick_in1 = runner.getDoubleArgumentValue("thick_in1",user_arguments)
+    thick_in2 = runner.getOptionalDoubleArgumentValue("thick_in2",user_arguments)
+    cond1 = runner.getDoubleArgumentValue("cond1",user_arguments)
+    cond2 = runner.getOptionalDoubleArgumentValue("cond2",user_arguments)
+    dens1 = runner.getDoubleArgumentValue("dens1",user_arguments)
+    dens2 = runner.getOptionalDoubleArgumentValue("dens2",user_arguments)
+    specheat1 = runner.getDoubleArgumentValue("specheat1",user_arguments)
+    specheat2 = runner.getOptionalDoubleArgumentValue("specheat2",user_arguments)
+    
+    # Validate Inputs
+    if fractionOfFloorArea < 0
+        runner.registerError("Fraction of Floor Area must be greater than or equal to 0.")
         return false
     end
-	fbasement_space_type_r = runner.getStringArgumentValue("fbasement_space_type",user_arguments)
-    fbasement_space_type = Geometry.get_space_type_from_string(model, fbasement_space_type_r, runner, false)	
-	
-    partitionWallMassThickness = runner.getDoubleArgumentValue("partitionwallmassth",user_arguments)
-    partitionWallMassConductivity = runner.getDoubleArgumentValue("partitionwallmasscond",user_arguments)
-    partitionWallMassDensity = runner.getDoubleArgumentValue("partitionwallmassdens",user_arguments)
-    partitionWallMassSpecificHeat = runner.getDoubleArgumentValue("partitionwallmasssh",user_arguments)
-    partitionWallMassFractionOfFloorArea = runner.getDoubleArgumentValue("partitionwallfrac",user_arguments)
+    if thick_in2.empty? != cond2.empty? or thick_in2.empty? != dens2.empty? or thick_in2.empty? != specheat2.empty?
+        runner.registerError("Layer 2 does not have all four properties (thickness, conductivity, density, specific heat) entered.")
+        return false
+    end
+    if thick_in1 <= 0.0
+        runner.registerError("Thickness 1 must be greater than 0.")
+        return false
+    end
+    if not thick_in2.empty? and thick_in2.get <= 0.0
+        runner.registerError("Thickness 2 must be greater than 0.")
+        return false
+    end
+    if cond1 <= 0.0
+        runner.registerError("Conductivity 1 must be greater than 0.")
+        return false
+    end
+    if not cond2.empty? and cond2.get <= 0.0
+        runner.registerError("Conductivity 2 must be greater than 0.")
+        return false
+    end
+    if dens1 <= 0.0
+        runner.registerError("Density 1 must be greater than 0.")
+        return false
+    end
+    if not dens2.empty? and dens2.get <= 0.0
+        runner.registerError("Density 2 must be greater than 0.")
+        return false
+    end
+    if specheat1 <= 0.0
+        runner.registerError("Specific Heat 1 must be greater than 0.")
+        return false
+    end
+    if not specheat2.empty? and specheat2.get <= 0.0
+        runner.registerError("Specific Heat 2 must be greater than 0.")
+        return false
+    end
     
-	living_space_area = 0
-	finished_basement_area = 0
-	living_space_area = Geometry.get_floor_area_for_space_type(model, living_space_type.handle)
-	unless fbasement_space_type.nil?
-		finished_basement_area = Geometry.get_floor_area_for_space_type(model, fbasement_space_type.handle)
-	end
-
     # Constants
     mat_wood = BaseMaterial.Wood
  
-    # Create the material class instances
-    partition_wall_mass = PartitionWallMass.new(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
-
-    living_space = LivingSpace.new
-    finished_basement = FinishedBasement.new
-
-    living_space.area = living_space_area
-    finished_basement.area = finished_basement_area
-
-    # Process the partition wall
-    partition_wall_mass = _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
-
-    # Initialize variables for drawn partition wall areas
-    livingPartWallDrawnArea = 0 # Drawn partition wall area of the living space
-    fbsmtPartWallDrawnArea = 0 # Drawn partition wall area of the finished basement
-
-    # Loop through all walls and find the wall area of drawn partition walls
-    # for wall in Geometry.walls.wall:
-    #   if wall.space_int == wall.space_ext:
-    #       if wall.space_int == Constants.SpaceLiving:
-    #           self.LivingPartWallDrawnArea += wall.area
-    #       elif wall.space_int == Constants.SpaceFinBasement:
-    #           self.FBsmtPartWallDrawnArea += wall.area
-    #       # End drawn partition wall area sumation loop
-
-    # PartitionWallMass
-    pwm = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    pwm.setName("PartitionWallMass")
-    pwm.setRoughness("Rough")
-    part_wall_mass = Material.MassPartitionWall(partitionWallMassThickness, partitionWallMassConductivity, partitionWallMassDensity, partitionWallMassSpecificHeat)
-    pwm.setThickness(OpenStudio::convert(part_wall_mass.thick,"ft","m").get)
-    pwm.setConductivity(OpenStudio::convert(part_wall_mass.k,"Btu/hr*ft*R","W/m*K").get)
-    pwm.setDensity(OpenStudio::convert(part_wall_mass.rho,"lb/ft^3","kg/m^3").get)
-    pwm.setSpecificHeat(OpenStudio::convert(part_wall_mass.cp,"Btu/lb*R","J/kg*K").get)
-    pwm.setThermalAbsorptance(part_wall_mass.tAbs)
-    pwm.setSolarAbsorptance(part_wall_mass.sAbs)
-    pwm.setVisibleAbsorptance(part_wall_mass.vAbs)
-
-    # StudandAirWall
-    saw = OpenStudio::Model::StandardOpaqueMaterial.new(model)
-    saw.setName("StudandAirWall")
-    saw.setRoughness("Rough")
-    saw.setThickness(OpenStudio::convert(Material.StudAndAir.thick,"ft","m").get)
-    saw.setConductivity(OpenStudio::convert(Material.StudAndAir.k,"Btu/hr*ft*R","W/m*K").get)
-    saw.setDensity(OpenStudio::convert(Material.StudAndAir.rho,"lb/ft^3","kg/m^3").get)
-    saw.setSpecificHeat(OpenStudio::convert(Material.StudAndAir.cp,"Btu/lb*R","J/kg*K").get)
-
-    # FinUninsFinWall
-    materials = []
-    materials << pwm
-    materials << saw
-    materials << pwm
-    fufw = OpenStudio::Model::Construction.new(materials)
-    fufw.setName("FinUninsFinWall")	
-
-    # Remaining partition walls within spaces (those without geometric representation)
-    lp = OpenStudio::Model::InternalMassDefinition.new(model)
-    lp.setName("LivingPartition")
-    lp.setConstruction(fufw)
-    if partition_wall_mass.living_space_area > (livingPartWallDrawnArea * 2)
-      lp.setSurfaceArea(OpenStudio::convert(partition_wall_mass.living_space_area - livingPartWallDrawnArea * 2,"ft^2","m^2").get)
-    else
-      lp.setSurfaceArea(OpenStudio::convert(0.001,"ft^2","m^2").get)
-    end
-    im = OpenStudio::Model::InternalMass.new(lp)
-    im.setName("LivingPartition")
+    spaces = Geometry.get_finished_spaces(model)
     
-	im.setSpaceType(living_space_type)
-	runner.registerInfo("Assigned internal mass object 'LivingPartition' to space type '#{living_space_type_r}'")
-
-    unless fbasement_space_type.nil?
-      # Remaining partition walls within spaces (those without geometric representation)
-      fbp = OpenStudio::Model::InternalMassDefinition.new(model)
-      fbp.setName("FBsmtPartition")
-      fbp.setConstruction(fufw)
-      #fbp.setZone # TODO: what is this?
-      if partition_wall_mass.finished_basement_area > (fbsmtPartWallDrawnArea * 2)
-        fbp.setSurfaceArea(OpenStudio::convert(partition_wall_mass.finished_basement_area - fbsmtPartWallDrawnArea * 2,"ft^2","m^2").get)
-      else
-        runner.registerWarning("The variable PartitionWallMassFractionOfFloorArea in the Partition Wall Mass category resulted in an area that is less than the partition wall area drawn. The mass of the drawn partition walls will be simulated, hence the variable PartitionWallMassFractionOfFloorArea will be ignored.")
-        fbp.setSurfaceArea(OpenStudio::convert(0.001,"ft^2","m^2").get)
-      end
-      im = OpenStudio::Model::InternalMass.new(fbp)
-      im.setName("FBsmtPartition")
-          
-	  im.setSpaceType(fbasement_space_type)
-	  runner.registerInfo("Assigned internal mass object 'FBsmtPartition' to space type '#{fbasement_space_type_r}'")
+    if spaces.size == 0
+        runner.registerAsNotApplicable("Measure not applied because no applicable spaces were found.")
+        return true
     end
-	
+
+    # Define materials
+    mat1 = nil
+    if thick_in1 > 0 and cond1 > 0
+        mat1 = Material.new(name=Constants.MaterialWallMass, thick_in=thick_in1, mat_base=nil, k_in=cond1, rho=dens1, cp=specheat1, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    end
+    mat2 = nil
+    if not thick_in2.empty? and thick_in2.get > 0 and not cond2.empty? and cond2.get > 0
+        mat2 = Material.new(name=Constants.MaterialWallMass2, thick_in=thick_in2.get, mat_base=nil, k_in=cond2.get, rho=dens2.get, cp=specheat2.get, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+    end
+
+    
+    # -------------------------------
+    # Process the existing partition walls
+    # -------------------------------
+
+    if not surfaces.empty?
+        # Define construction
+        wall = Construction.new([1])
+        if not mat1.nil?
+            wall.add_layer(mat1, true)
+            wall.add_layer(mat1, true, Constants.MaterialWallMassOtherSide)
+        else
+            wall.remove_layer(Constants.MaterialWallMass)
+            wall.remove_layer(Constants.MaterialWallMassOtherSide)
+        end
+        if not mat2.nil?
+            wall.add_layer(mat2, true)
+            wall.add_layer(mat2, true, Constants.MaterialWallMassOtherSide2)
+        else
+            wall.remove_layer(Constants.MaterialWallMass2)
+            wall.remove_layer(Constants.MaterialWallMassOtherSide2)
+        end
+        
+        if not wall.create_and_assign_constructions(surfaces, runner, model, name=nil)
+            return false
+        end
+    end
+
+    # -------------------------------
+    # Process the additional partition walls
+    # -------------------------------
+    
+    imdefs = []
+    spaces.each do |space|
+        # Determine existing partition wall mass in space
+        existing_surface_area = 0
+        surfaces.each do |surface|
+            existing_surface_area += surface.grossArea
+        end
+    
+        # Determine additional partition wall mass required
+        addtl_surface_area = fractionOfFloorArea * space.floorArea - existing_surface_area * 2
+        
+        # Remove any existing internal mass
+        space.internalMass.each do |im|
+            runner.registerInfo("Removing internal mass object '#{im.name.to_s}' from space '#{space.name.to_s}'")
+            im.remove
+        end
+        
+        if addtl_surface_area > 0
+            # Add remaining partition walls within spaces (those without geometric representation)
+            # as internal mass object.
+            imdef = OpenStudio::Model::InternalMassDefinition.new(model)
+            imdef.setName("#{space.name.to_s}Partition")
+            imdef.setSurfaceArea(OpenStudio::convert(addtl_surface_area,"ft^2","m^2").get)
+            imdefs << imdef
+            im = OpenStudio::Model::InternalMass.new(imdef)
+            im.setName("#{space.name.to_s}Partition")
+            im.setSpace(space)
+            runner.registerInfo("Added internal mass object '#{im.name.to_s}' to space '#{space.name.to_s}'")
+        end
+    end
+    
+    # Define materials
+    mat_cavity = Material.AirCavity(Material.Stud2x4.thick_in)
+    mat_framing = Material.new(name=nil, thick_in=Material.Stud2x4.thick_in, mat_base=BaseMaterial.Wood)
+
+    # Set paths
+    path_fracs = [Constants.DefaultFramingFactorInterior, 1 - Constants.DefaultFramingFactorInterior]
+    
+    # Define construction
+    int_mass = Construction.new(path_fracs)
+    int_mass.add_layer([mat_framing, mat_cavity], true, "StudAndAirWall")
+    if not mat1.nil?
+        int_mass.add_layer(mat1, true)
+        int_mass.add_layer(mat1, true, Constants.MaterialWallMassOtherSide)
+    else
+        int_mass.remove_layer(Constants.MaterialWallMass)
+        int_mass.remove_layer(Constants.MaterialWallMassOtherSide)
+    end
+    if not mat2.nil?
+        int_mass.add_layer(mat2, true)
+        int_mass.add_layer(mat2, true, Constants.MaterialWallMassOtherSide2)
+    else
+        int_mass.remove_layer(Constants.MaterialWallMass2)
+        int_mass.remove_layer(Constants.MaterialWallMassOtherSide2)
+    end
+
+    if not int_mass.create_and_assign_constructions(imdefs, runner, model, name="FinUninsFinWall")
+        return false
+    end
+
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
+
     return true
 
   end #end the run method
-
-  def _processThermalMassPartitionWall(partitionWallMassFractionOfFloorArea, partition_wall_mass, living_space, finished_basement)
-
-    # Handle Exception for user entry of zero (avoids EPlus complaining about zero value)
-    if partitionWallMassFractionOfFloorArea <= 0.0
-      partitionWallMassFractionOfFloorArea = 0.0001 # Set approximately to zero
-    end
-
-    # Calculate the total partition wall mass areas for finished spaces
-    partition_wall_mass.living_space_area = partitionWallMassFractionOfFloorArea * living_space.area # ft^2
-    partition_wall_mass.finished_basement_area = partitionWallMassFractionOfFloorArea * finished_basement.area # ft^2
-
-    return partition_wall_mass
-
-  end
-
   
 end #end the measure
 

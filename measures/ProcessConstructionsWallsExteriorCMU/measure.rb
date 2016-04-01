@@ -155,7 +155,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     # Process the CMU walls
     
     # Define materials
-    mat_cmu = Material.new(name=nil, thick_in=cmuThickness, mat_base=BaseMaterial.Concrete, k_in=cmuConductivity, dens=cmuDensity)
+    mat_cmu = Material.new(name=nil, thick_in=cmuThickness, mat_base=BaseMaterial.Concrete, k_in=cmuConductivity, rho=cmuDensity)
     mat_framing = Material.new(name=nil, thick_in=cmuThickness, mat_base=BaseMaterial.Wood)
     mat_furring = nil
     mat_furring_cavity = nil
@@ -179,25 +179,25 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     
     # Define construction
     cmu_wall = Construction.new(path_fracs)
-    cmu_wall.addlayer(Material.AirFilmVertical, false)
-    cmu_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+    cmu_wall.add_layer(Material.AirFilmVertical, false)
+    cmu_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
     if not mat_furring.nil?
-        cmu_wall.addlayer([mat_furring, mat_furring, mat_furring_cavity], true, "Furring")
-        cmu_wall.addlayer([mat_framing, mat_cmu, mat_cmu], true, "CMU")
+        cmu_wall.add_layer([mat_furring, mat_furring, mat_furring_cavity], true, "Furring")
+        cmu_wall.add_layer([mat_framing, mat_cmu, mat_cmu], true, "CMU")
     else
-        cmu_wall.addlayer([mat_framing, mat_cmu], true, "CMU")
+        cmu_wall.add_layer([mat_framing, mat_cmu], true, "CMU")
     end
-    cmu_wall.addlayer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    cmu_wall.addlayer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    cmu_wall.addlayer(Material.AirFilmOutside, false)
+    cmu_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+    cmu_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    cmu_wall.add_layer(Material.AirFilmOutside, false)
         
     # Create and assign construction to surfaces
     if not cmu_wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
         return false
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)        
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
         
     return true
 

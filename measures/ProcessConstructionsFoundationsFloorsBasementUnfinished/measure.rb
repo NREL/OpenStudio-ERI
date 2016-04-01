@@ -255,24 +255,24 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         end
         
         # Set paths
-        gapFactor = Construction.GetWallGapFactor(ufbsmtWallInstallGrade, ufbsmtWallFramingFactor, ufbsmtWallCavityInsRvalueInstalled)
+        gapFactor = Construction.get_wall_gap_factor(ufbsmtWallInstallGrade, ufbsmtWallFramingFactor, ufbsmtWallCavityInsRvalueInstalled)
         path_fracs = [ufbsmtWallFramingFactor, 1 - ufbsmtWallFramingFactor - gapFactor, gapFactor]
 
         # Define construction (only used to calculate assembly R-value)
         ufbsmt_wall = Construction.new(path_fracs)
-        ufbsmt_wall.addlayer(Material.AirFilmVertical, false)
+        ufbsmt_wall.add_layer(Material.AirFilmVertical, false)
         if ufbsmtWallCavityDepth > 0
-            ufbsmt_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+            ufbsmt_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
         end
         if not mat_framing.nil? and not mat_cavity.nil? and not mat_gap.nil?
-            ufbsmt_wall.addlayer([mat_framing, mat_cavity, mat_gap], false)
+            ufbsmt_wall.add_layer([mat_framing, mat_cavity, mat_gap], false)
         end
         if ufbsmtWallCavityInsRvalueInstalled > 0 or ufbsmtWallContInsRvalue > 0
             # For foundation walls, only add OSB if there is wall insulation.
-            ufbsmt_wall.addlayer(Material.DefaultWallSheathing, false)
+            ufbsmt_wall.add_layer(Material.DefaultWallSheathing, false)
         end
         if not mat_rigid.nil?
-            ufbsmt_wall.addlayer(mat_rigid, false)
+            ufbsmt_wall.add_layer(mat_rigid, false)
         end
 
         overall_wall_Rvalue = ufbsmt_wall.assembly_rvalue(runner)
@@ -281,7 +281,7 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         end
         
         # Calculate fictitious layer behind finished basement wall to achieve equivalent R-value. See Winkelmann article.
-        conduction_factor = Construction.GetBasementConductionFactor(ufbsmtWallInsHeight, overall_wall_Rvalue)
+        conduction_factor = Construction.get_basement_conduction_factor(ufbsmtWallInsHeight, overall_wall_Rvalue)
         if ubExtPerimeter > 0
             ub_effective_Rvalue = ubExtWallArea / (conduction_factor * ubExtPerimeter) # hr*ft^2*F/Btu
         else
@@ -306,15 +306,15 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         # Define actual construction
         fic_ufbsmt_wall = Construction.new([1])
         if not mat_fic_wall.nil?
-            fic_ufbsmt_wall.addlayer(mat_fic_wall, true)
+            fic_ufbsmt_wall.add_layer(mat_fic_wall, true)
         end
-        fic_ufbsmt_wall.addlayer(Material.Soil12in, true)
-        fic_ufbsmt_wall.addlayer(Material.Concrete8in, true)
+        fic_ufbsmt_wall.add_layer(Material.Soil12in, true)
+        fic_ufbsmt_wall.add_layer(Material.Concrete8in, true)
         if not mat_fic_insul_layer.nil?
-            fic_ufbsmt_wall.addlayer(mat_fic_insul_layer, true)
+            fic_ufbsmt_wall.add_layer(mat_fic_insul_layer, true)
         end
-        fic_ufbsmt_wall.addlayer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-        fic_ufbsmt_wall.addlayer(Material.AirFilmVertical, false)
+        fic_ufbsmt_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+        fic_ufbsmt_wall.add_layer(Material.AirFilmVertical, false)
 
         # Create and assign construction to surfaces
         if not fic_ufbsmt_wall.create_and_assign_constructions(wall_surfaces, runner, model, name="GrndInsUnfinBWall")
@@ -343,9 +343,9 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         
         # Define construction
         ub_floor = Construction.new([1.0])
-        ub_floor.addlayer(mat_fic_floor, true)
-        ub_floor.addlayer(Material.Soil12in, true)
-        ub_floor.addlayer(Material.Concrete4in, true)
+        ub_floor.add_layer(mat_fic_floor, true)
+        ub_floor.add_layer(Material.Soil12in, true)
+        ub_floor.add_layer(Material.Concrete4in, true)
         
         # Create and assign construction to surfaces
         if not ub_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsUnfinBFloor")
@@ -369,17 +369,17 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         mat_gap = Material.AirCavity(ufbsmtCeilingJoistHeight)
         
         # Set paths
-        gapFactor = Construction.GetWallGapFactor(ufbsmtCeilingInstallGrade, ufbsmtCeilingFramingFactor, ufbsmtCeilingCavityInsRvalueNominal)
+        gapFactor = Construction.get_wall_gap_factor(ufbsmtCeilingInstallGrade, ufbsmtCeilingFramingFactor, ufbsmtCeilingCavityInsRvalueNominal)
         path_fracs = [ufbsmtCeilingFramingFactor, 1 - ufbsmtCeilingFramingFactor - gapFactor, gapFactor]
         
         # Define construction
         ub_ceiling = Construction.new(path_fracs)
-        ub_ceiling.addlayer(Material.AirFilmFloorReduced, false)
-        ub_ceiling.addlayer([mat_framing, mat_cavity, mat_gap], true, "UFBsmtCeilingIns")
-        ub_ceiling.addlayer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
-        ub_ceiling.addlayer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
-        ub_ceiling.addlayer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
-        ub_ceiling.addlayer(Material.AirFilmFloorReduced, false)
+        ub_ceiling.add_layer(Material.AirFilmFloorReduced, false)
+        ub_ceiling.add_layer([mat_framing, mat_cavity, mat_gap], true, "UFBsmtCeilingIns")
+        ub_ceiling.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
+        ub_ceiling.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
+        ub_ceiling.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
+        ub_ceiling.add_layer(Material.AirFilmFloorReduced, false)
         
         # Create and assign construction to surfaces
         if not ub_ceiling.create_and_assign_constructions(ceiling_surfaces, runner, model, name="UnfinBInsFinFloor")
@@ -387,8 +387,8 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         end
     end
 
-    # Remove any materials which aren't used in any constructions
-    HelperMethods.remove_unused_materials_and_constructions(model, runner)     
+    # Remove any constructions/materials that aren't used
+    HelperMethods.remove_unused_constructions_and_materials(model, runner)
 
     return true
  
