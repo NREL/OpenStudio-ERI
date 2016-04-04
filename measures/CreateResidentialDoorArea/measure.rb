@@ -44,20 +44,20 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
 	userdefineddoorarea.setDefaultValue(20.0)
 	args << userdefineddoorarea
 
-    #make a choice argument for living space type
-    space_types = model.getSpaceTypes
-    space_type_args = OpenStudio::StringVector.new
-    space_types.each do |space_type|
-        space_type_args << space_type.name.to_s
+    #make a choice argument for space
+    spaces = model.getSpaces
+    space_args = OpenStudio::StringVector.new
+    spaces.each do |space|
+        space_args << space.name.to_s
     end
-    if not space_type_args.include?(Constants.LivingSpaceType)
-        space_type_args << Constants.LivingSpaceType
+    if not space_args.include?(Constants.LivingSpace(1))
+        space_args << Constants.LivingSpace(1)
     end
-    living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
-    living_space_type.setDisplayName("Living space type")
-    living_space_type.setDescription("Select the living space type")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
-    args << living_space_type
+    space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_args, true)
+    space.setDisplayName("Location")
+    space.setDescription("Select the space where the door area is located")
+    space.setDefaultValue(Constants.LivingSpace(1))
+    args << space
 
     return args
   end
@@ -71,20 +71,21 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-	living_space_type_r = runner.getStringArgumentValue("living_space_type",user_arguments)
-    living_space_type = Geometry.get_space_type_from_string(model, living_space_type_r, runner)
-    if living_space_type.nil?
-        return false
-    end
-
 	door_area = OpenStudio::convert(runner.getDoubleArgumentValue("userdefineddoorarea",user_arguments),"ft^2","m^2").get
+    space_r = runner.getStringArgumentValue("space",user_arguments)
 	
 	# error checking
 	if door_area <= 0
 		runner.registerError("Invalid door area.")
 		return false
 	end
-	
+
+    #Get space
+    space = Geometry.get_space_from_string(model, space_r, runner)
+    if space.nil?
+        return false
+    end
+
 	door_height = 2.1336 # 7 ft
 	door_offset = 0.5
 
@@ -93,25 +94,16 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
 	
 	# get the front wall on the first story
 	first_story_front_wall = nil
-	spaces = model.getSpaces
-	spaces.each do |space|
-		next if not living_space_type.handle.to_s == space.spaceType.get.handle.to_s
-		if space.buildingStory.is_initialized
-			story = space.buildingStory.get.name.to_s
-		end		
-		next if not story == "First"
-		surfaces = space.surfaces
-		surfaces.each do |surface|
-			next if not ( surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors" )
-			# get surface azimuth to determine facade
-			wall_azimuth = OpenStudio::Quantity.new(surface.azimuth, OpenStudio::createSIAngle)
-			wall_orientation = (OpenStudio.convert(wall_azimuth, OpenStudio::createIPAngle).get.value + building_orientation).round			
-			if wall_orientation - 180 == building_orientation
-				first_story_front_wall = surface
-				break
-			end				
-		end
-	end	
+    space.surfaces.each do |surface|
+        next if not ( surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors" )
+        # get surface azimuth to determine facade
+        wall_azimuth = OpenStudio::Quantity.new(surface.azimuth, OpenStudio::createSIAngle)
+        wall_orientation = (OpenStudio.convert(wall_azimuth, OpenStudio::createIPAngle).get.value + building_orientation).round			
+        if wall_orientation - 180 == building_orientation
+            first_story_front_wall = surface
+            break
+        end				
+    end
 	
 	front_wall_least_x = 10000
 	front_wall_least_z = 10000	

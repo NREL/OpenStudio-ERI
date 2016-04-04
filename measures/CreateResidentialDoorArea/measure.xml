@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>3f16804a-d555-4a6f-a597-bbf14c773587</version_id>
+  <version_id>26c5612f-e4d2-4032-8254-cfcc9f1f3327</version_id>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
@@ -20,17 +20,17 @@
       <default_value>20</default_value>
     </argument>
     <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
+      <name>space</name>
+      <display_name>Location</display_name>
+      <description>Select the space where the door area is located</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
+      <default_value>living space</default_value>
       <choices>
         <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
+          <value>living space</value>
+          <display_name>living space</display_name>
         </choice>
       </choices>
     </argument>
@@ -75,17 +75,6 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>13AFD758</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -108,6 +97,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0D13095D</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4E6C7F29</checksum>
     </file>
   </files>
 </measure>
