@@ -106,8 +106,8 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
                 floor_surfaces << surface
             end
             # Ceiling above below-grade unfinished space and below finished space
-            if surface.surfaceType.downcase == "roofceiling" and surface.adjacentSurface.is_initialized
-                adjacent_space = Geometry.get_space_from_surface(model, surface.adjacentSurface.get.name.to_s, runner)
+            if surface.surfaceType.downcase == "roofceiling" and surface.adjacentSurface.is_initialized and surface.adjacentSurface.get.space.is_initialized
+                adjacent_space = surface.adjacentSurface.get.space.get
                 if Geometry.space_is_finished(adjacent_space)
                     ceiling_surfaces << surface
                 end
@@ -256,7 +256,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Ruleset::Mod
         cs_ceiling = Construction.new(path_fracs)
         cs_ceiling.add_layer(Material.AirFilmFloorReduced, false)
         cs_ceiling.add_layer([mat_framing, mat_cavity, mat_gap], true, "CrawlCeilingIns")
-        cs_ceiling.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
+        cs_ceiling.add_layer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
         cs_ceiling.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
         cs_ceiling.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
         cs_ceiling.add_layer(Material.AirFilmFloorReduced, false)

@@ -880,18 +880,20 @@ class Construction
                 target_positions_std = {Constants.MaterialCeilingMass2 => 0, # outside
                                         Constants.MaterialCeilingMass => 1,
                                         # non-std middle layer(s) => 2...
-                                        Constants.MaterialFloorSheathing => [num_layers,3].max,
-                                        Constants.MaterialFloorMass => [num_layers+1,4].max,
-                                        Constants.MaterialFloorCovering => [num_layers+2,5].max} # inside
+                                        Constants.MaterialFloorRigidIns => [num_layers,3].max,
+                                        Constants.MaterialFloorSheathing => [num_layers+1,4].max,
+                                        Constants.MaterialFloorMass => [num_layers+2,5].max,
+                                        Constants.MaterialFloorCovering => [num_layers+3,6].max} # inside
                 target_position_non_std = target_positions_std[Constants.MaterialCeilingMass] + 1
             elsif surface.surfaceType.downcase == "roofceiling" # Ceiling (must be reverse of floor)
                 target_positions_std = {Constants.MaterialFloorCovering => 0, # outside
                                         Constants.MaterialFloorMass => 1,
                                         Constants.MaterialFloorSheathing => 2,
-                                        # non-std middle layer(s) => 3...
-                                        Constants.MaterialCeilingMass => [num_layers,4].max,
-                                        Constants.MaterialCeilingMass2 => [num_layers+1,5].max} # inside
-                target_position_non_std = target_positions_std[Constants.MaterialFloorSheathing] + 1
+                                        Constants.MaterialFloorRigidIns => 3,
+                                        # non-std middle layer(s) => 4...
+                                        Constants.MaterialCeilingMass => [num_layers,5].max,
+                                        Constants.MaterialCeilingMass2 => [num_layers+1,6].max} # inside
+                target_position_non_std = target_positions_std[Constants.MaterialFloorRigidIns] + 1
             else
                 runner.registeError("Unexpected surface type '#{surface.surfaceType.to_s}'.")
             end

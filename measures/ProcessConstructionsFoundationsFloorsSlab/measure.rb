@@ -248,13 +248,13 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 
     # Define construction
     slab = Construction.new([1.0])
+    slab.add_layer(Material.AirFilmFlatReduced, false)
+    slab.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
+    slab.add_layer(mat_slab, true)
+    slab.add_layer(Material.Soil12in, true)
     if not mat_fic.nil?
         slab.add_layer(mat_fic, true)
     end
-    slab.add_layer(Material.Soil12in, true)
-    slab.add_layer(mat_slab, true)
-    slab.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
-    slab.add_layer(Material.AirFilmFlatReduced, false)
     
     # Create and assign construction to surfaces
     if not slab.create_and_assign_constructions(surfaces, runner, model, name="Slab")

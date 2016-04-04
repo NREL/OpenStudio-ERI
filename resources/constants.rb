@@ -332,6 +332,9 @@ class Constants
     def self.MaterialFloorCovering
         return 'ResFloorCovering'
     end
+    def self.MaterialFloorRigidIns
+        return 'ResFloorRigidIns'
+    end
     def self.MaterialFloorSheathing
         return 'ResFloorSheathing'
     end

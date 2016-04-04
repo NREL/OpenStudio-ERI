@@ -67,12 +67,11 @@ class ProcessConstructionsUninsulatedWalls < OpenStudio::Ruleset::ModelUserScrip
     
     # Define construction
     wall = Construction.new(path_fracs)
-    # FIXME: Commented out layers for comparison to BEopt
-    #wall.add_layer(Material.AirFilmVertical, false)
+    wall.add_layer(Material.AirFilmVertical, false)
     wall.add_layer([mat_framing, mat_cavity], true, "ExtStudAndAirWall")
-    #wall.add_layer(Material.DefaultWallSheathing, true)
-    #wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    #wall.add_layer(Material.AirFilmOutside, false)
+    wall.add_layer(Material.DefaultWallSheathing, true)
+    wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+    wall.add_layer(Material.AirFilmOutside, false)
 
     # Create and assign construction to surfaces
     if not wall.create_and_assign_constructions(surfaces, runner, model, name="ExtUninsUnfinWall")

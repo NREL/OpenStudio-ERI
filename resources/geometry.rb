@@ -158,7 +158,8 @@ class Geometry
         space.surfaces.each do |surface|
             next if surface.surfaceType.downcase != "floor"
             next if not surface.adjacentSurface.is_initialized
-            adjacent_space = Geometry.get_space_from_surface(model, surface.adjacentSurface.get.name.to_s, nil, false)
+            next if not surface.adjacentSurface.get.space.is_initialized
+            adjacent_space = surface.adjacentSurface.get.space.get
             next if not Geometry.space_is_finished(adjacent_space)
             return true
         end
@@ -252,27 +253,6 @@ class Geometry
         return thermal_zone
     end     
     
-    # FIXME: Remove method; use surface.space instead
-    def self.get_space_from_surface(model, surface_s, runner, print_err=true)
-        space_r = nil
-        model.getSpaces.each do |space|
-            space.surfaces.each do |s|
-                if s.name.to_s == surface_s
-                    space_r = space
-                    break
-                end
-            end
-        end
-        if space_r.nil?
-            if print_err
-                runner.registerError("Could not find surface with the name '#{surface_s}'.")
-            else
-                runner.registerWarning("Could not find surface with the name '#{surface_s}'.")
-            end
-        end     
-        return space_r
-    end
-
     # Return an array of z values for surfaces passed in. The values will be relative to the parent origin. This was intended for spaces.
     def self.getSurfaceZValues(surfaceArray)
         zValueArray = []
@@ -507,12 +487,10 @@ class Geometry
     
     def self.get_non_attic_unfinished_roof_spaces(model)
         spaces = []
-        unfinished_attic_spaces = Geometry.get_unfinished_attic_spaces(model)
         model.getSpaces.each do |space|
             next if Geometry.space_is_finished(space)
             next if not Geometry.space_has_roof(space)
-            next if not Geometry.space_below_is_finished(space, model)
-            next if unfinished_attic_spaces.include?(space)
+            next if Geometry.space_below_is_finished(space, model)
             spaces << space
         end
         return spaces

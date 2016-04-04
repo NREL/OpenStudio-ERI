@@ -274,16 +274,16 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
         
         # Define actual construction
         fic_fbsmt_wall = Construction.new([1])
-        if not mat_fic_wall.nil?
-            fic_fbsmt_wall.add_layer(mat_fic_wall, true)
-        end
-        fic_fbsmt_wall.add_layer(Material.Soil12in, true)
-        fic_fbsmt_wall.add_layer(Material.Concrete8in, true)
+        fic_fbsmt_wall.add_layer(Material.AirFilmVertical, false)
+        fic_fbsmt_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
         if not mat_fic_insul_layer.nil?
             fic_fbsmt_wall.add_layer(mat_fic_insul_layer, true)
         end
-        fic_fbsmt_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-        fic_fbsmt_wall.add_layer(Material.AirFilmVertical, false)
+        fic_fbsmt_wall.add_layer(Material.Concrete8in, true)
+        fic_fbsmt_wall.add_layer(Material.Soil12in, true)
+        if not mat_fic_wall.nil?
+            fic_fbsmt_wall.add_layer(mat_fic_wall, true)
+        end
 
         # Create and assign construction to surfaces
         if not fic_fbsmt_wall.create_and_assign_constructions(wall_surfaces, runner, model, name="GrndInsFinWall")
@@ -312,9 +312,9 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
 
         # Define construction
         fb_floor = Construction.new([1.0])
-        fb_floor.add_layer(mat_fic_floor, true)
-        fb_floor.add_layer(Material.Soil12in, true)
         fb_floor.add_layer(Material.Concrete4in, true)
+        fb_floor.add_layer(Material.Soil12in, true)
+        fb_floor.add_layer(mat_fic_floor, true)
         
         # Create and assign construction to surfaces
         if not fb_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsFinBFloor")

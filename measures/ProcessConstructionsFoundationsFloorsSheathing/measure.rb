@@ -6,21 +6,21 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
+class SetResidentialFoundationsFloorsFloorSheathing < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Set Residential Walls - Wall Sheathing"
+    return " Set Residential Foundations/Floors - Floor Sheathing"
   end
 
   # human readable description
   def description
-    return "This measure assigns wall sheathing to all above-grade walls adjacent to finished space."
+    return "This measure assigns floor sheathing to floors of finished spaces, with the exception of foundation slabs."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "Assigns material layer properties for all above-grade walls between finished space and outside or between finished space and unfinished space."
+    return "Assigns material layer properties for floors of finished spaces that are not adjacent to the ground."
   end
 
   # define the arguments that the user will input
@@ -31,8 +31,8 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
 	osb_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("osb_thick_in",true)
 	osb_thick_in.setDisplayName("OSB/Plywood Thickness")
     osb_thick_in.setUnits("in")
-	osb_thick_in.setDescription("Specifies the thickness of the walls' structural shear OSB sheathing. Enter 0 for no sheathing (if the wall has other means to handle the shear load on the wall such as cross-bracing).")
-	osb_thick_in.setDefaultValue(0.5)
+	osb_thick_in.setDescription("Specifies the thickness of the floor OSB/plywood sheathing. Enter 0 for no sheathing.")
+	osb_thick_in.setDefaultValue(0.75)
 	args << osb_thick_in
     
 	#make a double argument for Rigid Insulation R-value
@@ -62,28 +62,23 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
     if !runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-    
+
+    # Floors of finished spaces (except foundation slabs)
     surfaces = []
     model.getSpaces.each do |space|
         next if Geometry.space_is_unfinished(space)
-        next if Geometry.space_is_below_grade(space)
         space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "wall"
-            if surface.outsideBoundaryCondition.downcase == "outdoors"
-                # Above-grade wall between finished space and outside    
-                surfaces << surface
-            elsif surface.adjacentSurface.is_initialized and surface.adjacentSurface.get.space.is_initialized
-                adjacent_space = surface.adjacentSurface.get.space.get
-                next if Geometry.space_is_finished(adjacent_space)
-                # Above-grade wall between finished space and unfinished space
-                surfaces << surface
-            end
+            next if surface.surfaceType.downcase != "floor"
+            next if surface.outsideBoundaryCondition.downcase == "ground"
+            surfaces << surface
         end
     end
+    
+    # Continue if no applicable surfaces
     if surfaces.empty?
-        runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
-        return true
-    end
+      runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
+      return true
+    end        
 
     # Get inputs
     osb_thick_in = runner.getDoubleArgumentValue("osb_thick_in",user_arguments)
@@ -108,27 +103,27 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
     mat_osb = nil
     mat_rigid = nil
     if osb_thick_in > 0
-        mat_osb = Material.new(name=Constants.MaterialWallSheathing, thick_in=osb_thick_in, mat_base=BaseMaterial.Wood)
+        mat_osb = Material.new(name=Constants.MaterialFloorSheathing, thick_in=osb_thick_in, mat_base=BaseMaterial.Wood)
     end
     if rigid_rvalue > 0 and rigid_thick_in > 0
-        mat_rigid = Material.new(name=Constants.MaterialWallRigidIns, thick_in=rigid_thick_in, mat_base=BaseMaterial.InsulationRigid, k_in=rigid_thick_in/rigid_rvalue)
+        mat_rigid = Material.new(name=Constants.MaterialFloorRigidIns, thick_in=rigid_thick_in, mat_base=BaseMaterial.InsulationRigid, k_in=rigid_thick_in/rigid_rvalue)
     end
     
     # Define construction
-    wall_sh = Construction.new([1])
+    floor_sh = Construction.new([1])
     if not mat_rigid.nil?
-        wall_sh.add_layer(mat_rigid, true)
+        floor_sh.add_layer(mat_rigid, true)
     else
-        wall_sh.remove_layer(Constants.MaterialWallRigidIns)
+        floor_sh.remove_layer(Constants.MaterialFloorRigidIns)
     end
     if not mat_osb.nil?
-        wall_sh.add_layer(mat_osb, true)
+        floor_sh.add_layer(mat_osb, true)
     else
-        wall_sh.remove_layer(Constants.MaterialWallSheathing)
+        floor_sh.remove_layer(Material.DefaultFloorSheathing.name)
     end
     
     # Create and assign construction to surfaces
-    if not wall_sh.create_and_assign_constructions(surfaces, runner, model, name=nil)
+    if not floor_sh.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
     end
 
@@ -142,4 +137,4 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
 end
 
 # register the measure to be used by the application
-ProcessConstructionsWallsSheathing.new.registerWithApplication
+SetResidentialFoundationsFloorsFloorSheathing.new.registerWithApplication

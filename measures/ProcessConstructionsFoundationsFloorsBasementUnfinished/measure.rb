@@ -152,8 +152,8 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
                 floor_surfaces << surface
             end
             # Ceiling above below-grade unfinished space and below finished space
-            if surface.surfaceType.downcase == "roofceiling" and surface.adjacentSurface.is_initialized
-                adjacent_space = Geometry.get_space_from_surface(model, surface.adjacentSurface.get.name.to_s, runner)
+            if surface.surfaceType.downcase == "roofceiling" and surface.adjacentSurface.is_initialized and surface.adjacentSurface.get.space.is_initialized
+                adjacent_space = surface.adjacentSurface.get.space.get
                 if Geometry.space_is_finished(adjacent_space)
                     ceiling_surfaces << surface
                 end
@@ -305,16 +305,16 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         
         # Define actual construction
         fic_ufbsmt_wall = Construction.new([1])
-        if not mat_fic_wall.nil?
-            fic_ufbsmt_wall.add_layer(mat_fic_wall, true)
-        end
-        fic_ufbsmt_wall.add_layer(Material.Soil12in, true)
-        fic_ufbsmt_wall.add_layer(Material.Concrete8in, true)
+        fic_ufbsmt_wall.add_layer(Material.AirFilmVertical, false)
+        fic_ufbsmt_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
         if not mat_fic_insul_layer.nil?
             fic_ufbsmt_wall.add_layer(mat_fic_insul_layer, true)
         end
-        fic_ufbsmt_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-        fic_ufbsmt_wall.add_layer(Material.AirFilmVertical, false)
+        fic_ufbsmt_wall.add_layer(Material.Concrete8in, true)
+        fic_ufbsmt_wall.add_layer(Material.Soil12in, true)
+        if not mat_fic_wall.nil?
+            fic_ufbsmt_wall.add_layer(mat_fic_wall, true)
+        end
 
         # Create and assign construction to surfaces
         if not fic_ufbsmt_wall.create_and_assign_constructions(wall_surfaces, runner, model, name="GrndInsUnfinBWall")
@@ -343,9 +343,9 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         
         # Define construction
         ub_floor = Construction.new([1.0])
-        ub_floor.add_layer(mat_fic_floor, true)
-        ub_floor.add_layer(Material.Soil12in, true)
         ub_floor.add_layer(Material.Concrete4in, true)
+        ub_floor.add_layer(Material.Soil12in, true)
+        ub_floor.add_layer(mat_fic_floor, true)
         
         # Create and assign construction to surfaces
         if not ub_floor.create_and_assign_constructions(floor_surfaces, runner, model, name="GrndUninsUnfinBFloor")
@@ -376,7 +376,7 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Rule
         ub_ceiling = Construction.new(path_fracs)
         ub_ceiling.add_layer(Material.AirFilmFloorReduced, false)
         ub_ceiling.add_layer([mat_framing, mat_cavity, mat_gap], true, "UFBsmtCeilingIns")
-        ub_ceiling.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
+        ub_ceiling.add_layer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
         ub_ceiling.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
         ub_ceiling.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
         ub_ceiling.add_layer(Material.AirFilmFloorReduced, false)

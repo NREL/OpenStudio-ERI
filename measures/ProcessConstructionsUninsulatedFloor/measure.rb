@@ -49,8 +49,8 @@ class ProcessConstructionsUninsulatedFloor < OpenStudio::Ruleset::ModelUserScrip
                 next
             end
             next if not surface.adjacentSurface.is_initialized
-            adjacent_surface = surface.adjacentSurface.get
-            adjacent_space = Geometry.get_space_from_surface(model, adjacent_surface.name.to_s, runner)
+            next if not surface.adjacentSurface.get.space.is_initialized
+            adjacent_space = surface.adjacentSurface.get.space.get
             next if Geometry.space_is_unfinished(adjacent_space)
             # Floor between two finished spaces
             finished_surfaces << surface
@@ -68,8 +68,8 @@ class ProcessConstructionsUninsulatedFloor < OpenStudio::Ruleset::ModelUserScrip
                 next
             end
             next if not surface.adjacentSurface.is_initialized
-            adjacent_surface = surface.adjacentSurface.get
-            adjacent_space = Geometry.get_space_from_surface(model, adjacent_surface.name.to_s, runner)
+            next if not surface.adjacentSurface.get.space.is_initialized
+            adjacent_space = surface.adjacentSurface.get.space.get
             next if Geometry.space_is_finished(adjacent_space)
             # Floor between two unfinished spaces
             unfinished_surfaces << surface
@@ -94,14 +94,13 @@ class ProcessConstructionsUninsulatedFloor < OpenStudio::Ruleset::ModelUserScrip
     if not finished_surfaces.empty?
         # Define construction
         fin_floor = Construction.new(path_fracs)
-        # FIXME: Commented out layers for comparison to BEopt
-        #fin_floor.add_layer(Material.AirFilmFloorAverage, false)
-        #fin_floor.add_layer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
+        fin_floor.add_layer(Material.AirFilmFloorAverage, false)
+        fin_floor.add_layer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
         fin_floor.add_layer([mat_framing, mat_cavity], true, "FinStudAndAirFloor")
-        fin_floor.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
-        #fin_floor.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
-        #fin_floor.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
-        #fin_floor.add_layer(Material.AirFilmFloorAverage, false)
+        fin_floor.add_layer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
+        fin_floor.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
+        fin_floor.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
+        fin_floor.add_layer(Material.AirFilmFloorAverage, false)
 
         # Create and apply construction to finished surfaces
         if not fin_floor.create_and_assign_constructions(finished_surfaces, runner, model, name="FinUninsFinFloor")
@@ -112,11 +111,10 @@ class ProcessConstructionsUninsulatedFloor < OpenStudio::Ruleset::ModelUserScrip
     if not unfinished_surfaces.empty?
         # Define construction
         unfin_floor = Construction.new(path_fracs)
-        # FIXME: Commented out layers for comparison to BEopt
-        #unfin_floor.add_layer(Material.AirFilmFloorAverage, false)
+        unfin_floor.add_layer(Material.AirFilmFloorAverage, false)
         unfin_floor.add_layer([mat_framing, mat_cavity], true, "UnfinStudAndAirFloor")
-        #unfin_floor.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
-        #unfin_floor.add_layer(Material.AirFilmFloorAverage, false)
+        unfin_floor.add_layer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
+        unfin_floor.add_layer(Material.AirFilmFloorAverage, false)
 
         # Create and apply construction to unfinished surfaces
         if not unfin_floor.create_and_assign_constructions(unfinished_surfaces, runner, model, name="UnfinUninsUnfinFloor")

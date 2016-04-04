@@ -76,8 +76,8 @@ class ProcessConstructionsFoundationsFloorsInterzonalFloors < OpenStudio::Rulese
             if surface.outsideBoundaryCondition.downcase == "outdoors"
                 # Cantilevered floor between above-grade finished space and outside    
                 surfaces << surface
-            elsif surface.adjacentSurface.is_initialized
-                adjacent_space = Geometry.get_space_from_surface(model, surface.adjacentSurface.get.name.to_s, runner)
+            elsif surface.adjacentSurface.is_initialized and surface.adjacentSurface.get.space.is_initialized
+                adjacent_space = surface.adjacentSurface.get.space.get
                 next if Geometry.space_is_finished(adjacent_space)
                 next if Geometry.space_is_below_grade(adjacent_space)
                 # Floor between above-grade finished space and above-grade unfinished space
@@ -126,7 +126,7 @@ class ProcessConstructionsFoundationsFloorsInterzonalFloors < OpenStudio::Rulese
     izf_const = Construction.new(path_fracs)
     izf_const.add_layer(Material.AirFilmFloorReduced, false)
     izf_const.add_layer([mat_framing, mat_cavity, mat_gap], true, "IntFloorIns")
-    izf_const.add_layer(Material.DefaultFloorSheathing, true) # sheathing added in separate measure FIXME: Need to add separate measure and turn argument to false
+    izf_const.add_layer(Material.DefaultFloorSheathing, false) # sheathing added in separate measure
     izf_const.add_layer(Material.DefaultFloorMass, false) # thermal mass added in separate measure
     izf_const.add_layer(Material.DefaultFloorCovering, false) # floor covering added in separate measure
     izf_const.add_layer(Material.AirFilmFloorReduced, false)

@@ -89,7 +89,8 @@ class ProcessConstructionsWallsInterzonal < OpenStudio::Ruleset::ModelUserScript
         space.surfaces.each do |surface|
             next if surface.surfaceType.downcase != "wall"
             next if not surface.adjacentSurface.is_initialized
-            adjacent_space = Geometry.get_space_from_surface(model, surface.adjacentSurface.get.name.to_s, runner)
+            next if not surface.adjacentSurface.get.space.is_initialized
+            adjacent_space = surface.adjacentSurface.get.space.get
             next if Geometry.space_is_finished(adjacent_space)
             surfaces << surface
         end

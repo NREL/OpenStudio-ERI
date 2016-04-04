@@ -105,10 +105,6 @@ class ProcessConstructionsCeilingsRoofsThermalMass < OpenStudio::Ruleset::ModelU
         space.surfaces.each do |surface|
             if surface.surfaceType.downcase == "roofceiling"
                 surfaces << surface
-            elsif surface.surfaceType.downcase == "floor" and surface.outsideBoundaryCondition.downcase == "adiabatic"
-                # For example, a partition floor surface between two living space stories from BEopt
-                # FIXME: Remove this elsif and split the spaces in our BEopt geometry files
-                surfaces << surface
             end
         end
     end
