@@ -66,6 +66,7 @@ class Geometry
         end
     end 
 
+    # FIXME: Remove when we get rid of space types
     # Retrieves the floor area of the specified space type
     def self.get_floor_area_for_space_type(model, spacetype_handle)
         floor_area = 0
@@ -82,7 +83,6 @@ class Geometry
         floor_area = 0
         model.getThermalZones.each do |zone|
             if self.zone_is_finished(zone)
-                runner.registerWarning(zone.name.to_s)
                 floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
             end
         end
@@ -180,7 +180,8 @@ class Geometry
         end
         return space
     end
-    
+
+    # FIXME: Remove when we get rid of space types
     def self.get_space_type_from_string(model, spacetype_s, runner, print_err=true)
         space_type = nil
         model.getSpaceTypes.each do |st|

@@ -40,5 +40,15 @@ class UnitConversion
         # ft^3 -> gal
         return 7.4805195*ft3
     end
+    
+    def self.lbm_min2kg_hr(lbm_min)
+        # lbm/min -> kg/hr
+        return 27.215542*lbm_min
+    end
+    
+    def self.lbm_min2kg_s(lbm_min)
+        # lbm/min -> kg/s
+        return UnitConversion.lbm_min2kg_hr(lbm_min) / 3600.0
+    end
   
 end

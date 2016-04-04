@@ -1,8 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
+  <error>undefined method `SlabSpace' for Constants:Class</error>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>e9ce2274-db46-4241-a763-5920e01224e3</version_id>
+  <version_id>d9fcdd13-487f-4b70-aaff-89481a2ee7f3</version_id>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -279,13 +280,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4FBE56E0</checksum>
+      <checksum>AF0000B2</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
+      <checksum>62FE7D43</checksum>
     </file>
   </files>
 </measure>

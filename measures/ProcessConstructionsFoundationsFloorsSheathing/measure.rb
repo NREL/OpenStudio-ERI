@@ -6,11 +6,11 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class SetResidentialFoundationsFloorsFloorSheathing < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsFoundationsFloorsSheathing < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return " Set Residential Foundations/Floors - Floor Sheathing"
+    return "Set Residential Foundations/Floors - Floor Sheathing"
   end
 
   # human readable description
@@ -137,4 +137,4 @@ class SetResidentialFoundationsFloorsFloorSheathing < OpenStudio::Ruleset::Model
 end
 
 # register the measure to be used by the application
-SetResidentialFoundationsFloorsFloorSheathing.new.registerWithApplication
+ProcessConstructionsFoundationsFloorsSheathing.new.registerWithApplication

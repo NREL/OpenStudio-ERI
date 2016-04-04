@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition_thermal_mass</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>019e9149-ed64-4dce-b24f-f38085a21338</version_id>
+  <version_id>93d37580-e913-45c4-80e4-4677bb836391</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsPartitionThermalMass</class_name>
   <display_name>Set Residential Walls - Partition Thermal Mass</display_name>
@@ -113,12 +113,6 @@
   </attributes>
   <files>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
-    </file>
-    <file>
       <filename>ProcessThermalMassPartitionWall_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -136,22 +130,28 @@
       <checksum>B288A438</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F9A25850</checksum>
+      <checksum>DCBEF242</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E02314FE</checksum>
+      <checksum>62FE7D43</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>88AE3262</checksum>
+      <checksum>0D13095D</checksum>
     </file>
   </files>
 </measure>

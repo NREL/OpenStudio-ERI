@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>2fb315ba-9c4e-40d9-befc-c0851754dfb6</version_id>
+  <version_id>752fb5cb-96db-4f4e-af44-4659a5d4d9ca</version_id>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -651,7 +651,7 @@
     </argument>
     <argument>
       <name>duct_location</name>
-      <display_name>Duct Location</display_name>
+      <display_name>Ducts: Location</display_name>
       <description>The space with the primary location of ducts.</description>
       <type>Choice</type>
       <required>true</required>
@@ -659,24 +659,28 @@
       <default_value>auto</default_value>
       <choices>
         <choice>
-          <value>None</value>
-          <display_name>None</display_name>
-        </choice>
-        <choice>
           <value>auto</value>
           <display_name>auto</display_name>
         </choice>
         <choice>
-          <value>living space</value>
-          <display_name>living space</display_name>
+          <value>living zone</value>
+          <display_name>living zone</display_name>
         </choice>
         <choice>
-          <value>basement space</value>
-          <display_name>basement space</display_name>
+          <value>attic zone</value>
+          <display_name>attic zone</display_name>
         </choice>
         <choice>
-          <value>attic space</value>
-          <display_name>attic space</display_name>
+          <value>basement zone</value>
+          <display_name>basement zone</display_name>
+        </choice>
+        <choice>
+          <value>garage zone</value>
+          <display_name>garage zone</display_name>
+        </choice>
+        <choice>
+          <value>none</value>
+          <display_name>none</display_name>
         </choice>
       </choices>
     </argument>
@@ -721,7 +725,7 @@
       <default_value>0.067</default_value>
     </argument>
     <argument>
-      <name>duct_ah_ret_leakage</name>
+      <name>duct_ah_ret_frac</name>
       <display_name>Ducts: Return Air Handler Leakage Fraction of Total</display_name>
       <description>The amount of air flow leakage leaking out from the return-side of the air handler expressed as a fraction of the total duct leakage.</description>
       <type>Double</type>
@@ -734,10 +738,61 @@
       <name>duct_norm_leakage_to_outside</name>
       <display_name>Ducts: Leakage to Outside at 25Pa</display_name>
       <description>Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.</description>
-      <type>Double</type>
+      <type>String</type>
       <units>cfm/100 ft^2</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value>NA</default_value>
+    </argument>
+    <argument>
+      <name>duct_location_frac</name>
+      <display_name>Ducts: Location Fraction</display_name>
+      <description>Fraction of supply ducts in the space specified by Duct Location; the remainder of supply ducts will be located in above-grade conditioned space.</description>
+      <type>String</type>
+      <units>frac</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+    </argument>
+    <argument>
+      <name>duct_num_returns</name>
+      <display_name>Ducts: Number of Returns</display_name>
+      <description>The number of duct returns.</description>
+      <type>String</type>
+      <units>#</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+    </argument>
+    <argument>
+      <name>supply_surface_area_multiplier</name>
+      <display_name>Ducts: Supply Surface Area Multiplier</display_name>
+      <description>Values specify a fraction of the Building America Benchmark supply duct surface area.</description>
+      <type>Double</type>
+      <units>mult</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>return_surface_area_multiplier</name>
+      <display_name>Ducts: Return Surface Area Multiplier</display_name>
+      <description>Values specify a fraction of the Building America Benchmark return duct surface area.</description>
+      <type>Double</type>
+      <units>mult</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>duct_unconditioned_rvalue</name>
+      <display_name>Ducts: Insulation Nominal R-Value</display_name>
+      <description>The nominal R-value for duct insulation.</description>
+      <type>Double</type>
+      <units>h-ft^2-R/Btu</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -767,7 +822,13 @@
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
+      <checksum>DCBEF242</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62FE7D43</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
@@ -776,16 +837,22 @@
       <checksum>79B0EC38</checksum>
     </file>
     <file>
-      <filename>sim.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>82B1C233</checksum>
+      <checksum>84F0F9A9</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>58E6CF39</checksum>
+      <checksum>A998D886</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0D13095D</checksum>
     </file>
     <file>
       <version>
@@ -796,25 +863,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>09A3E629</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>DCC20790</checksum>
     </file>
   </files>
 </measure>

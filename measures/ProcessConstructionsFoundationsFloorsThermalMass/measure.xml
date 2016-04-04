@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_thermal_mass</name>
   <uid>324b197d-f75e-4513-b8b8-151d77132961</uid>
-  <version_id>54ecb6d5-1cf0-471d-bfb7-1c50486f593f</version_id>
+  <version_id>7f6986dc-9402-4e52-83eb-18b13900566b</version_id>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsThermalMass</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Thermal Mass</display_name>
@@ -68,28 +68,10 @@
   </attributes>
   <files>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
-    </file>
-    <file>
       <filename>ProcessConstructionsInteriorInsulatedFloors_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>A98C5B12</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A2F0AE9C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0FA9D8F0</checksum>
     </file>
     <file>
       <version>
@@ -103,10 +85,28 @@
       <checksum>10A70777</checksum>
     </file>
     <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCBEF242</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62FE7D43</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>55697569</checksum>
+      <checksum>0D13095D</checksum>
     </file>
   </files>
 </measure>

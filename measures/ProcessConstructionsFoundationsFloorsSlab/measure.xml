@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>ab04b9ef-8b0b-41e3-a8c6-8a5b3c242fec</version_id>
+  <version_id>eccc6cb0-3f84-4e36-afb1-694be5fb119a</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
@@ -128,18 +128,6 @@
   </attributes>
   <files>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>ProcessConstructionsSlab_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3A2301EE</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -151,22 +139,34 @@
       <checksum>A44C8245</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F9A25850</checksum>
+      <checksum>DCBEF242</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E02314FE</checksum>
+      <checksum>62FE7D43</checksum>
+    </file>
+    <file>
+      <filename>ProcessConstructionsSlab_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C3EC7191</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>88AE3262</checksum>
+      <checksum>0D13095D</checksum>
     </file>
   </files>
 </measure>

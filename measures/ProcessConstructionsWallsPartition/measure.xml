@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>49603ca4-40d7-40f9-93e6-088f54b31a34</version_id>
+  <version_id>a0592cc7-fc5d-415b-b15d-a36d69027ea3</version_id>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsPartition</class_name>
   <display_name>Set Residential Walls - Partition Construction</display_name>
@@ -27,12 +27,6 @@
   </attributes>
   <files>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
-    </file>
-    <file>
       <filename>ProcessConstructionsInteriorUninsulatedWalls_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -50,22 +44,28 @@
       <checksum>29117320</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F9A25850</checksum>
+      <checksum>DCBEF242</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E02314FE</checksum>
+      <checksum>62FE7D43</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>88AE3262</checksum>
+      <checksum>0D13095D</checksum>
     </file>
   </files>
 </measure>

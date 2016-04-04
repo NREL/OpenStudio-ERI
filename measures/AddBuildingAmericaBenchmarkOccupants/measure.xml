@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>add_building_america_benchmark_occupants</name>
   <uid>922fce56-377a-439d-8b3d-19f9c8bb91f5</uid>
-  <version_id>b25aa1ec-8e61-4774-80e8-76e0249dfca9</version_id>
+  <version_id>1a871c36-236e-4d5a-82b7-85cd22aac64c</version_id>
   <xml_checksum>5639FE46</xml_checksum>
   <class_name>AddBuildingAmericaBenchmarkOccupants</class_name>
   <display_name>Set Residential Occupants</display_name>
@@ -57,12 +57,6 @@
       <checksum>3F65B40F</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -74,22 +68,28 @@
       <checksum>CEC54060</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
+      <checksum>DCBEF242</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
+      <checksum>62FE7D43</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>0D13095D</checksum>
     </file>
   </files>
 </measure>

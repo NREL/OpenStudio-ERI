@@ -2,131 +2,96 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>ec7073dc-52df-4a7b-adb6-0c7e315995a5</version_id>
+  <version_id>4ac19eaf-dc85-4bcd-8347-b0e354c51882</version_id>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
   <display_name>AddOSWaterHeaterMixedStorageOil</display_name>
-  <description>This measure adds an OS:WaterHeater:Mixed object representing an Oil Storage Water Heater. Users will be asked to provide the following arguments: 1) Use case; 2) Plant Loop Assignment; 3) Number of Bedrooms; 4) Number of Bathrooms; 5) Tank Volume; 6) Energy Factor; 7) Water Heater Location; ) Setpoint Temperature Schedule; 9) Water Heater Capacity; 11) Recovery Efficiency&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;
- </description>
-  <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a #1 Oil Storage Water Heater. The object will either create a new plant loop, or be assigned to an existing plant loop. The object will be configured be to use the user arguments. The EIO file reports the industry standard ratings of Recovery Efficiency and Energy Factor for water heater objects.</modeler_description>
+  <description>This measure adds a new residential oil storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced.</description>
+  <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a oil storage water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created.</modeler_description>
   <arguments>
     <argument>
-      <name>number_of_bedrooms</name>
-      <display_name>Number of Bedrooms in the Proposed Home</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <choices>
-        <choice>
-          <value>1</value>
-          <display_name>1</display_name>
-        </choice>
-        <choice>
-          <value>2</value>
-          <display_name>2</display_name>
-        </choice>
-        <choice>
-          <value>3</value>
-          <display_name>3</display_name>
-        </choice>
-        <choice>
-          <value>4</value>
-          <display_name>4</display_name>
-        </choice>
-        <choice>
-          <value>5</value>
-          <display_name>5</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>number_of_bathrooms</name>
-      <display_name>Number of Bathrooms in the Proposed Home</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <choices>
-        <choice>
-          <value>1</value>
-          <display_name>1</display_name>
-        </choice>
-        <choice>
-          <value>1.5</value>
-          <display_name>1.5</display_name>
-        </choice>
-        <choice>
-          <value>2</value>
-          <display_name>2</display_name>
-        </choice>
-        <choice>
-          <value>2.5</value>
-          <display_name>2.5</display_name>
-        </choice>
-        <choice>
-          <value>3</value>
-          <display_name>3</display_name>
-        </choice>
-        <choice>
-          <value>3.5 or more</value>
-          <display_name>3.5 or more</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>existing_plant_loop_name</name>
-      <display_name>Plant Loop to assign Water heater as a Supply Equipment</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <choices>
-        <choice>
-          <value>New Plant Loop</value>
-          <display_name>New Plant Loop</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>storage_tank_volume</name>
-      <display_name>Volume of the Storage Tank (gallons) of the Oil Hot Water Heater. Set to 0 to have Storage tank volume autosized.</display_name>
-      <type>Double</type>
+      <display_name>Tank Volume</display_name>
+      <description>Nominal volume of the of the water heater tank. Set to auto to have volume autosized.</description>
+      <type>String</type>
+      <units>gal</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
     </argument>
     <argument>
-      <name>rated_energy_factor</name>
-      <display_name>Rated Energy Factor of Oil Storage Tank Water Heater.</display_name>
+      <name>dhw_setpoint_temperature</name>
+      <display_name>Setpoint</display_name>
+      <description>Water heater setpoint temperature.</description>
       <type>Double</type>
+      <units>F</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>shw_setpoint_temperature</name>
-      <display_name>Hot Water Temperature Setpoint (Deg F).</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
+      <default_value>125</default_value>
     </argument>
     <argument>
       <name>water_heater_location</name>
-      <display_name>Thermal Zone where the Oil Storage Water Heater is located</display_name>
+      <display_name>Location</display_name>
+      <description>Thermal zone where the water heater is located.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>living zone</default_value>
+      <choices>
+        <choice>
+          <value>living zone</value>
+          <display_name>living zone</display_name>
+        </choice>
+      </choices>
     </argument>
     <argument>
       <name>water_heater_capacity</name>
-      <display_name>The nominal capacity [kBtu/hr] of the gas storage water heater. Set to 0 to have this field autosized.</display_name>
+      <display_name>Input Capacity</display_name>
+      <description>The maximum energy input rating of the water heater.</description>
+      <type>Double</type>
+      <units>kBtu/hr</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>90</default_value>
+    </argument>
+    <argument>
+      <name>rated_energy_factor</name>
+      <display_name>Rated Energy Factor</display_name>
+      <description>For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procesdures to thes the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B. Enter auto for a water heater that meets the minimum federal efficiency requirements.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>0.62</default_value>
     </argument>
     <argument>
       <name>water_heater_recovery_efficiency</name>
-      <display_name>Rated Recovery Efficiency of the water heater equal to the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the DOE in 10 CFR Part 430, Appendix E to Subpart B. Enter his number as a percent. This is used to calculate the thermal efficiency. Users wil need to review the E+out.eio file to confirm Calculated recovery efficiency - Rated recovery efficiency.</display_name>
+      <display_name>Recovery Efficiency</display_name>
+      <description>For water heaters, the recovery efficiency is the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the Department of Energy in 10 Code of Federal Regulations Part 430, Appendix E to Subpart B. This information can often be found in the AHRI Certification Directory or on the EnergyStar website.</description>
       <type>Double</type>
+      <units>Frac</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.8</default_value>
+      <default_value>0.78</default_value>
+    </argument>
+    <argument>
+      <name>offcyc_power</name>
+      <display_name>Parasitic Electric Power</display_name>
+      <description>Off cycle electric power draw for controls, etc.</description>
+      <type>Double</type>
+      <units>W</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>oncyc_power</name>
+      <display_name>Forced Draft Fan Power</display_name>
+      <description>On cycle electric power draw from the forced draft fan motor.</description>
+      <type>Double</type>
+      <units>W</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -147,16 +112,28 @@
   </attributes>
   <files>
     <file>
-      <filename>ba_protocol_table_8_page_13.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>61747C72</checksum>
-    </file>
-    <file>
       <filename>AddOSWaterHeaterMixedStorageOil_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>1304F290</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCBEF242</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B516C87F</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62FE7D43</checksum>
     </file>
     <file>
       <version>
@@ -167,13 +144,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>800D01DA</checksum>
+      <checksum>624545A7</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
+      <checksum>0D13095D</checksum>
     </file>
   </files>
 </measure>

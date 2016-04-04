@@ -4,6 +4,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/weather"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/geometry"
+require "#{File.dirname(__FILE__)}/resources/waterheater"
 
 #start the measure
 class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
@@ -128,13 +129,13 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     plant_loops.each do |plant_loop|
         plant_loop_args << plant_loop.name.to_s
     end
-    if not plant_loop_args.include?(Constants.PlantLoopServiceWater)
-        plant_loop_args << Constants.PlantLoopServiceWater
+    if not plant_loop_args.include?(Constants.PlantLoopDomesticWater)
+        plant_loop_args << Constants.PlantLoopDomesticWater
     end
     plant_loop = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("plant_loop", plant_loop_args, true)
     plant_loop.setDisplayName("Plant Loop")
     plant_loop.setDescription("Select the plant loop for the clothes washer")
-    plant_loop.setDefaultValue(Constants.PlantLoopServiceWater)
+    plant_loop.setDefaultValue(Constants.PlantLoopDomesticWater)
 	args << plant_loop
     
     return args
@@ -213,7 +214,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     end
 
     # Get water heater setpoint
-    wh_setpoint = HelperMethods.get_water_heater_setpoint(model, plant_loop, runner)
+    wh_setpoint = Waterheater.get_water_heater_setpoint(model, plant_loop, runner)
     if wh_setpoint.nil?
         return false
     end

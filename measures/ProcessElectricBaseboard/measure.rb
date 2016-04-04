@@ -35,8 +35,8 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     #make an argument for entering furnace installed afue
     userdefined_eff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedeff",true)
     userdefined_eff.setDisplayName("Efficiency")
-	userdefined_eff.setUnits("Btu/Btu")
-	userdefined_eff.setDescription("The efficiency of the electric baseboard.")
+	  userdefined_eff.setUnits("Btu/Btu")
+	  userdefined_eff.setDescription("The efficiency of the electric baseboard.")
     userdefined_eff.setDefaultValue(1.0)
     args << userdefined_eff
 
@@ -95,12 +95,12 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+    living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
     living_thermal_zone = Geometry.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
     if living_thermal_zone.nil?
         return false
     end
-	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
+    fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
     fbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, fbasement_thermal_zone_r, runner, false)
 	
     baseboardEfficiency = runner.getDoubleArgumentValue("userdefinedeff",user_arguments)
@@ -109,15 +109,12 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end
 
-    heatingseasonschedule = nil
-    scheduleRulesets = model.getScheduleRulesets
-    scheduleRulesets.each do |scheduleRuleset|
-      if scheduleRuleset.name.to_s == "HeatingSeasonSchedule"
-        heatingseasonschedule = scheduleRuleset
-        break
-      end
+    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
+    if heatingseasonschedule.nil?
+        runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        return false
     end
-
+    
     # Check if has equipment
     baseboards = model.getZoneHVACBaseboardConvectiveElectrics
     baseboards.each do |baseboard|
@@ -125,43 +122,61 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
       baseboard.remove
     end
+    airLoopHVACs = model.getAirLoopHVACs
+    airLoopHVACs.each do |airLoopHVAC|
+      thermalZones = airLoopHVAC.thermalZones
+      thermalZones.each do |thermalZone|
+        if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
+          supplyComponents = airLoopHVAC.supplyComponents
+          supplyComponents.each do |supplyComponent|
+            if supplyComponent.to_AirLoopHVACUnitarySystem.is_initialized
+              air_loop_unitary = supplyComponent.to_AirLoopHVACUnitarySystem.get
+              if air_loop_unitary.heatingCoil.is_initialized
+                htg_coil = air_loop_unitary.heatingCoil.get
+                if htg_coil.to_CoilHeatingGas.is_initialized
+                  runner.registerInfo("Removed '#{htg_coil.name}' from air loop '#{airLoopHVAC.name}'")
+                  air_loop_unitary.resetHeatingCoil
+                  htg_coil.remove
+                end
+                if htg_coil.to_CoilHeatingElectric.is_initialized
+                  runner.registerInfo("Removed '#{htg_coil.name}' from air loop '#{airLoopHVAC.name}'")
+                  air_loop_unitary.resetHeatingCoil
+                  htg_coil.remove
+                end
+              end
+            # TODO: this removes multispeed central AC (which we don't want to happen), but there's no way to distinguish between ASHP/Minisplit and multispeed central AC.
+            elsif supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAir.is_initialized or supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAirMultiSpeed.is_initialized
+              supplyComponent.remove
+              airLoopHVAC.remove
+            end
+          end
+        end
+      end
+    end
 
-    zones = model.getThermalZones
-    zones.each do |zone|
+    htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
+    htg_coil.setName("Living Zone Electric Baseboards")
+    htg_coil.setAvailabilitySchedule(heatingseasonschedule)
+    if baseboardOutputCapacity != "Autosize"
+        htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
+    end
+    htg_coil.setEfficiency(baseboardEfficiency)
 
-      if living_thermal_zone.handle.to_s == zone.handle.to_s
+    htg_coil.addToThermalZone(living_thermal_zone)
+    runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{living_thermal_zone.name}'")
+
+    unless fbasement_thermal_zone.nil?
 
         htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
-        htg_coil.setName("Living Zone Electric Baseboards")
+        htg_coil.setName("FBsmt Zone Electric Baseboards")
         htg_coil.setAvailabilitySchedule(heatingseasonschedule)
         if baseboardOutputCapacity != "Autosize"
-          htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
+            htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
         end
         htg_coil.setEfficiency(baseboardEfficiency)
 
-        htg_coil.addToThermalZone(zone)
-        runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{zone.name}'")
-
-      end
-
-      if not fbasement_thermal_zone.nil?
-
-        if fbasement_thermal_zone.handle.to_s == zone.handle.to_s
-
-          htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
-          htg_coil.setName("FBsmt Zone Electric Baseboards")
-          htg_coil.setAvailabilitySchedule(heatingseasonschedule)
-          if baseboardOutputCapacity != "Autosize"
-            htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
-          end
-          htg_coil.setEfficiency(baseboardEfficiency)
-
-          htg_coil.addToThermalZone(zone)
-          runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{zone.name}'")
-
-        end
-
-      end
+        htg_coil.addToThermalZone(fbasement_thermal_zone)
+        runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{fbasement_thermal_zone.name}'")
 
     end
 	

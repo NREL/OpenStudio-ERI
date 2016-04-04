@@ -12,7 +12,7 @@ class ProcessConstructionsSlab_Test < Test::Unit::TestCase
   def test_ProcessConstructionsSlab
      
     # create an instance of the measure
-    measure = ProcessConstructionsFoundationsFloorsSlab.new
+    measure = ProcessConstructionsFoundationsFloorsSheathing.new
     
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

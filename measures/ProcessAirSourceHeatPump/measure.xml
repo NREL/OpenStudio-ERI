@@ -2,7 +2,7 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>2566501c-759e-480e-bfa6-baebe66e8ded</version_id>
+  <version_id>0fbbb208-ed90-4853-b7ba-f5260b0f0477</version_id>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
   <display_name>Set Residential Air Source Heat Pump</display_name>
@@ -38,6 +38,45 @@
         <choice>
           <value>SEER 15, 8.5 HSPF</value>
           <display_name>SEER 15, 8.5 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 16, 8.6 HSPF</value>
+          <display_name>SEER 16, 8.6 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 17, 8.7 HSPF</value>
+          <display_name>SEER 17, 8.7 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 18, 9.3 HSPF</value>
+          <display_name>SEER 18, 9.3 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 19, 9.5 HSPF</value>
+          <display_name>SEER 19, 9.5 HSPF</display_name>
+        </choice>
+        <choice>
+          <value>SEER 22, 10 HSPF</value>
+          <display_name>SEER 22, 10 HSPF</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>selectedcchp</name>
+      <display_name>Is Cold Climate</display_name>
+      <description>Specifies whether the heat pump is a so called 'cold climate heat pump'.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
         </choice>
       </choices>
     </argument>
@@ -327,25 +366,7 @@
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>058A19F9</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>79B0EC38</checksum>
-    </file>
-    <file>
-      <filename>sim.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>82B1C233</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>58E6CF39</checksum>
+      <checksum>DCBEF242</checksum>
     </file>
     <file>
       <version>
@@ -356,25 +377,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>47AADD0A</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC42456C</checksum>
+      <checksum>77D968D6</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4ECCF987</checksum>
+      <checksum>62FE7D43</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A998D886</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>587FC02E</checksum>
+      <checksum>0D13095D</checksum>
     </file>
   </files>
 </measure>

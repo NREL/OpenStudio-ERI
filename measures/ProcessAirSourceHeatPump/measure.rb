@@ -7,10 +7,10 @@
 #see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
 # http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
 
-#load sim.rb
-require "#{File.dirname(__FILE__)}/resources/sim"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/psychrometrics"
 
 #start the measure
 class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
@@ -130,7 +130,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
   class Supply
     def initialize
     end
-    attr_accessor(:static, :cfm_ton, :HPCoolingOversizingFactor, :SpaceConditionedMult, :fan_power, :eff, :min_flow_ratio, :FAN_EIR_FPLR_SPEC_coefficients, :max_temp, :Heat_Capacity, :compressor_speeds, :Zone_Water_Remove_Cap_Ft_DB_RH_Coefficients, :Zone_Energy_Factor_Ft_DB_RH_Coefficients, :Zone_DXDH_PLF_F_PLR_Coefficients, :Number_Speeds, :fanspeed_ratio, :CFM_TON_Rated, :COOL_CAP_FT_SPEC_coefficients, :COOL_EIR_FT_SPEC_coefficients, :COOL_CAP_FFLOW_SPEC_coefficients, :COOL_EIR_FFLOW_SPEC_coefficients, :CoolingEIR, :SHR_Rated, :COOL_CLOSS_FPLR_SPEC_coefficients, :Capacity_Ratio_Cooling, :CondenserType, :Crankcase, :Crankcase_MaxT, :EER_CapacityDerateFactor, :HEAT_CAP_FT_SPEC_coefficients, :HEAT_EIR_FT_SPEC_coefficients, :HEAT_CAP_FFLOW_SPEC_coefficients, :HEAT_EIR_FFLOW_SPEC_coefficients, :CFM_TON_Rated_Heat, :HeatingEIR, :HEAT_CLOSS_FPLR_SPEC_coefficients, :Capacity_Ratio_Heating, :fanspeed_ratio_heating, :min_hp_temp, :max_supp_heating_temp, :max_defrost_temp, :COP_CapacityDerateFactor)
+    attr_accessor(:static, :cfm_ton, :HPCoolingOversizingFactor, :SpaceConditionedMult, :fan_power, :eff, :min_flow_ratio, :FAN_EIR_FPLR_SPEC_coefficients, :max_temp, :Heat_Capacity, :compressor_speeds, :Zone_Water_Remove_Cap_Ft_DB_RH_Coefficients, :Zone_Energy_Factor_Ft_DB_RH_Coefficients, :Zone_DXDH_PLF_F_PLR_Coefficients, :Number_Speeds, :fanspeed_ratio, :CFM_TON_Rated, :COOL_CAP_FT_SPEC_coefficients, :COOL_EIR_FT_SPEC_coefficients, :COOL_CAP_FFLOW_SPEC_coefficients, :COOL_EIR_FFLOW_SPEC_coefficients, :CoolingEIR, :SHR_Rated, :COOL_CLOSS_FPLR_SPEC_coefficients, :Capacity_Ratio_Cooling, :CondenserType, :Crankcase, :Crankcase_MaxT, :EER_CapacityDerateFactor, :HEAT_CAP_FT_SPEC_coefficients, :HEAT_EIR_FT_SPEC_coefficients, :HEAT_CAP_FFLOW_SPEC_coefficients, :HEAT_EIR_FFLOW_SPEC_coefficients, :CFM_TON_Rated_Heat, :HeatingEIR, :HEAT_CLOSS_FPLR_SPEC_coefficients, :Capacity_Ratio_Heating, :fanspeed_ratio_heating, :min_hp_temp, :max_defrost_temp, :COP_CapacityDerateFactor, :fan_power_rated, :htg_supply_air_temp, :supp_htg_max_supply_temp, :supp_htg_max_outdoor_temp)
   end
 
   #define the name that a user will see, this method may be deprecated as
@@ -158,20 +158,27 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     hp_display_names << "SEER 13, 7.7 HSPF"
     hp_display_names << "SEER 14, 8.2 HSPF"
     hp_display_names << "SEER 15, 8.5 HSPF"
-    # hp_display_names << "SEER 16, 8.6 HSPF"
-    # hp_display_names << "SEER 17, 8.7 HSPF"
-    # hp_display_names << "SEER 18, 9.3 HSPF"
-    # hp_display_names << "SEER 19, 9.5 HSPF"
-    # hp_display_names << "SEER 22, 10 HSPF"
+    hp_display_names << "SEER 16, 8.6 HSPF"
+    hp_display_names << "SEER 17, 8.7 HSPF"
+    hp_display_names << "SEER 18, 9.3 HSPF"
+    hp_display_names << "SEER 19, 9.5 HSPF"
+    hp_display_names << "SEER 22, 10 HSPF"
 
     #make a string argument for ashp options
     selected_hp = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedhp", hp_display_names, true)
     selected_hp.setDisplayName("Air Source Heat Pump: Installed SEER, Installed HSPF")
-	selected_hp.setUnits("Btu/W-h")
-	selected_hp.setDescription("The installed Seasonal Energy Efficiency Ratio (SEER) of the heat pump, and the installed Heating Seasonal Performance Factor (HSPF) of the heat pump.")
+	  selected_hp.setUnits("Btu/W-h")
+	  selected_hp.setDescription("The installed Seasonal Energy Efficiency Ratio (SEER) of the heat pump, and the installed Heating Seasonal Performance Factor (HSPF) of the heat pump.")
     selected_hp.setDefaultValue("SEER 13, 7.7 HSPF")
     args << selected_hp
 
+    #make a bool argument for whether the ashp is cold climate
+    selected_cchp = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedcchp", true)
+    selected_cchp.setDisplayName("Is Cold Climate")
+    selected_cchp.setDescription("Specifies whether the heat pump is a so called 'cold climate heat pump'.")
+    selected_cchp.setDefaultValue(false)
+    args << selected_cchp    
+    
     #make a choice argument for ashp cooling/heating output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << "Autosize"
@@ -240,12 +247,12 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+    living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
     living_thermal_zone = Geometry.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
     if living_thermal_zone.nil?
         return false
     end
-	fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
+    fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
     fbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, fbasement_thermal_zone_r, runner, false)
     selected_hp = runner.getStringArgumentValue("selectedhp",user_arguments)
     hpOutputCapacity = runner.getStringArgumentValue("selectedhpcap",user_arguments)
@@ -276,668 +283,314 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     hpCOPCapacityDerateFactor = {"SEER 8, 6.0 HSPF"=>0.0, "SEER 10, 6.2 HSPF"=>0.0, "SEER 13, 7.7 HSPF"=>1.0, "SEER 14, 8.2 HSPF"=>1.0, "SEER 15, 8.5 HSPF"=>1.0, "SEER 16, 8.6 HSPF"=>1.0, "SEER 17, 8.7 HSPF"=>1.0, "SEER 18, 9.3 HSPF"=>1.0, "SEER 19, 9.5 HSPF"=>1.0, "SEER 22, 10 HSPF"=>1.0}[selected_hp]
     hpRatedAirFlowRateCooling = {"SEER 8, 6.0 HSPF"=>394.2, "SEER 10, 6.2 HSPF"=>394.2, "SEER 13, 7.7 HSPF"=>394.2, "SEER 14, 8.2 HSPF"=>394.2, "SEER 15, 8.5 HSPF"=>394.2, "SEER 16, 8.6 HSPF"=>344.1, "SEER 17, 8.7 HSPF"=>344.1, "SEER 18, 9.3 HSPF"=>344.1, "SEER 19, 9.5 HSPF"=>344.1, "SEER 22, 10 HSPF"=>315.8}[selected_hp]
     hpRatedAirFlowRateHeating = {"SEER 8, 6.0 HSPF"=>384.1, "SEER 10, 6.2 HSPF"=>384.1, "SEER 13, 7.7 HSPF"=>384.1, "SEER 14, 8.2 HSPF"=>384.1, "SEER 15, 8.5 HSPF"=>384.1, "SEER 16, 8.6 HSPF"=>352.2, "SEER 17, 8.7 HSPF"=>352.2, "SEER 18, 9.3 HSPF"=>352.2, "SEER 19, 9.5 HSPF"=>352.2, "SEER 22, 10 HSPF"=>296.9}[selected_hp]
-
-    # Create the material class instances
-    air_conditioner = AirConditioner.new(nil)
-    heat_pump = HeatPump.new(hpNumberSpeeds, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCondenserType, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, hpHeatingCOP, hpHeatingInstalledHSPF, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, hpRatedAirFlowRateCooling, hpRatedAirFlowRateHeating)
-    supply = Supply.new
-
-    # Create the sim object
-    sim = Sim.new(model, runner)
-
-    hasFurnace = false
-    hasCoolingEquipment = true
-    hasAirConditioner = false
-    hasHeatPump = true
-    hasMiniSplitHP = false
-    hasRoomAirConditioner = false
-    hasGroundSourceHP = false
-
-    # Process the air system
-    air_conditioner, supply = sim._processAirSystem(supply, nil, air_conditioner, heat_pump, hasFurnace, hasCoolingEquipment, hasAirConditioner, hasHeatPump, hasMiniSplitHP, hasRoomAirConditioner, hasGroundSourceHP)
-
-    heatingseasonschedule = nil
-    scheduleRulesets = model.getScheduleRulesets
-    scheduleRulesets.each do |scheduleRuleset|
-      if scheduleRuleset.name.to_s == "HeatingSeasonSchedule"
-        heatingseasonschedule = scheduleRuleset
-        break
-      end
-    end
-
-    coolingseasonschedule = nil
-    scheduleRulesets = model.getScheduleRulesets
-    scheduleRulesets.each do |scheduleRuleset|
-      if scheduleRuleset.name.to_s == "CoolingSeasonSchedule"
-        coolingseasonschedule = scheduleRuleset
-        break
-      end
-    end
-
+    hpIsColdClimate = runner.getBoolArgumentValue("selectedcchp",user_arguments)
+    
+    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
+    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "CoolingSeasonSchedule")
+    if heatingseasonschedule.nil? or coolingseasonschedule.nil?
+        runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' and/or cooling season schedule named 'CoolingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        return false
+    end    
+    
     # Check if has equipment
-    airLoopHVACs = model.getAirLoopHVACs
-    airLoopHVACs.each do |airLoopHVAC|
-      thermalZones = airLoopHVAC.thermalZones
-      thermalZones.each do |thermalZone|
-        if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
-          supplyComponents = airLoopHVAC.supplyComponents
-          supplyComponents.each do |supplyComponent|
-            runner.registerInfo("Removed '#{supplyComponent.name}' from air loop '#{airLoopHVAC.name}'")
-            supplyComponent.remove
-          end
-          runner.registerInfo("Removed air loop '#{airLoopHVAC.name}'")
-          airLoopHVAC.remove
-        end
-      end
-    end
+    HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_thermal_zone)
     baseboards = model.getZoneHVACBaseboardConvectiveElectrics
     baseboards.each do |baseboard|
       thermalZone = baseboard.thermalZone.get
       runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
       baseboard.remove
     end
+    ptacs = model.getZoneHVACPackagedTerminalAirConditioners
+    ptacs.each do |ptac|
+      thermalZone = ptac.thermalZone.get
+      runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
+      ptac.remove
+    end    
+    
+    # Create the material class instances
+    air_conditioner = AirConditioner.new(nil)
+    heat_pump = HeatPump.new(hpNumberSpeeds, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCondenserType, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, hpHeatingCOP, hpHeatingInstalledHSPF, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, hpRatedAirFlowRateCooling, hpRatedAirFlowRateHeating)
+    supply = Supply.new
 
-    always_on = model.alwaysOnDiscreteSchedule
-
-    # _processSystemAir
-    # Air System
-
-    if not hasCoolingEquipment
-      # Initialize simulation variables not being used
-      supply.Number_Speeds = 1.0
-      supply.fanspeed_ratio = [1.0]
-      supply.compressor_speeds = 1.0
+    # _processAirSystem
+    
+    if air_conditioner.ACCoolingInstalledSEER == 999
+      air_conditioner.hasIdealAC = true
+    else
+      air_conditioner.hasIdealAC = false
     end
 
-    # if not sim.hasForcedAirEquipment:
-    #     return
+    supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
-    air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-    air_loop.setName("Central Air System")
-    # if air_conditioner.hasIdealAC
-    #     air_loop.setDesignSupplyAirFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate,"cfm","m^3/s").get)
-    # else
-    #   air_loop.setDesignSupplyAirFlowRate(supply.fanspeed_ratio.max * OpenStudio::convert(supply.Fan_AirFlowRate,"cfm","m^3/s").get)
-    # end
+    # Flow rate through AC units - hardcoded assumption of 400 cfm/ton
+    supply.cfm_ton = 400 # cfm / ton
 
-    # stuff
+    supply.HPCoolingOversizingFactor = 1 # Default to a value of 1 (currently only used for MSHPs)
+    supply.SpaceConditionedMult = 1 # Default used for central equipment    
+    
+    # Cooling Coil
+    supply = HVAC.get_cooling_coefficients(runner, heat_pump.HPNumberSpeeds, false, true, supply)
+    supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(heat_pump.HPRatedAirFlowRateCooling, heat_pump.HPFanspeedRatioCooling, heat_pump.HPCapacityRatio)
+    supply = HVAC._processAirSystemCoolingCoil(heat_pump.HPNumberSpeeds, heat_pump.HPCoolingEER, heat_pump.HPCoolingInstalledSEER, heat_pump.HPSupplyFanPowerInstalled, heat_pump.HPSupplyFanPowerRated, heat_pump.HPSHRRated, heat_pump.HPCapacityRatio, heat_pump.HPFanspeedRatioCooling, heat_pump.HPCondenserType, heat_pump.HPCrankcase, heat_pump.HPCrankcaseMaxT, heat_pump.HPEERCapacityDerateFactor, air_conditioner, supply, true)
 
-    air_supply_inlet_node = air_loop.supplyInletNode
-    air_supply_outlet_node = air_loop.supplyOutletNode
-    air_demand_inlet_node = air_loop.demandInletNode
-    air_demand_outlet_node = air_loop.demandOutletNode
+    # Heating Coil
+    has_cchp = hpIsColdClimate
+    supply = HVAC.get_heating_coefficients(runner, supply.Number_Speeds, false, supply, heat_pump.HPMinT)
+    supply.CFM_TON_Rated_Heat = HVAC.calc_cfm_ton_rated(heat_pump.HPRatedAirFlowRateHeating, heat_pump.HPFanspeedRatioHeating, heat_pump.HPCapacityRatio)
+    supply = HVAC._processAirSystemHeatingCoil(heat_pump.HPHeatingCOP, heat_pump.HPHeatingInstalledHSPF, heat_pump.HPSupplyFanPowerRated, heat_pump.HPCapacityRatio, heat_pump.HPFanspeedRatioHeating, heat_pump.HPMinT, heat_pump.HPCOPCapacityDerateFactor, supply)    
+
+    # Determine if the compressor is multi-speed (in our case 2 speed).
+    # If the minimum flow ratio is less than 1, then the fan and
+    # compressors can operate at lower speeds.
+    if supply.min_flow_ratio == 1.0
+      supply.compressor_speeds = 1.0
+    else
+      supply.compressor_speeds = supply.Number_Speeds
+    end
+    
+    htg_coil_stage_data = HVAC._processCurvesDXHeating(model, supply, hpOutputCapacity)
+    
+    # Heating defrost curve for reverse cycle
+    defrost_eir = OpenStudio::Model::CurveBiquadratic.new(model)
+    defrost_eir.setName("DefrostEIR")
+    defrost_eir.setCoefficient1Constant(0.1528)
+    defrost_eir.setCoefficient2x(0)
+    defrost_eir.setCoefficient3xPOW2(0)
+    defrost_eir.setCoefficient4y(0)
+    defrost_eir.setCoefficient5yPOW2(0)
+    defrost_eir.setCoefficient6xTIMESY(0)
+    defrost_eir.setMinimumValueofx(-100)
+    defrost_eir.setMaximumValueofx(100)
+    defrost_eir.setMinimumValueofy(-100)
+    defrost_eir.setMaximumValueofy(100)    
+    
+    # _processCurvesDXCooling
+
+    clg_coil_stage_data = HVAC._processCurvesDXCooling(model, supply, hpOutputCapacity)
 
     # _processSystemHeatingCoil
-    # Heating Coil
+    
+    if supply.compressor_speeds == 1.0
 
-    if hasHeatPump
-
-      htg_cap_f_of_temp = Array.new
-      htg_cap_f_of_flow = Array.new
-      htg_energy_input_ratio_f_of_temp = Array.new
-      htg_energy_input_ratio_f_of_flow = Array.new
-      htg_part_load_ratio = Array.new
-
-      # Loop through speeds to create curves for each speed
-      (0...supply.Number_Speeds).to_a.each do |speed|
-        # Heating Capacity f(T). Convert DOE-2 curves to E+ curves
-        if supply.Number_Speeds > 1.0
-          c = supply.HEAT_CAP_FT_SPEC_coefficients[speed]
-        else
-          c = supply.HEAT_CAP_FT_SPEC_coefficients
-        end
-        heat_Cap_fT_coeff = Array.new
-        heat_Cap_fT_coeff << c[0] + 32.0 * (c[1] + c[3]) + 1024.0 * (c[2] + c[4] + c[5])
-        heat_Cap_fT_coeff << 9.0 / 5.0 * c[1] + 576.0 / 5.0 * c[2] + 288.0 / 5.0 * c[5]
-        heat_Cap_fT_coeff << 81.0 / 25.0 * c[2]
-        heat_Cap_fT_coeff << 9.0 / 5.0 * c[3] + 576.0 / 5.0 * c[4] + 288.0 / 5.0 * c[5]
-        heat_Cap_fT_coeff << 81.0 / 25.0 * c[4]
-        heat_Cap_fT_coeff << 81.0 / 25.0 * c[5]
-
-        htg_cap_f_of_temp_object = OpenStudio::Model::CurveBiquadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          htg_cap_f_of_temp_object.setName("HP_Heat-Cap-fT#{speed + 1}")
-        else
-          htg_cap_f_of_temp_object.setName("HP_Heat-Cap-fT")
-        end
-        htg_cap_f_of_temp_object.setCoefficient1Constant(heat_Cap_fT_coeff[0])
-        htg_cap_f_of_temp_object.setCoefficient2x(heat_Cap_fT_coeff[1])
-        htg_cap_f_of_temp_object.setCoefficient3xPOW2(heat_Cap_fT_coeff[2])
-        htg_cap_f_of_temp_object.setCoefficient4y(heat_Cap_fT_coeff[3])
-        htg_cap_f_of_temp_object.setCoefficient5yPOW2(heat_Cap_fT_coeff[4])
-        htg_cap_f_of_temp_object.setCoefficient6xTIMESY(heat_Cap_fT_coeff[5])
-        htg_cap_f_of_temp_object.setMinimumValueofx(13.88)
-        htg_cap_f_of_temp_object.setMaximumValueofx(23.88)
-        htg_cap_f_of_temp_object.setMinimumValueofy(18.33)
-        htg_cap_f_of_temp_object.setMaximumValueofy(51.66)
-        htg_cap_f_of_temp << htg_cap_f_of_temp_object
-
-        # Heating EIR f(T) Convert DOE-2 curves to E+ curves
-        if supply.Number_Speeds > 1.0
-          c = supply.HEAT_EIR_FT_SPEC_coefficients[speed]
-        else
-          c = supply.HEAT_EIR_FT_SPEC_coefficients
-        end
-        hp_heat_EIR_fT_coeff = Array.new
-        hp_heat_EIR_fT_coeff << c[0] + 32.0 * (c[1] + c[3]) + 1024.0 * (c[2] + c[4] + c[5])
-        hp_heat_EIR_fT_coeff << 9.0 / 5 * c[1] + 576.0 / 5 * c[2] + 288.0 / 5.0 * c[5]
-        hp_heat_EIR_fT_coeff << 81.0 / 25.0 * c[2]
-        hp_heat_EIR_fT_coeff << 9.0 / 5.0 * c[3] + 576.0 / 5.0 * c[4] + 288.0 / 5.0 * c[5]
-        hp_heat_EIR_fT_coeff << 81.0 / 25.0 * c[4]
-        hp_heat_EIR_fT_coeff << 81.0 / 25.0 * c[5]
-
-        htg_energy_input_ratio_f_of_temp_object = OpenStudio::Model::CurveBiquadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          htg_energy_input_ratio_f_of_temp_object.setName("HP_Heat-EIR-fT#{speed + 1}")
-        else
-          htg_energy_input_ratio_f_of_temp_object.setName("HP_Heat-EIR-fT")
-        end
-        htg_energy_input_ratio_f_of_temp_object.setCoefficient1Constant(hp_heat_EIR_fT_coeff[0])
-        htg_energy_input_ratio_f_of_temp_object.setCoefficient2x(hp_heat_EIR_fT_coeff[1])
-        htg_energy_input_ratio_f_of_temp_object.setCoefficient3xPOW2(hp_heat_EIR_fT_coeff[2])
-        htg_energy_input_ratio_f_of_temp_object.setCoefficient4y(hp_heat_EIR_fT_coeff[3])
-        htg_energy_input_ratio_f_of_temp_object.setCoefficient5yPOW2(hp_heat_EIR_fT_coeff[4])
-        htg_energy_input_ratio_f_of_temp_object.setCoefficient6xTIMESY(hp_heat_EIR_fT_coeff[5])
-        htg_energy_input_ratio_f_of_temp_object.setMinimumValueofx(13.88)
-        htg_energy_input_ratio_f_of_temp_object.setMaximumValueofx(23.88)
-        htg_energy_input_ratio_f_of_temp_object.setMinimumValueofy(18.33)
-        htg_energy_input_ratio_f_of_temp_object.setMaximumValueofy(51.66)
-        htg_energy_input_ratio_f_of_temp << htg_energy_input_ratio_f_of_temp_object
-
-        # Heating PLF f(PLR) Convert DOE-2 curves to E+ curves
-        htg_part_load_ratio_object = OpenStudio::Model::CurveQuadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          htg_part_load_ratio_object.setName("HP_Heat-PLF-fPLR#{speed + 1}")
-        else
-          htg_part_load_ratio_object.setName("HP_Heat-PLF-fPLR")
-        end
-        htg_part_load_ratio_object.setCoefficient1Constant(supply.HEAT_CLOSS_FPLR_SPEC_coefficients[0])
-        htg_part_load_ratio_object.setCoefficient2x(supply.HEAT_CLOSS_FPLR_SPEC_coefficients[1])
-        htg_part_load_ratio_object.setCoefficient3xPOW2(supply.HEAT_CLOSS_FPLR_SPEC_coefficients[2])
-        htg_part_load_ratio_object.setMinimumValueofx(0.0)
-        htg_part_load_ratio_object.setMaximumValueofx(1.0)
-        # htg_part_load_ratio_object.setMinimumValueofy(0.7) # tk
-        # htg_part_load_ratio_object.setMaximumValueofy(1.0) # tk
-        htg_part_load_ratio << htg_part_load_ratio_object
-
-        # Heating CAP f(FF) Convert DOE-2 curves to E+ curves
-        htg_cap_f_of_flow_object = OpenStudio::Model::CurveQuadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          htg_cap_f_of_flow_object.setName("HP_Heat-Cap-fFF#{speed + 1}")
-          htg_cap_f_of_flow_object.setCoefficient1Constant(supply.HEAT_CAP_FFLOW_SPEC_coefficients[speed][0])
-          htg_cap_f_of_flow_object.setCoefficient2x(supply.HEAT_CAP_FFLOW_SPEC_coefficients[speed][1])
-          htg_cap_f_of_flow_object.setCoefficient3xPOW2(supply.HEAT_CAP_FFLOW_SPEC_coefficients[speed][2])
-        else
-          htg_cap_f_of_flow_object.setName("HP_Heat-CAP-fFF")
-          htg_cap_f_of_flow_object.setCoefficient1Constant(supply.HEAT_CAP_FFLOW_SPEC_coefficients[0])
-          htg_cap_f_of_flow_object.setCoefficient2x(supply.HEAT_CAP_FFLOW_SPEC_coefficients[1])
-          htg_cap_f_of_flow_object.setCoefficient3xPOW2(supply.HEAT_CAP_FFLOW_SPEC_coefficients[2])
-        end
-        htg_cap_f_of_flow_object.setMinimumValueofx(0.0)
-        htg_cap_f_of_flow_object.setMaximumValueofx(2.0)
-        # htg_cap_f_of_flow_object.setMinimumValueofy(0.0) # tk
-        # htg_cap_f_of_flow_object.setMaximumValueofy(2.0) # tk
-        htg_cap_f_of_flow << htg_cap_f_of_flow_object
-
-        # Heating EIR f(FF) Convert DOE-2 curves to E+ curves
-        htg_energy_input_ratio_f_of_flow_object = OpenStudio::Model::CurveQuadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          htg_energy_input_ratio_f_of_flow_object.setName("HP_Heat-EIR-fFF#{speed + 1}")
-          htg_energy_input_ratio_f_of_flow_object.setCoefficient1Constant(supply.HEAT_EIR_FFLOW_SPEC_coefficients[speed][0])
-          htg_energy_input_ratio_f_of_flow_object.setCoefficient2x(supply.HEAT_EIR_FFLOW_SPEC_coefficients[speed][1])
-          htg_energy_input_ratio_f_of_flow_object.setCoefficient3xPOW2(supply.HEAT_EIR_FFLOW_SPEC_coefficients[speed][2])
-        else
-          htg_energy_input_ratio_f_of_flow_object.setName("HP_Heat-EIR-fFF")
-          htg_energy_input_ratio_f_of_flow_object.setCoefficient1Constant(supply.HEAT_EIR_FFLOW_SPEC_coefficients[0])
-          htg_energy_input_ratio_f_of_flow_object.setCoefficient2x(supply.HEAT_EIR_FFLOW_SPEC_coefficients[1])
-          htg_energy_input_ratio_f_of_flow_object.setCoefficient3xPOW2(supply.HEAT_EIR_FFLOW_SPEC_coefficients[2])
-        end
-        htg_energy_input_ratio_f_of_flow_object.setMinimumValueofx(0.0)
-        htg_energy_input_ratio_f_of_flow_object.setMaximumValueofx(2.0)
-        # htg_energy_input_ratio_f_of_flow_object.setMinimumValueofy(0.0) # tk
-        # htg_energy_input_ratio_f_of_flow_object.setMaximumValueofy(2.0) # tk
-        htg_energy_input_ratio_f_of_flow << htg_energy_input_ratio_f_of_flow_object
-
+      htg_coil = OpenStudio::Model::CoilHeatingDXSingleSpeed.new(model, heatingseasonschedule, htg_coil_stage_data[0].heatingCapacityFunctionofTemperatureCurve, htg_coil_stage_data[0].heatingCapacityFunctionofFlowFractionCurve, htg_coil_stage_data[0].energyInputRatioFunctionofTemperatureCurve, htg_coil_stage_data[0].energyInputRatioFunctionofFlowFractionCurve, htg_coil_stage_data[0].partLoadFractionCorrelationCurve)
+      htg_coil.setName("DX Heating Coil")
+      if hpOutputCapacity != "Autosize"
+        htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
       end
+      htg_coil.setRatedCOP(1.0 / supply.HeatingEIR[0])
+      # self.addline(units.cfm2m3_s(sim.supply.Heat_AirFlowRate),'Rated Air Flow Rate {m^3/s}')
+      # self.addline(unit.supply.fan_power_rated/units.cfm2m3_s(1),'Rated Evaporator Fan Power Per Volume Flow Rate {W/(m/s)}')
+      htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir)
+      htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
+      htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
 
-      # Heating defrost curve for reverse cycle
-      defrost_eir = OpenStudio::Model::CurveBiquadratic.new(model)
-      defrost_eir.setName("DefrostEIR")
-      defrost_eir.setCoefficient1Constant(0.1528)
-      defrost_eir.setCoefficient2x(0)
-      defrost_eir.setCoefficient3xPOW2(0)
-      defrost_eir.setCoefficient4y(0)
-      defrost_eir.setCoefficient5yPOW2(0)
-      defrost_eir.setCoefficient6xTIMESY(0)
-      defrost_eir.setMinimumValueofx(-100)
-      defrost_eir.setMaximumValueofx(100)
-      defrost_eir.setMinimumValueofy(-100)
-      defrost_eir.setMaximumValueofy(100)
+      # Crankcase heaters are handled using EMS
+      htg_coil.setCrankcaseHeaterCapacity(0.0)
+      htg_coil.setDefrostStrategy("ReverseCycle")
+      htg_coil.setDefrostControl("OnDemand")
 
-      hp_supp_heater = OpenStudio::Model::CoilHeatingElectric.new(model, heatingseasonschedule)
-      hp_supp_heater.setName("HeatPump Supp Heater")
-      hp_supp_heater.setEfficiency(1.0)
-      if supplementalOutputCapacity != "Autosize"
-        hp_supp_heater.setNominalCapacity(OpenStudio::convert(supplementalOutputCapacity,"Btu/h","W").get)
-      end
+    else # Multi-speed compressors
 
-      if supply.compressor_speeds == 1.0
-
-        htg_coil = OpenStudio::Model::CoilHeatingDXSingleSpeed.new(model, heatingseasonschedule, htg_cap_f_of_temp[0], htg_cap_f_of_flow[0], htg_energy_input_ratio_f_of_temp[0], htg_energy_input_ratio_f_of_flow[0], htg_part_load_ratio[0])
-        htg_coil.setName("DX Heating Coil")
-        if hpOutputCapacity != "Autosize"
-          htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
-        end
-        htg_coil.setRatedCOP(1.0 / supply.HeatingEIR[0])
-        # self.addline(units.cfm2m3_s(sim.supply.Heat_AirFlowRate),'Rated Air Flow Rate {m^3/s}')
-        # self.addline(sim.supply.fan_power/units.cfm2m3_s(1),'Rated Evaporator Fan Power Per Volume Flow Rate {W/(m/s)}')
-        htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
-        htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
-
-        # Crankcase heaters are handled using EMS
-        htg_coil.setCrankcaseHeaterCapacity(0.0)
-        htg_coil.setDefrostStrategy("ReverseCycle")
-        htg_coil.setDefrostControl("OnDemand")
-
-        htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir)
-
-      else # Multi-speed compressors
-
-        htg_coil = OpenStudio::Model::CoilHeatingDXTwoSpeed.new(model, heatingseasonschedule, htg_cap_f_of_temp[1], htg_cap_f_of_flow[1], htg_energy_input_ratio_f_of_temp[1], htg_energy_input_ratio_f_of_flow[1], htg_part_load_ratio[1], htg_cap_f_of_temp[0], htg_energy_input_ratio_f_of_temp[0])
-        htg_coil.setName("DX Heating Coil")
-        htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
-
-        # Crankcase heaters are handled using EMS
-        htg_coil.setCrankcaseHeaterCapacity(0.0)
-        htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
-        htg_coil.setDefrostStrategy("ReverseCryle")
-        htg_coil.setDefrostControl("OnDemand")
-
+      htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
+      htg_coil.setName("DX Heating Coil")
+      htg_coil.setAvailabilitySchedule(heatingseasonschedule)
+      htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
+    
+      # Crankcase heaters are handled using EMS
+      htg_coil.setCrankcaseHeaterCapacity(0.0)
+      htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir)
+      htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
+      htg_coil.setDefrostStrategy("ReverseCryle")
+      htg_coil.setDefrostControl("OnDemand")
+      htg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
+      htg_coil.setFuelType("Electricity")
+      
+      htg_coil_stage_data.each do |i|
+          htg_coil.addStage(i)    
       end
 
     end
-
+    
+    supp_htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, heatingseasonschedule)
+    supp_htg_coil.setName("HeatPump Supp Heater")
+    supp_htg_coil.setEfficiency(1)
+    if supplementalOutputCapacity != "Autosize"
+      supp_htg_coil.setNominalCapacity(OpenStudio::convert(supplementalOutputCapacity,"Btu/h","W").get)
+    end
+    
     # _processSystemCoolingCoil
-    # Cooling Coil
+    
+    if supply.compressor_speeds == 1.0
 
-    if hasHeatPump
-
-      clg_cap_f_of_temp = Array.new
-      clg_cap_f_of_flow = Array.new
-      clg_energy_input_ratio_f_of_temp = Array.new
-      clg_energy_input_ratio_f_of_flow = Array.new
-      clg_part_load_ratio = Array.new
-
-      (0...supply.Number_Speeds).to_a.each do |speed|
-        # Cooling Capacity f(T). Convert DOE-2 curves to E+ curves
-        if supply.Number_Speeds > 1.0
-          c = supply.COOL_CAP_FT_SPEC_coefficients[speed]
-        else
-          c = supply.COOL_CAP_FT_SPEC_coefficients
-        end
-        cool_Cap_fT_coeff = Array.new
-        cool_Cap_fT_coeff << c[0] + 32.0 * (c[1] + c[3]) + 1024.0 * (c[2] + c[4] + c[5])
-        cool_Cap_fT_coeff << 9.0 / 5.0 * c[1] + 576.0 / 5.0 * c[2] + 288.0 / 5.0 * c[5]
-        cool_Cap_fT_coeff << 81.0 / 25.0 * c[2]
-        cool_Cap_fT_coeff << 9.0 / 5.0 * c[3] + 576.0 / 5.0 * c[4] + 288.0 / 5.0 * c[5]
-        cool_Cap_fT_coeff << 81.0 / 25.0 * c[4]
-        cool_Cap_fT_coeff << 81.0 / 25.0 * c[5]
-
-        clg_cap_f_of_temp_object = OpenStudio::Model::CurveBiquadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          clg_cap_f_of_temp_object.setName("Cool-Cap-fT#{speed + 1}")
-        else
-          clg_cap_f_of_temp_object.setName("Cool-Cap-fT")
-        end
-        clg_cap_f_of_temp_object.setCoefficient1Constant(cool_Cap_fT_coeff[0])
-        clg_cap_f_of_temp_object.setCoefficient2x(cool_Cap_fT_coeff[1])
-        clg_cap_f_of_temp_object.setCoefficient3xPOW2(cool_Cap_fT_coeff[2])
-        clg_cap_f_of_temp_object.setCoefficient4y(cool_Cap_fT_coeff[3])
-        clg_cap_f_of_temp_object.setCoefficient5yPOW2(cool_Cap_fT_coeff[4])
-        clg_cap_f_of_temp_object.setCoefficient6xTIMESY(cool_Cap_fT_coeff[5])
-        clg_cap_f_of_temp_object.setMinimumValueofx(13.88)
-        clg_cap_f_of_temp_object.setMaximumValueofx(23.88)
-        clg_cap_f_of_temp_object.setMinimumValueofy(18.33)
-        clg_cap_f_of_temp_object.setMaximumValueofy(51.66)
-        clg_cap_f_of_temp << clg_cap_f_of_temp_object
-
-        # Cooling EIR f(T) Convert DOE-2 curves to E+ curves
-        if supply.Number_Speeds > 1.0
-          c = supply.COOL_EIR_FT_SPEC_coefficients[speed]
-        else
-          c = supply.COOL_EIR_FT_SPEC_coefficients
-        end
-        cool_EIR_fT_coeff = Array.new
-        cool_EIR_fT_coeff << c[0] + 32.0 * (c[1] + c[3]) + 1024.0 * (c[2] + c[4] + c[5])
-        cool_EIR_fT_coeff << 9.0 / 5 * c[1] + 576.0 / 5 * c[2] + 288.0 / 5.0 * c[5]
-        cool_EIR_fT_coeff << 81.0 / 25.0 * c[2]
-        cool_EIR_fT_coeff << 9.0 / 5.0 * c[3] + 576.0 / 5.0 * c[4] + 288.0 / 5.0 * c[5]
-        cool_EIR_fT_coeff << 81.0 / 25.0 * c[4]
-        cool_EIR_fT_coeff << 81.0 / 25.0 * c[5]
-
-        clg_energy_input_ratio_f_of_temp_object = OpenStudio::Model::CurveBiquadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          clg_energy_input_ratio_f_of_temp_object.setName("Cool-EIR-fT#{speed + 1}")
-        else
-          clg_energy_input_ratio_f_of_temp_object.setName("Cool-EIR-fT")
-        end
-        clg_energy_input_ratio_f_of_temp_object.setCoefficient1Constant(cool_EIR_fT_coeff[0])
-        clg_energy_input_ratio_f_of_temp_object.setCoefficient2x(cool_EIR_fT_coeff[1])
-        clg_energy_input_ratio_f_of_temp_object.setCoefficient3xPOW2(cool_EIR_fT_coeff[2])
-        clg_energy_input_ratio_f_of_temp_object.setCoefficient4y(cool_EIR_fT_coeff[3])
-        clg_energy_input_ratio_f_of_temp_object.setCoefficient5yPOW2(cool_EIR_fT_coeff[4])
-        clg_energy_input_ratio_f_of_temp_object.setCoefficient6xTIMESY(cool_EIR_fT_coeff[5])
-        clg_energy_input_ratio_f_of_temp_object.setMinimumValueofx(13.88)
-        clg_energy_input_ratio_f_of_temp_object.setMaximumValueofx(23.88)
-        clg_energy_input_ratio_f_of_temp_object.setMinimumValueofy(18.33)
-        clg_energy_input_ratio_f_of_temp_object.setMaximumValueofy(51.66)
-        clg_energy_input_ratio_f_of_temp << clg_energy_input_ratio_f_of_temp_object
-
-        # Cooling PLF f(PLR) Convert DOE-2 curves to E+ curves
-        clg_part_load_ratio_object = OpenStudio::Model::CurveQuadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          clg_part_load_ratio_object.setName("Cool-PLF-fPLR#{speed + 1}")
-        else
-          clg_part_load_ratio_object.setName("Cool-PLF-fPLR")
-        end
-        clg_part_load_ratio_object.setCoefficient1Constant(supply.COOL_CLOSS_FPLR_SPEC_coefficients[0])
-        clg_part_load_ratio_object.setCoefficient2x(supply.COOL_CLOSS_FPLR_SPEC_coefficients[1])
-        clg_part_load_ratio_object.setCoefficient3xPOW2(supply.COOL_CLOSS_FPLR_SPEC_coefficients[2])
-        clg_part_load_ratio_object.setMinimumValueofx(0.0)
-        clg_part_load_ratio_object.setMaximumValueofx(1.0)
-        # clg_part_load_ratio_object.setMinimumValueofy(0.7) # tk
-        # clg_part_load_ratio_object.setMaximumValueofy(1.0) # tk
-        clg_part_load_ratio << clg_part_load_ratio_object
-
-        # Cooling CAP f(FF) Convert DOE-2 curves to E+ curves
-        clg_cap_f_of_flow_object = OpenStudio::Model::CurveQuadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          clg_cap_f_of_flow_object.setName("Cool-Cap-fFF#{speed + 1}")
-          clg_cap_f_of_flow_object.setCoefficient1Constant(supply.COOL_CAP_FFLOW_SPEC_coefficients[speed][0])
-          clg_cap_f_of_flow_object.setCoefficient2x(supply.COOL_CAP_FFLOW_SPEC_coefficients[speed][1])
-          clg_cap_f_of_flow_object.setCoefficient3xPOW2(supply.COOL_CAP_FFLOW_SPEC_coefficients[speed][2])
-        else
-          clg_cap_f_of_flow_object.setName("Cool-CAP-fFF")
-          clg_cap_f_of_flow_object.setCoefficient1Constant(supply.COOL_CAP_FFLOW_SPEC_coefficients[0])
-          clg_cap_f_of_flow_object.setCoefficient2x(supply.COOL_CAP_FFLOW_SPEC_coefficients[1])
-          clg_cap_f_of_flow_object.setCoefficient3xPOW2(supply.COOL_CAP_FFLOW_SPEC_coefficients[2])
-        end
-        clg_cap_f_of_flow_object.setMinimumValueofx(0.0)
-        clg_cap_f_of_flow_object.setMaximumValueofx(2.0)
-        # clg_cap_f_of_flow_object.setMinimumValueofy(0.0) # tk
-        # clg_cap_f_of_flow_object.setMaximumValueofy(2.0) # tk
-        clg_cap_f_of_flow << clg_cap_f_of_flow_object
-
-        # Cooling EIR f(FF) Convert DOE-2 curves to E+ curves
-        clg_energy_input_ratio_f_of_flow_object = OpenStudio::Model::CurveQuadratic.new(model)
-        if supply.Number_Speeds > 1.0
-          clg_energy_input_ratio_f_of_flow_object.setName("Cool-EIR-fFF#{speed + 1}")
-          clg_energy_input_ratio_f_of_flow_object.setCoefficient1Constant(supply.COOL_EIR_FFLOW_SPEC_coefficients[speed][0])
-          clg_energy_input_ratio_f_of_flow_object.setCoefficient2x(supply.COOL_EIR_FFLOW_SPEC_coefficients[speed][1])
-          clg_energy_input_ratio_f_of_flow_object.setCoefficient3xPOW2(supply.COOL_EIR_FFLOW_SPEC_coefficients[speed][2])
-        else
-          clg_energy_input_ratio_f_of_flow_object.setName("Cool-EIR-fFF")
-          clg_energy_input_ratio_f_of_flow_object.setCoefficient1Constant(supply.COOL_EIR_FFLOW_SPEC_coefficients[0])
-          clg_energy_input_ratio_f_of_flow_object.setCoefficient2x(supply.COOL_EIR_FFLOW_SPEC_coefficients[1])
-          clg_energy_input_ratio_f_of_flow_object.setCoefficient3xPOW2(supply.COOL_EIR_FFLOW_SPEC_coefficients[2])
-        end
-        clg_energy_input_ratio_f_of_flow_object.setMinimumValueofx(0.0)
-        clg_energy_input_ratio_f_of_flow_object.setMaximumValueofx(2.0)
-        # clg_energy_input_ratio_f_of_flow_object.setMinimumValueofy(0.0) # tk
-        # clg_energy_input_ratio_f_of_flow_object.setMaximumValueofy(2.0) # tk
-        clg_energy_input_ratio_f_of_flow << clg_energy_input_ratio_f_of_flow_object
-
+      clg_coil = OpenStudio::Model::CoilCoolingDXSingleSpeed.new(model, coolingseasonschedule, clg_coil_stage_data[0].totalCoolingCapacityFunctionofTemperatureCurve, clg_coil_stage_data[0].totalCoolingCapacityFunctionofFlowFractionCurve, clg_coil_stage_data[0].energyInputRatioFunctionofTemperatureCurve, clg_coil_stage_data[0].energyInputRatioFunctionofFlowFractionCurve, clg_coil_stage_data[0].partLoadFractionCorrelationCurve)
+      clg_coil.setName("DX Cooling Coil")
+      if hpOutputCapacity != "Autosize"
+        clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
       end
-
-      if supply.compressor_speeds == 1.0
-
-        if air_conditioner.hasIdealAC
-          # tk constant curves here
-        else
-
-        end
-
-        clg_coil = OpenStudio::Model::CoilCoolingDXSingleSpeed.new(model, coolingseasonschedule, clg_cap_f_of_temp[0], clg_cap_f_of_flow[0], clg_energy_input_ratio_f_of_temp[0], clg_energy_input_ratio_f_of_flow[0], clg_part_load_ratio[0])
-        clg_coil.setName("DX Cooling Coil")
+      if air_conditioner.hasIdealAC
+        clg_coil.setRatedSensibleHeatRatio(0.8)
+        clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0))
         if hpOutputCapacity != "Autosize"
-          clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
+          clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end
-        if air_conditioner.hasIdealAC
-          clg_coil.setRatedSensibleHeatRatio(0.8)
-          clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0))
-          if hpOutputCapacity != "Autosize"
-            clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
-          end
-        else
-          clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
-          clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0 / supply.CoolingEIR[0]))
-          if hpOutputCapacity != "Autosize"
-            clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
-          end
-        end
-        clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(supply.fan_power / OpenStudio::convert(1.0,"cfm","m^3/s").get))
-
-        if air_conditioner.hasIdealAC
-          clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(0))
-          clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(0))
-          clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(0))
-          clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(0))
-        else
-          clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(1000.0))
-          clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(1.5))
-          clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(3.0))
-          clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(45.0))
-        end
-
-        if supply.CondenserType == Constants.CondenserTypeAir
-          clg_coil.setCondenserType("AirCooled")
-        else
-          clg_coil.setCondenserType("EvaporativelyCooled")
-          clg_coil.setEvaporativeCondenserEffectiveness(OpenStudio::OptionalDouble.new(1))
-          clg_coil.setEvaporativeCondenserAirFlowRate(OpenStudio::OptionalDouble.new(OpenStudio::convert(850.0,"cfm","m^3/s").get * sizing.cooling_cap))
-          clg_coil.setEvaporativeCondenserPumpRatePowerConsumption(OpenStudio::OptionalDouble.new(0))
-        end
-
-        if not hasHeatPump
-          clg_coil.setCrankcaseHeaterCapacity(OpenStudio::OptionalDouble.new(OpenStudio::convert(supply.Crankcase,"kW","W").get))
-          clg_coil.setMaximumOutdoorDryBulbTemperatureForCrankcaseHeaterOperation(OpenStudio::OptionalDouble.new(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get))
-        else
-          #For heat pumps, we handle the crankcase heater using EMS so the heater energy shows up under cooling energy
-          clg_coil.setCrankcaseHeaterCapacity(OpenStudio::OptionalDouble.new(0.0))
-          clg_coil.setMaximumOutdoorDryBulbTemperatureForCrankcaseHeaterOperation(OpenStudio::OptionalDouble.new(10.0))
-        end
-
-        if air_conditioner.hasIdealAC
-          # stuff
-        end
-
       else
-
-        clg_coil = OpenStudio::Model::CoilCoolingDXTwoSpeed.new(model, coolingseasonschedule, clg_cap_f_of_temp[1], clg_cap_f_of_flow[1], clg_energy_input_ratio_f_of_temp[1], clg_energy_input_ratio_f_of_flow[1], clg_part_load_ratio[1], clg_cap_f_of_temp[0], clg_energy_input_ratio_f_of_temp[0])
-        clg_coil.setName("DX Cooling Coil")
-
-        clg_coil.setCondenserType(supply.CondenserType)
-
-        # stuff
-
-        # Make sure Rated Air Flow Rates are in descending order
+        clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
+        clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0 / supply.CoolingEIR[0]))
         if hpOutputCapacity != "Autosize"
-          flowrates = Array.new
-          (0...supply.Number_Speeds).to_a.each do |speed|
-            flowrates << supply.CFM_TON_Rated[speed] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * supply.Capacity_Ratio_Cooling[speed]
-          end
+          clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end
+      end
+      clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(supply.fan_power_rated / OpenStudio::convert(1.0,"cfm","m^3/s").get))
 
-        # if not flowrates == flowrates.sort
-        #   runner.registerError("AC or heat pump cooling coil rated air flow rates are not in ascending order ({value:.{digits}f}). Ensure that Capacity Ratio and Fan Speed Ratio inputs are correct.".format(value=flowrates, digits=2)")
-        # end
-
-        (0...supply.Number_Speeds).to_a.each do |speed|
-          if hpOutputCapacity != "Autosize"
-            clg_coil.setRatedHighSpeedTotalCoolingCapacity(OpenStudio::OptionalDouble.new(hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[speed]))
-          end
-          clg_coil.setRatedHighSpeedSensibleHeatRatio(OpenStudio::OptionalDouble.new(supply.SHR_Rated[speed]))
-          clg_coil.setRatedHighSpeedCOP(1.0 / supply.CoolingEIR[speed])
-          if hpOutputCapacity != "Autosize"
-            clg_coil.setRatedHighSpeedAirFlowRate(OpenStudio::OptionalDouble.new(flowrates[speed]))
-          end
-
-          # stuff
-
-          if supply.CondenserType == Constants.CondenserTypeAir
-
-          else
-
-          end
-
-        end
-
+      if air_conditioner.hasIdealAC
+        clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(0))
+        clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(0))
+        clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(0))
+        clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(0))
+      else
+        clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(1000.0))
+        clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(1.5))
+        clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(3.0))
+        clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(45.0))
       end
 
-    end
+      if supply.CondenserType == Constants.CondenserTypeAir
+        clg_coil.setCondenserType("AirCooled")
+      else
+        clg_coil.setCondenserType("EvaporativelyCooled")
+        clg_coil.setEvaporativeCondenserEffectiveness(OpenStudio::OptionalDouble.new(1))
+        clg_coil.setEvaporativeCondenserAirFlowRate(OpenStudio::OptionalDouble.new(OpenStudio::convert(850.0,"cfm","m^3/s").get * sizing.cooling_cap))
+        clg_coil.setEvaporativeCondenserPumpRatePowerConsumption(OpenStudio::OptionalDouble.new(0))
+      end
 
+      #For heat pumps, we handle the crankcase heater using EMS so the heater energy shows up under cooling energy
+      clg_coil.setCrankcaseHeaterCapacity(OpenStudio::OptionalDouble.new(0.0))
+      clg_coil.setMaximumOutdoorDryBulbTemperatureForCrankcaseHeaterOperation(OpenStudio::OptionalDouble.new(10.0))
+
+    else
+
+      clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
+      clg_coil.setName("DX Cooling Coil")
+      clg_coil.setAvailabilitySchedule(coolingseasonschedule)
+      clg_coil.setCondenserType(supply.CondenserType)
+      clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
+      clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
+
+      #Multi-speed ACs and HPs, we handle the crankcase heater using EMS so the heater energy shows up under cooling energy
+      clg_coil.setCrankcaseHeaterCapacity(0)
+      clg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(10.0)
+      
+      clg_coil.setFuelType("Electricity")
+           
+      clg_coil_stage_data.each do |i|
+          clg_coil.addStage(i)
+      end  
+
+    end    
+    
     # _processSystemFan
-    # HVAC Supply Fan
-
+    
     supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
     supply_fan_availability.setName("SupplyFanAvailability")
     supply_fan_availability.setValue(1)
 
-    # # This allows for simulation of constant speed fans for all systems other than 2-speed AC or HP
-    # if (hasHeatPump or hasAirConditioner or hasMiniSplitHP) and supply.Number_Speeds > 1
-    #
-    #   fan_power_curve = OpenStudio::Model::CurveExponent.new(model)
-    #   fan_power_curve.setName("FanPowerCurve")
-    #   fan_power_curve.setCoefficient1Constant(0)
-    #   fan_power_curve.setCoefficient2Constant(1)
-    #   fan_power_curve.setCoefficient3Constant(3)
-    #   fan_power_curve.setMinimumValueofx(-100)
-    #   fan_power_curve.setMaximumValueofx(100)
-    #
-    #   fan_eff_curve = OpenStudio::Model::CurveCubic.new(model)
-    #   fan_eff_curve.setName"FanEffCurve"
-    #   fan_eff_curve.setCoefficient1Constant(0)
-    #   fan_eff_curve.setCoefficient2x(1)
-    #   fan_eff_curve.setCoefficient3xPOW2(0)
-    #   fan_eff_curve.setCoefficient4xPOW3(0)
-    #   fan_eff_curve.setMinimumValueofx(0)
-    #   fan_eff_curve.setMaximumValueofx(1)
-    #   fan_eff_curve.setMinimumCurveOutput(0)
-    #   fan_eff_curve.setMaximumCurveOutput(1)
-    #
-    #   fan = OpenStudio::Model::FanOnOff.new(model, always_on, fan_power_curve, fan_eff_curve)
-    #
-    #   fan.setEndUseSubcategory("HVACFan")
-    # else
-    #
-    #   fan = OpenStudio::Model::FanOnOff.new(model, always_on)
-    #
-    #   fan.setEndUseSubcategory("HVACFan")
-    # end
-
     fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
     fan.setName("Supply Fan")
-
     fan.setEndUseSubcategory("HVACFan")
-
     fan.setFanEfficiency(supply.eff)
     fan.setPressureRise(supply.static)
-
-    # if air_conditioner.hasIdealAC
-    #   fan.setMaximumFlowRate(OpenStudio::convert(supply.Fan_AirFlowRate + 0.05,"cfm","m^3/s").get)
-    # else
-    #   fan.setMaximumFlowRate(supply.fanspeed_ratio.max * OpenStudio::convert(supply.Fan_AirFlowRate + 0.01,"cfm","m^3/s").get)
-    # end
-
     fan.setMotorEfficiency(1)
-
-    if air_conditioner.hasIdealAC
-      fan.setMotorInAirstreamFraction(0)
-    else
-      fan.setMotorInAirstreamFraction(1)
-    end
+    fan.setMotorInAirstreamFraction(1)
 
     supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
     supply_fan_operation.setName("SupplyFanOperation")
-    supply_fan_operation.setValue(0)
+    supply_fan_operation.setValue(0)     
+    
+    # _processSystemAir
 
-    air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitaryHeatPumpAirToAir.new(model, always_on, fan, htg_coil, clg_coil, hp_supp_heater)
-    air_loop_unitary.setName("Forced Air System")
-    air_loop_unitary.setMaximumSupplyAirTemperaturefromSupplementalHeater(OpenStudio::convert(supply.max_temp,"F","C").get)
-    air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.max_supp_heating_temp,"F","C").get)
-    air_loop_unitary.setFanPlacement("BlowThrough")
-    air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
-    # air_loop_unitary.setMaximumSupplyAirTemperature() tk
+    if supply.compressor_speeds == 1
+    
+      air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitaryHeatPumpAirToAir.new(model, model.alwaysOnDiscreteSchedule, fan, htg_coil, clg_coil, supp_htg_coil)
+      air_loop_unitary.setName("Forced Air System")
+      air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0)
+      air_loop_unitary.setMaximumSupplyAirTemperaturefromSupplementalHeater(OpenStudio::convert(supply.supp_htg_max_supply_temp,"F","C").get)
+      air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.supp_htg_max_outdoor_temp,"F","C").get)
+      air_loop_unitary.setFanPlacement("BlowThrough")
+      air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)     
+      
+    elsif supply.compressor_speeds > 1
+    
+      air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitaryHeatPumpAirToAirMultiSpeed.new(model, fan, htg_coil, clg_coil, supp_htg_coil)
+      air_loop_unitary.setName("Forced Air System")
+      air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+      air_loop_unitary.setSupplyAirFanPlacement("BlowThrough")
+      air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+      air_loop_unitary.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
+      air_loop_unitary.setMaximumSupplyAirTemperaturefromSupplementalHeater(OpenStudio::convert(supply.supp_htg_max_supply_temp,"F","C").get)
+      air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.supp_htg_max_outdoor_temp,"F","C").get)
+      air_loop_unitary.setAuxiliaryOnCycleElectricPower(0)
+      air_loop_unitary.setAuxiliaryOffCycleElectricPower(0)
+      air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0)
+      air_loop_unitary.setNumberofSpeedsforHeating(supply.Number_Speeds.to_i)
+      air_loop_unitary.setNumberofSpeedsforCooling(supply.Number_Speeds.to_i)      
+      
+    end
 
-    air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0.0)
-
+    air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
+    air_loop.setName("Central Air System")
+    air_supply_inlet_node = air_loop.supplyInletNode
+    air_supply_outlet_node = air_loop.supplyOutletNode
+    air_demand_inlet_node = air_loop.demandInletNode
+    air_demand_outlet_node = air_loop.demandOutletNode    
+    
     air_loop_unitary.addToNode(air_supply_inlet_node)
-
+    
     runner.registerInfo("Added on/off fan '#{fan.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-    runner.registerInfo("Added #{selected_hp} DX cooling coil '#{clg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-    runner.registerInfo("Added #{selected_hp} DX heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-    runner.registerInfo("Added electric heating coil '#{hp_supp_heater.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
+    runner.registerInfo("Added DX cooling coil '#{clg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
+    runner.registerInfo("Added DX heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
+    runner.registerInfo("Added electric heating coil '#{supp_htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")    
+    
+    if supply.compressor_speeds == 1
+      air_loop_unitary.setControllingZone(living_thermal_zone)
+    elsif supply.compressor_speeds > 1
+      air_loop_unitary.setControllingZoneorThermostatLocation(living_thermal_zone)
+    end
+    
+    # _processSystemDemandSideAir
+    # Demand Side
 
-    zones = model.getThermalZones
-    zones.each do |zone|
+    # Supply Air
+    zone_splitter = air_loop.zoneSplitter
+    zone_splitter.setName("Zone Splitter")
 
-      if living_thermal_zone.handle.to_s == zone.handle.to_s
+    diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+    diffuser_living.setName("Living Zone Direct Air")
+    # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
+    air_loop.addBranchForZone(living_thermal_zone, diffuser_living.to_StraightComponent)
 
-        air_loop_unitary.setControllingZone(zone)
+    setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
+    setpoint_mgr.setControlZone(living_thermal_zone)
+    setpoint_mgr.addToNode(air_supply_outlet_node)
 
-        # _processSystemDemandSideAir
-        # Demand Side
+    air_loop.addBranchForZone(living_thermal_zone)
+    runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{living_thermal_zone.name}'")
 
-        # Supply Air
-        zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName("Zone Splitter")
+    unless fbasement_thermal_zone.nil?
 
-        diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
-        diffuser_living.setName("Living Zone Direct Air")
-        # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-        air_loop.addBranchForZone(zone, diffuser_living.to_StraightComponent)
+        diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+        diffuser_fbsmt.setName("FBsmt Zone Direct Air")
+        # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
+        air_loop.addBranchForZone(fbasement_thermal_zone, diffuser_fbsmt.to_StraightComponent)
 
-        setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
-        setpoint_mgr.setControlZone(zone)
-        setpoint_mgr.addToNode(air_supply_outlet_node)
-
-        # Return Air
-
-        # TODO: need to replace the mixer with a return plenum
-        # zone_mixer = air_loop.zoneMixer
-        # zone_mixer.disconnect
-        # return_plenum = OpenStudio::Model::AirLoopHVACReturnPlenum.new(model)
-        # return_plenum.setName("Return Plenum")
-        # return_plenum.addToNode(air_demand_outlet_node)
-        # air_loop.addBranchForZone(zone, return_plenum.to_StraightComponent)
-
-        air_loop.addBranchForZone(zone)
-        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{zone.name}'")
-
-      end
-
-      unless fbasement_thermal_zone.nil?
-
-        if fbasement_thermal_zone.handle.to_s == zone.handle.to_s
-
-          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, always_on)
-          diffuser_fbsmt.setName("FBsmt Zone Direct Air")
-          # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-          air_loop.addBranchForZone(zone, diffuser_fbsmt.to_StraightComponent)
-
-          air_loop.addBranchForZone(zone)
-          runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{zone.name}'")
-
-        end
-
-      end
+        air_loop.addBranchForZone(fbasement_thermal_zone)
+        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{fbasement_thermal_zone.name}'")
 
     end
 	
     return true
  
   end #end the run method
-
+  
 end #end the measure
 
 #this allows the measure to be use by the application

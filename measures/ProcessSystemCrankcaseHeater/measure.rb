@@ -45,14 +45,14 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
     #make an argument for entering crankcase heater capacity
     userdefined_crankcase = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcrankcase",true)
     userdefined_crankcase.setDisplayName("Crankcase [kW]")
-	userdefined_crankcase.setDescription("Capacity of the crankcase heater for the compressor.")
+    userdefined_crankcase.setDescription("Capacity of the crankcase heater for the compressor.")
     userdefined_crankcase.setDefaultValue(0.02)
     args << userdefined_crankcase
 
     #make an argument for entering crankcase heater max temp
     userdefined_crankcasemaxt = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedcrankcasemaxt",true)
     userdefined_crankcasemaxt.setDisplayName("Crankcase Max Temp [degrees F]")
-	userdefined_crankcasemaxt.setDescription("Outdoor dry-bulb temperature above which compressor crankcase heating is disabled.")
+    userdefined_crankcasemaxt.setDescription("Outdoor dry-bulb temperature above which compressor crankcase heating is disabled.")
     userdefined_crankcasemaxt.setDefaultValue(55.0)
     args << userdefined_crankcasemaxt
 
@@ -85,8 +85,8 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end
 
-	living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
-	living_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
+    living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
+    living_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
     if living_thermal_zone.nil?
       return false
     end
@@ -100,7 +100,7 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
 
     # Find heat pump
     hasHeatPump = true
-    if workspace.getObjectsByType("AirLoopHVAC:UnitaryHeatPump:AirToAir".to_IddObjectType).empty?
+    if workspace.getObjectsByType("AirLoopHVAC:UnitaryHeatPump:AirToAir".to_IddObjectType).empty? and workspace.getObjectsByType("AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed".to_IddObjectType).empty?
       hasHeatPump = false  
     end
 
@@ -108,7 +108,7 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
     compressor_speeds = nil
     if not workspace.getObjectsByType("Coil:Cooling:DX:SingleSpeed".to_IddObjectType).empty?
       compressor_speeds = 1.0
-    elsif not workspace.getObjectsByType("Coil:Cooling:DX:TwoSpeed".to_IddObjectType).empty?
+    elsif not workspace.getObjectsByType("Coil:Cooling:DX:MultiSpeed".to_IddObjectType).empty?
       compressor_speeds = 2.0
     end
     
@@ -129,111 +129,110 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
     supply.Crankcase_MaxT = runner.getDoubleArgumentValue("userdefinedcrankcasemaxt",user_arguments)
     supply.compressor_speeds = compressor_speeds
 
-      # Crankcase heater for heat pumps and multispeed air conditioners
-      # These EMS components are used to account for the crankcase heater power use for heat pumps and multi-stage/speed air conditioners
-      # For heat pumps, E+ assigns crankcase power to the heating coil by default
-      # For multi-stage ACs, using the heat coil crankcase heater inputs will not work since the crankcase could be operating while the furnace is on
-      # This EMS code fixes both issues.
+    # Crankcase heater for heat pumps and multispeed air conditioners
+    # These EMS components are used to account for the crankcase heater power use for heat pumps and multi-stage/speed air conditioners
+    # For heat pumps, E+ assigns crankcase power to the heating coil by default
+    # For multi-stage ACs, using the heat coil crankcase heater inputs will not work since the crankcase could be operating while the furnace is on
+    # This EMS code fixes both issues.
 
-      ems = []
+    ems = []
 
+    ems << "
+    Schedule:Constant,
+      AlwaysOn,                                             !- Name
+      FRACTION,                                             !- Schedule Type
+      1;                                                    !- Hourly Value"
+    
+    ems << "
+    ElectricEquipment,
+      Crankcase Heater,                                     !- Name
+      #{living_thermal_zone_r},                             !- Zone Name
+      AlwaysOn,                                             !- SCHEDULE Name
+      EquipmentLevel,                                       !- Design Level calculation method
+      0,                                                    !- Design Level {W}
+      ,                                                     !- Watts per Zone Floor Area {watts/m2}
+      ,                                                     !- Watts per Person {watts/person}
+      0,                                                    !- Fraction Latent
+      0,                                                    !- Fraction Radiant
+      1,                                                    !- Fraction Lost
+      CustomCrankcaseHeater;                                !- End-use Subcategory"
+
+    ems << "
+    EnergyManagementSystem:Actuator,
+      CrankcaseHeaterActuator,                              !- Name
+      Crankcase Heater,                                     !- Actuated Component Unique Name
+      ElectricEquipment,                                    !- Actuated Component Type
+      Electric Power Level;                                 !- Actuated Component Control Type"
+
+    ems << "
+    EnergyManagementSystem:Sensor,                          
+      CoolingCoilRTF,                                       !- Name
+      DX Cooling Coil,                                      !- Output:Variable or Output:Meter Index Key Name
+      Cooling Coil Runtime Fraction;                        !- Output:Variable or Output:Meter Name"
+
+    if hasHeatPump
       ems << "
-      Schedule:Constant,
-        AlwaysOn,                     !- Name
-        FRACTION,                     !- Schedule Type
-        1;                            !- Hourly Value"
-      
-      ems << "
-      ElectricEquipment,
-        Crankcase Heater,                                     !- Name
-        #{living_thermal_zone_r},                             !- Zone Name
-        AlwaysOn,                                             !- SCHEDULE Name
-        EquipmentLevel,                                       !- Design Level calculation method
-        0,                                                    !- Design Level {W}
-        ,                                                     !- Watts per Zone Floor Area {watts/m2}
-        ,                                                     !- Watts per Person {watts/person}
-        0,                                                    !- Fraction Latent
-        0,                                                    !- Fraction Radiant
-        1,                                                    !- Fraction Lost
-        CustomCrankcaseHeater;                                !- End-use Subcategory"
+      EnergyManagementSystem:Sensor,    
+        HeatingCoilRTF,                                     !- Name
+        DX Heating Coil,                                    !- Output:Variable or Output:Meter Index Key Name
+        Heating Coil Runtime Fraction;                      !- Output:Variable or Output:Meter Name"
+    end
 
-      ems << "
-      EnergyManagementSystem:Actuator,
-        CrankcaseHeaterActuator,                            !- Name
-        Crankcase Heater,                                   !- Actuated Component Unique Name
-        ElectricEquipment,                                  !- Actuated Component Type
-        Electric Power Level;                               !- Actuated Component Control Type"
-
+    if supply.compressor_speeds > 1.0
       ems << "
       EnergyManagementSystem:Sensor,
-        CoolingCoilRTF,
-        DX Cooling Coil,
-        Cooling Coil Runtime Fraction;"
+        UnitaryEquipCyclingRatio,                           !- Name
+        Forced Air System,                                  !- Output:Variable or Output:Meter Index Key Name
+        Unitary System DX Coil Cycling Ratio;               !- Output:Variable or Output:Meter Name"
+    end
 
-      if hasHeatPump
-        ems << "
-        EnergyManagementSystem:Sensor,
-          HeatingCoilRTF,
-          DX Heating Coil,
-          Heating Coil Runtime Fraction;"
-      end
+    ems_program = "
+    EnergyManagementSystem:Program,
+      CrankcaseHeaterProgram,                               !- Name
+      If Tout > #{OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get},
+      Set CrankcaseHeaterActuator = 0,
+      Else,"
 
-      if supply.compressor_speeds > 1.0
-        # tk what output variable do we need to add to get this to work?
-        # ems << "
-        # EnergyManagementSystem:Sensor,
-        #   UnitaryEquipCyclingRatio,
-        #   Forced Air System,
-        #   Unitary System DX Coil Cycling Ratio;"
-      end
-
-      ems_program = "
-      EnergyManagementSystem:Program,
-        CrankcaseHeaterProgram,
-        If Tout < #{OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get},
-        Set CrankcaseHeaterActuator = 0,
-        Else,"
-
-      if not hasHeatPump
-        # Handles multi-speed ACs
-        ems_program += "
-        If CoolingCoilRTF > 0,"
-      else
-        # Handles all HPs
-        ems_program += "
-        If CoolingCoilRTF > 0 || HeatingCoilRTF > 0,"
-      end
-
-      if supply.compressor_speeds > 1.0
-        ems_program += "
-        Set CrankcaseHeaterActuator = (1.0-UnitaryEquipCyclingRatio) * #{OpenStudio::convert(supply.Crankcase,"kW","W").get},"
-      else
-        #There must be a heat pump if this code is being executed
-        ems_program += "
-        Set CrankcaseHeaterActuator = (1.0-CoolingCoilRTF-HeatingCoilRTF) * #{OpenStudio::convert(supply.Crankcase,"kW","W").get},"
-      end
-
+    if not hasHeatPump
+      # Handles multi-speed ACs
       ems_program += "
-      Else,
-      Set CrankcaseHeaterActuator = #{OpenStudio::convert(supply.Crankcase,"kW","W").get},
-      EndIf,
-      EndIf;"
+      If CoolingCoilRTF > 0,"
+    else
+      # Handles all HPs
+      ems_program += "
+      If (CoolingCoilRTF > 0) || (HeatingCoilRTF > 0),"
+    end
 
-      ems << ems_program
+    if supply.compressor_speeds > 1.0
+      ems_program += "
+      Set CrankcaseHeaterActuator = (1.0-UnitaryEquipCyclingRatio) * #{OpenStudio::convert(supply.Crankcase,"kW","W").get},"
+    else
+      #There must be a heat pump if this code is being executed
+      ems_program += "
+      Set CrankcaseHeaterActuator = (1.0-CoolingCoilRTF-HeatingCoilRTF) * #{OpenStudio::convert(supply.Crankcase,"kW","W").get},"
+    end
 
-      # Program Calling Manager
-      ems << "
-      EnergyManagementSystem:ProgramCallingManager,
-        CrankcaseHeaterManager,                             !- Name
-        EndOfZoneTimestepBeforeZoneReporting,               !- EnergyPlus Model Calling Point
-        CrankcaseHeaterProgram;                             !- Program Name 1"
+    ems_program += "
+    Else,
+    Set CrankcaseHeaterActuator = #{OpenStudio::convert(supply.Crankcase,"kW","W").get},
+    EndIf,
+    EndIf;"
 
-      ems.each do |str|
-        idfObject = OpenStudio::IdfObject::load(str)
-        object = idfObject.get
-        wsObject = workspace.addObject(object)
-        runner.registerInfo("Set object '#{str.split("\n")[1].gsub(",","")} - #{str.split("\n")[2].split(",")[0]}'")
-      end
+    ems << ems_program
+
+    # Program Calling Manager
+    ems << "
+    EnergyManagementSystem:ProgramCallingManager,
+      CrankcaseHeaterManager,                             !- Name
+      EndOfZoneTimestepBeforeZoneReporting,               !- EnergyPlus Model Calling Point
+      CrankcaseHeaterProgram;                             !- Program Name 1"
+
+    ems.each do |str|
+      idfObject = OpenStudio::IdfObject::load(str)
+      object = idfObject.get
+      wsObject = workspace.addObject(object)
+      runner.registerInfo("Set object '#{str.split("\n")[1].gsub(",","")} - #{str.split("\n")[2].split(",")[0]}'")
+    end
 
     return true
  
