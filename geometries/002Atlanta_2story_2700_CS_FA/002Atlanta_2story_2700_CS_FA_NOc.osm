@@ -1,7 +1,7 @@
 
 OS:Version,
-  {8ce349f2-0a8a-4741-a774-1647b3c0b941}, !- Handle
-  1.10.0;                                 !- Version Identifier
+  {faed3c8c-b7c5-4030-899e-7c18e577b17b}, !- Handle
+  1.11.0;                                 !- Version Identifier
 
 OS:Site,
   {bd79afaa-91de-41e8-a8fd-d98b1f7c020b}, !- Handle
@@ -108,8 +108,12 @@ OS:PortList,
 OS:Sizing:Zone,
   {59a963e6-6f4f-43c6-ad73-bcc52beb5ac5}, !- Handle
   {7a4bc7a8-f92f-4dbb-bdda-d77081ec01b6}, !- Zone or ZoneList Name
+  SupplyAirTemperature,                   !- Zone Cooling Design Supply Air Temperature Input Method
   14,                                     !- Zone Cooling Design Supply Air Temperature {C}
+  11.11,                                  !- Zone Cooling Design Supply Air Temperature Difference {deltaC}
+  SupplyAirTemperature,                   !- Zone Heating Design Supply Air Temperature Input Method
   40,                                     !- Zone Heating Design Supply Air Temperature {C}
+  11.11,                                  !- Zone Heating Design Supply Air Temperature Difference {deltaC}
   0.0085,                                 !- Zone Cooling Design Supply Air Humidity Ratio {kg-H2O/kg-air}
   0.008,                                  !- Zone Heating Design Supply Air Humidity Ratio {kg-H2O/kg-air}
   ,                                       !- Zone Heating Sizing Factor
@@ -125,7 +129,11 @@ OS:Sizing:Zone,
   ,                                       !- Heating Maximum Air Flow {m3/s}
   ,                                       !- Heating Maximum Air Flow Fraction
   ,                                       !- Design Zone Air Distribution Effectiveness in Cooling Mode
-  ;                                       !- Design Zone Air Distribution Effectiveness in Heating Mode
+  ,                                       !- Design Zone Air Distribution Effectiveness in Heating Mode
+  No,                                     !- Account for Dedicated Outdoor Air System
+  NeutralSupplyAir,                       !- Dedicated Outdoor Air System Control Strategy
+  Autosize,                               !- Dedicated Outdoor Air Low Setpoint Temperature for Design {C}
+  Autosize;                               !- Dedicated Outdoor Air High Setpoint Temperature for Design {C}
 
 OS:ZoneHVAC:EquipmentList,
   {fa223263-2dbe-403a-8a88-db85d2adb9f4}, !- Handle
@@ -265,8 +273,12 @@ OS:PortList,
 OS:Sizing:Zone,
   {cb0ca581-a63c-458e-ab0e-5bb8ce42abfd}, !- Handle
   {521e5b47-c4fd-4548-92a7-6004b34e58bc}, !- Zone or ZoneList Name
+  SupplyAirTemperature,                   !- Zone Cooling Design Supply Air Temperature Input Method
   14,                                     !- Zone Cooling Design Supply Air Temperature {C}
+  11.11,                                  !- Zone Cooling Design Supply Air Temperature Difference {deltaC}
+  SupplyAirTemperature,                   !- Zone Heating Design Supply Air Temperature Input Method
   40,                                     !- Zone Heating Design Supply Air Temperature {C}
+  11.11,                                  !- Zone Heating Design Supply Air Temperature Difference {deltaC}
   0.0085,                                 !- Zone Cooling Design Supply Air Humidity Ratio {kg-H2O/kg-air}
   0.008,                                  !- Zone Heating Design Supply Air Humidity Ratio {kg-H2O/kg-air}
   ,                                       !- Zone Heating Sizing Factor
@@ -282,7 +294,11 @@ OS:Sizing:Zone,
   ,                                       !- Heating Maximum Air Flow {m3/s}
   ,                                       !- Heating Maximum Air Flow Fraction
   ,                                       !- Design Zone Air Distribution Effectiveness in Cooling Mode
-  ;                                       !- Design Zone Air Distribution Effectiveness in Heating Mode
+  ,                                       !- Design Zone Air Distribution Effectiveness in Heating Mode
+  No,                                     !- Account for Dedicated Outdoor Air System
+  NeutralSupplyAir,                       !- Dedicated Outdoor Air System Control Strategy
+  Autosize,                               !- Dedicated Outdoor Air Low Setpoint Temperature for Design {C}
+  Autosize;                               !- Dedicated Outdoor Air High Setpoint Temperature for Design {C}
 
 OS:ZoneHVAC:EquipmentList,
   {b89b17ed-3eb5-4e14-9dd6-0983351657b2}, !- Handle
@@ -943,8 +959,8 @@ OS:Surface,
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
   0, 3.6576, 7.0104,                      !- X,Y,Z Vertex 1 {m}
-  0, 6.45697203123002e-016, 5.1816,       !- X,Y,Z Vertex 2 {m}
-  11.5824, 6.45697203123002e-016, 5.1816, !- X,Y,Z Vertex 3 {m}
+  0, 1.291394406246e-015, 5.1816,         !- X,Y,Z Vertex 2 {m}
+  11.5824, 1.291394406246e-015, 5.1816,   !- X,Y,Z Vertex 3 {m}
   11.5824, 3.6576, 7.0104;                !- X,Y,Z Vertex 4 {m}
 
 OS:SubSurface,
@@ -1275,8 +1291,8 @@ OS:ElectricEquipment,
 OS:ScheduleTypeLimits,
   {0305b293-6b1e-4000-a21e-4aa9b110aab1}, !- Handle
   Fractional,                             !- Name
-  0,                                      !- Lower Limit Value {BasedOnField A4}
-  1,                                      !- Upper Limit Value {BasedOnField A4}
+  0,                                      !- Lower Limit Value
+  1,                                      !- Upper Limit Value
   Continuous;                             !- Numeric Type
 
 OS:ElectricEquipment:Definition,
