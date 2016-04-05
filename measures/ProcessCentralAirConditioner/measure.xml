@@ -1,8 +1,10 @@
 <measure>
   <schema_version>3.0</schema_version>
+  <error>cannot load such file -- C:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessCentralAirConditioner/resources/geometry</error>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>d70a7bca-7164-4a30-aa0f-814f8f94cfb2</version_id>
+  <version_id>6b38c884-69e4-41c7-b2cb-545f43ab554d</version_id>
+  <version_modified>20160405T194032Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -234,25 +236,19 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>62FE7D43</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>84F0F9A9</checksum>
+      <checksum>027D38A5</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A998D886</checksum>
+      <checksum>8E1D3EF8</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0D13095D</checksum>
+      <checksum>F43A5089</checksum>
     </file>
   </files>
 </measure>

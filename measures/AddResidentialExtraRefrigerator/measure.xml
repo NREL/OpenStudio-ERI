@@ -1,8 +1,10 @@
 <measure>
   <schema_version>3.0</schema_version>
+  <error>cannot load such file -- C:/OpenStudio-BEopt/OpenStudio-Beopt/measures/AddResidentialExtraRefrigerator/resources/geometry</error>
   <name>residential_extra_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>c422b3dd-9326-4352-bd5f-c2ad5b43e5bd</version_id>
+  <version_id>ca78f7d2-e29b-46b8-80f3-399d109b4c5c</version_id>
+  <version_modified>20160405T194031Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialExtraRefrigerator</class_name>
   <display_name>Set Residential Extra Refrigerator</display_name>
@@ -106,34 +108,28 @@
       <checksum>6C4454FC</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>430DF459</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DCBEF242</checksum>
     </file>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC574302</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>62FE7D43</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>84F0F9A9</checksum>
+      <checksum>027D38A5</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0D13095D</checksum>
+      <checksum>F43A5089</checksum>
     </file>
   </files>
 </measure>

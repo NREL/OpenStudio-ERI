@@ -2,7 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>modify_site_water_mains_temperature</name>
   <uid>f15e8163-22f4-4336-8257-338e1ab63a16</uid>
-  <version_id>5b165d39-b717-4450-9823-d3df8593bbed</version_id>
+  <version_id>1903dfac-7f00-41f1-942d-5a9df2b72dda</version_id>
+  <version_modified>20160405T194032Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ModifySiteWaterMainsTemperature</class_name>
   <display_name>Set Residential Mains Water Temperature</display_name>
@@ -59,7 +60,7 @@
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A998D886</checksum>
+      <checksum>8E1D3EF8</checksum>
     </file>
   </files>
 </measure>

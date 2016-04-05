@@ -2,7 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>33df6e8a-fde2-4542-9c50-cd377ca4ab05</version_id>
+  <version_id>9a51beeb-5e75-4cc0-88ac-e8cffebad629</version_id>
+  <version_modified>20160405T194031Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageElectric</class_name>
   <display_name>AddOSWaterHeaterMixedStorageElectric</display_name>
@@ -100,12 +101,6 @@
       <checksum>B516C87F</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>62FE7D43</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -117,10 +112,16 @@
       <checksum>E99CE76F</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>027D38A5</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0D13095D</checksum>
+      <checksum>F43A5089</checksum>
     </file>
   </files>
 </measure>

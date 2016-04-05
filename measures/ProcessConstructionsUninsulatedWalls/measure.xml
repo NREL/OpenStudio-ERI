@@ -2,7 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>c13782f8-639f-49cb-af5d-6b00c5ac0717</version_id>
+  <version_id>951c47d0-9031-4db4-aa49-d9835c39a4ec</version_id>
+  <version_modified>20160405T194900Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedWalls</class_name>
   <display_name>Set Residential Uninsulated Wall Constructions</display_name>
@@ -44,12 +45,6 @@
       <checksum>3CAFC8D0</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -60,6 +55,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>84F0F9A9</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCBEF242</checksum>
     </file>
     <file>
       <filename>util.rb</filename>

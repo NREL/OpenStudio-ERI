@@ -1,9 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>undefined method `SlabSpace' for Constants:Class</error>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>d9fcdd13-487f-4b70-aaff-89481a2ee7f3</version_id>
+  <version_id>607787ca-f56f-490b-8d8e-e3490a8008f3</version_id>
+  <version_modified>20160405T194616Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -96,27 +96,27 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>slab space type</default_value>
+      <default_value>slab space</default_value>
       <choices>
         <choice>
-          <value>slab space type</value>
-          <display_name>slab space type</display_name>
+          <value>slab space</value>
+          <display_name>slab space</display_name>
         </choice>
         <choice>
-          <value>crawl space type</value>
-          <display_name>crawl space type</display_name>
+          <value>crawl space</value>
+          <display_name>crawl space</display_name>
         </choice>
         <choice>
-          <value>unfinished basement space type</value>
-          <display_name>unfinished basement space type</display_name>
+          <value>unfinished basement space</value>
+          <display_name>unfinished basement space</display_name>
         </choice>
         <choice>
-          <value>finished basement space type</value>
-          <display_name>finished basement space type</display_name>
+          <value>finished basement space</value>
+          <display_name>finished basement space</display_name>
         </choice>
         <choice>
-          <value>pier and beam space type</value>
-          <display_name>pier and beam space type</display_name>
+          <value>pier and beam space</value>
+          <display_name>pier and beam space</display_name>
         </choice>
       </choices>
     </argument>
@@ -137,15 +137,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>unfinished attic space type</default_value>
+      <default_value>unfinished attic space</default_value>
       <choices>
         <choice>
-          <value>unfinished attic space type</value>
-          <display_name>unfinished attic space type</display_name>
+          <value>unfinished attic space</value>
+          <display_name>unfinished attic space</display_name>
         </choice>
         <choice>
-          <value>finished attic space type</value>
-          <display_name>finished attic space type</display_name>
+          <value>finished attic space</value>
+          <display_name>finished attic space</display_name>
         </choice>
       </choices>
     </argument>

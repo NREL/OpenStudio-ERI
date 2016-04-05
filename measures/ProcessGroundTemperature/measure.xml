@@ -2,7 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_temperature</name>
   <uid>4a3a96e7-00ea-4b61-9433-3d6fc3395a62</uid>
-  <version_id>12d6f48c-bcf1-4e44-a191-246cc617f11f</version_id>
+  <version_id>23c1909a-48e2-44ba-b468-f43c04633fa3</version_id>
+  <version_modified>20160405T194033Z</version_modified>
   <xml_checksum>3BE1CF9C</xml_checksum>
   <class_name>ProcessGroundTemperature</class_name>
   <display_name>Set Residential Ground Temperatures</display_name>
@@ -53,7 +54,7 @@
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A998D886</checksum>
+      <checksum>8E1D3EF8</checksum>
     </file>
   </files>
 </measure>

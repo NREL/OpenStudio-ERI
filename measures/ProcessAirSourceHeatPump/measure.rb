@@ -509,14 +509,19 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     # _processSystemAir
 
     if supply.compressor_speeds == 1
-    
-      air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitaryHeatPumpAirToAir.new(model, model.alwaysOnDiscreteSchedule, fan, htg_coil, clg_coil, supp_htg_coil)
+
+      air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
       air_loop_unitary.setName("Forced Air System")
-      air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0)
-      air_loop_unitary.setMaximumSupplyAirTemperaturefromSupplementalHeater(OpenStudio::convert(supply.supp_htg_max_supply_temp,"F","C").get)
-      air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.supp_htg_max_outdoor_temp,"F","C").get)
+      air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+      air_loop_unitary.setSupplyFan(fan)
+      air_loop_unitary.setHeatingCoil(htg_coil)
+      air_loop_unitary.setCoolingCoil(clg_coil)
+      air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+      air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+      air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(supply.supp_htg_max_supply_temp,"F","C").get) # TODO: is this the same as AirLoopHVACUnitaryHeatPumpAirToAir's setMaximumSupplyAirTemperaturefromSupplementalHeater?
+      air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.supp_htg_max_outdoor_temp,"F","C").get)      
       air_loop_unitary.setFanPlacement("BlowThrough")
-      air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)     
+      air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
       
     elsif supply.compressor_speeds > 1
     
@@ -550,12 +555,8 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     runner.registerInfo("Added DX heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
     runner.registerInfo("Added electric heating coil '#{supp_htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")    
     
-    if supply.compressor_speeds == 1
-      air_loop_unitary.setControllingZone(living_thermal_zone)
-    elsif supply.compressor_speeds > 1
-      air_loop_unitary.setControllingZoneorThermostatLocation(living_thermal_zone)
-    end
-    
+    air_loop_unitary.setControllingZoneorThermostatLocation(living_thermal_zone)
+      
     # _processSystemDemandSideAir
     # Demand Side
 
