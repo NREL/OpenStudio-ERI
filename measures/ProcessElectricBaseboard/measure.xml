@@ -1,10 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>cannot load such file -- C:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessElectricBaseboard/resources/geometry</error>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>c154f17d-631d-4dc9-9196-91ba2d15c49c</version_id>
-  <version_modified>20160405T194033Z</version_modified>
+  <version_id>098d63df-4127-4d95-8043-72dea4771c08</version_id>
+  <version_modified>20160406T002314Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -210,12 +209,6 @@
       <checksum>528EA52F</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -227,16 +220,22 @@
       <checksum>D3F519D3</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>027D38A5</checksum>
+      <checksum>AE77F58D</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F43A5089</checksum>
+      <checksum>EAAAB264</checksum>
     </file>
   </files>
 </measure>

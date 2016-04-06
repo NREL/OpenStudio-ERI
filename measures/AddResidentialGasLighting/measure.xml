@@ -1,10 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>cannot load such file -- C:/OpenStudio-BEopt/OpenStudio-Beopt/measures/AddResidentialGasLighting/resources/geometry</error>
   <name>residential_gas_lighting</name>
   <uid>6b9211da-6274-4b09-8c76-9edbc85886c0</uid>
-  <version_id>039d9810-1e90-4412-8297-231b6ecd537d</version_id>
-  <version_modified>20160405T194032Z</version_modified>
+  <version_id>42ebe13c-c156-4e9c-98f9-4b65af0752cd</version_id>
+  <version_modified>20160406T002312Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasLighting</class_name>
   <display_name>Set Residential Gas Lighting</display_name>
@@ -101,6 +100,18 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>430DF459</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -109,31 +120,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A71BDF9C</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FC574302</checksum>
+      <checksum>B9C3DB55</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>027D38A5</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F43A5089</checksum>
+      <checksum>AE77F58D</checksum>
     </file>
   </files>
 </measure>

@@ -1,10 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>cannot load such file -- C:/OpenStudio-BEopt/OpenStudio-Beopt/measures/AddResidentialGasGrill/resources/geometry</error>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>432e500b-f43c-418a-836b-4c2d2b13b25c</version_id>
-  <version_modified>20160405T194031Z</version_modified>
+  <version_id>6d143a74-0d58-4597-8e4f-7428b091e8b4</version_id>
+  <version_modified>20160406T002312Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>
@@ -101,6 +100,18 @@
       <checksum>4BBF53E0</checksum>
     </file>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>430DF459</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -109,31 +120,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A56080F2</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FC574302</checksum>
+      <checksum>29D85989</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>027D38A5</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F43A5089</checksum>
+      <checksum>AE77F58D</checksum>
     </file>
   </files>
 </measure>

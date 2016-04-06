@@ -1,7 +1,6 @@
 
 # Add classes or functions here than can be used across a variety of our python classes and modules.
 require "#{File.dirname(__FILE__)}/constants"
-require "#{File.dirname(__FILE__)}/unit_conversions"
 
 class HelperMethods
     
@@ -310,7 +309,6 @@ class HelperMethods
     end
     
 end
-
 
 class HVAC
 

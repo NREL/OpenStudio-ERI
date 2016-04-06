@@ -1,3 +1,7 @@
+require "#{File.dirname(__FILE__)}/constants"
+require "#{File.dirname(__FILE__)}/unit_conversions"
+require "#{File.dirname(__FILE__)}/util"
+
 class Psychrometrics
   def self.rhoD_fT_w_P(tdb, w, p)
         '''

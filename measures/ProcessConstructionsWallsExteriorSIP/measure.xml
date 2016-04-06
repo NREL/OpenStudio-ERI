@@ -1,10 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>cannot load such file -- C:/OpenStudio-BEopt/OpenStudio-Beopt/measures/ProcessConstructionsWallsExteriorSIP/resources/util</error>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>926aaf5d-3872-47c5-9e2b-d04dcb64efe1</version_id>
-  <version_modified>20160405T194033Z</version_modified>
+  <version_id>f30b6b87-5d5d-49de-9270-018c775dee53</version_id>
+  <version_modified>20160406T002313Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
@@ -124,6 +123,24 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>02BAF89A</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AE77F58D</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EAAAB264</checksum>
     </file>
   </files>
 </measure>

@@ -1,18 +1,10 @@
-# -*- coding: iso-8859-1 -*-
-#see the URL below for information on how to write OpenStudio measures
-# http://openstudio.nrel.gov/openstudio-measure-writing-guide
+# see the URL below for information on how to write OpenStudio measures
+# http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
-#see the URL below for information on using life cycle cost objects in OpenStudio
-# http://openstudio.nrel.gov/openstudio-life-cycle-examples
-
-#see the URL below for access to C++ documentation on model objects (click on "model" in the main window to view model objects)
-# http://openstudio.nrel.gov/sites/openstudio.nrel.gov/files/nv_data/cpp_documentation_it/model/html/namespaces.html
-
-require 'OpenStudio'
 require "#{File.dirname(__FILE__)}/resources/util"
-require"#{File.dirname(__FILE__)}/resources/waterheater"
-require"#{File.dirname(__FILE__)}/resources/constants"
-require"#{File.dirname(__FILE__)}/resources/unit_conversions"
+require "#{File.dirname(__FILE__)}/resources/waterheater"
+require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
 class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScript
@@ -20,7 +12,7 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
     def name
-        return "AddOSWaterHeaterTanklessElectric"
+        return "Set Residential Electric Tankless Water Heater"
     end
   
     def description

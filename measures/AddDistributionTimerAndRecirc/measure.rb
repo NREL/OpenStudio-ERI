@@ -9,11 +9,11 @@
 
 require 'openstudio' 
 
-require "#{File.dirname(__FILE__)}/sitewatermainstemperature"
-require "#{File.dirname(__FILE__)}/scheduledraws"
-require "#{File.dirname(__FILE__)}/dailyusage"
-require "#{File.dirname(__FILE__)}/internalgains"
-require "#{File.dirname(__FILE__)}/recirculation"
+require "#{File.dirname(__FILE__)}/resources/sitewatermainstemperature"
+require "#{File.dirname(__FILE__)}/resources/scheduledraws"
+require "#{File.dirname(__FILE__)}/resources/dailyusage"
+require "#{File.dirname(__FILE__)}/resources/internalgains"
+require "#{File.dirname(__FILE__)}/resources/recirculation"
 require "#{File.dirname(__FILE__)}/resources/constants"
 
 

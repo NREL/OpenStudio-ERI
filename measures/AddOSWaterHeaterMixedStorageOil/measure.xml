@@ -2,11 +2,11 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>45367a49-f41d-405e-9ad8-c91e36cfdfff</version_id>
-  <version_modified>20160405T194031Z</version_modified>
+  <version_id>584fc646-7ef5-4d4c-9c77-7339aa61d165</version_id>
+  <version_modified>20160406T002311Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
-  <display_name>AddOSWaterHeaterMixedStorageOil</display_name>
+  <display_name>Set Residential Oil Tank Water Heater</display_name>
   <description>This measure adds a new residential oil storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced.</description>
   <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a oil storage water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created.</modeler_description>
   <arguments>
@@ -119,12 +119,6 @@
       <checksum>1304F290</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -139,19 +133,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>624545A7</checksum>
+      <checksum>D773C5E9</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>027D38A5</checksum>
+      <checksum>AE77F58D</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F43A5089</checksum>
+      <checksum>EAAAB264</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
     </file>
   </files>
 </measure>

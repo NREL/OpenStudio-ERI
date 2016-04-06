@@ -23,14 +23,8 @@ class Constants
   def self.DefaultSolarAbsWall
     return 0.5
   end
-  def self.DefaultStudSpacing
-    return 16.0 # in
-  end
   def self.g
     return 32.174    # gravity (ft/s2)
-  end
-  def self.Num_Speeds_MSHP
-    return 10
   end
   def self.MinimumBasementHeight
     return 7 # ft
@@ -43,6 +37,9 @@ class Constants
   end
   def self.MonthNumDays
     return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  end
+  def self.Num_Speeds_MSHP
+    return 10
   end
   def self.Patm
     return 14.696 # standard atmospheric pressure (psia)

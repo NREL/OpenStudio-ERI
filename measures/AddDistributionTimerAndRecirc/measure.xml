@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_water_use_equipment_object</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38c</uid>
-  <version_id>6519b4aa-c6f4-4e61-820d-a16caa8763e3</version_id>
-  <version_modified>20160405T194029Z</version_modified>
+  <version_id>df12913d-4c6d-4ded-82cb-d6bd4fc81b62</version_id>
+  <version_modified>20160406T002311Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>AddWaterUseEquipmentObject</class_name>
   <display_name>Add Hot Water Draw and Distribution</display_name>
@@ -350,46 +350,10 @@
       <checksum>1207A86C</checksum>
     </file>
     <file>
-      <filename>dhw.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>7207E6BF</checksum>
-    </file>
-    <file>
-      <filename>internalgains.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>B672AFCA</checksum>
-    </file>
-    <file>
-      <filename>scheduledraws.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9F497883</checksum>
-    </file>
-    <file>
       <filename>All_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>99BEF94E</checksum>
-    </file>
-    <file>
-      <filename>recirculation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>1F3A6B41</checksum>
-    </file>
-    <file>
-      <filename>dailyusage.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DC3E0671</checksum>
-    </file>
-    <file>
-      <filename>sitewatermainstemperature.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>B72B07B8</checksum>
     </file>
     <file>
       <filename>ScheduleDraws_Test.rb</filename>
@@ -406,13 +370,49 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C20FDBC4</checksum>
+      <checksum>2746A3DD</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>027D38A5</checksum>
+      <checksum>AE77F58D</checksum>
+    </file>
+    <file>
+      <filename>dailyusage.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DC3E0671</checksum>
+    </file>
+    <file>
+      <filename>dhw.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7207E6BF</checksum>
+    </file>
+    <file>
+      <filename>internalgains.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B672AFCA</checksum>
+    </file>
+    <file>
+      <filename>recirculation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1F3A6B41</checksum>
+    </file>
+    <file>
+      <filename>scheduledraws.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9F497883</checksum>
+    </file>
+    <file>
+      <filename>sitewatermainstemperature.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B72B07B8</checksum>
     </file>
   </files>
 </measure>

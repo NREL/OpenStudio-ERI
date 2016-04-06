@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>8392f52b-8624-41cf-a9e9-7a8d9ed638fa</version_id>
-  <version_modified>20160405T194033Z</version_modified>
+  <version_id>f0145336-d4b7-4792-b5f2-7120856a01ac</version_id>
+  <version_modified>20160406T002314Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -188,10 +188,10 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
+      <checksum>84F0F9A9</checksum>
     </file>
     <file>
       <version>
@@ -202,19 +202,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FBB541D6</checksum>
+      <checksum>04202836</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>027D38A5</checksum>
+      <checksum>AE77F58D</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F43A5089</checksum>
+      <checksum>EAAAB264</checksum>
     </file>
   </files>
 </measure>

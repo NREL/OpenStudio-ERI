@@ -233,59 +233,94 @@ task default: 'test:unit:all'
 desc 'update all resources'
 task :update_resources do
 
-  resources_to_update = Hash.new
-  File.open(File.expand_path("../resources/resources.csv", __FILE__)) do |file|
-	file.each do |line|
-	  line = line.chomp.split(',').reject { |l| l.empty? }
-	  measure = line.delete_at(0)
-	  resources_to_update[measure] = line
-	end
-  end  
-  
   measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry =='.' || entry == '..') }
   measures.each do |m|
-	resources = resources_to_update[m]
-    # Add/update any resource files
-	unless resources.nil?
-		unless resources.empty?
-		  unless File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
-			FileUtils.mkdir_p(File.expand_path("../measures/#{m}/resources", __FILE__))
-		  end
-		  resources.each do |r|
-            r_filename = File.split(r)[1] # Remove directory name if it exists
-			unless File.file?(File.expand_path("../measures/#{m}/resources/#{r_filename}", __FILE__))
-			  FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
-			  puts "Added #{r} to #{m}/resources."
-			else 
-			  if not FileUtils.compare_file(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/#{r_filename}", __FILE__))
-				FileUtils.cp(File.expand_path("../resources/#{r}", __FILE__), File.expand_path("../measures/#{m}/resources/", __FILE__))
-				puts "Updated #{r} in #{m}/resources."
-			  end
-			end
-		  end
-		end
-	else
-	  puts "No entry for #{m} in resources.csv."
-	end
+    measurerb = File.expand_path("../measures/#{m}/measure.rb", __FILE__)
+    
+    # Get recursive list of resources required based on looking for 'require FOO' in rb files
+    resources = get_requires_from_file(measurerb)
+
+    # Add any additional resources specified in resources.csv
+    subdir_resources = {} # Handle resources in subdirs
+    File.open(File.expand_path("../resources/resources.csv", __FILE__)) do |file|
+      file.each do |line|
+        line = line.chomp.split(',').reject { |l| l.empty? }
+        measure = line.delete_at(0)
+        next if measure != m
+        line.each do |resource|
+          fullresource = File.expand_path("../resources/#{resource}", __FILE__)
+          next if resources.include?(fullresource)
+          resources << fullresource
+          if resource != File.basename(resource)
+            subdir_resources[File.basename(resource)] = resource
+          end
+        end
+      end
+    end  
+    
+    # Add/update resource files as needed
+    resources.each do |resource|
+      if not File.exist?(resource)
+        puts "Cannot find resource: #{resource}."
+        next
+      end
+      r = File.basename(resource)
+      dest_resource = File.expand_path("../measures/#{m}/resources/#{r}", __FILE__)
+      measure_resource_dir = File.dirname(dest_resource)
+      if not File.directory?(measure_resource_dir)
+        FileUtils.mkdir_p(measure_resource_dir)
+      end
+      if not File.file?(dest_resource)
+        FileUtils.cp(resource, measure_resource_dir)
+        puts "Added #{r} to #{m}/resources."
+      elsif not FileUtils.compare_file(resource, dest_resource)
+        FileUtils.cp(resource, measure_resource_dir)
+        puts "Updated #{r} in #{m}/resources."
+      end
+    end
+    
     # Any extra resource files?
     if File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
       Dir.foreach(File.expand_path("../measures/#{m}/resources", __FILE__)) do |item|
         next if item == '.' or item == '..'
-        if not resources.nil?
-          found = false
-          resources.each do |r|
-            r_filename = File.split(r)[1] # Remove directory name if it exists
-            if r_filename == item
-              found = true
-              break
-            end
-          end
-          if not found
-            puts "Extra file #{item} found in #{m}/resources. Either delete it or add it to resources.csv."
-          end
+        if subdir_resources.include?(item)
+          item = subdir_resources[item]
         end
+        resource = File.expand_path("../resources/#{item}", __FILE__)
+        next if resources.include?(resource)
+        puts "Extra file #{item} found in #{m}/resources. Do you want to delete it? (y/n)"
+        input = STDIN.gets.strip.downcase
+        next if input != "y"
+        FileUtils.rm(File.expand_path("../measures/#{m}/resources/#{item}", __FILE__))
+        puts "File deleted."
       end
     end
   end
 
+end
+
+def get_requires_from_file(filerb)
+  requires = []
+  if not File.exists?(filerb)
+    return requires
+  end
+  File.open(filerb) do |file|
+    file.each do |line|
+      line.strip!
+      next if line.nil?
+      next if not (line.start_with?("require \"\#{File.dirname(__FILE__)}/") or line.start_with?("require\"\#{File.dirname(__FILE__)}/"))
+      line.chomp!("\"")
+      d = line.split("/")
+      requirerb = File.expand_path("../resources/#{d[-1].to_s}.rb", __FILE__)
+      requires << requirerb
+    end
+  end
+  # Recursively look for additional requirements
+  requires.each do |requirerb|
+    get_requires_from_file(requirerb).each do |rb|
+      next if requires.include?(rb)
+      requires << rb
+    end
+  end
+  return requires
 end

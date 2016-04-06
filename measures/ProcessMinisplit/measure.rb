@@ -4,6 +4,8 @@
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/psychrometrics"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/unit_conversions"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
 class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript

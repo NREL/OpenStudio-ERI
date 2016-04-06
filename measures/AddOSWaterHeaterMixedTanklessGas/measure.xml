@@ -2,11 +2,11 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_gas</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>8a73cc80-92e5-45a6-b9d1-28959f16d1e4</version_id>
-  <version_modified>20160405T194031Z</version_modified>
+  <version_id>e86dea1e-d2f1-41dc-90ec-57fc41d74111</version_id>
+  <version_modified>20160406T002311Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessGas</class_name>
-  <display_name>AddOSWaterHeaterTanklessGas</display_name>
+  <display_name>Set Residential Gas Tankless Water Heater</display_name>
   <description>This measure adds a new residential gas tankless water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced.</description>
   <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a gas tankless water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created.</modeler_description>
   <arguments>
@@ -109,12 +109,6 @@
       <checksum>62EF04AD</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -129,19 +123,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>409CC52D</checksum>
+      <checksum>7A4EDD78</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>027D38A5</checksum>
+      <checksum>AE77F58D</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F43A5089</checksum>
+      <checksum>EAAAB264</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>84F0F9A9</checksum>
     </file>
   </files>
 </measure>
