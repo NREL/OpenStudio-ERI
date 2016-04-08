@@ -150,15 +150,15 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 	
     #make a choice argument for model objects
     roof_type_display_names = OpenStudio::StringVector.new
-    roof_type_display_names << "Gable"
-    roof_type_display_names << "Hip"
-    roof_type_display_names << "Flat"
+    roof_type_display_names << Constants.RoofTypeGable
+    roof_type_display_names << Constants.RoofTypeHip
+    roof_type_display_names << Constants.RoofTypeFlat
 	
     #make a choice argument for roof type
     roof_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("roof_type", roof_type_display_names, true)
     roof_type.setDisplayName("Roof Type")
     roof_type.setDescription("The roof type of the building.")
-    roof_type.setDefaultValue("Gable")
+    roof_type.setDefaultValue(Constants.RoofTypeGable)
     args << roof_type
 	
     #make a choice argument for model objects
@@ -239,7 +239,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     length = footprint / width
 	
     # error checking
-    if garage_width > length or garage_depth > width or (garage_depth == width and garage_width == length)
+    if (garage_width > length and garage_depth > 0) or (garage_depth > width and garage_width > 0) or (garage_depth == width and garage_width == length)
       runner.registerError("Invalid living space and garage dimensions.")
       return false
     end
@@ -375,7 +375,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     end
 	
     # Attic
-    if roof_type != "Flat"
+    if roof_type != Constants.RoofTypeFlat
     
       z = z + living_height
       
@@ -395,7 +395,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       # make polygons
       polygon_floor = make_rectangle(roof_nw_point, roof_ne_point, roof_se_point, roof_sw_point)	
       side_type = nil
-      if roof_type == "Gable"
+      if roof_type == Constants.RoofTypeGable
         if length >= width
           roof_w_point = OpenStudio::Point3d.new(0,width/2.0,z+attic_height)
           roof_e_point = OpenStudio::Point3d.new(length,width/2.0,z+attic_height)			
@@ -412,7 +412,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
           polygon_e_wall = make_triangle(roof_e_point, roof_ne_point, roof_nw_point)
         end
         side_type = "Wall"
-      elsif roof_type == "Hip"
+      elsif roof_type == Constants.RoofTypeHip
         if length >= width
           roof_w_point = OpenStudio::Point3d.new(width/2.0,width/2.0,z+attic_height)
           roof_e_point = OpenStudio::Point3d.new(length-width/2.0,width/2.0,z+attic_height)			

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>c43c68ae-b8f7-4b7a-88b8-3f530c121ded</version_id>
-  <version_modified>20160406T002312Z</version_modified>
+  <version_id>bd27e11d-33c9-4002-9de2-a40b477bae22</version_id>
+  <version_modified>20160408T204236Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -156,19 +156,19 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Gable</default_value>
+      <default_value>gable</default_value>
       <choices>
         <choice>
-          <value>Gable</value>
-          <display_name>Gable</display_name>
+          <value>gable</value>
+          <display_name>gable</display_name>
         </choice>
         <choice>
-          <value>Hip</value>
-          <display_name>Hip</display_name>
+          <value>hip</value>
+          <display_name>hip</display_name>
         </choice>
         <choice>
-          <value>Flat</value>
-          <display_name>Flat</display_name>
+          <value>flat</value>
+          <display_name>flat</display_name>
         </choice>
       </choices>
     </argument>
@@ -272,6 +272,12 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04FF2C49</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -280,13 +286,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>AF0000B2</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AE77F58D</checksum>
+      <checksum>7ACCE72A</checksum>
     </file>
   </files>
 </measure>
