@@ -35,13 +35,13 @@ class SetResidentialSizingPeriod < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end   
 
-	# _processRunSizingPeriod
-	obj = []
+    # _processRunSizingPeriod
+    obj = []
 	
     obj << "
     SizingPeriod:WeatherFileDays,
       Plant DD,                                        	!- Name
-      1,                                   				!- Begin Month
+      1,                                   				      !- Begin Month
       1,                                                !- Begin Day of Month
       1,                                                !- End Month
       1,                                                !- End Day of Month
@@ -51,7 +51,7 @@ class SetResidentialSizingPeriod < OpenStudio::Ruleset::WorkspaceUserScript
 	
     obj << "
     RunPeriodControl:DaylightSavingTime,
-      April 7,                                   		!- Start Date
+      April 7,                                   		    !- Start Date
       October 26;                                       !- End Date"	
 	
     obj.each do |str|

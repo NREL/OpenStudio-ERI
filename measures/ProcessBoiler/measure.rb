@@ -444,8 +444,23 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
       condensing_boiler_eff.setMaximumValueofy(85.0)
       return condensing_boiler_eff
     else
-      runner.registerError("OpenStudio has not wrapped the Curve:BiCubic object.")
-      return false
+      non_condensing_boiler_eff = OpenStudio::Model::CurveBicubic.new(model)
+      non_condensing_boiler_eff.setName("NonCondensingBoilerEff")
+      non_condensing_boiler_eff.setCoefficient1Constant(1.111720116)
+      non_condensing_boiler_eff.setCoefficient2x(0.078614078)
+      non_condensing_boiler_eff.setCoefficient3xPOW2(-0.400425756)
+      non_condensing_boiler_eff.setCoefficient4y(0.0)
+      non_condensing_boiler_eff.setCoefficient5yPOW2(-0.000156783)
+      non_condensing_boiler_eff.setCoefficient6xTIMESY(0.009384599)
+      non_condensing_boiler_eff.setCoefficient7xPOW3(0.234257955)
+      non_condensing_boiler_eff.setCoefficient8yPOW3(1.32927e-06)
+      non_condensing_boiler_eff.setCoefficient9xPOW2TIMESY(-0.004446701)
+      non_condensing_boiler_eff.setCoefficient10xTIMESYPOW2(-1.22498e-05)
+      non_condensing_boiler_eff.setMinimumValueofx(0.1)
+      non_condensing_boiler_eff.setMaximumValueofx(1.0)
+      non_condensing_boiler_eff.setMinimumValueofy(20.0)
+      non_condensing_boiler_eff.setMaximumValueofy(80.0)
+      return non_condensing_boiler_eff
     end
     
   end
