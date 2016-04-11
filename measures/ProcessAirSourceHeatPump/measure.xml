@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>d0aceeff-ecdb-4b48-9e3b-2aea7258fe07</version_id>
-  <version_modified>20160406T002312Z</version_modified>
+  <version_id>5d1051b0-586d-4171-853b-504122d328e1</version_id>
+  <version_modified>20160411T142627Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
   <display_name>Set Residential Air Source Heat Pump</display_name>
@@ -376,12 +376,6 @@
       <checksum>84F0F9A9</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AE77F58D</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -397,6 +391,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>94512A7F</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04FF2C49</checksum>
     </file>
   </files>
 </measure>

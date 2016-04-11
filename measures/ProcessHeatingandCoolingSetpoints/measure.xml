@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heatingand_cooling_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>68998f4b-be1a-4f5c-8ab4-53ec73ae99d6</version_id>
-  <version_modified>20160406T211643Z</version_modified>
+  <version_id>0ac19b64-f205-4d8f-aced-053f26de0a64</version_id>
+  <version_modified>20160411T142629Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingandCoolingSetpoints</class_name>
   <display_name>Set Residential Heating/Cooling Setpoints and Schedules</display_name>
@@ -137,12 +137,6 @@
       <checksum>90D3023E</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AE77F58D</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -153,6 +147,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>EAAAB264</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04FF2C49</checksum>
     </file>
   </files>
 </measure>

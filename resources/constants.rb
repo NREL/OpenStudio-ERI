@@ -521,6 +521,9 @@ class Constants
   def self.RoofStructureRafter
     return 'rafter'
   end
+  def self.RoofStructureTrussCantilever
+    return 'truss, cantilever'
+  end
   def self.RoofTypeFlat
     return 'flat'
   end

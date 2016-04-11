@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>b6476d02-94d9-4233-b1a7-ad550f99a192</version_id>
-  <version_modified>20160406T002314Z</version_modified>
+  <version_id>6fb94806-9ee3-44e0-a504-957b67f72584</version_id>
+  <version_modified>20160411T142630Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Set Residential Electric Cooking Range</display_name>
@@ -130,7 +130,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AE77F58D</checksum>
+      <checksum>04FF2C49</checksum>
     </file>
   </files>
 </measure>
