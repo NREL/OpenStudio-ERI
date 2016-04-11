@@ -2,6 +2,14 @@ require "#{File.dirname(__FILE__)}/constants"
 
 class Geometry
 
+    def self.make_polygon(*pts)
+        p = OpenStudio::Point3dVector.new
+        pts.each do |pt|
+            p << pt
+        end
+        return p
+    end
+
     # Retrieves the number of bedrooms and bathrooms from the space type
     # They are assigned in the SetResidentialBedroomsAndBathrooms measure.
     def self.get_bedrooms_bathrooms(model, runner=nil)
