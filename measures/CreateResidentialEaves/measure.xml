@@ -2,7 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>ae8b1a65-77bf-45a3-9932-f623257b3bef</version_id>
+  <version_id>95d59940-fa93-429d-9f7d-b4a5f59afca6</version_id>
+  <version_modified>20160411T231518Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -10,37 +11,21 @@
   <modeler_description></modeler_description>
   <arguments>
     <argument>
-      <name>selectedattic</name>
-      <display_name>Attic Space</display_name>
-      <description>The attic space type.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>selectedgarage</name>
-      <display_name>Garage Space</display_name>
-      <description>The garage space type.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
       <name>roof_structure</name>
       <display_name>Roof Structure</display_name>
       <description>The roof structure of the building.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Truss, Cantilever</default_value>
+      <default_value>truss, cantilever</default_value>
       <choices>
         <choice>
-          <value>Truss, Cantilever</value>
-          <display_name>Truss, Cantilever</display_name>
+          <value>truss, cantilever</value>
+          <display_name>truss, cantilever</display_name>
         </choice>
         <choice>
-          <value>Rafter</value>
-          <display_name>Rafter</display_name>
+          <value>rafter</value>
+          <display_name>rafter</display_name>
         </choice>
       </choices>
     </argument>
@@ -95,6 +80,12 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D28DC6BC</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -103,7 +94,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F0C7D294</checksum>
+      <checksum>94159DD7</checksum>
     </file>
   </files>
 </measure>

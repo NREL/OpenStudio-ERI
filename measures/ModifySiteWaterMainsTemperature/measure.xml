@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>modify_site_water_mains_temperature</name>
   <uid>f15e8163-22f4-4336-8257-338e1ab63a16</uid>
-  <version_id>4912133e-9f9f-42d0-87d1-5798519ee24a</version_id>
-  <version_modified>20160406T211643Z</version_modified>
+  <version_id>a52bca4b-9090-436d-8d64-2bf9cb6c6f00</version_id>
+  <version_modified>20160411T142627Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ModifySiteWaterMainsTemperature</class_name>
   <display_name>Set Residential Mains Water Temperature</display_name>
@@ -57,12 +57,6 @@
       <checksum>79B0EC38</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AE77F58D</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -79,6 +73,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>EAAAB264</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04FF2C49</checksum>
     </file>
   </files>
 </measure>
