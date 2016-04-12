@@ -308,6 +308,65 @@ class HelperMethods
         return z
     end
     
+    # Calculates heating/cooling seasons from BAHSP definition
+    def self.calc_heating_and_cooling_seasons(weather)
+        monthly_temps = weather.data.MonthlyAvgDrybulbs
+        heat_design_db = weather.design.HeatingDrybulb
+
+        # create basis lists with zero for every month
+        cooling_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+        heating_season_temp_basis = Array.new(monthly_temps.length, 0.0)
+
+        monthly_temps.each_with_index do |temp, i|
+          if temp < 66.0
+            heating_season_temp_basis[i] = 1.0
+          elsif temp >= 66.0
+            cooling_season_temp_basis[i] = 1.0
+          end
+
+          if (i == 0 or i == 11) and heat_design_db < 59.0
+            heating_season_temp_basis[i] = 1.0
+          elsif i == 6 or i == 7
+            cooling_season_temp_basis[i] = 1.0
+          end
+        end
+
+        cooling_season = Array.new(monthly_temps.length, 0.0)
+        heating_season = Array.new(monthly_temps.length, 0.0)
+
+        monthly_temps.each_with_index do |temp, i|
+          # Heating overlaps with cooling at beginning of summer
+          if i == 0 # January
+            prevmonth = 11 # December
+          else
+            prevmonth = i - 1
+          end
+
+          if (heating_season_temp_basis[i] == 1.0 or (cooling_season_temp_basis[prevmonth] == 0.0 and cooling_season_temp_basis[i] == 1.0))
+            heating_season[i] = 1.0
+          else
+            heating_season[i] = 0.0
+          end
+
+          if (cooling_season_temp_basis[i] == 1.0 or (heating_season_temp_basis[prevmonth] == 0.0 and heating_season_temp_basis[i] == 1.0))
+            cooling_season[i] = 1.0
+          else
+            cooling_season[i] = 0.0
+          end
+        end
+
+        # Find the first month of cooling and add one month
+        (1...12).to_a.each do |i|
+          if cooling_season[i] == 1.0
+            cooling_season[i - 1] = 1.0
+            break
+          end
+        end
+        
+        return heating_season, cooling_season
+    end
+
+    
 end
 
 class HVAC

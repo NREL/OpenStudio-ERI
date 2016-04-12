@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heatingand_cooling_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>68998f4b-be1a-4f5c-8ab4-53ec73ae99d6</version_id>
-  <version_modified>20160406T211643Z</version_modified>
+  <version_id>75b6f37b-12a1-4da9-b537-fe62a4860f0d</version_id>
+  <version_modified>20160412T145634Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingandCoolingSetpoints</class_name>
   <display_name>Set Residential Heating/Cooling Setpoints and Schedules</display_name>
@@ -120,10 +120,22 @@
       <checksum>79B0EC38</checksum>
     </file>
     <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>640596F1</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>84F0F9A9</checksum>
+      <checksum>4267896A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04FF2C49</checksum>
     </file>
     <file>
       <version>
@@ -134,25 +146,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>90D3023E</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AE77F58D</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>640596F1</checksum>
+      <checksum>E2EBB060</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EAAAB264</checksum>
+      <checksum>0C810B8C</checksum>
     </file>
   </files>
 </measure>
