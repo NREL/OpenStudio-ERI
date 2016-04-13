@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>1293c35c-1c0d-4849-a4be-ba63c6e6a20d</version_id>
-  <version_modified>20160411T142626Z</version_modified>
+  <version_id>efb1ff81-624d-40c8-96d4-633086bd8111</version_id>
+  <version_modified>20160412T135451Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageElectric</class_name>
   <display_name>Set Residential Electric Tank Water Heater</display_name>
@@ -121,7 +121,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>04FF2C49</checksum>
+      <checksum>D28DC6BC</checksum>
     </file>
   </files>
 </measure>

@@ -128,8 +128,10 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     ptacs = model.getZoneHVACPackagedTerminalAirConditioners
     ptacs.each do |ptac|
       thermalZone = ptac.thermalZone.get
-      runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
-      ptac.remove
+      if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
+        runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
+        ptac.remove
+      end
     end
     airLoopHVACs = model.getAirLoopHVACs
     airLoopHVACs.each do |airLoopHVAC|

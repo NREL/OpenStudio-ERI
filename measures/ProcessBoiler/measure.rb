@@ -250,8 +250,16 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     baseboards = model.getZoneHVACBaseboardConvectiveElectrics
     baseboards.each do |baseboard|
       thermalZone = baseboard.thermalZone.get
-      runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-      baseboard.remove
+      if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
+        runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
+        baseboard.remove
+      end
+      unless fbasement_thermal_zone.nil?
+        if fbasement_thermal_zone.handle.to_s == thermalZone.handle.to_s
+          runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
+          baseboard.remove
+        end
+      end      
     end    
     
     # Create the material class instances

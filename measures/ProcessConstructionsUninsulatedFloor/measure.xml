@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_floor</name>
   <uid>477cfef1-0c37-4b16-9cfd-82d617472e43</uid>
-  <version_id>a26b0faa-93d6-4c5b-90ce-6c026052d8c7</version_id>
-  <version_modified>20160411T142628Z</version_modified>
+  <version_id>f3e504d9-97ee-492f-bc44-3bac16a36b9e</version_id>
+  <version_modified>20160412T135453Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedFloor</class_name>
   <display_name>Set Residential Uninsulated Floor Construction</display_name>
@@ -60,7 +60,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>04FF2C49</checksum>
+      <checksum>D28DC6BC</checksum>
     </file>
   </files>
 </measure>
