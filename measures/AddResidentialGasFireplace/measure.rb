@@ -70,13 +70,15 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
     spaces.each do |space|
         space_args << space.name.to_s
     end
-    if not space_args.include?(Constants.LivingSpace(1))
+    if space_args.empty?
         space_args << Constants.LivingSpace(1)
     end
     space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_args, true)
     space.setDisplayName("Location")
     space.setDescription("Select the space where the fireplace is located.")
-    space.setDefaultValue(Constants.LivingSpace(1))
+    if space_args.include?(Constants.LivingSpace(1))
+        space.setDefaultValue(Constants.LivingSpace(1))
+    end
     args << space
 
     return args

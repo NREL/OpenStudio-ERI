@@ -29,13 +29,15 @@ class AddBuildingAmericaBenchmarkOccupants < OpenStudio::Ruleset::ModelUserScrip
     space_types.each do |space_type|
         space_type_args << space_type.name.to_s
     end
-    if not space_type_args.include?(Constants.LivingSpaceType)
+    if space_type_args.empty?
         space_type_args << Constants.LivingSpaceType
     end
     living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
     living_space_type.setDisplayName("Living space type")
     living_space_type.setDescription("Select the living space type")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    if space_type_args.include?(Constants.LivingSpaceType)
+        living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    end
     args << living_space_type
     
     return args

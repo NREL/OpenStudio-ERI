@@ -80,13 +80,15 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     thermal_zones.each do |thermal_zone|
         thermal_zone_args << thermal_zone.name.to_s
     end
-    if not thermal_zone_args.include?(Constants.LivingZone)
+    if thermal_zone_args.empty?
         thermal_zone_args << Constants.LivingZone
     end
     living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, true)
     living_thermal_zone.setDisplayName("Living thermal zone")
     living_thermal_zone.setDescription("Select the living thermal zone")
-    living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    if thermal_zone_args.include?(Constants.LivingZone)
+        living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    end
     args << living_thermal_zone		   
 
     return args

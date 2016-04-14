@@ -746,13 +746,15 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 		zone_arg_name = thermal_zone.getString(0) # Name
         thermal_zone_args << zone_arg_name.to_s
     end
-    if not thermal_zone_args.include?(Constants.LivingZone)
+    if thermal_zone_args.empty?
         thermal_zone_args << Constants.LivingZone
     end
     living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, true)
     living_thermal_zone.setDisplayName("Living thermal zone")
     living_thermal_zone.setDescription("Select the living thermal zone")
-    living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    if thermal_zone_args.include?(Constants.LivingZone)
+        living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    end
     args << living_thermal_zone		
 	
     #make a choice argument for garage thermal zone
@@ -762,13 +764,15 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 		zone_arg_name = thermal_zone.getString(0) # Name
         thermal_zone_args << zone_arg_name.to_s
     end
-    if not thermal_zone_args.include?(Constants.GarageZone)
+    if thermal_zone_args.empty?
         thermal_zone_args << Constants.GarageZone
     end
     garage_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_thermal_zone", thermal_zone_args, true)
     garage_thermal_zone.setDisplayName("Garage thermal zone")
     garage_thermal_zone.setDescription("Select the garage thermal zone")
-    garage_thermal_zone.setDefaultValue(Constants.GarageZone)
+    if thermal_zone_args.include?(Constants.GarageZone)
+        garage_thermal_zone.setDefaultValue(Constants.GarageZone)
+    end
     args << garage_thermal_zone	
 
     #make a choice argument for finished basement thermal zone
@@ -778,13 +782,15 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 		zone_arg_name = thermal_zone.getString(0) # Name
         thermal_zone_args << zone_arg_name.to_s
     end
-    if not thermal_zone_args.include?(Constants.FinishedBasementZone)
+    if thermal_zone_args.empty?
         thermal_zone_args << Constants.FinishedBasementZone
     end
     fbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_thermal_zone", thermal_zone_args, true)
     fbasement_thermal_zone.setDisplayName("Finished Basement thermal zone")
     fbasement_thermal_zone.setDescription("Select the finished basement thermal zone")
-    fbasement_thermal_zone.setDefaultValue(Constants.FinishedBasementZone)
+    if thermal_zone_args.include?(Constants.FinishedBasementZone)
+        fbasement_thermal_zone.setDefaultValue(Constants.FinishedBasementZone)
+    end
     args << fbasement_thermal_zone	
 
     #make a choice argument for unfinished basement thermal zone
@@ -794,13 +800,15 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 		zone_arg_name = thermal_zone.getString(0) # Name
         thermal_zone_args << zone_arg_name.to_s
     end
-    if not thermal_zone_args.include?(Constants.UnfinishedBasementZone)
+    if thermal_zone_args.empty?
         thermal_zone_args << Constants.UnfinishedBasementZone
     end
     ufbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ufbasement_thermal_zone", thermal_zone_args, true)
     ufbasement_thermal_zone.setDisplayName("Unfinished Basement thermal zone")
     ufbasement_thermal_zone.setDescription("Select the unfinished basement thermal zone")
-    ufbasement_thermal_zone.setDefaultValue(Constants.UnfinishedBasementZone)
+    if thermal_zone_args.include?(Constants.UnfinishedBasementZone)
+        ufbasement_thermal_zone.setDefaultValue(Constants.UnfinishedBasementZone)
+    end
     args << ufbasement_thermal_zone	
 
     #make a choice argument for crawl thermal zone
@@ -810,13 +818,15 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 		zone_arg_name = thermal_zone.getString(0) # Name
         thermal_zone_args << zone_arg_name.to_s
     end
-    if not thermal_zone_args.include?(Constants.CrawlZone)
+    if thermal_zone_args.empty?
         thermal_zone_args << Constants.CrawlZone
     end
     crawl_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("crawl_thermal_zone", thermal_zone_args, true)
     crawl_thermal_zone.setDisplayName("Crawlspace thermal zone")
     crawl_thermal_zone.setDescription("Select the crawlspace thermal zone")
-    crawl_thermal_zone.setDefaultValue(Constants.CrawlZone)
+    if thermal_zone_args.include?(Constants.CrawlZone)
+        crawl_thermal_zone.setDefaultValue(Constants.CrawlZone)
+    end
     args << crawl_thermal_zone	
 	
     #make a choice argument for ufattic thermal zone
@@ -826,13 +836,15 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 		zone_arg_name = thermal_zone.getString(0) # Name
         thermal_zone_args << zone_arg_name.to_s
     end
-    if not thermal_zone_args.include?(Constants.UnfinishedAtticZone)
+    if thermal_zone_args.empty?
         thermal_zone_args << Constants.UnfinishedAtticZone
     end
     ufattic_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ufattic_thermal_zone", thermal_zone_args, true)
     ufattic_thermal_zone.setDisplayName("Unfinished Attic thermal zone")
     ufattic_thermal_zone.setDescription("Select the unfinished attic thermal zone")
-    ufattic_thermal_zone.setDefaultValue(Constants.UnfinishedAtticZone)
+    if thermal_zone_args.include?(Constants.UnfinishedAtticZone)
+        ufattic_thermal_zone.setDefaultValue(Constants.UnfinishedAtticZone)
+    end
     args << ufattic_thermal_zone		
 	
     #make a choice arguments for duct location

@@ -105,13 +105,15 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     space_types.each do |space_type|
         space_type_args << space_type.name.to_s
     end
-    if not space_type_args.include?(Constants.LivingSpaceType)
+    if space_type_args.empty?
         space_type_args << Constants.LivingSpaceType
     end
     living_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_space_type", space_type_args, true)
     living_space_type.setDisplayName("Living space type")
     living_space_type.setDescription("Select the living space type")
-    living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    if space_type_args.include?(Constants.LivingSpaceType)
+        living_space_type.setDefaultValue(Constants.LivingSpaceType)
+    end
     args << living_space_type
 
     #make a choice argument for garage space type
@@ -120,13 +122,15 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     space_types.each do |space_type|
         space_type_args << space_type.name.to_s
     end
-    if not space_type_args.include?(Constants.GarageSpaceType)
+    if space_type_args.empty?
         space_type_args << Constants.GarageSpaceType
     end
     garage_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_space_type", space_type_args, true)
     garage_space_type.setDisplayName("Garage space type")
     garage_space_type.setDescription("Select the garage space type")
-    garage_space_type.setDefaultValue(Constants.GarageSpaceType)
+    if space_type_args.include?(Constants.GarageSpaceType)
+        garage_space_type.setDefaultValue(Constants.GarageSpaceType)
+    end
     args << garage_space_type
 
     #make a choice argument for finished basement space type
@@ -135,13 +139,15 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     space_types.each do |space_type|
         space_type_args << space_type.name.to_s
     end
-    if not space_type_args.include?(Constants.FinishedBasementSpaceType)
+    if space_type_args.empty?
         space_type_args << Constants.FinishedBasementSpaceType
     end
     fbasement_space_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_space_type", space_type_args, true)
     fbasement_space_type.setDisplayName("Finished Basement space type")
     fbasement_space_type.setDescription("Select the finished basement space type")
-    fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
+    if space_type_args.include?(Constants.FinishedBasementSpaceType)
+        fbasement_space_type.setDefaultValue(Constants.FinishedBasementSpaceType)
+    end
     args << fbasement_space_type
     
     return args
