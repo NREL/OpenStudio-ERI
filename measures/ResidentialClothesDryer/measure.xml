@@ -160,5 +160,17 @@
       <usage_type>script</usage_type>
       <checksum>93D243F1</checksum>
     </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4267896A</checksum>
+    </file>
+    <file>
+      <filename>MinuteDrawProfilesMaxFlows.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>63BE98ED</checksum>
+    </file>
   </files>
 </measure>

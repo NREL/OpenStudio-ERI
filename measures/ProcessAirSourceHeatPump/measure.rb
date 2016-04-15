@@ -442,17 +442,17 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
       end
       if air_conditioner.hasIdealAC
-        clg_coil.setRatedSensibleHeatRatio(0.8)
+        if hpOutputCapacity != "Autosize"
+          clg_coil.setRatedSensibleHeatRatio(0.8)
+          clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
+        end
         clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0))
-        if hpOutputCapacity != "Autosize"
-          clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
-        end
       else
-        clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
-        clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0 / supply.CoolingEIR[0]))
         if hpOutputCapacity != "Autosize"
+          clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
           clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end
+        clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0 / supply.CoolingEIR[0]))
       end
       clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(supply.fan_power_rated / OpenStudio::convert(1.0,"cfm","m^3/s").get))
 

@@ -154,5 +154,11 @@
       <usage_type>script</usage_type>
       <checksum>26681EA7</checksum>
     </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D28DC6BC</checksum>
+    </file>
   </files>
 </measure>

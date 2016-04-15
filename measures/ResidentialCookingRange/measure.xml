@@ -132,5 +132,11 @@
       <usage_type>script</usage_type>
       <checksum>19A8FD8A</checksum>
     </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4267896A</checksum>
+    </file>
   </files>
 </measure>

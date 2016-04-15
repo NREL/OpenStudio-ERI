@@ -237,11 +237,9 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     clg_coil.setName("WindowAC Coil")
     if acOutputCapacity != "Autosize"
       clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(acOutputCapacity,"Btu/h","W").get)
-    end
-    if acOutputCapacity != "Autosize"
       clg_coil.setRatedAirFlowRate(supply.cfm_TON_Rated[0] * acOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
+      clg_coil.setRatedSensibleHeatRatio(supply.shr_Rated)
     end
-    clg_coil.setRatedSensibleHeatRatio(supply.shr_Rated)
     clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(OpenStudio::convert(roomaceer, "Btu/h", "W").get))
     clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(773.3))
     clg_coil.setEvaporativeCondenserEffectiveness(OpenStudio::OptionalDouble.new(0.9))

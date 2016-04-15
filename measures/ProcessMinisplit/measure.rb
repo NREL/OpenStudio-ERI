@@ -478,8 +478,8 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         if miniSplitCoolingOutputCapacity != "Autosize"
           stage_data.setGrossRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[i])
           stage_data.setRatedAirFlowRate(OpenStudio::convert(supply.CoolingCFMs[i] * OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","ton").get,"cfm","m^3/s").get)
+          stage_data.setGrossRatedSensibleHeatRatio(supply.SHR_Rated[i])
         end
-        stage_data.setGrossRatedSensibleHeatRatio(supply.SHR_Rated[i])
         stage_data.setGrossRatedCoolingCOP(1.0 / supply.CoolingEIR[i])
         stage_data.setNominalTimeforCondensateRemovaltoBegin(1000)
         stage_data.setRatioofInitialMoistureEvaporationRateandSteadyStateLatentCapacity(1.5)

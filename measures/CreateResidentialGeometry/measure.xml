@@ -1,10 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>cannot load such file -- C:/OpenStudio-BEopt/OpenStudio-Beopt/measures/CreateResidentialGeometry/resources/geometry</error>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>e97cef05-7ea3-4807-9c6f-418ea048738b</version_id>
-  <version_modified>20160412T135452Z</version_modified>
+  <version_id>4b950452-097b-4131-b2e3-16d2930c1d9f</version_id>
+  <version_modified>20160413T200228Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -288,6 +287,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>DB0E28AA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4267896A</checksum>
     </file>
   </files>
 </measure>

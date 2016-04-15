@@ -164,5 +164,11 @@
       <usage_type>script</usage_type>
       <checksum>2C42406F</checksum>
     </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4267896A</checksum>
+    </file>
   </files>
 </measure>
