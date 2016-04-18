@@ -179,7 +179,7 @@ end
 
 class HotWaterSchedule
 
-    def initialize(runner, model, num_bedrooms, unit_num, file_prefix, sch_name, target_water_temperature)
+    def initialize(runner, model, num_bedrooms, unit_num, file_prefix, sch_name, target_water_temperature, measure_dir)
         @validated = true
         @model = model
         @runner = runner
@@ -191,8 +191,8 @@ class HotWaterSchedule
         
         timestep_minutes = (60/@model.getTimestep.numberOfTimestepsPerHour).to_i
         
-        data = loadMinuteDrawProfileFromFile(timestep_minutes)
-        @totflow, @maxflow = loadDrawProfileStatsFromFile()
+        data = loadMinuteDrawProfileFromFile(timestep_minutes, measure_dir)
+        @totflow, @maxflow = loadDrawProfileStatsFromFile(measure_dir)
         if data.nil? or @totflow.nil? or @maxflow.nil?
             @validated = false
             return
@@ -243,11 +243,11 @@ class HotWaterSchedule
     
     private
     
-        def loadMinuteDrawProfileFromFile(timestep_minutes)
+        def loadMinuteDrawProfileFromFile(timestep_minutes, measure_dir)
             data = []
             
             # Get appropriate file
-            minute_draw_profile = "#{File.dirname(__FILE__)}/#{@file_prefix}Schedule_#{@num_bedrooms}bed_unit#{@unit_index}.csv"
+            minute_draw_profile = "#{measure_dir}/resources/#{@file_prefix}Schedule_#{@num_bedrooms}bed_unit#{@unit_index}.csv"
             if not File.file?(minute_draw_profile)
                 @runner.registerError("Unable to find file: #{minute_draw_profile}")
                 return nil
@@ -280,7 +280,7 @@ class HotWaterSchedule
             return data
         end
         
-        def loadDrawProfileStatsFromFile()
+        def loadDrawProfileStatsFromFile(measure_dir)
             totflow = 0 # daily gal/day
             maxflow = 0
             
@@ -289,7 +289,7 @@ class HotWaterSchedule
             totflow_column_header = "#{column_header} Sum"
             maxflow_column_header = "#{column_header} Max"
             
-            draw_file = "#{File.dirname(__FILE__)}/MinuteDrawProfilesMaxFlows.csv"
+            draw_file = "#{measure_dir}/resources/MinuteDrawProfilesMaxFlows.csv"
             
             datafound = false
             skippedheader = false
