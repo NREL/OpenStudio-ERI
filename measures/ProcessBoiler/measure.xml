@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>20d273b9-1bf3-4e17-aea9-e339228e4c90</version_id>
-  <version_modified>20160414T181525Z</version_modified>
+  <version_id>cd11bcac-8c09-49ac-ba2c-62dde3299b14</version_id>
+  <version_modified>20160418T183858Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -273,36 +273,6 @@
         </choice>
       </choices>
     </argument>
-    <argument>
-      <name>living_thermal_zone</name>
-      <display_name>Living thermal zone</display_name>
-      <description>Select the living thermal zone</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living zone</default_value>
-      <choices>
-        <choice>
-          <value>living zone</value>
-          <display_name>living zone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fbasement_thermal_zone</name>
-      <display_name>Finished Basement thermal zone</display_name>
-      <description>Select the finished basement thermal zone</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>finished basement zone</default_value>
-      <choices>
-        <choice>
-          <value>finished basement zone</value>
-          <display_name>finished basement zone</display_name>
-        </choice>
-      </choices>
-    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -350,16 +320,16 @@
       <checksum>D28DC6BC</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4267896A</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0C810B8C</checksum>
+      <checksum>5D8C22C7</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A05275C3</checksum>
     </file>
     <file>
       <version>
@@ -370,7 +340,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>AAB982AB</checksum>
+      <checksum>EF0D2B84</checksum>
     </file>
   </files>
 </measure>

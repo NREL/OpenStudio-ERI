@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>621c17a7-bd73-4c66-a982-4754584cae06</version_id>
-  <version_modified>20160414T181526Z</version_modified>
+  <version_id>0cc3d6c9-92ed-4202-a4bf-327770a66313</version_id>
+  <version_modified>20160418T160638Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -277,19 +277,13 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>5168907D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4267896A</checksum>
+      <checksum>C2265CC0</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0C810B8C</checksum>
+      <checksum>5D8C22C7</checksum>
     </file>
     <file>
       <version>
@@ -300,7 +294,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2E53C89C</checksum>
+      <checksum>4A13136C</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A05275C3</checksum>
     </file>
   </files>
 </measure>

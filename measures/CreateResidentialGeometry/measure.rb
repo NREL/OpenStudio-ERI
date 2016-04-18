@@ -462,7 +462,14 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       
       # create foundation zone
       foundation_zone = OpenStudio::Model::ThermalZone.new(model)
-      foundation_zone.setName(foundation_type)
+      if foundation_type == Constants.CrawlSpace
+        foundation_zone_name = Constants.CrawlZone
+      elsif foundation_type == Constants.UnfinishedBasementSpace
+        foundation_zone_name = Constants.UnfinishedBasementZone
+      elsif foundation_type == Constants.FinishedBasementSpace
+        foundation_zone_name = Constants.FinishedBasementZone
+      end
+      foundation_zone.setName(foundation_zone_name)
 
       # make polygons
       p = OpenStudio::Point3dVector.new

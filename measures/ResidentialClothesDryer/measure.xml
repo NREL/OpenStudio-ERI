@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>1ec7cc0f-c867-4f4a-b71b-ca0d0af6c96e</version_id>
-  <version_modified>20160414T181526Z</version_modified>
+  <version_id>8ad5e24d-b833-4497-b17e-efc72f24e88a</version_id>
+  <version_modified>20160418T160638Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>
@@ -138,18 +138,6 @@
       <checksum>D28DC6BC</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4267896A</checksum>
-    </file>
-    <file>
-      <filename>MinuteDrawProfilesMaxFlows.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>63BE98ED</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -158,19 +146,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>93D243F1</checksum>
+      <checksum>6DDD13C4</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4267896A</checksum>
-    </file>
-    <file>
-      <filename>MinuteDrawProfilesMaxFlows.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>63BE98ED</checksum>
+      <checksum>A05275C3</checksum>
     </file>
   </files>
 </measure>

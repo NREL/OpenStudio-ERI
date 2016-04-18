@@ -169,41 +169,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     boilerOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("boilerOutputCapacity", cap_display_names, true)
     boilerOutputCapacity.setDisplayName("Heating Output Capacity")
     boilerOutputCapacity.setDefaultValue("Autosize")
-    args << boilerOutputCapacity    
-    
-    #make a choice argument for living thermal zone
-    thermal_zones = model.getThermalZones
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-        thermal_zone_args << thermal_zone.name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.LivingZone
-    end
-    living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, true)
-    living_thermal_zone.setDisplayName("Living thermal zone")
-    living_thermal_zone.setDescription("Select the living thermal zone")
-    if thermal_zone_args.include?(Constants.LivingZone)
-        living_thermal_zone.setDefaultValue(Constants.LivingZone)
-    end
-    args << living_thermal_zone		
-	
-    #make a choice argument for finished basement thermal zone
-    thermal_zones = model.getThermalZones
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-        thermal_zone_args << thermal_zone.name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.FinishedBasementZone
-    end
-    fbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_thermal_zone", thermal_zone_args, true)
-    fbasement_thermal_zone.setDisplayName("Finished Basement thermal zone")
-    fbasement_thermal_zone.setDescription("Select the finished basement thermal zone")
-    if thermal_zone_args.include?(Constants.FinishedBasementZone)
-        fbasement_thermal_zone.setDefaultValue(Constants.FinishedBasementZone)
-    end
-    args << fbasement_thermal_zone    
+    args << boilerOutputCapacity  
 
     return args
   end
@@ -216,14 +182,6 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     if !runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-
-    living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
-    living_thermal_zone = Geometry.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
-    if living_thermal_zone.nil?
-        return false
-    end
-    fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
-    fbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, fbasement_thermal_zone_r, runner, false)
     
     boilerFuelType = runner.getStringArgumentValue("boilerFuelType",user_arguments)
     boilerType = runner.getStringArgumentValue("boilerType",user_arguments)
@@ -247,24 +205,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     if heatingseasonschedule.nil?
         runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
         return false
-    end    
-    
-    # Check if has equipment
-    clg_coil = HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_thermal_zone, "Central Air Conditioner")
-    baseboards = model.getZoneHVACBaseboardConvectiveElectrics
-    baseboards.each do |baseboard|
-      thermalZone = baseboard.thermalZone.get
-      if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
-        runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-        baseboard.remove
-      end
-      unless fbasement_thermal_zone.nil?
-        if fbasement_thermal_zone.handle.to_s == thermalZone.handle.to_s
-          runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-          baseboard.remove
-        end
-      end      
-    end    
+    end 
     
     # Create the material class instances
     hydronic_heating = Boiler.new(boilerFuelType, boilerType, boilerInstalledAFUE, boilerOATResetEnabled, boilerOATHigh, boilerOATLow, boilerOATLowHWST, boilerOATHighHWST, boilerDesignTemp)
@@ -399,29 +340,58 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     pipe_demand_inlet.addToNode(plant_loop.demandInletNode)
     pipe_demand_outlet.addToNode(plant_loop.demandOutletNode)
     
-    baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
-    baseboard_coil.setName("Water Baseboard Coil")
-    if boilerOutputCapacity != "Autosize"
-      bb_UA = OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get / (OpenStudio::convert(hydronic_heating.BoilerDesignTemp - 10.0 - 95.0,"R","K").get) * 3
-      bb_max_flow = OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get / OpenStudio::convert(20.0,"R","K").get / 4.186 / 998.2 / 1000 * 2.0    
-      baseboard_coil.setUFactorTimesAreaValue(bb_UA)
-      baseboard_coil.setMaximumWaterFlowRate(bb_max_flow)      
+    living_zones, basement_zones = Geometry.get_living_and_basement_zones(model)
+    
+    living_zones.each do |living_zone|
+    
+      # Check if has equipment
+      clg_coil = HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_zone, "Central Air Conditioner")
+      baseboards = model.getZoneHVACBaseboardConvectiveElectrics
+      baseboards.each do |baseboard|
+        thermalZone = baseboard.thermalZone.get
+        if living_zone.handle.to_s == thermalZone.handle.to_s
+          runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
+          baseboard.remove
+        end    
+      end    
+    
+      baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
+      baseboard_coil.setName("Water Baseboard Coil")
+      if boilerOutputCapacity != "Autosize"
+        bb_UA = OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get / (OpenStudio::convert(hydronic_heating.BoilerDesignTemp - 10.0 - 95.0,"R","K").get) * 3
+        bb_max_flow = OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get / OpenStudio::convert(20.0,"R","K").get / 4.186 / 998.2 / 1000 * 2.0    
+        baseboard_coil.setUFactorTimesAreaValue(bb_UA)
+        baseboard_coil.setMaximumWaterFlowRate(bb_max_flow)      
+      end
+      baseboard_coil.setConvergenceTolerance(0.001)
+      
+      living_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, heatingseasonschedule, baseboard_coil)
+      living_baseboard_heater.setName("Living Zone Baseboards")
+      living_baseboard_heater.addToThermalZone(living_zone)
+      runner.registerInfo("Added baseboard convective water '#{living_baseboard_heater.name}' to thermal zone '#{living_zone.name}'")
+      
+      basement_zones.each do |basement_zone|
+
+        # Check if has equipment
+        baseboards = model.getZoneHVACBaseboardConvectiveElectrics
+        baseboards.each do |baseboard|
+          thermalZone = baseboard.thermalZone.get
+          if basement_zone.handle.to_s == thermalZone.handle.to_s
+            runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
+            baseboard.remove
+          end
+        end        
+      
+        fbasement_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, heatingseasonschedule, baseboard_coil)
+        fbasement_baseboard_heater.setName("FBsmt Zone Baseboards")    
+        fbasement_baseboard_heater.addToThermalZone(basement_zone)
+        runner.registerInfo("Added baseboard convective water '#{fbasement_baseboard_heater.name}' to thermal zone '#{basement_zone.name}'")
+
+      end    
+      
+      plant_loop.addDemandBranchForComponent(baseboard_coil)      
+    
     end
-    baseboard_coil.setConvergenceTolerance(0.001)
-    
-    living_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, heatingseasonschedule, baseboard_coil)
-    living_baseboard_heater.setName("Living Zone Baseboards")
-    living_baseboard_heater.addToThermalZone(living_thermal_zone)
-    
-    unless fbasement_thermal_zone.nil?
-
-      fbasement_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, heatingseasonschedule, baseboard_coil)
-      fbasement_baseboard_heater.setName("FBsmt Zone Baseboards")    
-      fbasement_baseboard_heater.addToThermalZone(fbasement_thermal_zone)
-
-    end    
-    
-    plant_loop.addDemandBranchForComponent(baseboard_coil)
     
     return true
 

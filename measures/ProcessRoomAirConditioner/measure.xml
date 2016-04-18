@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>94ec7e12-6f3f-4e1e-a2d0-591d7ddd05a9</version_id>
-  <version_modified>20160414T181525Z</version_modified>
+  <version_id>49b085ce-5b0c-4497-a2ce-ba530ba48850</version_id>
+  <version_modified>20160418T165126Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -132,21 +132,6 @@
         </choice>
       </choices>
     </argument>
-    <argument>
-      <name>living_thermal_zone</name>
-      <display_name>Living thermal zone</display_name>
-      <description>Select the living thermal zone</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living zone</default_value>
-      <choices>
-        <choice>
-          <value>living zone</value>
-          <display_name>living zone</display_name>
-        </choice>
-      </choices>
-    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -194,16 +179,10 @@
       <checksum>D28DC6BC</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4267896A</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0C810B8C</checksum>
+      <checksum>5D8C22C7</checksum>
     </file>
     <file>
       <version>
@@ -214,7 +193,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FE0D667A</checksum>
+      <checksum>DFB074AC</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A05275C3</checksum>
     </file>
   </files>
 </measure>

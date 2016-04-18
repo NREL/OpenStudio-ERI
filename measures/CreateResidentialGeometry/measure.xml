@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>4b950452-097b-4131-b2e3-16d2930c1d9f</version_id>
-  <version_modified>20160413T200228Z</version_modified>
+  <version_id>e7622c5a-6950-4689-9e57-6a520ae93f8d</version_id>
+  <version_modified>20160418T160636Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -286,13 +286,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DB0E28AA</checksum>
+      <checksum>41BD685B</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4267896A</checksum>
+      <checksum>A05275C3</checksum>
     </file>
   </files>
 </measure>

@@ -35,29 +35,29 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     #make an argument for entering optional window u-factor
     userdefined_ufactor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufactor",false)
     userdefined_ufactor.setDisplayName("U-Value")
-	userdefined_ufactor.setUnits("Btu/hr-ft^2-R")
-	userdefined_ufactor.setDescription("The heat transfer coefficient of the windows.")
+    userdefined_ufactor.setUnits("Btu/hr-ft^2-R")
+    userdefined_ufactor.setDescription("The heat transfer coefficient of the windows.")
     userdefined_ufactor.setDefaultValue(0.37)
     args << userdefined_ufactor
 
     #make an argument for entering optional window shgc
     userdefined_shgc = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shgc",false)
     userdefined_shgc.setDisplayName("SHGC")
-	userdefined_shgc.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening.")
+    userdefined_shgc.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening.")
     userdefined_shgc.setDefaultValue(0.3)
     args << userdefined_shgc
 
     #make an argument for entering optional window u-factor
     userdefined_intshadeheatingmult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedintshadeheatingmult",false)
     userdefined_intshadeheatingmult.setDisplayName("Heating Shade Multiplier")
-	userdefined_intshadeheatingmult.setDescription("Interior shading multiplier for heating season.")
+    userdefined_intshadeheatingmult.setDescription("Interior shading multiplier for heating season.")
     userdefined_intshadeheatingmult.setDefaultValue(0.7)
     args << userdefined_intshadeheatingmult
 
     #make an argument for entering optional window shgc
     userdefined_intshadecoolingmult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedintshadecoolingmult",false)
     userdefined_intshadecoolingmult.setDisplayName("Cooling Shade Multiplier")
-	userdefined_intshadecoolingmult.setDescription("Interior shading multiplier for cooling season.")
+    userdefined_intshadecoolingmult.setDescription("Interior shading multiplier for cooling season.")
     userdefined_intshadecoolingmult.setDefaultValue(0.7)
     args << userdefined_intshadecoolingmult
 
@@ -139,8 +139,8 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     total_shade_abs = 0.00001
     total_shade_ref = 1 - total_shade_trans - total_shade_abs
 
-    day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
     day_startm = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
+    day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]    
 
     # WindowShadingSchedule
     sched_type = OpenStudio::Model::ScheduleTypeLimits.new(model)

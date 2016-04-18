@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>79babac5-f23b-4e43-b4ac-02e7159ef843</version_id>
-  <version_modified>20160414T181525Z</version_modified>
+  <version_id>8c5b3a61-fb85-4ac3-add1-6a18c246e36e</version_id>
+  <version_modified>20160418T160553Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -160,36 +160,6 @@
         </choice>
       </choices>
     </argument>
-    <argument>
-      <name>living_thermal_zone</name>
-      <display_name>Living thermal zone</display_name>
-      <description>Select the living thermal zone</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living zone</default_value>
-      <choices>
-        <choice>
-          <value>living zone</value>
-          <display_name>living zone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fbasement_thermal_zone</name>
-      <display_name>Finished Basement thermal zone</display_name>
-      <description>Select the finished basement thermal zone</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>finished basement zone</default_value>
-      <choices>
-        <choice>
-          <value>finished basement zone</value>
-          <display_name>finished basement zone</display_name>
-        </choice>
-      </choices>
-    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -227,16 +197,16 @@
       <checksum>D28DC6BC</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4267896A</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0C810B8C</checksum>
+      <checksum>5D8C22C7</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A05275C3</checksum>
     </file>
     <file>
       <version>
@@ -247,7 +217,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>AF2055C8</checksum>
+      <checksum>1D47D20A</checksum>
     </file>
   </files>
 </measure>

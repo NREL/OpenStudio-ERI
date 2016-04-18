@@ -119,10 +119,31 @@ class Geometry
     
     def self.zone_is_finished(zone)
         # FIXME: Ugly hack until we can get finished zones from OS
-        if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone
+        # if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone
+        if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone or zone.name.to_s.include? "Story" # URBANopt hack: ensure always finished zone
             return true
         end
         return false
+    end
+    
+    def self.get_living_and_basement_zones(model)
+      living_zones = []
+      basement_zones = []
+      model.getThermalZones.each do |thermal_zone|
+        next unless Geometry.zone_is_finished(thermal_zone)
+        next if Geometry.zone_is_below_grade(thermal_zone)
+        living_zones << thermal_zone      
+      end
+      model.getThermalZones.each do |thermal_zone|
+        next unless Geometry.zone_is_finished(thermal_zone)
+        next if Geometry.zone_is_above_grade(thermal_zone)
+        if living_zones.length == 1 # is Single-Family, and so any below-grade zone is a basement zone
+          basement_zones << thermal_zone
+        else
+          living_zones << thermal_zone # is Multifamily, and so any below-grade zone is a living zone
+        end
+      end
+      return living_zones, basement_zones
     end
     
     def self.space_is_unfinished(space)
@@ -151,6 +172,23 @@ class Geometry
         end
         return false
     end
+    
+    # Returns true if all spaces in zone are fully above grade
+    def self.zone_is_above_grade(zone)
+      spaces_are_above_grade = []
+      zone.spaces.each do |space|
+        spaces_are_above_grade << space_is_above_grade(space)
+      end
+      if spaces_are_above_grade.all?
+        return true
+      end
+      return false
+    end
+
+    # Returns true if all spaces in zone are either fully or partially below grade
+    def self.zone_is_below_grade(zone)
+      return !Geometry.zone_is_above_grade(zone)
+    end    
     
     def self.space_has_roof(space)
         space.surfaces.each do |surface|

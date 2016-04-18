@@ -194,40 +194,6 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     miniSplitSupplementalHeatingOutputCapacity.setDefaultValue("Autosize")
     args << miniSplitSupplementalHeatingOutputCapacity    
     
-    #make a choice argument for living thermal zone
-    thermal_zones = model.getThermalZones
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-        thermal_zone_args << thermal_zone.name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.LivingZone
-    end
-    living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, true)
-    living_thermal_zone.setDisplayName("Living thermal zone")
-    living_thermal_zone.setDescription("Select the living thermal zone")
-    if thermal_zone_args.include?(Constants.LivingZone)
-        living_thermal_zone.setDefaultValue(Constants.LivingZone)
-    end
-    args << living_thermal_zone    
-    
-    #make a choice argument for finished basement thermal zone
-    thermal_zones = model.getThermalZones
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-        thermal_zone_args << thermal_zone.name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.FinishedBasementZone
-    end
-    fbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_thermal_zone", thermal_zone_args, true)
-    fbasement_thermal_zone.setDisplayName("Finished Basement thermal zone")
-    fbasement_thermal_zone.setDescription("Select the finished basement thermal zone")
-    if thermal_zone_args.include?(Constants.FinishedBasementZone)
-        fbasement_thermal_zone.setDefaultValue(Constants.FinishedBasementZone)
-    end
-    args << fbasement_thermal_zone    
-    
     return args
   end
 
@@ -238,15 +204,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     # use the built-in error checking
     if !runner.validateUserArguments(arguments(model), user_arguments)
       return false
-    end
-
-    living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
-    living_thermal_zone = Geometry.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
-    if living_thermal_zone.nil?
-        return false
-    end
-    fbasement_thermal_zone_r = runner.getStringArgumentValue("fbasement_thermal_zone",user_arguments)
-    fbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, fbasement_thermal_zone_r, runner, false)    
+    end    
     
     curves = Curves.new
     supply = Supply.new
@@ -282,32 +240,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     if heatingseasonschedule.nil? or coolingseasonschedule.nil?
         runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' and/or cooling season schedule named 'CoolingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
         return false
-    end    
-    
-    # Check if has equipment
-    HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_thermal_zone)
-    ptacs = model.getZoneHVACPackagedTerminalAirConditioners
-    ptacs.each do |ptac|
-      thermalZone = ptac.thermalZone.get
-      if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
-        runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
-        ptac.remove
-      end
     end
-    baseboards = model.getZoneHVACBaseboardConvectiveElectrics
-    baseboards.each do |baseboard|
-      thermalZone = baseboard.thermalZone.get
-      if living_thermal_zone.handle.to_s == thermalZone.handle.to_s
-        runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-        baseboard.remove
-      end
-      unless fbasement_thermal_zone.nil?
-        if fbasement_thermal_zone.handle.to_s == thermalZone.handle.to_s
-          runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-          baseboard.remove
-        end
-      end      
-    end   
         
     # _processAirSystem       
         
@@ -503,130 +436,165 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     defrosteir.setMinimumValueofy(-100)
     defrosteir.setMaximumValueofy(100)
     
-    # _processSystemHeatingCoil
+    living_zones, basement_zones = Geometry.get_living_and_basement_zones(model)
     
-    htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
-    htg_coil.setName("DX Heating Coil")
-    htg_coil.setAvailabilitySchedule(heatingseasonschedule)
-    htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
-    htg_coil.setCrankcaseHeaterCapacity(0)
-    htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrosteir)
-    htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
-    htg_coil.setDefrostStrategy("ReverseCycle")
-    htg_coil.setDefrostControl("OnDemand")
-    htg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
-    htg_coil.setFuelType("Electricity")
+    living_zones.each do |living_zone|
+
+      # Check if has equipment
+      HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_zone)
+      ptacs = model.getZoneHVACPackagedTerminalAirConditioners
+      ptacs.each do |ptac|
+        thermalZone = ptac.thermalZone.get
+        if living_zone.handle.to_s == thermalZone.handle.to_s
+          runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
+          ptac.remove
+        end
+      end
+      baseboards = model.getZoneHVACBaseboardConvectiveElectrics
+      baseboards.each do |baseboard|
+        thermalZone = baseboard.thermalZone.get
+        if living_zone.handle.to_s == thermalZone.handle.to_s
+          runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
+          baseboard.remove
+        end    
+      end
     
-    heating_indices = curves.mshp_indices
-    heating_indices.each do |i|
-        htg_coil.addStage(htg_coil_stage_data[i])    
+      # _processSystemHeatingCoil
+      
+      htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
+      htg_coil.setName("DX Heating Coil")
+      htg_coil.setAvailabilitySchedule(heatingseasonschedule)
+      htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
+      htg_coil.setCrankcaseHeaterCapacity(0)
+      htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrosteir)
+      htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
+      htg_coil.setDefrostStrategy("ReverseCycle")
+      htg_coil.setDefrostControl("OnDemand")
+      htg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
+      htg_coil.setFuelType("Electricity")
+      
+      heating_indices = curves.mshp_indices
+      heating_indices.each do |i|
+          htg_coil.addStage(htg_coil_stage_data[i])    
+      end
+     
+      supp_htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, heatingseasonschedule)
+      supp_htg_coil.setName("HeatPump Supp Heater")
+      supp_htg_coil.setEfficiency(1)
+      if miniSplitSupplementalHeatingOutputCapacity == "NO SUPP HEAT"
+        supp_htg_coil.setNominalCapacity(0)
+      elsif miniSplitSupplementalHeatingOutputCapacity != "Autosize"
+        supp_htg_coil.setNominalCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get)
+      end
+     
+      # _processSystemCoolingCoil
+      
+      clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
+      clg_coil.setName("DX Cooling Coil")
+      clg_coil.setAvailabilitySchedule(coolingseasonschedule)
+      clg_coil.setCondenserType("AirCooled")
+      clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
+      clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
+      clg_coil.setCrankcaseHeaterCapacity(0)
+      clg_coil.setFuelType("Electricity")
+    
+      cooling_indices = curves.mshp_indices
+      cooling_indices.each do |i|
+          clg_coil.addStage(clg_coil_stage_data[i])
+      end   
+      
+      # _processSystemFan
+      
+      supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
+      supply_fan_availability.setName("SupplyFanAvailability")
+      supply_fan_availability.setValue(1)
+
+      fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
+      fan.setName("Supply Fan")
+      fan.setEndUseSubcategory("HVACFan")
+      fan.setFanEfficiency(supply.eff)
+      fan.setPressureRise(supply.static)
+      fan.setMotorEfficiency(1)
+      fan.setMotorInAirstreamFraction(1)
+
+      supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
+      supply_fan_operation.setName("SupplyFanOperation")
+      supply_fan_operation.setValue(0)    
+      
+      # _processSystemAir
+      
+      air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitaryHeatPumpAirToAirMultiSpeed.new(model, fan, htg_coil, clg_coil, supp_htg_coil)
+      air_loop_unitary.setName("Forced Air System")
+      air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+      air_loop_unitary.setSupplyAirFanPlacement("BlowThrough")
+      air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+      air_loop_unitary.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
+      air_loop_unitary.setMaximumSupplyAirTemperaturefromSupplementalHeater(OpenStudio::convert(supply.supp_htg_max_supply_temp,"F","C").get)
+      air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.supp_htg_max_outdoor_temp,"F","C").get)
+      air_loop_unitary.setAuxiliaryOnCycleElectricPower(0)
+      air_loop_unitary.setAuxiliaryOffCycleElectricPower(0)
+      air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0)
+      air_loop_unitary.setNumberofSpeedsforHeating(4)
+      air_loop_unitary.setNumberofSpeedsforCooling(4)
+      
+      air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
+      air_loop.setName("Central Air System")
+      air_supply_inlet_node = air_loop.supplyInletNode
+      air_supply_outlet_node = air_loop.supplyOutletNode
+      air_demand_inlet_node = air_loop.demandInletNode
+      air_demand_outlet_node = air_loop.demandOutletNode    
+      
+      air_loop_unitary.addToNode(air_supply_inlet_node)
+
+      runner.registerInfo("Added on/off fan '#{fan.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
+      runner.registerInfo("Added DX cooling coil '#{clg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
+      runner.registerInfo("Added DX heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
+      runner.registerInfo("Added electric heating coil '#{supp_htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
+
+      air_loop_unitary.setControllingZoneorThermostatLocation(living_zone)    
+      
+      # _processSystemDemandSideAir
+      # Demand Side
+
+      # Supply Air
+      zone_splitter = air_loop.zoneSplitter
+      zone_splitter.setName("Zone Splitter")
+
+      diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+      diffuser_living.setName("Living Zone Direct Air")
+      # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
+      air_loop.addBranchForZone(living_zone, diffuser_living.to_StraightComponent)
+
+      setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
+      setpoint_mgr.setControlZone(living_zone)
+      setpoint_mgr.addToNode(air_supply_outlet_node)
+
+      air_loop.addBranchForZone(living_zone)
+      runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{living_zone.name}'")
+
+      basement_zones.each do |basement_zone|
+
+          # Check if has equipment
+          baseboards = model.getZoneHVACBaseboardConvectiveElectrics
+          baseboards.each do |baseboard|
+            thermalZone = baseboard.thermalZone.get      
+            if basement_zone.handle.to_s == thermalZone.handle.to_s
+              runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
+              baseboard.remove
+            end
+          end
+      
+          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+          diffuser_fbsmt.setName("FBsmt Zone Direct Air")
+          # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
+          air_loop.addBranchForZone(basement_zone, diffuser_fbsmt.to_StraightComponent)
+
+          air_loop.addBranchForZone(basement_zone)
+          runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{basement_zone.name}'")
+
+      end    
+    
     end
-   
-    supp_htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, heatingseasonschedule)
-    supp_htg_coil.setName("HeatPump Supp Heater")
-    supp_htg_coil.setEfficiency(1)
-    if miniSplitSupplementalHeatingOutputCapacity == "NO SUPP HEAT"
-      supp_htg_coil.setNominalCapacity(0)
-    elsif miniSplitSupplementalHeatingOutputCapacity != "Autosize"
-      supp_htg_coil.setNominalCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get)
-    end
-   
-    # _processSystemCoolingCoil
-    
-    clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
-    clg_coil.setName("DX Cooling Coil")
-    clg_coil.setAvailabilitySchedule(coolingseasonschedule)
-    clg_coil.setCondenserType("AirCooled")
-    clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
-    clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
-    clg_coil.setCrankcaseHeaterCapacity(0)
-    clg_coil.setFuelType("Electricity")
-  
-    cooling_indices = curves.mshp_indices
-    cooling_indices.each do |i|
-        clg_coil.addStage(clg_coil_stage_data[i])
-    end   
-    
-    # _processSystemFan
-    
-    supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
-    supply_fan_availability.setName("SupplyFanAvailability")
-    supply_fan_availability.setValue(1)
-
-    fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
-    fan.setName("Supply Fan")
-    fan.setEndUseSubcategory("HVACFan")
-    fan.setFanEfficiency(supply.eff)
-    fan.setPressureRise(supply.static)
-    fan.setMotorEfficiency(1)
-    fan.setMotorInAirstreamFraction(1)
-
-    supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
-    supply_fan_operation.setName("SupplyFanOperation")
-    supply_fan_operation.setValue(0)    
-    
-    # _processSystemAir
-    
-    air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitaryHeatPumpAirToAirMultiSpeed.new(model, fan, htg_coil, clg_coil, supp_htg_coil)
-    air_loop_unitary.setName("Forced Air System")
-    air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-    air_loop_unitary.setSupplyAirFanPlacement("BlowThrough")
-    air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
-    air_loop_unitary.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
-    air_loop_unitary.setMaximumSupplyAirTemperaturefromSupplementalHeater(OpenStudio::convert(supply.supp_htg_max_supply_temp,"F","C").get)
-    air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.supp_htg_max_outdoor_temp,"F","C").get)
-    air_loop_unitary.setAuxiliaryOnCycleElectricPower(0)
-    air_loop_unitary.setAuxiliaryOffCycleElectricPower(0)
-    air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0)
-    air_loop_unitary.setNumberofSpeedsforHeating(4)
-    air_loop_unitary.setNumberofSpeedsforCooling(4)
-    
-    air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-    air_loop.setName("Central Air System")
-    air_supply_inlet_node = air_loop.supplyInletNode
-    air_supply_outlet_node = air_loop.supplyOutletNode
-    air_demand_inlet_node = air_loop.demandInletNode
-    air_demand_outlet_node = air_loop.demandOutletNode    
-    
-    air_loop_unitary.addToNode(air_supply_inlet_node)
-
-    runner.registerInfo("Added on/off fan '#{fan.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-    runner.registerInfo("Added DX cooling coil '#{clg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-    runner.registerInfo("Added DX heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-    runner.registerInfo("Added electric heating coil '#{supp_htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-
-    air_loop_unitary.setControllingZoneorThermostatLocation(living_thermal_zone)    
-    
-    # _processSystemDemandSideAir
-    # Demand Side
-
-    # Supply Air
-    zone_splitter = air_loop.zoneSplitter
-    zone_splitter.setName("Zone Splitter")
-
-    diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-    diffuser_living.setName("Living Zone Direct Air")
-    # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-    air_loop.addBranchForZone(living_thermal_zone, diffuser_living.to_StraightComponent)
-
-    setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
-    setpoint_mgr.setControlZone(living_thermal_zone)
-    setpoint_mgr.addToNode(air_supply_outlet_node)
-
-    air_loop.addBranchForZone(living_thermal_zone)
-    runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{living_thermal_zone.name}'")
-
-    unless fbasement_thermal_zone.nil?
-
-        diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_fbsmt.setName("FBsmt Zone Direct Air")
-        # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-        air_loop.addBranchForZone(fbasement_thermal_zone, diffuser_fbsmt.to_StraightComponent)
-
-        air_loop.addBranchForZone(fbasement_thermal_zone)
-        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{fbasement_thermal_zone.name}'")
-
-    end    
     
     return true
 
