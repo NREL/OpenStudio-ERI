@@ -88,7 +88,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     selected_furnacefuel.setDisplayName("Fuel Type")
     selected_furnacefuel.setDescription("Type of fuel used for heating.")
     selected_furnacefuel.setDefaultValue("gas")
-    args << selected_furnacefuel	
+    args << selected_furnacefuel
 	
     #make an argument for entering furnace installed afue
     userdefined_afue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedafue",true)
@@ -198,16 +198,16 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     supply.compressor_speeds = nil   
     
-    living_zones, basement_zones = Geometry.get_living_and_basement_zones(model)
+    master_zones, slave_zones = Geometry.get_master_and_slave_zones(model)
 
-    living_zones.each do |living_zone|
+    master_zones.each do |master_zone|
     
       # Check if has equipment
-      clg_coil = HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_zone, "Central Air Conditioner")
+      clg_coil = HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, master_zone, "Central Air Conditioner")
       baseboards = model.getZoneHVACBaseboardConvectiveElectrics
       baseboards.each do |baseboard|
         thermalZone = baseboard.thermalZone.get
-        if living_zone.handle.to_s == thermalZone.handle.to_s
+        if master_zone.handle.to_s == thermalZone.handle.to_s
           runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
           baseboard.remove
         end     
@@ -288,7 +288,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         runner.registerInfo("Added cooling coil '#{clg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
       end
 
-      air_loop_unitary.setControllingZoneorThermostatLocation(living_zone)
+      air_loop_unitary.setControllingZoneorThermostatLocation(master_zone)
 
       # _processSystemDemandSideAir
       # Demand Side
@@ -300,22 +300,22 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
       diffuser_living.setName("Living Zone Direct Air")
       # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-      air_loop.addBranchForZone(living_zone, diffuser_living.to_StraightComponent)
+      air_loop.addBranchForZone(master_zone, diffuser_living.to_StraightComponent)
 
       setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
-      setpoint_mgr.setControlZone(living_zone)
+      setpoint_mgr.setControlZone(master_zone)
       setpoint_mgr.addToNode(air_supply_outlet_node)
 
-      air_loop.addBranchForZone(living_zone)
-      runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{living_zone.name}'")
+      air_loop.addBranchForZone(master_zone)
+      runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{master_zone.name}'")
 
-      basement_zones.each do |basement_zone|
+      slave_zones.each do |slave_zone|
       
         # Check if has equipment
         baseboards = model.getZoneHVACBaseboardConvectiveElectrics
         baseboards.each do |baseboard|
           thermalZone = baseboard.thermalZone.get      
-          if basement_zone.handle.to_s == thermalZone.handle.to_s
+          if slave_zone.handle.to_s == thermalZone.handle.to_s
             runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
             baseboard.remove
           end
@@ -324,10 +324,10 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
         diffuser_fbsmt.setName("FBsmt Zone Direct Air")
         # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-        air_loop.addBranchForZone(basement_zone, diffuser_fbsmt.to_StraightComponent)
+        air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
 
-        air_loop.addBranchForZone(basement_zone)
-        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{basement_zone.name}'")      
+        air_loop.addBranchForZone(slave_zone)
+        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{slave_zone.name}'")      
       
       end
     

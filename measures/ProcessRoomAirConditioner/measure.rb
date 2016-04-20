@@ -168,15 +168,16 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     roomac_plf_fplr.setMinimumCurveOutput(0)
     roomac_plf_fplr.setMaximumCurveOutput(1)    
     
-    living_zones, basement_zones = Geometry.get_living_and_basement_zones(model)
+    master_zones, slave_zones = Geometry.get_master_and_slave_zones(model)
     
-    living_zones.each do |living_zone|
+    master_zones.each do |master_zone|
+      next unless Geometry.zone_is_above_grade(master_zone)
 
       # Check if has equipment
       ptacs = model.getZoneHVACPackagedTerminalAirConditioners
       ptacs.each do |ptac|
         thermalZone = ptac.thermalZone.get
-        if living_zone.handle.to_s == thermalZone.handle.to_s
+        if master_zone.handle.to_s == thermalZone.handle.to_s
           runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
           ptac.remove
         end
@@ -185,7 +186,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
       airLoopHVACs.each do |airLoopHVAC|
         thermalZones = airLoopHVAC.thermalZones
         thermalZones.each do |thermalZone|
-          if living_zone.handle.to_s == thermalZone.handle.to_s
+          if master_zone.handle.to_s == thermalZone.handle.to_s
             supplyComponents = airLoopHVAC.supplyComponents
             supplyComponents.each do |supplyComponent|
               if supplyComponent.to_AirLoopHVACUnitarySystem.is_initialized
@@ -250,8 +251,8 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
       ptac.setOutdoorAirMixerName("WindowAC Mixer")
       ptac.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
       # ptac.setFanPlacement("BlowThrough")
-      ptac.addToThermalZone(living_zone)
-      runner.registerInfo("Added packaged terminal air conditioner '#{ptac.name}' to thermal zone '#{living_zone.name}'")
+      ptac.addToThermalZone(master_zone)
+      runner.registerInfo("Added packaged terminal air conditioner '#{ptac.name}' to thermal zone '#{master_zone.name}'")
     
     end
     

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>5c5006d5-b1e9-4fcd-9c62-f68e68c1e3f7</version_id>
-  <version_modified>20160418T160638Z</version_modified>
+  <version_id>ac3163f1-8b87-4fe5-9aa6-1bf5d4fb8704</version_id>
+  <version_modified>20160420T163015Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsPartition</class_name>
   <display_name>Set Residential Walls - Partition Construction</display_name>
@@ -60,7 +60,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A05275C3</checksum>
+      <checksum>151F115E</checksum>
     </file>
   </files>
 </measure>

@@ -216,6 +216,18 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     heatingSetpointSchedule, heatingSetpointWeekday, heatingSetpointWeekend, coolingSetpointSchedule, coolingSetpointWeekday, coolingSetpointWeekend, controlType = _processHeatingCoolingSetpoints(heatingSetpointConstantSetpoint, coolingSetpointConstantSetpoint, selectedheating, selectedcooling)
 
     living_zones, basement_zones = Geometry.get_living_and_basement_zones(model)
+    building_type = Geometry.get_building_type(model)
+    if building_type.nil? or building_type == "single-family" # Single-family
+      if basement_zones.empty?
+        living_zones = [living_zones[0]] # Arbitrary above-grade zone gets a thermostat
+      elsif living_zones.empty?
+        living_zones = [basement_zones[0]] # Arbitrary below-grade zone gets a thermostat
+      else
+        living_zones = [living_zones[0]] # Arbitrary above-grade zone gets a thermostat
+      end
+    else # Multifamily
+      living_zones = living_zones + basement_zones # All zones get a thermostat
+    end
     
     living_zones.each do |living_zone|
     

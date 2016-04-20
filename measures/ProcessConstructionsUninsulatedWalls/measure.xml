@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_walls</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>9e3f6935-f536-42fa-bce8-9bbaec3da9e2</version_id>
-  <version_modified>20160418T160637Z</version_modified>
+  <version_id>c2940881-cdff-48c2-9d53-182182b3369f</version_id>
+  <version_modified>20160420T163014Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedWalls</class_name>
   <display_name>Set Residential Uninsulated Wall Constructions</display_name>
@@ -60,7 +60,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A05275C3</checksum>
+      <checksum>151F115E</checksum>
     </file>
   </files>
 </measure>

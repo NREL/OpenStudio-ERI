@@ -340,16 +340,16 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     pipe_demand_inlet.addToNode(plant_loop.demandInletNode)
     pipe_demand_outlet.addToNode(plant_loop.demandOutletNode)
     
-    living_zones, basement_zones = Geometry.get_living_and_basement_zones(model)
+    master_zones, slave_zones = Geometry.get_master_and_slave_zones(model)
     
-    living_zones.each do |living_zone|
-    
-      # Check if has equipment
-      clg_coil = HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, living_zone, "Central Air Conditioner")
+    master_zones.each do |master_zone|
+
+    # Check if has equipment
+      clg_coil = HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, master_zone, "Central Air Conditioner")
       baseboards = model.getZoneHVACBaseboardConvectiveElectrics
       baseboards.each do |baseboard|
         thermalZone = baseboard.thermalZone.get
-        if living_zone.handle.to_s == thermalZone.handle.to_s
+        if master_zone.handle.to_s == thermalZone.handle.to_s
           runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
           baseboard.remove
         end    
@@ -367,25 +367,25 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
       
       living_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, heatingseasonschedule, baseboard_coil)
       living_baseboard_heater.setName("Living Zone Baseboards")
-      living_baseboard_heater.addToThermalZone(living_zone)
-      runner.registerInfo("Added baseboard convective water '#{living_baseboard_heater.name}' to thermal zone '#{living_zone.name}'")
+      living_baseboard_heater.addToThermalZone(master_zone)
+      runner.registerInfo("Added baseboard convective water '#{living_baseboard_heater.name}' to thermal zone '#{master_zone.name}'")
       
-      basement_zones.each do |basement_zone|
+      slave_zones.each do |slave_zone|
 
         # Check if has equipment
         baseboards = model.getZoneHVACBaseboardConvectiveElectrics
         baseboards.each do |baseboard|
           thermalZone = baseboard.thermalZone.get
-          if basement_zone.handle.to_s == thermalZone.handle.to_s
+          if slave_zone.handle.to_s == thermalZone.handle.to_s
             runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
             baseboard.remove
           end
         end        
       
         fbasement_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, heatingseasonschedule, baseboard_coil)
-        fbasement_baseboard_heater.setName("FBsmt Zone Baseboards")    
-        fbasement_baseboard_heater.addToThermalZone(basement_zone)
-        runner.registerInfo("Added baseboard convective water '#{fbasement_baseboard_heater.name}' to thermal zone '#{basement_zone.name}'")
+        fbasement_baseboard_heater.setName("FBsmt Zone Baseboards")
+        fbasement_baseboard_heater.addToThermalZone(slave_zone)
+        runner.registerInfo("Added baseboard convective water '#{fbasement_baseboard_heater.name}' to thermal zone '#{slave_zone.name}'")
 
       end    
       

@@ -120,7 +120,7 @@ class Geometry
     def self.zone_is_finished(zone)
         # FIXME: Ugly hack until we can get finished zones from OS
         # if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone
-        if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone or zone.name.to_s.include? "Story" # URBANopt hack: ensure always finished zone
+        if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone or zone.name.to_s.include? "Story" # URBANopt hack: zone.name.to_s.include? "Story" ensures always finished zone
             return true
         end
         return false
@@ -132,19 +132,37 @@ class Geometry
       model.getThermalZones.each do |thermal_zone|
         next unless Geometry.zone_is_finished(thermal_zone)
         next if Geometry.zone_is_below_grade(thermal_zone)
-        living_zones << thermal_zone      
+        living_zones << thermal_zone
       end
       model.getThermalZones.each do |thermal_zone|
         next unless Geometry.zone_is_finished(thermal_zone)
         next if Geometry.zone_is_above_grade(thermal_zone)
-        if living_zones.length == 1 # is Single-Family, and so any below-grade zone is a basement zone
-          basement_zones << thermal_zone
-        else
-          living_zones << thermal_zone # is Multifamily, and so any below-grade zone is a living zone
-        end
+        basement_zones << thermal_zone
       end
       return living_zones, basement_zones
     end
+    
+    def self.get_master_and_slave_zones(model)
+      master_zones = []
+      slave_zones = []
+      model.getThermalZones.each do |thermal_zone|
+        next unless Geometry.zone_is_finished(thermal_zone)
+        if thermal_zone.thermostatSetpointDualSetpoint.is_initialized
+          master_zones << thermal_zone
+        else
+          slave_zones << thermal_zone
+        end
+      end
+      return master_zones, slave_zones
+    end
+    
+    def self.get_building_type(model)
+      building_type = nil
+      unless model.getBuilding.standardsBuildingType.empty?
+        building_type = model.getBuilding.standardsBuildingType.get.downcase
+      end
+      return building_type
+   end
     
     def self.space_is_unfinished(space)
         return !Geometry.space_is_finished(space)

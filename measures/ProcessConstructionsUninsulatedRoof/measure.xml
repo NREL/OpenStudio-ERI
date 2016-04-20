@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>083f3bd2-9ccd-4291-8b93-0d15eb369903</version_id>
-  <version_modified>20160418T160637Z</version_modified>
+  <version_id>dee02dae-ab3a-41b4-bbc6-7108331efa6f</version_id>
+  <version_modified>20160420T163014Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedRoof</class_name>
   <display_name>Set Residential Uninsulated Roof Construction</display_name>
@@ -60,7 +60,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A05275C3</checksum>
+      <checksum>151F115E</checksum>
     </file>
   </files>
 </measure>
