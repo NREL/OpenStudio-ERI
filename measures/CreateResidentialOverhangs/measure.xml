@@ -2,12 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>3ed724c7-8213-48cd-aac8-19d557b2628d</version_id>
+  <version_id>cff14b15-91a1-4710-a68d-d0cff6700de7</version_id>
+  <version_modified>20160420T141623Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
-  <description></description>
-  <modeler_description></modeler_description>
+  <description>Sets presence/dimensions of overhangs for windows on the specified building facade(s).</description>
+  <modeler_description>Creates overhang shading surfaces for windows on the specified building facade(s) and specified depth/offset. Any existing overhang shading surfaces are removed.</modeler_description>
   <arguments>
     <argument>
       <name>depth</name>
@@ -30,9 +31,9 @@
       <default_value>0.5</default_value>
     </argument>
     <argument>
-      <name>first_story_front</name>
-      <display_name>First Story, Front</display_name>
-      <description>Specifies the presence of overhangs on front windows on the first story.</description>
+      <name>front_facade</name>
+      <display_name>Front Facade</display_name>
+      <description>Specifies the presence of overhangs for windows on the front facade.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -49,9 +50,9 @@
       </choices>
     </argument>
     <argument>
-      <name>first_story_back</name>
-      <display_name>First Story, Back</display_name>
-      <description>Specifies the presence of overhangs on back windows on the first story.</description>
+      <name>back_facade</name>
+      <display_name>Back Facade</display_name>
+      <description>Specifies the presence of overhangs for windows on the back facade.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -68,9 +69,9 @@
       </choices>
     </argument>
     <argument>
-      <name>first_story_left</name>
-      <display_name>First Story, Left</display_name>
-      <description>Specifies the presence of overhangs on left windows on the first story.</description>
+      <name>left_facade</name>
+      <display_name>Left Facade</display_name>
+      <description>Specifies the presence of overhangs for windows on the left facade.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -87,389 +88,9 @@
       </choices>
     </argument>
     <argument>
-      <name>first_story_right</name>
-      <display_name>First Story, Right</display_name>
-      <description>Specifies the presence of overhangs on right windows on the first story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>second_story_front</name>
-      <display_name>Second Story, Front</display_name>
-      <description>Specifies the presence of overhangs on front windows on the second story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>second_story_back</name>
-      <display_name>Second Story, Back</display_name>
-      <description>Specifies the presence of overhangs on back windows on the second story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>second_story_left</name>
-      <display_name>Second Story, Left</display_name>
-      <description>Specifies the presence of overhangs on left windows on the second story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>second_story_right</name>
-      <display_name>Second Story, Right</display_name>
-      <description>Specifies the presence of overhangs on right windows on the second story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>third_story_front</name>
-      <display_name>Third Story, Front</display_name>
-      <description>Specifies the presence of overhangs on front windows on the third story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>third_story_back</name>
-      <display_name>Third Story, Back</display_name>
-      <description>Specifies the presence of overhangs on back windows on the third story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>third_story_left</name>
-      <display_name>Third Story, Left</display_name>
-      <description>Specifies the presence of overhangs on left windows on the third story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>third_story_right</name>
-      <display_name>Third Story, Right</display_name>
-      <description>Specifies the presence of overhangs on right windows on the third story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fourth_story_front</name>
-      <display_name>Fourth Story, Front</display_name>
-      <description>Specifies the presence of overhangs on front windows on the fourth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fourth_story_back</name>
-      <display_name>Fourth Story, Back</display_name>
-      <description>Specifies the presence of overhangs on back windows on the fourth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fourth_story_left</name>
-      <display_name>Fourth Story, Left</display_name>
-      <description>Specifies the presence of overhangs on left windows on the fourth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fourth_story_right</name>
-      <display_name>Fourth Story, Right</display_name>
-      <description>Specifies the presence of overhangs on right windows on the fourth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fifth_story_front</name>
-      <display_name>Fifth Story, Front</display_name>
-      <description>Specifies the presence of overhangs on front windows on the fifth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fifth_story_back</name>
-      <display_name>Fifth Story, Back</display_name>
-      <description>Specifies the presence of overhangs on back windows on the fifth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fifth_story_left</name>
-      <display_name>Fifth Story, Left</display_name>
-      <description>Specifies the presence of overhangs on left windows on the fifth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fifth_story_right</name>
-      <display_name>Fifth Story, Right</display_name>
-      <description>Specifies the presence of overhangs on right windows on the fifth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>sixth_story_front</name>
-      <display_name>Sixth Story, Front</display_name>
-      <description>Specifies the presence of overhangs on front windows on the sixth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>sixth_story_back</name>
-      <display_name>Sixth Story, Back</display_name>
-      <description>Specifies the presence of overhangs on back windows on the sixth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>sixth_story_left</name>
-      <display_name>Sixth Story, Left</display_name>
-      <description>Specifies the presence of overhangs on left windows on the sixth story.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>true</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>sixth_story_right</name>
-      <display_name>Sixth Story, Right</display_name>
-      <description>Specifies the presence of overhangs on right windows on the sixth story.</description>
+      <name>right_facade</name>
+      <display_name>Right Facade</display_name>
+      <description>Specifies the presence of overhangs for windows on the right facade.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -534,7 +155,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B2E0B7E3</checksum>
+      <checksum>D17603F6</checksum>
     </file>
   </files>
 </measure>
