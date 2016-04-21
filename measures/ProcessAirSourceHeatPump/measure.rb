@@ -316,16 +316,15 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
     clg_coil_stage_data = HVAC._processCurvesDXCooling(model, supply, hpOutputCapacity)
 
-    master_zones, slave_zones = Geometry.get_master_and_slave_zones(model)
-    
-    master_zones.each do |master_zone|
+    control_slave_zones_hash = Geometry.get_control_and_slave_zones(model)
+    control_slave_zones_hash.each do |control_zone, slave_zones|
     
       # Check if has equipment
-      HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, master_zone)
+      HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, control_zone)
       baseboards = model.getZoneHVACBaseboardConvectiveElectrics
       baseboards.each do |baseboard|
         thermalZone = baseboard.thermalZone.get
-        if master_zone.handle.to_s == thermalZone.handle.to_s
+        if control_zone.handle.to_s == thermalZone.handle.to_s
           runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
           baseboard.remove
         end    
@@ -333,7 +332,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       ptacs = model.getZoneHVACPackagedTerminalAirConditioners
       ptacs.each do |ptac|
         thermalZone = ptac.thermalZone.get
-        if master_zone.handle.to_s == thermalZone.handle.to_s
+        if control_zone.handle.to_s == thermalZone.handle.to_s
           runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
           ptac.remove
         end
@@ -526,7 +525,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       runner.registerInfo("Added DX heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
       runner.registerInfo("Added electric heating coil '#{supp_htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")    
       
-      air_loop_unitary.setControllingZoneorThermostatLocation(master_zone)
+      air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
         
       # _processSystemDemandSideAir
       # Demand Side
@@ -538,14 +537,14 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
       diffuser_living.setName("Living Zone Direct Air")
       # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
-      air_loop.addBranchForZone(master_zone, diffuser_living.to_StraightComponent)
+      air_loop.addBranchForZone(control_zone, diffuser_living.to_StraightComponent)
 
       setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
-      setpoint_mgr.setControlZone(master_zone)
+      setpoint_mgr.setControlZone(control_zone)
       setpoint_mgr.addToNode(air_supply_outlet_node)
 
-      air_loop.addBranchForZone(master_zone)
-      runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{master_zone.name}'")
+      air_loop.addBranchForZone(control_zone)
+      runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{control_zone.name}'")
 
       slave_zones.each do |slave_zone|
 
