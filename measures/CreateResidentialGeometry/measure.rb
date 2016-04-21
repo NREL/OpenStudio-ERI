@@ -379,10 +379,10 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
         else
           roof_w_point = OpenStudio::Point3d.new(length/2.0,0,z+attic_height)
           roof_e_point = OpenStudio::Point3d.new(length/2.0,width,z+attic_height)		
-          polygon_s_roof = make_rectangle(roof_e_point, roof_w_point, roof_se_point, roof_ne_point)
-          polygon_n_roof = make_rectangle(roof_w_point, roof_e_point, roof_nw_point, roof_sw_point)
-          polygon_w_wall = make_triangle(roof_w_point, roof_sw_point, roof_se_point)
-          polygon_e_wall = make_triangle(roof_e_point, roof_ne_point, roof_nw_point)
+          polygon_s_roof = Geometry.make_polygon(roof_e_point, roof_w_point, roof_se_point, roof_ne_point)
+          polygon_n_roof = Geometry.make_polygon(roof_w_point, roof_e_point, roof_nw_point, roof_sw_point)
+          polygon_w_wall = Geometry.make_polygon(roof_w_point, roof_sw_point, roof_se_point)
+          polygon_e_wall = Geometry.make_polygon(roof_e_point, roof_ne_point, roof_nw_point)
         end
         side_type = "Wall"
       elsif roof_type == Constants.RoofTypeHip
@@ -396,10 +396,10 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
         else
           roof_w_point = OpenStudio::Point3d.new(length/2.0,length/2.0,z+attic_height)
           roof_e_point = OpenStudio::Point3d.new(length/2.0,width-length/2.0,z+attic_height)
-          polygon_s_roof = make_rectangle(roof_e_point, roof_w_point, roof_se_point, roof_ne_point)
-          polygon_n_roof = make_rectangle(roof_w_point, roof_e_point, roof_nw_point, roof_sw_point)
-          polygon_w_wall = make_triangle(roof_w_point, roof_sw_point, roof_se_point)
-          polygon_e_wall = make_triangle(roof_e_point, roof_ne_point, roof_nw_point)	
+          polygon_s_roof = Geometry.make_polygon(roof_e_point, roof_w_point, roof_se_point, roof_ne_point)
+          polygon_n_roof = Geometry.make_polygon(roof_w_point, roof_e_point, roof_nw_point, roof_sw_point)
+          polygon_w_wall = Geometry.make_polygon(roof_w_point, roof_sw_point, roof_se_point)
+          polygon_e_wall = Geometry.make_polygon(roof_e_point, roof_ne_point, roof_nw_point)	
         end
         side_type = "RoofCeiling"
       end
