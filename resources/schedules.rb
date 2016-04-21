@@ -38,13 +38,21 @@ class MonthHourSchedule
 
 	def setSchedule(obj)
 		# Helper method to set (or replace) the object's schedule
-		if not obj.schedule.empty?
-			sch = obj.schedule.get
-			sch.remove
-		end
-		obj.setSchedule(@schedule)
+        if obj.is_a? OpenStudio::Model::People
+            if not obj.numberofPeopleSchedule.empty?
+                sch = obj.numberofPeopleSchedule.get
+                sch.remove
+            end
+            obj.setNumberofPeopleSchedule(@schedule)
+        else
+            if not obj.schedule.empty?
+                sch = obj.schedule.get
+                sch.remove
+            end
+            obj.setSchedule(@schedule)
+        end
 	end
-
+    
 	private 
 	
 		def validateValues(values_str, num_values, sch_name)

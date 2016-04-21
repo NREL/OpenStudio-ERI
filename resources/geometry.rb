@@ -231,13 +231,17 @@ class Geometry
     end
 
     def self.get_default_space(model, runner=nil)
+        # FIXME: Can we eventually get rid of this method?
         space = nil
         model.getSpaces.each do |s|
-            if s.name.to_s == Constants.LivingSpace(1) # Try to return our living space
+            if s.name.to_s == Constants.LivingSpace(1) # Prioritize returning our standard living space
                 return s
-            elsif space.nil? # Return first space in list if our living space not found
+            elsif space.nil? and Geometry.space_is_finished(s) and Geometry.space_is_above_grade(s) # Return first above-grade conditioned space in list if our living space not found
                 space = s
             end
+        end
+        if space.nil? and model.getSpaces.size > 0
+            space = model.getSpaces[0]
         end
         if space.nil? and not runner.nil?
             runner.registerError("Could not find any spaces in the model.")

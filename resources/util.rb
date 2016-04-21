@@ -4,6 +4,10 @@ require "#{File.dirname(__FILE__)}/constants"
 
 class HelperMethods
     
+    def self.valid_float?(str)
+        !!Float(str) rescue false
+    end
+    
     def self.remove_object_from_idf_based_on_name(workspace, name_s, object_s, runner=nil)
       workspace.getObjectsByType(object_s.to_IddObjectType).each do |str|
         n = str.getString(0).to_s
@@ -37,18 +41,18 @@ class HelperMethods
         end
         return plant_loop
     end
-	
-	def self.eplus_fuel_map(fuel)
-		if fuel == Constants.FuelTypeElectric
-			return "Electricity"
-		elsif fuel == Constants.FuelTypeGas
-			return "NaturalGas"
-		elsif fuel == Constants.FuelTypeOil
-			return "FuelOil#1"
-		elsif fuel == Constants.FuelTypePropane
-			return "Propane"
-		end
-	end
+    
+    def self.eplus_fuel_map(fuel)
+        if fuel == Constants.FuelTypeElectric
+            return "Electricity"
+        elsif fuel == Constants.FuelTypeGas
+            return "NaturalGas"
+        elsif fuel == Constants.FuelTypeOil
+            return "FuelOil#1"
+        elsif fuel == Constants.FuelTypePropane
+            return "Propane"
+        end
+    end
     
     def self.remove_existing_hvac_equipment_except_for_specified_object(model, runner, thermal_zone, excepted_object=nil)
         htg_coil = nil
