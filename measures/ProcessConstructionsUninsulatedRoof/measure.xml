@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_roof</name>
   <uid>bd1dcb8e-0d18-4ef0-8a52-cbef02ae9f4a</uid>
-  <version_id>7c4cd9ff-a2fd-4bf4-8515-15f97534b0fd</version_id>
-  <version_modified>20160421T142346Z</version_modified>
+  <version_id>fd5ba00b-947d-4e72-abc2-775c732db26f</version_id>
+  <version_modified>20160421T200154Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedRoof</class_name>
   <display_name>Set Residential Uninsulated Roof Construction</display_name>
@@ -48,19 +48,19 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>D28DC6BC</checksum>
+      <checksum>DFE4EFD1</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>5D8C22C7</checksum>
+      <checksum>35395019</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>01DB9ED4</checksum>
+      <checksum>1B4BF46B</checksum>
     </file>
   </files>
 </measure>

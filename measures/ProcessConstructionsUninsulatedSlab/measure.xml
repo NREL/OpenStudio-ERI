@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_slab</name>
   <uid>3da62049-50f9-4ed0-b05a-6b89a202482d</uid>
-  <version_id>57e8f777-aa4c-406c-9e42-9be4ba0dbf08</version_id>
-  <version_modified>20160421T142346Z</version_modified>
+  <version_id>8282a283-c196-431e-8bed-60545c1b2652</version_id>
+  <version_modified>20160421T200154Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedSlab</class_name>
   <display_name>Set Residential Uninsulated Slab Construction</display_name>
@@ -48,19 +48,19 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>D28DC6BC</checksum>
+      <checksum>DFE4EFD1</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>5D8C22C7</checksum>
+      <checksum>35395019</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>01DB9ED4</checksum>
+      <checksum>1B4BF46B</checksum>
     </file>
   </files>
 </measure>

@@ -28,7 +28,7 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     arg = OpenStudio::Ruleset::OSArgument.makeStringArgument('weather_directory', true)
     arg.setDisplayName("Weather Directory")
     arg.setDescription("Absolute (or relative) directory to weather files.")
-    arg.setDefaultValue("../../../../OpenStudio-Beopt/OpenStudio-analysis-spreadsheet/weather")
+    arg.setDefaultValue("./resources")
     args << arg
 
     arg = OpenStudio::Ruleset::OSArgument.makeStringArgument('weather_file_name', true)
