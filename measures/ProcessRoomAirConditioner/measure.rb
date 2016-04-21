@@ -168,16 +168,16 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     roomac_plf_fplr.setMinimumCurveOutput(0)
     roomac_plf_fplr.setMaximumCurveOutput(1)    
     
-    master_zones, slave_zones = Geometry.get_master_and_slave_zones(model)
+    control_slave_zones_hash = Geometry.get_control_and_slave_zones(model)
+    control_slave_zones_hash.each do |control_zone, slave_zones|
     
-    master_zones.each do |master_zone|
-      next unless Geometry.zone_is_above_grade(master_zone)
+      next unless Geometry.zone_is_above_grade(control_zone)
 
       # Check if has equipment
       ptacs = model.getZoneHVACPackagedTerminalAirConditioners
       ptacs.each do |ptac|
         thermalZone = ptac.thermalZone.get
-        if master_zone.handle.to_s == thermalZone.handle.to_s
+        if control_zone.handle.to_s == thermalZone.handle.to_s
           runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
           ptac.remove
         end
@@ -186,7 +186,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
       airLoopHVACs.each do |airLoopHVAC|
         thermalZones = airLoopHVAC.thermalZones
         thermalZones.each do |thermalZone|
-          if master_zone.handle.to_s == thermalZone.handle.to_s
+          if control_zone.handle.to_s == thermalZone.handle.to_s
             supplyComponents = airLoopHVAC.supplyComponents
             supplyComponents.each do |supplyComponent|
               if supplyComponent.to_AirLoopHVACUnitarySystem.is_initialized
@@ -246,13 +246,13 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
       htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, model.alwaysOffDiscreteSchedule())
       htg_coil.setName("Always Off Heating Coil for PTAC")
       
-      ptac = OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner.new(model,coolingseasonschedule, fan_onoff, htg_coil, clg_coil)
+      ptac = OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner.new(model, coolingseasonschedule, fan_onoff, htg_coil, clg_coil)
       ptac.setName("Window AC")
       ptac.setOutdoorAirMixerName("WindowAC Mixer")
       ptac.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
       # ptac.setFanPlacement("BlowThrough")
-      ptac.addToThermalZone(master_zone)
-      runner.registerInfo("Added packaged terminal air conditioner '#{ptac.name}' to thermal zone '#{master_zone.name}'")
+      ptac.addToThermalZone(control_zone)
+      runner.registerInfo("Added packaged terminal air conditioner '#{ptac.name}' to thermal zone '#{control_zone.name}'")
     
     end
     

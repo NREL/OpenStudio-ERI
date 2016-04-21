@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_building_america_benchmark_occupants</name>
   <uid>922fce56-377a-439d-8b3d-19f9c8bb91f5</uid>
-  <version_id>2df19680-4bdc-4e04-8340-37a23436eb2b</version_id>
-  <version_modified>20160420T163009Z</version_modified>
+  <version_id>8a3963c8-c720-4fe5-a20b-85ad7f49cd86</version_id>
+  <version_modified>20160421T142342Z</version_modified>
   <xml_checksum>5639FE46</xml_checksum>
   <class_name>AddBuildingAmericaBenchmarkOccupants</class_name>
   <display_name>Set Residential Occupants</display_name>
@@ -78,7 +78,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>151F115E</checksum>
+      <checksum>01DB9ED4</checksum>
     </file>
   </files>
 </measure>

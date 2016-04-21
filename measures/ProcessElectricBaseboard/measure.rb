@@ -77,15 +77,14 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
         return false
     end
    
-    master_zones, slave_zones = Geometry.get_master_and_slave_zones(model)
-    
-    master_zones.each do |master_zone|
+    control_slave_zones_hash = Geometry.get_control_and_slave_zones(model)
+    control_slave_zones_hash.each do |control_zone, slave_zones|
     
       # Check if has equipment
       baseboards = model.getZoneHVACBaseboardConvectiveElectrics
       baseboards.each do |baseboard|
         thermalZone = baseboard.thermalZone.get
-        if master_zone.handle.to_s == thermalZone.handle.to_s
+        if control_zone.handle.to_s == thermalZone.handle.to_s
           runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
           baseboard.remove
         end
@@ -94,7 +93,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       airLoopHVACs.each do |airLoopHVAC|
         thermalZones = airLoopHVAC.thermalZones
         thermalZones.each do |thermalZone|
-          if master_zone.handle.to_s == thermalZone.handle.to_s
+          if control_zone.handle.to_s == thermalZone.handle.to_s
             supplyComponents = airLoopHVAC.supplyComponents
             supplyComponents.each do |supplyComponent|
               if supplyComponent.to_AirLoopHVACUnitarySystem.is_initialized
@@ -130,8 +129,8 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       end
       htg_coil.setEfficiency(baseboardEfficiency)
 
-      htg_coil.addToThermalZone(master_zone)
-      runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{master_zone.name}'")
+      htg_coil.addToThermalZone(control_zone)
+      runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{control_zone.name}'")
 
       slave_zones.each do |slave_zone|
 

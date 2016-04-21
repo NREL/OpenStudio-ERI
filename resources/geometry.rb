@@ -126,34 +126,60 @@ class Geometry
         return false
     end
     
-    def self.get_living_and_basement_zones(model)
-      living_zones = []
-      basement_zones = []
-      model.getThermalZones.each do |thermal_zone|
-        next unless Geometry.zone_is_finished(thermal_zone)
-        next if Geometry.zone_is_below_grade(thermal_zone)
-        living_zones << thermal_zone
+    # Returns true if all spaces in zone are fully above grade
+    def self.zone_is_above_grade(zone)
+      spaces_are_above_grade = []
+      zone.spaces.each do |space|
+        spaces_are_above_grade << Geometry.space_is_above_grade(space)
       end
-      model.getThermalZones.each do |thermal_zone|
-        next unless Geometry.zone_is_finished(thermal_zone)
-        next if Geometry.zone_is_above_grade(thermal_zone)
-        basement_zones << thermal_zone
+      if spaces_are_above_grade.all?
+        return true
       end
-      return living_zones, basement_zones
+      return false
     end
+
+    # Returns true if all spaces in zone are either fully or partially below grade
+    def self.zone_is_below_grade(zone)
+      return !Geometry.zone_is_above_grade(zone)
+    end       
     
-    def self.get_master_and_slave_zones(model)
-      master_zones = []
-      slave_zones = []
+    def self.get_conditioned_above_and_below_grade_zones(model)
+      conditioned_living_zones = []
+      conditioned_basement_zones = []
       model.getThermalZones.each do |thermal_zone|
-        next unless Geometry.zone_is_finished(thermal_zone)
-        if thermal_zone.thermostatSetpointDualSetpoint.is_initialized
-          master_zones << thermal_zone
-        else
-          slave_zones << thermal_zone
+        next unless thermal_zone.thermostatSetpointDualSetpoint.is_initialized
+        if Geometry.zone_is_above_grade(thermal_zone)
+          conditioned_living_zones << thermal_zone
+        elsif Geometry.zone_is_below_grade(thermal_zone)
+          conditioned_basement_zones << thermal_zone
         end
       end
-      return master_zones, slave_zones
+      return conditioned_living_zones, conditioned_basement_zones
+    end
+    
+    def self.get_control_and_slave_zones(model)
+      control_slave_zones_hash = {}
+      conditioned_above_grade_zones, conditioned_below_grade_zones = Geometry.get_conditioned_above_and_below_grade_zones(model)
+      building_type = Geometry.get_building_type(model)
+      if building_type.nil? or building_type == "single-family" # Single-family
+        control_zone = nil
+        slave_zones = []
+        [conditioned_above_grade_zones, conditioned_below_grade_zones].each do |conditioned_zones| # Preference to above-grade zone as control zone
+          conditioned_zones.each do |conditioned_zone|
+            if control_zone.nil?
+              control_zone = conditioned_zone
+            else
+              slave_zones << conditioned_zone
+            end
+          end
+        end
+        control_slave_zones_hash[control_zone] = slave_zones
+      else # Multifamily
+        (conditioned_above_grade_zones + conditioned_below_grade_zones).each do |conditioned_zone|
+          control_slave_zones_hash[conditioned_zone] = [] # All zones are control zones, no slave zones
+        end
+      end
+      return control_slave_zones_hash
     end
     
     def self.get_building_type(model)
@@ -189,24 +215,7 @@ class Geometry
             end
         end
         return false
-    end
-    
-    # Returns true if all spaces in zone are fully above grade
-    def self.zone_is_above_grade(zone)
-      spaces_are_above_grade = []
-      zone.spaces.each do |space|
-        spaces_are_above_grade << space_is_above_grade(space)
-      end
-      if spaces_are_above_grade.all?
-        return true
-      end
-      return false
-    end
-
-    # Returns true if all spaces in zone are either fully or partially below grade
-    def self.zone_is_below_grade(zone)
-      return !Geometry.zone_is_above_grade(zone)
-    end    
+    end 
     
     def self.space_has_roof(space)
         space.surfaces.each do |surface|

@@ -215,21 +215,14 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     # Process the heating and cooling setpoints
     heatingSetpointSchedule, heatingSetpointWeekday, heatingSetpointWeekend, coolingSetpointSchedule, coolingSetpointWeekday, coolingSetpointWeekend, controlType = _processHeatingCoolingSetpoints(heatingSetpointConstantSetpoint, coolingSetpointConstantSetpoint, selectedheating, selectedcooling)
 
-    living_zones, basement_zones = Geometry.get_living_and_basement_zones(model)
-    building_type = Geometry.get_building_type(model)
-    if building_type.nil? or building_type == "single-family" # Single-family
-      if basement_zones.empty?
-        living_zones = [living_zones[0]] # Arbitrary above-grade zone gets a thermostat
-      elsif living_zones.empty?
-        living_zones = [basement_zones[0]] # Arbitrary below-grade zone gets a thermostat
-      else
-        living_zones = [living_zones[0]] # Arbitrary above-grade zone gets a thermostat
+    conditioned_zones = []
+    model.getThermalZones.each do |thermal_zone|
+      if Geometry.zone_is_finished(thermal_zone)
+        conditioned_zones << thermal_zone
       end
-    else # Multifamily
-      living_zones = living_zones + basement_zones # All zones get a thermostat
     end
     
-    living_zones.each do |living_zone|
+    conditioned_zones.each do |conditioned_zone|
     
       thermostatsetpointdualsetpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
       thermostatsetpointdualsetpoint.setName("Living Zone Temperature SP")
@@ -386,14 +379,14 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
 
       end
 
-      living_zone.setThermostatSetpointDualSetpoint(thermostatsetpointdualsetpoint)
+      conditioned_zone.setThermostatSetpointDualSetpoint(thermostatsetpointdualsetpoint)
 
       if controlType == 4
-        runner.registerInfo("Set the thermostat '#{living_zone.thermostatSetpointDualSetpoint.get.name}' for thermal zone '#{living_zone.name}' with heating setpoint schedule '#{heatingsetpoint.name}' and cooling setpoint schedule '#{coolingsetpoint.name}'")
+        runner.registerInfo("Set the thermostat '#{conditioned_zone.thermostatSetpointDualSetpoint.get.name}' for thermal zone '#{conditioned_zone.name}' with heating setpoint schedule '#{heatingsetpoint.name}' and cooling setpoint schedule '#{coolingsetpoint.name}'")
       elsif controlType == 2
-        runner.registerInfo("Set the thermostat '#{living_zone.thermostatSetpointDualSetpoint.get.name}' for thermal zone '#{living_zone.name}' with cooling setpoint schedule '#{coolingsetpoint.name}'")
+        runner.registerInfo("Set the thermostat '#{conditioned_zone.thermostatSetpointDualSetpoint.get.name}' for thermal zone '#{conditioned_zone.name}' with cooling setpoint schedule '#{coolingsetpoint.name}'")
       elsif controlType == 1
-        runner.registerInfo("Set the thermostat '#{living_zone.thermostatSetpointDualSetpoint.get.name}' for thermal zone '#{living_zone.name}' with heating setpoint schedule '#{heatingsetpoint.name}'")
+        runner.registerInfo("Set the thermostat '#{conditioned_zone.thermostatSetpointDualSetpoint.get.name}' for thermal zone '#{conditioned_zone.name}' with heating setpoint schedule '#{heatingsetpoint.name}'")
       end   
     
     end
