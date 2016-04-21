@@ -143,40 +143,40 @@ class Geometry
       return !Geometry.zone_is_above_grade(zone)
     end       
     
-    def self.get_conditioned_above_and_below_grade_zones(model)
-      conditioned_living_zones = []
-      conditioned_basement_zones = []
+    def self.get_finished_above_and_below_grade_zones(model)
+      finished_living_zones = []
+      finished_basement_zones = []
       model.getThermalZones.each do |thermal_zone|
-        next unless thermal_zone.thermostatSetpointDualSetpoint.is_initialized
+        next unless Geometry.zone_is_finished(thermal_zone)
         if Geometry.zone_is_above_grade(thermal_zone)
-          conditioned_living_zones << thermal_zone
+          finished_living_zones << thermal_zone
         elsif Geometry.zone_is_below_grade(thermal_zone)
-          conditioned_basement_zones << thermal_zone
+          finished_basement_zones << thermal_zone
         end
       end
-      return conditioned_living_zones, conditioned_basement_zones
+      return finished_living_zones, finished_basement_zones
     end
     
     def self.get_control_and_slave_zones(model)
       control_slave_zones_hash = {}
-      conditioned_above_grade_zones, conditioned_below_grade_zones = Geometry.get_conditioned_above_and_below_grade_zones(model)
+      finished_above_grade_zones, finished_below_grade_zones = Geometry.get_finished_above_and_below_grade_zones(model)
       building_type = Geometry.get_building_type(model)
       if building_type.nil? or building_type == "single-family" # Single-family
         control_zone = nil
         slave_zones = []
-        [conditioned_above_grade_zones, conditioned_below_grade_zones].each do |conditioned_zones| # Preference to above-grade zone as control zone
-          conditioned_zones.each do |conditioned_zone|
+        [finished_above_grade_zones, finished_below_grade_zones].each do |finished_zones| # Preference to above-grade zone as control zone
+          finished_zones.each do |finished_zone|
             if control_zone.nil?
-              control_zone = conditioned_zone
+              control_zone = finished_zone
             else
-              slave_zones << conditioned_zone
+              slave_zones << finished_zone
             end
           end
         end
         control_slave_zones_hash[control_zone] = slave_zones
       else # Multifamily
-        (conditioned_above_grade_zones + conditioned_below_grade_zones).each do |conditioned_zone|
-          control_slave_zones_hash[conditioned_zone] = [] # All zones are control zones, no slave zones
+        (finished_above_grade_zones + finished_below_grade_zones).each do |finished_zone|
+          control_slave_zones_hash[finished_zone] = [] # All zones are control zones, no slave zones
         end
       end
       return control_slave_zones_hash
