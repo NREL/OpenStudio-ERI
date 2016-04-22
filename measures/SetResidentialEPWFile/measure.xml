@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>cba02622-9a33-4bbe-9421-2f2a3ea742d8</version_id>
-  <version_modified>20160421T201142Z</version_modified>
+  <version_id>31f3a5f7-8d83-49d1-884e-e1a07fa6a320</version_id>
+  <version_modified>20160422T145348Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
@@ -26,7 +26,7 @@
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>USA_CO_Denver.Intl.AP.725650_TMY3.epw</default_value>
+      <default_value>USA_CO_Denver_Intl_AP_725650_TMY3.epw</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -107,22 +107,22 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>18FE9CC2</checksum>
+      <checksum>FEDBB1A3</checksum>
     </file>
     <file>
-      <filename>USA_CO_Denver.Intl.AP.725650_TMY3.ddy</filename>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
       <usage_type>resource</usage_type>
       <checksum>FB253570</checksum>
     </file>
     <file>
-      <filename>USA_CO_Denver.Intl.AP.725650_TMY3.epw</filename>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
       <filetype>epw</filetype>
       <usage_type>resource</usage_type>
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>USA_CO_Denver.Intl.AP.725650_TMY3.stat</filename>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.stat</filename>
       <filetype>stat</filetype>
       <usage_type>resource</usage_type>
       <checksum>A8786025</checksum>

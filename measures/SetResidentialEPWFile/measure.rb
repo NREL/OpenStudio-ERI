@@ -34,7 +34,7 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     arg = OpenStudio::Ruleset::OSArgument.makeStringArgument('weather_file_name', true)
     arg.setDisplayName("Weather File Name")
     arg.setDescription("Name of the EPW weather file to assign. The corresponding DDY file must also be in the same directory.")
-    arg.setDefaultValue("USA_CO_Denver.Intl.AP.725650_TMY3.epw")
+    arg.setDefaultValue("USA_CO_Denver_Intl_AP_725650_TMY3.epw")
     args << arg
 
     return args
