@@ -23,6 +23,7 @@ namespace :measures do
   desc 'Generate measures to prepare for upload to BCL '
   task :generate do
     require 'bcl'
+    name_hash = replace_name_in_measure_xmls()
     # verify staged directory exists
     FileUtils.mkdir_p('./staged')
     dirs = Dir.glob('./measures/*')
@@ -49,6 +50,7 @@ namespace :measures do
       BCL.tarball(destination, paths)
       Dir.chdir(current_d)
     end
+    revert_name_in_measure_xmls(name_hash)
   end
 
   desc 'Push generated measures to the BCL group defined in .bcl/config.yml'
@@ -323,4 +325,46 @@ def get_requires_from_file(filerb)
     end
   end
   return requires
+end
+
+def replace_name_in_measure_xmls()
+    # This method replaces the <name> element in measure.xml
+    # with the <display_name> value and returns the original
+    # <name> values in a hash.
+    # This is temporary code since the BCL currently looks
+    # at the <name> element, rather than the <display_name>
+    # element, in the measure.xml file. The BCL will be fixed
+    # at some future point.
+    name_hash = {}
+    require 'rexml/document'
+    require 'rexml/xpath'
+    Dir.glob('./measures/*').each do |dir|
+      next if dir.include?('Rakefile')
+      measure_xml = File.absolute_path(File.join(dir, "measure.xml"))
+      xmldoc = REXML::Document.new(File.read(measure_xml))
+      orig_name = REXML::XPath.first(xmldoc, "//measure/name").text
+      display_name = REXML::XPath.first(xmldoc, "//measure/display_name").text
+      REXML::XPath.each(xmldoc, "//measure/name") do |node|
+        node.text = display_name
+      end
+      xmldoc.write(File.open(measure_xml, "w"))
+      name_hash[measure_xml] = orig_name
+    end
+    return name_hash
+end
+
+def revert_name_in_measure_xmls(name_hash)
+    # This method reverts the <name> element in measure.xml
+    # to its original value.
+    require 'rexml/document'
+    require 'rexml/xpath'
+    Dir.glob('./measures/*').each do |dir|
+      next if dir.include?('Rakefile')
+      measure_xml = File.absolute_path(File.join(dir, "measure.xml"))
+      xmldoc = REXML::Document.new(File.read(measure_xml))
+      REXML::XPath.each(xmldoc, "//measure/name") do |node|
+        node.text = name_hash[measure_xml]
+      end
+      xmldoc.write(File.open(measure_xml, "w"))
+    end
 end
