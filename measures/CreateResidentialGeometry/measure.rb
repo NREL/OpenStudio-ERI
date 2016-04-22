@@ -231,10 +231,6 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       foundation_offset = foundation_height
     end
 	
-    # stories
-    story_hash = Hash.new
-    story_hash = {0=>"First", 1=>"Second", 2=>"Third", 3=>"Fourth", 4=>"Fifth", 5=>"Sixth"}
-	
     # loop through the number of floors
     foundation_polygon_with_wrong_zs = nil
     for floor in (0..num_floors-1)
@@ -318,16 +314,11 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
         end
       end		
 		
-      # make story
-      story = OpenStudio::Model::BuildingStory.new(model)
-      story.setName(story_hash[floor])
-      
       # make space
       living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
       living_space = living_space.get
       living_space_name = Constants.LivingSpace(floor+1)
       living_space.setName(living_space_name)
-      living_space.setBuildingStory(story)
       runner.registerInfo("Set #{living_space_name}.")
       
       # set these to the living zone
