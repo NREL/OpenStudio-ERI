@@ -2,6 +2,7 @@
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
 require "#{File.dirname(__FILE__)}/resources/weather"
+require "#{File.dirname(__FILE__)}/resources/constants"
 
 # start the measure
 class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
@@ -18,7 +19,7 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description of modeling approach
   def modeler_description
-    return "Sets the weather file, site information (e.g., latitude, longitude, elevation, timezone), design day information (from the DDY file), the mains water temperature using the correlation method, and daylight saving time start/end dates."
+    return "Sets the weather file, Building America climate zone, site information (e.g., latitude, longitude, elevation, timezone), design day information (from the DDY file), the mains water temperature using the correlation method, and the daylight saving time start/end dates."
   end
 
   # define the arguments that the user will input
@@ -34,7 +35,7 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     arg = OpenStudio::Ruleset::OSArgument.makeStringArgument('weather_file_name', true)
     arg.setDisplayName("Weather File Name")
     arg.setDescription("Name of the EPW weather file to assign. The corresponding DDY file must also be in the same directory.")
-    arg.setDefaultValue("USA_CO_Denver.Intl.AP.725650_TMY3.epw")
+    arg.setDefaultValue("USA_CO_Denver_Intl_AP_725650_TMY3.epw")
     args << arg
 
     arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("start_date", true)
@@ -92,29 +93,35 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     else
       runner.registerError("'#{weather_file}' does not exist or is not an .epw file.")
       return false
-    end	
+    end    
 
     OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
     runner.registerInfo("Setting weather file.")
+
+    weather = WeatherProcess.new(model,runner)
+    if weather.error?
+      return false
+    end
     
     # -------------------
     # Set model site data
     # -------------------
     
-    weather_name = "#{epw_file.city}_#{epw_file.stateProvinceRegion}_#{epw_file.country}"
-    weather_lat = epw_file.latitude
-    weather_lon = epw_file.longitude
-    weather_time = epw_file.timeZone
-    weather_elev = epw_file.elevation
-
-    # Add or update site data
     site = model.getSite
-    site.setName(weather_name)
-    site.setLatitude(weather_lat)
-    site.setLongitude(weather_lon)
-    site.setTimeZone(weather_time)
-    site.setElevation(weather_elev)
+    site.setName("#{epw_file.city}_#{epw_file.stateProvinceRegion}_#{epw_file.country}")
+    site.setLatitude(epw_file.latitude)
+    site.setLongitude(epw_file.longitude)
+    site.setTimeZone(epw_file.timeZone)
+    site.setElevation(epw_file.elevation)
     runner.registerInfo("Setting site data.")
+
+    # -------------------
+    # Set climate zones
+    # -------------------
+    ba_zone = get_climate_zone_ba(epw_file.wmoNumber)
+    climateZones = model.getClimateZones
+    climateZones.setClimateZone(Constants.BuildingAmericaClimateZone, ba_zone)
+    runner.registerInfo("Setting #{Constants.BuildingAmericaClimateZone} climate zone to #{ba_zone}.")
 
     # -------------------
     # Set design day info
@@ -145,28 +152,20 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     # Set mains water temperatures
     # ----------------------------
     
-    weather = WeatherProcess.new(model,runner)
-    if weather.error?
-      return false
-    end
-
-	avgOAT = OpenStudio::convert(weather.data.AnnualAvgDrybulb,"F","C").get
-	monthlyOAT = weather.data.MonthlyAvgDrybulbs
-	
-	min_temp = monthlyOAT.min
-	max_temp = monthlyOAT.max
-	
-	maxDiffOAT = OpenStudio::convert(max_temp,"F","C").get - OpenStudio::convert(min_temp,"F","C").get
-	
-	#Calc annual average mains temperature to report
-	daily_mains, monthly_mains, annual_mains = WeatherProcess._calc_mains_temperature(weather.data, weather.header)
-		
+    avgOAT = OpenStudio::convert(weather.data.AnnualAvgDrybulb,"F","C").get
+    monthlyOAT = weather.data.MonthlyAvgDrybulbs
+    
+    min_temp = monthlyOAT.min
+    max_temp = monthlyOAT.max
+    
+    maxDiffOAT = OpenStudio::convert(max_temp,"F","C").get - OpenStudio::convert(min_temp,"F","C").get
+    
+    #Calc annual average mains temperature to report
     swmt = model.getSiteWaterMainsTemperature
-        
     swmt.setCalculationMethod "Correlation"
     swmt.setAnnualAverageOutdoorAirTemperature avgOAT
     swmt.setMaximumDifferenceInMonthlyAverageOutdoorAirTemperatures maxDiffOAT
-    runner.registerInfo("Setting Site:MainsWaterTemperature object with an average temperature of #{annual_mains.round(1)} F.")
+    runner.registerInfo("Setting Site:MainsWaterTemperature object with an average temperature of #{weather.data.MainsAvgTemp.round(1)} F.")
 
     # report final condition
     final_design_days = model.getDesignDays
@@ -181,6 +180,25 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
 
   end
   
+  def get_climate_zone_ba(wmo)
+      ba_zone = "NA"
+
+      zones_csv = File.join(File.dirname(__FILE__), "resources", "climate_zones.csv")
+      if not File.exists?(zones_csv)
+          return ba_zone
+      end
+
+      require "csv"
+      CSV.foreach(zones_csv) do |row|
+        if row[0].to_s == wmo.to_s
+          ba_zone = row[5].to_s
+          break
+        end
+      end
+      
+      return ba_zone
+  end
+
 end
 
 # register the measure to be used by the application

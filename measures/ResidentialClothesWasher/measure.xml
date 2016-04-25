@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>a8ec3980-226c-4970-8453-80456ac3717e</version_id>
-  <version_modified>20160422T224003Z</version_modified>
+  <version_id>eac4d8ca-03c6-4d86-b633-7668c63bc390</version_id>
+  <version_modified>20160422T202135Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -262,27 +262,10 @@
       <checksum>640596F1</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C2265CC0</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>217503E7</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DFE4EFD1</checksum>
+      <checksum>35395019</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
@@ -297,10 +280,27 @@
       <checksum>1B4BF46B</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>54AC33EA</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2032AE44</checksum>
+      <checksum>5A3B61B7</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CDA42DE8</checksum>
     </file>
   </files>
 </measure>
