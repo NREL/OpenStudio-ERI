@@ -27,12 +27,12 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make an argument for total living space floor area
-    total_bldg_area = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("total_bldg_area",true)
-    total_bldg_area.setDisplayName("Living Space Area")
-    total_bldg_area.setUnits("ft^2")
-    total_bldg_area.setDescription("The total area of the living space above grade.")
-    total_bldg_area.setDefaultValue(2000.0)
-    args << total_bldg_area
+    above_grade_ffa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("above_grade_ffa",true)
+    above_grade_ffa.setDisplayName("Above-Grade Finished Floor Area")
+    above_grade_ffa.setUnits("ft^2")
+    above_grade_ffa.setDescription("The avove grade floor area of the finished space.")
+    above_grade_ffa.setDefaultValue(2000.0)
+    args << above_grade_ffa
 	
     #make an argument for living space height
     living_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("living_height",true)
@@ -46,7 +46,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     num_floors = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("num_floors",true)
     num_floors.setDisplayName("Num Floors")
     num_floors.setUnits("#")
-    num_floors.setDescription("The number of living space floors above grade.")
+    num_floors.setDescription("The number of floors above grade.")
     num_floors.setDefaultValue(2)
     args << num_floors
 	
@@ -168,7 +168,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    total_bldg_area = OpenStudio.convert(runner.getDoubleArgumentValue("total_bldg_area",user_arguments),"ft^2","m^2").get
+    above_grade_ffa = OpenStudio.convert(runner.getDoubleArgumentValue("above_grade_ffa",user_arguments),"ft^2","m^2").get
     living_height = OpenStudio.convert(runner.getDoubleArgumentValue("living_height",user_arguments),"ft","m").get
     num_floors = runner.getIntegerArgumentValue("num_floors",user_arguments)
     aspect_ratio = runner.getDoubleArgumentValue("aspect_ratio",user_arguments)
@@ -205,7 +205,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     
     # calculate the footprint of the building
     garage_area = garage_width * garage_depth
-    footprint = (total_bldg_area + garage_area) / num_floors
+    footprint = (above_grade_ffa + garage_area) / num_floors
 	
     # calculate the dimensions of the building
     width = Math.sqrt(footprint / aspect_ratio)
