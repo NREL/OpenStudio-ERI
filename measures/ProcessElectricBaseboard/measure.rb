@@ -25,7 +25,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "This measure parses the OSM for the HeatingSeasonSchedule. Any existing baseboard convective electrics are removed from any existing zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists."
+    return "This measure parses the OSM for the HeatingSeasonSchedule. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists."
   end   
   
   #define the arguments that the user will input
@@ -77,49 +77,14 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
         return false
     end
    
+    # Check if has equipment
+    HelperMethods.remove_hot_water_loop(model, runner)   
+   
     control_slave_zones_hash = Geometry.get_control_and_slave_zones(model)
     control_slave_zones_hash.each do |control_zone, slave_zones|
     
-      # Check if has equipment
-      baseboards = model.getZoneHVACBaseboardConvectiveElectrics
-      baseboards.each do |baseboard|
-        thermalZone = baseboard.thermalZone.get
-        if control_zone.handle.to_s == thermalZone.handle.to_s
-          runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-          baseboard.remove
-        end
-      end
-      airLoopHVACs = model.getAirLoopHVACs
-      airLoopHVACs.each do |airLoopHVAC|
-        thermalZones = airLoopHVAC.thermalZones
-        thermalZones.each do |thermalZone|
-          if control_zone.handle.to_s == thermalZone.handle.to_s
-            supplyComponents = airLoopHVAC.supplyComponents
-            supplyComponents.each do |supplyComponent|
-              if supplyComponent.to_AirLoopHVACUnitarySystem.is_initialized
-                air_loop_unitary = supplyComponent.to_AirLoopHVACUnitarySystem.get
-                if air_loop_unitary.heatingCoil.is_initialized
-                  htg_coil = air_loop_unitary.heatingCoil.get
-                  if htg_coil.to_CoilHeatingGas.is_initialized
-                    runner.registerInfo("Removed '#{htg_coil.name}' from air loop '#{airLoopHVAC.name}'")
-                    air_loop_unitary.resetHeatingCoil
-                    htg_coil.remove
-                  end
-                  if htg_coil.to_CoilHeatingElectric.is_initialized
-                    runner.registerInfo("Removed '#{htg_coil.name}' from air loop '#{airLoopHVAC.name}'")
-                    air_loop_unitary.resetHeatingCoil
-                    htg_coil.remove
-                  end
-                end
-              # TODO: this removes multispeed central AC (which we don't want to happen), but there's no way to distinguish between ASHP/Minisplit and multispeed central AC.
-              elsif supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAir.is_initialized or supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAirMultiSpeed.is_initialized
-                supplyComponent.remove
-                airLoopHVAC.remove
-              end
-            end
-          end
-        end
-      end       
+      # Remove existing equipment
+      HelperMethods.remove_existing_hvac_equipment(model, runner, "Electric Baseboard", control_zone)
     
       htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
       htg_coil.setName("Living Zone Electric Baseboards")
@@ -134,15 +99,8 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
 
       slave_zones.each do |slave_zone|
 
-        # Check if has equipment
-        baseboards = model.getZoneHVACBaseboardConvectiveElectrics
-        baseboards.each do |baseboard|
-          thermalZone = baseboard.thermalZone.get
-          if slave_zone.handle.to_s == thermalZone.handle.to_s
-            runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-            baseboard.remove
-          end
-        end    
+        # Remove existing equipment
+        HelperMethods.remove_existing_hvac_equipment(model, runner, "Electric Baseboard", slave_zone)    
       
         htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
         htg_coil.setName("FBsmt Zone Electric Baseboards")

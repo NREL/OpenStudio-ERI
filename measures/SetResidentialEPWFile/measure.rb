@@ -13,12 +13,12 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return "Sets the EPW weather file (EPW) and supplemental data specific to the location."
+    return "Sets the EPW weather file (EPW), supplemental data specific to the location, and daylight saving time start/end dates."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "Sets the weather file, site information (e.g., latitude, longitude, elevation, timezone), design day information (from the DDY file), and the mains water temperature using the correlation method."
+    return "Sets the weather file, site information (e.g., latitude, longitude, elevation, timezone), design day information (from the DDY file), the mains water temperature using the correlation method, and daylight saving time start/end dates."
   end
 
   # define the arguments that the user will input
@@ -37,6 +37,16 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     arg.setDefaultValue("USA_CO_Denver.Intl.AP.725650_TMY3.epw")
     args << arg
 
+    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("start_date", true)
+    arg.setDisplayName("Daylight Saving Start Date")
+    arg.setDefaultValue("April 7")
+    args << arg
+    
+    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("end_date", true)
+    arg.setDisplayName("Daylight Saving End Date")
+    arg.setDefaultValue("October 26")
+    args << arg      
+    
     return args
   end
 
@@ -53,6 +63,22 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     weather_directory = runner.getStringArgumentValue("weather_directory", user_arguments)
     weather_file_name = runner.getStringArgumentValue("weather_file_name", user_arguments)
 
+    start_date = runner.getStringArgumentValue("start_date", user_arguments)
+    end_date = runner.getStringArgumentValue("end_date", user_arguments)
+    
+    # ----------------
+    # Set daylight saving time
+    # ----------------    
+    
+    start_date_month = OpenStudio::monthOfYear(start_date.split[0])
+    start_date_day = start_date.split[1].to_i
+    end_date_month = OpenStudio::monthOfYear(end_date.split[0])
+    end_date_day = end_date.split[1].to_i    
+    
+    dst = model.getRunPeriodControlDaylightSavingTime
+    dst.setStartDate(start_date_month, start_date_day)
+    dst.setEndDate(end_date_month, end_date_day)    
+    
     # ----------------
     # Set weather file
     # ----------------
