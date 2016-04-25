@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_temperature</name>
   <uid>4a3a96e7-00ea-4b61-9433-3d6fc3395a62</uid>
-  <version_id>f5d40185-ab11-4a97-a9ad-f45489b960ef</version_id>
-  <version_modified>20160421T200155Z</version_modified>
+  <version_id>0f24ca8f-22f4-48a2-8fc9-06079d2247a1</version_id>
+  <version_modified>20160422T224003Z</version_modified>
   <xml_checksum>3BE1CF9C</xml_checksum>
   <class_name>ProcessGroundTemperature</class_name>
   <display_name>Set Residential Ground Temperatures</display_name>
@@ -72,7 +72,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>35395019</checksum>
+      <checksum>2032AE44</checksum>
     </file>
   </files>
 </measure>

@@ -14,12 +14,12 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return ""
+    return "Sets the basic geometry for the building. Building is limited to one foundation type. Garage is tucked within the building, on the front left or front right corners of the building."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return ""
+    return "Gathers living space area, wall height per floor, number of floors, aspect ratio, garage width and depth, garage position, foundation type and wall height, attic and roof type, and roof pitch. Constructs building by calculating footprint and performing a series of affine transformations into living, foundation, and attic spaces."
   end
 
   # define the arguments that the user will input

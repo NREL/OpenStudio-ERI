@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>570b8315-afba-4b22-86c5-958700faf4cc</version_id>
-  <version_modified>20160421T200153Z</version_modified>
+  <version_id>643d7a23-5016-40bf-929c-1aa7fc05c191</version_id>
+  <version_modified>20160425T151128Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
-  <description></description>
-  <modeler_description></modeler_description>
+  <description>This measure removes any existing HVAC heating components from the building and adds a boiler along with constant speed pump and water baseboard coils to a hot water plant loop.</description>
+  <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. A boiler along with constant speed pump and water baseboard coils are added to a hot water plant loop.</modeler_description>
   <arguments>
     <argument>
       <name>boilerFuelType</name>
@@ -314,6 +314,18 @@
       <checksum>C4F35230</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DFE4EFD1</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1B4BF46B</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.6</identifier>
@@ -322,25 +334,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CA762E5F</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DFE4EFD1</checksum>
+      <checksum>651DC2EE</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>35395019</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1B4BF46B</checksum>
+      <checksum>87F0A24E</checksum>
     </file>
   </files>
 </measure>

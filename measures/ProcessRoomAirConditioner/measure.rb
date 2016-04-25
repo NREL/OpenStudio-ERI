@@ -32,7 +32,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description of modeling approach
   def modeler_description
-    return "This measure parses the IDF for the CoolingSeasonSchedule. Any supply components, except for heating coils, are removed from any existing air loops or zones. Any existing air loops are also removed."
+    return "This measure parses the IDF for the CoolingSeasonSchedule. Any cooling components are removed from any existing air loops or zones. Any existing air loops are also removed. An HVAC packaged terminal air conditioner is added to the living zone."
   end
 
   # define the arguments that the user will input
@@ -173,45 +173,8 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     
       next unless Geometry.zone_is_above_grade(control_zone)
 
-      # Check if has equipment
-      ptacs = model.getZoneHVACPackagedTerminalAirConditioners
-      ptacs.each do |ptac|
-        thermalZone = ptac.thermalZone.get
-        if control_zone.handle.to_s == thermalZone.handle.to_s
-          runner.registerInfo("Removed '#{ptac.name}' from thermal zone '#{thermalZone.name}'")
-          ptac.remove
-        end
-      end
-      airLoopHVACs = model.getAirLoopHVACs
-      airLoopHVACs.each do |airLoopHVAC|
-        thermalZones = airLoopHVAC.thermalZones
-        thermalZones.each do |thermalZone|
-          if control_zone.handle.to_s == thermalZone.handle.to_s
-            supplyComponents = airLoopHVAC.supplyComponents
-            supplyComponents.each do |supplyComponent|
-              if supplyComponent.to_AirLoopHVACUnitarySystem.is_initialized
-                air_loop_unitary = supplyComponent.to_AirLoopHVACUnitarySystem.get
-                if air_loop_unitary.coolingCoil.is_initialized
-                  clg_coil = air_loop_unitary.coolingCoil.get
-                  if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
-                    runner.registerInfo("Removed '#{clg_coil.name}' from air loop '#{airLoopHVAC.name}'")
-                    air_loop_unitary.resetCoolingCoil
-                    clg_coil.remove
-                  end
-                  if clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
-                    runner.registerInfo("Removed '#{clg_coil.name}' from air loop '#{airLoopHVAC.name}'")
-                    air_loop_unitary.resetCoolingCoil
-                    clg_coil.remove
-                  end
-                end
-              elsif supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAir.is_initialized or supplyComponent.to_AirLoopHVACUnitaryHeatPumpAirToAirMultiSpeed.is_initialized
-                supplyComponent.remove
-                airLoopHVAC.remove            
-              end
-            end
-          end
-        end
-      end    
+      # Remove existing equipment
+      HelperMethods.remove_existing_hvac_equipment(model, runner, "Room Air Conditioner", control_zone)    
     
       # _processSystemRoomAC
     

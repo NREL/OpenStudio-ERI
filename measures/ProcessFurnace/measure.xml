@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>9c20f9cf-3d82-4b4d-a447-88a82ed473d5</version_id>
-  <version_modified>20160421T200155Z</version_modified>
+  <version_id>44ecaa97-6b4e-4e5e-884e-d3b7f9db566a</version_id>
+  <version_modified>20160422T224003Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop.</description>
-  <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule. Any supply components or baseboard convective electrics, except for cooling DX coils, are removed from any existing air loops or zones. Any existing air loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists.</modeler_description>
+  <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule. Any supply components or baseboard convective electrics/waters, except for cooling DX coils, are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists.</modeler_description>
   <arguments>
     <argument>
       <name>selectedfurnacefuel</name>
@@ -224,6 +224,18 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DFE4EFD1</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1B4BF46B</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -232,25 +244,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>648EADE4</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DFE4EFD1</checksum>
+      <checksum>B5860B0E</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>35395019</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1B4BF46B</checksum>
+      <checksum>2032AE44</checksum>
     </file>
   </files>
 </measure>

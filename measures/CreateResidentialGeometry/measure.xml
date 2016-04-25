@@ -7,8 +7,8 @@
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
-  <description></description>
-  <modeler_description></modeler_description>
+  <description>Sets the basic geometry for the building. Building is limited to one foundation type. Garage is tucked within the building, on the front left or front right corners of the building.</description>
+  <modeler_description>Gathers living space area, wall height per floor, number of floors, aspect ratio, garage width and depth, garage position, foundation type and wall height, attic and roof type, and roof pitch. Constructs building by calculating footprint and performing a series of affine transformations into living, foundation, and attic spaces.</modeler_description>
   <arguments>
     <argument>
       <name>total_bldg_area</name>

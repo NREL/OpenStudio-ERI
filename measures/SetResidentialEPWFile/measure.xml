@@ -8,7 +8,7 @@
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
   <description>Sets the EPW weather file (EPW) and supplemental data specific to the location.</description>
-  <modeler_description>Sets the weather file, Building America climate zone, site information (e.g., latitude, longitude, elevation, timezone), design day information (from the DDY file), and the mains water temperature using the correlation method.</modeler_description>
+  <modeler_description>Sets the weather file, Building America climate zone, site information (e.g., latitude, longitude, elevation, timezone), design day information (from the DDY file), the mains water temperature using the correlation method, and the daylight saving time start/end dates.</modeler_description>
   <arguments>
     <argument>
       <name>weather_directory</name>
@@ -27,6 +27,22 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>USA_CO_Denver_Intl_AP_725650_TMY3.epw</default_value>
+    </argument>
+    <argument>
+      <name>start_date</name>
+      <display_name>Daylight Saving Start Date</display_name>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>April 7</default_value>
+    </argument>
+    <argument>
+      <name>end_date</name>
+      <display_name>Daylight Saving End Date</display_name>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>October 26</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -131,7 +147,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B8240055</checksum>
+      <checksum>07FDA2E7</checksum>
     </file>
   </files>
 </measure>

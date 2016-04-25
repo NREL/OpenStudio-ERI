@@ -71,7 +71,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "This measure parses the OSM for the HeatingSeasonSchedule. Any supply components or baseboard convective electrics, except for cooling DX coils, are removed from any existing air loops or zones. Any existing air loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
+    return "This measure parses the OSM for the HeatingSeasonSchedule. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
   end   
   
   #define the arguments that the user will input
@@ -198,19 +198,14 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     supply.compressor_speeds = nil   
     
+    # Check if has equipment
+    HelperMethods.remove_hot_water_loop(model, runner)    
+    
     control_slave_zones_hash = Geometry.get_control_and_slave_zones(model)
     control_slave_zones_hash.each do |control_zone, slave_zones|
     
-      # Check if has equipment
-      clg_coil = HelperMethods.remove_existing_hvac_equipment_except_for_specified_object(model, runner, control_zone, "Central Air Conditioner")
-      baseboards = model.getZoneHVACBaseboardConvectiveElectrics
-      baseboards.each do |baseboard|
-        thermalZone = baseboard.thermalZone.get
-        if control_zone.handle.to_s == thermalZone.handle.to_s
-          runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-          baseboard.remove
-        end     
-      end    
+      # Remove existing equipment
+      clg_coil = HelperMethods.remove_existing_hvac_equipment(model, runner, "Furnace", control_zone)
     
       # _processSystemHeatingCoil
       
@@ -310,15 +305,9 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     
       slave_zones.each do |slave_zone|
       
-        # Check if has equipment
-        baseboards = model.getZoneHVACBaseboardConvectiveElectrics
-        baseboards.each do |baseboard|
-          thermalZone = baseboard.thermalZone.get      
-          if slave_zone.handle.to_s == thermalZone.handle.to_s
-            runner.registerInfo("Removed '#{baseboard.name}' from thermal zone '#{thermalZone.name}'")
-            baseboard.remove
-          end
-        end
+        # Remove existing equipment
+        HelperMethods.has_boiler(model, runner, slave_zone, true)
+        HelperMethods.has_electric_baseboard(model, runner, slave_zone, true)        
       
         diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
         diffuser_fbsmt.setName("FBsmt Zone Direct Air")
