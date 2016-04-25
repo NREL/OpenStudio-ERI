@@ -38,12 +38,12 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     arg.setDefaultValue("USA_CO_Denver_Intl_AP_725650_TMY3.epw")
     args << arg
 
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("start_date", true)
+    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("dst_start_date", true)
     arg.setDisplayName("Daylight Saving Start Date")
     arg.setDefaultValue("April 7")
     args << arg
     
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("end_date", true)
+    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("dst_end_date", true)
     arg.setDisplayName("Daylight Saving End Date")
     arg.setDefaultValue("October 26")
     args << arg      
@@ -63,22 +63,21 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     # grab the initial weather file
     weather_directory = runner.getStringArgumentValue("weather_directory", user_arguments)
     weather_file_name = runner.getStringArgumentValue("weather_file_name", user_arguments)
-
-    start_date = runner.getStringArgumentValue("start_date", user_arguments)
-    end_date = runner.getStringArgumentValue("end_date", user_arguments)
+    dst_start_date = runner.getStringArgumentValue("dst_start_date", user_arguments)
+    dst_end_date = runner.getStringArgumentValue("dst_end_date", user_arguments)
     
     # ----------------
     # Set daylight saving time
     # ----------------    
     
-    start_date_month = OpenStudio::monthOfYear(start_date.split[0])
-    start_date_day = start_date.split[1].to_i
-    end_date_month = OpenStudio::monthOfYear(end_date.split[0])
-    end_date_day = end_date.split[1].to_i    
+    dst_start_date_month = OpenStudio::monthOfYear(dst_start_date.split[0])
+    dst_start_date_day = dst_start_date.split[1].to_i
+    dst_end_date_month = OpenStudio::monthOfYear(dst_end_date.split[0])
+    dst_end_date_day = dst_end_date.split[1].to_i    
     
     dst = model.getRunPeriodControlDaylightSavingTime
-    dst.setStartDate(start_date_month, start_date_day)
-    dst.setEndDate(end_date_month, end_date_day)    
+    dst.setStartDate(dst_start_date_month, dst_start_date_day)
+    dst.setEndDate(dst_end_date_month, dst_end_date_day)    
     
     # ----------------
     # Set weather file
