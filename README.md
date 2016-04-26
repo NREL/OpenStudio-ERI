@@ -27,40 +27,66 @@ To build up a complete residential building model from an empty seed model, some
   1. Set Residential Location
 2. Gometry:
   1. Create Residential Geometry
-  2. Set Residential Orientation
-  3. Set Residential Eaves
-  4. <Windows measure>
-  5. Set Residential Overhangs
-  6. Set Neighbors
+  2. Set Residential Number of Beds, Baths, and Occupants
+  3. Set Residential Orientation
+  4. Set Residential Eaves
+  5. <Windows measure>
+  6. Set Residential Overhangs
+  7. Set Residential Door Area
+  7. Set Neighbors
 3. Envelope Constructions:
-  1. Ceilings/Roofs:
-    1. Set Residential Ceilings/Roofs - Unfinished Attic Constructions
-    2. Set Residential Ceilings/Roofs - Finished Roof Construction
-    3. Set Residential Ceilings/Roofs - Roof Sheathing
-    4. Set Residential Ceilings/Roofs - Roofing Material
-    5. Set Residential Ceilings/Roofs - Radiant Barrier
-  2. Foundations/Floors:
-    1. TODO
-    2. TODO
-  3. Walls:
-    1. TODO
-    2. TODO
-  4. Other:
+  1. Set Residential Ceilings/Roofs - Unfinished Attic Constructions
+  2. Set Residential Ceilings/Roofs - Finished Roof Construction
+  3. Set Residential Ceilings/Roofs - Roof Sheathing
+  4. Set Residential Ceilings/Roofs - Roofing Material
+  5. Set Residential Ceilings/Roofs - Radiant Barrier
+  6. Set Residential Ceilings/Roofs - Ceiling Thermal Mass
+  7. Set Residential Foundations/Floors - Finished Basement Constructions
+  8. Set Residential Foundations/Floors - Unfinished Basement Constructions
+  9. Set Residential Foundations/Floors - Crawlspace Constructions
+  10. Set Residential Foundations/Floors - Slab Construction
+  11. Set Residential Foundations/Floors - Interzonal Floor Construction
+  12. Set Residential Foundations/Floors - Floor Covering
+  13. Set Residential Foundations/Floors - Floor Sheathing
+  14. Set Residential Foundations/Floors - Floor Thermal Mass
+  15. Set Residential Walls - * Construction (e.g., Wood Stud or CMU)
+  16. Set Residential Walls - Interzonal Construction
+  17. Set Residential Walls - Partition Construction
+  18. Set Residential Walls - Wall Sheathing
+  19. Set Residential Walls - Exterior Finish
+  20. Set Residential Walls - Exterior Thermal Mass
+  21. Set Residential Walls - Partition Thermal Mass
+  22. Set Residential Uninsulated Surfaces
+  23. Set Residential Window Construction
+  24. Set Residential Door Construction
+  25. Set Residential Furniture Thermal Mass
 4. Water Heating:
-  1. TODO
-  2. TODO
+  1. Set Residential * Water Heater (e.g., Electric Tank or Gas Tankless)
+  2. <Hot water distribution; before or after water heater?>
 5. HVAC:
   1. TODO
   2. TODO
 6. Major Appliances:
-  1. TODO
-  2. TODO
+  1. Set Residential Refrigerator
+  2. Set Residential Clothes Washer
+  3. Set Residential * Clothes Dryer (e.g., Electric or Gas)
+  4. Set Residential Dishwasher
+  5. Set Residential * Cooking Range (e.g., Electric or Gas)
 7. Lighting:
   1. TODO
   2. TODO
 8. Plug Loads:
-  1. TODO
-  2. TODO
+  1. Set Residential Plug Loads
+  2. Set Residential Extra Refrigerator
+  3. Set Residential Freezer
+  4. Set Residential Hot Tub * Heater (e.g., Electric or Gas)
+  5. Set Residential Hot Tub Pump
+  6. Set Residential Pool * Heater (e.g., Electric or Gas)
+  7. Set Residential Pool Pump
+  8. Set Residential Well Pump
+  9. Set Residential Gas Fireplace
+  10. Set Residential Gas Grill
+  11. Set Residential Gas Lighting
 9. Other:
   1. TODO
   2. TODO
