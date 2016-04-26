@@ -27,12 +27,12 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make an argument for total living space floor area
-    above_grade_ffa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("above_grade_ffa",true)
-    above_grade_ffa.setDisplayName("Above-Grade Finished Floor Area")
-    above_grade_ffa.setUnits("ft^2")
-    above_grade_ffa.setDescription("The avove grade floor area of the finished space.")
-    above_grade_ffa.setDefaultValue(2000.0)
-    args << above_grade_ffa
+    total_ffa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("total_ffa",true)
+    total_ffa.setDisplayName("Total Finished Floor Area")
+    total_ffa.setUnits("ft^2")
+    total_ffa.setDescription("The total floor area of the finished space (including any finished basement floor area).")
+    total_ffa.setDefaultValue(2000.0)
+    args << total_ffa
 	
     #make an argument for living space height
     living_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("living_height",true)
@@ -168,7 +168,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    above_grade_ffa = OpenStudio.convert(runner.getDoubleArgumentValue("above_grade_ffa",user_arguments),"ft^2","m^2").get
+    total_ffa = OpenStudio.convert(runner.getDoubleArgumentValue("total_ffa",user_arguments),"ft^2","m^2").get
     living_height = OpenStudio.convert(runner.getDoubleArgumentValue("living_height",user_arguments),"ft","m").get
     num_floors = runner.getIntegerArgumentValue("num_floors",user_arguments)
     aspect_ratio = runner.getDoubleArgumentValue("aspect_ratio",user_arguments)
@@ -205,7 +205,12 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     
     # calculate the footprint of the building
     garage_area = garage_width * garage_depth
-    footprint = (above_grade_ffa + garage_area) / num_floors
+    if foundation_type == Constants.FinishedBasementSpace
+        # 2*garage_area handles the slab under the garage
+        footprint = (total_ffa + 2 * garage_area) / (num_floors + 1)
+    else
+        footprint = (total_ffa + garage_area) / num_floors
+    end
 	
     # calculate the dimensions of the building
     width = Math.sqrt(footprint / aspect_ratio)
