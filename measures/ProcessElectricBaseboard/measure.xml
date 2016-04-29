@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>aa465c92-d63b-4352-b6e8-fb4ff3ff3fdf</version_id>
-  <version_modified>20160422T223933Z</version_modified>
+  <version_id>317c5dbc-2575-42c6-8b72-57497917a223</version_id>
+  <version_modified>20160429T163713Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
   <description>This measure removes any existing electric baseboards from the building and adds electric baseboards.</description>
-  <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule. Any supply components or baseboard convective electrics/waters, except for cooling DX coils, are removed from any existing air/plant loops or zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists.</modeler_description>
+  <modeler_description>This measure parses the OSM for the HeatingSeasonSchedule. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists.</modeler_description>
   <arguments>
     <argument>
       <name>userdefinedeff</name>
@@ -199,13 +199,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BDDD4FD6</checksum>
+      <checksum>A47FFF1F</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2032AE44</checksum>
+      <checksum>FFB87057</checksum>
     </file>
   </files>
 </measure>

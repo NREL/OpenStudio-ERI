@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_system_crankcase_heater</name>
   <uid>b0630593-f352-4753-ae2c-2aa68f1c5611</uid>
-  <version_id>81525543-6fba-4759-bcc9-f0fa84dce906</version_id>
-  <version_modified>20160422T224003Z</version_modified>
+  <version_id>e0ab0714-50ae-42df-89f0-89701b50077b</version_id>
+  <version_modified>20160429T163713Z</version_modified>
   <xml_checksum>C7ED76C0</xml_checksum>
   <class_name>ProcessSystemCrankcaseHeater</class_name>
   <display_name>Set Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner</display_name>
@@ -94,7 +94,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2032AE44</checksum>
+      <checksum>FFB87057</checksum>
     </file>
   </files>
 </measure>
