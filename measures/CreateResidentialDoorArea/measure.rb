@@ -106,7 +106,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    added_door = false
+    door_sub_surface = nil
     first_story_front_walls.each do |first_story_front_wall|
       # Try to place door on any surface with enough area
       next if door_area >= first_story_front_wall.grossArea
@@ -139,9 +139,10 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       door_sub_surface.setName("#{first_story_front_wall.name} - Front Door")
       door_sub_surface.setSubSurfaceType("Door")
       door_sub_surface.setSurface(first_story_front_wall)	
+      added_door = true
     end
     
-    if not added_door then
+    if door_sub_surface.nil? then
         runner.registerError("Could not find appropriate surface for the door. No door was added.")
         return false
     end
