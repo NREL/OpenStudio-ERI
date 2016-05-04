@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heatingand_cooling_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>cb39a848-9493-409d-a71a-a6f2334adb3c</version_id>
-  <version_modified>20160429T163713Z</version_modified>
+  <version_id>f52d2054-3aa6-4977-a22e-5f0c7c898523</version_id>
+  <version_modified>20160504T190603Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingandCoolingSetpoints</class_name>
   <display_name>Set Residential Heating/Cooling Setpoints and Schedules</display_name>
@@ -105,12 +105,6 @@
       <checksum>640596F1</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C2265CC0</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -120,12 +114,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>F4FDE04C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DFE4EFD1</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -138,6 +126,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>FFB87057</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5A3B61B7</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CDA42DE8</checksum>
     </file>
   </files>
 </measure>

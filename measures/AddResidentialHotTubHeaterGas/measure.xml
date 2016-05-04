@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater</name>
   <uid>65550b9d-c0bf-405b-9229-dc63721eb887</uid>
-  <version_id>f578fc1f-e4eb-4670-bdc3-569f2cc87281</version_id>
-  <version_modified>20160421T200153Z</version_modified>
+  <version_id>e59db0cd-0706-4ee4-a8c3-990ebc855f29</version_id>
+  <version_modified>20160504T190559Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialHotTubHeater</class_name>
   <display_name>Set Residential Hot Tub Gas Heater</display_name>
@@ -111,12 +111,6 @@
       <checksum>3C86AA63</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DFE4EFD1</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -127,6 +121,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>1B4BF46B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CDA42DE8</checksum>
     </file>
   </files>
 </measure>
