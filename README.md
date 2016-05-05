@@ -23,6 +23,8 @@ Once setup, you can now run ```rake update_resources``` to update the measures' 
 
 To build up a complete residential building model from an empty seed model, some measures need to be called before others. For example, the Window Constructions measure must be called after windows have been added to the building. The list below documents the intended workflow for using these measures.
 
+<nowiki>*</nowiki> Note: Nearly every measure is dependent on having the geometry defined first so this is not included in the table for readability purposes.
+
 |Group|Measure|Dependencies*|
 |:---|:---|:---|
 |1. Location|1. Set Residential Location||
@@ -84,4 +86,3 @@ To build up a complete residential building model from an empty seed model, some
 |9. Other|1. TODO||
 ||2. TODO||
 
-* Note: Nearly every measure is dependent on having the geometry defined first so this is not included in the table for readability purposes.
