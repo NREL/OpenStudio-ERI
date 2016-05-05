@@ -3,7 +3,7 @@ Residential OpenStudio Measures
 
 Files to support residential measures in OpenStudio
 
-Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d/1vIwgJtkB-sCFCV2Tnp1OqnjXgA9vTaxtWXw0gpq_Lc4/edit#gid=0)
+Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d/1vIwgJtkB-sCFCV2Tnp1OqnjXgA9vTaxtWXw0gpq_Lc4)
 
 ## Setup
 
