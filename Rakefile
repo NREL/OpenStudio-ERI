@@ -235,6 +235,9 @@ task default: 'test:unit:all'
 desc 'update all resources'
 task :update_resources do
 
+  require 'bcl'
+  require 'openstudio'
+
   measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry =='.' || entry == '..') }
   measures.each do |m|
     measurerb = File.expand_path("../measures/#{m}/measure.rb", __FILE__)
@@ -297,6 +300,21 @@ task :update_resources do
         puts "File deleted."
       end
     end
+    
+    # Update measure xml
+    measure_dir = File.expand_path("../measures/#{m}/", __FILE__)
+    measure = OpenStudio::BCLMeasure.load(measure_dir)
+    if not measure.empty?
+        begin
+            measure = measure.get
+            result = OpenStudio::Ruleset.getInfo(measure, OpenStudio::Model::OptionalModel.new, OpenStudio::OptionalWorkspace.new)
+            measure.save
+        rescue Exception => e
+            puts e.message
+        end
+    end
+    
+    
   end
 
 end
