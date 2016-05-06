@@ -21,9 +21,9 @@ To be able to use the rakefile, follow these steps:
 
 Once setup, you can now run ```rake update_resources``` to update the measures' resource files. You can also run ```rake -T``` to see the list of possible rake tasks.
 
-## Workflow for Users
+## New Construction Workflow for Users
 
-To build up a complete residential building model from an empty seed model, some measures need to be called before others. For example, the Window Constructions measure must be called after windows have been added to the building. The list below documents the intended workflow for using these measures.
+The New Construction workflow illustrates how to build up a complete residential building model from an empty seed model. Note that some measures need to be called before others. For example, the Window Constructions measure must be called after windows have been added to the building. The list below documents the intended workflow for using these measures.
 
 <nowiki>*</nowiki> Note: Nearly every measure is dependent on having the geometry defined first so this is not included in the table for readability purposes.
 
@@ -88,3 +88,10 @@ To build up a complete residential building model from an empty seed model, some
 |9. Other|1. TODO||
 ||2. TODO||
 
+## Existing Building/Retrofit Workflow for Users
+
+Most of these measures were written to be reusable for existing building retrofits. The intended workflow is to create the existing building from an empty seed model in the same way as the [New Construction Workflow](#workflow-for-users). Once the existing building model has been created, the same measures can now be used to replace/modify building components as appropriate. 
+
+For example, while the dishwasher measure added a dishwasher to the model when applied to an empty seed model, the same measure, when applied to the existing building model, will replace the existing dishwasher with the newly specified dishwasher (rather than add an additional dishwasher to the model). This example could be used to evaluate an EnergyStar dishwasher replacement, for example. Alternatively, if the existing building was never assigned a dishwasher, then the measure would indeed add a dishwasher to the model.
+
+Note that some measures are dependent on others. For example, if the Clothes Washer measure were to be applied to the existing building model, such that the existing clothes washer is replaced, the Clothes Dryer measure would also need to be subsequently applied to the existing building model so that its energy use, as dependent on the clothes washer, is correct.
