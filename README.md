@@ -88,9 +88,9 @@ The New Construction workflow illustrates how to build up a complete residential
 |9. Other|1. TODO||
 ||2. TODO||
 
-## Existing Building/Retrofit Workflow for Users
+## Retrofit Workflow for Users
 
-Most of these measures were written to be reusable for existing building retrofits. The intended workflow is to create the existing building from an empty seed model in the same way as the [New Construction Workflow](#workflow-for-users). Once the existing building model has been created, the same measures can now be used to replace/modify building components as appropriate. 
+Most of these measures were written to be reusable for existing building retrofits. The intended workflow is to create the existing building from an empty seed model in the same way as the [New Construction Workflow](#new-construction-workflow-for-users). Once the existing building model has been created, the same measures can now be used to replace/modify building components as appropriate. 
 
 For example, while the dishwasher measure added a dishwasher to the model when applied to an empty seed model, the same measure, when applied to the existing building model, will replace the existing dishwasher with the newly specified dishwasher (rather than add an additional dishwasher to the model). This example could be used to evaluate an EnergyStar dishwasher replacement, for example. Alternatively, if the existing building was never assigned a dishwasher, then the measure would indeed add a dishwasher to the model.
 
