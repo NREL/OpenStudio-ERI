@@ -65,8 +65,16 @@ The New Construction workflow illustrates how to build up a complete residential
 ||25. Set Residential Furniture Thermal Mass|TODO|
 |4. Water Heating|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
 ||2. [Hot water distribution; before or after water heater?]||
-|5. HVAC|1. TODO||
-||2. TODO||
+|5. HVAC|1. Set Residential Heating/Cooling Setpoints and Schedules||
+||2. Set Residential Central Air Conditioner|Setpoints/Schedules, Crankcase (for 2+ speeds)|
+||3. Set Residential Room Air Conditioner|Setpoints/Schedules|
+||4. Set Residential Furnace|Setpoints/Schedules|
+||5. Set Residential Mini-Split Heat Pump|Setpoints/Schedules|
+||6. Set Residential Boiler|Setpoints/Schedules|
+||7. Set Residential Electric Baseboard|Setpoints/Schedules|
+||8. Set Residential Air Source Heat Pump|Setpoints/Schedules, Crankcase|
+||9. Set Residential Airflow||
+||10. Set Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner||
 |6. Major Appliances|1. Set Residential Refrigerator||
 ||2. Set Residential Clothes Washer|Water Heater, Location|
 ||3. Set Residential Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
