@@ -1,9 +1,11 @@
 Residential OpenStudio Measures
 ===============
 
-Files to support residential measures in OpenStudio
+This project includes OpenStudio measures used to model residential buildings.
 
-Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d/1vIwgJtkB-sCFCV2Tnp1OqnjXgA9vTaxtWXw0gpq_Lc4)
+This project is a <b>work-in-progress</b>. The models are not fully completed nor tested. These measures will eventually be posted on the [Building Component Library](https://bcl.nrel.gov/)
+
+Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d/1vIwgJtkB-sCFCV2Tnp1OqnjXgA9vTaxtWXw0gpq_Lc4).
 
 ## Setup
 
