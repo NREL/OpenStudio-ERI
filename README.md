@@ -1,9 +1,11 @@
 Residential OpenStudio Measures
 ===============
 
-Files to support residential measures in OpenStudio
+This project includes OpenStudio measures used to model residential buildings.
 
-Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d/1vIwgJtkB-sCFCV2Tnp1OqnjXgA9vTaxtWXw0gpq_Lc4)
+This project is a <b>work-in-progress</b>. The models are not fully completed nor tested. These measures will eventually be posted on the [Building Component Library](https://bcl.nrel.gov/)
+
+Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d/1vIwgJtkB-sCFCV2Tnp1OqnjXgA9vTaxtWXw0gpq_Lc4).
 
 ## Setup
 
@@ -19,9 +21,9 @@ To be able to use the rakefile, follow these steps:
 
 Once setup, you can now run ```rake update_resources``` to update the measures' resource files. You can also run ```rake -T``` to see the list of possible rake tasks.
 
-## Workflow for Users
+## New Construction Workflow for Users
 
-To build up a complete residential building model from an empty seed model, some measures need to be called before others. For example, the Window Constructions measure must be called after windows have been added to the building. The list below documents the intended workflow for using these measures.
+The New Construction workflow illustrates how to build up a complete residential building model from an empty seed model. Note that some measures need to be called before others. For example, the Window Constructions measure must be called after windows have been added to the building. The list below documents the intended workflow for using these measures.
 
 <nowiki>*</nowiki> Note: Nearly every measure is dependent on having the geometry defined first so this is not included in the table for readability purposes.
 
@@ -32,9 +34,9 @@ To build up a complete residential building model from an empty seed model, some
 ||2. Set Residential Number of Beds, Baths, and Occupants||
 ||3. Set Residential Orientation||
 ||4. Set Residential Eaves||
-||5. [Windows measure]||
 ||6. Set Residential Overhangs|Window Area|
 ||7. Set Residential Door Area||
+||7. Set Residential Window Area (TODO)||
 ||8. Set Neighbors||
 |3. Envelope Constructions|1. Set Residential Ceilings/Roofs - Unfinished Attic Constructions||
 ||2. Set Residential Ceilings/Roofs - Finished Roof Construction||
@@ -63,8 +65,9 @@ To build up a complete residential building model from an empty seed model, some
 ||25. Set Residential Furniture Thermal Mass|TODO|
 |4. Water Heating|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
 ||2. [Hot water distribution; before or after water heater?]||
-|5. HVAC|1. TODO||
-||2. TODO||
+|5. HVAC & Airflow|1. Set Residential Heating/Cooling Setpoints and Schedules||
+||2. Set Residential Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)|Setpoints/Schedules|
+||3. Set Residential Airflow||
 |6. Major Appliances|1. Set Residential Refrigerator||
 ||2. Set Residential Clothes Washer|Water Heater, Location|
 ||3. Set Residential Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
@@ -86,3 +89,10 @@ To build up a complete residential building model from an empty seed model, some
 |9. Other|1. TODO||
 ||2. TODO||
 
+## Retrofit Workflow for Users
+
+Most of these measures were written to be reusable for existing building retrofits. The intended workflow is to create the existing building from an empty seed model in the same way as the [New Construction Workflow](#new-construction-workflow-for-users). Once the existing building model has been created, the same measures can now be used to replace/modify building components as appropriate. 
+
+For example, while the dishwasher measure added a dishwasher to the model when applied to an empty seed model, the same measure, when applied to the existing building model, will replace the existing dishwasher with the newly specified dishwasher (rather than add an additional dishwasher to the model). This example could be used to evaluate an EnergyStar dishwasher replacement, for example. Alternatively, if the existing building was never assigned a dishwasher, then the measure would indeed add a dishwasher to the model.
+
+Note that some measures are dependent on others. For example, if the Clothes Washer measure were to be applied to the existing building model, such that the existing clothes washer is replaced, the Clothes Dryer measure would also need to be subsequently applied to the existing building model so that its energy use, as dependent on the clothes washer, is correct.
