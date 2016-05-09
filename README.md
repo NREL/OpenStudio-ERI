@@ -34,9 +34,9 @@ The New Construction workflow illustrates how to build up a complete residential
 ||2. Set Residential Number of Beds, Baths, and Occupants||
 ||3. Set Residential Orientation||
 ||4. Set Residential Eaves||
-||5. [Windows measure]||
 ||6. Set Residential Overhangs|Window Area|
 ||7. Set Residential Door Area||
+||7. Set Residential Window Area (TODO)||
 ||8. Set Neighbors||
 |3. Envelope Constructions|1. Set Residential Ceilings/Roofs - Unfinished Attic Constructions||
 ||2. Set Residential Ceilings/Roofs - Finished Roof Construction||
@@ -65,16 +65,9 @@ The New Construction workflow illustrates how to build up a complete residential
 ||25. Set Residential Furniture Thermal Mass|TODO|
 |4. Water Heating|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
 ||2. [Hot water distribution; before or after water heater?]||
-|5. HVAC|1. Set Residential Heating/Cooling Setpoints and Schedules||
-||2. Set Residential Central Air Conditioner|Setpoints/Schedules, Crankcase (for 2+ speeds)|
-||3. Set Residential Room Air Conditioner|Setpoints/Schedules|
-||4. Set Residential Furnace|Setpoints/Schedules|
-||5. Set Residential Mini-Split Heat Pump|Setpoints/Schedules|
-||6. Set Residential Boiler|Setpoints/Schedules|
-||7. Set Residential Electric Baseboard|Setpoints/Schedules|
-||8. Set Residential Air Source Heat Pump|Setpoints/Schedules, Crankcase|
-||9. Set Residential Airflow||
-||10. Set Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner||
+|5. HVAC & Airflow|1. Set Residential Heating/Cooling Setpoints and Schedules||
+||2. Set Residential Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)|Setpoints/Schedules|
+||3. Set Residential Airflow||
 |6. Major Appliances|1. Set Residential Refrigerator||
 ||2. Set Residential Clothes Washer|Water Heater, Location|
 ||3. Set Residential Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
