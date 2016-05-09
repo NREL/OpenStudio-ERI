@@ -563,6 +563,17 @@ class Geometry
         return spaces
     end
     
+    def self.get_garage_spaces(model) #unfinished, above grade spaces without a finished space below
+        spaces = []
+        model.getSpaces.each do |space|
+            next if Geometry.space_is_finished(space)
+            next if Geometry.space_is_below_grade(space)
+            next if Geometry.space_below_is_finished(space, model)
+            spaces << space
+        end
+        return spaces
+    end
+    
     def self.get_non_attic_unfinished_roof_spaces(model)
         spaces = []
         model.getSpaces.each do |space|
