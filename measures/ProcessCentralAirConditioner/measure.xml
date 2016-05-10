@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>68224072-727f-4ff8-bd80-486faa65b9fe</version_id>
-  <version_modified>20160504T190601Z</version_modified>
+  <version_id>495d0760-a687-4b37-9ea7-8411906668cd</version_id>
+  <version_modified>20160510T220842Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -191,12 +191,6 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1B4BF46B</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -217,7 +211,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CDA42DE8</checksum>
+      <checksum>0A95F3D7</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C8823B7F</checksum>
     </file>
   </files>
 </measure>

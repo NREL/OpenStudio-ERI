@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>eff8302f-19f3-4a24-994e-5c3b10a0dca5</version_id>
-  <version_modified>20160504T190603Z</version_modified>
+  <version_id>73999cc3-2f12-41c1-a7d0-0977847eb6dc</version_id>
+  <version_modified>20160510T220844Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -224,12 +224,6 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1B4BF46B</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -250,7 +244,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CDA42DE8</checksum>
+      <checksum>0A95F3D7</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C8823B7F</checksum>
     </file>
   </files>
 </measure>

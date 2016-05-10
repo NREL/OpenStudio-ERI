@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>ec51a6b4-2f82-42b4-b7a3-26b5e21826cf</version_id>
-  <version_modified>20160504T190600Z</version_modified>
+  <version_id>d53d225c-f05f-40dc-b40e-f3f9d241fef8</version_id>
+  <version_modified>20160510T220842Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
   <display_name>Set Residential Air Source Heat Pump</display_name>
@@ -340,12 +340,6 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1B4BF46B</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -366,7 +360,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CDA42DE8</checksum>
+      <checksum>0A95F3D7</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C8823B7F</checksum>
     </file>
   </files>
 </measure>
