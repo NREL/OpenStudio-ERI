@@ -54,6 +54,13 @@ class SetResidentialWindowArea < OpenStudio::Ruleset::ModelUserScript
     right_wwr.setDefaultValue(0.18)
     args << right_wwr
 
+    #make a double argument for aspect ratio
+    aspect_ratio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("aspect_ratio", true)
+    aspect_ratio.setDisplayName("Window Aspect Ratio")
+    aspect_ratio.setDescription("Ratio of window height to width.")
+    aspect_ratio.setDefaultValue(1.333)
+    args << aspect_ratio
+
     return args
   end
 
@@ -73,6 +80,7 @@ class SetResidentialWindowArea < OpenStudio::Ruleset::ModelUserScript
     wwr[Constants.FacadeBack] = runner.getDoubleArgumentValue("back_wwr",user_arguments)
     wwr[Constants.FacadeLeft] = runner.getDoubleArgumentValue("left_wwr",user_arguments)
     wwr[Constants.FacadeRight] = runner.getDoubleArgumentValue("right_wwr",user_arguments)
+    aspect_ratio = runner.getDoubleArgumentValue("aspect_ratio",user_arguments)
 
     # Remove existing windows and store surfaces that should get windows by facade
     surfaces = {Constants.FacadeFront=>[], Constants.FacadeBack=>[],
@@ -111,9 +119,12 @@ class SetResidentialWindowArea < OpenStudio::Ruleset::ModelUserScript
       runner.registerError("Right Window-to-Wall Ratio must be greater than or equal to 0 and less than 1.")
       return false
     end    
+    if aspect_ratio <= 0
+      runner.registerError("Window Aspect Ratio must be greater than 0.")
+      return false
+    end
     
-    # Split any surfaces that have doors so that we can ignore them when
-    # adding windows.
+    # Split any surfaces that have doors so that we can ignore them when adding windows
     facades.each do |facade|
         surfaces_to_add = []
         surfaces[facade].each do |surface|
@@ -130,14 +141,12 @@ class SetResidentialWindowArea < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Default assumptions
-    default_window_aspect_ratio = 1.333 # height/width
-    min_single_window_area = 5.333 # sqft (2x2.67)
-    max_single_window_area = 12.0 # sqft (3x4); default_window_aspect_ratio preserved
-    max_single_window_area_tall = 21.0 # sqft (3x7); default_window_aspect_ratio not preserved
-    max_window_width = 3.0 # ft; after a window hits max_single_window_area only the height increases
-    window_gap_y = 1.0 # minimum ft from, e.g., a gable wall top edge
-    min_wall_height_for_window = Math.sqrt(max_single_window_area * default_window_aspect_ratio) + window_gap_y * 1.05 # allow some wall area above/below
-    min_window_width = Math.sqrt(min_single_window_area / default_window_aspect_ratio) * 1.05 # allow some wall area to the left/right
+    min_single_window_area = 5.333 # sqft
+    max_single_window_area = 12.0 # sqft
+    window_gap_y = 1.0 # ft; distance from top of wall
+    window_gap_x = 0.2 # ft; distance between windows in a two-window group
+    min_wall_height_for_window = Math.sqrt(max_single_window_area * aspect_ratio) + window_gap_y * 1.05 # allow some wall area above/below
+    min_window_width = Math.sqrt(min_single_window_area / aspect_ratio) * 1.05 # allow some wall area to the left/right
     
     # Calculate available area for each wall, facade
     surface_avail_area = {}
@@ -224,10 +233,9 @@ class SetResidentialWindowArea < OpenStudio::Ruleset::ModelUserScript
     facades.each do |facade|
         surfaces[facade].each do |surface|
             next if surface_window_area[surface] == 0
-            add_windows_to_wall(surface, surface_window_area[surface], window_gap_y, 
-                                default_window_aspect_ratio, max_window_width,
-                                max_single_window_area, max_single_window_area_tall,
-                                facade, model, runner)
+            if not add_windows_to_wall(surface, surface_window_area[surface], window_gap_y, window_gap_x, aspect_ratio, max_single_window_area, facade, model, runner)
+                return false
+            end
         end
     end
     
@@ -257,27 +265,27 @@ class SetResidentialWindowArea < OpenStudio::Ruleset::ModelUserScript
         return 0.0
     end
 
-    # TODO: Currently just returns total wall area, which is OK for rectangular 
-    # surfaces but less so for other shapes (e.g., gable walls).
     return OpenStudio.convert(surface.grossArea, "m^2", "ft^2").get
   end
   
-  def add_windows_to_wall(surface, window_area, window_gap_y, default_window_aspect_ratio, max_window_width, max_single_window_area, max_single_window_area_tall, facade, model, runner)
-    window_gap_x = 0.2 # ft; default between windows in a group
-    
+  def add_windows_to_wall(surface, window_area, window_gap_y, window_gap_x, aspect_ratio, max_single_window_area, facade, model, runner)
     wall_width = Geometry.get_surface_length(surface)
     wall_height = Geometry.get_surface_height(surface)
     
     # Calculate number of windows needed
     num_windows = (window_area / max_single_window_area).ceil
-    window_width = Math.sqrt((window_area / num_windows.to_f) / default_window_aspect_ratio)
-    width_for_windows = window_width * num_windows.to_f
-    if width_for_windows >= Geometry.get_surface_length(surface)
-        # Need to enlarge windows
-        num_windows = (window_area / max_single_window_area_tall).ceil
-        window_width = Math.sqrt((window_area / num_windows.to_f) / default_window_aspect_ratio)
+    num_window_groups = (num_windows / 2.0).ceil
+    num_window_gaps = num_window_groups
+    if num_windows % 2 == 1
+        num_window_gaps -= 1
     end
+    window_width = Math.sqrt((window_area / num_windows.to_f) / aspect_ratio)
     window_height = (window_area / num_windows.to_f) / window_width
+    width_for_windows = window_width * num_windows.to_f + window_gap_x * num_window_gaps.to_f
+    if width_for_windows > wall_width
+        runner.registerError("Could not fit windows on #{surface.name.to_s}.")
+        return false
+    end
     
     # Position window from top of surface
     win_top = wall_height - window_gap_y
@@ -287,7 +295,6 @@ class SetResidentialWindowArea < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Groups of two windows
-    num_window_groups = (num_windows / 2.0).ceil
     win_num = 0
     for i in (1..num_window_groups)
         
@@ -308,7 +315,7 @@ class SetResidentialWindowArea < OpenStudio::Ruleset::ModelUserScript
         end
     end
     runner.registerInfo("Added #{num_windows.to_s} window(s), totaling #{window_area.round(1).to_s} ft^2, to #{surface.name}.")
-    
+    return true
   end
   
   def add_window_to_wall(surface, win_width, win_height, win_center_x, win_center_y, win_num, facade, model, runner)

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_gas</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>d6722cbe-95e3-4401-be20-e552b4b1ad65</version_id>
-  <version_modified>20160510T220842Z</version_modified>
+  <version_id>426ec283-9233-4bf9-9359-222eff6d2a8b</version_id>
+  <version_modified>20160511T135421Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessGas</class_name>
   <display_name>Set Residential Gas Tankless Water Heater</display_name>
@@ -23,15 +23,15 @@
     <argument>
       <name>water_heater_location</name>
       <display_name>Location</display_name>
-      <description>Thermal zone where the water heater is located.</description>
+      <description>Thermal zone where the water heater is located. auto will locate the water heater according the BA House Simulation Protocols: A garage (if available) or the living space in hot-dry and hot-humid climates, a basement (finished or unfinished, if available) or living space in all other climates</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living zone</default_value>
+      <default_value>auto</default_value>
       <choices>
         <choice>
-          <value>living zone</value>
-          <display_name>living zone</display_name>
+          <value>auto</value>
+          <display_name>auto</display_name>
         </choice>
       </choices>
     </argument>
@@ -43,7 +43,7 @@
       <units>kBtu/hr</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>1000000.0</default_value>
+      <default_value>199.0</default_value>
     </argument>
     <argument>
       <name>rated_energy_factor</name>
@@ -115,17 +115,6 @@
       <checksum>B516C87F</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>1.4.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>035DD12E</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -142,6 +131,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C8823B7F</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.4.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>1B87665C</checksum>
     </file>
   </files>
 </measure>

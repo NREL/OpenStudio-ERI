@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>5d21bf1d-e85f-4e39-a440-65934b8ce7d3</version_id>
-  <version_modified>20160510T222453Z</version_modified>
+  <version_id>c572bc80-969e-473e-8974-ed4203741673</version_id>
+  <version_modified>20160511T140147Z</version_modified>
   <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -45,6 +45,15 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.18</default_value>
+    </argument>
+    <argument>
+      <name>aspect_ratio</name>
+      <display_name>Window Aspect Ratio</display_name>
+      <description>Ratio of window height to width.</description>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1.333</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -122,7 +131,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>16683625</checksum>
+      <checksum>987AF905</checksum>
     </file>
   </files>
 </measure>
