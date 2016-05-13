@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_fireplace</name>
   <uid>0565d3b2-593b-480b-a742-a6ec7058d3c4</uid>
-  <version_id>9ac32e68-51b8-449b-aad6-fd7c4b9e68b1</version_id>
-  <version_modified>20160510T220842Z</version_modified>
+  <version_id>3689ec59-51b9-46ff-86a4-d7802608cecf</version_id>
+  <version_modified>20160512T152628Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasFireplace</class_name>
   <display_name>Set Residential Gas Fireplace</display_name>
@@ -141,7 +141,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C8823B7F</checksum>
+      <checksum>5CFC2180</checksum>
     </file>
   </files>
 </measure>
