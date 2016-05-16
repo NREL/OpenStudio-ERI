@@ -400,10 +400,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setCondenserType(supply.CondenserType)
         clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
         clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
-
-        #Multi-speed ACs and HPs, we handle the crankcase heater using EMS so the heater energy shows up under cooling energy
-        clg_coil.setCrankcaseHeaterCapacity(0)
-        clg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(10.0)
+        clg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)
+        clg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get)
         
         clg_coil.setFuelType("Electricity")
              
@@ -461,7 +459,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         new_htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
         new_htg_coil.setName("DX Heating Coil")
         new_htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(-20)
-        new_htg_coil.setCrankcaseHeaterCapacity(0)
+        new_htg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)
+        new_htg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get)
         new_htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(0)
         new_htg_coil.setDefrostStrategy("Resistive")
         new_htg_coil.setDefrostControl("Timed")
