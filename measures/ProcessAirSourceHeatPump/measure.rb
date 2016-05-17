@@ -544,9 +544,8 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir)
         htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
         htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
-
-        # Crankcase heaters are handled using EMS
-        htg_coil.setCrankcaseHeaterCapacity(0.0)
+        htg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)
+        htg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get)
         htg_coil.setDefrostStrategy("ReverseCycle")
         htg_coil.setDefrostControl("OnDemand")
 
@@ -556,9 +555,8 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         htg_coil.setName("DX Heating Coil")
         htg_coil.setAvailabilitySchedule(heatingseasonschedule)
         htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
-      
-        # Crankcase heaters are handled using EMS
-        htg_coil.setCrankcaseHeaterCapacity(0.0)
+        htg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)
+        htg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get)
         htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir)
         htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
         htg_coil.setDefrostStrategy("ReverseCryle")
@@ -567,7 +565,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         htg_coil.setFuelType("Electricity")
         
         htg_coil_stage_data.each do |i|
-            htg_coil.addStage(i)    
+            htg_coil.addStage(i)
         end
 
       end
@@ -624,10 +622,6 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
           clg_coil.setEvaporativeCondenserPumpRatePowerConsumption(OpenStudio::OptionalDouble.new(0))
         end
 
-        #For heat pumps, we handle the crankcase heater using EMS so the heater energy shows up under cooling energy
-        clg_coil.setCrankcaseHeaterCapacity(OpenStudio::OptionalDouble.new(0.0))
-        clg_coil.setMaximumOutdoorDryBulbTemperatureForCrankcaseHeaterOperation(OpenStudio::OptionalDouble.new(10.0))
-
       else
 
         clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
@@ -635,12 +629,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setAvailabilitySchedule(coolingseasonschedule)
         clg_coil.setCondenserType(supply.CondenserType)
         clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
-        clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
-
-        #Multi-speed ACs and HPs, we handle the crankcase heater using EMS so the heater energy shows up under cooling energy
-        clg_coil.setCrankcaseHeaterCapacity(0)
-        clg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(10.0)
-        
+        clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)        
         clg_coil.setFuelType("Electricity")
              
         clg_coil_stage_data.each do |i|
