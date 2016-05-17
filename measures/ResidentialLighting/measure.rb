@@ -344,23 +344,15 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     all_spaces = finished_spaces | garage_spaces | [outside]
     
     all_spaces.each do |space|
-        runner.registerInfo("Processing #{space.to_s}")
         if space.is_a?(String)
-            runner.registerInfo("outside")
             space_design_level = sch.calcDesignLevel(outside_max)
             obj_name_space = "#{obj_name} #{outside}"
         elsif finished_spaces.include?(space)
-            runner.registerInfo("finished space")
             space_design_level = sch.calcDesignLevel(ltg_max) * OpenStudio.convert(space.floorArea, "m^2", "ft^2").get / ffa
             obj_name_space = "#{obj_name} #{space.name.to_s}"
         elsif garage_spaces.include?(space)
-            runner.registerInfo("garage space")
-            runner.registerInfo("#{OpenStudio.convert(space.floorArea, "m^2", "ft^2").get.to_s}")
-            runner.registerInfo("#{gfa.to_s}")
             space_design_level = sch.calcDesignLevel(grg_max) * OpenStudio.convert(space.floorArea, "m^2", "ft^2").get / gfa
             obj_name_space = "#{obj_name} #{space.name.to_s}"
-        else
-            runner.registerInfo("none of the above")
         end
         
         if space.is_a?(String)
@@ -387,7 +379,11 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     end
 
     #reporting final condition of model
-    runner.registerFinalCondition("Lighting has been set with #{ltg_total.round} kWhs annual energy consumption (#{ltg_ann.round} kWhs interior, #{garage_ann.round} kWhs garage, and #{outside_ann.round} kWhs exterior).")
+    garage_str = ""
+    if garage_ann > 0
+        garage_str = ", #{garage_ann.round} kWhs garage,"
+    end
+    runner.registerFinalCondition("Lighting has been set with #{ltg_total.round} kWhs annual energy consumption (#{ltg_ann.round} kWhs interior#{garage_str} and #{outside_ann.round} kWhs exterior).")
     
     return true
  
