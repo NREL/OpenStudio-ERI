@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>2c69a60e-501a-4516-a253-725d23808b2d</uid>
-  <version_id>8cdde294-c0c8-4bee-a7c3-7e837fa22884</version_id>
-  <version_modified>20160512T152631Z</version_modified>
+  <version_id>1adee4c4-feb6-4b07-8691-0df723535e38</version_id>
+  <version_modified>20160517T160624Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -11,45 +11,18 @@
   <modeler_description>Adds a new lighting object that uses the Building America Benchmark schedule.</modeler_description>
   <arguments>
     <argument>
-      <name>selected_ltg</name>
-      <display_name>Lighting Energy Consumption Option</display_name>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <choices>
-        <choice>
-          <value>Benchmark</value>
-          <display_name>Benchmark</display_name>
-        </choice>
-        <choice>
-          <value>Simple</value>
-          <display_name>Simple</display_name>
-        </choice>
-        <choice>
-          <value>Detailed</value>
-          <display_name>Detailed</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>ltg_E</name>
-      <display_name>Simple Interior Lighting Annual Energy Consumption (kWh/yr)</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
       <name>hw_cfl</name>
       <display_name>Hardwired Fraction CFL</display_name>
+      <description>Fraction of all hardwired lamps (interior, garage, and exterior) that are compact fluorescent. Hardwired lighting not specified as CFL, LED, or LFL is assumed to be incandescent.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>0.34</default_value>
     </argument>
     <argument>
       <name>hw_led</name>
       <display_name>Hardwired Fraction LED</display_name>
+      <description>Fraction of all hardwired lamps (interior, garage, and exterior) that are LED. Hardwired lighting not specified as CFL, LED, or LFL is assumed to be incandescent.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -58,6 +31,7 @@
     <argument>
       <name>hw_lfl</name>
       <display_name>Hardwired Fraction LFL</display_name>
+      <description>Fraction of all hardwired lamps (interior, garage, and exterior) that are linear fluorescent. Hardwired lighting not specified as CFL, LED, or LFL is assumed to be incandescent.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -66,14 +40,16 @@
     <argument>
       <name>pg_cfl</name>
       <display_name>Plugin Fraction CFL</display_name>
+      <description>Fraction of all plugin lamps that are compact fluorescent. Plugin lighting not specified as CFL, LED, or LFL is assumed to be incandescent.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>0.34</default_value>
     </argument>
     <argument>
       <name>pg_led</name>
       <display_name>Plugin Fraction LED</display_name>
+      <description>Fraction of all plugin lamps that are LED. Plugin lighting not specified as CFL, LED, or LFL is assumed to be incandescent.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -82,6 +58,7 @@
     <argument>
       <name>pg_lfl</name>
       <display_name>Plugin Fraction LFL</display_name>
+      <description>Fraction of all plugin lamps that are linear fluorescent. Plugin lighting not specified as CFL, LED, or LFL is assumed to be incandescent.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -89,80 +66,43 @@
     </argument>
     <argument>
       <name>in_eff</name>
-      <display_name>Incandescent Efficacy (lm/W))</display_name>
+      <display_name>Incandescent Efficacy</display_name>
+      <description>The ratio of light output from an incandescent lamp to the electric power it consumes.</description>
       <type>Double</type>
+      <units>lm/W</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>15</default_value>
     </argument>
     <argument>
       <name>cfl_eff</name>
-      <display_name>CFL Efficacy (lm/W))</display_name>
+      <display_name>CFL Efficacy</display_name>
+      <description>The ratio of light output from a CFL lamp to the electric power it consumes.</description>
       <type>Double</type>
+      <units>lm/W</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>55</default_value>
     </argument>
     <argument>
       <name>led_eff</name>
-      <display_name>LED Efficacy (lm/W))</display_name>
+      <display_name>LED Efficacy</display_name>
+      <description>The ratio of light output from a LED lamp to the electric power it consumes.</description>
       <type>Double</type>
+      <units>lm/W</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>50</default_value>
+      <default_value>80</default_value>
     </argument>
     <argument>
       <name>lfl_eff</name>
-      <display_name>LFL Efficacy (lm/W))</display_name>
+      <display_name>LFL Efficacy</display_name>
+      <description>The ratio of light output from a LFL lamp to the electric power it consumes.</description>
       <type>Double</type>
+      <units>lm/W</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>88</default_value>
-    </argument>
-    <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>garage_space_type</name>
-      <display_name>Garage space type</display_name>
-      <description>Select the garage space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>garage space type</default_value>
-      <choices>
-        <choice>
-          <value>garage space type</value>
-          <display_name>garage space type</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fbasement_space_type</name>
-      <display_name>Finished Basement space type</display_name>
-      <description>Select the finished basement space type</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>finished basement space type</default_value>
-      <choices>
-        <choice>
-          <value>finished basement space type</value>
-          <display_name>finished basement space type</display_name>
-        </choice>
-      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -189,6 +129,18 @@
       <checksum>74335D8E</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A31A08D6</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0A49920B</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -197,19 +149,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F96EB1FD</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0A95F3D7</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5CFC2180</checksum>
+      <checksum>16C8E7A0</checksum>
     </file>
   </files>
 </measure>
