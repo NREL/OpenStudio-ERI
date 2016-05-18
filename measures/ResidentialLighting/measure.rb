@@ -341,9 +341,8 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     finished_spaces = Geometry.get_finished_spaces(model)
     garage_spaces = Geometry.get_garage_spaces(model)
     outside = 'outside'
-    all_spaces = finished_spaces | garage_spaces | [outside]
     
-    all_spaces.each do |space|
+    (finished_spaces + garage_spaces + [outside]).each do |space|
         if space.is_a?(String)
             space_design_level = sch.calcDesignLevel(outside_max)
             obj_name_space = "#{obj_name} #{outside}"
