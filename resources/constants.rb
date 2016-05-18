@@ -428,6 +428,9 @@ class Constants
   def self.ObjectNameHotTubPump
     return 'residential hot tub pump'
   end
+  def self.ObjectNameLighting
+    return 'residential lighting'
+  end
   def self.ObjectNameMiscPlugLoads
     return 'residential misc plug loads'
   end

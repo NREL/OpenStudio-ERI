@@ -104,29 +104,134 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
+  
+    #make a double argument for central ac cooling rated seer
+    acCoolingInstalledSEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acCoolingInstalledSEER", true)
+    acCoolingInstalledSEER.setDisplayName("Rated SEER")
+    acCoolingInstalledSEER.setUnits("Btu/W-h")
+    acCoolingInstalledSEER.setDescription("Seasonal Energy Efficiency Ratio (SEER) is a measure of equipment energy efficiency over the cooling season.")
+    acCoolingInstalledSEER.setDefaultValue(13.0)
+    args << acCoolingInstalledSEER
 
-    #make a choice argument for central air options
-    ac_display_names = OpenStudio::StringVector.new
-    ac_display_names << "SEER 8"
-    ac_display_names << "SEER 10"
-    ac_display_names << "SEER 13"
-    ac_display_names << "SEER 14"
-    ac_display_names << "SEER 15"
-    ac_display_names << "SEER 16"
-    ac_display_names << "SEER 16 (2 Stage)"
-    ac_display_names << "SEER 17"
-    ac_display_names << "SEER 18"
-    ac_display_names << "SEER 21"
-    ac_display_names << "SEER 24.5"
+    #make a double argument for central ac number of speeds
+    acNumberSpeeds = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acNumberSpeeds", true)
+    acNumberSpeeds.setDisplayName("Number of Speeds")
+    acNumberSpeeds.setUnits("frac")
+    acNumberSpeeds.setDescription("Number of speeds of the compressor.")
+    acNumberSpeeds.setDefaultValue(1.0)
+    args << acNumberSpeeds
+    
+    #make a double argument for central ac eer
+    acCoolingEER = OpenStudio::Ruleset::OSArgument::makeStringArgument("acCoolingEER", true)
+    acCoolingEER.setDisplayName("EER")
+    acCoolingEER.setUnits("kBtu/kWh")
+    acCoolingEER.setDescription("EER (net) from the A test (95 ODB/80 EDB/67 EWB) for each of the compressor speeds.")
+    acCoolingEER.setDefaultValue("11.1")
+    args << acCoolingEER
 
-    #make a string argument for central air options
-    selected_ac = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedac", ac_display_names, true)
-    selected_ac.setDisplayName("Installed SEER")
-    selected_ac.setUnits("Btu/W-h")
-    selected_ac.setDescription("The installed Seasonal Energy Efficiency Ratio (SEER) of the air conditioner, which can be used to account for performance derating or degradation relative to the rated value.")
-    selected_ac.setDefaultValue("SEER 13")
-    args << selected_ac
+    #make a double argument for central ac rated shr
+    acSHRRated = OpenStudio::Ruleset::OSArgument::makeStringArgument("acSHRRated", true)
+    acSHRRated.setDisplayName("Rated SHR")
+    acSHRRated.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity for each of the compressor speeds.")
+    acSHRRated.setDefaultValue("0.73")
+    args << acSHRRated 
+    
+    #make a double argument for central ac capacity ratio
+    acCapacityRatio = OpenStudio::Ruleset::OSArgument::makeStringArgument("acCapacityRatio", true)
+    acCapacityRatio.setDisplayName("Capacity Ratio")
+    acCapacityRatio.setDescription("Capacity divided by rated capacity for each of the compressor speeds.")
+    acCapacityRatio.setDefaultValue("1.0")
+    args << acCapacityRatio
+    
+    #make a double argument for central ac rated air flow rate
+    acRatedAirFlowRate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acRatedAirFlowRate", true)
+    acRatedAirFlowRate.setDisplayName("Rated Air Flow Rate")
+    acRatedAirFlowRate.setUnits("cfm/ton")
+    acRatedAirFlowRate.setDescription("Air flow rate (cfm) per ton of rated capacity.")
+    acRatedAirFlowRate.setDefaultValue(386.1)
+    args << acRatedAirFlowRate
+    
+    #make a double argument for central ac fan speed ratio
+    acFanspeedRatio = OpenStudio::Ruleset::OSArgument::makeStringArgument("acFanspeedRatio", true)
+    acFanspeedRatio.setDisplayName("Fan Speed Ratio")
+    acFanspeedRatio.setDescription("Fan speed divided by fan speed at the compressor speed for which Capacity Ratio = 1.0 for each of the compressor speeds.")
+    acFanspeedRatio.setDefaultValue("1.0")
+    args << acFanspeedRatio
+    
+    #make a double argument for central ac rated supply fan power
+    acSupplyFanPowerRated = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acSupplyFanPowerRated", true)
+    acSupplyFanPowerRated.setDisplayName("Rated Supply Fan Power")
+    acSupplyFanPowerRated.setUnits("W/cfm")
+    acSupplyFanPowerRated.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the outdoor fan under conditions prescribed by AHRI Standard 210/240 for SEER testing.")
+    acSupplyFanPowerRated.setDefaultValue(0.365)
+    args << acSupplyFanPowerRated
+    
+    #make a double argument for central ac installed supply fan power
+    acSupplyFanPowerInstalled = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acSupplyFanPowerInstalled", true)
+    acSupplyFanPowerInstalled.setDisplayName("Installed Supply Fan Power")
+    acSupplyFanPowerInstalled.setUnits("W/cfm")
+    acSupplyFanPowerInstalled.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the outdoor fan for the maximum fan speed under actual operating conditions.")
+    acSupplyFanPowerInstalled.setDefaultValue(0.5)
+    args << acSupplyFanPowerInstalled
+    
+    #make a double argument for central ac condenser type
+    acCondenserType = OpenStudio::Ruleset::OSArgument::makeStringArgument("acCondenserType", true)
+    acCondenserType.setDisplayName("Condenser Type")
+    acCondenserType.setDescription("For evaporatively cooled units, the performance curves are a function of outdoor wetbulb (not drybulb) and entering wetbulb.")
+    acCondenserType.setDefaultValue("aircooled")
+    args << acCondenserType    
+  
+    #make a double argument for central ac crankcase
+    acCrankcase = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acCrankcase", true)
+    acCrankcase.setDisplayName("Crankcase")
+    acCrankcase.setUnits("kW")
+    acCrankcase.setDescription("Capacity of the crankcase heater for the compressor.")
+    acCrankcase.setDefaultValue(0.0)
+    args << acCrankcase
 
+    #make a double argument for central ac crankcase max t
+    acCrankcaseMaxT = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acCrankcaseMaxT", true)
+    acCrankcaseMaxT.setDisplayName("Crankcase Max Temp")
+    acCrankcaseMaxT.setUnits("degrees F")
+    acCrankcaseMaxT.setDescription("Outdoor dry-bulb temperature above which compressor crankcase heating is disabled.")
+    acCrankcaseMaxT.setDefaultValue(55.0)
+    args << acCrankcaseMaxT
+    
+    #make a double argument for central ac 1.5 ton eer capacity derate
+    acEERCapacityDerateFactor1ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acEERCapacityDerateFactor1ton", true)
+    acEERCapacityDerateFactor1ton.setDisplayName("1.5 Ton EER Capacity Derate")
+    acEERCapacityDerateFactor1ton.setDescription("EER multiplier for 1.5 ton air-conditioners.")
+    acEERCapacityDerateFactor1ton.setDefaultValue(1.0)
+    args << acEERCapacityDerateFactor1ton
+    
+    #make a double argument for central ac 2 ton eer capacity derate
+    acEERCapacityDerateFactor2ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acEERCapacityDerateFactor2ton", true)
+    acEERCapacityDerateFactor2ton.setDisplayName("2 Ton EER Capacity Derate")
+    acEERCapacityDerateFactor2ton.setDescription("EER multiplier for 2 ton air-conditioners.")
+    acEERCapacityDerateFactor2ton.setDefaultValue(1.0)
+    args << acEERCapacityDerateFactor2ton
+
+    #make a double argument for central ac 3 ton eer capacity derate
+    acEERCapacityDerateFactor3ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acEERCapacityDerateFactor3ton", true)
+    acEERCapacityDerateFactor3ton.setDisplayName("3 Ton EER Capacity Derate")
+    acEERCapacityDerateFactor3ton.setDescription("EER multiplier for 3 ton air-conditioners.")
+    acEERCapacityDerateFactor3ton.setDefaultValue(1.0)
+    args << acEERCapacityDerateFactor3ton
+
+    #make a double argument for central ac 4 ton eer capacity derate
+    acEERCapacityDerateFactor4ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acEERCapacityDerateFactor4ton", true)
+    acEERCapacityDerateFactor4ton.setDisplayName("4 Ton EER Capacity Derate")
+    acEERCapacityDerateFactor4ton.setDescription("EER multiplier for 4 ton air-conditioners.")
+    acEERCapacityDerateFactor4ton.setDefaultValue(1.0)
+    args << acEERCapacityDerateFactor4ton
+
+    #make a double argument for central ac 5 ton eer capacity derate
+    acEERCapacityDerateFactor5ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acEERCapacityDerateFactor5ton", true)
+    acEERCapacityDerateFactor5ton.setDisplayName("5 Ton EER Capacity Derate")
+    acEERCapacityDerateFactor5ton.setDescription("EER multiplier for 5 ton air-conditioners.")
+    acEERCapacityDerateFactor5ton.setDefaultValue(1.0)
+    args << acEERCapacityDerateFactor5ton
+    
     #make a choice argument for central air cooling output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << "Autosize"
@@ -135,11 +240,11 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     end
 
     #make a string argument for central air cooling output capacity
-    selected_accap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedaccap", cap_display_names, true)
-    selected_accap.setDisplayName("Cooling Output Capacity")
-    selected_accap.setDefaultValue("Autosize")
-    args << selected_accap
-	
+    acCoolingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("acCoolingOutputCapacity", cap_display_names, true)
+    acCoolingOutputCapacity.setDisplayName("Cooling Output Capacity")
+    acCoolingOutputCapacity.setDefaultValue("Autosize")
+    args << acCoolingOutputCapacity    
+    
     return args
   end #end the arguments method
 
@@ -151,27 +256,40 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-	
-    selected_ac = runner.getStringArgumentValue("selectedac",user_arguments)
-    acOutputCapacity = runner.getStringArgumentValue("selectedaccap",user_arguments)
-    if not acOutputCapacity == "Autosize"
+	  
+    acCoolingInstalledSEER = runner.getDoubleArgumentValue("acCoolingInstalledSEER",user_arguments)
+    acNumberSpeeds = runner.getDoubleArgumentValue("acNumberSpeeds",user_arguments)
+    acCoolingEER = runner.getStringArgumentValue("acCoolingEER",user_arguments).split(",").map {|i| i.to_f}
+    acSHRRated = runner.getStringArgumentValue("acSHRRated",user_arguments).split(",").map {|i| i.to_f}
+    acCapacityRatio = runner.getStringArgumentValue("acCapacityRatio",user_arguments).split(",").map {|i| i.to_f}
+    acRatedAirFlowRate = runner.getDoubleArgumentValue("acRatedAirFlowRate",user_arguments)
+    acFanspeedRatio = runner.getStringArgumentValue("acFanspeedRatio",user_arguments).split(",").map {|i| i.to_f}
+    acSupplyFanPowerRated = runner.getDoubleArgumentValue("acSupplyFanPowerRated",user_arguments)
+    acSupplyFanPowerInstalled = runner.getDoubleArgumentValue("acSupplyFanPowerInstalled",user_arguments)
+    acCondenserType = runner.getStringArgumentValue("acCondenserType",user_arguments)
+    acCrankcase = runner.getDoubleArgumentValue("acCrankcase",user_arguments)
+    acCrankcaseMaxT = runner.getDoubleArgumentValue("acCrankcaseMaxT",user_arguments)
+    acEERCapacityDerateFactor1ton = runner.getDoubleArgumentValue("acEERCapacityDerateFactor1ton",user_arguments)
+    acEERCapacityDerateFactor2ton = runner.getDoubleArgumentValue("acEERCapacityDerateFactor2ton",user_arguments)
+    acEERCapacityDerateFactor3ton = runner.getDoubleArgumentValue("acEERCapacityDerateFactor3ton",user_arguments)
+    acEERCapacityDerateFactor4ton = runner.getDoubleArgumentValue("acEERCapacityDerateFactor4ton",user_arguments)
+    acEERCapacityDerateFactor5ton = runner.getDoubleArgumentValue("acEERCapacityDerateFactor5ton",user_arguments)
+    acEERCapacityDerateFactor = [acEERCapacityDerateFactor1ton, acEERCapacityDerateFactor2ton, acEERCapacityDerateFactor3ton, acEERCapacityDerateFactor4ton, acEERCapacityDerateFactor5ton]
+    acOutputCapacity = runner.getStringArgumentValue("acCoolingOutputCapacity",user_arguments)
+    unless acOutputCapacity == "Autosize"
       acOutputCapacity = OpenStudio::convert(acOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
     end
 
-    acCoolingInstalledSEER = {"SEER 8"=>8.0, "SEER 10"=>10.0, "SEER 13"=>13.0, "SEER 14"=>14.0, "SEER 15"=>15.0, "SEER 16"=>16.0, "SEER 16 (2 Stage)"=>16.0, "SEER 17"=>17.0, "SEER 18"=>18.0, "SEER 21"=>21.0, "SEER 24.5"=>24.5}[selected_ac]
-    acNumberSpeeds = {"SEER 8"=>1.0, "SEER 10"=>1.0, "SEER 13"=>1.0, "SEER 14"=>1.0, "SEER 15"=>1.0, "SEER 16"=>1.0, "SEER 16 (2 Stage)"=>2.0, "SEER 17"=>2.0, "SEER 18"=>2.0, "SEER 21"=>2.0, "SEER 24.5"=>4.0}[selected_ac]
-    acRatedAirFlowRate = {"SEER 8"=>386.1, "SEER 10"=>386.1, "SEER 13"=>386.1, "SEER 14"=>386.1, "SEER 15"=>386.1, "SEER 16"=>386.1, "SEER 16 (2 Stage)"=>355.2, "SEER 17"=>355.2, "SEER 18"=>355.2, "SEER 21"=>355.2, "SEER 24.5"=>315.8}[selected_ac]
-    acFanspeedRatio = {"SEER 8"=>[1.0], "SEER 10"=>[1.0], "SEER 13"=>[1.0], "SEER 14"=>[1.0], "SEER 15"=>[1.0], "SEER 16"=>[1.0], "SEER 16 (2 Stage)"=>[0.86,1.0], "SEER 17"=>[0.86,1.0], "SEER 18"=>[0.86,1.0], "SEER 21"=>[0.86,1.0], "SEER 24.5"=>[0.51,0.84,1.0,1.19]}[selected_ac]
-    acCapacityRatio = {"SEER 8"=>[1.0], "SEER 10"=>[1.0], "SEER 13"=>[1.0], "SEER 14"=>[1.0], "SEER 15"=>[1.0], "SEER 16"=>[1.0], "SEER 16 (2 Stage)"=>[0.72,1.0], "SEER 17"=>[0.72,1.0], "SEER 18"=>[0.72,1.0], "SEER 21"=>[0.72,1.0], "SEER 24.5"=>[0.36,0.64,1.0,1.16]}[selected_ac]
-    acCoolingEER = {"SEER 8"=>[7.3], "SEER 10"=>[8.9], "SEER 13"=>[11.1], "SEER 14"=>[12.0], "SEER 15"=>[13.0], "SEER 16"=>[14.0], "SEER 16 (2 Stage)"=>[13.5,12.4], "SEER 17"=>[14.4,13.2], "SEER 18"=>[15.2,14.0], "SEER 21"=>[17.7,15.3], "SEER 24.5"=>[19.2,18.3,16.5,14.6]}[selected_ac]
-    acSupplyFanPowerInstalled = {"SEER 8"=>0.5, "SEER 10"=>0.5, "SEER 13"=>0.5, "SEER 14"=>0.5, "SEER 15"=>0.5, "SEER 16"=>0.5, "SEER 16 (2 Stage)"=>0.3, "SEER 17"=>0.3, "SEER 18"=>0.3, "SEER 21"=>0.3, "SEER 24.5"=>0.3}[selected_ac]
-    acSupplyFanPowerRated = {"SEER 8"=>0.365, "SEER 10"=>0.365, "SEER 13"=>0.365, "SEER 14"=>0.365, "SEER 15"=>0.365, "SEER 16"=>0.14, "SEER 16 (2 Stage)"=>0.14, "SEER 17"=>0.14, "SEER 18"=>0.14, "SEER 21"=>0.14, "SEER 24.5"=>0.14}[selected_ac]
-    acSHRRated = {"SEER 8"=>[0.73], "SEER 10"=>[0.73], "SEER 13"=>[0.73], "SEER 14"=>[0.73], "SEER 15"=>[0.73], "SEER 16"=>[0.73], "SEER 16 (2 Stage)"=>[0.71,0.73], "SEER 17"=>[0.71,0.73], "SEER 18"=>[0.71,0.73], "SEER 21"=>[0.71,0.73], "SEER 24.5"=>[0.98,0.82,0.745,0.77]}[selected_ac]
-    acCondenserType = {"SEER 8"=>"aircooled", "SEER 10"=>"aircooled", "SEER 13"=>"aircooled", "SEER 14"=>"aircooled", "SEER 15"=>"aircooled", "SEER 16"=>"aircooled", "SEER 16 (2 Stage)"=>"aircooled", "SEER 17"=>"aircooled", "SEER 18"=>"aircooled", "SEER 21"=>"aircooled", "SEER 24.5"=>"aircooled"}[selected_ac]
-    acCrankcase = {"SEER 8"=>0.0, "SEER 10"=>0.0, "SEER 13"=>0.0, "SEER 14"=>0.0, "SEER 15"=>0.0, "SEER 16"=>0.0, "SEER 16 (2 Stage)"=>0.0, "SEER 17"=>0.0, "SEER 18"=>0.0, "SEER 21"=>0.0, "SEER 24.5"=>0.0}[selected_ac]
-    acCrankcaseMaxT = {"SEER 8"=>55.0, "SEER 10"=>55.0, "SEER 13"=>55.0, "SEER 14"=>55.0, "SEER 15"=>55.0, "SEER 16"=>55.0, "SEER 16 (2 Stage)"=>55.0, "SEER 17"=>55.0, "SEER 18"=>55.0, "SEER 21"=>55.0, "SEER 24.5"=>55.0}[selected_ac]
-    acEERCapacityDerateFactor = {"SEER 8"=>1.0, "SEER 10"=>1.0, "SEER 13"=>1.0, "SEER 14"=>1.0, "SEER 15"=>1.0, "SEER 16"=>1.0, "SEER 16 (2 Stage)"=>1.0, "SEER 17"=>1.0, "SEER 18"=>1.0, "SEER 21"=>1.0, "SEER 24.5"=>1.0}[selected_ac]
-
+    # error checking
+    unless [1, 2, 4].include? acNumberSpeeds
+      runner.registerError("Invalid number of compressor speeds entered.")
+      return false
+    end
+    unless ( acNumberSpeeds == acCoolingEER.length and acNumberSpeeds == acSHRRated.length and acNumberSpeeds == acCapacityRatio.length and acNumberSpeeds == acFanspeedRatio.length )
+      runner.registerError("Entered wrong length for EER, Rated SHR, Capacity Ratio, or Fan Speed Ratio given the Number of Speeds.")
+      return false
+    end
+      
     coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "CoolingSeasonSchedule")
     if coolingseasonschedule.nil?
         runner.registerError("A cooling season schedule named 'CoolingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
@@ -282,10 +400,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setCondenserType(supply.CondenserType)
         clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
         clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
-
-        #Multi-speed ACs and HPs, we handle the crankcase heater using EMS so the heater energy shows up under cooling energy
-        clg_coil.setCrankcaseHeaterCapacity(0)
-        clg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(10.0)
+        clg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)
+        clg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get)
         
         clg_coil.setFuelType("Electricity")
              
@@ -343,7 +459,8 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         new_htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
         new_htg_coil.setName("DX Heating Coil")
         new_htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(-20)
-        new_htg_coil.setCrankcaseHeaterCapacity(0)
+        new_htg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)
+        new_htg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get)
         new_htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(0)
         new_htg_coil.setDefrostStrategy("Resistive")
         new_htg_coil.setDefrostControl("Timed")

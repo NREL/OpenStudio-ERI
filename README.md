@@ -13,11 +13,9 @@ A number of measures share the same resource files, found in the top-level ```re
 
 To be able to use the rakefile, follow these steps:
 
-1. Run ```gem sources -r https://rubygems.org/```
-2. Run ```gem sources -a http://rubygems.org/```
-3. Run ```gem install bundler```
-4. Download DevKit at http://rubyinstaller.org/downloads/. Choose either the 32-bit or 64-bit version for use with Ruby 2.0 or above, depending on which version of Ruby you installed. Run the installer and extract to a directory (e.g., C:\RubyDevKit). Go to this directory and run ```ruby dk.rb init``` followed by ```ruby dk.rb install```
-5. Run ```bundler```
+1. Run ```gem install bundler```. (If you get an error, you may have to issue the following: ```gem sources -r https://rubygems.org/``` followed by ```gem sources -a http://rubygems.org/```.)
+2. Download DevKit at http://rubyinstaller.org/downloads/. Choose either the 32-bit or 64-bit version for use with Ruby 2.0 or above, depending on which version of Ruby you installed. Run the installer and extract to a directory (e.g., C:\RubyDevKit). Go to this directory and run ```ruby dk.rb init``` followed by ```ruby dk.rb install```
+3. Run ```bundler```
 
 Once setup, you can now run ```rake update_resources``` to update the measures' resource files. You can also run ```rake -T``` to see the list of possible rake tasks.
 
@@ -36,7 +34,7 @@ The New Construction workflow illustrates how to build up a complete residential
 ||4. Set Residential Eaves||
 ||6. Set Residential Overhangs|Window Area|
 ||7. Set Residential Door Area||
-||7. Set Residential Window Area (TODO)||
+||7. Set Residential Window Areas||
 ||8. Set Neighbors||
 |3. Envelope Constructions|1. Set Residential Ceilings/Roofs - Unfinished Attic Constructions||
 ||2. Set Residential Ceilings/Roofs - Finished Roof Construction||
