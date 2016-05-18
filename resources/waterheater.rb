@@ -339,33 +339,36 @@ class Waterheater
         #If auto is picked, get the BA climate zone, 
         #check if the building has a garage/basement, 
         #and assign the water heater location appropriately
-        weather = WeatherProcess.new(model,runner)
         climateZones = model.getClimateZones
+        ba_cz_name = ""
+        climateZones.climateZones.each do |climateZone|
+            if climateZone.institution == Constants.BuildingAmericaClimateZone
+                ba_cz_name = climateZone.value.to_s
+            end
+        end
         living = Geometry.get_default_space(model)
         wh_tz = nil
-        climateZones.climateZones.each do |ba_cz|
-            ba_cz_name = ba_cz.value.to_s
-            if ba_cz_name == "Subarctic" or ba_cz_name == "Very Cold" or ba_cz_name == "Cold"
-                #check if the building has a basement
-                fin_basement = Geometry.get_finished_basement_spaces(model)
-                unfin_basement = Geometry.get_unfinished_basement_spaces(model)
-                #FIXME: always locating the water heater in the first unconditioned space, what if there's multiple
-                if fin_basement.length > 0
-                    wh_tz = fin_basement[0].thermalZone.get.name
-                elsif unfin_basement.length > 0
-                    wh_tz = unfin_basement[0].thermalZone.get.name
-                else #no basement, in living space
-                    wh_tz = living.thermalZone.get.name
-                end
-            elsif ba_cz_name == "Hot-Dry" or ba_cz_name == "Hot-Humid" or ba_cz_name == "Mixed-Dry" or ba_cz_name == "Mixed-Humid" or ba_cz_name == "Marine"
-                garage = Geometry.get_garage_spaces(model)
-                #check if the building has a garage
-                if garage.length > 0
-                    wh_tz = garage[0].thermalZone.get.name
-                else #no garage, in living space
-                    wh_tz = living.thermalZone.get.name
-                end
+        if ba_cz_name == "Hot-Dry" or ba_cz_name == "Hot-Humid"
+            garage = Geometry.get_garage_spaces(model)
+            #check if the building has a garage
+            if garage.length > 0
+                wh_tz = garage[0].thermalZone.get.name
+            else #no garage, in living space
+                wh_tz = living.thermalZone.get.name
             end
+        else
+            #check if the building has a basement
+            fin_basement = Geometry.get_finished_basement_spaces(model)
+            unfin_basement = Geometry.get_unfinished_basement_spaces(model)
+            #FIXME: always locating the water heater in the first unconditioned space, what if there's multiple
+            if fin_basement.length > 0
+                wh_tz = fin_basement[0].thermalZone.get.name
+            elsif unfin_basement.length > 0
+                wh_tz = unfin_basement[0].thermalZone.get.name
+            else #no basement, in living space
+                wh_tz = living.thermalZone.get.name
+            end
+        
         end
         
         return wh_tz
