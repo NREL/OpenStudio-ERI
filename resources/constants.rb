@@ -80,6 +80,9 @@ class Constants
   def self.BAZoneMixedHumid
     return 'Mixed-Humid'
   end
+  def self.BAZoneMixedDry
+    return 'Mixed-Dry'
+  end
   def self.BAZoneMarine
     return 'Marine'
   end
