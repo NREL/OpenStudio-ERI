@@ -307,8 +307,20 @@ task :update_resources do
     if not measure.empty?
         begin
             measure = measure.get
-            result = OpenStudio::Ruleset.getInfo(measure, OpenStudio::Model::OptionalModel.new, OpenStudio::OptionalWorkspace.new)
-            measure.save
+
+            file_updates = measure.checkForUpdatesFiles # checks if any files have been updated
+            xml_updates = measure.checkForUpdatesXML # only checks if xml as loaded has been changed since last save
+      
+            if file_updates || xml_updates
+
+                # try to load the ruby measure
+                info = OpenStudio::Ruleset.getInfo(measure, OpenStudio::Model::OptionalModel.new, OpenStudio::OptionalWorkspace.new)
+                info.update(measure)
+
+                measure.save
+            end
+            
+            
         rescue Exception => e
             puts e.message
         end

@@ -32,7 +32,7 @@ class AddWaterUseEquipmentObject < OpenStudio::Ruleset::ModelUserScript
 		osargument = ruleset::OSArgument
 
 		args = ruleset::OSArgumentVector.new
-
+        x = x
 		# make an argument for the existing plant loop
 		existing_plant_loops = model.getPlantLoops
 		existing_heating_plant_loops = existing_plant_loops.select{ |pl| pl.sizingPlant.loopType() == "Heating"}
