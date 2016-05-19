@@ -71,9 +71,8 @@ The New Construction workflow illustrates how to build up a complete residential
 ||3. Set Residential Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
 ||4. Set Residential Dishwasher|Water Heater, Location|
 ||5. Set Residential Cooking Range (Electric or Gas)|Beds/Baths|
-|7. Lighting|1. TODO||
-||2. TODO||
-|8. Plug Loads|1. Set Residential Plug Loads|Beds/Baths|
+|7. Lighting|1. Set Residential Lighting|Location|
+|8. Misc Loads|1. Set Residential Plug Loads|Beds/Baths|
 ||2. Set Residential Extra Refrigerator||
 ||3. Set Residential Freezer||
 ||4. Set Residential Hot Tub Heater (Electric or Gas)|Beds/Baths|
