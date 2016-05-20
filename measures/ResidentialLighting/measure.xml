@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>2c69a60e-501a-4516-a253-725d23808b2d</uid>
-  <version_id>12d85fad-ff21-4694-abfe-8a8f0f9444a4</version_id>
-  <version_modified>20160519T200947Z</version_modified>
+  <version_id>215ef065-b664-4080-bc76-86380c3863ec</version_id>
+  <version_modified>20160520T154900Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -135,6 +135,17 @@
       <checksum>0A49920B</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>35240557</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -145,6 +156,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>640596F1</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>056321B5</checksum>
     </file>
     <file>
       <filename>unit_conversions.rb</filename>
@@ -162,24 +179,7 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>08929059</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>35240557</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>95E896FE</checksum>
+      <checksum>52EC8CAE</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_interzonal</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>886c7bed-3fe7-4dd0-9e87-4686209fe8a9</version_id>
-  <version_modified>20160519T211056Z</version_modified>
+  <version_id>2d1e5eb1-1144-490b-8ea1-40e8d20eed5a</version_id>
+  <version_modified>20160520T154858Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsInterzonal</class_name>
   <display_name>Set Residential Walls - Interzonal Construction</display_name>

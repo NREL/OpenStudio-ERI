@@ -155,6 +155,21 @@ class MonthWeekdayWeekendSchedule
                 sch.remove
             end
             obj.setNumberofPeopleSchedule(@schedule)
+        elsif obj.is_a? OpenStudio::Model::ThermostatSetpointDualSetpoint
+            if @schedule.name.to_s.downcase.include? "heating"
+              if not obj.heatingSetpointTemperatureSchedule.empty?
+                  sch = obj.heatingSetpointTemperatureSchedule.get
+                  sch.remove
+              end
+              obj.setHeatingSetpointTemperatureSchedule(@schedule)
+            end
+            if @schedule.name.to_s.downcase.include? "cooling"
+              if not obj.coolingSetpointTemperatureSchedule.empty?
+                  sch = obj.coolingSetpointTemperatureSchedule.get
+                  sch.remove
+              end
+              obj.setCoolingSetpointTemperatureSchedule(@schedule)
+            end
         else
             if not obj.schedule.empty?
                 sch = obj.schedule.get

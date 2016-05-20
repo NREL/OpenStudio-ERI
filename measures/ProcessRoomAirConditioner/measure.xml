@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>236a3474-4a5c-4418-9e68-e0e249b41e39</version_id>
-  <version_modified>20160519T211057Z</version_modified>
+  <version_id>45b33f55-e5e2-4a82-ad7e-6de14742c4f5</version_id>
+  <version_modified>20160520T154859Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>

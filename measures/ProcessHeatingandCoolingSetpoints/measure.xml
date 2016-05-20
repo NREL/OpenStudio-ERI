@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heatingand_cooling_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>5302ef82-1f5e-42be-a7ab-a5aee8f12659</version_id>
-  <version_modified>20160519T211057Z</version_modified>
+  <version_id>b9b34e28-6f7a-4369-aa5f-1fad940f75ed</version_id>
+  <version_modified>20160520T154859Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingandCoolingSetpoints</class_name>
   <display_name>Set Residential Heating/Cooling Setpoints and Schedules</display_name>
@@ -11,24 +11,44 @@
   <modeler_description>This measure creates HeatingSeasonSchedule and CoolingSeasonSchedule ruleset objects. Schedule values are populated based on information contained in the EPW file. This measure also creates HeatingSetPoint and CoolingSetPoint ruleset objects. Schedule values are populated based on information input by the user as well as contained in the HeatingSeasonSchedule and CoolingSeasonSchedule. The heating and cooling setpoint schedules are added to the living zone's thermostat.</modeler_description>
   <arguments>
     <argument>
-      <name>userdefinedhsp</name>
-      <display_name>Heating Set Point: Constant Setpoint</display_name>
-      <description>Constant heating setpoint for every hour.</description>
-      <type>Double</type>
+      <name>htg_wkdy</name>
+      <display_name>Weekday Heating Setpoint Schedule</display_name>
+      <description>Specify the 24-hour weekday heating schedule.</description>
+      <type>String</type>
       <units>degrees F</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>71</default_value>
+      <default_value>65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0,</default_value>
     </argument>
     <argument>
-      <name>userdefinedcsp</name>
-      <display_name>Cooling Set Point: Constant Setpoint</display_name>
-      <description>Constant cooling setpoint for every hour.</description>
-      <type>Double</type>
+      <name>htg_wked</name>
+      <display_name>Weekend Heating Setpoint Schedule</display_name>
+      <description>Specify the 24-hour weekend heating schedule.</description>
+      <type>String</type>
       <units>degrees F</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>76</default_value>
+      <default_value>65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0,</default_value>
+    </argument>
+    <argument>
+      <name>clg_wkdy</name>
+      <display_name>Weekday Cooling Setpoint Schedule</display_name>
+      <description>Specify the 24-hour weekday cooling schedule.</description>
+      <type>String</type>
+      <units>degrees F</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0</default_value>
+    </argument>
+    <argument>
+      <name>clg_wked</name>
+      <display_name>Weekend Cooling Setpoint Schedule</display_name>
+      <description>Specify the 24-hour weekend cooling schedule.</description>
+      <type>String</type>
+      <units>degrees F</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0</default_value>
     </argument>
     <argument>
       <name>selectedheating</name>
@@ -105,23 +125,6 @@
       <checksum>640596F1</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>F4FDE04C</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>08929059</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -132,6 +135,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0A49920B</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>24577FE8</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>52EC8CAE</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>056321B5</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>

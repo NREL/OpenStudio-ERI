@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>4579ffd2-6017-4dfb-bdec-136ff83f6129</version_id>
-  <version_modified>20160519T211049Z</version_modified>
+  <version_id>a28d384c-d59e-4512-a267-8a7514803408</version_id>
+  <version_modified>20160520T154854Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
   <display_name>Set Residential Oil Tank Water Heater</display_name>
@@ -137,22 +137,10 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>08929059</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0A49920B</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07473538</checksum>
     </file>
     <file>
       <version>
@@ -164,6 +152,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>ED064A51</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>52EC8CAE</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07473538</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>

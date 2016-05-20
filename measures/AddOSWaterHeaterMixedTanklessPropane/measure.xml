@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_propane</name>
   <uid>0278a4e0-d473-46a4-bfe4-33e92ca0a147</uid>
-  <version_id>2a49388d-ecdf-490f-949e-f3059a1735eb</version_id>
-  <version_modified>20160519T211050Z</version_modified>
+  <version_id>0ffe05f2-f19c-4032-815c-7b8c058c9fec</version_id>
+  <version_modified>20160520T154854Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessPropane</class_name>
   <display_name>Set Residential Propane Tankless Water Heater</display_name>
@@ -103,40 +103,10 @@
   </attributes>
   <files>
     <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>640596F1</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCBEF242</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>08929059</checksum>
-    </file>
-    <file>
       <filename>AddOSWaterHeaterMixedTanklessPropane_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>42374938</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D4E9327D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0A49920B</checksum>
     </file>
     <file>
       <version>
@@ -150,16 +120,46 @@
       <checksum>FA1CCFC2</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2D59FB8C</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0A49920B</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>640596F1</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCBEF242</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D4E9327D</checksum>
+    </file>
+    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>07473538</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2D59FB8C</checksum>
+      <checksum>52EC8CAE</checksum>
     </file>
   </files>
 </measure>

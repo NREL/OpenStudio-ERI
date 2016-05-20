@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater</name>
   <uid>29865d0a-e979-4f09-87b9-7fa7154b9833</uid>
-  <version_id>2c965e6f-934b-48c9-9ffd-00b7ea8f6d10</version_id>
-  <version_modified>20160519T211050Z</version_modified>
+  <version_id>50523e19-3ba0-4691-b01a-33f58435c361</version_id>
+  <version_modified>20160520T154855Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolHeater</class_name>
   <display_name>Set Residential Pool Electric Heater</display_name>
@@ -120,7 +120,7 @@
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>95E896FE</checksum>
+      <checksum>056321B5</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>

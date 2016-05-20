@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>60ec11c9-c44b-4fe5-8bc3-c5a8bb2b6452</version_id>
-  <version_modified>20160519T211049Z</version_modified>
+  <version_id>86cd77e6-e780-42ad-ad8c-b4f98d980101</version_id>
+  <version_modified>20160520T154853Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageElectric</class_name>
   <display_name>Set Residential Electric Tank Water Heater</display_name>
@@ -107,22 +107,10 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>08929059</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0A49920B</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07473538</checksum>
     </file>
     <file>
       <version>
@@ -134,6 +122,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>D6D96E21</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>52EC8CAE</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07473538</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>

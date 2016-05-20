@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>231f63f0-51af-468a-a7d1-d940e0ca0564</version_id>
-  <version_modified>20160519T211056Z</version_modified>
+  <version_id>50b868c2-25a4-4ecf-b35c-77c3395afd0e</version_id>
+  <version_modified>20160520T154858Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsPartition</class_name>
   <display_name>Set Residential Walls - Partition Construction</display_name>

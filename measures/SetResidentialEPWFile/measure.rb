@@ -178,6 +178,43 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
         runner.registerInfo("No daylight saving time set.")
     end
 
+    # ----------------
+    # Set ground temperatures
+    # ----------------  
+    
+    # This correlation is the same that is used in DOE-2's src\WTH.f file, subroutine GTEMP.
+    monthly_temps = weather.data.MonthlyAvgDrybulbs
+    annual_temp = weather.data.AnnualAvgDrybulb    
+    
+    ground_temps = weather._getGroundTemperatures(monthly_temps, annual_temp)
+    
+    s_gt_bs = OpenStudio::Model::SiteGroundTemperatureBuildingSurface.new(model)
+    s_gt_bs.setJanuaryGroundTemperature(OpenStudio::convert(ground_temps[0],"F","C").get)
+    s_gt_bs.setFebruaryGroundTemperature(OpenStudio::convert(ground_temps[1],"F","C").get)
+    s_gt_bs.setMarchGroundTemperature(OpenStudio::convert(ground_temps[2],"F","C").get)
+    s_gt_bs.setAprilGroundTemperature(OpenStudio::convert(ground_temps[3],"F","C").get)
+    s_gt_bs.setMayGroundTemperature(OpenStudio::convert(ground_temps[4],"F","C").get)
+    s_gt_bs.setJuneGroundTemperature(OpenStudio::convert(ground_temps[5],"F","C").get)
+    s_gt_bs.setJulyGroundTemperature(OpenStudio::convert(ground_temps[6],"F","C").get)
+    s_gt_bs.setAugustGroundTemperature(OpenStudio::convert(ground_temps[7],"F","C").get)
+    s_gt_bs.setSeptemberGroundTemperature(OpenStudio::convert(ground_temps[8],"F","C").get)
+    s_gt_bs.setOctoberGroundTemperature(OpenStudio::convert(ground_temps[9],"F","C").get)
+    s_gt_bs.setNovemberGroundTemperature(OpenStudio::convert(ground_temps[10],"F","C").get)
+    s_gt_bs.setDecemberGroundTemperature(OpenStudio::convert(ground_temps[11],"F","C").get)
+    s_gt_d = OpenStudio::Model::SiteGroundTemperatureDeep.new(model)
+    s_gt_d.setJanuaryDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setFebruaryDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setMarchDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setAprilDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setMayDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setJuneDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setJulyDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setAugustDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setSeptemberDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setOctoberDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setNovemberDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)
+    s_gt_d.setDecemberDeepGroundTemperature(OpenStudio::convert(annual_temp,"F","C").get)    
+    
     # report final condition
     final_design_days = model.getDesignDays
     if site.weatherFile.is_initialized

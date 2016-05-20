@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>bf641b2a-fab5-4249-868f-775d126f42ea</version_id>
-  <version_modified>20160519T211051Z</version_modified>
+  <version_id>0ed9b16d-790c-4ead-af50-fc95dd3a67af</version_id>
+  <version_modified>20160520T154856Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>

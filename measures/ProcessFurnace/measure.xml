@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>1abbc58e-b22a-46c9-a215-0e80b8775db6</version_id>
-  <version_modified>20160519T211057Z</version_modified>
+  <version_id>a5797d58-4caf-4474-bc15-c72808f70b48</version_id>
+  <version_modified>20160520T154859Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>

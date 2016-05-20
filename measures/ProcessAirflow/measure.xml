@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>d91a01ed-4219-4407-8033-2e631462d817</version_id>
-  <version_modified>20160519T211051Z</version_modified>
+  <version_id>bc79f875-a859-4306-b5cf-aff45ae86724</version_id>
+  <version_modified>20160520T154855Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -843,12 +843,6 @@
       <checksum>882FBFF1</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>08929059</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -859,6 +853,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0A49920B</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>52EC8CAE</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
