@@ -3,7 +3,7 @@
 # Annual schedule defined by 12 24-hour values
 class HourlyByMonthSchedule
 
-    def initialize(month_by_hour_values, model, sch_name, runner)
+    def initialize(model, runner, sch_name, month_by_hour_values, normalize_values=true)
         @validated = true
         @model = model
         @runner = runner
@@ -12,7 +12,11 @@ class HourlyByMonthSchedule
         if not @validated
             return
         end
-        @maxval = calcMaxval()
+        if normalize_values
+            @maxval = calcMaxval()
+        else
+            @maxval = 1.0
+        end
         @schedule = createSchedule()
     end
     
@@ -73,7 +77,7 @@ class HourlyByMonthSchedule
             end
 
             schedule = OpenStudio::Model::ScheduleRuleset.new(@model)
-            schedule.setName(@sch_name + " annual schedule")
+            schedule.setName(@sch_name)
             
             for m in 1..12
                 date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
@@ -113,8 +117,8 @@ end
 # Annual schedule defined by 24 weekday hourly values, 24 weekend hourly values, and 12 monthly values
 class MonthWeekdayWeekendSchedule
 
-    def initialize(weekday_hourly_values, weekend_hourly_values, monthly_values, model, sch_name, runner,
-                   mult_weekday=1.0, mult_weekend=1.0)
+    def initialize(model, runner, sch_name, weekday_hourly_values, weekend_hourly_values, monthly_values, 
+                   mult_weekday=1.0, mult_weekend=1.0, normalize_values=true)
         @validated = true
         @model = model
         @runner = runner
@@ -127,11 +131,16 @@ class MonthWeekdayWeekendSchedule
         if not @validated
             return
         end
-        @weekday_hourly_values = normalizeSumToOne(@weekday_hourly_values)
-        @weekend_hourly_values = normalizeSumToOne(@weekend_hourly_values)
-        @monthly_values = normalizeAvgToOne(@monthly_values)
-        @maxval = calcMaxval()
-        @schadjust = calcSchadjust()
+        if normalize_values
+            @weekday_hourly_values = normalizeSumToOne(@weekday_hourly_values)
+            @weekend_hourly_values = normalizeSumToOne(@weekend_hourly_values)
+            @monthly_values = normalizeAvgToOne(@monthly_values)
+            @maxval = calcMaxval()
+            @schadjust = calcSchadjust()
+        else
+            @maxval = 1.0
+            @schadjust = 1.0
+        end
         @schedule = createSchedule()
     end
   
@@ -255,7 +264,7 @@ class MonthWeekdayWeekendSchedule
             end
 
             schedule = OpenStudio::Model::ScheduleRuleset.new(@model)
-            schedule.setName(@sch_name + " annual schedule")
+            schedule.setName(@sch_name)
             
             for m in 1..12
                 date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
@@ -316,11 +325,12 @@ end
 
 class HotWaterSchedule
 
-    def initialize(runner, model, num_bedrooms, unit_num, file_prefix, sch_name, target_water_temperature, measure_dir)
+    def initialize(model, runner, sch_name, temperature_sch_name, num_bedrooms, unit_num, file_prefix, target_water_temperature, measure_dir)
         @validated = true
         @model = model
         @runner = runner
         @sch_name = sch_name
+        @temperature_sch_name = temperature_sch_name
         @num_bedrooms = num_bedrooms.to_i
         @unit_index = unit_num % 10
         @file_prefix = file_prefix
@@ -374,7 +384,7 @@ class HotWaterSchedule
         end
         temperature_sch = OpenStudio::Model::ScheduleConstant.new(@model)
         temperature_sch.setValue(@target_water_temperature)
-        temperature_sch.setName(@sch_name + "_temperature_schedule")
+        temperature_sch.setName(@temperature_sch_name)
         obj.waterUseEquipmentDefinition.setTargetTemperatureSchedule(temperature_sch)
     end
     
@@ -477,7 +487,7 @@ class HotWaterSchedule
             time_series = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(data), "")
             
             schedule = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series, @model).get
-            schedule.setName(@sch_name + "_annual_schedule")
+            schedule.setName(@sch_name)
             
             return schedule
         end

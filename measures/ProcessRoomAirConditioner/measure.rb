@@ -32,7 +32,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description of modeling approach
   def modeler_description
-    return "This measure parses the IDF for the CoolingSeasonSchedule. Any cooling components are removed from any existing air loops or zones. Any existing air loops are also removed. An HVAC packaged terminal air conditioner is added to the living zone."
+    return "This measure parses the IDF for the #{Constants.ObjectNameCoolingSeason}. Any cooling components are removed from any existing air loops or zones. Any existing air loops are also removed. An HVAC packaged terminal air conditioner is added to the living zone."
   end
 
   # define the arguments that the user will input
@@ -89,9 +89,9 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     supply = Supply.new
     curves = Curves.new
 
-    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "CoolingSeasonSchedule")
+    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, Constants.ObjectNameCoolingSeason)
     if coolingseasonschedule.nil?
-        runner.registerError("A cooling season schedule named 'CoolingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        runner.registerError("A cooling season schedule named '#{Constants.ObjectNameCoolingSeason}' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
         return false
     end
     

@@ -72,7 +72,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description of modeling approach
   def modeler_description
-    return "This measure parses the OSM for the HeatingSeasonSchedule. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. A boiler along with constant speed pump and water baseboard coils are added to a hot water plant loop."
+    return "This measure parses the OSM for the #{Constants.ObjectNameHeatingSeason}. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. A boiler along with constant speed pump and water baseboard coils are added to a hot water plant loop."
   end
 
   # define the arguments that the user will input
@@ -201,9 +201,9 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     end
     boilerDesignTemp = runner.getDoubleArgumentValue("boilerDesignTemp",user_arguments)
 
-    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
+    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, Constants.ObjectNameHeatingSeason)
     if heatingseasonschedule.nil?
-        runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        runner.registerError("A heating season schedule named '#{Constants.ObjectNameHeatingSeason}' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
         return false
     end 
     

@@ -26,7 +26,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "This measure creates HeatingSeasonSchedule and CoolingSeasonSchedule ruleset objects. Schedule values are populated based on information contained in the EPW file. This measure also creates HeatingSetPoint and CoolingSetPoint ruleset objects. Schedule values are populated based on information input by the user as well as contained in the HeatingSeasonSchedule and CoolingSeasonSchedule. The heating and cooling setpoint schedules are added to the living zone's thermostat."
+    return "This measure creates #{Constants.ObjectNameHeatingSeason} and #{Constants.ObjectNameCoolingSeason} ruleset objects. Schedule values are populated based on information contained in the EPW file. This measure also creates #{Constants.ObjectNameHeatingSetpoint} and #{Constants.ObjectNameCoolingSetpoint} ruleset objects. Schedule values are populated based on information input by the user as well as contained in the #{Constants.ObjectNameHeatingSeason} and #{Constants.ObjectNameCoolingSeason}. The heating and cooling setpoint schedules are added to the living zone's thermostat."
   end     
   
   #define the arguments that the user will input
@@ -105,30 +105,8 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     
     heating_season, cooling_season = HelperMethods.calc_heating_and_cooling_seasons(weather)
     
-    heatingseasonschedule = MonthWeekdayWeekendSchedule.new(Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), heating_season.join(", "), model, "HeatingSeasonSchedule", runner)
-    coolingseasonschedule = MonthWeekdayWeekendSchedule.new(Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), cooling_season.join(", "), model, "CoolingSeasonSchedule", runner)
-
-    # get the heating and cooling season schedules
-    heating_season = {}
-    cooling_season = {}
-    scheduleRulesets = model.getScheduleRulesets
-    scheduleRulesets.each do |scheduleRuleset|
-      if scheduleRuleset.name.to_s == "HeatingSeasonSchedule"
-        scheduleRules = scheduleRuleset.scheduleRules
-        scheduleRules.each do |scheduleRule|
-          daySchedule = scheduleRule.daySchedule
-          values = daySchedule.values
-          heating_season[scheduleRule.name.to_s] = values[0]
-        end
-      elsif scheduleRuleset.name.to_s == "CoolingSeasonSchedule"
-        scheduleRules = scheduleRuleset.scheduleRules
-        scheduleRules.each do |scheduleRule|
-          daySchedule = scheduleRule.daySchedule
-          values = daySchedule.values
-          cooling_season[scheduleRule.name.to_s] = values[0]
-        end
-      end
-    end
+    heatingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSeason, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), heating_season.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+    coolingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSeason, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), cooling_season.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
 
     # Thermostatic Control type schedule
     if selectedheating and selectedcooling
@@ -148,7 +126,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     
     htg_monthly_sch = Array.new(12, 1)
     for m in 1..12
-      if heating_season["HeatingSeasonSchedule%02d" % m.to_s] == 1.0
+      if heating_season[m-1] == 1.0
         htg_monthly_sch[m-1] = 1
       else
         htg_monthly_sch[m-1] = -10000
@@ -158,7 +136,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     
     clg_monthly_sch = Array.new(12, 1)
     for m in 1..12
-      if cooling_season["CoolingSeasonSchedule%02d" % m.to_s] == 1.0
+      if cooling_season[m-1] == 1.0
         clg_monthly_sch[m-1] = 1
       else
         clg_monthly_sch[m-1] = 10000
@@ -166,8 +144,8 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     end
     clg_monthly_sch = clg_monthly_sch.join(", ")
     
-    heatingsetpoint = MonthWeekdayWeekendSchedule.new(htg_wkdy, htg_wked, htg_monthly_sch, model, "HeatingSetPoint", runner)
-    coolingsetpoint = MonthWeekdayWeekendSchedule.new(clg_wkdy, clg_wked, clg_monthly_sch, model, "CoolingSetPoint", runner)
+    heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy, htg_wked, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+    coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy, clg_wked, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
 
     if not heatingsetpoint.validated? or not coolingsetpoint.validated?
       return false

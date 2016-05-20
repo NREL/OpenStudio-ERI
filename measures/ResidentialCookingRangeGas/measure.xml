@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>33d8c300-8f2b-4d36-b6cc-545422c7b407</uid>
-  <version_id>47f22ac8-5fb0-4b67-9a53-ff2cafb31a1d</version_id>
-  <version_modified>20160520T154900Z</version_modified>
+  <version_id>6de91c94-81ec-4ddb-8dae-2a806d4e5777</version_id>
+  <version_modified>20160520T220936Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Set Residential Gas Cooking Range</display_name>
@@ -129,6 +129,12 @@
       <checksum>0A49920B</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BE51CB1C</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -137,19 +143,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7E9937F3</checksum>
+      <checksum>9EC94D84</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>056321B5</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2D59FB8C</checksum>
+      <checksum>F670C28B</checksum>
     </file>
   </files>
 </measure>

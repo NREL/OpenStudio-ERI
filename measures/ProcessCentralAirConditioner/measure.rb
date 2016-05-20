@@ -98,7 +98,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "This measure parses the OSM for the CoolingSeasonSchedule. Any cooling components are removed from any existing air loops or zones. Any existing air loops are also removed. A cooling DX coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
+    return "This measure parses the OSM for the #{Constants.ObjectNameCoolingSeason}. Any cooling components are removed from any existing air loops or zones. Any existing air loops are also removed. A cooling DX coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
   end   
   
   #define the arguments that the user will input
@@ -290,9 +290,9 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
       return false
     end
       
-    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "CoolingSeasonSchedule")
+    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, Constants.ObjectNameCoolingSeason)
     if coolingseasonschedule.nil?
-        runner.registerError("A cooling season schedule named 'CoolingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        runner.registerError("A cooling season schedule named '#{Constants.ObjectNameCoolingSeason}' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
         return false
     end   
     

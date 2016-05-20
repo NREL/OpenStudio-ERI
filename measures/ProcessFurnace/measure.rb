@@ -71,7 +71,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "This measure parses the OSM for the HeatingSeasonSchedule. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
+    return "This measure parses the OSM for the #{Constants.ObjectNameHeatingSeason}. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. An electric or gas heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
   end   
   
   #define the arguments that the user will input
@@ -148,9 +148,9 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     furnaceMaxSupplyTemp = runner.getDoubleArgumentValue("userdefinedmaxtemp",user_arguments)
     furnaceInstalledSupplyFanPower = runner.getDoubleArgumentValue("userdefinedfanpower",user_arguments)
 
-    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
+    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, Constants.ObjectNameHeatingSeason)
     if heatingseasonschedule.nil?
-      runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+      runner.registerError("A heating season schedule named '#{Constants.ObjectNameHeatingSeason}' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
       return false
     end    
     

@@ -34,7 +34,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description of modeling approach
   def modeler_description
-    return "This measure parses the OSM for the HeatingSeasonSchedule and CoolingSeasonSchedule. Any supply components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. A heating DX coil, cooling DX coil, electric supplemental heating coil, and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
+    return "This measure parses the OSM for the #{Constants.ObjectNameHeatingSeason} and #{Constants.ObjectNameCoolingSeason}. Any supply components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. A heating DX coil, cooling DX coil, electric supplemental heating coil, and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
   end
 
   # define the arguments that the user will input
@@ -235,10 +235,10 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
       miniSplitSupplementalHeatingOutputCapacity = OpenStudio::convert(miniSplitSupplementalHeatingOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end
     
-    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
-    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "CoolingSeasonSchedule")
+    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, Constants.ObjectNameHeatingSeason)
+    coolingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, Constants.ObjectNameCoolingSeason)
     if heatingseasonschedule.nil? or coolingseasonschedule.nil?
-        runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' and/or cooling season schedule named 'CoolingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        runner.registerError("A heating season schedule named '#{Constants.ObjectNameHeatingSeason}' and/or cooling season schedule named '#{Constants.ObjectNameCoolingSeason}' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
         return false
     end
         

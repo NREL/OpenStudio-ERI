@@ -25,7 +25,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "This measure parses the OSM for the HeatingSeasonSchedule. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists."
+    return "This measure parses the OSM for the #{Constants.ObjectNameHeatingSeason}. Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists."
   end   
   
   #define the arguments that the user will input
@@ -71,9 +71,9 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end
 
-    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, "HeatingSeasonSchedule")
+    heatingseasonschedule = HelperMethods.get_heating_or_cooling_season_schedule_object(model, runner, Constants.ObjectNameHeatingSeason)
     if heatingseasonschedule.nil?
-        runner.registerError("A heating season schedule named 'HeatingSeasonSchedule' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
+        runner.registerError("A heating season schedule named '#{Constants.ObjectNameHeatingSeason}' has not yet been assigned. Apply the 'Set Residential Heating/Cooling Setpoints and Schedules' measure first.")
         return false
     end
    

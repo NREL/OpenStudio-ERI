@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>3517e9bd-f1c7-4c51-9ee8-dd584bef1ae6</version_id>
-  <version_modified>20160520T154900Z</version_modified>
+  <version_id>5881b991-ecd3-4643-8195-d5ef92eed53c</version_id>
+  <version_modified>20160520T220937Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
@@ -137,8 +137,8 @@
     <file>
       <version>
         <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
+        <identifier>1.11.3</identifier>
+        <min_compatible>1.11.3</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
@@ -149,7 +149,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2D59FB8C</checksum>
+      <checksum>BE51CB1C</checksum>
     </file>
   </files>
 </measure>

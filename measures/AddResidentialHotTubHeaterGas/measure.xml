@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater</name>
   <uid>65550b9d-c0bf-405b-9229-dc63721eb887</uid>
-  <version_id>ee219545-2cc9-43ec-b27b-4a7b98ba3617</version_id>
-  <version_modified>20160520T154855Z</version_modified>
+  <version_id>b91afaf2-0fa4-4d11-91c2-f681b00f4b8e</version_id>
+  <version_modified>20160520T220926Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialHotTubHeater</class_name>
   <display_name>Set Residential Hot Tub Gas Heater</display_name>
@@ -106,6 +106,12 @@
       <checksum>0A49920B</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BE51CB1C</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -114,19 +120,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>545E6122</checksum>
+      <checksum>09DF1CD9</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>056321B5</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2D59FB8C</checksum>
+      <checksum>F670C28B</checksum>
     </file>
   </files>
 </measure>
