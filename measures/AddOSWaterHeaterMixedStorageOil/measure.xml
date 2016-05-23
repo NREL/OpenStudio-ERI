@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>74386d0e-2894-4325-9742-167307fbff47</version_id>
-  <version_modified>20160520T220924Z</version_modified>
+  <version_id>d65a3a32-e328-47f3-a7a0-1a4f108385f8</version_id>
+  <version_modified>20160523T182114Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
   <display_name>Set Residential Oil Tank Water Heater</display_name>
@@ -137,12 +137,6 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0A49920B</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -170,6 +164,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BE51CB1C</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>75AC76FD</checksum>
     </file>
   </files>
 </measure>

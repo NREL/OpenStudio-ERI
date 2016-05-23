@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>47fcce81-b034-4693-9f95-6a67b044d30a</version_id>
-  <version_modified>20160520T220928Z</version_modified>
+  <version_id>f87c70cb-e66c-4760-8f9b-73d47e2fcae0</version_id>
+  <version_modified>20160523T182256Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -565,7 +565,7 @@
       <display_name>Living thermal zone</display_name>
       <description>Select the living thermal zone</description>
       <type>Choice</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>living zone</default_value>
       <choices>
@@ -580,7 +580,7 @@
       <display_name>Garage thermal zone</display_name>
       <description>Select the garage thermal zone</description>
       <type>Choice</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>garage zone</default_value>
       <choices>
@@ -595,7 +595,7 @@
       <display_name>Finished Basement thermal zone</display_name>
       <description>Select the finished basement thermal zone</description>
       <type>Choice</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>finished basement zone</default_value>
       <choices>
@@ -610,7 +610,7 @@
       <display_name>Unfinished Basement thermal zone</display_name>
       <description>Select the unfinished basement thermal zone</description>
       <type>Choice</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>unfinished basement zone</default_value>
       <choices>
@@ -625,7 +625,7 @@
       <display_name>Crawlspace thermal zone</display_name>
       <description>Select the crawlspace thermal zone</description>
       <type>Choice</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>crawl zone</default_value>
       <choices>
@@ -640,7 +640,7 @@
       <display_name>Unfinished Attic thermal zone</display_name>
       <description>Select the unfinished attic thermal zone</description>
       <type>Choice</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>unfinished attic zone</default_value>
       <choices>
@@ -832,27 +832,10 @@
       <checksum>640596F1</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>882FBFF1</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D4E9327D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0A49920B</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
@@ -865,6 +848,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BE51CB1C</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>75AC76FD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>81A78664</checksum>
     </file>
   </files>
 </measure>

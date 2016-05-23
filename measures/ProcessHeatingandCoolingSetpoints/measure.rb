@@ -98,6 +98,11 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     selectedheating = runner.getBoolArgumentValue("selectedheating",user_arguments)
     selectedcooling = runner.getBoolArgumentValue("selectedcooling",user_arguments)    
     
+    if not selectedheating and not selectedcooling
+      runner.registerWarning("No thermostat added because no heating and no cooling.")
+      return true
+    end      
+    
     weather = WeatherProcess.new(model,runner)
     if weather.error?
       return false
@@ -106,23 +111,21 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     heating_season, cooling_season = HelperMethods.calc_heating_and_cooling_seasons(weather)
     
     heatingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSeason, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), heating_season.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-    coolingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSeason, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), cooling_season.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-
-    # Thermostatic Control type schedule
-    if selectedheating and selectedcooling
-      controlType = 4 # Dual Setpoint (Heating and Cooling) with deadband
-    elsif selectedcooling
-      controlType = 2 # Single Cooling Setpoint
-    elsif selectedheating
-      controlType = 1 # Single Heating Setpoint
-    else
-      controlType = 0 # Uncontrolled
-    end    
+    coolingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSeason, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), cooling_season.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)  
     
-    htg_wkdy = htg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
-    htg_wked = htg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
-    clg_wkdy = clg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
-    clg_wked = clg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
+    htg_wkdy = htg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
+    htg_wked = htg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
+    clg_wkdy = clg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
+    clg_wked = clg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
+    
+    htg_wd = []
+    htg_we = []
+    clg_wd = []
+    clg_we = []
+    htg_wd = htg_wkdy.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : h}.join(", ")
+    htg_we = htg_wked.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : h}.join(", ")
+    clg_wd = htg_wkdy.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : c}.join(", ")
+    clg_we = htg_wked.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : c}.join(", ")
     
     htg_monthly_sch = Array.new(12, 1)
     for m in 1..12
@@ -144,8 +147,8 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     end
     clg_monthly_sch = clg_monthly_sch.join(", ")
     
-    heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy, htg_wked, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-    coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy, clg_wked, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+    heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wd, htg_we, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+    coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wd, clg_we, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
 
     if not heatingsetpoint.validated? or not coolingsetpoint.validated?
       return false
@@ -163,16 +166,12 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
       thermostatsetpointdualsetpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
       thermostatsetpointdualsetpoint.setName("Living Zone Temperature SP")
 
-      if controlType == 4 or controlType == 2 or controlType == 1
-
-        heatingsetpoint.setSchedule(thermostatsetpointdualsetpoint)
-        coolingsetpoint.setSchedule(thermostatsetpointdualsetpoint)
-      
-        finished_zone.setThermostatSetpointDualSetpoint(thermostatsetpointdualsetpoint)
-      
-        runner.registerInfo("Set the thermostat '#{finished_zone.thermostatSetpointDualSetpoint.get.name}' for thermal zone '#{finished_zone.name}'")
-
-      end
+      heatingsetpoint.setSchedule(thermostatsetpointdualsetpoint)
+      coolingsetpoint.setSchedule(thermostatsetpointdualsetpoint)
+    
+      finished_zone.setThermostatSetpointDualSetpoint(thermostatsetpointdualsetpoint)
+    
+      runner.registerInfo("Set the thermostat '#{finished_zone.thermostatSetpointDualSetpoint.get.name}' for thermal zone '#{finished_zone.name}'")
 
     end
 

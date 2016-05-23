@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_water_use_equipment_object</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38c</uid>
-  <version_id>9490703b-e0e4-41ba-b3c4-bf87e9fb36e1</version_id>
-  <version_modified>20160520T220923Z</version_modified>
+  <version_id>7b595df9-296e-49f2-99cd-393043a4d926</version_id>
+  <version_modified>20160523T155145Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>AddWaterUseEquipmentObject</class_name>
   <display_name>Add Hot Water Draw and Distribution</display_name>
