@@ -12,12 +12,6 @@ class WeatherData
   attr_accessor(:AnnualAvgDrybulb, :AnnualMinDrybulb, :AnnualMaxDrybulb, :CDD50F, :CDD65F, :HDD50F, :HDD64F, :HDD65F, :HDD66F, :DailyAvgDrybulbs, :DailyMaxDrybulbs, :DailyMinDrybulbs, :AnnualAvgWindspeed, :MonthlyAvgDrybulbs, :MainsDailyTemps, :MainsMonthlyTemps, :MainsAvgTemp)
 end
 
-class WeatherDesign
-  def initialize
-  end
-  attr_accessor(:HeatingDrybulb, :HeatingWindspeed, :CoolingDrybulb, :CoolingWetbulb, :CoolingHumidityRatio, :CoolingWindspeed, :DailyTemperatureRange, :DehumidDrybulb, :DehumidHumidityRatio)
-end
-
 class WeatherProcess
 
   def initialize(model, runner, header_only=false)
@@ -108,34 +102,6 @@ class WeatherProcess
     
     if header_only
         return header, nil, nil
-    end
-
-    # Design data line:
-
-    design = WeatherDesign.new
-    designData = epwlines.delete_at(0).split(',')
-    epwHasDesignData = false
-    if designData.length > 5
-      begin
-        design.HeatingDrybulb = OpenStudio::convert(designData[7].to_f,"C","F").get
-        design.HeatingWindspeed = designData[16].to_f
-
-        design.CoolingDrybulb = OpenStudio::convert(designData[25].to_f,"C","F").get
-        design.CoolingWetbulb = OpenStudio::convert(designData[26].to_f,"C","F").get
-        std_press = Psychrometrics.Pstd_fZ(header.Altitude)
-        design.CoolingHumidityRatio = Psychrometrics.w_fT_Twb_P(design.CoolingDrybulb, design.CoolingWetbulb, std_press)
-        design.CoolingWindspeed = designData[35].to_f
-
-        design.DailyTemperatureRange = OpenStudio::convert(designData[22].to_f,"C","F").get
-
-        dehum02per_dp = OpenStudio::convert(designData[43].to_f,"C","F").get
-        design.DehumidDrybulb = OpenStudio::convert(designData[45].to_f,"C","F").get
-        design.DehumidHumidityRatio = Psychrometrics.w_fT_Twb_P(dehum02per_dp, dehum02per_dp, std_press)
-
-        epwHasDesignData = true
-      rescue
-        epwHasDesignData = false
-      end
     end
 
     epwlines = _remove_non_hourly_lines(epwlines)

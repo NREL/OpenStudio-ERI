@@ -122,14 +122,21 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     ddy_file = "#{File.join(File.dirname(weather_file), File.basename(weather_file, '.*'))}.ddy"
     if File.exist? ddy_file
       ddy_model = OpenStudio::EnergyPlus.loadAndTranslateIdf(ddy_file).get
+      ddy_list = [Constants.DDYHtgDrybulb, Constants.DDYClgDrybulb, Constants.DDYClgWetbulb]
+      design_days_found = 0
       ddy_model.getObjectsByType("OS:SizingPeriod:DesignDay".to_IddObjectType).each do |d|
-        # grab only the ones that matter
-        ddy_list = /(Htg 99.6. Condns DB)|(Clg .4. Condns WB=>MDB)|(Clg .4% Condns DB=>MWB)/
-        if d.name.get =~ ddy_list
-          runner.registerInfo("Adding object #{d.name}.")
-          # add the object to the existing model
-          model.addObject(d.clone)
+        ddy_list.each do |ddy_name|
+          if d.name.get =~ /#{ddy_name}/
+            runner.registerInfo("Adding design day object '#{d.name}'.")
+            # add the object to the existing model
+            model.addObject(d.clone)
+            design_days_found += 1
+          end
         end
+      end
+      if design_days_found != ddy_list.size
+        runner.registerError("Could not find required design day information in #{File.basename(ddy_file)}.")
+        return false
       end
     else
       runner.registerError("Could not find DDY file for #{ddy_file}.")
