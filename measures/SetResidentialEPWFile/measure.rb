@@ -190,12 +190,10 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     # ----------------  
     
     # This correlation is the same that is used in DOE-2's src\WTH.f file, subroutine GTEMP.
-    monthly_temps = weather.data.MonthlyAvgDrybulbs
-    annual_temp = weather.data.AnnualAvgDrybulb    
-    annual_temps = Array.new(12, annual_temp)
+    annual_temps = Array.new(12, weather.data.AnnualAvgDrybulb)
     annual_temps = annual_temps.map {|i| OpenStudio::convert(i,"F","C").get}
     
-    ground_temps = weather._getGroundTemperatures(monthly_temps, annual_temp)
+    ground_temps = weather.data.GroundMonthlyTemps
     ground_temps = ground_temps.map {|i| OpenStudio::convert(i,"F","C").get}
     
     s_gt_bs = OpenStudio::Model::SiteGroundTemperatureBuildingSurface.new(model)

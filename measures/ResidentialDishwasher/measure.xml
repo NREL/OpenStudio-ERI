@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>3a322e46-45e5-421b-b58a-c4b6d8ad20ce</version_id>
-  <version_modified>20160524T202901Z</version_modified>
+  <version_id>f2fca69f-eecf-49ad-a604-d09828f1e80d</version_id>
+  <version_modified>20160525T135431Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -253,16 +253,16 @@
       <checksum>47EA779B</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2733C194</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E4784B5E</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>86545BBF</checksum>
     </file>
   </files>
 </measure>

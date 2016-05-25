@@ -1259,6 +1259,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     
     # Create the sim object
     @weather = WeatherProcess.new(workspace, runner)
+    if @weather.error?
+        return false
+    end
 	
     # Process the infiltration
     si, living_space, wind_speed, garage, fb, ub, cs, ua = _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, garage_thermal_zone, fbasement_thermal_zone, ufbasement_thermal_zone, crawl_thermal_zone, ufattic_thermal_zone, wind_speed, neighbors, site, geometry)
