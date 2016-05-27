@@ -275,6 +275,9 @@ class Constants
   def self.GarageSpace
     return 'garage space'
   end
+  def self.GarageAtticSpace
+    return 'garage attic space'
+  end
   def self.GarageSpaceType
     return 'garage space type'
   end

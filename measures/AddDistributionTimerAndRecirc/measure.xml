@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_water_use_equipment_object</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38c</uid>
-  <version_id>4b88c2f2-be40-4bf9-9cdc-1faffad5b09a</version_id>
-  <version_modified>20160524T200924Z</version_modified>
+  <version_id>c0e42438-2195-4a26-a7c7-870a2435bd03</version_id>
+  <version_modified>20160527T175340Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>AddWaterUseEquipmentObject</class_name>
   <display_name>Add Hot Water Draw and Distribution</display_name>
@@ -412,7 +412,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>47EA779B</checksum>
+      <checksum>1051647D</checksum>
     </file>
   </files>
 </measure>
