@@ -20,8 +20,12 @@ class WeatherProcess
     if model.respond_to?("weatherFile") and model.weatherFile.is_initialized
       # OpenStudio measures
       wf = model.weatherFile.get
-      # Using wf.url is ugly, but Dan says it's OK for now
-      epw_path = wf.url.to_s.sub("file:///","")
+      # Sometimes path is available, sometimes just url. Should be improved in OS 2.0.
+      if wf.path.is_initialized
+        epw_path = wf.path.get.to_s
+      else
+        epw_path = wf.url.to_s.sub("file:///","")
+      end
       @header, @data = process_epw(epw_path, header_only)
     elsif not model.respond_to?("weatherFile") and runner.lastEpwFilePath.is_initialized
       # EnergyPlus measures
@@ -42,6 +46,12 @@ class WeatherProcess
   private
   
       def process_epw(epw_path, header_only)
+        if not File.exist?(epw_path)
+            @runner.registerError("Cannot find weather file at #{epw_path}.")
+            @error = true
+            return nil, nil
+        end
+
         epw_file = OpenStudio::EpwFile.new(epw_path, !header_only)
         epw_file_data = epw_file.data
 

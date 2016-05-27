@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>03e39b5b-1c0c-4a70-bd66-7766e2811949</version_id>
-  <version_modified>20160525T135431Z</version_modified>
+  <version_id>1a9cff0f-3da2-4a71-9d05-4edfd6f2b63c</version_id>
+  <version_modified>20160527T172522Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -300,7 +300,7 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>86545BBF</checksum>
+      <checksum>F81F0956</checksum>
     </file>
   </files>
 </measure>

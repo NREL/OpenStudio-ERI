@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>54e36cd4-64fc-4867-990a-cfe456f5a239</version_id>
-  <version_modified>20160525T135432Z</version_modified>
+  <version_id>3b73e314-38e8-46dd-b728-1e13efe2bc1e</version_id>
+  <version_modified>20160527T172522Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -110,7 +110,7 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>86545BBF</checksum>
+      <checksum>F81F0956</checksum>
     </file>
   </files>
 </measure>
