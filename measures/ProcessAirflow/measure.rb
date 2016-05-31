@@ -168,9 +168,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
   end
 
   class MechanicalVentilation
-    def initialize(mechVentType, mechVentInfilCreditForExistingHomes, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
+    def initialize(mechVentType, mechVentInfilCredit, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
       @mechVentType = mechVentType
-      @mechVentInfilCreditForExistingHomes = mechVentInfilCreditForExistingHomes
+      @mechVentInfilCredit = mechVentInfilCredit
       @mechVentTotalEfficiency = mechVentTotalEfficiency
       @mechVentFractionOfASHRAE = mechVentFractionOfASHRAE
       @mechVentHouseFanPower = mechVentHouseFanPower
@@ -184,8 +184,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       return @mechVentType
     end
 
-    def MechVentInfilCreditForExistingHomes
-      return @mechVentInfilCreditForExistingHomes
+    def MechVentInfilCredit
+      return @mechVentInfilCredit
     end
 
     def MechVentTotalEfficiency
@@ -473,10 +473,10 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     selected_venttype.setDefaultValue("exhaust")
     args << selected_venttype
 
-    #make a bool argument for infiltration credit for existing homes
+    #make a bool argument for infiltration credit
     selected_infilcredit = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinfilcredit",false)
-    selected_infilcredit.setDisplayName("Mechanical Ventilation: Include Infil Credit for Existing Homes")
-    selected_infilcredit.setDescription("If True, the ASHRAE 62.2 infiltration credit will be included for buildings with infiltration that exceeds a default rate of 2 cfm per 100sqft of finished floor area.")
+    selected_infilcredit.setDisplayName("Mechanical Ventilation: Allow Infiltration Credit")
+    selected_infilcredit.setDescription("Defines whether the infiltration credit allowed per the ASHRAE 62.2 Standard will be included in the calculation of the mechanical ventilation rate. If True, the infiltration credit will apply 1) to new/existing single-family detached homes for 2013 ASHRAE 62.2, or 2) to existing single-family detached or multi-family homes for 2010 ASHRAE 62.2.")
     selected_infilcredit.setDefaultValue(true)
     args << selected_infilcredit
 
@@ -1023,7 +1023,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     uaSLA = runner.getDoubleArgumentValue("userdefinedinfunfinattic",user_arguments)
     terrainType = runner.getStringArgumentValue("selectedterraintype",user_arguments)
     mechVentType = runner.getStringArgumentValue("selectedventtype",user_arguments)
-    mechVentInfilCreditForExistingHomes = runner.getBoolArgumentValue("selectedinfilcredit",user_arguments)
+    mechVentInfilCredit = runner.getBoolArgumentValue("selectedinfilcredit",user_arguments)
     mechVentTotalEfficiency = runner.getDoubleArgumentValue("userdefinedtotaleff",user_arguments)
     mechVentSensibleEfficiency = runner.getDoubleArgumentValue("userdefinedsenseff",user_arguments)
     mechVentHouseFanPower = runner.getDoubleArgumentValue("userdefinedfanpower",user_arguments)
@@ -1113,7 +1113,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     wind_speed = WindSpeed.new
     neighbors = Neighbors.new(get_least_neighbor_offset(workspace))
     site = Site.new(terrainType)
-    vent = MechanicalVentilation.new(mechVentType, mechVentInfilCreditForExistingHomes, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
+    vent = MechanicalVentilation.new(mechVentType, mechVentInfilCredit, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
     clothes_dryer = ClothesDryer.new(dryerExhaust)
     geometry = Geom.new(nbeds, nbaths)
     nv = NaturalVentilation.new(natVentHtgSsnSetpointOffset, natVentClgSsnSetpointOffset, natVentOvlpSsnSetpointOffset, natVentHeatingSeason, natVentCoolingSeason, natVentOverlapSeason, natVentNumberWeekdays, natVentNumberWeekendDays, natVentFractionWindowsOpen, natVentFractionWindowAreaOpen, natVentMaxOAHumidityRatio, natVentMaxOARelativeHumidity)
@@ -3184,33 +3184,27 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
     ashrae_mv_without_infil_credit = get_mech_vent_whole_house_cfm(1, geometry.num_bedrooms, geometry.finished_floor_area, vent.MechVentASHRAEStandard) 
     
-    # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2);
-    # only applies to existing buildings
+    # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2)
     infil.rate_credit = 0 # default to no credit
-    if vent.MechVentInfilCreditForExistingHomes and ageOfHome > 0
-
-      if vent.MechVentASHRAEStandard == '2010'
-        # ASHRAE Standard 62.2 2010
-        # 2 cfm per 100ft^2 of occupiable floor area
-        infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
-        # Half the excess infiltration rate above the default rate is credited toward mech vent:
-        infil.rate_credit = [(living_space.inf_flow - default_rate) / 2.0, 0].max
-      
-      elsif vent.MechVentASHRAEStandard == '2013'
-        # ASHRAE Standard 62.2 2013
-        # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
-        # rate shall not be reduced as described in Section 4.1.3.").     
-        if geometry.num_units == 1
-          ela = infil.A_o # Effective leakage area, ft^2
-          nl = 1000.0 * ela / living_space.area * (living_space.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
-          qinf = nl * @weather.header.WSF * living_space.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-          infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
+    if vent.MechVentInfilCredit
+        if vent.MechVentASHRAEStandard == '2010' and ageOfHome > 0
+            # ASHRAE Standard 62.2 2010
+            # Only applies to existing buildings
+            # 2 cfm per 100ft^2 of occupiable floor area
+            infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
+            # Half the excess infiltration rate above the default rate is credited toward mech vent:
+            infil.rate_credit = [(living_space.inf_flow - default_rate) / 2.0, 0].max          
+        elsif vent.MechVentASHRAEStandard == '2013' and geometry.num_units == 1
+            # ASHRAE Standard 62.2 2013
+            # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
+            # rate shall not be reduced as described in Section 4.1.3.").     
+            ela = infil.A_o # Effective leakage area, ft^2
+            nl = 1000.0 * ela / living_space.area * (living_space.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
+            qinf = nl * @weather.header.WSF * living_space.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+            infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
         end
-      
-      end
-
     end
-
+    
     # Apply infiltration credit (if any)
     vent.ashrae_vent_rate = [ashrae_mv_without_infil_credit - infil.rate_credit, 0.0].max # cfm
     # Apply fraction of ASHRAE value

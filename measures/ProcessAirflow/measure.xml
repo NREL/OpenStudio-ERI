@@ -2,8 +2,6 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>edcafde8-f228-4e1d-93be-9899e3f8ee6b</version_id>
-  <version_modified>20160527T210403Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -147,8 +145,8 @@
     </argument>
     <argument>
       <name>selectedinfilcredit</name>
-      <display_name>Mechanical Ventilation: Include Infil Credit for Existing Homes</display_name>
-      <description>If True, the ASHRAE 62.2 infiltration credit will be included for buildings with infiltration that exceeds a default rate of 2 cfm per 100sqft of finished floor area.</description>
+      <display_name>Mechanical Ventilation: Allow Infiltration Credit</display_name>
+      <description>Defines whether the infiltration credit allowed per the 2010 or 2013 ASHRAE 62.2 Standards will be included in the calculation of the mechanical ventilation rate. If True, the infiltration credit will apply 1) to new/existing single-family detached homes for 2013 ASHRAE 62.2, or 2) to existing single-family detached or multi-family homes for 2010 ASHRAE 62.2.</description>
       <type>Boolean</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -844,6 +842,12 @@
       <checksum>E4784B5E</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F81F0956</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -852,13 +856,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D7D58C31</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F81F0956</checksum>
+      <checksum>159E9727</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
