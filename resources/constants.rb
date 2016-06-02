@@ -476,6 +476,9 @@ class Constants
   def self.ObjectNameWellPump
     return 'residential well pump'
   end
+  def self.ObjectNameWindowShading
+    return 'residential window shading'
+  end
   def self.PierBeamSpace
     return 'pier and beam space'
   end
