@@ -557,8 +557,10 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
           surface.vertices.each do |vertex|
             if vertex.y == 0.0
               n_points << vertex
-            else
+            elsif vertex.y < 0.0
               s_points << vertex
+            elsif num_floors == 1.0 and roof_type == Constants.RoofTypeFlat
+              n_points << vertex
             end
           end
           if n_points[0].x > n_points[1].x

@@ -144,7 +144,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
   end
   
   def modeler_description
-    return "This measure parses the OSM for the #{Constants.ObjectNameHeatingSeason} and #{Constants.ObjectNameCoolingSeason}. Any supply components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. A heating DX coil, cooling DX coil, electric supplemental heating coil, and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A single zone reheat setpoint manager is added to the supply outlet node, and a diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
+    return "This measure parses the OSM for the #{Constants.ObjectNameHeatingSeason} and #{Constants.ObjectNameCoolingSeason}. Any supply components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. A heating DX coil, cooling DX coil, electric supplemental heating coil, and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A diffuser is added to the branch for the living zone as well as for the finished basement if it exists."
   end   
   
   #define the arguments that the user will input
@@ -712,10 +712,6 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       diffuser_living.setName("Living Zone Direct Air")
       # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
       air_loop.addBranchForZone(control_zone, diffuser_living.to_StraightComponent)
-
-      setpoint_mgr = OpenStudio::Model::SetpointManagerSingleZoneReheat.new(model)
-      setpoint_mgr.setControlZone(control_zone)
-      setpoint_mgr.addToNode(air_supply_outlet_node)
 
       air_loop.addBranchForZone(control_zone)
       runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{control_zone.name}'")

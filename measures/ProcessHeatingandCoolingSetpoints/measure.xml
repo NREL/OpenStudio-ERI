@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heatingand_cooling_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>6c266331-3d0d-4c86-9d08-4dea5ad3058b</version_id>
-  <version_modified>20160602T142633Z</version_modified>
+  <version_id>0f41d275-e5f8-417d-81db-25e95ced713f</version_id>
+  <version_modified>20160603T164437Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingandCoolingSetpoints</class_name>
   <display_name>Set Residential Heating/Cooling Setpoints and Schedules</display_name>
@@ -18,7 +18,7 @@
       <units>degrees F</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0,</default_value>
+      <default_value>65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0</default_value>
     </argument>
     <argument>
       <name>htg_wked</name>
@@ -28,7 +28,7 @@
       <units>degrees F</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0,</default_value>
+      <default_value>65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0</default_value>
     </argument>
     <argument>
       <name>clg_wkdy</name>
@@ -157,7 +157,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DB65CD99</checksum>
+      <checksum>6EEE71B3</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>

@@ -38,7 +38,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     htg_wkdy.setDisplayName("Weekday Heating Setpoint Schedule")
     htg_wkdy.setDescription("Specify the 24-hour weekday heating schedule.")
     htg_wkdy.setUnits("degrees F")
-    htg_wkdy.setDefaultValue("65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0,")
+    htg_wkdy.setDefaultValue("65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0")
     args << htg_wkdy
 
    	#Make a string argument for 24 weekend heating set point values
@@ -46,7 +46,7 @@ class ProcessHeatingandCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
     htg_wked.setDisplayName("Weekend Heating Setpoint Schedule")
     htg_wked.setDescription("Specify the 24-hour weekend heating schedule.")
     htg_wked.setUnits("degrees F")
-    htg_wked.setDefaultValue("65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0,")
+    htg_wked.setDefaultValue("65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0")
     args << htg_wked  
   
    	#Make a string argument for 24 weekday cooling set point values
