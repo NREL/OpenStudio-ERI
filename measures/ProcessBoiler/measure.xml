@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>83b1121e-8200-46d3-8ac1-43c1a14dab4f</version_id>
-  <version_modified>20160602T142629Z</version_modified>
+  <version_id>b3759d05-4a93-40db-8db0-f6531ca341f7</version_id>
+  <version_modified>20160603T214457Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -325,12 +325,6 @@
       <checksum>C37D46C0</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>75AC76FD</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -341,6 +335,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>9F7D2989</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E1556074</checksum>
     </file>
   </files>
 </measure>

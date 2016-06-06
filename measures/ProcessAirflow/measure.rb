@@ -379,6 +379,114 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
   def arguments(workspace)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
+    #make a choice argument for living thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if thermal_zone_args.empty?
+        thermal_zone_args << Constants.LivingZone
+    end
+    living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, false)
+    living_thermal_zone.setDisplayName("Living thermal zone")
+    living_thermal_zone.setDescription("Select the living thermal zone")
+    if thermal_zone_args.include?(Constants.LivingZone)
+        living_thermal_zone.setDefaultValue(Constants.LivingZone)
+    end
+    args << living_thermal_zone		
+	
+    #make a choice argument for garage thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if thermal_zone_args.empty?
+        thermal_zone_args << Constants.GarageZone
+    end
+    garage_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_thermal_zone", thermal_zone_args, false)
+    garage_thermal_zone.setDisplayName("Garage thermal zone")
+    garage_thermal_zone.setDescription("Select the garage thermal zone")
+    if thermal_zone_args.include?(Constants.GarageZone)
+        garage_thermal_zone.setDefaultValue(Constants.GarageZone)
+    end
+    args << garage_thermal_zone	
+
+    #make a choice argument for finished basement thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if thermal_zone_args.empty?
+        thermal_zone_args << Constants.FinishedBasementZone
+    end
+    fbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_thermal_zone", thermal_zone_args, false)
+    fbasement_thermal_zone.setDisplayName("Finished Basement thermal zone")
+    fbasement_thermal_zone.setDescription("Select the finished basement thermal zone")
+    if thermal_zone_args.include?(Constants.FinishedBasementZone)
+        fbasement_thermal_zone.setDefaultValue(Constants.FinishedBasementZone)
+    end
+    args << fbasement_thermal_zone	
+
+    #make a choice argument for unfinished basement thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if thermal_zone_args.empty?
+        thermal_zone_args << Constants.UnfinishedBasementZone
+    end
+    ufbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ufbasement_thermal_zone", thermal_zone_args, false)
+    ufbasement_thermal_zone.setDisplayName("Unfinished Basement thermal zone")
+    ufbasement_thermal_zone.setDescription("Select the unfinished basement thermal zone")
+    if thermal_zone_args.include?(Constants.UnfinishedBasementZone)
+        ufbasement_thermal_zone.setDefaultValue(Constants.UnfinishedBasementZone)
+    end
+    args << ufbasement_thermal_zone	
+
+    #make a choice argument for crawl thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if thermal_zone_args.empty?
+        thermal_zone_args << Constants.CrawlZone
+    end
+    crawl_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("crawl_thermal_zone", thermal_zone_args, false)
+    crawl_thermal_zone.setDisplayName("Crawlspace thermal zone")
+    crawl_thermal_zone.setDescription("Select the crawlspace thermal zone")
+    if thermal_zone_args.include?(Constants.CrawlZone)
+        crawl_thermal_zone.setDefaultValue(Constants.CrawlZone)
+    end
+    args << crawl_thermal_zone	
+	
+    #make a choice argument for ufattic thermal zone
+    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
+    thermal_zone_args = OpenStudio::StringVector.new
+    thermal_zones.each do |thermal_zone|
+		zone_arg_name = thermal_zone.getString(0) # Name
+        thermal_zone_args << zone_arg_name.to_s
+    end
+    if thermal_zone_args.empty?
+        thermal_zone_args << Constants.UnfinishedAtticZone
+    end
+    ufattic_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ufattic_thermal_zone", thermal_zone_args, false)
+    ufattic_thermal_zone.setDisplayName("Unfinished Attic thermal zone")
+    ufattic_thermal_zone.setDescription("Select the unfinished attic thermal zone")
+    if thermal_zone_args.include?(Constants.UnfinishedAtticZone)
+        ufattic_thermal_zone.setDefaultValue(Constants.UnfinishedAtticZone)
+    end
+    args << ufattic_thermal_zone    
+    
     # Air Leakage
 
     #make a double argument for infiltration of living space
@@ -622,230 +730,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     userdefined_relhumratio.setDescription("Outdoor air relative humidity (0-1) above which windows will not open for natural ventilation.")
     userdefined_relhumratio.setDefaultValue(0.7)
     args << userdefined_relhumratio
-
-    # Geometry
-    finished_floor_area = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("finished_floor_area",true)
-    finished_floor_area.setDisplayName("Finished floor area [ft^2].")
-    finished_floor_area.setDefaultValue(2700.0)
-    args << finished_floor_area
-
-    above_grade_finished_floor_area = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("above_grade_finished_floor_area",true)
-    above_grade_finished_floor_area.setDisplayName("Above grade finished floor area [ft^2].")
-    above_grade_finished_floor_area.setDefaultValue(2700.0)
-    args << above_grade_finished_floor_area
-
-    building_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("building_height",true)
-    building_height.setDisplayName("Height of building [ft].")
-    building_height.setDefaultValue(24.5)
-    args << building_height
-
-    stories = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("stories",true)
-    stories.setDisplayName("Number of stories.")
-    stories.setDefaultValue(2.0)
-    args << stories
-
-    window_area = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("window_area",true)
-    window_area.setDisplayName("Window area [ft^2].")
-    window_area.setDefaultValue(348.0)
-    args << window_area
-
-    livingspacevolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("livingspacevolume",true)
-    livingspacevolume.setDisplayName("Volume of living space [ft^3].")
-    livingspacevolume.setDefaultValue(21600.0)
-    args << livingspacevolume
-
-    livingspaceheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("livingspaceheight",true)
-    livingspaceheight.setDisplayName("Height of living space [ft].")
-    livingspaceheight.setDefaultValue(16.0)
-    args << livingspaceheight
-
-    livingspacearea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("livingspacearea",true)
-    livingspacearea.setDisplayName("Area of living space [ft^2].")
-    livingspacearea.setDefaultValue(2700.0)
-    args << livingspacearea
-
-    uavolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("uavolume",true)
-    uavolume.setDisplayName("Volume of unfinished attic [ft^3].")
-    uavolume.setDefaultValue(5250.0)
-    args << uavolume
-
-    uaheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("uaheight",true)
-    uaheight.setDisplayName("Height of unfinished attic [ft].")
-    uaheight.setDefaultValue(8.5)
-    args << uaheight
-
-    uaarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("uaarea",true)
-    uaarea.setDisplayName("Area of unfinished attic [ft^2].")
-    uaarea.setDefaultValue(1500.0)
-    args << uaarea
-
-    cvolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cvolume",true)
-    cvolume.setDisplayName("Volume of crawlspace [ft^3].")
-    cvolume.setDefaultValue(4800.0)
-    args << cvolume
-
-    cheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cheight",true)
-    cheight.setDisplayName("Height of crawlspace [ft].")
-    cheight.setDefaultValue(4.0)
-    args << cheight
-
-    carea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("carea",true)
-    carea.setDisplayName("Area of crawlspace [ft^2].")
-    carea.setDefaultValue(1200.0)
-    args << carea
-
-    gvolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gvolume",true)
-    gvolume.setDisplayName("Volume of garage [ft^3].")
-    gvolume.setDefaultValue(2400.0)
-    args << gvolume
-
-    gheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gheight",true)
-    gheight.setDisplayName("Height of garage [ft].")
-    gheight.setDefaultValue(8.0)
-    args << gheight
-
-    garea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("garea",true)
-    garea.setDisplayName("Area of garage [ft^2].")
-    garea.setDefaultValue(300.0)
-    args << garea
-
-    fbvolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fbvolume",true)
-    fbvolume.setDisplayName("Volume of finished basement [ft^3].")
-    fbvolume.setDefaultValue(9600.0)
-    args << fbvolume
-
-    fbheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fbheight",true)
-    fbheight.setDisplayName("Height of finished basement [ft].")
-    fbheight.setDefaultValue(8.0)
-    args << fbheight
-
-    fbarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fbarea",true)
-    fbarea.setDisplayName("Area of finished basement [ft^2].")
-    fbarea.setDefaultValue(1200.0)
-    args << fbarea
-
-    ufbvolume = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufbvolume",true)
-    ufbvolume.setDisplayName("Volume of unfinished basement [ft^3].")
-    ufbvolume.setDefaultValue(9600.0)
-    args << ufbvolume
-
-    ufbheight = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufbheight",true)
-    ufbheight.setDisplayName("Height of unfinished basement [ft].")
-    ufbheight.setDefaultValue(8.0)
-    args << ufbheight
-
-    ufbarea = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufbarea",true)
-    ufbarea.setDisplayName("Area of unfinished basement [ft^2].")
-    ufbarea.setDefaultValue(1200.0)
-    args << ufbarea
-
-    #make a choice argument for living thermal zone
-    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-		zone_arg_name = thermal_zone.getString(0) # Name
-        thermal_zone_args << zone_arg_name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.LivingZone
-    end
-    living_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("living_thermal_zone", thermal_zone_args, false)
-    living_thermal_zone.setDisplayName("Living thermal zone")
-    living_thermal_zone.setDescription("Select the living thermal zone")
-    if thermal_zone_args.include?(Constants.LivingZone)
-        living_thermal_zone.setDefaultValue(Constants.LivingZone)
-    end
-    args << living_thermal_zone		
-	
-    #make a choice argument for garage thermal zone
-    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-		zone_arg_name = thermal_zone.getString(0) # Name
-        thermal_zone_args << zone_arg_name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.GarageZone
-    end
-    garage_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_thermal_zone", thermal_zone_args, false)
-    garage_thermal_zone.setDisplayName("Garage thermal zone")
-    garage_thermal_zone.setDescription("Select the garage thermal zone")
-    if thermal_zone_args.include?(Constants.GarageZone)
-        garage_thermal_zone.setDefaultValue(Constants.GarageZone)
-    end
-    args << garage_thermal_zone	
-
-    #make a choice argument for finished basement thermal zone
-    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-		zone_arg_name = thermal_zone.getString(0) # Name
-        thermal_zone_args << zone_arg_name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.FinishedBasementZone
-    end
-    fbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fbasement_thermal_zone", thermal_zone_args, false)
-    fbasement_thermal_zone.setDisplayName("Finished Basement thermal zone")
-    fbasement_thermal_zone.setDescription("Select the finished basement thermal zone")
-    if thermal_zone_args.include?(Constants.FinishedBasementZone)
-        fbasement_thermal_zone.setDefaultValue(Constants.FinishedBasementZone)
-    end
-    args << fbasement_thermal_zone	
-
-    #make a choice argument for unfinished basement thermal zone
-    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-		zone_arg_name = thermal_zone.getString(0) # Name
-        thermal_zone_args << zone_arg_name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.UnfinishedBasementZone
-    end
-    ufbasement_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ufbasement_thermal_zone", thermal_zone_args, false)
-    ufbasement_thermal_zone.setDisplayName("Unfinished Basement thermal zone")
-    ufbasement_thermal_zone.setDescription("Select the unfinished basement thermal zone")
-    if thermal_zone_args.include?(Constants.UnfinishedBasementZone)
-        ufbasement_thermal_zone.setDefaultValue(Constants.UnfinishedBasementZone)
-    end
-    args << ufbasement_thermal_zone	
-
-    #make a choice argument for crawl thermal zone
-    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-		zone_arg_name = thermal_zone.getString(0) # Name
-        thermal_zone_args << zone_arg_name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.CrawlZone
-    end
-    crawl_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("crawl_thermal_zone", thermal_zone_args, false)
-    crawl_thermal_zone.setDisplayName("Crawlspace thermal zone")
-    crawl_thermal_zone.setDescription("Select the crawlspace thermal zone")
-    if thermal_zone_args.include?(Constants.CrawlZone)
-        crawl_thermal_zone.setDefaultValue(Constants.CrawlZone)
-    end
-    args << crawl_thermal_zone	
-	
-    #make a choice argument for ufattic thermal zone
-    thermal_zones = workspace.getObjectsByType("Zone".to_IddObjectType)
-    thermal_zone_args = OpenStudio::StringVector.new
-    thermal_zones.each do |thermal_zone|
-		zone_arg_name = thermal_zone.getString(0) # Name
-        thermal_zone_args << zone_arg_name.to_s
-    end
-    if thermal_zone_args.empty?
-        thermal_zone_args << Constants.UnfinishedAtticZone
-    end
-    ufattic_thermal_zone = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("ufattic_thermal_zone", thermal_zone_args, false)
-    ufattic_thermal_zone.setDisplayName("Unfinished Attic thermal zone")
-    ufattic_thermal_zone.setDescription("Select the unfinished attic thermal zone")
-    if thermal_zone_args.include?(Constants.UnfinishedAtticZone)
-        ufattic_thermal_zone.setDefaultValue(Constants.UnfinishedAtticZone)
-    end
-    args << ufattic_thermal_zone		
 	
     #make a choice arguments for duct location
     duct_locations = OpenStudio::StringVector.new
@@ -854,7 +738,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     duct_locations << Constants.AtticZone
     duct_locations << Constants.BasementZone
     duct_locations << Constants.GarageZone
-    duct_locations << "none"
     duct_location = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("duct_location", duct_locations, true)
     duct_location.setDisplayName("Ducts: Location")
     duct_location.setDescription("The space with the primary location of ducts.")
@@ -1076,7 +959,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     else
       ductNormLeakageToOutside = nil
     end
-    duct_location_frac = runner.getStringArgumentValue("duct_location",user_arguments)
+    duct_location_frac = runner.getStringArgumentValue("duct_location_frac",user_arguments)
     duct_num_returns = runner.getStringArgumentValue("duct_num_returns",user_arguments)
     ductSupplySurfaceAreaMultiplier = runner.getDoubleArgumentValue("supply_surface_area_multiplier",user_arguments)
     ductReturnSurfaceAreaMultiplier = runner.getDoubleArgumentValue("return_surface_area_multiplier",user_arguments)
@@ -1124,38 +1007,72 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     
     zones = workspace.getObjectsByType("Zone".to_IddObjectType)
     zones.each do |zone|
-      zone_name = zone.getString(0).to_s # Name
-      if zone_name == living_thermal_zone_r # FIXME: this would be the code if the idf indeed stored this information
-        living_space.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
-        living_space.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
-        living_space.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
+      zone_name = zone.getString(0).to_s
+      if zone_name == living_thermal_zone_r
         living_space.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
       elsif zone_name == garage_thermal_zone_r
-        garage.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
-        garage.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
-        garage.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         garage.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
       elsif zone_name == fbasement_thermal_zone_r
-        finished_basement.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
-        finished_basement.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
-        finished_basement.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         finished_basement.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
       elsif zone_name == ufbasement_thermal_zone_r
-        space_unfinished_basement.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
-        space_unfinished_basement.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
-        space_unfinished_basement.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         space_unfinished_basement.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
       elsif zone_name == crawl_thermal_zone_r
-        crawlspace.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
-        crawlspace.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
-        crawlspace.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         crawlspace.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
       elsif zone_name == ufattic_thermal_zone_r
-        unfinished_attic.height = OpenStudio::convert(zone.getString(7).get.to_f,"m","ft").get # Ceiling Height {m}
-        unfinished_attic.area = OpenStudio::convert(zone.getString(9).get.to_f,"m^2","ft^2").get # Floor Area {m2}
-        unfinished_attic.volume = OpenStudio::convert(zone.getString(8).get.to_f,"m^3","ft^3").get # Volume {m3}
         unfinished_attic.coord_z = OpenStudio::convert(zone.getString(4).get.to_f,"m","ft").get # Z Origin {m}
       end
+    end    
+    
+    model = runner.lastOpenStudioModel.get
+    geometry.finished_floor_area = Geometry.get_building_finished_floor_area(model, runner)
+    if geometry.finished_floor_area.nil?
+      return false
+    end
+    geometry.above_grade_finished_floor_area = Geometry.get_building_above_grade_finished_floor_area(model, runner)
+    if geometry.above_grade_finished_floor_area.nil?
+      return false
+    end
+    geometry.building_height = Geometry.get_building_height(model.getSpaces)
+    geometry.stories = Geometry.get_building_stories(model.getSpaces)
+    geometry.window_area = Geometry.get_building_window_area(model, runner)
+    geometry.num_units = 1 # TODO: determine number of multifamily units
+    living_zone = Geometry.get_thermal_zone_from_string_from_osm(model, living_thermal_zone_r, runner)
+    living_space.height = Geometry.get_building_height(living_zone.spaces)
+    living_space.area = OpenStudio::convert(living_zone.floorArea,"m^2","ft^2").get
+    living_space.volume = living_space.height * living_space.area
+    ufattic_zone = Geometry.get_thermal_zone_from_string_from_osm(model, ufattic_thermal_zone_r, runner)
+    unless ufattic_zone.nil?
+      unfinished_attic.height = Geometry.get_building_height(ufattic_zone.spaces)
+      unfinished_attic.area = OpenStudio::convert(ufattic_zone.floorArea,"m^2","ft^2").get
+      unfinished_attic.volume = unfinished_attic.height * unfinished_attic.area
+    end
+    crawl_zone = Geometry.get_thermal_zone_from_string_from_osm(model, crawl_thermal_zone_r, runner)
+    unless crawl_zone.nil?
+      crawlspace.height = Geometry.get_building_height(crawl_zone.spaces)
+      crawlspace.area = OpenStudio::convert(crawl_zone.floorArea,"m^2","ft^2").get
+      crawlspace.volume = crawlspace.height * crawlspace.area
+    end
+    garage_zone = Geometry.get_thermal_zone_from_string_from_osm(model, garage_thermal_zone_r, runner)
+    unless garage_zone.nil?
+      garage.height = Geometry.get_building_height(garage_zone.spaces)
+      garage.area = OpenStudio::convert(garage_zone.floorArea,"m^2","ft^2").get
+      garage.volume = garage.height * garage.area
+    end
+    fbasement_zone = Geometry.get_thermal_zone_from_string_from_osm(model, fbasement_thermal_zone_r, runner)
+    unless fbasement_zone.nil?
+      finished_basement.height = Geometry.get_building_height(fbasement_zone.spaces)
+      finished_basement.area = OpenStudio::convert(fbasement_zone.floorArea,"m^2","ft^2").get
+      finished_basement.volume = finished_basement.height * finished_basement.area   
+    end
+    ufbasement_zone = Geometry.get_thermal_zone_from_string_from_osm(model, ufbasement_thermal_zone_r, runner)
+    unless ufbasement_zone.nil?
+      space_unfinished_basement.height = Geometry.get_building_height(ufbasement_zone.spaces)
+      space_unfinished_basement.area = OpenStudio::convert(ufbasement_zone.floorArea,"m^2","ft^2").get
+      space_unfinished_basement.volume = space_unfinished_basement.height * space_unfinished_basement.area
+    end
+  
+    if HelperMethods.has_central_air_conditioner(model, runner, living_zone).nil? and HelperMethods.has_furnace(model, runner, living_zone).nil? and HelperMethods.has_air_source_heat_pump(model, runner, living_zone).nil?
+      duct_location = "none"
     end
   
     heating_set_point.HeatingSetpointWeekday = Array.new
@@ -1229,33 +1146,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         cooling_set_point.CoolingSetpointWeekend << 10000
       end
     end
-
-    # TODO: create helper methods to retrieve the following
-    geometry.finished_floor_area = runner.getDoubleArgumentValue("finished_floor_area",user_arguments)
-    geometry.above_grade_finished_floor_area = runner.getDoubleArgumentValue("above_grade_finished_floor_area",user_arguments)
-    geometry.building_height = runner.getDoubleArgumentValue("building_height",user_arguments)
-    geometry.stories = runner.getDoubleArgumentValue("stories",user_arguments)
-    geometry.window_area = runner.getDoubleArgumentValue("window_area",user_arguments)
-    geometry.num_units = 1
-    living_space.volume = runner.getDoubleArgumentValue("livingspacevolume",user_arguments)
-    living_space.height = runner.getDoubleArgumentValue("livingspaceheight",user_arguments)
-    living_space.area = runner.getDoubleArgumentValue("livingspacearea",user_arguments)
-    unfinished_attic.volume = runner.getDoubleArgumentValue("uavolume",user_arguments)
-    unfinished_attic.height = runner.getDoubleArgumentValue("uaheight",user_arguments)
-    unfinished_attic.area = runner.getDoubleArgumentValue("uaarea",user_arguments)
-    crawlspace.volume = runner.getDoubleArgumentValue("cvolume",user_arguments)
-    crawlspace.height = runner.getDoubleArgumentValue("cheight",user_arguments)
-    crawlspace.area = runner.getDoubleArgumentValue("carea",user_arguments)
-    garage.volume = runner.getDoubleArgumentValue("gvolume",user_arguments)
-    garage.height = runner.getDoubleArgumentValue("gheight",user_arguments)
-    garage.area = runner.getDoubleArgumentValue("garea",user_arguments)
-    finished_basement.volume = runner.getDoubleArgumentValue("fbvolume",user_arguments)
-    finished_basement.height = runner.getDoubleArgumentValue("fbheight",user_arguments)
-    finished_basement.area = runner.getDoubleArgumentValue("fbarea",user_arguments)
-    space_unfinished_basement.volume = runner.getDoubleArgumentValue("ufbvolume",user_arguments)
-    space_unfinished_basement.height = runner.getDoubleArgumentValue("ufbheight",user_arguments)
-    space_unfinished_basement.area = runner.getDoubleArgumentValue("ufbarea",user_arguments)
-    ###
     
     # Create the sim object
     @weather = WeatherProcess.new(workspace, runner)

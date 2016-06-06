@@ -2,14 +2,104 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>247e6a5a-568e-406d-891b-1d05d9f4bf50</version_id>
-  <version_modified>20160602T142629Z</version_modified>
+  <version_id>80177888-6e1f-4e29-88f6-4fb4ad901eb9</version_id>
+  <version_modified>20160606T145139Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
   <description>This measure processes infiltration for the living space, garage, finished basement, unfinished basement, crawlspace, and unfinished attic. It also processes mechanical ventilation and natural ventilation for the living space.</description>
   <modeler_description>Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation). Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
   <arguments>
+    <argument>
+      <name>living_thermal_zone</name>
+      <display_name>Living thermal zone</display_name>
+      <description>Select the living thermal zone</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>living zone</default_value>
+      <choices>
+        <choice>
+          <value>living zone</value>
+          <display_name>living zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>garage_thermal_zone</name>
+      <display_name>Garage thermal zone</display_name>
+      <description>Select the garage thermal zone</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>garage zone</default_value>
+      <choices>
+        <choice>
+          <value>garage zone</value>
+          <display_name>garage zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>fbasement_thermal_zone</name>
+      <display_name>Finished Basement thermal zone</display_name>
+      <description>Select the finished basement thermal zone</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>finished basement zone</default_value>
+      <choices>
+        <choice>
+          <value>finished basement zone</value>
+          <display_name>finished basement zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>ufbasement_thermal_zone</name>
+      <display_name>Unfinished Basement thermal zone</display_name>
+      <description>Select the unfinished basement thermal zone</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>unfinished basement zone</default_value>
+      <choices>
+        <choice>
+          <value>unfinished basement zone</value>
+          <display_name>unfinished basement zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>crawl_thermal_zone</name>
+      <display_name>Crawlspace thermal zone</display_name>
+      <description>Select the crawlspace thermal zone</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>crawl zone</default_value>
+      <choices>
+        <choice>
+          <value>crawl zone</value>
+          <display_name>crawl zone</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>ufattic_thermal_zone</name>
+      <display_name>Unfinished Attic thermal zone</display_name>
+      <description>Select the unfinished attic thermal zone</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>unfinished attic zone</default_value>
+      <choices>
+        <choice>
+          <value>unfinished attic zone</value>
+          <display_name>unfinished attic zone</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>userdefinedinflivingspace</name>
       <display_name>Air Leakage: Above-Grade Living Space ACH50</display_name>
@@ -377,280 +467,6 @@
       <default_value>0.7</default_value>
     </argument>
     <argument>
-      <name>finished_floor_area</name>
-      <display_name>Finished floor area [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2700</default_value>
-    </argument>
-    <argument>
-      <name>above_grade_finished_floor_area</name>
-      <display_name>Above grade finished floor area [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2700</default_value>
-    </argument>
-    <argument>
-      <name>building_height</name>
-      <display_name>Height of building [ft].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>24.5</default_value>
-    </argument>
-    <argument>
-      <name>stories</name>
-      <display_name>Number of stories.</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2</default_value>
-    </argument>
-    <argument>
-      <name>window_area</name>
-      <display_name>Window area [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>348</default_value>
-    </argument>
-    <argument>
-      <name>livingspacevolume</name>
-      <display_name>Volume of living space [ft^3].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>21600</default_value>
-    </argument>
-    <argument>
-      <name>livingspaceheight</name>
-      <display_name>Height of living space [ft].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>16</default_value>
-    </argument>
-    <argument>
-      <name>livingspacearea</name>
-      <display_name>Area of living space [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2700</default_value>
-    </argument>
-    <argument>
-      <name>uavolume</name>
-      <display_name>Volume of unfinished attic [ft^3].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>5250</default_value>
-    </argument>
-    <argument>
-      <name>uaheight</name>
-      <display_name>Height of unfinished attic [ft].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>8.5</default_value>
-    </argument>
-    <argument>
-      <name>uaarea</name>
-      <display_name>Area of unfinished attic [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1500</default_value>
-    </argument>
-    <argument>
-      <name>cvolume</name>
-      <display_name>Volume of crawlspace [ft^3].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>4800</default_value>
-    </argument>
-    <argument>
-      <name>cheight</name>
-      <display_name>Height of crawlspace [ft].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>4</default_value>
-    </argument>
-    <argument>
-      <name>carea</name>
-      <display_name>Area of crawlspace [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1200</default_value>
-    </argument>
-    <argument>
-      <name>gvolume</name>
-      <display_name>Volume of garage [ft^3].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>2400</default_value>
-    </argument>
-    <argument>
-      <name>gheight</name>
-      <display_name>Height of garage [ft].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>8</default_value>
-    </argument>
-    <argument>
-      <name>garea</name>
-      <display_name>Area of garage [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>300</default_value>
-    </argument>
-    <argument>
-      <name>fbvolume</name>
-      <display_name>Volume of finished basement [ft^3].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>9600</default_value>
-    </argument>
-    <argument>
-      <name>fbheight</name>
-      <display_name>Height of finished basement [ft].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>8</default_value>
-    </argument>
-    <argument>
-      <name>fbarea</name>
-      <display_name>Area of finished basement [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1200</default_value>
-    </argument>
-    <argument>
-      <name>ufbvolume</name>
-      <display_name>Volume of unfinished basement [ft^3].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>9600</default_value>
-    </argument>
-    <argument>
-      <name>ufbheight</name>
-      <display_name>Height of unfinished basement [ft].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>8</default_value>
-    </argument>
-    <argument>
-      <name>ufbarea</name>
-      <display_name>Area of unfinished basement [ft^2].</display_name>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1200</default_value>
-    </argument>
-    <argument>
-      <name>living_thermal_zone</name>
-      <display_name>Living thermal zone</display_name>
-      <description>Select the living thermal zone</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>living zone</default_value>
-      <choices>
-        <choice>
-          <value>living zone</value>
-          <display_name>living zone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>garage_thermal_zone</name>
-      <display_name>Garage thermal zone</display_name>
-      <description>Select the garage thermal zone</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>garage zone</default_value>
-      <choices>
-        <choice>
-          <value>garage zone</value>
-          <display_name>garage zone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>fbasement_thermal_zone</name>
-      <display_name>Finished Basement thermal zone</display_name>
-      <description>Select the finished basement thermal zone</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>finished basement zone</default_value>
-      <choices>
-        <choice>
-          <value>finished basement zone</value>
-          <display_name>finished basement zone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>ufbasement_thermal_zone</name>
-      <display_name>Unfinished Basement thermal zone</display_name>
-      <description>Select the unfinished basement thermal zone</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>unfinished basement zone</default_value>
-      <choices>
-        <choice>
-          <value>unfinished basement zone</value>
-          <display_name>unfinished basement zone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>crawl_thermal_zone</name>
-      <display_name>Crawlspace thermal zone</display_name>
-      <description>Select the crawlspace thermal zone</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>crawl zone</default_value>
-      <choices>
-        <choice>
-          <value>crawl zone</value>
-          <display_name>crawl zone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>ufattic_thermal_zone</name>
-      <display_name>Unfinished Attic thermal zone</display_name>
-      <description>Select the unfinished attic thermal zone</description>
-      <type>Choice</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>unfinished attic zone</default_value>
-      <choices>
-        <choice>
-          <value>unfinished attic zone</value>
-          <display_name>unfinished attic zone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>duct_location</name>
       <display_name>Ducts: Location</display_name>
       <description>The space with the primary location of ducts.</description>
@@ -678,10 +494,6 @@
         <choice>
           <value>garage zone</value>
           <display_name>garage zone</display_name>
-        </choice>
-        <choice>
-          <value>none</value>
-          <display_name>none</display_name>
         </choice>
       </choices>
     </argument>
@@ -832,12 +644,6 @@
       <checksum>640596F1</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>75AC76FD</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -850,6 +656,18 @@
       <checksum>F81F0956</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9F7D2989</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E1556074</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -858,13 +676,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D0E390F1</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9F7D2989</checksum>
+      <checksum>2915BC18</checksum>
     </file>
   </files>
 </measure>
