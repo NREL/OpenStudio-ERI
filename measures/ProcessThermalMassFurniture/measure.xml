@@ -2,73 +2,71 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>b83c2245-b0e4-414c-93c2-556fa7333e31</version_id>
-  <version_modified>20160603T214502Z</version_modified>
+  <version_id>586d187a-f00e-4ad3-8c1e-2d64ddc7ccf9</version_id>
+  <version_modified>20160609T144038Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>
-  <description>This measure assigns furniture mass to the living space, finished basement, unfinished basement, and garage.</description>
-  <modeler_description>This measure creates constructions representing the internal mass of furniture in the living space, finished basement, unfinished basement, and garage. The constructions are set to define the internal mass objects of their respective spaces.</modeler_description>
+  <description>Adds (or replaces) furniture mass to finished and unfinished spaces.</description>
+  <modeler_description>This measure creates constructions representing the internal mass of furniture in finished and unfinished spaces. If existing furniture mass objects are found, they are removed.</modeler_description>
   <arguments>
     <argument>
-      <name>living_space_type</name>
-      <display_name>Living space type</display_name>
-      <description>Select the living space type</description>
-      <type>Choice</type>
+      <name>area_fraction</name>
+      <display_name>Area Fraction</display_name>
+      <description>Fraction of finished floor area covered by furniture.  Furniture intercepts a portion of radiation which would otherwise be distributed to floor surfaces, based on this variable.</description>
+      <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>living space type</default_value>
-      <choices>
-        <choice>
-          <value>living space type</value>
-          <display_name>living space type</display_name>
-        </choice>
-      </choices>
+      <default_value>0.4</default_value>
     </argument>
     <argument>
-      <name>fbasement_space_type</name>
-      <display_name>Finished basement space type</display_name>
-      <description>Select the finished basement space type</description>
-      <type>Choice</type>
+      <name>mass</name>
+      <display_name>Mass</display_name>
+      <description>Furniture mass per finished floor area.</description>
+      <type>Double</type>
+      <units>lb/ft^2</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>finished basement space type</default_value>
-      <choices>
-        <choice>
-          <value>finished basement space type</value>
-          <display_name>finished basement space type</display_name>
-        </choice>
-      </choices>
+      <default_value>8</default_value>
     </argument>
     <argument>
-      <name>ubasement_space_type</name>
-      <display_name>Unfinished basement space type</display_name>
-      <description>Select the unfinished basement space type</description>
-      <type>Choice</type>
+      <name>solar_abs</name>
+      <display_name>Solar Absorptance</display_name>
+      <description>Solar absorptance of furnishings in finished spaces.</description>
+      <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>unfinished basement space type</default_value>
-      <choices>
-        <choice>
-          <value>unfinished basement space type</value>
-          <display_name>unfinished basement space type</display_name>
-        </choice>
-      </choices>
+      <default_value>0.6</default_value>
     </argument>
     <argument>
-      <name>garage_space_type</name>
-      <display_name>Garage space type</display_name>
-      <description>Select the garage space type</description>
-      <type>Choice</type>
+      <name>conductivity</name>
+      <display_name>Conductivity</display_name>
+      <description>Conductivity of furnishings in finished spaces.</description>
+      <type>Double</type>
+      <units>Btu-in/h-ft^2-R</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>garage space type</default_value>
-      <choices>
-        <choice>
-          <value>garage space type</value>
-          <display_name>garage space type</display_name>
-        </choice>
-      </choices>
+      <default_value>0.8004</default_value>
+    </argument>
+    <argument>
+      <name>density</name>
+      <display_name>Density</display_name>
+      <description>Density of furnishings in finished spaces.</description>
+      <type>Double</type>
+      <units>lb/ft^3</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>40</default_value>
+    </argument>
+    <argument>
+      <name>specific_heat</name>
+      <display_name>Density</display_name>
+      <description>Specific heat of furnishings in finished spaces.</description>
+      <type>Double</type>
+      <units>Btu/lb-R</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.29</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -95,6 +93,24 @@
       <checksum>A956F71E</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E4784B5E</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E1556074</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6AFEAC3E</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -103,25 +119,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>998D0C4E</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E4784B5E</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9F7D2989</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E1556074</checksum>
+      <checksum>48971CF0</checksum>
     </file>
   </files>
 </measure>
