@@ -844,34 +844,36 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       return false
     end
     
+    model = runner.lastOpenStudioModel.get
+
     # Zones
     living_thermal_zone_r = runner.getOptionalStringArgumentValue("living_thermal_zone",user_arguments)
     living_thermal_zone_r.is_initialized ? living_thermal_zone_r.get : living_thermal_zone_r = nil
     living_thermal_zone_r = living_thermal_zone_r.to_s
-    living_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner)
+    living_thermal_zone = Geometry.get_thermal_zone_from_string(model, living_thermal_zone_r, runner)
     if living_thermal_zone.nil?
         return false
     end
     garage_thermal_zone_r = runner.getOptionalStringArgumentValue("garage_thermal_zone",user_arguments)
     garage_thermal_zone_r.is_initialized ? garage_thermal_zone_r.get : garage_thermal_zone_r = nil
     garage_thermal_zone_r = garage_thermal_zone_r.to_s
-    garage_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, garage_thermal_zone_r, runner)
+    garage_thermal_zone = Geometry.get_thermal_zone_from_string(model, garage_thermal_zone_r, runner)
     fbasement_thermal_zone_r = runner.getOptionalStringArgumentValue("fbasement_thermal_zone",user_arguments)
     fbasement_thermal_zone_r.is_initialized ? fbasement_thermal_zone_r.get : fbasement_thermal_zone_r = nil
     fbasement_thermal_zone_r = fbasement_thermal_zone_r.to_s
-    fbasement_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, fbasement_thermal_zone_r, runner)
+    fbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, fbasement_thermal_zone_r, runner)
     ufbasement_thermal_zone_r = runner.getOptionalStringArgumentValue("ufbasement_thermal_zone",user_arguments)
     ufbasement_thermal_zone_r.is_initialized ? ufbasement_thermal_zone_r.get : ufbasement_thermal_zone_r = nil
     ufbasement_thermal_zone_r = ufbasement_thermal_zone_r.to_s
-    ufbasement_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, ufbasement_thermal_zone_r, runner)
+    ufbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, ufbasement_thermal_zone_r, runner)
     crawl_thermal_zone_r = runner.getOptionalStringArgumentValue("crawl_thermal_zone",user_arguments)
     crawl_thermal_zone_r.is_initialized ? crawl_thermal_zone_r.get : crawl_thermal_zone_r = nil
     crawl_thermal_zone_r = crawl_thermal_zone_r.to_s
-    crawl_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, crawl_thermal_zone_r, runner)
+    crawl_thermal_zone = Geometry.get_thermal_zone_from_string(model, crawl_thermal_zone_r, runner)
     ufattic_thermal_zone_r = runner.getOptionalStringArgumentValue("ufattic_thermal_zone",user_arguments)
     ufattic_thermal_zone_r.is_initialized ? ufattic_thermal_zone_r.get : ufattic_thermal_zone_r = nil
     ufattic_thermal_zone_r = ufattic_thermal_zone_r.to_s
-    ufattic_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, ufattic_thermal_zone_r, runner)
+    ufattic_thermal_zone = Geometry.get_thermal_zone_from_string(model, ufattic_thermal_zone_r, runner)
 
     # Remove existing airflow objects
     workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["NatVentProbability"], "Schedule:Constant", runner)
@@ -966,7 +968,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     ductUnconditionedRvalue = runner.getDoubleArgumentValue("duct_unconditioned_rvalue",user_arguments)
 
     # Get number of bedrooms/bathrooms
-    nbeds, nbaths = Geometry.get_bedrooms_bathrooms_from_idf(workspace, runner)
+    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end
@@ -1023,7 +1025,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       end
     end    
     
-    model = runner.lastOpenStudioModel.get
     geometry.finished_floor_area = Geometry.get_building_finished_floor_area(model, runner)
     if geometry.finished_floor_area.nil?
       return false
@@ -1036,42 +1037,36 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     geometry.stories = Geometry.get_building_stories(model.getSpaces)
     geometry.window_area = Geometry.get_building_window_area(model, runner)
     geometry.num_units = 1 # TODO: determine number of multifamily units
-    living_zone = Geometry.get_thermal_zone_from_string_from_osm(model, living_thermal_zone_r, runner)
-    living_space.height = Geometry.get_building_height(living_zone.spaces)
-    living_space.area = OpenStudio::convert(living_zone.floorArea,"m^2","ft^2").get
+    living_space.height = Geometry.get_building_height(living_thermal_zone.spaces)
+    living_space.area = OpenStudio::convert(living_thermal_zone.floorArea,"m^2","ft^2").get
     living_space.volume = living_space.height * living_space.area
-    ufattic_zone = Geometry.get_thermal_zone_from_string_from_osm(model, ufattic_thermal_zone_r, runner)
-    unless ufattic_zone.nil?
-      unfinished_attic.height = Geometry.get_building_height(ufattic_zone.spaces)
-      unfinished_attic.area = OpenStudio::convert(ufattic_zone.floorArea,"m^2","ft^2").get
+    unless ufattic_thermal_zone.nil?
+      unfinished_attic.height = Geometry.get_building_height(ufattic_thermal_zone.spaces)
+      unfinished_attic.area = OpenStudio::convert(ufattic_thermal_zone.floorArea,"m^2","ft^2").get
       unfinished_attic.volume = unfinished_attic.height * unfinished_attic.area
     end
-    crawl_zone = Geometry.get_thermal_zone_from_string_from_osm(model, crawl_thermal_zone_r, runner)
-    unless crawl_zone.nil?
-      crawlspace.height = Geometry.get_building_height(crawl_zone.spaces)
-      crawlspace.area = OpenStudio::convert(crawl_zone.floorArea,"m^2","ft^2").get
+    unless crawl_thermal_zone.nil?
+      crawlspace.height = Geometry.get_building_height(crawl_thermal_zone.spaces)
+      crawlspace.area = OpenStudio::convert(crawl_thermal_zone.floorArea,"m^2","ft^2").get
       crawlspace.volume = crawlspace.height * crawlspace.area
     end
-    garage_zone = Geometry.get_thermal_zone_from_string_from_osm(model, garage_thermal_zone_r, runner)
-    unless garage_zone.nil?
-      garage.height = Geometry.get_building_height(garage_zone.spaces)
-      garage.area = OpenStudio::convert(garage_zone.floorArea,"m^2","ft^2").get
+    unless garage_thermal_zone.nil?
+      garage.height = Geometry.get_building_height(garage_thermal_zone.spaces)
+      garage.area = OpenStudio::convert(garage_thermal_zone.floorArea,"m^2","ft^2").get
       garage.volume = garage.height * garage.area
     end
-    fbasement_zone = Geometry.get_thermal_zone_from_string_from_osm(model, fbasement_thermal_zone_r, runner)
-    unless fbasement_zone.nil?
-      finished_basement.height = Geometry.get_building_height(fbasement_zone.spaces)
-      finished_basement.area = OpenStudio::convert(fbasement_zone.floorArea,"m^2","ft^2").get
+    unless fbasement_thermal_zone.nil?
+      finished_basement.height = Geometry.get_building_height(fbasement_thermal_zone.spaces)
+      finished_basement.area = OpenStudio::convert(fbasement_thermal_zone.floorArea,"m^2","ft^2").get
       finished_basement.volume = finished_basement.height * finished_basement.area   
     end
-    ufbasement_zone = Geometry.get_thermal_zone_from_string_from_osm(model, ufbasement_thermal_zone_r, runner)
-    unless ufbasement_zone.nil?
-      space_unfinished_basement.height = Geometry.get_building_height(ufbasement_zone.spaces)
-      space_unfinished_basement.area = OpenStudio::convert(ufbasement_zone.floorArea,"m^2","ft^2").get
+    unless ufbasement_thermal_zone.nil?
+      space_unfinished_basement.height = Geometry.get_building_height(ufbasement_thermal_zone.spaces)
+      space_unfinished_basement.area = OpenStudio::convert(ufbasement_thermal_zone.floorArea,"m^2","ft^2").get
       space_unfinished_basement.volume = space_unfinished_basement.height * space_unfinished_basement.area
     end
   
-    if HelperMethods.has_central_air_conditioner(model, runner, living_zone).nil? and HelperMethods.has_furnace(model, runner, living_zone).nil? and HelperMethods.has_air_source_heat_pump(model, runner, living_zone).nil?
+    if HelperMethods.has_central_air_conditioner(model, runner, living_thermal_zone).nil? and HelperMethods.has_furnace(model, runner, living_thermal_zone).nil? and HelperMethods.has_air_source_heat_pump(model, runner, living_thermal_zone).nil?
       duct_location = "none"
     end
   

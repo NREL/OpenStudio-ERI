@@ -86,9 +86,11 @@ class ProcessSystemCrankcaseHeater < OpenStudio::Ruleset::WorkspaceUserScript
     if not runner.validateUserArguments(arguments(workspace), user_arguments)
       return false
     end
+    
+    model = runner.lastOpenStudioModel.get
 
     living_thermal_zone_r = runner.getStringArgumentValue("living_thermal_zone",user_arguments)
-    living_thermal_zone = Geometry.get_thermal_zone_from_string_from_idf(workspace, living_thermal_zone_r, runner, false)
+    living_thermal_zone = Geometry.get_thermal_zone_from_string(model, living_thermal_zone_r, runner, false)
     if living_thermal_zone.nil?
       return false
     end

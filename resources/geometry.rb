@@ -36,27 +36,6 @@ class Geometry
         return [nbeds, nbaths]
     end
     
-    def self.get_bedrooms_bathrooms_from_idf(workspace, runner=nil)
-        nbeds = nil
-        nbaths = nil
-        electricEquipments = workspace.getObjectsByType("ElectricEquipment".to_IddObjectType)
-        electricEquipments.each do |electricEquipment|
-            br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(electricEquipment.getString(0).to_s)
-            ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(electricEquipment.getString(0).to_s)   
-            if br_regexpr
-                nbeds = br_regexpr[:br].to_f
-            elsif ba_regexpr
-                nbaths = ba_regexpr[:ba].to_f
-            end
-        end
-        if nbeds.nil? or nbaths.nil?
-            if not runner.nil?
-                runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
-            end
-        end
-        return [nbeds, nbaths]
-    end 
-    
     # Removes the number of bedrooms and bathrooms in the model
     def self.remove_bedrooms_bathrooms(model)
         model.getSpaces.each do |space|
@@ -73,18 +52,6 @@ class Geometry
             end
         end
     end 
-
-    # FIXME: Remove when we get rid of space types
-    # Retrieves the floor area of the specified space type
-    def self.get_floor_area_for_space_type(model, spacetype_handle)
-        floor_area = 0
-        model.getSpaceTypes.each do |spaceType|
-            if spaceType.handle.to_s == spacetype_handle.to_s
-                floor_area = OpenStudio.convert(spaceType.floorArea,"m^2","ft^2").get
-            end
-        end
-        return floor_area
-    end
 
     # Retrieves the finished floor area for the building
     def self.get_building_finished_floor_area(model, runner=nil)
@@ -316,25 +283,6 @@ class Geometry
         return space
     end
 
-    # FIXME: Remove when we get rid of space types
-    def self.get_space_type_from_string(model, spacetype_s, runner, print_err=true)
-        space_type = nil
-        model.getSpaceTypes.each do |st|
-            if st.name.to_s == spacetype_s
-                space_type = st
-                break
-            end
-        end
-        if space_type.nil?
-            if print_err
-                runner.registerError("Could not find space type with the name '#{spacetype_s}'.")
-            else
-                runner.registerWarning("Could not find space type with the name '#{spacetype_s}'.")
-            end
-        end
-        return space_type
-    end
-    
     def self.get_space_from_string(model, space_s, runner, print_err=true)
         space = nil
         model.getSpaces.each do |s|
@@ -354,67 +302,27 @@ class Geometry
     end
 
     def self.get_thermal_zone_from_string(model, thermalzone_s, runner, print_err=true)
-        thermal_zone = nil
-        model.getThermalZones.each do |tz|
-            if tz.name.to_s == thermalzone_s
-                thermal_zone = tz
-                break
+        unless thermalzone_s.empty?
+            thermal_zone = nil
+            model.getThermalZones.each do |tz|
+                if tz.name.to_s == thermalzone_s
+                    thermal_zone = tz
+                    break
+                end
             end
-        end
-        if thermal_zone.nil?
-            if print_err
-                runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
-            else
-                runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
+            if thermal_zone.nil?
+                if print_err
+                    runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
+                else
+                    runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
+                end
             end
+            return thermal_zone
+        else
+            return nil
         end
-        return thermal_zone
     end
 
-    def self.get_thermal_zone_from_string_from_idf(workspace, thermalzone_s, runner, print_err=true)
-        unless thermalzone_s.empty?
-          thermal_zone = nil
-          workspace.getObjectsByType("Zone".to_IddObjectType).each do |tz|
-              if tz.getString(0).to_s == thermalzone_s
-                  thermal_zone = tz
-                  break
-              end
-          end
-          if thermal_zone.nil?
-              if print_err
-                  runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
-              else
-                  runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
-              end
-          end
-          return thermal_zone
-        else
-          return nil
-        end
-    end
-    
-    def self.get_thermal_zone_from_string_from_osm(model, thermalzone_s, runner, print_err=true)
-        unless thermalzone_s.empty?
-          thermal_zone = nil
-          model.getThermalZones.each do |tz|
-              if tz.name.to_s == thermalzone_s
-                  thermal_zone = tz
-                  break
-              end
-          end
-          if thermal_zone.nil?
-              if print_err
-                  runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
-              else
-                  runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
-              end
-          end
-          return thermal_zone
-        else
-          return nil
-        end    
-    end
-    
     # Return an array of x values for surfaces passed in. The values will be relative to the parent origin. This was intended for spaces.
     def self.getSurfaceXValues(surfaceArray)
         xValueArray = []

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>6d947b62-c3eb-44df-bf71-1933d5d32fa3</version_id>
-  <version_modified>20160608T195458Z</version_modified>
+  <version_id>7f957e6f-bc0b-4a17-9f6c-413a893f3871</version_id>
+  <version_modified>20160609T163536Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -656,10 +656,16 @@
       <checksum>F81F0956</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6AFEAC3E</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E1556074</checksum>
+      <checksum>2285CA0B</checksum>
     </file>
     <file>
       <version>
@@ -670,13 +676,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2915BC18</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6AFEAC3E</checksum>
+      <checksum>D8BF4D07</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_system_crankcase_heater</name>
   <uid>b0630593-f352-4753-ae2c-2aa68f1c5611</uid>
-  <version_id>94878ed8-040d-43be-9869-1db39cc07a6a</version_id>
-  <version_modified>20160608T195502Z</version_modified>
+  <version_id>0a2bd4e1-07fc-4d9e-8c37-d29491529312</version_id>
+  <version_modified>20160609T162821Z</version_modified>
   <xml_checksum>C7ED76C0</xml_checksum>
   <class_name>ProcessSystemCrankcaseHeater</class_name>
   <display_name>Set Residential Crankcase Heater for Heat Pump and Multispeed Air Conditioner</display_name>
@@ -68,6 +68,18 @@
       <checksum>B79FDDBB</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E4784B5E</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6AFEAC3E</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -76,25 +88,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3FDF6BB2</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E4784B5E</checksum>
+      <checksum>984F7C2B</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E1556074</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6AFEAC3E</checksum>
+      <checksum>2285CA0B</checksum>
     </file>
   </files>
 </measure>
