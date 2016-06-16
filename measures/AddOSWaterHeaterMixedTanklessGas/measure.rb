@@ -170,11 +170,11 @@ class AddOSWaterHeaterMixedTanklessGas < OpenStudio::Ruleset::ModelUserScript
                     if wh.to_WaterHeaterMixed.is_initialized
                         waterHeater = wh.to_WaterHeaterMixed.get
                         waterHeater.remove
-                        runner.registerInfo("The existing mixed water heater has been removed and will be replaced with the new user specified water heater")
+                        runner.registerInitialCondition("The existing mixed water heater has been removed and will be replaced with the new user specified water heater")
                     elsif wh.to_WaterHeaterStratified.is_initialized
                         waterHeater = wh.to_WaterHeaterStratified.get
                         waterHeater.remove
-                        runner.registerInfo("The existing stratified water heater has been removed and will be replaced with the new user specified water heater")
+                        runner.registerInitialCondition("The existing stratified water heater has been removed and will be replaced with the new user specified water heater")
                     end
                 end
             end
@@ -182,11 +182,9 @@ class AddOSWaterHeaterMixedTanklessGas < OpenStudio::Ruleset::ModelUserScript
 
         if loop.nil?
             runner.registerInfo("A new plant loop for DHW will be added to the model")
+            runner.registerInitialCondition("No water heater model currently exists")
             loop = Waterheater.create_new_loop(model)
         end
-
-        register_initial_conditions(model, runner)
-
         if loop.components(OSM::PumpConstantSpeed::iddObjectType).empty?
             new_pump = Waterheater.create_new_pump(model)
             new_pump.addToNode(loop.supplyInletNode)
@@ -214,15 +212,6 @@ class AddOSWaterHeaterMixedTanklessGas < OpenStudio::Ruleset::ModelUserScript
         new_schedule = Waterheater.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", t_set, model)
         OSM::SetpointManagerScheduled.new(model, new_schedule)
     end 
-  
-    def register_initial_conditions(model, runner)
-        initial_condition = list_water_heaters(model, runner).join("\n")
-        if initial_condition.empty?
-            initial_condition = "No water heaters in initial model"
-        end
-    
-        runner.registerInitialCondition(initial_condition)
-    end
 
     def register_final_conditions(runner, model)
         final_condition = list_water_heaters(model, runner).join("\n")
