@@ -534,7 +534,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         end
         htg_coil.setRatedCOP(1.0 / supply.HeatingEIR[0])
         # self.addline(units.cfm2m3_s(sim.supply.Heat_AirFlowRate),'Rated Air Flow Rate {m^3/s}')
-        # self.addline(unit.supply.fan_power_rated/units.cfm2m3_s(1),'Rated Evaporator Fan Power Per Volume Flow Rate {W/(m/s)}')
+        htg_coil.setRatedSupplyFanPowerPerVolumeFlowRate(supply.fan_power_rated / OpenStudio::convert(1.0,"cfm","m^3/s").get)
         htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir)
         htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
         htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)

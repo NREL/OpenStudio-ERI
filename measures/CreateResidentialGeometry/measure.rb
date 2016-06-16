@@ -82,6 +82,13 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     garage_protrusion.setDefaultValue(0.0)
     args << garage_protrusion
     
+    #make a bool argument for whether the house has bonus room above garage
+    garage_bonus = OpenStudio::Ruleset::OSArgument::makeBoolArgument("garage_bonus", false)
+    garage_bonus.setDisplayName("Bonus Room Above Garage")
+    garage_bonus.setDescription("Indicates whether the house has a bonus room above the garage.")
+    garage_bonus.setDefaultValue(false)
+    args << garage_bonus
+    
     #make a choice argument for model objects
     garage_pos_display_names = OpenStudio::StringVector.new
     garage_pos_display_names << "Right"
@@ -183,6 +190,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     garage_width = OpenStudio::convert(runner.getDoubleArgumentValue("garage_width",user_arguments),"ft","m").get
     garage_depth = OpenStudio::convert(runner.getDoubleArgumentValue("garage_depth",user_arguments),"ft","m").get
     garage_protrusion = runner.getDoubleArgumentValue("garage_protrusion",user_arguments)
+    garage_bonus = runner.getBoolArgumentValue("garage_bonus",user_arguments)
     garage_pos = runner.getStringArgumentValue("garage_pos",user_arguments)
     foundation_type = runner.getStringArgumentValue("foundation_type",user_arguments)
     foundation_height = OpenStudio.convert(runner.getDoubleArgumentValue("foundation_height",user_arguments),"ft","m").get
@@ -208,11 +216,16 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       return false
     end
     if num_floors > 6
-      runner.registetError("Too many floors.")
+      runner.registerError("Too many floors.")
       return false
     end
     if garage_protrusion < 0 or garage_protrusion > 1
       runner.registerError("Invalid garage protrusion value entered.")
+      return false
+    end
+    if garage_width == 0 and garage_bonus
+      runner.registerWarning("No bonus room because no garage.")
+      garage_bonus = false
     end
     
     # calculate the footprint of the building
@@ -221,7 +234,12 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     if garage_area > 0
       has_garage = true
     end
-    garage_area = garage_area * (1.0 - garage_protrusion)
+    area_above_garage = garage_area * (1.0 - garage_protrusion)
+    if garage_bonus
+      bonus_area_above_garage = garage_area * garage_protrusion
+    else
+      bonus_area_above_garage = 0
+    end    
     if foundation_type == Constants.FinishedBasementSpace
         # 2*garage_area handles the slab under the garage
         footprint = (total_ffa + 2 * garage_area) / (num_floors + 1)
