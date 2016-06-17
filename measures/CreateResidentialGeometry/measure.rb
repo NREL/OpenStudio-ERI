@@ -82,13 +82,6 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     garage_protrusion.setDefaultValue(0.0)
     args << garage_protrusion
     
-    #make a bool argument for whether the house has bonus room above garage
-    garage_bonus = OpenStudio::Ruleset::OSArgument::makeBoolArgument("garage_bonus", false)
-    garage_bonus.setDisplayName("Bonus Room Above Garage")
-    garage_bonus.setDescription("Indicates whether the house has a bonus room above the garage.")
-    garage_bonus.setDefaultValue(false)
-    args << garage_bonus
-    
     #make a choice argument for model objects
     garage_pos_display_names = OpenStudio::StringVector.new
     garage_pos_display_names << "Right"
@@ -190,14 +183,13 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     garage_width = OpenStudio::convert(runner.getDoubleArgumentValue("garage_width",user_arguments),"ft","m").get
     garage_depth = OpenStudio::convert(runner.getDoubleArgumentValue("garage_depth",user_arguments),"ft","m").get
     garage_protrusion = runner.getDoubleArgumentValue("garage_protrusion",user_arguments)
-    garage_bonus = runner.getBoolArgumentValue("garage_bonus",user_arguments)
     garage_pos = runner.getStringArgumentValue("garage_pos",user_arguments)
     foundation_type = runner.getStringArgumentValue("foundation_type",user_arguments)
     foundation_height = OpenStudio.convert(runner.getDoubleArgumentValue("foundation_height",user_arguments),"ft","m").get
     attic_type = runner.getStringArgumentValue("attic_type",user_arguments)
     roof_type = runner.getStringArgumentValue("roof_type",user_arguments)
     roof_pitch = {"1:12"=>1.0/12.0, "2:12"=>2.0/12.0, "3:12"=>3.0/12.0, "4:12"=>4.0/12.0, "5:12"=>5.0/12.0, "6:12"=>6.0/12.0, "7:12"=>7.0/12.0, "8:12"=>8.0/12.0, "9:12"=>9.0/12.0, "10:12"=>10.0/12.0, "11:12"=>11.0/12.0, "12:12"=>12.0/12.0}[runner.getStringArgumentValue("roof_pitch",user_arguments)]
-
+    
     # error checking
     if aspect_ratio < 0
       runner.registerError("Invalid aspect ratio entered.")
@@ -223,9 +215,13 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       runner.registerError("Invalid garage protrusion value entered.")
       return false
     end
-    if garage_width == 0 and garage_bonus
-      runner.registerWarning("No bonus room because no garage.")
-      garage_bonus = false
+    if garage_protrusion > 0 and roof_type == Constants.RoofTypeHip
+      runner.registerError("Cannot handle protruding garage and hip roof.")
+      return false
+    end
+    if garage_protrusion > 0 and aspect_ratio < 1
+      runner.registerError("Cannot handle protruding garage and attic ridge running from front to back.")
+      return false
     end
     
     # calculate the footprint of the building
@@ -234,17 +230,15 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     if garage_area > 0
       has_garage = true
     end
-    area_above_garage = garage_area * (1.0 - garage_protrusion)
-    if garage_bonus
-      bonus_area_above_garage = garage_area * garage_protrusion
-    else
-      bonus_area_above_garage = 0
-    end    
+    garage_area_inside_footprint = 0
+    if has_garage
+      garage_area_inside_footprint = garage_area * (1.0 - garage_protrusion)      
+    end
+    bonus_area_above_garage = garage_area * garage_protrusion
     if foundation_type == Constants.FinishedBasementSpace
-        # 2*garage_area handles the slab under the garage
-        footprint = (total_ffa + 2 * garage_area) / (num_floors + 1)
+        footprint = (total_ffa + 2 * garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / (num_floors + 1)
     else
-        footprint = (total_ffa + garage_area) / num_floors
+        footprint = (total_ffa + garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / num_floors
     end
 	
     # calculate the dimensions of the building
@@ -256,6 +250,10 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       runner.registerError("Invalid living space and garage dimensions.")
       return false
     end
+    if garage_width > width and garage_protrusion > 0 and roof_type != Constants.RoofTypeFlat
+      runner.registerError("Cannot handle garage ridge height greater than house ridge height.")
+      return false
+    end    
 	
     # starting spaces
     starting_spaces = model.getSpaces
@@ -358,16 +356,71 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
         foundation_polygon_with_wrong_zs = living_polygon			
       
       else
-        sw_point = OpenStudio::Point3d.new(0,0,z)	
-        nw_point = OpenStudio::Point3d.new(0,width,z)
-        ne_point = OpenStudio::Point3d.new(length,width,z)
-        se_point = OpenStudio::Point3d.new(length,0,z)
-        living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)
-        if z == foundation_offset
-          foundation_polygon_with_wrong_zs = living_polygon
+        
+        if has_garage
+          garage_se_point = OpenStudio::Point3d.new(garage_se_point.x, garage_se_point.y, living_height * floor + foundation_offset)
+          garage_sw_point = OpenStudio::Point3d.new(garage_sw_point.x, garage_sw_point.y, living_height * floor + foundation_offset)        
+          if garage_pos == "Right"
+            if ( garage_depth < width or garage_protrusion > 0 ) and garage_protrusion < 1 # 6 points
+              if garage_protrusion > 0
+                sw_point = OpenStudio::Point3d.new(0,0,z)
+                nw_point = OpenStudio::Point3d.new(0,width,z)
+                ne_point = OpenStudio::Point3d.new(length,width,z)
+                l_se_point = OpenStudio::Point3d.new(length-garage_width,0,z)
+                living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, garage_se_point, garage_sw_point, l_se_point)
+              else
+                sw_point = OpenStudio::Point3d.new(0,0,z)	
+                nw_point = OpenStudio::Point3d.new(0,width,z)
+                ne_point = OpenStudio::Point3d.new(length,width,z)
+                se_point = OpenStudio::Point3d.new(length,0,z)
+                living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)              
+              end
+            else # 4 points
+              sw_point = OpenStudio::Point3d.new(0,0,z)	
+              nw_point = OpenStudio::Point3d.new(0,width,z)
+              ne_point = OpenStudio::Point3d.new(length,width,z)
+              se_point = OpenStudio::Point3d.new(length,0,z)
+              living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)      
+            end
+          elsif garage_pos == "Left"
+            if ( garage_depth < width or garage_protrusion > 0 ) and garage_protrusion < 1 # 6 points
+              if garage_protrusion > 0
+                nw_point = OpenStudio::Point3d.new(0,width,z)	
+                ne_point = OpenStudio::Point3d.new(length,width,z)
+                se_point = OpenStudio::Point3d.new(length,0,z)
+                l_sw_point = OpenStudio::Point3d.new(garage_width,0,z)
+                living_polygon = Geometry.make_polygon(garage_sw_point, nw_point, ne_point, se_point, l_sw_point, garage_se_point)
+              else
+                sw_point = OpenStudio::Point3d.new(0,0,z)	
+                nw_point = OpenStudio::Point3d.new(0,width,z)
+                ne_point = OpenStudio::Point3d.new(length,width,z)
+                se_point = OpenStudio::Point3d.new(length,0,z)
+                living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)              
+              end
+            else # 4 points
+              ne_point = OpenStudio::Point3d.new(length,width,z)
+              se_point = OpenStudio::Point3d.new(length,0,z)
+              sw_point = OpenStudio::Point3d.new(0,0,z)
+              nw_point = OpenStudio::Point3d.new(0,width,z)
+              living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)          
+            end
+          end
+        
+        else
+      
+          sw_point = OpenStudio::Point3d.new(0,0,z)	
+          nw_point = OpenStudio::Point3d.new(0,width,z)
+          ne_point = OpenStudio::Point3d.new(length,width,z)
+          se_point = OpenStudio::Point3d.new(length,0,z)
+          living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)
+          if z == foundation_offset
+            foundation_polygon_with_wrong_zs = living_polygon
+          end
+          
         end
-      end		
-		
+        
+      end
+
       # make space
       living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
       living_space = living_space.get
@@ -566,19 +619,22 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     # intersect and match surfaces for each space in the vector
     OpenStudio::Model.intersectSurfaces(spaces)
     OpenStudio::Model.matchSurfaces(spaces)
-  
-    if has_garage
-      garage_space.surfaces.each do |surface|
+
+    if has_garage and roof_type != Constants.RoofTypeFlat
+      if num_floors > 1
+        space_with_roof_over_garage = living_space
+      else
+        space_with_roof_over_garage = garage_space
+      end
+      space_with_roof_over_garage.surfaces.each do |surface|
         if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
           n_points = []
           s_points = []
           surface.vertices.each do |vertex|
-            if vertex.y == 0.0
+            if vertex.y == 0
               n_points << vertex
-            elsif vertex.y < 0.0
+            elsif vertex.y < 0
               s_points << vertex
-            elsif num_floors == 1.0 and roof_type == Constants.RoofTypeFlat
-              n_points << vertex
             end
           end
           if n_points[0].x > n_points[1].x
@@ -595,9 +651,15 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
             sw_point = s_points[0]
             se_point = s_points[1]
           end
+          
+          nw_point = OpenStudio::Point3d.new(nw_point.x, nw_point.y, living_space.zOrigin+nw_point.z)
+          ne_point = OpenStudio::Point3d.new(ne_point.x, ne_point.y, living_space.zOrigin+ne_point.z)
+          sw_point = OpenStudio::Point3d.new(sw_point.x, sw_point.y, living_space.zOrigin+sw_point.z)
+          se_point = OpenStudio::Point3d.new(se_point.x, se_point.y, living_space.zOrigin+se_point.z)
+          
           attic_height = (ne_point.x - nw_point.x)/2 * roof_pitch
-          roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2,nw_point.y,living_height+attic_height)
-          roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2,sw_point.y,living_height+attic_height)
+          roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2, nw_point.y+attic_height/roof_pitch, living_space.zOrigin+living_height+attic_height)
+          roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2, sw_point.y, living_space.zOrigin+living_height+attic_height)
           
           polygon_w_roof = Geometry.make_polygon(nw_point, sw_point, roof_s_point, roof_n_point)
           polygon_e_roof = Geometry.make_polygon(ne_point, roof_n_point, roof_s_point, se_point)
@@ -615,15 +677,19 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
           wall_s = OpenStudio::Model::Surface.new(polygon_s_wall, model)
           wall_s.setSurfaceType("Wall") 
           wall_s.setOutsideBoundaryCondition("Outdoors")
-          
+
           garage_attic_space = OpenStudio::Model::Space.new(model)
           garage_attic_space_name = Constants.GarageAtticSpace
           garage_attic_space.setName(garage_attic_space_name)
+          if attic_type == Constants.FinishedAtticSpace
+            garage_attic_space.setThermalZone(living_zone)
+          else
+            garage_attic_space.setThermalZone(garage_zone)
+          end
           deck_w.setSpace(garage_attic_space)
           deck_e.setSpace(garage_attic_space)
           wall_n.setSpace(garage_attic_space)
           wall_s.setSpace(garage_attic_space)
-          spaces << garage_attic_space
           
           runner.registerInfo("Set #{garage_attic_space_name}.")
           
@@ -632,15 +698,21 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
           break
           
         end
-      end
+      end      
     end
   
+    # put all of the spaces in the model into a vector
+    spaces = OpenStudio::Model::SpaceVector.new
+    model.getSpaces.each do |space|
+      spaces << space
+    end
+    
+    # intersect and match surfaces for each space in the vector
     OpenStudio::Model.intersectSurfaces(spaces)
-    OpenStudio::Model.matchSurfaces(spaces)  
+    OpenStudio::Model.matchSurfaces(spaces)
   
     # reporting final condition of model
-    finishing_spaces = model.getSpaces
-    runner.registerFinalCondition("The building finished with #{finishing_spaces.size} spaces.")	
+    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")	
     
     return true
 
