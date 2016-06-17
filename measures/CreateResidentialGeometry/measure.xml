@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>5bb9b5b2-fdcc-4c10-9a52-c216d99fdc26</version_id>
-  <version_modified>20160616T173830Z</version_modified>
+  <version_id>d92dd734-ce58-471d-9ca6-8c933811592a</version_id>
+  <version_modified>20160617T153659Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -79,25 +79,6 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>garage_bonus</name>
-      <display_name>Bonus Room Above Garage</display_name>
-      <description>Indicates whether the house has a bonus room above the garage.</description>
-      <type>Boolean</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>false</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
     </argument>
     <argument>
       <name>garage_pos</name>
@@ -321,7 +302,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1C176A5F</checksum>
+      <checksum>5F37D548</checksum>
     </file>
   </files>
 </measure>

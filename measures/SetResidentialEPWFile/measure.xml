@@ -137,8 +137,8 @@
     <file>
       <version>
         <software_program>OpenStudio</software_program>
-        <identifier>1.11.3</identifier>
-        <min_compatible>1.11.3</min_compatible>
+        <identifier>1.11.5</identifier>
+        <min_compatible>1.11.5</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
