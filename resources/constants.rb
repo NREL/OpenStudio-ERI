@@ -452,8 +452,8 @@ class Constants
   def self.ObjectNameHeatingSetpoint
     return 'residential heating setpoint'
   end
-  def self.ObjectNameHotTubHeater
-    return 'residential hot tub heater'
+  def self.ObjectNameHotTubHeater(fueltype)
+    return "residential hot tub heater #{fueltype}"
   end
   def self.ObjectNameHotTubPump
     return 'residential hot tub pump'
@@ -467,8 +467,8 @@ class Constants
   def self.ObjectNameOccupants
     return 'residential occupants'
   end
-  def self.ObjectNamePoolHeater
-    return 'residential pool heater'
+  def self.ObjectNamePoolHeater(fueltype)
+    return "residential pool heater #{fueltype}"
   end
   def self.ObjectNamePoolPump
     return 'residential pool pump'

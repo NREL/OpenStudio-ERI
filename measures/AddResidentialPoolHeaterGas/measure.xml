@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater</name>
   <uid>bbb7dbaa-5517-438e-bb14-5b92e9d09284</uid>
-  <version_id>9ae3872a-b246-4136-a62c-21e133814190</version_id>
-  <version_modified>20160616T203418Z</version_modified>
+  <version_id>4b2a4042-2575-4701-b7e7-fd376aeb7f2b</version_id>
+  <version_modified>20160618T165342Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialPoolHeater</class_name>
   <display_name>Set Residential Pool Gas Heater</display_name>
@@ -94,10 +94,16 @@
   </attributes>
   <files>
     <file>
-      <filename>ResidentialRefrigerator_Test.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4BBF53E0</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>2285CA0B</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CFF29151</checksum>
     </file>
     <file>
       <version>
@@ -108,25 +114,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EE2B2737</checksum>
+      <checksum>44B9A023</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A2C693E7</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CBEE7249</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6AFEAC3E</checksum>
+      <checksum>6D5E3121</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2285CA0B</checksum>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecPoolHeater.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EBB68CB1</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
+      <filename>ResidentialPoolHeaterGas_Test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D0765FD2</checksum>
+      <usage_type>test</usage_type>
+      <checksum>CCE63F3F</checksum>
     </file>
   </files>
 </measure>

@@ -140,32 +140,34 @@ namespace :test do
     desc 'Run all unit tests on measures'
     Rake::TestTask.new(:all) do |t|
       # need to update the names of these directories to "test"
-      file_list = FileList.new('NREL*/**/tests/*_test.rb')
-      file_list += FileList.new('NREL*/**/tests/*_Test.rb')
+      #file_list = FileList.new('NREL*/**/tests/*_test.rb')
+      #file_list += FileList.new('NREL*/**/tests/*_Test.rb')
 
       Rake::Task['ci:setup:minitest'].invoke
 
-      # Use the line below to run a specific test
-      # file_list = FileList.new('NREL*/EnableIdealAirLoadsForAllZones/tests/*_Test.rb')
+      # Use the line(s) below to run a specific test(s)
+      file_list = FileList.new('measures/AddResidentialRefrigerator/tests/*_Test.rb',
+                               'measures/AddResidentialExtraRefrigerator/tests/*_Test.rb',
+                               'measures/AddResidentialFreezer/tests/*_Test.rb')
 
       # These two will not run on Headless Linux for some reason.  Most likely a RunManager issue as it states
       # No XServer found
-      file_list.exclude(/.*HvacGshpDoas.*/,
-                        /.*SlabAndBasement.*/,
-                        /.*AnalysisPeriodCashFlows.*/,
-                        /.*AnnualEndUseBreakdown.*/,
-                        /.*CalibrationReports.*/,
-                        /.*MeterFloodPlot.*/,
-                        /.*NRELOpenStudioQAQCChecks.*/,
-                        /.*StandardReports.*/,
-                        /.*XcelEDAReportingandQAQC.*/,
-                        /.*XcelEDATariffSelectionandModelSetup.*/,
-                        /.*BarAspectRatioStudySlicedBySpaceTypeMidriseApartmen.*/,
-                        /.*TestCreateErrorMsgs.*/,
-                        /.*ListOfConstructions.*/,
-                        /.*ReduceSpaceInfiltrationByPercentage.*/,
-                        /.*AddPTAC\//
-                       )
+      #file_list.exclude(/.*HvacGshpDoas.*/,
+      #                  /.*SlabAndBasement.*/,
+      #                  /.*AnalysisPeriodCashFlows.*/,
+      #                  /.*AnnualEndUseBreakdown.*/,
+      #                  /.*CalibrationReports.*/,
+      #                  /.*MeterFloodPlot.*/,
+      #                  /.*NRELOpenStudioQAQCChecks.*/,
+      #                  /.*StandardReports.*/,
+      #                  /.*XcelEDAReportingandQAQC.*/,
+      #                  /.*XcelEDATariffSelectionandModelSetup.*/,
+      #                  /.*BarAspectRatioStudySlicedBySpaceTypeMidriseApartmen.*/,
+      #                  /.*TestCreateErrorMsgs.*/,
+      #                  /.*ListOfConstructions.*/,
+      #                  /.*ReduceSpaceInfiltrationByPercentage.*/,
+      #                  /.*AddPTAC\//
+      #                 )
 
       t.libs << 'test'
       t.test_files = file_list # .first(50)
