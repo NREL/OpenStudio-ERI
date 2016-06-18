@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>4d83b8af-6c66-4709-aec8-f16d09ca0b8d</version_id>
-  <version_modified>20160618T161708Z</version_modified>
+  <version_id>44c4802e-300c-4c09-9811-c05557ed1f5a</version_id>
+  <version_modified>20160618T170347Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSteelStud</class_name>
   <display_name>Set Residential Walls - Steel Stud Construction</display_name>
@@ -158,7 +158,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6D5E3121</checksum>
+      <checksum>6FEC70C2</checksum>
     </file>
   </files>
 </measure>

@@ -410,6 +410,9 @@ class Constants
   def self.MonthNames
     return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   end
+  def self.ObjectNameBath
+    return 'residential bath'
+  end
   def self.ObjectNameClothesWasher
     return 'residential clothes washer'
   end
@@ -475,6 +478,12 @@ class Constants
   end
   def self.ObjectNameRefrigerator
     return 'residential refrigerator'
+  end
+  def self.ObjectNameShower
+    return 'residential shower'
+  end
+  def self.ObjectNameSink
+    return 'residential sink'
   end
   def self.ObjectNameWellPump
     return 'residential well pump'

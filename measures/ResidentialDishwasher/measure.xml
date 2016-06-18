@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>ac3dc6ef-9d4b-4862-b591-36aee1f988fd</version_id>
-  <version_modified>20160618T161712Z</version_modified>
+  <version_id>8a996e59-6332-4eeb-841e-0d424a49de40</version_id>
+  <version_modified>20160618T170351Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -133,7 +133,7 @@
     <argument>
       <name>plant_loop</name>
       <display_name>Plant Loop</display_name>
-      <description>Select the plant loop for the clothes washer</description>
+      <description>Select the plant loop for the dishwasher</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -168,12 +168,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>0B899055</checksum>
-    </file>
-    <file>
-      <filename>MinuteDrawProfilesMaxFlows.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>63BE98ED</checksum>
     </file>
     <file>
       <filename>DishwasherSchedule_1bed_unit0.csv</filename>
@@ -224,17 +218,6 @@
       <checksum>07473538</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>0F04BD31</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -259,10 +242,27 @@
       <checksum>CFF29151</checksum>
     </file>
     <file>
+      <filename>MinuteDrawProfilesMaxFlows.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9D722D63</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>31EA28D7</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6D5E3121</checksum>
+      <checksum>6FEC70C2</checksum>
     </file>
   </files>
 </measure>

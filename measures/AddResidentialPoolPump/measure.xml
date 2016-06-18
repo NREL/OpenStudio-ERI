@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_pump</name>
   <uid>b5648903-279f-4e58-9139-c44134c0cf76</uid>
-  <version_id>88225bf9-ec53-4bc6-9b9d-4c7a0902c4af</version_id>
-  <version_modified>20160618T165342Z</version_modified>
+  <version_id>e8908fcf-37d8-403f-a5d2-b1b2e0c0c122</version_id>
+  <version_modified>20160618T170341Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolPump</class_name>
   <display_name>Set Residential Pool Pump</display_name>
@@ -117,12 +117,6 @@
       <checksum>93DB3036</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6D5E3121</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -139,6 +133,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>C4C6BA59</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6FEC70C2</checksum>
     </file>
   </files>
 </measure>
