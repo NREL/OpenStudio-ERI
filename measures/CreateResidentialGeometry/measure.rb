@@ -191,6 +191,10 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     roof_pitch = {"1:12"=>1.0/12.0, "2:12"=>2.0/12.0, "3:12"=>3.0/12.0, "4:12"=>4.0/12.0, "5:12"=>5.0/12.0, "6:12"=>6.0/12.0, "7:12"=>7.0/12.0, "8:12"=>8.0/12.0, "9:12"=>9.0/12.0, "10:12"=>10.0/12.0, "11:12"=>11.0/12.0, "12:12"=>12.0/12.0}[runner.getStringArgumentValue("roof_pitch",user_arguments)]
     
     # error checking
+    if model.getSpaces.size > 0
+      runner.registerError("Starting model is not empty.")
+      return false
+    end
     if aspect_ratio < 0
       runner.registerError("Invalid aspect ratio entered.")
       return false

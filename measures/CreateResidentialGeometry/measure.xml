@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>237fa034-672c-4d2a-bbbc-1ef5ed4e3e5a</version_id>
-  <version_modified>20160618T170342Z</version_modified>
+  <version_id>cc2080c0-cde4-43a7-b509-5c3de5e62a41</version_id>
+  <version_modified>20160622T154502Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -270,22 +270,28 @@
   </attributes>
   <files>
     <file>
-      <filename>create_basic_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>77ECDDF1</checksum>
-    </file>
-    <file>
-      <filename>example_model.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C4F35230</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2285CA0B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6FEC70C2</checksum>
+    </file>
+    <file>
+      <filename>EmptySeedModel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>67F4A6F3</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A2C693E7</checksum>
     </file>
     <file>
       <version>
@@ -296,13 +302,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5F37D548</checksum>
+      <checksum>62BCCFDE</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>create_basic_geometry_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6FEC70C2</checksum>
+      <usage_type>test</usage_type>
+      <checksum>827ABF6D</checksum>
     </file>
   </files>
 </measure>
