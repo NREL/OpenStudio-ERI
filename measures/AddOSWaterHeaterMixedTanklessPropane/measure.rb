@@ -193,8 +193,6 @@ class AddOSWaterHeaterMixedTanklessPropane < OpenStudio::Ruleset::ModelUserScrip
             loop = Waterheater.create_new_loop(model)
         end
 
-        register_initial_conditions(model, runner)
-
         if loop.components(OSM::PumpConstantSpeed::iddObjectType).empty?
             new_pump = Waterheater.create_new_pump(model)
             new_pump.addToNode(loop.supplyInletNode)

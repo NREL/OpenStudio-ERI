@@ -158,7 +158,6 @@ class AddOSWaterHeaterMixedTanklessElectric < OpenStudio::Ruleset::ModelUserScri
                         runner.registerInitialCondition("The existing mixed water heater has been removed and will be replaced with the new user specified water heater")
                     elsif wh.to_WaterHeaterStratified.is_initialized
                         waterHeater = wh.to_WaterHeaterStratified.get
-                        register_initial_conditions(model, runner)
                         waterHeater.remove
                         runner.registerInitialCondition("The existing stratified water heater has been removed and will be replaced with the new user specified water heater")
                     end
