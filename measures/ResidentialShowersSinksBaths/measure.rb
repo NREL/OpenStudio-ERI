@@ -14,7 +14,7 @@ class ResidentialShowersSinksBaths < OpenStudio::Ruleset::ModelUserScript
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
     def name
-        return "Residential Showers Sinks Baths"
+        return "Set Residential Showers, Sinks, and Baths"
     end
 
     def description
@@ -319,7 +319,7 @@ class ResidentialShowersSinksBaths < OpenStudio::Ruleset::ModelUserScript
         b_sch.setSchedule(b_oe)
         
         #reporting final condition of model
-        runner.registerFinalCondition("Showers, sinks and bath hot water end uses, drawing #{sh_gpd} , #{s_gpd} gal/day, and #{b_gpd} gal/day respectively, have been added to plant loop #{plant_loop_s} and their associated space gains have been added to space #{space}.")
+        runner.registerFinalCondition("Showers, sinks and bath hot water end uses, drawing #{sh_gpd} , #{s_gpd} gal/day, and #{b_gpd} gal/day respectively, have been added to plant loop #{plant_loop_s} and their associated space gains have been added to space #{space.name}.")
 	
         return true
     end

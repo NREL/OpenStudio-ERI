@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>cc2080c0-cde4-43a7-b509-5c3de5e62a41</version_id>
-  <version_modified>20160622T154502Z</version_modified>
+  <version_id>ebd91353-92b1-468d-b7ea-7332fd2c4bf0</version_id>
+  <version_modified>20160623T171646Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -294,6 +294,12 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
+      <filename>create_basic_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>827ABF6D</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -302,13 +308,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>62BCCFDE</checksum>
-    </file>
-    <file>
-      <filename>create_basic_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>827ABF6D</checksum>
+      <checksum>2C4A7A4F</checksum>
     </file>
   </files>
 </measure>

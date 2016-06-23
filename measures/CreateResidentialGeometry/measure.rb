@@ -533,7 +533,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
       attic_space.setName(attic_space_name)
       runner.registerInfo("Set #{attic_space_name}.")
 
-      # set these to the foundation spacetype and zone
+      # set these to the foundation zone
       if attic_type == Constants.UnfinishedAtticSpace        
         # create attic zone
         attic_zone = OpenStudio::Model::ThermalZone.new(model)

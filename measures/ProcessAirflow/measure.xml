@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>543b8a28-3886-494a-b228-cc62396e6107</version_id>
-  <version_modified>20160618T170342Z</version_modified>
+  <version_id>5c531a41-3213-4815-942e-cf958b5160a2</version_id>
+  <version_modified>20160623T171646Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -257,7 +257,7 @@
     <argument>
       <name>userdefinedtotaleff</name>
       <display_name>Mechanical Ventilation: Total Recovery Efficiency</display_name>
-      <description>The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plys the exhaust fan energy.</description>
+      <description>The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plus the exhaust fan energy.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -275,7 +275,7 @@
     <argument>
       <name>userdefinedfanpower</name>
       <display_name>Mechanical Ventilation: Fan Power</display_name>
-      <description>Fan power (in W) per delivered airflow rate (in cfm) of fan(s) providing whole house ventilation. If the house uses a balanced ventilation system thtere is assumed to be two fans operating at this efficiency.</description>
+      <description>Fan power (in W) per delivered airflow rate (in cfm) of fan(s) providing whole house ventilation. If the house uses a balanced ventilation system there is assumed to be two fans operating at this efficiency.</description>
       <type>Double</type>
       <units>W/cfm</units>
       <required>false</required>
@@ -285,7 +285,7 @@
     <argument>
       <name>userdefinedfracofashrae</name>
       <display_name>Mechanical Ventilation: Fraction of ASHRAE 62.2</display_name>
-      <description>Fraction of the ventilation rate (including any infiltration credit) specified by ASHRAE 62.2 that is desired in the bulding.</description>
+      <description>Fraction of the ventilation rate (including any infiltration credit) specified by ASHRAE 62.2 that is desired in the building.</description>
       <type>Double</type>
       <units>frac</units>
       <required>false</required>
@@ -644,12 +644,6 @@
       <checksum>640596F1</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E4784B5E</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -662,6 +656,18 @@
       <checksum>2285CA0B</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6FEC70C2</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1506D9BD</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -670,13 +676,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>065754F7</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6FEC70C2</checksum>
+      <checksum>B1151610</checksum>
     </file>
   </files>
 </measure>

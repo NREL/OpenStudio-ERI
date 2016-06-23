@@ -591,7 +591,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     #make a double argument for total efficiency
     userdefined_totaleff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedtotaleff",false)
     userdefined_totaleff.setDisplayName("Mechanical Ventilation: Total Recovery Efficiency")
-    userdefined_totaleff.setDescription("The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plys the exhaust fan energy.")
+    userdefined_totaleff.setDescription("The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plus the exhaust fan energy.")
     userdefined_totaleff.setDefaultValue(0)
     args << userdefined_totaleff
 
@@ -606,7 +606,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     userdefined_fanpower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfanpower",false)
     userdefined_fanpower.setDisplayName("Mechanical Ventilation: Fan Power")
     userdefined_fanpower.setUnits("W/cfm")
-    userdefined_fanpower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of fan(s) providing whole house ventilation. If the house uses a balanced ventilation system thtere is assumed to be two fans operating at this efficiency.")
+    userdefined_fanpower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of fan(s) providing whole house ventilation. If the house uses a balanced ventilation system there is assumed to be two fans operating at this efficiency.")
     userdefined_fanpower.setDefaultValue(0.3)
     args << userdefined_fanpower
 
@@ -614,7 +614,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     userdefined_fracofashrae = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfracofashrae",false)
     userdefined_fracofashrae.setDisplayName("Mechanical Ventilation: Fraction of ASHRAE 62.2")
     userdefined_fracofashrae.setUnits("frac")
-    userdefined_fracofashrae.setDescription("Fraction of the ventilation rate (including any infiltration credit) specified by ASHRAE 62.2 that is desired in the bulding.")
+    userdefined_fracofashrae.setDescription("Fraction of the ventilation rate (including any infiltration credit) specified by ASHRAE 62.2 that is desired in the building.")
     userdefined_fracofashrae.setDefaultValue(1.0)
     args << userdefined_fracofashrae
 

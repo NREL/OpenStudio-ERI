@@ -2,11 +2,11 @@
   <schema_version>3.0</schema_version>
   <name>residential_showers_sinks_baths</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>7f7dbc8d-824b-4255-8b94-6e68b45c2aae</version_id>
-  <version_modified>20160618T170352Z</version_modified>
+  <version_id>3bbc1080-2c74-4cb5-af0d-786bfe30616e</version_id>
+  <version_modified>20160623T165941Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialShowersSinksBaths</class_name>
-  <display_name>Residential Showers Sinks Baths</display_name>
+  <display_name>Set Residential Showers, Sinks, and Baths</display_name>
   <description>Adds water use due to showers, sinks, and baths into the home. This water use also results in internal gains due to the hot water use. The total hot water use and space gains are modified by the DHW distribution measure if it is also run. Hot water is assumed to be used at 110 F for these end uses.</description>
   <modeler_description>Creates three new WaterUse:Equipment objects to represent showers, sinks, and baths in a home. OtherEquipment objects are also added to take into account the heat gain in the space due to hot water use.</modeler_description>
   <arguments>
@@ -134,18 +134,6 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E4784B5E</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07473538</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -254,17 +242,6 @@
       <checksum>88867B1C</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>1.4.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>2DF16447</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -275,6 +252,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>CFF29151</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1506D9BD</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31699732</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.4.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>5C0479B0</checksum>
     </file>
   </files>
 </measure>

@@ -64,7 +64,7 @@ class AddOSWaterHeaterMixedTanklessGas < OpenStudio::Ruleset::ModelUserScript
         # make an argument for the rated energy factor
         rated_energy_factor = osargument::makeStringArgument("rated_energy_factor", true)
         rated_energy_factor.setDisplayName("Rated Energy Factor")
-        rated_energy_factor.setDescription("For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procesdures to thes the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B.")
+        rated_energy_factor.setDescription("For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procedures to test the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B.")
         rated_energy_factor.setDefaultValue("0.82")
         args << rated_energy_factor
 
