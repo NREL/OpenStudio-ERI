@@ -2,11 +2,11 @@
   <schema_version>3.0</schema_version>
   <name>residential_showers_sinks_baths</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>3bbc1080-2c74-4cb5-af0d-786bfe30616e</version_id>
-  <version_modified>20160623T165941Z</version_modified>
+  <version_id>1a578293-e708-4a14-8f73-d25f42916330</version_id>
+  <version_modified>20160623T173825Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialShowersSinksBaths</class_name>
-  <display_name>Set Residential Showers, Sinks, and Baths</display_name>
+  <display_name>Set Residential Hot Water Fixtures</display_name>
   <description>Adds water use due to showers, sinks, and baths into the home. This water use also results in internal gains due to the hot water use. The total hot water use and space gains are modified by the DHW distribution measure if it is also run. Hot water is assumed to be used at 110 F for these end uses.</description>
   <modeler_description>Creates three new WaterUse:Equipment objects to represent showers, sinks, and baths in a home. OtherEquipment objects are also added to take into account the heat gain in the space due to hot water use.</modeler_description>
   <arguments>
@@ -274,7 +274,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5C0479B0</checksum>
+      <checksum>9AC65FAB</checksum>
     </file>
   </files>
 </measure>

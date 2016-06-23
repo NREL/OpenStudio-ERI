@@ -61,8 +61,8 @@ The New Construction workflow illustrates how to build up a complete residential
 ||23. Set Residential Window Construction|Window Area|
 ||24. Set Residential Door Construction|Door Area|
 ||25. Set Residential Furniture Thermal Mass|TODO|
-|4. Water Heating|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
-||2. Set Residential Showers, Sinks, and Baths|Water Heater|
+|4. Domestic Hot Water|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
+||2. Set Residential Hot Water Fixtures|Water Heater|
 ||3. [Hot water distribution; where?]||
 |5. HVAC & Airflow|1. Set Residential Heating/Cooling Setpoints and Schedules||
 ||2. Set Residential Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)|Setpoints/Schedules|

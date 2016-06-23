@@ -14,7 +14,7 @@ class ResidentialShowersSinksBaths < OpenStudio::Ruleset::ModelUserScript
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
     def name
-        return "Set Residential Showers, Sinks, and Baths"
+        return "Set Residential Hot Water Fixtures"
     end
 
     def description
