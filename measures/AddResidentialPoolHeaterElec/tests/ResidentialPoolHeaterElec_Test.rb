@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class NewMeasureTest < MiniTest::Test
+class ResidentialPoolHeaterElecTest < MiniTest::Test
 
   def test_new_construction_none1
     # Using annual energy
@@ -140,7 +140,7 @@ class NewMeasureTest < MiniTest::Test
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
-    measure = ResidentialPoolHeater.new
+    measure = ResidentialPoolHeaterElec.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -174,7 +174,7 @@ class NewMeasureTest < MiniTest::Test
 
   def _test_new_construction(osm_file, args_hash, expected_new_object, expected_annual_kwh=nil)
     # create an instance of the measure
-    measure = ResidentialPoolHeater.new
+    measure = ResidentialPoolHeaterElec.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -249,7 +249,7 @@ class NewMeasureTest < MiniTest::Test
   
   def _test_retrofit(model, args_hash, expected_new_object, expected_annual_kwh=nil)
     # create an instance of the measure
-    measure = ResidentialPoolHeater.new
+    measure = ResidentialPoolHeaterElec.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new

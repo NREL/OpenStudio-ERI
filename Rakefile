@@ -139,38 +139,24 @@ namespace :test do
   namespace :unit do
     desc 'Run all unit tests on measures'
     Rake::TestTask.new(:all) do |t|
-      # need to update the names of these directories to "test"
-      #file_list = FileList.new('NREL*/**/tests/*_test.rb')
-      #file_list += FileList.new('NREL*/**/tests/*_Test.rb')
-
-      Rake::Task['ci:setup:minitest'].invoke
-
-      # Use the line(s) below to run a specific test(s)
-      file_list = FileList.new('measures/AddResidentialRefrigerator/tests/*_Test.rb',
-                               'measures/AddResidentialExtraRefrigerator/tests/*_Test.rb',
-                               'measures/AddResidentialFreezer/tests/*_Test.rb')
-
-      # These two will not run on Headless Linux for some reason.  Most likely a RunManager issue as it states
-      # No XServer found
-      #file_list.exclude(/.*HvacGshpDoas.*/,
-      #                  /.*SlabAndBasement.*/,
-      #                  /.*AnalysisPeriodCashFlows.*/,
-      #                  /.*AnnualEndUseBreakdown.*/,
-      #                  /.*CalibrationReports.*/,
-      #                  /.*MeterFloodPlot.*/,
-      #                  /.*NRELOpenStudioQAQCChecks.*/,
-      #                  /.*StandardReports.*/,
-      #                  /.*XcelEDAReportingandQAQC.*/,
-      #                  /.*XcelEDATariffSelectionandModelSetup.*/,
-      #                  /.*BarAspectRatioStudySlicedBySpaceTypeMidriseApartmen.*/,
-      #                  /.*TestCreateErrorMsgs.*/,
-      #                  /.*ListOfConstructions.*/,
-      #                  /.*ReduceSpaceInfiltrationByPercentage.*/,
-      #                  /.*AddPTAC\//
-      #                 )
+      file_list = FileList['measures/AddResidentialRefrigerator/tests/ResidentialRefrigerator_Test.rb',
+                           'measures/ResidentialMiscellaneousElectricLoads/tests/ResidentialMiscellaneousElectricLoads_Test.rb',
+                           'measures/AddResidentialExtraRefrigerator/tests/ResidentialExtraRefrigerator_Test.rb',
+                           'measures/AddResidentialFreezer/tests/ResidentialFreezer_Test.rb',
+                           'measures/AddResidentialPoolHeaterElec/tests/ResidentialPoolHeaterElec_Test.rb',
+                           'measures/AddResidentialPoolHeaterGas/tests/ResidentialPoolHeaterGas_Test.rb',
+                           'measures/AddResidentialPoolPump/tests/ResidentialPoolPump_Test.rb',
+                           'measures/AddResidentialHotTubHeaterElec/tests/ResidentialHotTubHeaterElec_Test.rb',
+                           'measures/AddResidentialHotTubHeaterGas/tests/ResidentialHotTubHeaterGas_Test.rb',
+                           'measures/AddResidentialHotTubPump/tests/ResidentialHotTubPump_Test.rb',
+                           'measures/AddResidentialWellPump/tests/ResidentialWellPump_Test.rb',
+                           'measures/AddResidentialGasFireplace/tests/ResidentialGasFireplace_Test.rb',
+                           'measures/AddResidentialGasGrill/tests/ResidentialGasGrill_Test.rb',
+                           'measures/AddResidentialGasLighting/tests/ResidentialGasLighting_Test.rb']
 
       t.libs << 'test'
-      t.test_files = file_list # .first(50)
+      t.test_files = file_list
+      t.warning = false
       t.verbose = true
     end
   end

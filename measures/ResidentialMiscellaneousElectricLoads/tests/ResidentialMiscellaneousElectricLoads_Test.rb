@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class NewMeasureTest < MiniTest::Test
+class ResidentialMiscellaneousElectricLoadsTest < MiniTest::Test
 
   def test_new_construction_none
     # Using energy multiplier

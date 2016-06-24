@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class NewMeasureTest < MiniTest::Test
+class ResidentialPoolPumpTest < MiniTest::Test
 
   def test_new_construction_none1
     # Using annual energy
