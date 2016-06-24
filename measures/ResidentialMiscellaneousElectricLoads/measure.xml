@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_electric_loads</name>
   <uid>3ac41688-ef52-4679-b79c-8cbdf7cbd0e7</uid>
-  <version_id>66af6cd4-7ae1-45ec-9a2d-42382cb2b6f7</version_id>
-  <version_modified>20160620T203840Z</version_modified>
+  <version_id>cb593d75-ba3c-4eac-a080-b96f335c59c2</version_id>
+  <version_modified>20160624T185813Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialMiscellaneousElectricLoads</class_name>
   <display_name>Set Residential Plug Loads</display_name>
@@ -94,12 +94,6 @@
       <checksum>CBEE7249</checksum>
     </file>
     <file>
-      <filename>ResidentialMiscellaneousElectricLoads_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>083A56D9</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -109,6 +103,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>40F484B9</checksum>
+    </file>
+    <file>
+      <filename>ResidentialMiscellaneousElectricLoads_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1A06D85D</checksum>
     </file>
   </files>
 </measure>

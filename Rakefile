@@ -124,101 +124,50 @@ namespace :measures do
 end # end the :measures namespace
 
 namespace :test do
-  desc 'Run integration tests'
-  task :integration do
-    require_relative 'test/integration_test.rb'
-    Test::Integration.run
+
+  # Split into equal groups for CircleCI parallelization
+  measures_group_0 = FileList['measures/AddResidentialRefrigerator/tests/ResidentialRefrigerator_Test.rb',
+                              'measures/ResidentialMiscellaneousElectricLoads/tests/ResidentialMiscellaneousElectricLoads_Test.rb',
+                              'measures/AddResidentialExtraRefrigerator/tests/ResidentialExtraRefrigerator_Test.rb',
+                              'measures/AddResidentialFreezer/tests/ResidentialFreezer_Test.rb',
+                              'measures/AddResidentialPoolHeaterElec/tests/ResidentialPoolHeaterElec_Test.rb',
+                              'measures/AddResidentialPoolHeaterGas/tests/ResidentialPoolHeaterGas_Test.rb',
+                              'measures/AddResidentialPoolPump/tests/ResidentialPoolPump_Test.rb']
+  
+  measures_group_1 = FileList['measures/AddResidentialHotTubHeaterElec/tests/ResidentialHotTubHeaterElec_Test.rb',
+                              'measures/AddResidentialHotTubHeaterGas/tests/ResidentialHotTubHeaterGas_Test.rb',
+                              'measures/AddResidentialHotTubPump/tests/ResidentialHotTubPump_Test.rb',
+                              'measures/AddResidentialWellPump/tests/ResidentialWellPump_Test.rb',
+                              'measures/AddResidentialGasFireplace/tests/ResidentialGasFireplace_Test.rb',
+                              'measures/AddResidentialGasGrill/tests/ResidentialGasGrill_Test.rb',
+                              'measures/AddResidentialGasLighting/tests/ResidentialGasLighting_Test.rb']
+
+  desc 'Run unit tests for all measures in group 0'
+  Rake::TestTask.new('measures_group_0') do |t|
+    t.libs << 'test'
+    t.test_files = measures_group_0
+    t.warning = false
+    t.verbose = true
   end
 
-  desc 'Update integration tests'
-  task :update do
-    require_relative 'test/update_integration_tests.rb'
-    update_integration_tests
+  desc 'Run unit tests for all measures in group 1'
+  Rake::TestTask.new('measures_group_1') do |t|
+    t.libs << 'test'
+    t.test_files = measures_group_1
+    t.warning = false
+    t.verbose = true
   end
 
-  namespace :unit do
-    desc 'Run all unit tests on measures'
-    Rake::TestTask.new(:all) do |t|
-      file_list = FileList['measures/AddResidentialRefrigerator/tests/ResidentialRefrigerator_Test.rb',
-                           'measures/ResidentialMiscellaneousElectricLoads/tests/ResidentialMiscellaneousElectricLoads_Test.rb',
-                           'measures/AddResidentialExtraRefrigerator/tests/ResidentialExtraRefrigerator_Test.rb',
-                           'measures/AddResidentialFreezer/tests/ResidentialFreezer_Test.rb',
-                           'measures/AddResidentialPoolHeaterElec/tests/ResidentialPoolHeaterElec_Test.rb',
-                           'measures/AddResidentialPoolHeaterGas/tests/ResidentialPoolHeaterGas_Test.rb',
-                           'measures/AddResidentialPoolPump/tests/ResidentialPoolPump_Test.rb',
-                           'measures/AddResidentialHotTubHeaterElec/tests/ResidentialHotTubHeaterElec_Test.rb',
-                           'measures/AddResidentialHotTubHeaterGas/tests/ResidentialHotTubHeaterGas_Test.rb',
-                           'measures/AddResidentialHotTubPump/tests/ResidentialHotTubPump_Test.rb',
-                           'measures/AddResidentialWellPump/tests/ResidentialWellPump_Test.rb',
-                           'measures/AddResidentialGasFireplace/tests/ResidentialGasFireplace_Test.rb',
-                           'measures/AddResidentialGasGrill/tests/ResidentialGasGrill_Test.rb',
-                           'measures/AddResidentialGasLighting/tests/ResidentialGasLighting_Test.rb']
-
-      t.libs << 'test'
-      t.test_files = file_list
-      t.warning = false
-      t.verbose = true
-    end
+  desc 'Run unit tests for all measures'
+  Rake::TestTask.new('all') do |t|
+    t.libs << 'test'
+    t.test_files = measures_group_0 + measures_group_1
+    t.warning = false
+    t.verbose = true
   end
 end
 
-desc 'test running in docker using docker gem'
-task :docker do
-  require 'docker'
-  # This section needs to go into an initializer
-  # If you are using boot2docker, then you have to deal with all these shananigans
-  # https://github.com/swipely/docker-api/issues/202
-  if ENV['DOCKER_HOST']
-    puts "Docker URL is #{ENV['DOCKER_HOST']}:#{ENV['DOCKER_HOST'].class}"
-  else
-    fail 'No Docker IP found. Set DOCKER_HOST ENV variable to the Docker socket'
-  end
-
-  cert_path = File.expand_path ENV['DOCKER_CERT_PATH']
-  Docker.options = {
-    client_cert: File.join(cert_path, 'cert.pem'),
-    client_key: File.join(cert_path, 'key.pem'),
-    ssl_ca_file: File.join(cert_path, 'ca.pem'),
-    scheme: 'https' # This is important when the URL starts with tcp://
-  }
-  Docker.url = ENV['DOCKER_HOST']
-
-  # What is the longest timeout?
-  docker_container_timeout = 60 * 60 # 60 minutes
-  Excon.defaults[:write_timeout] = docker_container_timeout
-  Excon.defaults[:read_timeout] = docker_container_timeout
-
-  # TODO: docker images has to already be downloaded (e.g. docker pull nllong/openstudio:1.5.1-ruby)
-  # run_command = %W[/var/cbecc-com-files/run.sh -i /var/cbecc-com-files/run/#{run_filename}]
-  run_command = %w(ls -alt)
-  c = Docker::Container.create('Cmd' => run_command,
-                               'Image' => 'nllong/openstudio:1.5.1-ruby',
-                               'AttachStdout' => true
-                              )
-  run_path = File.expand_path('.')
-  puts run_path
-  c.start('Binds' => ["#{run_path}:/var/simdata/openstudio"])
-
-  # this command is kind of weird. From what I understand, this is the container timeout (defaults to 60 seconds)
-  # This may be of interest: http://kimh.github.io/blog/en/docker/running-docker-containers-asynchronously-with-celluloid/
-  c.wait(docker_container_timeout)
-  stdout, stderr = c.attach(stream: false, stdout: true, stderr: true, logs: true)
-
-  puts stdout
-  puts stderr
-end
-
-require 'rubocop/rake_task'
-desc 'Run RuboCop on the lib directory'
-RuboCop::RakeTask.new(:rubocop) do |task|
-  task.options = ['--no-color', '--out=rubocop-results.xml']
-  task.formatters = ['RuboCop::Formatter::CheckstyleFormatter']
-  task.requires = ['rubocop/formatter/checkstyle_formatter']
-  # don't abort rake on failure
-  task.fail_on_error = false
-end
-
-task default: 'test:unit:all'
+task default: 'test:all'
 
 desc 'update all resources'
 task :update_resources do
