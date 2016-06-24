@@ -1,9 +1,9 @@
 GIT
-  remote: git://github.com/NREL/bcl-gem.git
-  revision: ebd0e86de4feffc4499fe4ae99499caacb9291e1
+  remote: https://github.com/NREL/bcl-gem
+  revision: abcd28bed2066c49ea045fca2c161a9685adcd7a
   branch: develop
   specs:
-    bcl (0.5.7)
+    bcl (0.5.6)
       archive-tar-minitar
       builder
       faraday
@@ -39,20 +39,23 @@ GEM
     json (1.7.7)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
-    mini_portile2 (2.0.0)
+    mini_portile2 (2.1.0)
     minitest (5.4.3)
-    multi_json (1.12.0)
+    multi_json (1.12.1)
     multipart-post (2.0.0)
-    nokogiri (1.6.7.2-x64-mingw32)
-      mini_portile2 (~> 2.0.0.rc2)
-    nokogiri (1.6.7.2-x86-mingw32)
-      mini_portile2 (~> 2.0.0.rc2)
+    nokogiri (1.6.8-x64-mingw32)
+      mini_portile2 (~> 2.1.0)
+      pkg-config (~> 1.1.7)
+    nokogiri (1.6.8-x86-mingw32)
+      mini_portile2 (~> 2.1.0)
+      pkg-config (~> 1.1.7)
     parser (2.3.1.0)
       ast (~> 2.2)
+    pkg-config (1.1.7)
     powerpack (0.0.9)
     rainbow (2.1.0)
     rake (11.1.2)
-    roo (2.3.2)
+    roo (2.4.0)
       nokogiri (~> 1)
       rubyzip (~> 1.1, < 2.0.0)
     rubocop (0.26.1)
@@ -64,7 +67,7 @@ GEM
     rubocop-checkstyle_formatter (0.1.1)
       rubocop (>= 0.14.0)
     ruby-progressbar (1.8.0)
-    rubyXL (3.3.17)
+    rubyXL (3.3.21)
       nokogiri (>= 1.4.4)
       rubyzip (>= 1.1.6)
     rubyzip (1.2.0)
