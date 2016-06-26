@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater_gas</name>
   <uid>bbb7dbaa-5517-438e-bb14-5b92e9d09284</uid>
-  <version_id>8e4e4f9e-d2fc-48d1-ad10-f712b1ebd3b4</version_id>
-  <version_modified>20160624T185811Z</version_modified>
+  <version_id>24261f7b-e115-48fe-bb96-911b99f71ac9</version_id>
+  <version_modified>20160626T194746Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialPoolHeaterGas</class_name>
   <display_name>Set Residential Pool Gas Heater</display_name>
@@ -124,12 +124,6 @@
       <checksum>EBB68CB1</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6FEC70C2</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -141,10 +135,16 @@
       <checksum>338C98AA</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A6D2A65F</checksum>
+    </file>
+    <file>
       <filename>ResidentialPoolHeaterGas_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>A1487945</checksum>
+      <checksum>D11639CA</checksum>
     </file>
   </files>
 </measure>

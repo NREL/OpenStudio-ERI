@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ResidentialCookingRangeTest < MiniTest::Test
+class ResidentialCookingRangeGasTest < MiniTest::Test
 
   def test_new_construction_none
     # Using energy multiplier
@@ -13,69 +13,71 @@ class ResidentialCookingRangeTest < MiniTest::Test
     _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, false)
   end
   
-  def test_new_construction_electric
+  def test_new_construction_gas
     args_hash = {}
-    args_hash["c_ef"] = 0.74
-    args_hash["o_ef"] = 0.11
-    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 500)
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 80, 29)
   end
   
-  def test_new_construction_induction
+  def test_new_construction_no_elec_ignition
     args_hash = {}
-    args_hash["c_ef"] = 0.84
-    args_hash["o_ef"] = 0.11
-    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 473)
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    args_hash["e_ignition"] = "false"
+    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 80, 0)
   end
 
   def test_new_construction_mult_0_80
     args_hash = {}
-    args_hash["c_ef"] = 0.74
-    args_hash["o_ef"] = 0.11
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
     args_hash["mult"] = 0.80
-    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 400)
+    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 64, 23)
   end
   
   def test_new_construction_modified_schedule
     args_hash = {}
-    args_hash["c_ef"] = 0.74
-    args_hash["o_ef"] = 0.11
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
     args_hash["weekday_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["weekend_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["monthly_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12"
-    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 500)
+    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 80, 29)
   end
 
   def test_new_construction_basement
     args_hash = {}
-    args_hash["c_ef"] = 0.74
-    args_hash["o_ef"] = 0.11
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
     args_hash["space"] = Constants.FinishedBasementSpace
-    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 500)
+    _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 80, 29)
   end
   
   def test_retrofit_replace
     args_hash = {}
-    args_hash["c_ef"] = 0.74
-    args_hash["o_ef"] = 0.11
-    model = _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 500)
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    model = _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 80, 29)
     args_hash = {}
-    args_hash["c_ef"] = 0.84
-    _test_retrofit(model, args_hash, true, 473)
+    args_hash["c_ef"] = 0.2
+    args_hash["o_ef"] = 0.02
+    _test_retrofit(model, args_hash, true, 80, 71)
   end
   
-  def test_retrofit_replace_gas_cooking_range
-    model = _get_model("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasCookingRange.osm")
+  def test_retrofit_replace_elec_cooking_range
+    model = _get_model("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm")
     args_hash = {}
-    args_hash["c_ef"] = 0.74
-    args_hash["o_ef"] = 0.11
-    _test_retrofit(model, args_hash, true, 500)
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    _test_retrofit(model, args_hash, true, 80, 29)
   end
     
   def test_retrofit_remove
     args_hash = {}
-    args_hash["c_ef"] = 0.74
-    args_hash["o_ef"] = 0.11
-    model = _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 500)
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    model = _test_new_construction("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, true, 80, 29)
     args_hash = {}
     args_hash["mult"] = 0.0
     _test_retrofit(model, args_hash, false)
@@ -173,7 +175,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
-    measure = ResidentialCookingRange.new
+    measure = ResidentialCookingRangeGas.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -205,9 +207,9 @@ class ResidentialCookingRangeTest < MiniTest::Test
     assert(result.errors.size == 1)
   end
 
-  def _test_new_construction(osm_file, args_hash, expected_new_object, expected_annual_kwh=nil)
+  def _test_new_construction(osm_file, args_hash, expected_new_object, expected_annual_kwh=nil, expected_annual_therm=nil)
     # create an instance of the measure
-    measure = ResidentialCookingRange.new
+    measure = ResidentialCookingRangeGas.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -286,7 +288,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
   
   def _test_retrofit(model, args_hash, expected_new_object, expected_annual_kwh=nil)
     # create an instance of the measure
-    measure = ResidentialCookingRange.new
+    measure = ResidentialCookingRangeGas.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
