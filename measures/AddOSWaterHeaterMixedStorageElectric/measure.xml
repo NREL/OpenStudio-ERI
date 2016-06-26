@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>83232ddd-d627-4830-b05f-cdd660142815</version_id>
-  <version_modified>20160626T055501Z</version_modified>
+  <version_id>b9bd2e93-e04e-4401-97a4-e04a19e1d10f</version_id>
+  <version_modified>20160626T195517Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageElectric</class_name>
   <display_name>Set Residential Electric Tank Water Heater</display_name>
@@ -113,12 +113,6 @@
       <checksum>31699732</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1506D9BD</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -140,6 +134,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>A6D2A65F</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7367BD96</checksum>
     </file>
   </files>
 </measure>
