@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater_elec</name>
   <uid>05dab71a-88e0-4c98-84c4-232e380b9944</uid>
-  <version_id>b34a33ab-8a66-47f2-8176-664c4b4657b4</version_id>
-  <version_modified>20160626T195520Z</version_modified>
+  <version_id>b58a686a-dd58-4e8a-9ef5-14f9cd24fba6</version_id>
+  <version_modified>20160627T173323Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialHotTubHeaterElec</class_name>
   <display_name>Set Residential Hot Tub Electric Heater</display_name>
@@ -129,12 +129,6 @@
       <checksum>4F47D87B</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A6D2A65F</checksum>
-    </file>
-    <file>
       <filename>ResidentialHotTubHeaterElec_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -145,6 +139,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0F8D91D8</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6857D963</checksum>
     </file>
   </files>
 </measure>

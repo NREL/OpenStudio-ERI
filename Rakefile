@@ -5,9 +5,6 @@ require 'rake'
 require 'rake/testtask'
 require 'ci/reporter/rake/minitest'
 
-# require 'minitest/autorun'
-# require 'bcl'
-
 require 'pp'
 require 'colored'
 require 'json'
@@ -146,7 +143,9 @@ namespace :test do
                               
   measures_group_3 = FileList['measures/AddResidentialGasGrill/tests/ResidentialGasGrill_Test.rb',
                               'measures/AddResidentialGasLighting/tests/ResidentialGasLighting_Test.rb',
-                              'measures/ResidentialLighting/tests/ResidentialLighting_Test.rb'
+                              'measures/ResidentialLighting/tests/ResidentialLighting_Test.rb',
+                              'measures/ResidentialCookingRange/tests/ResidentialCookingRange_Test.rb',
+                              'measures/ResidentialCookingRangeGas/tests/ResidentialCookingRangeGas_Test.rb'
                               ]
                               
   desc 'Run unit tests for all measures in group 0'

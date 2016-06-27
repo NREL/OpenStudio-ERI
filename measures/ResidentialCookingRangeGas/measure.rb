@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
+class ResidentialCookingRangeGas < OpenStudio::Ruleset::ModelUserScript
   
   def name
     return "Set Residential Gas Cooking Range"
@@ -223,4 +223,4 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ResidentialCookingRange.new.registerWithApplication
+ResidentialCookingRangeGas.new.registerWithApplication

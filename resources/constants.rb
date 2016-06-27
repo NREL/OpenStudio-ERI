@@ -424,7 +424,7 @@ class Constants
     if ignition
         s_ignition = " ignition"
     end
-    return 'residential range #{fueltype}#{s_ignition}'
+    return "residential range #{fueltype}#{s_ignition}"
   end
   def self.ObjectNameCoolingSeason
     return 'residential cooling season'
