@@ -540,6 +540,12 @@ class Schedule
   # return [Double] The total number of full load hours for this schedule.
   def self.annual_equivalent_full_load_hrs(model, schedule)
 
+    if schedule.to_ScheduleInterval.is_initialized
+        timeSeries = schedule.to_ScheduleInterval.get.timeSeries
+        annual_flh = timeSeries.averageValue * 8760
+        return annual_flh
+    end
+
     if not schedule.to_ScheduleRuleset.is_initialized
       return nil
     end
