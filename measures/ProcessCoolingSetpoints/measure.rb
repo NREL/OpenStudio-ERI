@@ -35,18 +35,18 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
   
    	#Make a string argument for 24 weekday cooling set point values
     clg_wkdy = OpenStudio::Ruleset::OSArgument::makeStringArgument("clg_wkdy", false)
-    clg_wkdy.setDisplayName("Weekday Cooling Setpoint Schedule")
-    clg_wkdy.setDescription("Specify the 24-hour weekday cooling schedule.")
+    clg_wkdy.setDisplayName("Weekday Setpoint")
+    clg_wkdy.setDescription("Specify a single cooling setpoint or a 24-hour cooling schedule for the weekdays.")
     clg_wkdy.setUnits("degrees F")
-    clg_wkdy.setDefaultValue("76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0")
+    clg_wkdy.setDefaultValue("76")
     args << clg_wkdy  
     
    	#Make a string argument for 24 weekend cooling set point values
     clg_wked = OpenStudio::Ruleset::OSArgument::makeStringArgument("clg_wked", false)
-    clg_wked.setDisplayName("Weekend Cooling Setpoint Schedule")
-    clg_wked.setDescription("Specify the 24-hour weekend cooling schedule.")
+    clg_wked.setDisplayName("Weekend Setpoint")
+    clg_wked.setDescription("Specify a single cooling setpoint or a 24-hour cooling schedule for the weekend.")
     clg_wked.setUnits("degrees F")
-    clg_wked.setDefaultValue("76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0")
+    clg_wked.setDefaultValue("76")
     args << clg_wked	
 	
     return args
@@ -100,6 +100,14 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
       runner.registerWarning("Cooling setpoints set at 10000 because no cooling equipment found.")
     end
     
+    # Convert to 24-values if a single value entered
+    if not clg_wkdy.include?(",")
+      clg_wkdy = Array.new(24, clg_wkdy).join(", ")
+    end
+    if not clg_wked.include?(",")
+      clg_wked = Array.new(24, clg_wked).join(", ")
+    end
+
     clg_wkdy = clg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
     clg_wked = clg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
     

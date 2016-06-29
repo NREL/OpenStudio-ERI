@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>b95ae381-7957-428c-8603-4e0b5459404a</version_id>
-  <version_modified>20160627T204950Z</version_modified>
+  <version_id>29c061e9-9819-46c7-b4e4-3f6ea162f035</version_id>
+  <version_modified>20160629T183656Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -12,23 +12,23 @@
   <arguments>
     <argument>
       <name>clg_wkdy</name>
-      <display_name>Weekday Cooling Setpoint Schedule</display_name>
-      <description>Specify the 24-hour weekday cooling schedule.</description>
+      <display_name>Weekday Setpoint</display_name>
+      <description>Specify a single cooling setpoint or a 24-hour cooling schedule for the weekdays.</description>
       <type>String</type>
       <units>degrees F</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0</default_value>
+      <default_value>76</default_value>
     </argument>
     <argument>
       <name>clg_wked</name>
-      <display_name>Weekend Cooling Setpoint Schedule</display_name>
-      <description>Specify the 24-hour weekend cooling schedule.</description>
+      <display_name>Weekend Setpoint</display_name>
+      <description>Specify a single cooling setpoint or a 24-hour cooling schedule for the weekend.</description>
       <type>String</type>
       <units>degrees F</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 85.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0, 76.0</default_value>
+      <default_value>76</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -89,17 +89,6 @@
       <checksum>DCBEF242</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.11.5</identifier>
-        <min_compatible>1.11.5</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>429A40F7</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -122,6 +111,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3FEC7DD1</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.11.5</identifier>
+        <min_compatible>1.11.5</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>120DD1D0</checksum>
     </file>
   </files>
 </measure>

@@ -35,18 +35,18 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
 
    	#Make a string argument for 24 weekday heating set point values
     htg_wkdy = OpenStudio::Ruleset::OSArgument::makeStringArgument("htg_wkdy", false)
-    htg_wkdy.setDisplayName("Weekday Heating Setpoint Schedule")
-    htg_wkdy.setDescription("Specify the 24-hour weekday heating schedule.")
+    htg_wkdy.setDisplayName("Weekday Setpoint")
+    htg_wkdy.setDescription("Specify a single heating setpoint or a 24-hour heating schedule for the weekdays.")
     htg_wkdy.setUnits("degrees F")
-    htg_wkdy.setDefaultValue("65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0")
+    htg_wkdy.setDefaultValue("71")
     args << htg_wkdy
 
    	#Make a string argument for 24 weekend heating set point values
     htg_wked = OpenStudio::Ruleset::OSArgument::makeStringArgument("htg_wked", false)
-    htg_wked.setDisplayName("Weekend Heating Setpoint Schedule")
-    htg_wked.setDescription("Specify the 24-hour weekend heating schedule.")
+    htg_wked.setDisplayName("Weekend Setpoint")
+    htg_wked.setDescription("Specify a single heating setpoint or a 24-hour heating schedule for the weekend.")
     htg_wked.setUnits("degrees F")
-    htg_wked.setDefaultValue("65.0, 65.0, 65.0, 65.0, 65.0, 65.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 71.0, 65.0")
+    htg_wked.setDefaultValue("71")
     args << htg_wked
 	
     return args
@@ -116,6 +116,14 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
       runner.registerWarning("Heating setpoints set at -10000 because no heating equipment found.")
     end    
     
+    # Convert to 24-values if a single value entered
+    if not htg_wkdy.include?(",")
+      htg_wkdy = Array.new(24, htg_wkdy).join(", ")
+    end
+    if not htg_wked.include?(",")
+      htg_wked = Array.new(24, htg_wked).join(", ")
+    end
+
     htg_wkdy = htg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
     htg_wked = htg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
     
