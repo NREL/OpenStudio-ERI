@@ -24,6 +24,8 @@ group :test do
   gem 'rubocop', '~> 0.26.0'
   gem 'rubocop-checkstyle_formatter', '~> 0.1.1'
   gem 'ci_reporter_minitest', '~> 1.0.0'
+  gem 'coveralls'
+  gem 'minitest-reporters'
 end
 
 gem 'docker-api', require: 'docker'

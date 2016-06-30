@@ -122,6 +122,8 @@ end # end the :measures namespace
 
 namespace :test do
 
+  require_relative 'test/minitest_helper'
+
   # Split into equal groups for CircleCI parallelization
   measures_group_0 = FileList['measures/AddResidentialRefrigerator/tests/ResidentialRefrigerator_Test.rb',
                               'measures/ResidentialMiscellaneousElectricLoads/tests/ResidentialMiscellaneousElectricLoads_Test.rb',
