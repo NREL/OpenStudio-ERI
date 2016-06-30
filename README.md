@@ -1,6 +1,10 @@
 Residential OpenStudio Measures
 ===============
 
+[![CircleCI](https://circleci.com/gh/NREL/OpenStudio-Beopt.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-Beopt)
+
+[![Coverage Status](https://coveralls.io/repos/github/NREL/OpenStudio-Beopt/badge.svg?branch=master)](https://coveralls.io/github/NREL/OpenStudio-Beopt?branch=master)
+
 This project includes OpenStudio measures used to model residential buildings.
 
 This project is a <b>work-in-progress</b>. The models are not fully completed nor tested. These measures will eventually be posted on the [Building Component Library](https://bcl.nrel.gov/)
