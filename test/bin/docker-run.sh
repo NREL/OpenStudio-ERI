@@ -8,6 +8,8 @@ eval "$(rbenv init -)"
 cd /OpenStudio-Beopt
 bundle install
 
+rake update_resources
+
 # Run a specific set of tests on each node.
 # Test groups are defined in the Rakefile.
 # Each group must have a total runtime less
