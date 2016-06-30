@@ -2,6 +2,7 @@
 
 export CI=true
 export CIRCLECI=true
+export COVERALLS_PARALLEL=true
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
