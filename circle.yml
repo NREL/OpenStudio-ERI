@@ -1,7 +1,9 @@
 machine:
   services:
     - docker
-
+  environment:
+    COVERALLS_PARALLEL: true
+    
 dependencies:
   override:
     - echo Running this echo command to skip CircleCI inferred bundle install command
