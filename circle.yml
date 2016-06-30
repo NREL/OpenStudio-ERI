@@ -4,7 +4,8 @@ machine:
 
 dependencies:
   override:
-
+    - echo Running this echo command to skip CircleCI inferred bundle install command
+  
 test:
   override:
     - mkdir -p $CIRCLE_TEST_REPORTS/minitest:
