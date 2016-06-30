@@ -5,6 +5,7 @@ export CIRCLECI=true
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
+cd /OpenStudio-Beopt/OpenStudio-Beopt
 bundle install
 
 # Run a specific set of tests on each node.
