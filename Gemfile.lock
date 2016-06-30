@@ -16,6 +16,13 @@ GIT
       yamler
       zliby
 
+GIT
+  remote: https://github.com/circleci/minitest-ci.git
+  revision: 1e655bbfeafe9120db9a527794fa1125e3d99081
+  specs:
+    minitest-ci (3.0.4.pre)
+      minitest (~> 5.0, >= 5.0.6)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -133,6 +140,7 @@ DEPENDENCIES
   docker-api
   json (~> 1.7.7)
   minitest (~> 5.4.0)
+  minitest-ci!
   minitest-reporters
   rake (~> 11.1.2)
   rubocop (~> 0.26.0)

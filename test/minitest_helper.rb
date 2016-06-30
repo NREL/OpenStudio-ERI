@@ -10,11 +10,11 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
 
 # Ignore some of the code in coverage testing
 SimpleCov.start do
-  add_filter '/geometries/'
-  add_filter '/resources/'
-  add_filter '/test/'
+  add_filter '/measures/.*/resources/'
+  add_filter '/measures/.*/tests/'
 end
 
+require 'minitest/autorun'
 require 'minitest/reporters'
 
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new # spec-like progress
