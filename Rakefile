@@ -122,33 +122,17 @@ end # end the :measures namespace
 
 namespace :test do
 
-  
+  all_tests = Dir['measures/*/tests/*.rb']
+  group_size = (all_tests.size/4.0).ceil
 
   # Split into equal groups for CircleCI parallelization
-  measures_group_0 = FileList['measures/AddResidentialRefrigerator/tests/ResidentialRefrigerator_Test.rb',
-                              'measures/ResidentialMiscellaneousElectricLoads/tests/ResidentialMiscellaneousElectricLoads_Test.rb',
-                              'measures/AddResidentialExtraRefrigerator/tests/ResidentialExtraRefrigerator_Test.rb',
-                              'measures/AddResidentialFreezer/tests/ResidentialFreezer_Test.rb'
-                              ]
+  measures_group_0 = FileList[all_tests.each_slice(group_size).to_a[0]]
   
-  measures_group_1 = FileList['measures/AddResidentialPoolHeaterElec/tests/ResidentialPoolHeaterElec_Test.rb',
-                              'measures/AddResidentialPoolHeaterGas/tests/ResidentialPoolHeaterGas_Test.rb',
-                              'measures/AddResidentialPoolPump/tests/ResidentialPoolPump_Test.rb',
-                              'measures/AddResidentialHotTubHeaterElec/tests/ResidentialHotTubHeaterElec_Test.rb'
-                              ]
+  measures_group_1 = FileList[all_tests.each_slice(group_size).to_a[1]]
 
-  measures_group_2 = FileList['measures/AddResidentialHotTubHeaterGas/tests/ResidentialHotTubHeaterGas_Test.rb',
-                              'measures/AddResidentialHotTubPump/tests/ResidentialHotTubPump_Test.rb',
-                              'measures/AddResidentialWellPump/tests/ResidentialWellPump_Test.rb',
-                              'measures/AddResidentialGasFireplace/tests/ResidentialGasFireplace_Test.rb'
-                              ]
+  measures_group_2 = FileList[all_tests.each_slice(group_size).to_a[2]]
                               
-  measures_group_3 = FileList['measures/AddResidentialGasGrill/tests/ResidentialGasGrill_Test.rb',
-                              'measures/AddResidentialGasLighting/tests/ResidentialGasLighting_Test.rb',
-                              'measures/ResidentialLighting/tests/ResidentialLighting_Test.rb',
-                              'measures/ResidentialCookingRange/tests/ResidentialCookingRange_Test.rb',
-                              'measures/ResidentialCookingRangeGas/tests/ResidentialCookingRangeGas_Test.rb'
-                              ]
+  measures_group_3 = FileList[all_tests.each_slice(group_size).to_a[3]]
                               
   desc 'Run unit tests for all measures in group 0'
   Rake::TestTask.new('measures_group_0') do |t|
@@ -185,7 +169,7 @@ namespace :test do
   desc 'Run unit tests for all measures'
   Rake::TestTask.new('all') do |t|
     t.libs << 'test'
-    t.test_files = measures_group_0 + measures_group_1 + measures_group_2 + measures_group_3
+    t.test_files = all_tests
     t.warning = false
     t.verbose = true
   end
