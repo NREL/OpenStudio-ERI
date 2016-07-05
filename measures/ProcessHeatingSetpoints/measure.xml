@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>d5282f5d-c69a-4cb3-b558-aa1ccc4a6de0</version_id>
-  <version_modified>20160705T142233Z</version_modified>
+  <version_id>29bc1c9d-c20e-492e-92b5-5305caa85e5a</version_id>
+  <version_modified>20160705T184912Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -79,10 +79,10 @@
       <checksum>7367BD96</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3FEC7DD1</checksum>
+      <checksum>5DA42BED</checksum>
     </file>
     <file>
       <version>
@@ -93,13 +93,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2E3D72E9</checksum>
+      <checksum>DED57C76</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>5DA42BED</checksum>
+      <checksum>8EA68519</checksum>
     </file>
   </files>
 </measure>

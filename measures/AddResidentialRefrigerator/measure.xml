@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>f0259bdc-1391-41eb-80eb-efc10bd1bc02</uid>
-  <version_id>f60018d5-c9a3-46a8-9531-bb107d6c9005</version_id>
-  <version_modified>20160705T155746Z</version_modified>
+  <version_id>748c39f0-8d58-427e-aadc-e0c9d9709f72</version_id>
+  <version_modified>20160705T184911Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Set Residential Refrigerator</display_name>
@@ -113,12 +113,6 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3FEC7DD1</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -129,6 +123,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>109E519B</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8EA68519</checksum>
     </file>
   </files>
 </measure>

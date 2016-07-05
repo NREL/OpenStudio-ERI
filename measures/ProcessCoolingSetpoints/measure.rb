@@ -74,7 +74,7 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    coolingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSeason, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), cooling_season.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)  
+    coolingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSeason, Array.new(24, 1), Array.new(24, 1), cooling_season, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)  
     
     unless coolingseasonschedule.validated?
       return false
@@ -193,8 +193,8 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
           end
         end        
                 
-        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy.join(", "), htg_wked.join(", "), htg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy.join(", "), clg_wked.join(", "), clg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy, htg_wked, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy, clg_wked, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
 
         unless heatingsetpoint.validated? and coolingsetpoint.validated?
           return false
@@ -218,8 +218,8 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
           htg_monthly_sch[m-1] = -10000
         end
         
-        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), htg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy.join(", "), clg_wked.join(", "), clg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, Array.new(24, 1), Array.new(24, 1), htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy, clg_wked, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
 
         unless coolingsetpoint.validated?
           return false

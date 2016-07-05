@@ -1,6 +1,7 @@
 # TODO: Need to handle vacations
 
 # Annual schedule defined by 12 24-hour values
+# Values must be a 12-element array of 24-element arrays of numbers.
 class HourlyByMonthSchedule
 
     def initialize(model, runner, sch_name, month_by_hour_values, normalize_values=true)
@@ -40,21 +41,32 @@ class HourlyByMonthSchedule
     private 
     
         def validateValues(vals, num_outter_values, num_inner_values)
+            err_msg = "A #{num_outter_values.to_s}-element array with #{num_inner_values.to_s}-element arrays of numbers must be entered for the schedule."
+            if not vals.is_a?(Array)
+                @runner.registerError(err_msg)
+                @validated = false
+                return nil
+            end
             begin
                 if vals.length != num_outter_values
-                    @runner.registerError("#{num_outter_values.to_s} lists of #{num_inner_values.to_s} numbers must be entered for the schedule.")
+                    @runner.registerError(err_msg)
                     @validated = false
                     return nil
                 end
                 vals.each do |val|
+                    if not val.is_a?(Array)
+                        @runner.registerError(err_msg)
+                        @validated = false
+                        return nil
+                    end
                     if val.length != num_inner_values
-                        @runner.registerError("#{num_outter_values.to_s} lists of #{num_inner_values.to_s} numbers must be entered for the schedule.")
+                        @runner.registerError(err_msg)
                         @validated = false
                         return nil
                     end
                 end
             rescue
-                @runner.registerError("#{num_outter_values.to_s} lists of #{num_inner_values.to_s} numbers must be entered for the schedule.")
+                @runner.registerError(err_msg)
                 @validated = false
                 return nil
             end
@@ -115,6 +127,8 @@ class HourlyByMonthSchedule
 end
 
 # Annual schedule defined by 24 weekday hourly values, 24 weekend hourly values, and 12 monthly values
+# Hourly values can either be a comma-separated string of 24 numbers or a 24-element array of numbers.
+# Monthly values can either be a comma-separated string of 12 numbers or a 12-element array of numbers.
 class MonthWeekdayWeekendSchedule
 
     def initialize(model, runner, sch_name, weekday_hourly_values, weekend_hourly_values, monthly_values, 
@@ -192,24 +206,45 @@ class MonthWeekdayWeekendSchedule
     
     private 
     
-        def validateValues(values_str, num_values, sch_name)
-            begin
-                vals = values_str.split(",")
-                vals.each do |val|
+        def validateValues(values, num_values, sch_name)
+            err_msg = "Either a comma-separated string of #{num_values.to_s} numbers or an array of #{num_values.to_s} numbers must be entered for the #{sch_name} schedule."
+            if values.is_a?(Array)
+                if values.length != num_values
+                    @runner.registerError(err_msg)
+                    @validated = false
+                    return nil
+                end
+                values.each do |val|
                     if not valid_float?(val)
-                        @runner.registerError(num_values.to_s + " comma-separated numbers must be entered for the " + sch_name + " schedule.")
+                        @runner.registerError(err_msg)
                         @validated = false
                         return nil
                     end
                 end
-                floats = vals.map {|i| i.to_f}
-                if floats.length != num_values
-                    @runner.registerError(num_values.to_s + " comma-separated numbers must be entered for the " + sch_name + " schedule.")
+                floats = values.map {|i| i.to_f}
+            elsif values.is_a?(String)
+                begin
+                    vals = values.split(",")
+                    vals.each do |val|
+                        if not valid_float?(val)
+                            @runner.registerError(err_msg)
+                            @validated = false
+                            return nil
+                        end
+                    end
+                    floats = vals.map {|i| i.to_f}
+                    if floats.length != num_values
+                        @runner.registerError(err_msg)
+                        @validated = false
+                        return nil
+                    end
+                rescue
+                    @runner.registerError(err_msg)
                     @validated = false
                     return nil
                 end
-            rescue
-                @runner.registerError(num_values.to_s + " comma-separated numbers must be entered for the " + sch_name + " schedule.")
+            else
+                @runner.registerError(err_msg)
                 @validated = false
                 return nil
             end
