@@ -7,12 +7,24 @@ require 'fileutils'
 
 class ResidentialDishwasherTest < MiniTest::Test
 
+  def osm_geo
+    return "2000sqft_2story_FB_GRG_UA.osm"
+  end
+
+  def osm_geo_beds_loc_tankwh
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm"
+  end
+
+  def osm_geo_beds_loc_tanklesswh
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtankless.osm"
+  end
+  
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
     args_hash["mult_e"] = 0.0
     args_hash["mult_hw"] = 0.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_measure(osm_geo_beds_loc_tankwh, args_hash)
   end
   
   def test_new_construction_318_rated_kwh
@@ -20,7 +32,7 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["num_settings"] = 8
     args_hash["dw_E"] = 318
     args_hash["eg_gas_cost"] = 24
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash, 0, 2, 111, 3.10)
+    _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 111, 3.10)
   end
   
   def test_new_construction_290_rated_kwh
@@ -28,9 +40,17 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["num_settings"] = 12
     args_hash["dw_E"] = 290
     args_hash["eg_gas_cost"] = 23
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash, 0, 2, 83.1, 1.65)
+    _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 83.1, 1.65)
   end
   
+  def test_new_construction_318_rated_kwh_tankless
+    args_hash = {}
+    args_hash["num_settings"] = 8
+    args_hash["dw_E"] = 318
+    args_hash["eg_gas_cost"] = 24
+    _test_measure(osm_geo_beds_loc_tanklesswh, args_hash, 0, 2, 111, 3.10)
+  end
+
   def test_new_construction_318_rated_kwh_mult_0_80
     args_hash = {}
     args_hash["num_settings"] = 8
@@ -38,7 +58,7 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["eg_gas_cost"] = 24
     args_hash["mult_e"] = 0.8
     args_hash["mult_hw"] = 0.8
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash, 0, 2, 88.8, 2.48)
+    _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 88.8, 2.48)
   end
   
   def test_new_construction_318_rated_kwh_cold_inlet
@@ -48,7 +68,7 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["eg_gas_cost"] = 24
     args_hash["cold_inlet"] = "true"
     args_hash["cold_use"] = 3.5
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash, 0, 2, 303.8, 5.0)
+    _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 303.8, 5.0)
   end
 
   def test_new_construction_318_rated_kwh_no_int_heater
@@ -57,7 +77,7 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["dw_E"] = 318
     args_hash["eg_gas_cost"] = 24
     args_hash["int_htr"] = "false"
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash, 0, 2, 124.8, 2.41)
+    _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 124.8, 2.41)
   end
 
   def test_new_construction_basement
@@ -66,7 +86,7 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["dw_E"] = 318
     args_hash["eg_gas_cost"] = 24
     args_hash["space"] = Constants.FinishedBasementSpace
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash, 0, 2, 111, 3.10)
+    _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 111, 3.10)
   end
 
   def test_retrofit_replace
@@ -74,7 +94,7 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["num_settings"] = 8
     args_hash["dw_E"] = 318
     args_hash["eg_gas_cost"] = 24
-    model = _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash, 0, 2, 111, 3.10)
+    model = _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 111, 3.10)
     args_hash = {}
     args_hash["num_settings"] = 12
     args_hash["dw_E"] = 290
@@ -87,7 +107,7 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["num_settings"] = 8
     args_hash["dw_E"] = 318
     args_hash["eg_gas_cost"] = 24
-    model = _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash, 0, 2, 111, 3.10)
+    model = _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 111, 3.10)
     args_hash = {}
     args_hash["mult_e"] = 0.0
     args_hash["mult_hw"] = 0.0
@@ -97,61 +117,61 @@ class ResidentialDishwasherTest < MiniTest::Test
   def test_argument_error_num_settings_negative
     args_hash = {}
     args_hash["num_settings"] = -1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
   
   def test_argument_error_num_settings_zero
     args_hash = {}
     args_hash["num_settings"] = 0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
 
   def test_argument_error_dw_E_negative
     args_hash = {}
     args_hash["dw_E"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
   
   def test_argument_error_cold_use_negative
     args_hash = {}
     args_hash["cold_use"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
 
   def test_argument_error_eg_date_negative
     args_hash = {}
     args_hash["eg_date"] = -1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
 
   def test_argument_error_eg_date_zero
     args_hash = {}
     args_hash["eg_date"] = 0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
 
   def test_argument_error_eg_gas_cost_negative
     args_hash = {}
     args_hash["eg_gas_cost"] = -1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
 
   def test_argument_error_eg_gas_cost_zero
     args_hash = {}
     args_hash["eg_gas_cost"] = 0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
 
   def test_argument_error_mult_e_negative
     args_hash = {}
     args_hash["mult_e"] = -1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
 
   def test_argument_error_mult_hw_negative
     args_hash = {}
     args_hash["mult_hw"] = -1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm", args_hash)
+    _test_error(osm_geo_beds_loc_tankwh, args_hash)
   end
 
   def test_error_missing_geometry
@@ -161,7 +181,7 @@ class ResidentialDishwasherTest < MiniTest::Test
   
   def test_error_missing_water_heater
     args_hash = {}
-    _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
+    _test_error(osm_geo, args_hash)
   end
 
   private

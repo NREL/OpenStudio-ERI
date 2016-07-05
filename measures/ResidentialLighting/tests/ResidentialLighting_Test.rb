@@ -7,6 +7,18 @@ require 'fileutils'
 
 class ResidentialLightingTest < MiniTest::Test
 
+  def osm_geo
+    return "2000sqft_2story_FB_GRG_UA.osm"
+  end
+  
+  def osm_geo_beds
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
+  end
+
+  def osm_geo_beds_loc
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm"
+  end
+
   def test_new_construction_100_incandescent
     args_hash = {}
     args_hash["hw_cfl"] = 0.0
@@ -15,7 +27,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.0
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash, 0, 5, 2085)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 2085)
   end
   
   def test_new_construction_20_cfl_hw_34_cfl_pg
@@ -26,7 +38,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash, 0, 5, 1848)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1848)
   end
   
   def test_new_construction_34_cfl_hw_34_cfl_pg
@@ -37,7 +49,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash, 0, 5, 1733)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1733)
   end
   
   def test_new_construction_60_led_hw_34_cfl_pg
@@ -48,7 +60,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash, 0, 5, 1461)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1461)
   end
   
   def test_new_construction_100_cfl
@@ -59,7 +71,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 1.0
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash, 0, 5, 1110)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1110)
   end
   
   def test_new_construction_100_led
@@ -70,7 +82,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.0
     args_hash["pg_led"] = 1.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash, 0, 5, 957)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 957)
   end
   
   def test_new_construction_100_led_low_efficacy
@@ -82,12 +94,12 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_led"] = 1.0
     args_hash["pg_lfl"] = 0.0
     args_hash["led_eff"] = 50
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash, 0, 5, 1159)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1159)
   end
   
   def test_retrofit_replace
     args_hash = {}
-    model = _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash, 0, 5, 1733)
+    model = _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1733)
     args_hash = {}
     args_hash["hw_cfl"] = 1.0
     _test_measure(model, args_hash, 5, 5, 1252)
@@ -96,97 +108,97 @@ class ResidentialLightingTest < MiniTest::Test
   def test_argument_error_hw_cfl_lt_0
     args_hash = {}
     args_hash["hw_cfl"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_hw_cfl_gt_1
     args_hash = {}
     args_hash["hw_cfl"] = 1.1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_hw_led_lt_0
     args_hash = {}
     args_hash["hw_led"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_hw_led_gt_1
     args_hash = {}
     args_hash["hw_led"] = 1.1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_hw_lfl_lt_0
     args_hash = {}
     args_hash["hw_lfl"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_hw_lfl_gt_1
     args_hash = {}
     args_hash["hw_lfl"] = 1.1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_pg_cfl_lt_0
     args_hash = {}
     args_hash["pg_cfl"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_pg_cfl_gt_1
     args_hash = {}
     args_hash["pg_cfl"] = 1.1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_pg_led_lt_0
     args_hash = {}
     args_hash["pg_led"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_pg_led_gt_1
     args_hash = {}
     args_hash["pg_led"] = 1.1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_pg_lfl_lt_0
     args_hash = {}
     args_hash["pg_lfl"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
   
   def test_argument_error_pg_lfl_gt_1
     args_hash = {}
     args_hash["pg_lfl"] = 1.1
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
 
   def test_argument_error_in_eff_0
     args_hash = {}
     args_hash["in_eff"] = 0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
 
   def test_argument_error_cfl_eff_0
     args_hash = {}
     args_hash["cfl_eff"] = 0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
 
   def test_argument_error_led_eff_0
     args_hash = {}
     args_hash["led_eff"] = 0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
 
   def test_argument_error_lfl_eff_0
     args_hash = {}
     args_hash["lfl_eff"] = 0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm", args_hash)
+    _test_error(osm_geo_beds_loc, args_hash)
   end
 
   def test_error_missing_geometry
@@ -196,12 +208,12 @@ class ResidentialLightingTest < MiniTest::Test
   
   def test_error_missing_beds
     args_hash = {}
-    _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
+    _test_error(osm_geo, args_hash)
   end
     
   def test_error_missing_location
     args_hash = {}
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_error(osm_geo_beds, args_hash)
   end
 
   private

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>2a847ac7-f64d-4450-895c-4dabbbd794b3</version_id>
-  <version_modified>20160705T151525Z</version_modified>
+  <version_id>b1c326a9-2557-4432-b1f9-288bb7f706f7</version_id>
+  <version_modified>20160705T155747Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -236,12 +236,6 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWH.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E01B3B6C</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -274,7 +268,19 @@
       <filename>ResidentialDishwasher_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>97D8AA35</checksum>
+      <checksum>6DB35A52</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E01B3B6C</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtankless.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>14F53907</checksum>
     </file>
   </files>
 </measure>
