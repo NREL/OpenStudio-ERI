@@ -127,74 +127,53 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         thermostatsetpointdualsetpoint = thermostatsetpointdualsetpoint.get
         runner.registerInfo("Found existing thermostat #{thermostatsetpointdualsetpoint.name} for #{finished_zone.name}.")        
         
-        htg_wkdy = Array.new(24, 10000)
-        htg_wked = Array.new(24, 10000)
+        htg_wkdy = Array.new(24, -10000)
+        htg_wked = Array.new(24, -10000)
         heating_season = Array.new(12, 0.0)
         thermostatsetpointdualsetpoint.heatingSetpointTemperatureSchedule.get.to_Schedule.get.to_ScheduleRuleset.get.scheduleRules.each do |rule|
           if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
             rule.daySchedule.values.each_with_index do |value, hour|
-              if value < htg_wkdy[hour]
+              if value > htg_wkdy[hour]
                 htg_wkdy[hour] = value
               end
             end
           elsif rule.applySaturday and rule.applySunday
             rule.daySchedule.values.each_with_index do |value, hour|
-              if value < clg_wked[hour]
+              if value > htg_wked[hour]
                 htg_wked[hour] = value
               end
-              if value < 50
+              if value > -50
                 heating_season[rule.startDate.get.monthOfYear.value-1] = 1.0
               end
             end
           end
         end
         
-        (0..11).to_a.each do |i|
-          htg_monthly_sch = Array.new(12, -10000)
-          clg_monthly_sch = Array.new(12, 10000)        
+        htg_wkdy_monthly = []
+        htg_wked_monthly = []
+        clg_wkdy_monthly = []
+        clg_wked_monthly = []        
+        (0..11).to_a.each do |i|       
           if cooling_season[i] == 1 and heating_season[i] == 1
-            htg_wd = htg_wkdy.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : h}
-            htg_we = htg_wked.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : h}
-            clg_wd = htg_wkdy.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : c}
-            clg_we = htg_wked.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : c}
-            htg_monthly_sch[i] = 1
-            clg_monthly_sch[i] = 1
+            htg_wkdy_monthly << htg_wkdy.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : h}
+            htg_wked_monthly << htg_wked.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : h}
+            clg_wkdy_monthly << htg_wkdy.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : c}
+            clg_wked_monthly << htg_wked.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : c}
           elsif heating_season[i] == 1
-            htg_wd = htg_wkdy
-            htg_we = htg_wked
-            clg_wd = clg_wkdy
-            clg_we = clg_wked
-            htg_monthly_sch[i] = 1
+            htg_wkdy_monthly << htg_wkdy
+            htg_wked_monthly << htg_wked
+            clg_wkdy_monthly << Array.new(24, 10000)
+            clg_wked_monthly << Array.new(24, 10000)
           elsif cooling_season[i] == 1
-            htg_wd = htg_wkdy
-            htg_we = htg_wked
-            clg_wd = clg_wkdy
-            clg_we = clg_wked
-            clg_monthly_sch[i] = 1            
-          end
-          
+            htg_wkdy_monthly << Array.new(24, -10000)
+            htg_wked_monthly << Array.new(24, -10000)
+            clg_wkdy_monthly << clg_wkdy
+            clg_wked_monthly << clg_wked
+          end          
         end
         
-        # FIXME: include the cooling setpoints < heating setpoints schedules
-        htg_monthly_sch = Array.new(12, 1)
-        for m in 1..12
-          if heating_season[m-1] == 1
-            htg_monthly_sch[m-1] = 1
-          else
-            htg_monthly_sch[m-1] = -10000
-          end
-        end        
-        clg_monthly_sch = Array.new(12, 1)
-        for m in 1..12
-          if cooling_season[m-1] == 1
-            clg_monthly_sch[m-1] = 1
-          else
-            clg_monthly_sch[m-1] = 10000
-          end
-        end        
-                
-        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy, htg_wked, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy, clg_wked, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        heatingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
+        coolingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
 
         unless heatingsetpoint.validated? and coolingsetpoint.validated?
           return false
@@ -218,8 +197,8 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
           htg_monthly_sch[m-1] = -10000
         end
         
-        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, Array.new(24, 1), Array.new(24, 1), htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy, clg_wked, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), htg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy.join(", "), clg_wked.join(", "), clg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
 
         unless coolingsetpoint.validated?
           return false

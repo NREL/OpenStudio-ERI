@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>9e471259-94b5-4e83-a712-d74e5968c116</version_id>
-  <version_modified>20160705T203951Z</version_modified>
+  <version_id>0853dae2-d73a-429f-bc1c-4be10d9d3ef6</version_id>
+  <version_modified>20160705T214134Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -95,6 +95,12 @@
       <checksum>5DA42BED</checksum>
     </file>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>796FFBD4</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.11.5</identifier>
@@ -103,13 +109,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0723E1B2</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07E4DC1F</checksum>
+      <checksum>8EECFEFF</checksum>
     </file>
   </files>
 </measure>

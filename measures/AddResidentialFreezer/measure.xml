@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>207ec4e2-fc55-49f0-af03-7a1241f9dd10</version_id>
-  <version_modified>20160705T203949Z</version_modified>
+  <version_id>7a9ac23d-5567-4edc-b878-351837cc22e4</version_id>
+  <version_modified>20160705T212151Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
@@ -128,7 +128,7 @@
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>07E4DC1F</checksum>
+      <checksum>796FFBD4</checksum>
     </file>
   </files>
 </measure>

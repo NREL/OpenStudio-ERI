@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>b16177f7-e1ae-479c-a0d3-b7b6e245f575</version_id>
-  <version_modified>20160705T203951Z</version_modified>
+  <version_id>b4205d7c-6937-4760-8161-25dd4afef09e</version_id>
+  <version_modified>20160705T212152Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -110,7 +110,7 @@
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>07E4DC1F</checksum>
+      <checksum>796FFBD4</checksum>
     </file>
   </files>
 </measure>
