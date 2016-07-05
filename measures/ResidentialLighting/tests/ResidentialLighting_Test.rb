@@ -200,6 +200,22 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["lfl_eff"] = 0
     _test_error(osm_geo_beds_loc, args_hash)
   end
+  
+  def test_argument_error_hw_gt_1
+    args_hash = {}
+    args_hash["hw_cfl"] = 0.4
+    args_hash["hw_lfl"] = 0.4
+    args_hash["hw_led"] = 0.4
+    _test_error(osm_geo_beds_loc, args_hash)  
+  end
+  
+  def test_argument_error_pg_gt_1
+    args_hash = {}
+    args_hash["pg_cfl"] = 0.4
+    args_hash["pg_lfl"] = 0.4
+    args_hash["pg_led"] = 0.4
+    _test_error(osm_geo_beds_loc, args_hash)  
+  end
 
   def test_error_missing_geometry
     args_hash = {}
