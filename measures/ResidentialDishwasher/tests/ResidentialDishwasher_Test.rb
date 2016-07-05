@@ -43,14 +43,6 @@ class ResidentialDishwasherTest < MiniTest::Test
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 83.1, 1.65)
   end
   
-  def test_new_construction_318_rated_kwh_tankless
-    args_hash = {}
-    args_hash["num_settings"] = 8
-    args_hash["dw_E"] = 318
-    args_hash["eg_gas_cost"] = 24
-    _test_measure(osm_geo_beds_loc_tanklesswh, args_hash, 0, 2, 111, 3.10)
-  end
-
   def test_new_construction_318_rated_kwh_mult_0_80
     args_hash = {}
     args_hash["num_settings"] = 8
@@ -69,6 +61,16 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash["cold_inlet"] = "true"
     args_hash["cold_use"] = 3.5
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 2, 303.8, 5.0)
+  end
+
+  def test_new_construction_318_rated_kwh_cold_inlet_tankless
+    args_hash = {}
+    args_hash["num_settings"] = 8
+    args_hash["dw_E"] = 318
+    args_hash["eg_gas_cost"] = 24
+    args_hash["cold_inlet"] = "true"
+    args_hash["cold_use"] = 3.5
+    _test_measure(osm_geo_beds_loc_tanklesswh, args_hash, 0, 2, 303.8, 5.0)
   end
 
   def test_new_construction_318_rated_kwh_no_int_heater
