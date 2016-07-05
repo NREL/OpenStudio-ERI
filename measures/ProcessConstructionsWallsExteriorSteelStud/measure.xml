@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>99656ac7-0cd9-4d54-89b1-cd2de16de36d</version_id>
-  <version_modified>20160627T173327Z</version_modified>
+  <version_id>cecb5c2a-d21e-47c9-bb13-1d2283097071</version_id>
+  <version_modified>20160705T142232Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSteelStud</class_name>
   <display_name>Set Residential Walls - Steel Stud Construction</display_name>
@@ -120,18 +120,6 @@
   </attributes>
   <files>
     <file>
-      <filename>example_model.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C4F35230</checksum>
-    </file>
-    <file>
-      <filename>process_constructions_exterior_insulated_walls_steel_stud_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2FA4083B</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -158,7 +146,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6857D963</checksum>
+      <checksum>5DA42BED</checksum>
     </file>
   </files>
 </measure>

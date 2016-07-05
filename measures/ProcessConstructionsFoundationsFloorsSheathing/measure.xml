@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_sheathing</name>
   <uid>b59d63a5-8d7b-41e2-b290-6d22cdfc0c0c</uid>
-  <version_id>c2715586-bf18-4db3-924e-f1fca9bb9c3b</version_id>
-  <version_modified>20160627T173326Z</version_modified>
+  <version_id>79e38f79-2bea-44e5-9101-202cd043e019</version_id>
+  <version_modified>20160705T142231Z</version_modified>
   <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSheathing</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Sheathing</display_name>
@@ -99,18 +99,6 @@
   </attributes>
   <files>
     <file>
-      <filename>example_model.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C4F35230</checksum>
-    </file>
-    <file>
-      <filename>set_residential_roofl_sheathing_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EBDEDBEC</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.0</identifier>
@@ -137,7 +125,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6857D963</checksum>
+      <checksum>5DA42BED</checksum>
     </file>
   </files>
 </measure>

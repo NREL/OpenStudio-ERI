@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>8f6fe322-f5b0-4b35-bed2-6444527db9bd</version_id>
-  <version_modified>20160627T204951Z</version_modified>
+  <version_id>42df1138-9296-405c-a098-d8f7782d3ab3</version_id>
+  <version_modified>20160705T143724Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -202,12 +202,6 @@
   </attributes>
   <files>
     <file>
-      <filename>ResidentialClothesWasherandDryer_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C0A8F5D4</checksum>
-    </file>
-    <file>
       <filename>ClothesWasherSchedule_1bed_unit0.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
@@ -273,12 +267,6 @@
       <checksum>9D722D63</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31699732</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -291,16 +279,22 @@
       <checksum>7367BD96</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6857D963</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3FEC7DD1</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5DA42BED</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>15CDCABD</checksum>
     </file>
   </files>
 </measure>

@@ -2,7 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_dehumidifier</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38d</uid>
-  <version_id>b1c7d8b8-cde6-40a8-ad1e-439e74a4ca69</version_id>
+  <version_id>959ab4df-3790-4fde-80e0-ab21f81ebd1f</version_id>
+  <version_modified>20160705T140641Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>AddResidentialDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
@@ -80,18 +81,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>AddResidentialDehumidifier_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>517233D6</checksum>
-    </file>
-    <file>
-      <filename>withThermalZones.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>71686D38</checksum>
-    </file>
     <file>
       <version>
         <software_program>OpenStudio</software_program>

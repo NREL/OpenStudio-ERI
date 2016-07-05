@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_gas</name>
   <uid>33d8c300-8f2b-4d36-b6cc-545422c7b407</uid>
-  <version_id>521106ac-bd6b-4563-8b5c-f246c00e5e16</version_id>
-  <version_modified>20160627T204951Z</version_modified>
+  <version_id>56b9a982-b13e-48ac-a942-0859425bbac6</version_id>
+  <version_modified>20160705T142234Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeGas</class_name>
   <display_name>Set Residential Gas Cooking Range</display_name>
@@ -135,12 +135,6 @@
       <checksum>CBEE7249</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6857D963</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -150,12 +144,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>701067EB</checksum>
-    </file>
-    <file>
-      <filename>ResidentialCookingRangeGas_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3784D4E3</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm</filename>
@@ -168,6 +156,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3FEC7DD1</checksum>
+    </file>
+    <file>
+      <filename>ResidentialCookingRangeGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>96C2B2CA</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5DA42BED</checksum>
     </file>
   </files>
 </measure>

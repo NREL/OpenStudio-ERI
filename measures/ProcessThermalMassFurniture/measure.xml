@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>aa4702d8-6020-4cee-a94c-3a7aa2071482</version_id>
-  <version_modified>20160627T173329Z</version_modified>
+  <version_id>c80f203c-f3aa-4bfe-82a9-a63629707dfd</version_id>
+  <version_modified>20160705T142233Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>
@@ -87,12 +87,6 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessThermalMassFurniture_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A956F71E</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -119,7 +113,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6857D963</checksum>
+      <checksum>5DA42BED</checksum>
     </file>
   </files>
 </measure>

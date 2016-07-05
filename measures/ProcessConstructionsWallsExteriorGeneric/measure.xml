@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>d5001153-fa71-4f76-84ea-1f8d4ec6e460</version_id>
-  <version_modified>20160627T173327Z</version_modified>
+  <version_id>c99579e5-9c6f-43a9-8f7f-73a058d16e3e</version_id>
+  <version_modified>20160705T142231Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
@@ -213,12 +213,6 @@
   </attributes>
   <files>
     <file>
-      <filename>ProcessConstructionsExteriorInsulatedWallsWoodStud_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B9A44DFC</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -245,7 +239,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6857D963</checksum>
+      <checksum>5DA42BED</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition</name>
   <uid>077812cf-b013-4103-8cdb-77eb05549d35</uid>
-  <version_id>979a63d3-6198-4eb2-b9ac-e7e715b9ba6c</version_id>
-  <version_modified>20160627T173328Z</version_modified>
+  <version_id>2723dbe3-3be1-459c-b7c4-e3e48733654d</version_id>
+  <version_modified>20160705T142232Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsPartition</class_name>
   <display_name>Set Residential Walls - Partition Construction</display_name>
@@ -27,12 +27,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>ProcessConstructionsInteriorUninsulatedWalls_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>30741FA0</checksum>
-    </file>
     <file>
       <version>
         <software_program>OpenStudio</software_program>
@@ -60,7 +54,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6857D963</checksum>
+      <checksum>5DA42BED</checksum>
     </file>
   </files>
 </measure>

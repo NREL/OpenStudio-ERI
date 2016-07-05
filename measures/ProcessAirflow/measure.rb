@@ -557,11 +557,11 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
     #make a choice arguments for terrain type
     terrain_types_names = OpenStudio::StringVector.new
-    terrain_types_names << "ocean"
-    terrain_types_names << "plains"
-    terrain_types_names << "rural"
-    terrain_types_names << "suburban"
-    terrain_types_names << "city"
+    terrain_types_names << Constants.TerrainOcean
+    terrain_types_names << Constants.TerrainPlains
+    terrain_types_names << Constants.TerrainRural
+    terrain_types_names << Constants.TerrainSuburban
+    terrain_types_names << Constants.TerrainCity
     selected_terraintype = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedterraintype", terrain_types_names, true)
     selected_terraintype.setDisplayName("Site Terrain")
     selected_terraintype.setDescription("The terrain of the site.")
@@ -573,9 +573,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     #make a choice argument for ventilation type
     ventilation_types_names = OpenStudio::StringVector.new
     ventilation_types_names << "none"
-    ventilation_types_names << "exhaust"
-    ventilation_types_names << "supply"
-    ventilation_types_names << "balanced"
+    ventilation_types_names << Constants.VentTypeExhaust
+    ventilation_types_names << Constants.VentTypeSupply
+    ventilation_types_names << Constants.VentTypeBalanced
     selected_venttype = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedventtype", ventilation_types_names, false)
     selected_venttype.setDisplayName("Mechanical Ventilation: Ventilation Type")
     selected_venttype.setDefaultValue("exhaust")
