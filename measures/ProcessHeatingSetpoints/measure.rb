@@ -76,7 +76,7 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
     
     heatingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSeason, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), heating_season.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
     
-    if not heatingseasonschedule.validated?
+    unless heatingseasonschedule.validated?
       return false
     end
 
@@ -113,7 +113,8 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
     end
     
     unless htg_equip
-      runner.registerWarning("Heating setpoints set at -10000 because no heating equipment found.")
+      runner.registerError("No heating equipment found.")
+      return false
     end    
     
     # Convert to 24-values if a single value entered
@@ -124,31 +125,8 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
       htg_wked = Array.new(24, htg_wked).join(", ")
     end
 
-    htg_wkdy = htg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
-    htg_wked = htg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}.join(", ")
-    
-    htg_monthly_sch = Array.new(12, 1)
-    for m in 1..12
-      if heating_season[m-1] == 1.0 and htg_equip
-        htg_monthly_sch[m-1] = 1
-      else
-        htg_monthly_sch[m-1] = -10000
-      end
-    end
-    htg_monthly_sch = htg_monthly_sch.join(", ")
-    
-    clg_monthly_sch = Array.new(12, 1)
-    for m in 1..12
-      clg_monthly_sch[m-1] = 10000
-    end
-    clg_monthly_sch = clg_monthly_sch.join(", ")    
-    
-    heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy, htg_wked, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-    coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-
-    if not heatingsetpoint.validated?
-      return false
-    end    
+    htg_wkdy = htg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
+    htg_wked = htg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
     
     finished_zones = []
     model.getThermalZones.each do |thermal_zone|
@@ -161,23 +139,119 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
     
       thermostatsetpointdualsetpoint = finished_zone.thermostatSetpointDualSetpoint
       if thermostatsetpointdualsetpoint.is_initialized
+      
         thermostatsetpointdualsetpoint = thermostatsetpointdualsetpoint.get
         runner.registerInfo("Found existing thermostat #{thermostatsetpointdualsetpoint.name} for #{finished_zone.name}.")
+        
+        clg_wkdy = Array.new(24, 10000)
+        clg_wked = Array.new(24, 10000)
+        cooling_season = Array.new(12, 0.0)
+        thermostatsetpointdualsetpoint.coolingSetpointTemperatureSchedule.get.to_Schedule.get.to_ScheduleRuleset.get.scheduleRules.each do |rule|
+          if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
+            rule.daySchedule.values.each_with_index do |value, hour|
+              if value < clg_wkdy[hour]
+                clg_wkdy[hour] = value
+              end
+            end
+          elsif rule.applySaturday and rule.applySunday
+            rule.daySchedule.values.each_with_index do |value, hour|
+              if value < clg_wked[hour]
+                clg_wked[hour] = value
+              end
+              if value < 50
+                cooling_season[rule.startDate.get.monthOfYear.value-1] = 1.0
+              end
+            end
+          end
+        end
+        
+        (0..11).to_a.each do |i|
+          htg_monthly_sch = Array.new(12, -10000)
+          clg_monthly_sch = Array.new(12, 10000)        
+          if cooling_season[i] == 1 and heating_season[i] == 1
+            htg_wd = htg_wkdy.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : h}
+            htg_we = htg_wked.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : h}
+            clg_wd = htg_wkdy.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : c}
+            clg_we = htg_wked.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : c}
+            htg_monthly_sch[i] = 1
+            clg_monthly_sch[i] = 1
+          elsif heating_season[i] == 1
+            htg_wd = htg_wkdy
+            htg_we = htg_wked
+            clg_wd = clg_wkdy
+            clg_we = clg_wked
+            htg_monthly_sch[i] = 1
+          elsif cooling_season[i] == 1
+            htg_wd = htg_wkdy
+            htg_we = htg_wked
+            clg_wd = clg_wkdy
+            clg_we = clg_wked
+            clg_monthly_sch[i] = 1            
+          end
+          
+        end
+        
+        # FIXME: include the cooling setpoints < heating setpoints schedules
+        htg_monthly_sch = Array.new(12, 1)
+        for m in 1..12
+          if heating_season[m-1] == 1
+            htg_monthly_sch[m-1] = 1
+          else
+            htg_monthly_sch[m-1] = -10000
+          end
+        end        
+        clg_monthly_sch = Array.new(12, 1)
+        for m in 1..12
+          if cooling_season[m-1] == 1
+            clg_monthly_sch[m-1] = 1
+          else
+            clg_monthly_sch[m-1] = 10000
+          end
+        end         
+        
+        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy.join(", "), htg_wked.join(", "), htg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy.join(", "), clg_wked.join(", "), clg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+
+        unless heatingsetpoint.validated? and coolingsetpoint.validated?
+          return false
+        end
+
         heatingsetpoint.setSchedule(thermostatsetpointdualsetpoint)
+        coolingsetpoint.setSchedule(thermostatsetpointdualsetpoint)        
+        
       else
+        
+        htg_monthly_sch = Array.new(12, 1)
+        for m in 1..12
+          if heating_season[m-1] == 1
+            htg_monthly_sch[m-1] = 1
+          else
+            htg_monthly_sch[m-1] = -10000
+          end
+        end        
+        clg_monthly_sch = Array.new(12, 1)
+        for m in 1..12
+          clg_monthly_sch[m-1] = 10000
+        end        
+        
+        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy.join(", "), htg_wked.join(", "), htg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), clg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+
+        unless heatingsetpoint.validated?
+          return false
+        end        
+        
         thermostatsetpointdualsetpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
         thermostatsetpointdualsetpoint.setName("Living Zone Temperature SP")
         runner.registerInfo("Created new thermostat #{thermostatsetpointdualsetpoint.name} for #{finished_zone.name}.")
         heatingsetpoint.setSchedule(thermostatsetpointdualsetpoint)
         finished_zone.setThermostatSetpointDualSetpoint(thermostatsetpointdualsetpoint)
+        coolingsetpoint.setSchedule(thermostatsetpointdualsetpoint)
+        runner.registerInfo("Set a dummy cooling setpoint schedule for #{thermostatsetpointdualsetpoint.name}.")              
+      
       end
       
       runner.registerInfo("Set the heating setpoint schedule for #{thermostatsetpointdualsetpoint.name}.")
-      
-      unless thermostatsetpointdualsetpoint.coolingSetpointTemperatureSchedule.is_initialized
-        coolingsetpoint.setSchedule(thermostatsetpointdualsetpoint)
-        runner.registerInfo("Set a dummy cooling setpoint schedule for #{thermostatsetpointdualsetpoint.name}.")
-      end      
 
     end
 
