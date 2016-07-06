@@ -1,8 +1,6 @@
 machine:
   services:
     - docker
-  environment:
-    COVERALLS_PARALLEL: true
     
 dependencies:
   override:

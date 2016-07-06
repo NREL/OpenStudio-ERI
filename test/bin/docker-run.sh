@@ -16,16 +16,17 @@ rake update_resources
 # than 2 hrs.
 case $CIRCLE_NODE_INDEX in
   0)
-    rake test:measures_group_0
+    #rake test:measures_group_0
+    rake test:all
     ;;
-  1)
-    rake test:measures_group_1
-    ;;
-  2)
-    rake test:measures_group_2
-    ;;
-  3)
-    rake test:measures_group_3
-    ;;
+  #1)
+  #  rake test:measures_group_1
+  #  ;;
+  #2)
+  #  rake test:measures_group_2
+  #  ;;
+  #3)
+  #  rake test:measures_group_3
+  #  ;;
   *)
 esac
