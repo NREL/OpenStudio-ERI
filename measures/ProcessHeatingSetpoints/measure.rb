@@ -62,7 +62,7 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
     end
 
     htg_wkdy = runner.getStringArgumentValue("htg_wkdy",user_arguments)
-    htg_wked = runner.getStringArgumentValue("htg_wked",user_arguments)    
+    htg_wked = runner.getStringArgumentValue("htg_wked",user_arguments)
     
     weather = WeatherProcess.new(model,runner)
     if weather.error?
@@ -126,7 +126,7 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
     end
 
     htg_wkdy = htg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
-    htg_wked = htg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
+    htg_wked = htg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}   
     
     finished_zones = []
     model.getThermalZones.each do |thermal_zone|
