@@ -1,3 +1,4 @@
+require_relative '../../../test/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
@@ -105,10 +106,63 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Invalid living space and garage dimensions.")  
+  end  
+  
+  def test_gable_ridge_front_to_back
+    args_hash = {}
+    args_hash["aspect_ratio"] = 0.75
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
   end
   
-  # test_[NUMSTORIES]_[FOUNDATIONTYPE]_[GARAGEPRESENT]_[GARAGEPROTRUDES]_[GARAGEPOSITION]
-  def test_onestory_fbasement_hasgarage_noprotrusion_garageright
+  def test_hip_ridge_front_to_back
+    args_hash = {}
+    args_hash["aspect_ratio"] = 0.75
+    args_hash["roof_type"] = Constants.RoofTypeHip
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end
+
+  def test_finished_attic
+    args_hash = {}
+    args_hash["attic_type"] = Constants.FinishedAtticSpace
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end
+  
+  def test_crawlspace
+    args_hash = {}
+    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_height"] = 4
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end
+
+  def test_ufbasement
+    args_hash = {}
+    args_hash["foundation_type"] = Constants.UnfinishedBasementSpace
+    args_hash["foundation_height"] = 8
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end  
+  
+  # test_[NUMSTORIES]_[FOUNDATIONTYPE]_[GARAGEPRESENT]_[GARAGEPROTRUDES]_[GARAGEPOSITION]_[ROOFTYPE]
+  def test_onestory_fbasement_nogarage_noprotrusion_garageright_gableroof
+    args_hash = {}
+    args_hash["num_floors"] = 1
+    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_height"] = 8
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end  
+  
+  def test_onestory_fbasement_hasgarage_noprotrusion_garageright_gableroof
     args_hash = {}
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
@@ -119,7 +173,7 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)
   end
 
-  def test_onestory_fbasement_hasgarage_halfprotrusion_garageright
+  def test_onestory_fbasement_hasgarage_halfprotrusion_garageright_gableroof
     args_hash = {}
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
@@ -131,7 +185,19 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)
   end
   
-  def test_twostory_fbasement_hasgarage_noprotrusion_garageright
+  def test_onestory_fbasement_hasgarage_fullprotrusion_garageright_gableroof
+    args_hash = {}
+    args_hash["num_floors"] = 1
+    args_hash["garage_width"] = 12
+    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_height"] = 8
+    args_hash["garage_protrusion"] = 1
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end  
+  
+  def test_twostory_fbasement_hasgarage_noprotrusion_garageright_gableroof
     args_hash = {}
     args_hash["num_floors"] = 2
     args_hash["garage_width"] = 12
@@ -142,7 +208,7 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
 
-  def test_twostory_fbasement_hasgarage_halfprotrusion_garageright
+  def test_twostory_fbasement_hasgarage_halfprotrusion_garageright_gableroof
     args_hash = {}
     args_hash["num_floors"] = 2
     args_hash["garage_width"] = 12
@@ -154,7 +220,19 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)   
   end
   
-  def test_onestory_fbasement_hasgarage_noprotrusion_garageleft
+  def test_twostory_fbasement_hasgarage_fullprotrusion_garageright_gableroof
+    args_hash = {}
+    args_hash["num_floors"] = 2
+    args_hash["garage_width"] = 12
+    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_height"] = 8
+    args_hash["garage_protrusion"] = 1
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)   
+  end  
+  
+  def test_onestory_fbasement_hasgarage_noprotrusion_garageleft_gableroof
     args_hash = {}
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
@@ -166,7 +244,7 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)
   end
 
-  def test_onestory_fbasement_hasgarage_halfprotrusion_garageleft
+  def test_onestory_fbasement_hasgarage_halfprotrusion_garageleft_gableroof
     args_hash = {}
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
@@ -179,7 +257,20 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)
   end
   
-  def test_twostory_fbasement_hasgarage_noprotrusion_garageleft
+  def test_onestory_fbasement_hasgarage_fullprotrusion_garageleft_gableroof
+    args_hash = {}
+    args_hash["num_floors"] = 1
+    args_hash["garage_width"] = 12
+    args_hash["garage_pos"] = "Left"
+    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_height"] = 8
+    args_hash["garage_protrusion"] = 1
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end  
+  
+  def test_twostory_fbasement_hasgarage_noprotrusion_garageleft_gableroof
     args_hash = {}
     args_hash["num_floors"] = 2
     args_hash["garage_width"] = 12
@@ -191,7 +282,7 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
 
-  def test_twostory_fbasement_hasgarage_halfprotrusion_garageleft
+  def test_twostory_fbasement_hasgarage_halfprotrusion_garageleft_gableroof
     args_hash = {}
     args_hash["num_floors"] = 2
     args_hash["garage_width"] = 12
@@ -202,6 +293,28 @@ class CreateBasicGeometryTest < MiniTest::Test
     result = _test_error("EmptySeedModel.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)   
+  end
+  
+  def test_twostory_fbasement_hasgarage_fullprotrusion_garageleft_gableroof
+    args_hash = {}
+    args_hash["num_floors"] = 2
+    args_hash["garage_width"] = 12
+    args_hash["garage_pos"] = "Left"
+    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_height"] = 8
+    args_hash["garage_protrusion"] = 1
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)   
+  end
+
+  def test_twostory_slab_hasgarage_noprotrusion_garageright_hiproof
+    args_hash = {}
+    args_hash["garage_width"] = 12
+    args_hash["roof_type"] = Constants.RoofTypeHip
+    result = _test_error("EmptySeedModel.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
   end  
   
   private
