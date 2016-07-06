@@ -113,8 +113,8 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
     end
     
     unless htg_equip
-      runner.registerError("No heating equipment found.")
-      return false
+      runner.registerWarning("No heating equipment found.")
+      return true
     end    
     
     # Convert to 24-values if a single value entered
@@ -213,8 +213,8 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
           clg_monthly_sch[m-1] = 10000
         end        
         
-        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy.join(", "), htg_wked.join(", "), htg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, Array.new(24, 1).join(", "), Array.new(24, 1).join(", "), clg_monthly_sch.join(", "), mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy, htg_wked, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+        coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, Array.new(24, 1), Array.new(24, 1), clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
 
         unless heatingsetpoint.validated?
           return false
