@@ -64,7 +64,7 @@ The New Construction workflow illustrates how to build up a complete residential
 ||22. Set Residential Uninsulated Surfaces||
 ||23. Set Residential Window Construction|Window Area|
 ||24. Set Residential Door Construction|Door Area|
-||25. Set Residential Furniture Thermal Mass|TODO|
+||25. Set Residential Furniture Thermal Mass||
 |4. Domestic Hot Water|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
 ||2. Set Residential Hot Water Fixtures|Water Heater|
 ||3. [Hot water distribution; where?]||
@@ -89,8 +89,6 @@ The New Construction workflow illustrates how to build up a complete residential
 ||9. Set Residential Gas Fireplace|Beds/Baths|
 ||10. Set Residential Gas Grill|Beds/Baths|
 ||11. Set Residential Gas Lighting|Beds/Baths|
-|9. Other|1. TODO||
-||2. TODO||
 
 ## Retrofit Workflow for Users
 
