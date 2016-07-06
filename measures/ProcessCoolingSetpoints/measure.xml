@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>0853dae2-d73a-429f-bc1c-4be10d9d3ef6</version_id>
-  <version_modified>20160705T214134Z</version_modified>
+  <version_id>65ef4788-0d17-460b-9aff-9d473cdbf0c1</version_id>
+  <version_modified>20160706T154256Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -109,7 +109,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8EECFEFF</checksum>
+      <checksum>3017EFA8</checksum>
     </file>
   </files>
 </measure>
