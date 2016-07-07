@@ -118,18 +118,6 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    # _processInteriorShadingSchedule
-    # Assigns window shade multiplier and shading cooling season for each month.
-    window_shade_multiplier = []
-    (0...Constants.MonthNames.length).to_a.each do |i|
-      if cooling_season[i] == 1.0
-        window_shade_multiplier << intShadeCoolingMultiplier
-      else
-        window_shade_multiplier << intShadeHeatingMultiplier
-      end
-    end
-    window_shade_cooling_season = cooling_season
-
     # _processConstructionsWindows
     # EnergyPlus doesn't like shades that absorb no heat, transmit no heat or reflect no heat.
     if intShadeCoolingMultiplier == 1
@@ -155,7 +143,7 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     sched_type.setNumericType("Continuous")
     
     # Interior Shading Schedule
-    sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameWindowShading + " schedule", Array.new(24, 1), Array.new(24, 1), window_shade_cooling_season)
+    sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameWindowShading + " schedule", Array.new(24, 1), Array.new(24, 1), cooling_season)
     if not sch.validated?
         return false
     end
