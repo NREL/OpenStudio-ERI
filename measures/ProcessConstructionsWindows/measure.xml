@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>b4205d7c-6937-4760-8161-25dd4afef09e</version_id>
-  <version_modified>20160705T212152Z</version_modified>
+  <version_id>1f47b6e4-64ba-4beb-bdc7-c1145f1c52ec</version_id>
+  <version_modified>20160708T161314Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -96,6 +96,12 @@
       <checksum>5DA42BED</checksum>
     </file>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>796FFBD4</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -104,13 +110,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C18FAEF3</checksum>
+      <checksum>D469F2AD</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
+      <filename>EmptySeedModel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>67F4A6F3</checksum>
+    </file>
+    <file>
+      <filename>process_constructions_windows_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>796FFBD4</checksum>
+      <usage_type>test</usage_type>
+      <checksum>1260CC11</checksum>
     </file>
   </files>
 </measure>

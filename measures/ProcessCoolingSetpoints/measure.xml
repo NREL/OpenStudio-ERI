@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>65ef4788-0d17-460b-9aff-9d473cdbf0c1</version_id>
-  <version_modified>20160706T154256Z</version_modified>
+  <version_id>0974701b-fec9-4e9f-9225-4d68ad4cb038</version_id>
+  <version_modified>20160708T161314Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -110,6 +110,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>3017EFA8</checksum>
+    </file>
+    <file>
+      <filename>EmptySeedModel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>67F4A6F3</checksum>
+    </file>
+    <file>
+      <filename>process_cooling_setpoints_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9AC50D02</checksum>
     </file>
   </files>
 </measure>

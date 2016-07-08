@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>3d618d43-9d5e-4136-974f-82ddcf28e36b</version_id>
-  <version_modified>20160706T154256Z</version_modified>
+  <version_id>87f54141-3cc8-4e18-bfeb-be5e588e48e8</version_id>
+  <version_modified>20160708T161314Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -99,7 +99,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>83D828A8</checksum>
+      <checksum>0A7B9D58</checksum>
+    </file>
+    <file>
+      <filename>EmptySeedModel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>67F4A6F3</checksum>
+    </file>
+    <file>
+      <filename>process_heating_setpoints_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DC9B3ABF</checksum>
     </file>
   </files>
 </measure>
