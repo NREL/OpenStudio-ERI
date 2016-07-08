@@ -202,7 +202,6 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     eaves_depth = OpenStudio.convert(runner.getDoubleArgumentValue("eaves_depth",user_arguments),"ft","m").get
 
     roof_type = determine_roof_type(model.getSurfaces)
-    puts roof_type
     
     surfaces_modified = false
     
