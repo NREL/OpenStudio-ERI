@@ -68,10 +68,9 @@ The New Construction workflow illustrates how to build up a complete residential
 |4. Domestic Hot Water|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
 ||2. Set Residential Hot Water Fixtures|Water Heater|
 ||3. [Hot water distribution; where?]||
-|5. HVAC & Airflow|1. Set Residential Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)||
-||2. Set Residential Heating Setpoints and Schedules|HVAC Heating Equipment|
-||3. Set Residential Cooling Setpoints and Schedules|HVAC Cooling Equipment|
-||4. Set Residential Airflow||
+|5. HVAC|1. Set Residential Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)||
+||2. Set Residential Heating Setpoints and Schedules|HVAC Equipment|
+||3. Set Residential Cooling Setpoints and Schedules|HVAC Equipment|
 |6. Major Appliances|1. Set Residential Refrigerator||
 ||2. Set Residential Clothes Washer|Water Heater, Location|
 ||3. Set Residential Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
@@ -89,6 +88,7 @@ The New Construction workflow illustrates how to build up a complete residential
 ||9. Set Residential Gas Fireplace|Beds/Baths|
 ||10. Set Residential Gas Grill|Beds/Baths|
 ||11. Set Residential Gas Lighting|Beds/Baths|
+|9. EnergyPlus Measures|1. Set Residential Airflow|HVAC Equipment, Clothes Dryer|
 
 ## Retrofit Workflow for Users
 
