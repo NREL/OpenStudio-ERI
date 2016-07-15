@@ -17,7 +17,7 @@ class WeatherProcess
   def initialize(model, runner, header_only=false)
     @model = model
     @runner = runner
-    if model.respond_to?("weatherFile") and model.weatherFile.is_initialized
+    if model.weatherFile.is_initialized
       # OpenStudio measures
       wf = model.weatherFile.get
       # Sometimes path is available, sometimes just url. Should be improved in OS 2.0.
@@ -33,10 +33,6 @@ class WeatherProcess
           epw_path = epw_path_unit_tests
         end
       end
-      @header, @data = process_epw(epw_path, header_only)
-    elsif not model.respond_to?("weatherFile") and runner.lastEpwFilePath.is_initialized
-      # EnergyPlus measures
-      epw_path = runner.lastEpwFilePath.get.to_s
       @header, @data = process_epw(epw_path, header_only)
     else
       runner.registerError("Model has not been assigned a weather file.")
