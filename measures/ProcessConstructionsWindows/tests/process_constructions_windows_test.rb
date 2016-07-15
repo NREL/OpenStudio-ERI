@@ -129,7 +129,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     result.info.each do |info|
         if info.logMessage.include? "Material 'GlazingMaterial' was created."
             material_added = true
-        elsif info.logMessage.include? "Construction 'WindowConstruction' was created with 1 material (GlazingMaterial)." or info.logMessage.include? "Construction 'WindowConstruction 1' was created with 2 materials (GlazingMaterial, GlazingMaterial)."
+        elsif info.logMessage.include? "Construction 'WindowConstruction' was created with 1 material (GlazingMaterial)." or info.logMessage.include? "Construction 'WindowConstruction 1' was created with 1 material (GlazingMaterial)."
             construction_added = true
         elsif info.logMessage.include? "Removed construction 'WindowConstruction' because it was orphaned."
             construction_removed = true
