@@ -2,7 +2,6 @@ require_relative '../../../test/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
-require_relative '../measure.rb'
 require 'fileutils'
 
 class ProcessHeatingSetpointsTest < MiniTest::Test
@@ -70,6 +69,8 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
   private
   
   def _test_error(osm_file, args_hash)
+    require_relative '../measure.rb'
+  
     # create an instance of the measure
     measure = ProcessHeatingSetpoints.new
 
@@ -100,6 +101,8 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
   end
   
   def _test_measure(osm_file_or_model, args_hash, expected_num_new_schedules=0, expected_num_existing_schedules=0)
+    require_relative '../measure.rb'
+  
     # create an instance of the measure
     measure = ProcessHeatingSetpoints.new
 
