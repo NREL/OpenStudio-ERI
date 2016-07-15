@@ -5,64 +5,39 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ProcessHeatingSetpointsTest < MiniTest::Test
+class SetResidentialEPWFileTest < MiniTest::Test
 
-  def test_error_no_weather
+  def test_error_invalid_weather_path
     args_hash = {}
+    args_hash["weather_directory"] = "./resuorces" # misspelled
+    args_hash["weather_file_name"] = "USA_CO_Denver_Intl_AP_725650_TMY3.epw"
     result = _test_error("default_geometry.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Model has not been assigned a weather file.")    
-  end 
-
-  def test_error_input_not_24_values
+    assert_equal(result.errors[0].logMessage, "'#{File.join(File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_directory"])), args_hash["weather_file_name"])}' does not exist or is not an .epw file.")
+  end
+  
+  def test_error_invalid_daylight_saving
     args_hash = {}
-    args_hash["htg_wkdy"] = "71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71"
-    result = _test_error("default_geometry_location_furnace.osm", args_hash)
+    args_hash["dst_start_date"] = "April 31"
+    result = _test_error("default_geometry.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Either a comma-separated string of 24 numbers or an array of 24 numbers must be entered for the weekday schedule.")    
-  end
-
-  def test_warning_no_equip
-    args_hash = {}
-    result = _test_error("default_geometry_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-    assert_equal(result.warnings[0].logMessage, "No heating equipment found.")
-  end
+    assert_equal(result.errors[0].logMessage, "Invalid daylight saving date specified.")
+  end   
   
-  def test_furnace_avail_sched
+  def test_NA_daylight_saving
     args_hash = {}
-    result = _test_error("default_geometry_location_furnace.osm", args_hash)
+    args_hash["dst_start_date"] = "NA"
+    args_hash["dst_end_date"] = "NA"
+    result = _test_error("default_geometry.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
-  end
-
-  def test_ashp_avail_sched
-    args_hash = {}
-    result = _test_error("default_geometry_location_ashp.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-  end
-  
-  def test_mshp_avail_sched
-    args_hash = {}
-    result = _test_error("default_geometry_location_mshp.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-  end
-  
-  def test_cooling_setpoints_exist
-    args_hash = {}
-    result = _test_error("default_geometry_location_central_air_conditioner_and_furnace_with_cooling_setpoints.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
   end
   
   def test_retrofit_replace
     args_hash = {}
-    model = _test_measure("default_geometry_location_furnace.osm", args_hash, 1, 0)
+    model = _test_measure("default_geometry.osm", args_hash, 1, 0)
     args_hash = {}
     _test_measure(model, args_hash, 1, 1)
   end  
@@ -71,7 +46,7 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessHeatingSetpoints.new
+    measure = SetResidentialEPWFile.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -99,9 +74,9 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
     
   end
   
-  def _test_measure(osm_file_or_model, args_hash, expected_num_new_schedules=0, expected_num_existing_schedules=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_new_files=0, expected_num_existing_files=0)
     # create an instance of the measure
-    measure = ProcessHeatingSetpoints.new
+    measure = SetResidentialEPWFile.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -127,21 +102,21 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    new_schedule = false
-    existing_schedule = false
+    new_file = false
+    existing_file = false
     result.info.each do |info|
-        if info.logMessage.include? "Set the heating setpoint schedule for Living Zone Temperature SP."
-            new_schedule = true
-        elsif info.logMessage.include? "Found existing thermostat Living Zone Temperature SP for living zone."
-            existing_schedule = true
+        if info.logMessage.include? "Setting weather file."
+            new_file = true
+        elsif info.logMessage.include? "Found an existing weather file."
+            existing_file = true
         end
     end    
-    if expected_num_existing_schedules == 0 # new
-        assert(new_schedule==true)
-        assert(existing_schedule==false)
+    if expected_num_existing_files == 0 # new
+        assert(new_file==true)
+        assert(existing_file==false)
     else # replacement
-        assert(new_schedule==true)
-        assert(existing_schedule==true)
+        assert(new_file==true)
+        assert(existing_file==true)
     end   
 
     return model

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>1f47b6e4-64ba-4beb-bdc7-c1145f1c52ec</version_id>
-  <version_modified>20160708T161314Z</version_modified>
+  <version_id>1c04345e-8aa3-476b-88b6-aea4bf1ffa23</version_id>
+  <version_modified>20160715T154037Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -113,16 +113,34 @@
       <checksum>D469F2AD</checksum>
     </file>
     <file>
-      <filename>EmptySeedModel.osm</filename>
+      <filename>default_geometry_location_windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>67F4A6F3</checksum>
+      <checksum>E532CC3A</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>06B42072</checksum>
+    </file>
+    <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
+      <filetype>ddy</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FB253570</checksum>
+    </file>
+    <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
+      <filetype>epw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E23378AA</checksum>
     </file>
     <file>
       <filename>process_constructions_windows_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>1260CC11</checksum>
+      <checksum>3515BABC</checksum>
     </file>
   </files>
 </measure>

@@ -180,7 +180,7 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
             htg_wked_monthly << htg_wked
             clg_wkdy_monthly << Array.new(24, 10000)
             clg_wked_monthly << Array.new(24, 10000)
-          elsif cooling_season[i] == 1
+          else
             htg_wkdy_monthly << Array.new(24, -10000)
             htg_wked_monthly << Array.new(24, -10000)
             clg_wkdy_monthly << clg_wkdy
