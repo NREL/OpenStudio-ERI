@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>efd835fc-0629-4a70-8ae8-6ffb17e5f74b</version_id>
-  <version_modified>20160715T224607Z</version_modified>
+  <version_id>436d1941-77ca-4c48-9164-2be54478dbe7</version_id>
+  <version_modified>20160716T162102Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -97,6 +97,12 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BC30AD91</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -105,55 +111,49 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C4E3395D</checksum>
+      <checksum>5190FA4C</checksum>
     </file>
     <file>
       <filename>default_geometry_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>65F26C0B</checksum>
+      <checksum>F80B0C46</checksum>
     </file>
     <file>
       <filename>default_geometry_location_ashp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CC3DC753</checksum>
+      <checksum>00151330</checksum>
     </file>
     <file>
       <filename>default_geometry_location_central_air_conditioner_and_furnace_with_cooling_setpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AE4102E6</checksum>
+      <checksum>752E60CE</checksum>
     </file>
     <file>
       <filename>default_geometry_location_furnace.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A6971BB5</checksum>
+      <checksum>3D2EACDF</checksum>
     </file>
     <file>
       <filename>default_geometry_location_mshp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>52838413</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5E2E091C</checksum>
+      <checksum>7B92C38E</checksum>
     </file>
     <file>
       <filename>process_heating_setpoints_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>E6C0305B</checksum>
+      <checksum>75FEB4C4</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BC30AD91</checksum>
+      <checksum>129640D9</checksum>
     </file>
   </files>
 </measure>

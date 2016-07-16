@@ -89,7 +89,7 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
     runner.registerInfo("Setting weather file.")
 
-    weather = WeatherProcess.new(model,runner)
+    weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
     if weather.error?
       return false
     end

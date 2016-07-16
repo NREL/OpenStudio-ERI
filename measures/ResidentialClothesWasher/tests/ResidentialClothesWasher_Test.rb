@@ -2,6 +2,7 @@ require_relative '../../../test/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
+require_relative '../measure.rb'
 require 'fileutils'
 
 class ResidentialClothesWasherTest < MiniTest::Test
@@ -212,8 +213,6 @@ class ResidentialClothesWasherTest < MiniTest::Test
   private
   
   def _test_error(osm_file, args_hash)
-    require_relative '../measure.rb'
-  
     # create an instance of the measure
     measure = ResidentialClothesWasher.new
     
@@ -248,8 +247,6 @@ class ResidentialClothesWasherTest < MiniTest::Test
   end
 
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0, expected_hw_gpd=0.0)
-    require_relative '../measure.rb'
-  
     # create an instance of the measure
     measure = ResidentialClothesWasher.new
 

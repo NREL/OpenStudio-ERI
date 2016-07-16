@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>206d37a0-7583-42a0-8660-1f398fbf986f</version_id>
-  <version_modified>20160715T230159Z</version_modified>
+  <version_id>140f2762-397e-4bed-8b4b-60362d5a5070</version_id>
+  <version_modified>20160716T162104Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
@@ -117,22 +117,10 @@
       <checksum>1C7BECC6</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5E2E091C</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BC30AD91</checksum>
-    </file>
-    <file>
-      <filename>set_location_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>83C76812</checksum>
     </file>
     <file>
       <version>
@@ -143,7 +131,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E47CA50F</checksum>
+      <checksum>49CEE97F</checksum>
+    </file>
+    <file>
+      <filename>set_location_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6AF0B1AF</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>129640D9</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>80ea333a-413a-4e3c-8c2d-58d7bb05eb4b</version_id>
-  <version_modified>20160715T230421Z</version_modified>
+  <version_id>5a1f265e-08b5-4840-9cb4-c30375c1244e</version_id>
+  <version_modified>20160716T162101Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -90,23 +90,6 @@
       <checksum>796FFBD4</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>D469F2AD</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E532CC3A</checksum>
-    </file>
-    <file>
       <filename>default_geometry_windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -125,28 +108,45 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>process_constructions_windows_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>05FA2E6A</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5E2E091C</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BC30AD91</checksum>
     </file>
     <file>
+      <filename>process_constructions_windows_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>561BEFD3</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>12457C4E</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8482DE2E</checksum>
+    </file>
+    <file>
       <filename>default_geometry_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>65F26C0B</checksum>
+      <checksum>F80B0C46</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>129640D9</checksum>
     </file>
   </files>
 </measure>

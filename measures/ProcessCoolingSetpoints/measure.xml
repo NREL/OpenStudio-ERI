@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>8dc74fff-5d9d-4e0e-9979-cc3fb36a708d</version_id>
-  <version_modified>20160715T224607Z</version_modified>
+  <version_id>2313852d-fd4d-4a99-b5e4-da8d7c49c8ee</version_id>
+  <version_modified>20160716T162101Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -89,57 +89,10 @@
       <checksum>796FFBD4</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.11.5</identifier>
-        <min_compatible>1.11.5</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>B9172288</checksum>
-    </file>
-    <file>
       <filename>default_geometry.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>1C7BECC6</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>65F26C0B</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_ashp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CC3DC753</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>33922BFC</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_furnace_and_central_air_conditioner_with_heating_setpoints.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3D92B080</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>52838413</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_room_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>02790F78</checksum>
     </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
@@ -154,22 +107,69 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>5E2E091C</checksum>
+      <checksum>BC30AD91</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.11.5</identifier>
+        <min_compatible>1.11.5</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A1C02AC6</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F80B0C46</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_ashp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>00151330</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3193DF80</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_furnace_and_central_air_conditioner_with_heating_setpoints.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EFD8F26E</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7B92C38E</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B41CE23D</checksum>
     </file>
     <file>
       <filename>process_cooling_setpoints_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>9300CFA9</checksum>
+      <checksum>F8854B2A</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BC30AD91</checksum>
+      <checksum>129640D9</checksum>
     </file>
   </files>
 </measure>
