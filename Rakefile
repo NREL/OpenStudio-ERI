@@ -122,54 +122,10 @@ end # end the :measures namespace
 
 namespace :test do
 
-  all_tests = Dir['measures/*/tests/*.rb']
-  group_size = (all_tests.size/4.0).ceil
-
-  # Split into equal groups for CircleCI parallelization
-  measures_group_0 = FileList[all_tests.each_slice(group_size).to_a[0]]
-  
-  measures_group_1 = FileList[all_tests.each_slice(group_size).to_a[1]]
-
-  measures_group_2 = FileList[all_tests.each_slice(group_size).to_a[2]]
-                              
-  measures_group_3 = FileList[all_tests.each_slice(group_size).to_a[3]]
-                              
-  desc 'Run unit tests for all measures in group 0'
-  Rake::TestTask.new('measures_group_0') do |t|
-    t.libs << 'test'
-    t.test_files = measures_group_0
-    t.warning = false
-    t.verbose = true
-  end
-
-  desc 'Run unit tests for all measures in group 1'
-  Rake::TestTask.new('measures_group_1') do |t|
-    t.libs << 'test'
-    t.test_files = measures_group_1
-    t.warning = false
-    t.verbose = true
-  end
-
-  desc 'Run unit tests for all measures in group 2'
-  Rake::TestTask.new('measures_group_2') do |t|
-    t.libs << 'test'
-    t.test_files = measures_group_2
-    t.warning = false
-    t.verbose = true
-  end
-
-  desc 'Run unit tests for all measures in group 3'
-  Rake::TestTask.new('measures_group_3') do |t|
-    t.libs << 'test'
-    t.test_files = measures_group_3
-    t.warning = false
-    t.verbose = true
-  end
-
   desc 'Run unit tests for all measures'
   Rake::TestTask.new('all') do |t|
     t.libs << 'test'
-    t.test_files = all_tests
+    t.test_files = Dir['measures/*/tests/*.rb']
     t.warning = false
     t.verbose = true
   end
