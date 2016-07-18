@@ -20,6 +20,14 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     return "Set Residential Lighting"
   end
   
+  def description
+    return "Sets (or replaces) the lighting energy use, based on fractions of CFLs, LFLs, and LEDs, for finished spaces, the garage, and outside."
+  end
+  
+  def modeler_description
+    return "Assigns a lighting energy use and schedule to finished spaces, the garage, and outside. The lighting schedule is calculated for the latitude/longitude of the weather location specified in the model."
+  end
+  
   #define the arguments that the user will input
   #define the arguments that the user will input
   def arguments(model)

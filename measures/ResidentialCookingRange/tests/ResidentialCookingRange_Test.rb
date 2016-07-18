@@ -234,6 +234,11 @@ class ResidentialCookingRangeTest < MiniTest::Test
     # create an instance of the measure
     measure = ResidentialCookingRange.new
 
+    # check for standard methods
+    assert(!measure.name.empty?)
+    assert(!measure.description.empty?)
+    assert(!measure.modeler_description.empty?)
+
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
     
