@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>97c72283-774f-4df2-93be-35fa824b8388</version_id>
-  <version_modified>20160716T194958Z</version_modified>
+  <version_id>eda01288-c2be-4260-bcf6-a86ec758fabf</version_id>
+  <version_modified>20160718T191236Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>
@@ -276,12 +276,6 @@
       <checksum>2285CA0B</checksum>
     </file>
     <file>
-      <filename>EmptySeedModel.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>67F4A6F3</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -302,13 +296,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>62182958</checksum>
+      <checksum>16119723</checksum>
     </file>
     <file>
       <filename>create_basic_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>455C4DC4</checksum>
+      <checksum>192E912A</checksum>
     </file>
   </files>
 </measure>
