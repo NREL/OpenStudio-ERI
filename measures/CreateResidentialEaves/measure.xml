@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>c09a83f4-054e-4121-9b6d-46acf156b8d0</version_id>
-  <version_modified>20160719T215257Z</version_modified>
+  <version_id>7fca51ba-e9bb-44f9-94a0-bef77768dcbe</version_id>
+  <version_modified>20160720T215640Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -68,6 +68,12 @@
   </attributes>
   <files>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5DD91978</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -76,13 +82,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>92364F08</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5DD91978</checksum>
+      <checksum>9A88D65C</checksum>
     </file>
   </files>
 </measure>
