@@ -82,7 +82,7 @@ GEM
     pkg-config (1.1.7)
     powerpack (0.0.9)
     rainbow (2.1.0)
-    rake (11.1.2)
+    rake (11.2.2)
     rest-client (1.8.0-x64-mingw32)
       ffi (~> 1.9)
       http-cookie (>= 1.0.2, < 2.0)
@@ -142,7 +142,7 @@ DEPENDENCIES
   minitest (~> 5.4.0)
   minitest-ci!
   minitest-reporters
-  rake (~> 11.1.2)
+  rake (~> 11.2.2)
   rubocop (~> 0.26.0)
   rubocop-checkstyle_formatter (~> 0.1.1)
   ruby-prof (~> 0.15.1)

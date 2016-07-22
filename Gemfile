@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rake', '~> 11.1.2'
+gem 'rake', '~> 11.2.2'
 
 # uncomment if you need to update the bcl measures
 # gem "bcl", "~> 0.5"
