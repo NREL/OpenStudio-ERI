@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>fa912002-d823-4052-85c6-14e3ff77ee1f</version_id>
-  <version_modified>20160722T151317Z</version_modified>
+  <version_id>e87e74dd-5a99-4ef4-8bba-3f5e34eaa9b1</version_id>
+  <version_modified>20160722T155352Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
@@ -135,7 +135,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BC30AD91</checksum>
+      <checksum>3269EF90</checksum>
     </file>
   </files>
 </measure>
