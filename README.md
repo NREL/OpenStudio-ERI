@@ -56,15 +56,14 @@ The New Construction workflow illustrates how to build up a complete residential
 ||14. Set Residential Foundations/Floors - Floor Thermal Mass||
 ||15. Set Residential Walls - Wood Stud Construction (or Double Stud, CMU, etc.)||
 ||16. Set Residential Walls - Interzonal Construction||
-||17. Set Residential Walls - Partition Construction||
-||18. Set Residential Walls - Wall Sheathing||
-||19. Set Residential Walls - Exterior Finish||
-||20. Set Residential Walls - Exterior Thermal Mass||
-||21. Set Residential Walls - Partition Thermal Mass||
-||22. Set Residential Uninsulated Surfaces||
-||23. Set Residential Window Construction|Window Area|
-||24. Set Residential Door Construction|Door Area|
-||25. Set Residential Furniture Thermal Mass||
+||17. Set Residential Walls - Wall Sheathing||
+||18. Set Residential Walls - Exterior Finish||
+||19. Set Residential Walls - Exterior Thermal Mass||
+||20. Set Residential Walls - Partition Thermal Mass||
+||21. Set Residential Uninsulated Surfaces||
+||22. Set Residential Window Construction|Window Area|
+||23. Set Residential Door Construction|Door Area|
+||24. Set Residential Furniture Thermal Mass||
 |4. Domestic Hot Water|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
 ||2. Set Residential Hot Water Fixtures|Water Heater|
 ||3. [Hot water distribution; where?]||

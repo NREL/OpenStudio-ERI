@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_propane</name>
   <uid>0278a4e0-d473-46a4-bfe4-33e92ca0a147</uid>
-  <version_id>66e38f23-1ca3-4c37-b20e-bee7d43fe223</version_id>
-  <version_modified>20160721T165345Z</version_modified>
+  <version_id>e6ef8d6d-fa7d-4bc5-8999-c9f81084d5dd</version_id>
+  <version_modified>20160722T151315Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessPropane</class_name>
   <display_name>Set Residential Propane Tankless Water Heater</display_name>
@@ -153,7 +153,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3269EF90</checksum>
+      <checksum>BC30AD91</checksum>
     </file>
   </files>
 </measure>

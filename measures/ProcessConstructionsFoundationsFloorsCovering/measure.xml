@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_covering</name>
   <uid>c0a10f27-c095-4b45-91f8-faee094a1d42</uid>
-  <version_id>8f1b3b4d-f703-406b-a1db-9b648a51c9e6</version_id>
-  <version_modified>20160721T165346Z</version_modified>
+  <version_id>4d6b0d6a-1c80-4080-a061-15c7855fe691</version_id>
+  <version_modified>20160722T151317Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCovering</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Covering</display_name>
@@ -74,7 +74,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3269EF90</checksum>
+      <checksum>BC30AD91</checksum>
     </file>
   </files>
 </measure>

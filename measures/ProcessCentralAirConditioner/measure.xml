@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>a31b89aa-2405-4388-a32f-02336748c561</version_id>
-  <version_modified>20160722T151017Z</version_modified>
+  <version_id>7f3da974-9dbb-4ef1-aaf8-fc7ee7de66ec</version_id>
+  <version_modified>20160722T151316Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -337,12 +337,6 @@
       <checksum>F6EB53AA</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3269EF90</checksum>
-    </file>
-    <file>
       <filename>default_geometry_location_electric_furnace.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -371,6 +365,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>A6A3B56A</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BC30AD91</checksum>
     </file>
   </files>
 </measure>
