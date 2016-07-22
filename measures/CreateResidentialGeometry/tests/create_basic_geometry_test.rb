@@ -15,6 +15,16 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal(result.errors[0].logMessage, "Starting model is not empty.")
   end
   
+  def test_argument_error_garage_ridge_higher_than_house_ridge
+    args_hash = {}
+    args_hash["garage_protrusion"] = 0.5
+    args_hash["garage_width"] = 24
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "Cannot handle garage ridge height greater than house ridge height.")  
+  end
+  
   def test_argument_error_aspect_ratio_invalid
     args_hash = {}
     args_hash["aspect_ratio"] = -1.0
@@ -128,6 +138,8 @@ class CreateBasicGeometryTest < MiniTest::Test
   def test_finished_attic
     args_hash = {}
     args_hash["attic_type"] = Constants.FinishedAtticSpace
+    args_hash["garage_width"] = 12
+    args_hash["garage_protrusion"] = 0.5
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
@@ -150,6 +162,15 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
   end  
+  
+  def test_pierandbeam
+    args_hash = {}
+    args_hash["foundation_type"] = Constants.PierBeamSpace
+    args_hash["foundation_height"] = 4
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)  
+  end
   
   # test_[NUMSTORIES]_[FOUNDATIONTYPE]_[GARAGEPRESENT]_[GARAGEPROTRUDES]_[GARAGEPOSITION]_[ROOFTYPE]
   def test_onestory_fbasement_nogarage_noprotrusion_garageright_gableroof
