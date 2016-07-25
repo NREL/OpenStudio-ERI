@@ -685,13 +685,15 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
     OpenStudio::Model.matchSurfaces(spaces)
     
     # changes surface between unfinished attic and garage attic from roofceiling to wall
-    attic_space.surfaces.each do |surface|
-      next if surface.surfaceType.downcase != "roofceiling"
-      next unless surface.adjacentSurface.is_initialized
-      next if surface.adjacentSurface.get.surfaceType.downcase != "wall"
-      surface.setSurfaceType("Wall")
-      break
-    end    
+    unless attic_space.nil?
+      attic_space.surfaces.each do |surface|
+        next if surface.surfaceType.downcase != "roofceiling"
+        next unless surface.adjacentSurface.is_initialized
+        next if surface.adjacentSurface.get.surfaceType.downcase != "wall"
+        surface.setSurfaceType("Wall")
+        break
+      end
+    end
   
     # reporting final condition of model
     runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")	
