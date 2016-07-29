@@ -15,14 +15,14 @@ class CreateBasicGeometryTest < MiniTest::Test
     assert_equal(result.errors[0].logMessage, "Starting model is not empty.")
   end
   
-  def test_argument_error_garage_ridge_higher_than_house_ridge
+  def test_change_garage_pitch_when_garage_ridge_higher_than_house_ridge
     args_hash = {}
     args_hash["garage_protrusion"] = 0.5
     args_hash["garage_width"] = 24
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Cannot handle garage ridge height greater than house ridge height.")  
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+    assert_equal(result.warnings[0].logMessage, "The garage pitch was changed to accommodate garage ridge > house ridge (from 0.5 to 0.23).")  
   end
   
   def test_argument_error_aspect_ratio_invalid
