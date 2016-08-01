@@ -46,11 +46,69 @@ class ProcessBoilerTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
     
-  def test_retrofit_replace
+  def test_retrofit_replace_ashp
     args_hash = {}
-    model = _test_measure("default_geometry_location.osm", args_hash, 1, 0)
+    _test_measure("default_geometry_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace
     args_hash = {}
-    _test_measure(model, args_hash, 1, 1)
+    _test_measure("default_geometry_location_furnace.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_central_air_conditioner.osm", args_hash, [])
+  end
+  
+  def test_retrofit_replace_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_room_air_conditioner.osm", args_hash, [])
+  end  
+  
+  def test_retrofit_replace_electric_baseboard
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
+  end
+  
+  def test_retrofit_replace_boiler
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
+  end
+  
+  def test_retrofit_replace_mshp
+    args_hash = {}
+    _test_measure("default_geometry_location_mshp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil 1' from air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System'"])
+  end    
+  
+  def test_retrofit_replace_electric_baseboard_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
+  end
+
+  def test_retrofit_replace_boiler_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler_central_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
+  end
+  
+  def test_retrofit_replace_electric_baseboard_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
+  end
+
+  def test_retrofit_replace_boiler_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler_room_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
   end  
   
   private
@@ -85,7 +143,7 @@ class ProcessBoilerTest < MiniTest::Test
     
   end
   
-  def _test_measure(osm_file_or_model, args_hash, expected_num_new_baseboards=0, expected_num_existing_baseboards=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_infos)
     # create an instance of the measure
     measure = ProcessBoiler.new
 
@@ -118,21 +176,9 @@ class ProcessBoilerTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    new_baseboard = false
-    existing_baseboard = false
-    result.info.each do |info|
-        if info.logMessage.include? "Added baseboard convective water 'Living Zone Baseboards' to thermal zone 'living zone'"
-            new_baseboard = true
-        elsif info.logMessage.include? "Removed 'Living Zone Baseboards' (Boiler)"
-            existing_baseboard = true
-        end
-    end    
-    if expected_num_existing_baseboards == 0 # new
-        assert(new_baseboard==true)
-        assert(existing_baseboard==false)
-    else # replacement
-        assert(new_baseboard==true)
-        assert(existing_baseboard==true)
+    expected_infos += ["Added baseboard convective water 'Living Zone Baseboards' to thermal zone 'living zone'"]
+    expected_infos.each do |expected_info|
+      assert_includes(result.info.map{ |x| x.logMessage }, expected_info)
     end   
 
     return model

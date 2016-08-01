@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_gas</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>cf7ef551-f89a-4267-bf5a-f4c83a827863</version_id>
-  <version_modified>20160726T142633Z</version_modified>
+  <version_id>bd5d5b65-b475-40a4-a3f5-84d20687e390</version_id>
+  <version_modified>20160801T210045Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessGas</class_name>
   <display_name>Set Residential Gas Tankless Water Heater</display_name>
@@ -153,7 +153,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3269EF90</checksum>
+      <checksum>C05A9D7F</checksum>
     </file>
   </files>
 </measure>

@@ -194,7 +194,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
     
     # Check if has equipment
     HelperMethods.remove_hot_water_loop(model, runner)    
-    
+
     control_slave_zones_hash = Geometry.get_control_and_slave_zones(model)
     control_slave_zones_hash.each do |control_zone, slave_zones|
     
@@ -254,6 +254,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       air_loop_unitary.setSupplyFan(fan)
       air_loop_unitary.setFanPlacement("BlowThrough")
       air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+      air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
       if not clg_coil.nil?
         # Add the existing DX central air back in
         air_loop_unitary.setCoolingCoil(clg_coil)

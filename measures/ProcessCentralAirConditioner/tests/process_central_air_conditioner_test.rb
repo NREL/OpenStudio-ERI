@@ -117,11 +117,69 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)
   end
     
-  def test_retrofit_replace
+  def test_retrofit_replace_ashp
     args_hash = {}
-    model = _test_measure("default_geometry_location.osm", args_hash, 1, 0)
+    _test_measure("default_geometry_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace
     args_hash = {}
-    _test_measure(model, args_hash, 1, 1)
+    _test_measure("default_geometry_location_furnace.osm", args_hash, ["Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_room_air_conditioner.osm", args_hash, ["Removed 'Window AC'"])
+  end
+  
+  def test_retrofit_replace_electric_baseboard
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard.osm", args_hash, [])
+  end
+  
+  def test_retrofit_replace_boiler
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler.osm", args_hash, [])
+  end
+  
+  def test_retrofit_replace_mshp
+    args_hash = {}
+    _test_measure("default_geometry_location_mshp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_furnace_room_air_conditioner.osm", args_hash, ["Removed air loop 'Central Air System'"])
+  end    
+  
+  def test_retrofit_replace_electric_baseboard_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+
+  def test_retrofit_replace_boiler_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_electric_baseboard_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed 'Window AC'"])
+  end
+
+  def test_retrofit_replace_boiler_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler_room_air_conditioner.osm", args_hash, ["Removed 'Window AC'"])
   end  
   
   private
@@ -156,7 +214,7 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
     
   end
   
-  def _test_measure(osm_file_or_model, args_hash, expected_num_new_coils=0, expected_num_existing_coils=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_infos)
     # create an instance of the measure
     measure = ProcessCentralAirConditioner.new
 
@@ -189,21 +247,9 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    new_coil = false
-    existing_coil = false
-    result.info.each do |info|
-        if info.logMessage.include? "Added DX cooling coil 'DX Cooling Coil' to branch 'Forced Air System' of air loop 'Central Air System'"
-            new_coil = true
-        elsif info.logMessage.include? "Removed 'DX Cooling Coil' (Central Air Conditioner) from air loop 'Central Air System'"
-            existing_coil = true
-        end
-    end    
-    if expected_num_existing_coils == 0 # new
-        assert(new_coil==true)
-        assert(existing_coil==false)
-    else # replacement
-        assert(new_coil==true)
-        assert(existing_coil==true)
+    expected_infos += ["Added DX cooling coil 'DX Cooling Coil' to branch 'Forced Air System' of air loop 'Central Air System'"]
+    expected_infos.each do |expected_info|
+      assert_includes(result.info.map{ |x| x.logMessage }, expected_info)
     end   
 
     return model

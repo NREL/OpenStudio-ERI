@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>5c81201d-a0ed-4faa-baa4-9341d08b6368</version_id>
-  <version_modified>20160726T142634Z</version_modified>
+  <version_id>c316feab-d954-403c-a932-a57fe40d9693</version_id>
+  <version_modified>20160801T210046Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -349,16 +349,82 @@
       <checksum>CA8B029E</checksum>
     </file>
     <file>
+      <filename>default_geometry_location_ashp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D0C604FF</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_boiler.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>02654FDB</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_boiler_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E4A9CF35</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_boiler_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>81BEFC08</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_electric_baseboard.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>545514EB</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_electric_baseboard_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D65526A2</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_electric_baseboard_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E9A8077E</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_furnace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E934FD35</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F20181E3</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_furnace_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6DBE40A3</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E6DC2842</checksum>
+    </file>
+    <file>
       <filename>process_boiler_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>16989CC7</checksum>
+      <checksum>63C2904C</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3269EF90</checksum>
+      <checksum>C05A9D7F</checksum>
     </file>
   </files>
 </measure>

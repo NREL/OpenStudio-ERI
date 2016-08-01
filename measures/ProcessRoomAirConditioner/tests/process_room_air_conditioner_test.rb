@@ -15,11 +15,69 @@ class ProcessRoomAirConditionerTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end    
     
-  def test_retrofit_replace
+  def test_retrofit_replace_ashp
     args_hash = {}
-    model = _test_measure("default_geometry_location.osm", args_hash, 1, 0)
+    _test_measure("default_geometry_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace
     args_hash = {}
-    _test_measure(model, args_hash, 1, 1)
+    _test_measure("default_geometry_location_furnace.osm", args_hash, [])
+  end  
+  
+  def test_retrofit_replace_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_room_air_conditioner.osm", args_hash, ["Removed 'Window AC'"])
+  end
+  
+  def test_retrofit_replace_electric_baseboard
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard.osm", args_hash, [])
+  end
+  
+  def test_retrofit_replace_boiler
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler.osm", args_hash, [])
+  end  
+  
+  def test_retrofit_replace_mshp
+    args_hash = {}
+    _test_measure("default_geometry_location_mshp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_furnace_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Window AC'"])
+  end    
+  
+  def test_retrofit_replace_electric_baseboard_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+
+  def test_retrofit_replace_boiler_central_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+  end
+  
+  def test_retrofit_replace_electric_baseboard_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed 'Window AC'"])
+  end
+
+  def test_retrofit_replace_boiler_room_air_conditioner
+    args_hash = {}
+    _test_measure("default_geometry_location_boiler_room_air_conditioner.osm", args_hash, ["Removed 'Window AC'"])
   end  
   
   private
@@ -54,7 +112,7 @@ class ProcessRoomAirConditionerTest < MiniTest::Test
     
   end
   
-  def _test_measure(osm_file_or_model, args_hash, expected_num_new_ptacs=0, expected_num_existing_ptacs=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_infos)
     # create an instance of the measure
     measure = ProcessRoomAirConditioner.new
 
@@ -87,21 +145,9 @@ class ProcessRoomAirConditionerTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    new_ptac = false
-    existing_ptac = false
-    result.info.each do |info|
-        if info.logMessage.include? "Added packaged terminal air conditioner 'Window AC' to thermal zone 'living zone'"
-            new_ptac = true
-        elsif info.logMessage.include? "Removed 'Window AC' (Room Air Conditioner)"
-            existing_ptac = true
-        end
-    end    
-    if expected_num_existing_ptacs == 0 # new
-        assert(new_ptac==true)
-        assert(existing_ptac==false)
-    else # replacement
-        assert(new_ptac==true)
-        assert(existing_ptac==true)
+    expected_infos += ["Added packaged terminal air conditioner 'Window AC' to thermal zone 'living zone'"]
+    expected_infos.each do |expected_info|
+      assert_includes(result.info.map{ |x| x.logMessage }, expected_info)
     end   
 
     return model

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>2b2531c1-8cd3-4f5e-be75-6d2a26cd4ed7</version_id>
-  <version_modified>20160726T142634Z</version_modified>
+  <version_id>fe80faae-c15c-40f7-9080-ab151d5c566d</version_id>
+  <version_modified>20160801T211422Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -326,17 +326,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>F6EB53AA</checksum>
-    </file>
-    <file>
       <filename>default_geometry_location_electric_furnace.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -361,16 +350,105 @@
       <checksum>DFDAED1F</checksum>
     </file>
     <file>
-      <filename>process_central_air_conditioner_test.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A6A3B56A</checksum>
+      <usage_type>script</usage_type>
+      <checksum>1B212F5C</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3269EF90</checksum>
+      <checksum>C05A9D7F</checksum>
+    </file>
+    <file>
+      <filename>process_central_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0CC62857</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_ashp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D0C604FF</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_boiler.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>02654FDB</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_boiler_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E4A9CF35</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_boiler_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>81BEFC08</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C0A4D94B</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_electric_baseboard.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>545514EB</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_electric_baseboard_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D65526A2</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_electric_baseboard_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E9A8077E</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_furnace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E934FD35</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F20181E3</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_furnace_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6DBE40A3</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E6DC2842</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8929A3ED</checksum>
     </file>
   </files>
 </measure>
