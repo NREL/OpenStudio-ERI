@@ -660,7 +660,7 @@ OS:WeatherFile,
   -104.65,                                !- Longitude {deg}
   -7,                                     !- Time Zone {hr}
   1650,                                   !- Elevation {m}
-  file:///C:/OpenStudio-BEopt/test/dataPoint1/1-UserScript-0/mergedjob-1/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw, !- Url
+  file:../tests/USA_CO_Denver_Intl_AP_725650_TMY3.epw, !- Url
   E23378AA;                               !- Checksum
 
 OS:SizingPeriod:DesignDay,

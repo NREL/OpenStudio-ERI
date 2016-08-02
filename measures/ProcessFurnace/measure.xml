@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>111cc183-62e0-4a69-a744-41608cf39956</version_id>
-  <version_modified>20160802T153322Z</version_modified>
+  <version_id>b7e5950b-47dc-4736-911e-56ff36552687</version_id>
+  <version_modified>20160802T194051Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -254,17 +254,6 @@
       <checksum>6718C36A</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>142EC988</checksum>
-    </file>
-    <file>
       <filename>default_geometry_location_ashp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -331,12 +320,6 @@
       <checksum>E6DC2842</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C05A9D7F</checksum>
-    </file>
-    <file>
       <filename>default_geometry_location_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -353,6 +336,23 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>D381D5FE</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>87A7ACA1</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2792E40D</checksum>
     </file>
   </files>
 </measure>

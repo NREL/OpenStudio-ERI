@@ -163,17 +163,18 @@ class HelperMethods
             if remove
               runner.registerInfo("Removed '#{clg_coil.name}' from air loop '#{air_loop.name}'")
               air_loop_unitary.resetCoolingCoil
-              clg_coil.remove              
+              clg_coil.remove
               return true
             else
-              clg_coil = clg_coil.clone
+              cloned_clg_coil = clg_coil.clone
               air_loop_unitary.resetCoolingCoil
-              if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
-                clg_coil = clg_coil.to_CoilCoolingDXSingleSpeed.get
-              elsif clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
-                clg_coil = clg_coil.to_CoilCoolingDXMultiSpeed.get
+              clg_coil.remove
+              if cloned_clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
+                cloned_clg_coil = cloned_clg_coil.to_CoilCoolingDXSingleSpeed.get
+              elsif cloned_clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
+                cloned_clg_coil = cloned_clg_coil.to_CoilCoolingDXMultiSpeed.get
               end        
-              return clg_coil
+              return cloned_clg_coil
             end
           end
         end
@@ -209,14 +210,15 @@ class HelperMethods
               htg_coil.remove
               return true
             else
-              htg_coil = htg_coil.clone
+              cloned_htg_coil = htg_coil.clone
               air_loop_unitary.resetHeatingCoil
-              if htg_coil.to_CoilHeatingGas.is_initialized
-                htg_coil = htg_coil.to_CoilHeatingGas.get
-              elsif htg_coil.to_CoilHeatingElectric.is_initialized
-                htg_coil = htg_coil.to_CoilHeatingElectric.get
+              htg_coil.remove
+              if cloned_htg_coil.to_CoilHeatingGas.is_initialized
+                cloned_htg_coil = cloned_htg_coil.to_CoilHeatingGas.get
+              elsif cloned_htg_coil.to_CoilHeatingElectric.is_initialized
+                cloned_htg_coil = cloned_htg_coil.to_CoilHeatingElectric.get
               end
-              return htg_coil
+              return cloned_htg_coil
             end
           end
         end

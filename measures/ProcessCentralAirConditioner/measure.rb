@@ -427,18 +427,19 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
       air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
       air_loop_unitary.setName("Forced Air System")
       air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-      air_loop_unitary.setCoolingCoil(clg_coil)
-      air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
-      air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(120.0,"F","C").get)
-      air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
-      air_loop_unitary.setSupplyFan(fan)
-      air_loop_unitary.setFanPlacement("BlowThrough")
+      air_loop_unitary.setCoolingCoil(clg_coil)      
       if not htg_coil.nil?
         # Add the existing furnace back in
+        puts htg_coil.name.to_s
         air_loop_unitary.setHeatingCoil(htg_coil)
       else
         air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0000001) # this is when there is no heating present
-      end      
+      end
+      air_loop_unitary.setSupplyFan(fan)
+      air_loop_unitary.setFanPlacement("BlowThrough")
+      air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+      air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(120.0,"F","C").get)
+      air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)      
       
       air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
       air_loop.setName("Central Air System")

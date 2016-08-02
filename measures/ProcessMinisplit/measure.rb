@@ -453,7 +453,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
       
       heating_indices = curves.mshp_indices
       heating_indices.each do |i|
-          htg_coil.addStage(htg_coil_stage_data[i])    
+          htg_coil.addStage(htg_coil_stage_data[i])
       end
      
       supp_htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, model.alwaysOnDiscreteSchedule)

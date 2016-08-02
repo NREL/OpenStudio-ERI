@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>b8253691-5ae2-4fbc-912d-4e2622ecab04</version_id>
-  <version_modified>20160801T210049Z</version_modified>
+  <version_id>55ee7a42-7ee3-4fef-af42-0ecd74f10c3b</version_id>
+  <version_modified>20160802T194050Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorWoodStud</class_name>
   <display_name>Set Residential Walls - Wood Stud Construction</display_name>
@@ -127,7 +127,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C05A9D7F</checksum>
+      <checksum>2792E40D</checksum>
     </file>
   </files>
 </measure>

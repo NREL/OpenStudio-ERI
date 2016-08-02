@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_minisplit</name>
   <uid>257a8095-0b3d-4ac7-acf5-c537ecbaa945</uid>
-  <version_id>b916ebb2-8f83-441e-9a07-876499b3fba2</version_id>
-  <version_modified>20160801T210053Z</version_modified>
+  <version_id>d50c3a64-97b9-4dc0-9a89-ebfb946e5d25</version_id>
+  <version_modified>20160802T194315Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
@@ -487,17 +487,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.0</identifier>
-        <min_compatible>1.10.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9EE9869B</checksum>
-    </file>
-    <file>
       <filename>process_minisplit_heat_pump_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -582,10 +571,21 @@
       <checksum>8929A3ED</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.0</identifier>
+        <min_compatible>1.10.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>3A967C08</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C05A9D7F</checksum>
+      <checksum>2792E40D</checksum>
     </file>
   </files>
 </measure>
