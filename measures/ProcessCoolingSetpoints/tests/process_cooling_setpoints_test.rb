@@ -56,6 +56,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
   def test_mshp_avail_sched
     args_hash = {}
     result = _test_error("default_geometry_location_mshp.osm", args_hash)
+    puts result.errors
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
   end

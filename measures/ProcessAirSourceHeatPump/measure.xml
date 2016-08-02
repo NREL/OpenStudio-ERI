@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>942d60cd-effb-47ac-8be2-6181746ad018</version_id>
-  <version_modified>20160801T210046Z</version_modified>
+  <version_id>3e81e9a2-0a7d-46b8-849f-97ecd4efddf9</version_id>
+  <version_modified>20160802T153627Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
   <display_name>Set Residential Air Source Heat Pump</display_name>

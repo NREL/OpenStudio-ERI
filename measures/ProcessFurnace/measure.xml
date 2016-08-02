@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>c727ff67-07fe-4808-92f5-7642995cada6</version_id>
-  <version_modified>20160801T210619Z</version_modified>
+  <version_id>111cc183-62e0-4a69-a744-41608cf39956</version_id>
+  <version_modified>20160802T153322Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -337,12 +337,6 @@
       <checksum>C05A9D7F</checksum>
     </file>
     <file>
-      <filename>process_furnace_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E9EC400A</checksum>
-    </file>
-    <file>
       <filename>default_geometry_location_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -353,6 +347,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>8929A3ED</checksum>
+    </file>
+    <file>
+      <filename>process_furnace_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D381D5FE</checksum>
     </file>
   </files>
 </measure>
