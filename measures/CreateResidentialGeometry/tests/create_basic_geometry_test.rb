@@ -19,11 +19,12 @@ class CreateBasicGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["garage_protrusion"] = 0.5
     args_hash["garage_width"] = 24
+    args_hash["garage_depth"] = 24
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
-    assert_equal(result.warnings[0].logMessage, "The garage pitch was changed to accommodate garage ridge > house ridge (from 0.5 to 0.23).")  
-  end
+    assert_equal(result.warnings[0].logMessage, "The garage pitch was changed to accommodate garage ridge >= house ridge (from 0.5 to 0.463).")  
+  end 
   
   def test_argument_error_aspect_ratio_invalid
     args_hash = {}
