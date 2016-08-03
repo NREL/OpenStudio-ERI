@@ -629,7 +629,7 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
           garage_attic_height = (ne_point.x - nw_point.x)/2 * roof_pitch
           garage_roof_pitch = roof_pitch
           if garage_attic_height > attic_height
-            garage_attic_height = attic_height
+            garage_attic_height = attic_height - 0.01 # garage attic height slightly below attic height so that we don't get any roof decks with only three vertices
             garage_roof_pitch = garage_attic_height / garage_width
             runner.registerWarning("The garage pitch was changed to accommodate garage ridge > house ridge (from #{roof_pitch.round(2)} to #{garage_roof_pitch.round(2)}).")
           end

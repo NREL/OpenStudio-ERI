@@ -64,30 +64,22 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
   
   def determine_roof_type(surfaces)
     roof_decks = []
+    gable_walls = []
     surfaces.each do |surface|
       next if surface.space.get.name.to_s.downcase.include? "garage" # don't determine the roof type based on the garage (gable) roof
-      next unless surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
-      roof_decks << surface
+      if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
+        roof_decks << surface
+      elsif surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors" and surface.vertices.length == 3
+        gable_walls << surface
+      end
     end
     if roof_decks.length == 1
       return Constants.RoofTypeFlat
+    elsif gable_walls.length > 0
+      return Constants.RoofTypeGable
+    else
+      return Constants.RoofTypeHip
     end
-    roof_decks.each do |roof_deck|
-      if roof_deck.vertices.length == 3
-        return Constants.RoofTypeHip
-      else
-        next unless roof_deck.vertices.length == 4
-        lengths_of_sides = []
-        lengths_of_sides << Math.sqrt((roof_deck.vertices[0].x - roof_deck.vertices[1].x) ** 2 + (roof_deck.vertices[0].y - roof_deck.vertices[1].y) ** 2 + (roof_deck.vertices[0].z - roof_deck.vertices[1].z) ** 2)
-        lengths_of_sides << Math.sqrt((roof_deck.vertices[1].x - roof_deck.vertices[2].x) ** 2 + (roof_deck.vertices[1].y - roof_deck.vertices[2].y) ** 2 + (roof_deck.vertices[1].z - roof_deck.vertices[2].z) ** 2)
-        lengths_of_sides << Math.sqrt((roof_deck.vertices[2].x - roof_deck.vertices[3].x) ** 2 + (roof_deck.vertices[2].y - roof_deck.vertices[3].y) ** 2 + (roof_deck.vertices[2].z - roof_deck.vertices[3].z) ** 2)
-        lengths_of_sides << Math.sqrt((roof_deck.vertices[3].x - roof_deck.vertices[0].x) ** 2 + (roof_deck.vertices[3].y - roof_deck.vertices[0].y) ** 2 + (roof_deck.vertices[3].z - roof_deck.vertices[0].z) ** 2)
-        if lengths_of_sides.uniq.length == 3
-          return Constants.RoofTypeHip
-        end
-      end
-    end    
-    return Constants.RoofTypeGable
   end
   
   def get_slope_direction_and_lower_points(surface)
@@ -201,7 +193,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
       runner.registerInfo("Removed existing eaves.")
     end
     
-    roof_type = determine_roof_type(model.getSurfaces)   
+    roof_type = determine_roof_type(model.getSurfaces)
     
     surfaces_modified = false
     
@@ -270,8 +262,8 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
               else
                 min_x = x_s.each_with_index.min
                 max_x = x_s.each_with_index.max
-                max_pt = OpenStudio::Point3d.new(x_s[min_x[1]] - eaves_depth + existing_eaves_depth, y_s[min_x[1]], z_s[min_x[1]])
-                min_pt = OpenStudio::Point3d.new(x_s[max_x[1]] + eaves_depth - existing_eaves_depth, y_s[max_x[1]], z_s[max_x[1]])
+                min_pt = OpenStudio::Point3d.new(x_s[min_x[1]] - eaves_depth + existing_eaves_depth, y_s[min_x[1]], z_s[min_x[1]])
+                max_pt = OpenStudio::Point3d.new(x_s[max_x[1]] + eaves_depth - existing_eaves_depth, y_s[max_x[1]], z_s[max_x[1]])
               end
             end
             new_vertices = OpenStudio::Point3dVector.new
