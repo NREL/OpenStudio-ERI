@@ -204,16 +204,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	end
   end
 
-  class ClothesDryer
-    def initialize(dryerExhaust)
-      @dryerExhaust = dryerExhaust
-    end
-
-    def DryerExhaust
-      return @dryerExhaust
-    end
-  end
-
   class Geom
     def initialize(nbeds, nbaths)
 	  @nbeds = nbeds
@@ -669,17 +659,17 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     args << selected_overlapssn
 
     #make a double argument for number weekdays
-    userdefined_ventweekdays = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedventweekdays",false)
+    userdefined_ventweekdays = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("userdefinedventweekdays",false)
     userdefined_ventweekdays.setDisplayName("Natural Ventilation: Number Weekdays")
     userdefined_ventweekdays.setDescription("Number of weekdays in the week that natural ventilation can occur.")
-    userdefined_ventweekdays.setDefaultValue(3.0)
+    userdefined_ventweekdays.setDefaultValue(3)
     args << userdefined_ventweekdays
 
     #make a double argument for number weekend days
-    userdefined_ventweekenddays = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedventweekenddays",false)
+    userdefined_ventweekenddays = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("userdefinedventweekenddays",false)
     userdefined_ventweekenddays.setDisplayName("Natural Ventilation: Number Weekend Days")
     userdefined_ventweekenddays.setDescription("Number of weekend days in the week that natural ventilation can occur.")
-    userdefined_ventweekenddays.setDefaultValue(0.0)
+    userdefined_ventweekenddays.setDefaultValue(0)
     args << userdefined_ventweekenddays
 
     #make a double argument for fraction of windows open
@@ -716,6 +706,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 	
     #make a choice arguments for duct location
     duct_locations = OpenStudio::StringVector.new
+    duct_locations << "none"
     duct_locations << Constants.Auto
     duct_locations << Constants.LivingZone
     duct_locations << Constants.AtticZone
@@ -913,12 +904,19 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     electricEquipments = workspace.getObjectsByType("ElectricEquipment".to_IddObjectType)
     electricEquipments.each do |electricEquipment|
       electricEquipment_name = electricEquipment.getString(0).to_s # Name
-      if electricEquipment_name.downcase.include? "clothes" and electricEquipment_name.downcase.include? "dryer"
+      if electricEquipment_name == Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric)
+        has_cd = true
+      end
+    end
+    gasEquipments = workspace.getObjectsByType("GasEquipment".to_IddObjectType)
+    gasEquipments.each do |gasEquipment|
+      gasEquipment_name = gasEquipment.getString(0).to_s # Name
+      if gasEquipment_name == Constants.ObjectNameClothesDryer(Constants.FuelTypeGas)
         has_cd = true
       end
     end
     if not has_cd and dryerExhaust > 0
-      runner.registerWarning("There is no clothes dryer but the clothes dryer exhaust specified is nonzero. Assuming clothes dryer exhaust is 0 cfm.")
+      runner.registerWarning("No clothes dryer object was found but the clothes dryer exhaust specified is non-zero. Overriding clothes dryer exhaust to be zero.")
       dryerExhaust = 0
     end
 
@@ -930,8 +928,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentHeatingSeason = runner.getBoolArgumentValue("selectedheatingssn",user_arguments)
     natVentCoolingSeason = runner.getBoolArgumentValue("selectedcoolingssn",user_arguments)
     natVentOverlapSeason = runner.getBoolArgumentValue("selectedoverlapssn",user_arguments)
-    natVentNumberWeekdays = runner.getDoubleArgumentValue("userdefinedventweekdays",user_arguments)
-    natVentNumberWeekendDays = runner.getDoubleArgumentValue("userdefinedventweekenddays",user_arguments)
+    natVentNumberWeekdays = runner.getIntegerArgumentValue("userdefinedventweekdays",user_arguments)
+    natVentNumberWeekendDays = runner.getIntegerArgumentValue("userdefinedventweekenddays",user_arguments)
     natVentFractionWindowsOpen = runner.getDoubleArgumentValue("userdefinedfracwinopen",user_arguments)
     natVentFractionWindowAreaOpen = runner.getDoubleArgumentValue("userdefinedfracwinareaopen",user_arguments)
     natVentMaxOAHumidityRatio = runner.getDoubleArgumentValue("userdefinedhumratio",user_arguments)
@@ -979,7 +977,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     wind_speed = WindSpeed.new
     neighbors_min_nonzero_offset = get_least_neighbor_offset(workspace)
     vent = MechanicalVentilation.new(mechVentType, mechVentInfilCredit, mechVentTotalEfficiency, mechVentFractionOfASHRAE, mechVentHouseFanPower, mechVentSensibleEfficiency, mechVentASHRAEStandard)
-    clothes_dryer = ClothesDryer.new(dryerExhaust)
     geometry = Geom.new(nbeds, nbaths)
     nv = NaturalVentilation.new(natVentHtgSsnSetpointOffset, natVentClgSsnSetpointOffset, natVentOvlpSsnSetpointOffset, natVentHeatingSeason, natVentCoolingSeason, natVentOverlapSeason, natVentNumberWeekdays, natVentNumberWeekendDays, natVentFractionWindowsOpen, natVentFractionWindowAreaOpen, natVentMaxOAHumidityRatio, natVentMaxOARelativeHumidity)
     schedules = Schedules.new
@@ -1044,7 +1041,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       space_unfinished_basement.volume = space_unfinished_basement.height * space_unfinished_basement.area
     end
   
-    if HelperMethods.has_central_air_conditioner(model, runner, living_thermal_zone).nil? and HelperMethods.has_furnace(model, runner, living_thermal_zone).nil? and HelperMethods.has_air_source_heat_pump(model, runner, living_thermal_zone).nil?
+    if duct_location != "none" and HelperMethods.has_central_air_conditioner(model, runner, living_thermal_zone).nil? and HelperMethods.has_furnace(model, runner, living_thermal_zone).nil? and HelperMethods.has_air_source_heat_pump(model, runner, living_thermal_zone).nil?
+      runner.registerWarning("No ducted HVAC equipment was found but ducts were specified. Overriding duct specification.")
       duct_location = "none"
     end
   
@@ -1129,7 +1127,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     # Process the infiltration
     si, living_space, wind_speed, garage, fb, ub, cs, ua = _processInfiltration(si, living_space, garage, finished_basement, space_unfinished_basement, crawlspace, unfinished_attic, garage_thermal_zone, fbasement_thermal_zone, ufbasement_thermal_zone, crawl_thermal_zone, ufattic_thermal_zone, wind_speed, neighbors_min_nonzero_offset, terrainType, geometry)
     # Process the mechanical ventilation
-    vent, schedules = _processMechanicalVentilation(si, vent, ageOfHome, clothes_dryer, geometry, living_space, schedules)
+    vent, schedules = _processMechanicalVentilation(si, vent, ageOfHome, dryerExhaust, geometry, living_space, schedules)
     # Process the natural ventilation
     nv, schedules = _processNaturalVentilation(workspace, nv, living_space, wind_speed, si, schedules, geometry, coolingSetpointWeekday, coolingSetpointWeekend, heatingSetpointWeekday, heatingSetpointWeekend)
 
@@ -3031,7 +3029,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
   end  
   
-  def _processMechanicalVentilation(infil, vent, ageOfHome, clothes_dryer, geometry, living_space, schedules)
+  def _processMechanicalVentilation(infil, vent, ageOfHome, dryerExhaust, geometry, living_space, schedules)
     # Mechanical Ventilation
 
     # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
@@ -3094,7 +3092,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
     vent.bathroom_hour_avg_exhaust = vent.MechVentBathroomExhaust * geometry.num_bathrooms * vent.bath_exhaust_operation / 60.0 # cfm
     vent.range_hood_hour_avg_exhaust = vent.MechVentRangeHoodExhaust * vent.range_hood_exhaust_operation / 60.0 # cfm
-    vent.clothes_dryer_hour_avg_exhaust = clothes_dryer.DryerExhaust * vent.clothes_dryer_exhaust_operation / 60.0 # cfm
+    vent.clothes_dryer_hour_avg_exhaust = dryerExhaust * vent.clothes_dryer_exhaust_operation / 60.0 # cfm
 
     vent.max_power = [vent.bathroom_hour_avg_exhaust * vent.MechVentSpotFanPower + vent.whole_house_vent_rate * vent.MechVentHouseFanPower * vent.num_vent_fans, vent.range_hood_hour_avg_exhaust * vent.MechVentSpotFanPower + vent.whole_house_vent_rate * vent.MechVentHouseFanPower * vent.num_vent_fans].max / OpenStudio::convert(1.0,"kW","W").get # kW
 
