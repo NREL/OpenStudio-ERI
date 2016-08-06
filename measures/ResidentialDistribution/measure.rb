@@ -7,13 +7,13 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/waterheater"
 
 #start the measure
-class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
+class ResidentialHotWaterDistribution < OpenStudio::Ruleset::ModelUserScript
     OSM = OpenStudio::Model
             
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
     def name
-        return "Residential Distribution"
+        return "Set Residential Hot Water Distribution"
     end
 
     def description
@@ -32,42 +32,42 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
             
         #Distribution pipe material
         pipe_mat_display_name = OpenStudio::StringVector.new
-        pipe_mat_display_name << "Copper"
-        pipe_mat_display_name << "PEX"
+        pipe_mat_display_name << Constants.MaterialCopper
+        pipe_mat_display_name << Constants.MaterialPEX
         pipe_mat = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("pipe_mat", pipe_mat_display_name, true)
         pipe_mat.setDisplayName("Pipe Material")
         pipe_mat.setDescription("The plumbing material.")
-        pipe_mat.setDefaultValue("Copper")
+        pipe_mat.setDefaultValue(Constants.MaterialCopper)
         args << pipe_mat
         
         #Distribution system layout
         dist_layout_display_name = OpenStudio::StringVector.new
-        dist_layout_display_name << "Home Run"
-        dist_layout_display_name << "Trunk and Branch"
+        dist_layout_display_name << Constants.PipeTypeHomeRun
+        dist_layout_display_name << Constants.PipeTypeTrunkBranch
         dist_layout = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("dist_layout", dist_layout_display_name, true)
         dist_layout.setDisplayName("Distribution system layout")
         dist_layout.setDescription("The plumbing layout of the hot water distribution system. Trunk and branch uses a main trunk line to supply various branch take-offs to specific fixtures. In the home run layout, all fixtures are fed from dedicated piping that runs directly from central manifolds.")
-        dist_layout.setDefaultValue("Trunk and Branch")
+        dist_layout.setDefaultValue(Constants.PipeTypeTrunkBranch)
         args << dist_layout
         
         #make a choice argument for space
         space_display_name = OpenStudio::StringVector.new
-        space_display_name << "Interior"
-        space_display_name << "Exterior"
+        space_display_name << Constants.LocationInterior
+        space_display_name << Constants.LocationExterior
         space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_display_name, true)
         space.setDescription("Select the primary space where the DHW distribution system is located.")
-        space.setDefaultValue("Interior")
+        space.setDefaultValue(Constants.LocationInterior)
         args << space
         
         #Recirculation Type
         recirc_type_display_name = OpenStudio::StringVector.new
-        recirc_type_display_name << "None"
-        recirc_type_display_name << "Timer"
-        recirc_type_display_name << "Demand"
+        recirc_type_display_name << Constants.RecircTypeNone
+        recirc_type_display_name << Constants.RecircTypeTimer
+        recirc_type_display_name << Constants.RecircTypeDemand
         recirc_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("recirc_type", recirc_type_display_name, true)
         recirc_type.setDisplayName("Recirculation Type")
         recirc_type.setDescription("The type of hot water recirculation control, if any. Timer recirculation control assumes 16 hours of daily pump operation from 6am to 10pm. Demand recirculation controls assume push button control at all non-appliance fistures with 100% ideal control.")
-        recirc_type.setDefaultValue("None")
+        recirc_type.setDefaultValue(Constants.RecircTypeNone)
         args << recirc_type
                     
         #Insulation
@@ -91,18 +91,11 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
 		end
 
 		#assign the user inputs to variables
-        pipe_mat = runner.getStringArgumentValue("pipe_mat", user_arguments).downcase
-        dist_layout = runner.getStringArgumentValue("dist_layout", user_arguments).downcase
+        pipe_mat = runner.getStringArgumentValue("pipe_mat", user_arguments)
+        dist_layout = runner.getStringArgumentValue("dist_layout", user_arguments)
         dist_ins = runner.getDoubleArgumentValue("dist_ins", user_arguments)
-        recirc_type = runner.getStringArgumentValue("recirc_type", user_arguments).downcase
-        dist_loc = runner.getStringArgumentValue("space", user_arguments).downcase
-        
-        #reformat dist layout from display name
-        if dist_layout == "trunk and branch"
-            dist_layout = Constants.PipeTypeTrunkBranch
-        else
-            dist_layout = Constants.PipeTypeHomeRun
-        end
+        recirc_type = runner.getStringArgumentValue("recirc_type", user_arguments)
+        dist_loc = runner.getStringArgumentValue("space", user_arguments)
         
         #Check for valid and reasonable inputs
         if dist_ins < 0
@@ -217,15 +210,15 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
         end
         
         #Calculate the pump energy consumption (in kWh/day)
-        if recirc_type == "none"
-            pump_e = 0
-        elsif recirc_type == "timer"
+        if recirc_type == Constants.RecircTypeNone
+            pump_e_ann = 0
+        elsif recirc_type == Constants.RecircTypeTimer
             for m in 0..11 
                 daily_recovery_load[m] = [(18135.0 + 2538.0 * nbeds + (-12265.0 - 1495.0 * nbeds) * dist_ins / 2.0) / \
                                 (8.33 * (120.0 - tmains[m]) * 4184.0 * 0.00023886),0].max
             end
             pump_e_ann = 193.0
-        else #demand
+        elsif recirc_type == Constants.RecircTypeDemand
             for m in 0..11
                  daily_recovery_load[m] = [(-3648.0 + 2344.0 * nbeds + (-1328.0 - 761.0 * nbeds) * dist_ins / 2.0) / \
                                  (8.33 * (120.0 - tmains[m]) * 4184.0 * 0.00023886),0].max
@@ -235,7 +228,7 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
         pump_e = pump_e_ann / 365.0
         #Case 1: Trunk & Branch, Copper, Interior, No Recirc
         if dist_layout == Constants.PipeTypeTrunkBranch and pipe_mat == Constants.MaterialCopper and \
-           dist_loc == Constants.LocationInterior and recirc_type == "none"
+           dist_loc == Constants.LocationInterior and recirc_type == Constants.RecircTypeNone
             for m in 0..11
                 daily_shower_increase[m] = [(-0.305 - 0.75 * nbeds) * dist_ins / 2.0,0].min #gal/day
                 daily_bath_increase[m] = [(0.03 - 0.03 * nbeds) * dist_ins / 2.0,0].min #gal/day
@@ -246,7 +239,7 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
             end
         #Case 2: Trunk & Branch, PEX, Interior, No Recirc
         elsif dist_layout == Constants.PipeTypeTrunkBranch and pipe_mat == Constants.MaterialPEX and \
-              dist_loc == Constants.LocationInterior and recirc_type == "none"
+              dist_loc == Constants.LocationInterior and recirc_type == Constants.RecircTypeNone
             for m in 0..11
                 daily_shower_increase[m] = [-0.85 - 0.44 * dist_ins / 2.0,0].min #gal/day
                 daily_bath_increase[m] = [-0.12 - 0.06 * dist_ins / 2.0,0].min #gal/day
@@ -257,7 +250,7 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
             end
         #Case 3: Trunk & Branch, Copper, Exterior, No Recirc
         elsif dist_layout == Constants.PipeTypeTrunkBranch and pipe_mat == Constants.MaterialCopper and \
-              dist_loc == Constants.LocationExterior and recirc_type == "none"
+              dist_loc == Constants.LocationExterior and recirc_type == Constants.RecircTypeNone
             for m in 0..11
                 daily_shower_increase[m] = [((-1.14 - 0.36 * nbeds) + (-0.34 - 0.08 * nbeds) * dist_ins / 2.0) * \
                                            (1 + 0.11 * Math.sin(deg_rad * (360.0 * ((m + 1.0) / 12.0) + 0.3))),0].min #gal/day 
@@ -269,7 +262,7 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
             end
         #Case 4: Trunk & Branch, PEX, Exterior, No Recirc
         elsif dist_layout == Constants.PipeTypeTrunkBranch and pipe_mat == Constants.MaterialPEX and \
-              dist_loc == Constants.LocationExterior and recirc_type == "none"
+              dist_loc == Constants.LocationExterior and recirc_type == Constants.RecircTypeNone
             for m in 0..11
                 daily_shower_increase[m] = [-0.85 + (shower_daily * water_mix_to_h[m] - 0.85) / \
                                            (shower_daily * water_mix_to_h[m]) * ((-1.14 - 0.36 * nbeds) + \
@@ -287,7 +280,7 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
             end
         #Case 5: Home Run, PEX, Interior, No Recirc
         elsif dist_layout == Constants.PipeTypeHomeRun and pipe_mat == Constants.MaterialPEX and \
-              dist_loc == Constants.LocationInterior and recirc_type == "none"
+              dist_loc == Constants.LocationInterior and recirc_type == Constants.RecircTypeNone
             for m in 0..11
                 daily_shower_increase[m] = [(-0.52 - 0.23 * nbeds) + (-0.35 + 0.02 * nbeds) * dist_ins / 2.0,0].min #gal/day
                 daily_bath_increase[m] = [(-0.06 - 0.05 * nbeds) + (-0.11 + 0.03 * nbeds) * dist_ins / 2.0,0].min #gal/day
@@ -298,7 +291,7 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
             end
         #Case 6: Homerun, PEX, Exterior, No Recirc
         elsif dist_layout == Constants.PipeTypeHomeRun and pipe_mat == Constants.MaterialPEX and \
-              dist_loc == Constants.LocationExterior and recirc_type == "none"
+              dist_loc == Constants.LocationExterior and recirc_type == Constants.RecircTypeNone
             for m in 0..11
                 daily_shower_increase[m] = [-0.52 - 0.23 * nbeds + (shower_daily * water_mix_to_h[m] - 0.52 - 0.23 * nbeds) / \
                                            (shower_daily * water_mix_to_h[m]) * ((-1.14 - 0.36 * nbeds) + \
@@ -440,7 +433,7 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
             gain_sch.setSchedule(dist_oe)
         end
         
-        if recirc_type != "None"
+        if recirc_type != Constants.RecircTypeNone
             recirc_pump_name = "recirculation pump"
             recirc_pump_design_level = sh_sch.calcDesignLevelFromDailykWh(pump_e)
             recirc_pump_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
@@ -463,9 +456,9 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
         
         #reporting final condition of model
         if default_dist
-            runner.registerFinalCondition("The defined DHW distribution system could not be modeled, and a default system was installed instead. For a list of acceptable distribution system configurations, see Table 18 of the December 2008 Building America Fesearch Benchmark Definition (http://www.nrel.gov/docs/fy09osti/44816.pdf)")
+            runner.registerFinalCondition("The defined DHW distribution system could not be modeled, and a default system was installed instead. For a list of acceptable distribution system configurations, see Table 18 of the December 2008 Building America Research Benchmark Definition (http://www.nrel.gov/docs/fy09osti/44816.pdf)")
         else
-            if recirc_type != "None"
+            if recirc_type != Constants.RecircTypeNone
                 runner.registerFinalCondition("A new #{pipe_mat}, #{dist_layout} DHW distribution system has been added to the #{dist_loc} of the home with a recirculation pump energy consumption of #{pump_e_ann.round(2)} kWh/yr.")
             else
                 runner.registerFinalCondition("A new #{pipe_mat}, #{dist_layout} DHW distribution system has been added to the #{dist_loc} of the home.")
@@ -477,4 +470,4 @@ class ResidentialDistribution < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ResidentialDistribution.new.registerWithApplication
+ResidentialHotWaterDistribution.new.registerWithApplication

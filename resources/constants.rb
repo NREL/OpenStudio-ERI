@@ -424,10 +424,10 @@ class Constants
     return 'pier and beam space type'
   end
   def self.PipeTypeTrunkBranch
-    return 'trunkbranch'
+    return 'trunk and branch'
   end
   def self.PipeTypeHomeRun
-    return 'homerun'
+    return 'home run'
   end
   def self.PlantLoopDomesticWater
     return 'Domestic Hot Water Loop'
@@ -440,6 +440,9 @@ class Constants
   end
   def self.RecircTypeDemand
     return 'demand' 
+  end
+  def self.RecircTypeNone
+    return 'none'
   end
   def self.RoofStructureRafter
     return 'rafter'

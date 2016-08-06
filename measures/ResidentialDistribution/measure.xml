@@ -1,12 +1,12 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>residential_distribution</name>
+  <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>0577ded0-81ea-44fd-8b55-f964aee68d85</version_id>
-  <version_modified>20160804T215600Z</version_modified>
+  <version_id>fde1e052-cab6-4e37-b278-fd4e1383b785</version_id>
+  <version_modified>20160806T151151Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
-  <class_name>ResidentialDistribution</class_name>
-  <display_name>Residential Distribution</display_name>
+  <class_name>ResidentialHotWaterDistribution</class_name>
+  <display_name>Set Residential Hot Water Distribution</display_name>
   <description>Adds a hot water distribution system, including pipes and any recirculation pumps, into the home. This measure must be run after showers, sinks, and baths have been added to the home.</description>
   <modeler_description>Modifies the existing HotWater:Equipment Objects for showers, sinks, and baths to take into account the additional water drawn due to distribution system inefficiencies. Also adds an internal gain to the space due to heat loss from the pipes and an ElectricEquipment object for the pump if recirculation is included.</modeler_description>
   <arguments>
@@ -17,15 +17,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Copper</default_value>
+      <default_value>copper</default_value>
       <choices>
         <choice>
-          <value>Copper</value>
-          <display_name>Copper</display_name>
+          <value>copper</value>
+          <display_name>copper</display_name>
         </choice>
         <choice>
-          <value>PEX</value>
-          <display_name>PEX</display_name>
+          <value>pex</value>
+          <display_name>pex</display_name>
         </choice>
       </choices>
     </argument>
@@ -36,15 +36,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Trunk and Branch</default_value>
+      <default_value>trunkbranch</default_value>
       <choices>
         <choice>
-          <value>Home Run</value>
-          <display_name>Home Run</display_name>
+          <value>homerun</value>
+          <display_name>homerun</display_name>
         </choice>
         <choice>
-          <value>Trunk and Branch</value>
-          <display_name>Trunk and Branch</display_name>
+          <value>trunkbranch</value>
+          <display_name>trunkbranch</display_name>
         </choice>
       </choices>
     </argument>
@@ -55,15 +55,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Interior</default_value>
+      <default_value>interior</default_value>
       <choices>
         <choice>
-          <value>Interior</value>
-          <display_name>Interior</display_name>
+          <value>interior</value>
+          <display_name>interior</display_name>
         </choice>
         <choice>
-          <value>Exterior</value>
-          <display_name>Exterior</display_name>
+          <value>exterior</value>
+          <display_name>exterior</display_name>
         </choice>
       </choices>
     </argument>
@@ -74,19 +74,19 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>None</default_value>
+      <default_value>none</default_value>
       <choices>
         <choice>
-          <value>None</value>
-          <display_name>None</display_name>
+          <value>none</value>
+          <display_name>none</display_name>
         </choice>
         <choice>
-          <value>Timer</value>
-          <display_name>Timer</display_name>
+          <value>timer</value>
+          <display_name>timer</display_name>
         </choice>
         <choice>
-          <value>Demand</value>
-          <display_name>Demand</display_name>
+          <value>demand</value>
+          <display_name>demand</display_name>
         </choice>
       </choices>
     </argument>
@@ -260,7 +260,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>96E0C572</checksum>
+      <checksum>1AB9292D</checksum>
     </file>
     <file>
       <version>
@@ -271,7 +271,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>64FBBF83</checksum>
+      <checksum>3BD7EADD</checksum>
     </file>
   </files>
 </measure>
