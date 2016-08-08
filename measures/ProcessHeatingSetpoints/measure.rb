@@ -75,7 +75,7 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
     end
     
     heatingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSeason, Array.new(24, 1), Array.new(24, 1), heating_season, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-    
+        
     unless heatingseasonschedule.validated?
       return false
     end

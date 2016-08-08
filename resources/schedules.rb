@@ -155,9 +155,9 @@ class HourlyByMonthSchedule
                 end
             end
             
-            sumDesSch = wkdy[6] # TODO: Where did this come from?
+            sumDesSch = wkdy[6].clone.to_ScheduleDay.get
             sumDesSch.setName(@sch_name + " summer")
-            winDesSch = wkdy[1] # TODO: Where did this come from?
+            winDesSch = wkdy[1].clone.to_ScheduleDay.get
             winDesSch.setName(@sch_name + " winter")
             schedule.setSummerDesignDaySchedule(sumDesSch)
             schedule.setWinterDesignDaySchedule(winDesSch)
@@ -390,9 +390,9 @@ class MonthWeekdayWeekendSchedule
                 end
             end
             
-            sumDesSch = wkdy[6] # TODO: Where did this come from?
+            sumDesSch = wkdy[6].clone.to_ScheduleDay.get
             sumDesSch.setName(@sch_name + " summer")
-            winDesSch = wkdy[1] # TODO: Where did this come from?
+            winDesSch = wkdy[1].clone.to_ScheduleDay.get
             winDesSch.setName(@sch_name + " winter")
             schedule.setSummerDesignDaySchedule(sumDesSch)
             schedule.setWinterDesignDaySchedule(winDesSch)

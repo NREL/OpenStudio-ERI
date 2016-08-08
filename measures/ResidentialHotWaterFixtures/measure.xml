@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_showers_sinks_baths</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>7cbaa156-d43c-4be9-89a6-537f85e136f3</version_id>
-  <version_modified>20160806T150906Z</version_modified>
+  <version_id>ac6a3ec9-43dc-4618-b1fa-15f910582015</version_id>
+  <version_modified>20160808T170539Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialShowersSinksBaths</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -218,12 +218,6 @@
       <checksum>2792E40D</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>49A218DA</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -239,6 +233,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>1AB9292D</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C95CF61</checksum>
     </file>
   </files>
 </measure>

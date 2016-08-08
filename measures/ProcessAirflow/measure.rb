@@ -3507,32 +3507,32 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
     # Parse the idf for season_type array
     heating_season_names = []
-    heating_season = []
+    heating_season = Array.new(12, 0.0)
     cooling_season_names = []
-    cooling_season = []
+    cooling_season = Array.new(12, 0.0)
     (1..12).to_a.each do |i|
       heating_season_names << "#{Constants.ObjectNameHeatingSeason} weekday#{i}"
       cooling_season_names << "#{Constants.ObjectNameCoolingSeason} weekday#{i}"
     end
 
     sch_args = workspace.getObjectsByType("Schedule:Day:Interval".to_IddObjectType)
-    heating_season_names.each do |sch_name|
+    heating_season_names.each_with_index do |sch_name, i|
       sch_args.each do |sch_arg|
         sch_arg_name = sch_arg.getString(0).to_s # Name
         if sch_arg_name == sch_name
-          heating_season << sch_arg.getString(4).get.to_f
+          heating_season[i] = sch_arg.getString(4).get.to_f
         end
       end
     end
-    cooling_season_names.each do |sch_name|
+    cooling_season_names.each_with_index do |sch_name, i|
       sch_args.each do |sch_arg|
         sch_arg_name = sch_arg.getString(0).to_s # Name
         if sch_arg_name == sch_name
-          cooling_season << sch_arg.getString(4).get.to_f
+          cooling_season[i] = sch_arg.getString(4).get.to_f
         end
       end
     end
-
+    
     nv.season_type = []
     (0...12).to_a.each do |month|
       if heating_season[month] == 1.0 and cooling_season[month] == 0.0
@@ -3671,6 +3671,39 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     end
     off_day += "#{natventoff_day_hourly[23]};"
 
+    days = []
+    if nv.NatVentNumberWeekdays == 0 and nv.NatVentNumberWeekendDays == 0
+      days << "None"
+    else
+      if nv.NatVentNumberWeekdays == 1
+        days << "Monday"
+      elsif nv.NatVentNumberWeekdays == 2
+        days << "Monday"
+        days << "Wednesday"
+      elsif nv.NatVentNumberWeekdays == 3
+        days << "Monday"
+        days << "Wednesday"
+        days << "Friday"
+      elsif nv.NatVentNumberWeekdays == 4
+        days << "Monday"
+        days << "Tuesday"
+        days << "Wednesday"
+        days << "Friday"
+      elsif nv.NatVentNumberWeekdays == 5
+        days << "Monday"
+        days << "Tuesday"
+        days << "Wednesday"
+        days << "Thursday"
+        days << "Friday"
+      end
+      if nv.NatVentNumberWeekendDays == 1
+        days << "Saturday"
+      elsif nv.NatVentNumberWeekendDays == 2
+        days << "Saturday"
+        days << "Sunday"
+      end
+    end
+    
     off_week = "
     Schedule:Week:Compact,
       NatVentOffSeason-Week,                           !- Name
@@ -3685,31 +3718,28 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
     on_week = "
     Schedule:Week:Compact,
-      NatVent-Week,                                    !- Name
+      NatVent-Week,                                    !- Name"
+    if not days[0] == "None"
+      days.each do |day|
+        on_week += "
+        For: #{day},
+        NatVentOn-Day,"
+      end
+    else
+      on_week += "
       For: Weekdays,
-      NatVentOn-Day,
-      For: CustomDay1,
-      NatVentOn-Day,
-      For: CustomDay2,
-      NatVentOn-Day,
-      For: AllOtherDays,
-      NatVentOff-Day;"
-
-    # # Apply the on schedule to the correct number of days
-    # wkday_order = ('monday','wednesday','friday','tuesday','thursday')
-    # for dayname,_i in zip(wkday_order,range(1,nv.NatVentNumberWeekdays+1)):
-    #   getattr(on_week,'set_%s' % dayname)(on_day)
-    #   wkend_order = ('saturday','sunday')
-    #   for dayname,_i in zip(wkend_order,range(1,nv.NatVentNumberWeekendDays+1)):
-    #     getattr(on_week,'set_%s' % dayname)(on_day)
-    #     on_week.set_other_days(off_day)
-
+      NatVentOn-Day,"
+    end
+    on_week += "
+    For: AllOtherDays,
+    NatVentOff-Day;"
+    
     sch_year = "
     Schedule:Year,
       NatVent,                  !- Name
       FRACTION,                 !- Schedule Type"
     (0...12).to_a.each do |month|
-      if (nv.season_type[month] == Constants.SeasonHeating and nv.NatVentHeatingSeason) or (nv.season_type[month] == Constants.SeasonCooling and nv.NatVentCoolingSeason) or (nv.season_type[month] == Constants.SeasonOverlap and nv.NatVentOverlapSeason)
+      if ((nv.season_type[month] == Constants.SeasonHeating and nv.NatVentHeatingSeason) or (nv.season_type[month] == Constants.SeasonCooling and nv.NatVentCoolingSeason) or (nv.season_type[month] == Constants.SeasonOverlap and nv.NatVentOverlapSeason)) and (not days[0] == "None")
         week_schedule_name = "NatVent-Week"
       else
         week_schedule_name = "NatVentOffSeason-Week"

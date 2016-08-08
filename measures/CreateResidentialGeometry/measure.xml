@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_basic_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>9af6287d-e017-4adb-baed-99973a66408f</version_id>
-  <version_modified>20160806T150901Z</version_modified>
+  <version_id>45648ec8-ff0d-421d-b27f-a0d9496ee03a</version_id>
+  <version_modified>20160808T170149Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateBasicGeometry</class_name>
   <display_name>Create Residential Geometry</display_name>

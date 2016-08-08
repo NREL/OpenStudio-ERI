@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>fde1e052-cab6-4e37-b278-fd4e1383b785</version_id>
-  <version_modified>20160806T151151Z</version_modified>
+  <version_id>1ff1a1a2-2804-48bf-b81c-02a62c584446</version_id>
+  <version_modified>20160808T170539Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>
@@ -36,15 +36,15 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>trunkbranch</default_value>
+      <default_value>trunk and branch</default_value>
       <choices>
         <choice>
-          <value>homerun</value>
-          <display_name>homerun</display_name>
+          <value>home run</value>
+          <display_name>home run</display_name>
         </choice>
         <choice>
-          <value>trunkbranch</value>
-          <display_name>trunkbranch</display_name>
+          <value>trunk and branch</value>
+          <display_name>trunk and branch</display_name>
         </choice>
       </choices>
     </argument>
@@ -251,12 +251,6 @@
       <checksum>129640D9</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>49A218DA</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -272,6 +266,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>3BD7EADD</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C95CF61</checksum>
     </file>
   </files>
 </measure>
