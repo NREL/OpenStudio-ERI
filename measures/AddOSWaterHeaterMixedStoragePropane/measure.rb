@@ -229,7 +229,7 @@ class AddOSWaterHeaterMixedStoragePropane < OpenStudio::Ruleset::ModelUserScript
     private
 
     def create_new_schedule_manager(t_set, model)
-        new_schedule = Waterheater.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", t_set, model)
+        new_schedule = Waterheater.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get, model)
         OSM::SetpointManagerScheduled.new(model, new_schedule)
     end 
 

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>538ea87e-0e55-4b27-9d19-5c8680242320</version_id>
-  <version_modified>20160808T170539Z</version_modified>
+  <version_id>88a7db49-ed1c-445f-a74e-b7846afbe367</version_id>
+  <version_modified>20160810T215656Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -224,12 +224,6 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>15CDCABD</checksum>
-    </file>
-    <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
       <usage_type>test</usage_type>
@@ -293,6 +287,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>1C95CF61</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4E9D7165</checksum>
     </file>
   </files>
 </measure>
