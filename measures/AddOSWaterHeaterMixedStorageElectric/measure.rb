@@ -129,7 +129,7 @@ class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScrip
         end
         
         # Get number of bedrooms/bathrooms
-        nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 1, runner)
         if nbeds.nil? or nbaths.nil?
             runner.registerError("Number of bedrooms and bathrooms must be set before adding a water heater")
             return false

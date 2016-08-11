@@ -9,50 +9,86 @@ class Geometry
         end
         return p
     end
-
-    # Retrieves the number of bedrooms and bathrooms from the space type
-    # They are assigned in the SetResidentialBedroomsAndBathrooms measure.
-    def self.get_bedrooms_bathrooms(model, runner=nil)
-        nbeds = nil
-        nbaths = nil
-        model.getSpaces.each do |space|
-            space_equipments = space.electricEquipment
-            space_equipments.each do |space_equipment|
-                name = space_equipment.electricEquipmentDefinition.name.get.to_s
-                br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
-                ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)  
-                if br_regexpr
-                    nbeds = br_regexpr[:br].to_f
-                elsif ba_regexpr
-                    nbaths = ba_regexpr[:ba].to_f
-                end
-            end
+    
+    def self.set_unit_beds_baths_spaces(model, unit_num, spaces_list, nbeds=nil, nbaths=nil)
+        # Information temporarily stored in the name of a dummy ElectricEquipment object.
+        # This method sets or updates the dummy object.
+        if nbeds.nil?
+          nbeds = "nil"
         end
-        if nbeds.nil? or nbaths.nil?
-            if not runner.nil?
-                runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
-            end
+        if nbaths.nil?
+          nbaths = "nil"
         end
-        return [nbeds, nbaths]
+        
+        str = "unit=#{unit_num}|bed=#{nbeds}|bath=#{nbaths}"
+        spaces_list.each do |space|
+            str += "|space=#{space.handle.to_s}"
+        end
+        
+        # Update existing object?
+        model.getElectricEquipments.each do |ee|
+            next if !ee.name.to_s.start_with?("unit=")
+            ee.setName(str)
+            ee.electricEquipmentDefinition.setName(str)
+            return
+        end
+        
+        # No existing object, create a new one
+        eed = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+        eed.setName(str)
+        sch = OpenStudio::Model::ScheduleRuleset.new(model, 0)
+        sch.setName('empty_schedule')
+        ee = OpenStudio::Model::ElectricEquipment.new(eed)
+        ee.setName(str)
+        ee.setSchedule(sch)
     end
     
-    # Removes the number of bedrooms and bathrooms in the model
-    def self.remove_bedrooms_bathrooms(model)
-        model.getSpaces.each do |space|
-            space_equipments = space.electricEquipment
-            space_equipments.each do |space_equipment|
-                name = space_equipment.electricEquipmentDefinition.name.get.to_s
-                br_regexpr = /(?<br>\d+\.\d+)\s+Bedrooms/.match(name)
-                ba_regexpr = /(?<ba>\d+\.\d+)\s+Bathrooms/.match(name)  
-                if br_regexpr
-                    space_equipment.electricEquipmentDefinition.remove
-                elsif ba_regexpr
-                    space_equipment.electricEquipmentDefinition.remove
+    def self.get_unit_beds_baths_spaces(model, unit_num, runner=nil)
+        # Retrieves information temporarily stored in the name of a dummy ElectricEquipment object.
+        # Returns a vector with #beds, #baths, and a list of spaces
+        nbeds = nil
+        nbaths = nil
+        spaces_list = nil
+        
+        model.getElectricEquipments.each do |ee|
+            next if !ee.name.to_s.start_with?("unit=#{unit_num}")
+            ee.name.to_s.split("|").each do |data|
+                if data.include?("bed") and !data.include?("nil")
+                    vals = data.split("=")
+                    nbeds = vals[1].to_f
+                elsif data.include?("bath") and !data.include?("nil")
+                    vals = data.split("=")
+                    nbaths = vals[1].to_f
+                elsif data.include?("space")
+                    vals = data.split("=")
+                    space_handle_s = vals[1].to_s
+                    space_found = false
+                    model.getSpaces.each do |space|
+                        next if space.handle.to_s != space_handle_s
+                        if spaces_list.nil?
+                            spaces_list = []
+                        end
+                        spaces_list << space
+                        space_found = true
+                        break # found space
+                    end
+                    if not space_found
+                        runner.registerError("Could not find the space '#{space_handle_s}' associated with unit #{unit_num}.")
+                        return [nil, nil, nil]
+                    end
                 end
             end
+            break # found unit
         end
-    end 
-
+        
+        if !runner.nil? and (nbeds.nil? or nbaths.nil? or spaces_list.nil?)
+            runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+            return [nil, nil, nil]
+        end
+        
+        return [nbeds, nbaths, spaces_list]
+    end
+    
     # Retrieves the finished floor area for the building
     def self.get_building_finished_floor_area(model, runner=nil)
         floor_area = 0
@@ -120,6 +156,7 @@ class Geometry
       return maxzs.max - minzs.min
     end
     
+    # FIXME: Switch to using StandardsNumberOfStories and StandardsNumberOfAboveGroundStories instead
     def self.get_building_stories(spaces)
       space_min_zs = []
       spaces.each do |space|

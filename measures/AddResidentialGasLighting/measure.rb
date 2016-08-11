@@ -99,7 +99,7 @@ class ResidentialGasLighting < OpenStudio::Ruleset::ModelUserScript
     if ffa.nil?
         return false
     end
-    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model, runner)
+    nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 1, runner)
     if nbeds.nil? or nbaths.nil?
         return false
     end

@@ -11,12 +11,12 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Set Residential Number of Beds, Baths, and Occupants"
+    return "Set Residential Number of Beds and Baths"
   end
 
   # human readable description
   def description
-    return "Sets the number of bedrooms and bathrooms in the building as well as the number/schedule of occupants."
+    return "Sets the number of bedrooms and bathrooms in the building."
   end
 
   # human readable description of modeling approach
@@ -54,33 +54,38 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	num_ba.setDefaultValue("2")
 	args << num_ba		
 
+    # NOTE
+    # Occupant arguments commented out for now since they are confusing. Num occupants and schedules
+    # only affect occupant heat gain, not plug loads, hot water usage, etc. When we refactor HSP
+    # equations to be based on num occupants rather than num bedrooms, we should uncomment this.
+    
     #Make a string argument for occupants (auto or number)
-    occupants = OpenStudio::Ruleset::OSArgument::makeStringArgument("occupants", false)
-    occupants.setDisplayName("Number of Occupants")
-    occupants.setDescription("Use '#{Constants.Auto}' to calculate the average number of occupants from the number of bedrooms. Only used to specify the internal gains from people.")
-    occupants.setDefaultValue(Constants.Auto)
-    args << occupants
+    #occupants = OpenStudio::Ruleset::OSArgument::makeStringArgument("occupants", false)
+    #occupants.setDisplayName("Number of Occupants")
+    #occupants.setDescription("Use '#{Constants.Auto}' to calculate the average number of occupants from the number of bedrooms. Only used to specify the internal gains from people.")
+    #occupants.setDefaultValue(Constants.Auto)
+    #args << occupants
 
     #Make a string argument for 24 weekday schedule values
-    weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch", true)
-    weekday_sch.setDisplayName("Weekday schedule")
-    weekday_sch.setDescription("Specify the 24-hour weekday schedule.")
-    weekday_sch.setDefaultValue("1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000")
-    args << weekday_sch
+    #weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch", true)
+    #weekday_sch.setDisplayName("Weekday schedule")
+    #weekday_sch.setDescription("Specify the 24-hour weekday schedule.")
+    #weekday_sch.setDefaultValue("1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000")
+    #args << weekday_sch
     
     #Make a string argument for 24 weekend schedule values
-    weekend_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekend_sch", true)
-    weekend_sch.setDisplayName("Weekend schedule")
-    weekend_sch.setDescription("Specify the 24-hour weekend schedule.")
-    weekend_sch.setDefaultValue("1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000")
-    args << weekend_sch
+    #weekend_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekend_sch", true)
+    #weekend_sch.setDisplayName("Weekend schedule")
+    #weekend_sch.setDescription("Specify the 24-hour weekend schedule.")
+    #weekend_sch.setDefaultValue("1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000")
+    #args << weekend_sch
 
     #Make a string argument for 12 monthly schedule values
-    monthly_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("monthly_sch", true)
-    monthly_sch.setDisplayName("Month schedule")
-    monthly_sch.setDescription("Specify the 12-month schedule.")
-    monthly_sch.setDefaultValue("1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0")
-    args << monthly_sch
+    #monthly_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("monthly_sch", true)
+    #monthly_sch.setDisplayName("Month schedule")
+    #monthly_sch.setDescription("Specify the 12-month schedule.")
+    #monthly_sch.setDefaultValue("1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0")
+    #args << monthly_sch
 
     return args
   end
@@ -96,10 +101,16 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	
 	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
 	num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments)
-    weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
-    weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
-    monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
-    occupants = runner.getStringArgumentValue("occupants",user_arguments)
+    
+    # See NOTE in arguments method regarding hard-coded values below.
+    #occupants = runner.getStringArgumentValue("occupants",user_arguments)
+    #weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
+    #weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
+    #monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
+    occupants = Constants.Auto
+    weekday_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
+    weekend_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
+    monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
 
     if occupants != Constants.Auto 
         if not HelperMethods.valid_float?(occupants)
@@ -111,50 +122,15 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
         end
     end
 
-	# Remove any existing bedrooms and bathrooms
-	Geometry.remove_bedrooms_bathrooms(model)
-	
 	#Convert num bedrooms to appropriate integer
 	num_br = num_br.tr('+','').to_f
 
 	#Convert num bathrooms to appropriate float
 	num_ba = num_ba.tr('+','').to_f
     
-    sch = OpenStudio::Model::ScheduleRuleset.new(model, 0)
-    sch.setName('empty_schedule')
-	
-	# Bedrooms
-	br_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-	br_def.setName("#{num_br} Bedrooms")
-	br = OpenStudio::Model::ElectricEquipment.new(br_def)
-	br.setName("#{num_br} Bedrooms")
-    br.setSchedule(sch)
-	
-	# Bathrooms
-	ba_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-	ba_def.setName("#{num_ba} Bathrooms")
-	ba = OpenStudio::Model::ElectricEquipment.new(ba_def)
-	ba.setName("#{num_ba} Bathrooms")
-    ba.setSchedule(sch)
-	
-	# Assign to an arbitrary space
-    space = Geometry.get_default_space(model, runner)
-    if space.nil?
-        return false
-    end
-    br.setSpace(space)
-    ba.setSpace(space)
-	
-	# Test retrieving
-    nbeds, nbaths = Geometry.get_bedrooms_bathrooms(model)
-    if nbeds.nil?
-        runner.registerError("Number of bedrooms incorrectly set.")
-        return false
-    end
-    if nbaths.nil?
-        runner.registerError("Number of bathrooms incorrectly set.")
-        return false
-    end
+    # Update number of bedrooms/bathrooms
+    _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 1)
+    Geometry.set_unit_beds_baths_spaces(model, 1, unit_spaces, num_br, num_ba)
     
     # Get FFA
     ffa = Geometry.get_building_finished_floor_area(model, runner)
@@ -164,7 +140,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 
     #Calculate number of occupants & activity level
     if occupants == Constants.Auto
-        num_occ = 0.87 + 0.59 * nbeds
+        num_occ = 0.87 + 0.59 * num_br
     else
         num_occ = occupants.to_f
     end
@@ -223,7 +199,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     end
     
     #reporting final condition of model
-    runner.registerFinalCondition("The building has been assigned #{nbeds.to_s} bedrooms, #{nbaths.to_s} bathrooms, and #{num_occ.to_s} occupants.")
+    runner.registerFinalCondition("The building has been assigned #{num_br.to_s} bedrooms and #{num_ba.to_s} bathrooms.")
 
     return true
 

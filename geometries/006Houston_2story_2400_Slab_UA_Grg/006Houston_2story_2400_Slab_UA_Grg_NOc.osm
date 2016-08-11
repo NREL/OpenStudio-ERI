@@ -1603,7 +1603,7 @@ OS:Schedule:Day,
 
 OS:ElectricEquipment:Definition,
   {5154270c-e844-4673-a360-236d37cfe7f0}, !- Handle
-  3.0 Bedrooms,                           !- Name
+  unit=1|bed=3.0|bath=2.0|space={3af3bebf-5f72-4811-b063-54dd2ff402fa},                           !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -1611,7 +1611,7 @@ OS:ElectricEquipment:Definition,
 
 OS:ElectricEquipment,
   {56c53220-9347-4f5e-a300-a2eefa40c8ea}, !- Handle
-  3.0 Bedrooms,                           !- Name
+  unit=1|bed=3.0|bath=2.0|space={3af3bebf-5f72-4811-b063-54dd2ff402fa},                           !- Name
   {5154270c-e844-4673-a360-236d37cfe7f0}, !- Electric Equipment Definition Name
   {e7b207a3-40c0-4eb5-b9c8-d487990a6cf0}, !- Space or SpaceType Name
   {2d04eaa4-73f9-4ec8-8f91-adfe9fca3adb}; !- Schedule Name
@@ -1622,19 +1622,3 @@ OS:ScheduleTypeLimits,
   0,                                      !- Lower Limit Value
   1,                                      !- Upper Limit Value
   Continuous;                             !- Numeric Type
-
-OS:ElectricEquipment:Definition,
-  {027fb201-2579-4bdb-bbe4-9057c5ce2398}, !- Handle
-  2.0 Bathrooms,                          !- Name
-  EquipmentLevel,                         !- Design Level Calculation Method
-  0,                                      !- Design Level {W}
-  ,                                       !- Watts per Space Floor Area {W/m2}
-  ;                                       !- Watts per Person {W/person}
-
-OS:ElectricEquipment,
-  {3cf8c4a3-fd12-4742-8a49-93938599f6c6}, !- Handle
-  2.0 Bathrooms,                          !- Name
-  {027fb201-2579-4bdb-bbe4-9057c5ce2398}, !- Electric Equipment Definition Name
-  {e7b207a3-40c0-4eb5-b9c8-d487990a6cf0}, !- Space or SpaceType Name
-  {2d04eaa4-73f9-4ec8-8f91-adfe9fca3adb}; !- Schedule Name
-

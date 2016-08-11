@@ -1060,7 +1060,7 @@ OS:Schedule:Day,
 
 OS:ElectricEquipment:Definition,
   {64ae6cf5-6292-4547-8333-744198bc0a7b}, !- Handle
-  3.0 Bedrooms,                           !- Name
+  unit=1|bed=3.0|bath=2.0|space={9435f553-18bd-402e-879f-dbd55e20ab2a}|space={2873f88c-ef54-4e06-80ce-7be5d9796321}|space={2ecc816a-a02b-45d9-a9fc-c7c3943f54d5},                           !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -1068,7 +1068,7 @@ OS:ElectricEquipment:Definition,
 
 OS:ElectricEquipment,
   {dff1044b-27c4-4a3e-be7b-a8486be1cc8a}, !- Handle
-  3.0 Bedrooms,                           !- Name
+  unit=1|bed=3.0|bath=2.0|space={9435f553-18bd-402e-879f-dbd55e20ab2a}|space={2873f88c-ef54-4e06-80ce-7be5d9796321}|space={2ecc816a-a02b-45d9-a9fc-c7c3943f54d5},                           !- Name
   {64ae6cf5-6292-4547-8333-744198bc0a7b}, !- Electric Equipment Definition Name
   {9435f553-18bd-402e-879f-dbd55e20ab2a}, !- Space or SpaceType Name
   {075d9c5d-458f-4fed-8aa4-a787190e1dbd}; !- Schedule Name
@@ -1079,21 +1079,6 @@ OS:ScheduleTypeLimits,
   0,                                      !- Lower Limit Value
   1,                                      !- Upper Limit Value
   Continuous;                             !- Numeric Type
-
-OS:ElectricEquipment:Definition,
-  {be2372c4-4b3e-45dd-aa4e-1702c855536b}, !- Handle
-  2.0 Bathrooms,                          !- Name
-  EquipmentLevel,                         !- Design Level Calculation Method
-  0,                                      !- Design Level {W}
-  ,                                       !- Watts per Space Floor Area {W/m2}
-  ;                                       !- Watts per Person {W/person}
-
-OS:ElectricEquipment,
-  {4c94c1b9-7cee-4117-a6b1-d2e8ea7dcc12}, !- Handle
-  2.0 Bathrooms,                          !- Name
-  {be2372c4-4b3e-45dd-aa4e-1702c855536b}, !- Electric Equipment Definition Name
-  {9435f553-18bd-402e-879f-dbd55e20ab2a}, !- Space or SpaceType Name
-  {075d9c5d-458f-4fed-8aa4-a787190e1dbd}; !- Schedule Name
 
 OS:Schedule:Ruleset,
   {b7805d06-2c6c-432f-a949-37d7e8265eaf}, !- Handle

@@ -2409,7 +2409,7 @@ OS:Schedule:Day,
 
 OS:ElectricEquipment:Definition,
   {29c6e604-e48d-4b43-82c1-ef617c55f276}, !- Handle
-  3.0 Bedrooms,                           !- Name
+  unit=1|bed=3.0|bath=2.0|space={d3d39da8-4ab4-4fe4-9ab7-1a1027f44923}|space={37e82f08-1c15-417b-aa8a-6abe2518bafb},                           !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -2417,7 +2417,7 @@ OS:ElectricEquipment:Definition,
 
 OS:ElectricEquipment,
   {2409ddbf-24bb-4c13-ba2f-866b1cc53f22}, !- Handle
-  3.0 Bedrooms,                           !- Name
+  unit=1|bed=3.0|bath=2.0|space={d3d39da8-4ab4-4fe4-9ab7-1a1027f44923}|space={37e82f08-1c15-417b-aa8a-6abe2518bafb},                           !- Name
   {29c6e604-e48d-4b43-82c1-ef617c55f276}, !- Electric Equipment Definition Name
   {a9d3de29-7027-4ebe-8093-f677f6e66574}, !- Space or SpaceType Name
   {79b39d66-66c5-4256-a654-9072e6fcf20b}; !- Schedule Name
@@ -2428,19 +2428,3 @@ OS:ScheduleTypeLimits,
   0,                                      !- Lower Limit Value
   1,                                      !- Upper Limit Value
   Continuous;                             !- Numeric Type
-
-OS:ElectricEquipment:Definition,
-  {f2d3370e-7834-4a49-a039-796d63a059fa}, !- Handle
-  2.0 Bathrooms,                          !- Name
-  EquipmentLevel,                         !- Design Level Calculation Method
-  0,                                      !- Design Level {W}
-  ,                                       !- Watts per Space Floor Area {W/m2}
-  ;                                       !- Watts per Person {W/person}
-
-OS:ElectricEquipment,
-  {ef93a37b-03d7-44ed-a95e-ba55801514c6}, !- Handle
-  2.0 Bathrooms,                          !- Name
-  {f2d3370e-7834-4a49-a039-796d63a059fa}, !- Electric Equipment Definition Name
-  {a9d3de29-7027-4ebe-8093-f677f6e66574}, !- Space or SpaceType Name
-  {79b39d66-66c5-4256-a654-9072e6fcf20b}; !- Schedule Name
-

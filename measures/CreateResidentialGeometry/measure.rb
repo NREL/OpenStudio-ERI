@@ -698,6 +698,20 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
         break
       end
     end
+    
+    # Store dwelling unit information (for consistency with multifamily buildings)
+    model.getBuilding.setStandardsNumberOfLivingUnits(1)
+    unit_spaces = []
+    living_zone.spaces.each do |living_space|
+      unit_spaces << living_space
+    end
+    if foundation_type == Constants.FinishedBasementSpace
+      unit_spaces << foundation_space
+    end
+    if attic_type == Constants.FinishedAtticSpace
+      unit_spaces << attic_space
+    end
+    Geometry.set_unit_beds_baths_spaces(model, 1, unit_spaces)
   
     # reporting final condition of model
     runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")	
