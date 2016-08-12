@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater_gas</name>
   <uid>bbb7dbaa-5517-438e-bb14-5b92e9d09284</uid>
-  <version_id>d2947cd3-6929-42f3-8478-cbb9203de565</version_id>
-  <version_modified>20160811T202201Z</version_modified>
+  <version_id>1e0d5628-d59d-4136-b791-f2d60124bd63</version_id>
+  <version_modified>20160812T160730Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialPoolHeaterGas</class_name>
   <display_name>Set Residential Pool Gas Heater</display_name>
@@ -118,17 +118,6 @@
       <checksum>1C95CF61</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>20337333</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -141,10 +130,21 @@
       <checksum>01841086</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A3ACDCB4</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

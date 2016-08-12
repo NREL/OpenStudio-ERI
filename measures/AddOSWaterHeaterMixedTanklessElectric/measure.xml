@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>191c8758-be04-48a9-a159-eb2976f686c7</version_id>
-  <version_modified>20160811T202200Z</version_modified>
+  <version_id>b16f666e-c16f-4ad9-af14-b579223423b2</version_id>
+  <version_modified>20160812T160729Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedTanklessElectric</class_name>
   <display_name>Set Residential Electric Tankless Water Heater</display_name>
@@ -127,13 +127,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>ECE34292</checksum>
+      <checksum>EB6D24D6</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

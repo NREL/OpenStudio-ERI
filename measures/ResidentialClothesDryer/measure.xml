@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>90153a00-48d8-4d11-83bc-7d301e273b75</version_id>
-  <version_modified>20160811T202206Z</version_modified>
+  <version_id>faaf6fa7-15ec-43e2-a170-875a86317019</version_id>
+  <version_modified>20160812T160735Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>
@@ -144,17 +144,6 @@
       <checksum>1C95CF61</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>5AC49FAB</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -167,10 +156,21 @@
       <checksum>D9E7B5C3</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>787715CC</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

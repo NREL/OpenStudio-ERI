@@ -129,8 +129,13 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 	num_ba = num_ba.tr('+','').to_f
     
     # Update number of bedrooms/bathrooms
-    _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 1)
-    Geometry.set_unit_beds_baths_spaces(model, 1, unit_spaces, num_br, num_ba)
+    unit_num = 1
+    _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
+    if unit_spaces.nil?
+        runner.registerError("Could not determine the spaces associated with unit #{unit_num}.")
+        return false
+    end
+    Geometry.set_unit_beds_baths_spaces(model, unit_num, unit_spaces, num_br, num_ba)
     
     # Get FFA
     ffa = Geometry.get_building_finished_floor_area(model, runner)

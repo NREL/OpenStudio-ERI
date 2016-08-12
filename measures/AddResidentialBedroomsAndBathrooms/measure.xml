@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>2cf84558-9cc4-464d-80e3-d1749399bd8a</version_id>
-  <version_modified>20160811T202200Z</version_modified>
+  <version_id>fb6a16f2-49be-41ab-a5a6-a066d380276d</version_id>
+  <version_modified>20160812T160729Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -127,13 +127,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>92D75E46</checksum>
+      <checksum>26F05682</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

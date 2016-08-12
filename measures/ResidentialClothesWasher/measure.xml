@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>e92d34cc-d7c0-49ef-aa02-e867497bbffb</version_id>
-  <version_modified>20160811T202207Z</version_modified>
+  <version_id>9d808460-b328-40a9-96cb-79c33f2c8121</version_id>
+  <version_modified>20160812T160735Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -304,17 +304,6 @@
       <checksum>4E9D7165</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>88155130</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -327,10 +316,21 @@
       <checksum>55ED6664</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>50D589A4</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

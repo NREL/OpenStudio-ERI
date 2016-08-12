@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>9d142a99-ccf4-4655-8bfe-63680d4deed0</version_id>
-  <version_modified>20160811T202203Z</version_modified>
+  <version_id>588c82c7-db08-4a86-944e-b604f06180b0</version_id>
+  <version_modified>20160812T160732Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
@@ -128,7 +128,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

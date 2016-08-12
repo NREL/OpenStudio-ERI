@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater_gas</name>
   <uid>65550b9d-c0bf-405b-9229-dc63721eb887</uid>
-  <version_id>becc86f0-d864-49ba-890a-94e9a2e9020c</version_id>
-  <version_modified>20160811T202201Z</version_modified>
+  <version_id>db3442e2-a4f2-434e-ab2e-09060b3c771b</version_id>
+  <version_modified>20160812T160730Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialHotTubHeaterGas</class_name>
   <display_name>Set Residential Hot Tub Gas Heater</display_name>
@@ -118,17 +118,6 @@
       <checksum>1C95CF61</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>BC4BC4A9</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -141,10 +130,21 @@
       <checksum>107D98C3</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>0DAAF0A7</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

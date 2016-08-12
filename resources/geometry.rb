@@ -72,18 +72,13 @@ class Geometry
                         space_found = true
                         break # found space
                     end
-                    if not space_found
+                    if !runner.nil? and !space_found
                         runner.registerError("Could not find the space '#{space_handle_s}' associated with unit #{unit_num}.")
                         return [nil, nil, nil]
                     end
                 end
             end
             break # found unit
-        end
-        
-        if !runner.nil? and (nbeds.nil? or nbaths.nil? or spaces_list.nil?)
-            runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
-            return [nil, nil, nil]
         end
         
         return [nbeds, nbaths, spaces_list]
@@ -181,8 +176,7 @@ class Geometry
     
     def self.zone_is_finished(zone)
         # FIXME: Ugly hack until we can get finished zones from OS
-        # if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone
-        if zone.name.to_s == Constants.LivingZone or zone.name.to_s == Constants.FinishedBasementZone or zone.name.to_s.include? "Story" # URBANopt hack: zone.name.to_s.include? "Story" ensures always finished zone
+        if zone.name.to_s.start_with?(Constants.LivingZone) or zone.name.to_s.start_with?(Constants.FinishedBasementZone) or zone.name.to_s.include?("Story") # URBANopt hack: zone.name.to_s.include? "Story" ensures always finished zone
             return true
         end
         return false

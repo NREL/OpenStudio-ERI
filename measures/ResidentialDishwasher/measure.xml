@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>e025a8e5-aae7-47de-b9cb-97e10cdb23ef</version_id>
-  <version_modified>20160811T202207Z</version_modified>
+  <version_id>057c6eae-08f0-4ad2-a16f-3e6efe7e3873</version_id>
+  <version_modified>20160812T160735Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -266,17 +266,6 @@
       <checksum>4E9D7165</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>A8EBEA84</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -289,10 +278,21 @@
       <checksum>55ED6664</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>156EDE63</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

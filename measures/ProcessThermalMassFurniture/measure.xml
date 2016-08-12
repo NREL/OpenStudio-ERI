@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>28b1467f-822c-4376-8977-bb34f726032e</version_id>
-  <version_modified>20160811T202206Z</version_modified>
+  <version_id>7892d0c1-2989-48ae-9447-43dff6de6740</version_id>
+  <version_modified>20160812T160735Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>
@@ -113,7 +113,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>

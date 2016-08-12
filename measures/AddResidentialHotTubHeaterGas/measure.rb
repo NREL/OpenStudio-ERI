@@ -101,6 +101,7 @@ class ResidentialHotTubHeaterGas < OpenStudio::Ruleset::ModelUserScript
     end
     nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 1, runner)
     if nbeds.nil? or nbaths.nil?
+        runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
         return false
     end
     

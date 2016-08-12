@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>f0259bdc-1391-41eb-80eb-efc10bd1bc02</uid>
-  <version_id>d6141122-a09f-4f79-b0ca-c979ec1a582d</version_id>
-  <version_modified>20160811T202201Z</version_modified>
+  <version_id>221717a6-0483-456e-ac25-ae6348ec6217</version_id>
+  <version_modified>20160812T160730Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Set Residential Refrigerator</display_name>
@@ -90,17 +90,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DEA17C00</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -125,10 +114,21 @@
       <checksum>1C95CF61</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>DEA17C00</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
+      <checksum>E72F3619</checksum>
     </file>
   </files>
 </measure>
