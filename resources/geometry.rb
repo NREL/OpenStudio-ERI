@@ -50,7 +50,7 @@ class Geometry
         
         # Update existing object?
         model.getElectricEquipments.each do |ee|
-            next if !ee.name.to_s.start_with?("unit=")
+            next if !ee.name.to_s.start_with?("unit=#{unit_num}")
             ee.setName(str)
             ee.electricEquipmentDefinition.setName(str)
             return
@@ -103,7 +103,6 @@ class Geometry
             end
             break # found unit
         end
-        
         return [nbeds, nbaths, spaces_list]
     end
     
