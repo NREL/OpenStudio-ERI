@@ -1258,7 +1258,7 @@ OS:Surface,
 
 OS:RunPeriod,
   {794130e5-f2f6-474b-8714-90bf69aa52aa}, !- Handle
-  Atlanta Hartsfield Intl Ap GA 3900 sqft, !- Name
+  Multifamily 3 Units,                    !- Name
   1,                                      !- Begin Month
   1,                                      !- Begin Day of Month
   12,                                     !- End Month
@@ -1349,7 +1349,7 @@ OS:Surface,
 
 OS:Building,
   {c3706c3f-8e81-426d-9dc4-529ed0485824}, !- Handle
-  Atlanta Hartsfield Intl Ap GA 3900 sqft, !- Name
+  Multifamily 3 Units,                    !- Name
   ,                                       !- Building Sector Type
   180,                                    !- North Axis {deg}
   ,                                       !- Nominal Floor to Floor Height {m}
@@ -1359,7 +1359,7 @@ OS:Building,
   ,                                       !- Standards Number of Stories
   ,                                       !- Standards Number of Above Ground Stories
   ,                                       !- Standards Building Type
-  ,                                       !- Standards Number of Living Units
+  3,                                      !- Standards Number of Living Units
   ,                                       !- Relocatable
   ;                                       !- Nominal Floor to Ceiling Height {m}
 
