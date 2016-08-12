@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>507c1729-e4f2-4b36-af18-147d661e555a</version_id>
-  <version_modified>20160812T180500Z</version_modified>
+  <version_id>c2185c47-9f28-44a8-be5c-d06bd2706dd4</version_id>
+  <version_modified>20160812T215213Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
@@ -128,7 +128,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FF0E6C24</checksum>
+      <checksum>75CEF7B8</checksum>
     </file>
   </files>
 </measure>

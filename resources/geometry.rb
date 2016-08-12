@@ -121,6 +121,24 @@ class Geometry
         return floor_area
     end
     
+    # Retrieves the finished floor area for a unit
+    def self.get_unit_finished_floor_area(model, unit_spaces, runner=nil)
+        floor_area = 0
+        model.getThermalZones.each do |zone|
+          zone.spaces.each do |space|
+            next unless unit_spaces.include? space
+            if self.zone_is_finished(zone)
+                floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
+            end            
+          end
+        end
+        if floor_area == 0 and not runner.nil?
+            runner.registerError("Could not find any finished floor area.")
+            return nil
+        end
+        return floor_area
+    end    
+    
     def self.get_building_above_grade_finished_floor_area(model, runner=nil)
       floor_area = 0
       model.getThermalZones.each do |zone|
@@ -576,13 +594,13 @@ class Geometry
         return spaces
     end
     
-    def self.get_finished_spaces(model)
-        spaces = []
-        model.getSpaces.each do |space|
+    def self.get_finished_spaces(model, spaces=model.getSpaces)
+        finished_spaces = []
+        spaces.each do |space|
             next if Geometry.space_is_unfinished(space)
-            spaces << space
+            finished_spaces << space
         end
-        return spaces
+        return finished_spaces
     end
     
     def self.get_finished_basement_spaces(model)

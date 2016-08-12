@@ -129,9 +129,19 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       num_ba = Array.new(num_units, num_ba[0])
     end 
     
+    obj_name = Constants.ObjectNameOccupants
+    
+    people_sch = MonthWeekdayWeekendSchedule.new(model, runner, obj_name + " schedule", weekday_sch, weekend_sch, monthly_sch)
+    if not people_sch.validated?
+        return false
+    end
+    activity_per_person = 112.5504
+    activity_sch = OpenStudio::Model::ScheduleRuleset.new(model, activity_per_person)    
+    
     # Update number of bedrooms/bathrooms
-    num_occ = 0
+    tot_space_num_occ = 0
     (0...num_units).to_a.each do |unit_num|
+      puts unit_num+1
     
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
       if unit_spaces.nil?
@@ -150,80 +160,55 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       num_ba[unit_num] = num_ba[unit_num].to_f.round(1).to_s
       Geometry.set_unit_beds_baths_spaces(model, unit_num + 1, unit_spaces, num_br[unit_num], num_ba[unit_num])
       runner.registerInfo("Unit #{unit_num + 1} has been assigned #{num_br[unit_num]} bedrooms and #{num_ba[unit_num]} bathrooms.")
-      
-      #Calculate number of occupants & activity level
-      if occupants == Constants.Auto
-          num_occ += 0.87 + 0.59 * num_br[unit_num].to_f
-      else
-          num_occ += occupants.to_f
+
+      # Get FFA
+      ffa = Geometry.get_unit_finished_floor_area(model, unit_spaces, runner)
+      if ffa.nil?
+          return false
       end
       
-    end
+      #hard coded convective, radiative, latent, and lost fractions
+      occ_lat = 0.427
+      occ_conv = 0.253
+      occ_rad = 0.32
+      occ_lost = 1 - occ_lat - occ_conv - occ_rad
+      occ_sens = occ_rad + occ_conv
+      
+      spaces = Geometry.get_finished_spaces(model, unit_spaces)      
+      spaces.each do |space|
+      
+          #Calculate number of occupants & activity level
+          if occupants == Constants.Auto
+              num_occ = 0.87 + 0.59 * num_br[unit_num].to_f
+          else
+              num_occ = occupants.to_f
+          end
+      
+          obj_name_space = "#{obj_name} #{space.name.to_s}"
+          space_num_occ = num_occ * OpenStudio.convert(space.floorArea, "m^2", "ft^2").get / ffa
+          tot_space_num_occ += space_num_occ
 
-    # Get FFA
-    ffa = Geometry.get_building_finished_floor_area(model, runner)
-    if ffa.nil?
-        return false
-    end    
-    
-    obj_name = Constants.ObjectNameOccupants
-    
-    #hard coded convective, radiative, latent, and lost fractions
-    occ_lat = 0.427
-    occ_conv = 0.253
-    occ_rad = 0.32
-    occ_lost = 1 - occ_lat - occ_conv - occ_rad
-    occ_sens = occ_rad + occ_conv    
-    
-    occ_def = OpenStudio::Model::PeopleDefinition.new(model)
-    occ_def.setName(obj_name)
-    occ_def.setNumberOfPeopleCalculationMethod("People",1)
-    occ_def.setNumberofPeople(num_occ)
-    occ_def.setFractionRadiant(occ_rad)
-    occ_def.setSensibleHeatFraction(occ_sens)
-    occ_def.setMeanRadiantTemperatureCalculationType("ZoneAveraged")
-    occ_def.setCarbonDioxideGenerationRate(0)
-    occ_def.setEnableASHRAE55ComfortWarnings(false)    
-    
-    activity_per_person = 112.5504
-    
-    people_sch = MonthWeekdayWeekendSchedule.new(model, runner, obj_name + " schedule", weekday_sch, weekend_sch, monthly_sch)
-    if not people_sch.validated?
-        return false
-    end
-    activity_sch = OpenStudio::Model::ScheduleRuleset.new(model, activity_per_person)
-    
-    spaces = Geometry.get_finished_spaces(model)
+          #Add people definition for the occ
+          occ_def = OpenStudio::Model::PeopleDefinition.new(model)
+          occ = OpenStudio::Model::People.new(occ_def)
+          occ.setName(obj_name_space)
+          occ.setSpace(space)
+          occ_def.setName(obj_name_space)
+          occ_def.setNumberOfPeopleCalculationMethod("People",1)
+          occ_def.setNumberofPeople(space_num_occ)
+          occ_def.setFractionRadiant(occ_rad)
+          occ_def.setSensibleHeatFraction(occ_sens)
+          occ_def.setMeanRadiantTemperatureCalculationType("ZoneAveraged")
+          occ_def.setCarbonDioxideGenerationRate(0)
+          occ_def.setEnableASHRAE55ComfortWarnings(false)
+          occ.setActivityLevelSchedule(activity_sch)
+          people_sch.setSchedule(occ)
+      end
 
-    # Remove any existing occupants
-    occ_removed = false
-    spaces.each do |space|
-        obj_name_space = "#{obj_name} #{space.name.to_s}"
-        space.people.each do |occupant|
-            if occupant.name.to_s == obj_name_space
-                occupant.remove
-                occ_removed = true
-            end
-        end
-    end
-    if occ_removed
-        runner.registerInfo("Removed existing occupants.")
-    end
-    
-    spaces.each do |space|
-        obj_name_space = "#{obj_name} #{space.name.to_s}"
-        
-        #Add people definition for the occ
-        occ = OpenStudio::Model::People.new(occ_def)
-        occ.setName(obj_name_space)
-        occ.setSpace(space)
-
-        occ.setActivityLevelSchedule(activity_sch)
-        people_sch.setSchedule(occ)
     end
     
     #reporting final condition of model
-    runner.registerFinalCondition("The building has been assigned #{num_occ} occupants,  #{num_br.collect { |i| i.to_f }.inject(:+)} bedrooms, and #{num_ba.collect { |i| i.to_f }.inject(:+)} bathrooms across #{num_units} unit(s).")
+    runner.registerFinalCondition("The building has been assigned #{tot_space_num_occ} occupants,  #{num_br.collect { |i| i.to_f }.inject(:+)} bedrooms, and #{num_ba.collect { |i| i.to_f }.inject(:+)} bathrooms across #{num_units} unit(s).")
 
     return true
 
