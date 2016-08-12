@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_interzonal</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>0349e3da-1843-4227-9ef6-a15bdf1bcd0c</version_id>
-  <version_modified>20160812T160734Z</version_modified>
+  <version_id>af3b17c3-88a9-475c-9a91-f8805b949729</version_id>
+  <version_modified>20160812T170209Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsInterzonal</class_name>
   <display_name>Set Residential Walls - Interzonal Construction</display_name>
@@ -127,7 +127,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E72F3619</checksum>
+      <checksum>C82E90CB</checksum>
     </file>
   </files>
 </measure>

@@ -10,6 +10,29 @@ class Geometry
         return p
     end
     
+    def self.get_num_units(model, runner)
+        if not model.getBuilding.standardsNumberOfLivingUnits.is_initialized
+            runner.registerError("Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+            return nil
+        end
+        num_units = model.getBuilding.standardsNumberOfLivingUnits.get
+        # Check that this matches the number of unit specifications
+        units_found = []
+        model.getElectricEquipments.each do |ee|
+            next if !ee.name.to_s.start_with?("unit=")
+            ee.name.to_s.split("|").each do |data|
+                next if !data.include?("unit")
+                vals = data.split("=")
+                units_found << vals[1].to_i
+            end
+        end
+        if num_units != units_found.size
+            runner.registerError("Cannot determine number of building units; inconsistent number of units defined in the model.")
+            return nil
+        end
+        return num_units
+    end
+    
     def self.set_unit_beds_baths_spaces(model, unit_num, spaces_list, nbeds=nil, nbaths=nil)
         # Information temporarily stored in the name of a dummy ElectricEquipment object.
         # This method sets or updates the dummy object.
@@ -43,7 +66,7 @@ class Geometry
         ee.setSchedule(sch)
     end
     
-    def self.get_unit_beds_baths_spaces(model, unit_num, runner=nil)
+    def self.get_unit_beds_baths_spaces(model, unit_num, runner)
         # Retrieves information temporarily stored in the name of a dummy ElectricEquipment object.
         # Returns a vector with #beds, #baths, and a list of spaces
         nbeds = nil
