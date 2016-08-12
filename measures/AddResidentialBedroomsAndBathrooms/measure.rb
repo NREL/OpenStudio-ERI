@@ -26,34 +26,22 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Ruleset::OSArgumentVector.new		
 
-	#make an integer argument for number of bedrooms
-	chs = OpenStudio::StringVector.new
-	chs << "1"
-	chs << "2" 
-	chs << "3"
-	chs << "4"
-	chs << "5+"
-	num_br = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("Num_Br", chs, true)
-	num_br.setDisplayName("Number of Bedrooms")
-    num_br.setDescription("Used to determine the energy usage of appliances and plug loads, hot water usage, mechanical ventilation rate, etc.")
-	num_br.setDefaultValue("3")
-	args << num_br	
-	
-	#make an integer argument for number of bathrooms
-	chs = OpenStudio::StringVector.new
-	chs << "1"
-	chs << "1.5" 
-	chs << "2"
-	chs << "2.5"
-	chs << "3+"
-	num_ba = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("Num_Ba", chs, true)
-	num_ba.setDisplayName("Number of Bathrooms")
-    num_ba.setDescription("Used to determine the hot water usage, etc.")
-	num_ba.setDefaultValue("2")
-	args << num_ba		
-
+    #make a string argument for number of bedrooms
+    num_br = OpenStudio::Ruleset::OSArgument::makeStringArgument("Num_Br", false)
+    num_br.setDisplayName("Number of Bedrooms")
+    num_br.setDescription("Specify the number of bedrooms for all units, or a comma-separated string of numbers of bedrooms (in the correct order) for each unit. Used to determine the energy usage of appliances and plug loads, hot water usage, mechanical ventilation rate, etc.")
+    num_br.setDefaultValue("3.0")
+    args << num_br
+    
+    #make a string argument for number of bathrooms
+    num_ba = OpenStudio::Ruleset::OSArgument::makeStringArgument("Num_Ba", false)
+    num_ba.setDisplayName("Number of Bathrooms")
+    num_ba.setDescription("Specify the number of bathrooms for all units, or a comma-separated string of numbers of bathrooms (in the correct order) for each unit. Used to determine the hot water usage, etc.")
+    num_ba.setDefaultValue("2.0")
+    args << num_ba
+    
     # NOTE
     # Occupant arguments commented out for now since they are confusing. Num occupants and schedules
     # only affect occupant heat gain, not plug loads, hot water usage, etc. When we refactor HSP
@@ -99,8 +87,8 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-	num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
-	num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments)
+    num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
+    num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments)
     
     # See NOTE in arguments method regarding hard-coded values below.
     #occupants = runner.getStringArgumentValue("occupants",user_arguments)
@@ -122,43 +110,83 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
         end
     end
 
-	#Convert num bedrooms to appropriate integer
-	num_br = num_br.tr('+','').to_f
-
-	#Convert num bathrooms to appropriate float
-	num_ba = num_ba.tr('+','').to_f
+    num_units = Geometry.get_num_units(model, runner)
+    num_br = num_br.split(",").map(&:strip)
+    num_ba = num_ba.split(",").map(&:strip)
+    
+    #error checking
+    if num_br.length != num_ba.length
+      runner.registerError("Number of units based on number of bedroom elements specified inconsistent with number of units based on number of bathroom elements specified.")
+      return false
+    end
+    if num_br.length > 1 and num_br.length != num_units
+      runner.registerError("Number of units based on number of bedrooms elements specified in consistent with number of units defined in the model.")
+      return false
+    end
+    
+    if num_units > 1 and num_br.length == 1
+      num_br = Array.new(num_units, num_br[0])
+      num_ba = Array.new(num_units, num_ba[0])
+    end 
     
     # Update number of bedrooms/bathrooms
-    unit_num = 1
-    _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
-    if unit_spaces.nil?
-        runner.registerError("Could not determine the spaces associated with unit #{unit_num}.")
-        return false
-    end
-    Geometry.set_unit_beds_baths_spaces(model, unit_num, unit_spaces, num_br, num_ba)
+    num_occ = 0
+    (0...num_units).to_a.each do |unit_num|
     
+      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
+      if unit_spaces.nil?
+          runner.registerError("Could not determine the spaces associated with unit #{unit_num + 1}.")
+          return false
+      end
+      if num_br[unit_num].to_f > 5
+        runner.registerWarning("Number of bedrooms for Unit #{unit_num + 1} exceeds 5.0; setting number of bedrooms to 5.0.")
+        num_br[unit_num] = "5.0"
+      end
+      if num_ba[unit_num].to_f > 3
+        runner.registerWarning("Number of bathrooms for Unit #{unit_num + 1} exceeds 3.0; setting number of bathrooms to 3.0.")
+        num_ba[unit_num] = "3.0"
+      end
+      num_br[unit_num] = num_br[unit_num].to_f.round(1).to_s
+      num_ba[unit_num] = num_ba[unit_num].to_f.round(1).to_s
+      Geometry.set_unit_beds_baths_spaces(model, unit_num + 1, unit_spaces, num_br[unit_num], num_ba[unit_num])
+      runner.registerInfo("Unit #{unit_num + 1} has been assigned #{num_br[unit_num]} bedrooms and #{num_ba[unit_num]} bathrooms.")
+      
+      #Calculate number of occupants & activity level
+      if occupants == Constants.Auto
+          num_occ += 0.87 + 0.59 * num_br[unit_num].to_f
+      else
+          num_occ += occupants.to_f
+      end
+      
+    end
+
     # Get FFA
     ffa = Geometry.get_building_finished_floor_area(model, runner)
     if ffa.nil?
         return false
-    end
-
-    #Calculate number of occupants & activity level
-    if occupants == Constants.Auto
-        num_occ = 0.87 + 0.59 * num_br
-    else
-        num_occ = occupants.to_f
-    end
-    activity_per_person = 112.5504
+    end    
+    
+    obj_name = Constants.ObjectNameOccupants
     
     #hard coded convective, radiative, latent, and lost fractions
     occ_lat = 0.427
     occ_conv = 0.253
     occ_rad = 0.32
     occ_lost = 1 - occ_lat - occ_conv - occ_rad
-    occ_sens = occ_rad + occ_conv
-
-    obj_name = Constants.ObjectNameOccupants
+    occ_sens = occ_rad + occ_conv    
+    
+    occ_def = OpenStudio::Model::PeopleDefinition.new(model)
+    occ_def.setName(obj_name)
+    occ_def.setNumberOfPeopleCalculationMethod("People",1)
+    occ_def.setNumberofPeople(num_occ)
+    occ_def.setFractionRadiant(occ_rad)
+    occ_def.setSensibleHeatFraction(occ_sens)
+    occ_def.setMeanRadiantTemperatureCalculationType("ZoneAveraged")
+    occ_def.setCarbonDioxideGenerationRate(0)
+    occ_def.setEnableASHRAE55ComfortWarnings(false)    
+    
+    activity_per_person = 112.5504
+    
     people_sch = MonthWeekdayWeekendSchedule.new(model, runner, obj_name + " schedule", weekday_sch, weekend_sch, monthly_sch)
     if not people_sch.validated?
         return false
@@ -184,27 +212,18 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     
     spaces.each do |space|
         obj_name_space = "#{obj_name} #{space.name.to_s}"
-        space_num_occ = num_occ * OpenStudio.convert(space.floorArea, "m^2", "ft^2").get/ffa
-
+        
         #Add people definition for the occ
-        occ_def = OpenStudio::Model::PeopleDefinition.new(model)
         occ = OpenStudio::Model::People.new(occ_def)
         occ.setName(obj_name_space)
         occ.setSpace(space)
-        occ_def.setName(obj_name_space)
-        occ_def.setNumberOfPeopleCalculationMethod("People",1)
-        occ_def.setNumberofPeople(space_num_occ)
-        occ_def.setFractionRadiant(occ_rad)
-        occ_def.setSensibleHeatFraction(occ_sens)
-        occ_def.setMeanRadiantTemperatureCalculationType("ZoneAveraged")
-        occ_def.setCarbonDioxideGenerationRate(0)
-        occ_def.setEnableASHRAE55ComfortWarnings(false)
+
         occ.setActivityLevelSchedule(activity_sch)
         people_sch.setSchedule(occ)
     end
     
     #reporting final condition of model
-    runner.registerFinalCondition("The building has been assigned #{num_br.to_s} bedrooms and #{num_ba.to_s} bathrooms.")
+    runner.registerFinalCondition("The building has been assigned #{num_occ} occupants,  #{num_br.collect { |i| i.to_f }.inject(:+)} bedrooms, and #{num_ba.collect { |i| i.to_f }.inject(:+)} bathrooms across #{num_units} unit(s).")
 
     return true
 

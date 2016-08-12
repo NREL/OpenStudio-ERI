@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>49858594-8d8d-44c3-aff3-5737720b6911</version_id>
-  <version_modified>20160812T175229Z</version_modified>
+  <version_id>3949a430-c22a-4c4f-8e39-bb574e6b526b</version_id>
+  <version_modified>20160812T200631Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -13,64 +13,20 @@
     <argument>
       <name>Num_Br</name>
       <display_name>Number of Bedrooms</display_name>
-      <description>Used to determine the energy usage of appliances and plug loads, hot water usage, mechanical ventilation rate, etc.</description>
-      <type>Choice</type>
-      <required>true</required>
+      <description>Specify the number of bedrooms for all units, or a comma-separated string of numbers of bedrooms (in the correct order) for each unit. Used to determine the energy usage of appliances and plug loads, hot water usage, mechanical ventilation rate, etc.</description>
+      <type>String</type>
+      <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>3</default_value>
-      <choices>
-        <choice>
-          <value>1</value>
-          <display_name>1</display_name>
-        </choice>
-        <choice>
-          <value>2</value>
-          <display_name>2</display_name>
-        </choice>
-        <choice>
-          <value>3</value>
-          <display_name>3</display_name>
-        </choice>
-        <choice>
-          <value>4</value>
-          <display_name>4</display_name>
-        </choice>
-        <choice>
-          <value>5+</value>
-          <display_name>5+</display_name>
-        </choice>
-      </choices>
+      <default_value>3.0</default_value>
     </argument>
     <argument>
       <name>Num_Ba</name>
       <display_name>Number of Bathrooms</display_name>
-      <description>Used to determine the hot water usage, etc.</description>
-      <type>Choice</type>
-      <required>true</required>
+      <description>Specify the number of bathrooms for all units, or a comma-separated string of numbers of bathrooms (in the correct order) for each unit. Used to determine the hot water usage, etc.</description>
+      <type>String</type>
+      <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>2</default_value>
-      <choices>
-        <choice>
-          <value>1</value>
-          <display_name>1</display_name>
-        </choice>
-        <choice>
-          <value>1.5</value>
-          <display_name>1.5</display_name>
-        </choice>
-        <choice>
-          <value>2</value>
-          <display_name>2</display_name>
-        </choice>
-        <choice>
-          <value>2.5</value>
-          <display_name>2.5</display_name>
-        </choice>
-        <choice>
-          <value>3+</value>
-          <display_name>3+</display_name>
-        </choice>
-      </choices>
+      <default_value>2.0</default_value>
     </argument>
   </arguments>
   <provenances/>
@@ -116,7 +72,13 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C82E90CB</checksum>
+      <checksum>FF0E6C24</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F1BABA71</checksum>
     </file>
     <file>
       <version>
@@ -127,13 +89,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>26F05682</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F1BABA71</checksum>
+      <checksum>6D863285</checksum>
     </file>
   </files>
 </measure>

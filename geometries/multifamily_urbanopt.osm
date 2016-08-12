@@ -996,7 +996,7 @@ OS:Building,
   ,                                       !- Default Schedule Set Name
   ,                                       !- Standards Number of Stories
   ,                                       !- Standards Number of Above Ground Stories
-  ,                                       !- Standards Building Type
+  Multifamily (5 or more units),          !- Standards Building Type
   8,                                      !- Standards Number of Living Units
   ,                                       !- Relocatable
   ;                                       !- Nominal Floor to Ceiling Height {m}
@@ -1117,7 +1117,7 @@ OS:ElectricEquipment,
   {94af4d2b-3185-47c9-9c0b-e91f765d8343}, !- Handle
   unit=1|bed=nil|bath=nil|space={7f54b2e3-f6f0-4463-928b-1ed9a3b95e2a}, !- Name
   {927025f4-8bd7-49fa-99f3-36017f35fa3f}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
+  {7f54b2e3-f6f0-4463-928b-1ed9a3b95e2a}, !- Space or SpaceType Name
   {be6ccf9b-6438-4e91-bdae-903ddccbb9d0}; !- Schedule Name
 
 OS:ScheduleTypeLimits,
@@ -1154,7 +1154,7 @@ OS:ElectricEquipment,
   {1ff9518c-c5f7-41a0-9c7a-029d8fc40f97}, !- Handle
   unit=2|bed=nil|bath=nil|space={8d63d987-d805-4ab0-9968-14c59c0bdc9a}, !- Name
   {82f3447d-d2ce-4a2a-974d-8b0eb5e2fc52}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
+  {8d63d987-d805-4ab0-9968-14c59c0bdc9a}, !- Space or SpaceType Name
   {552c489c-3f49-4ee5-8795-f0ad189ae2cf}; !- Schedule Name
 
 OS:ScheduleTypeLimits,
@@ -1191,7 +1191,7 @@ OS:ElectricEquipment,
   {0f94e371-1559-4ffe-b378-922f43a0348b}, !- Handle
   unit=3|bed=nil|bath=nil|space={70257a76-c2a6-43f6-98d9-172584c7cce3}, !- Name
   {81b9a98d-b65a-4e3f-becc-3e5ff147b564}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
+  {70257a76-c2a6-43f6-98d9-172584c7cce3}, !- Space or SpaceType Name
   {ede11023-f809-4b7d-bc6e-58069c49d4e7}; !- Schedule Name
 
 OS:ScheduleTypeLimits,
@@ -1228,7 +1228,7 @@ OS:ElectricEquipment,
   {d15a2e75-9fb0-46aa-9d0f-a619229e6ef1}, !- Handle
   unit=4|bed=nil|bath=nil|space={dc54e5ab-b5e1-4655-b563-3d4cf9e536f6}, !- Name
   {28ef1b52-56fd-465b-9123-100f90f5081d}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
+  {dc54e5ab-b5e1-4655-b563-3d4cf9e536f6}, !- Space or SpaceType Name
   {406cc18f-0608-4df3-b072-8b5db558ce5c}; !- Schedule Name
 
 OS:ScheduleTypeLimits,
@@ -1265,7 +1265,7 @@ OS:ElectricEquipment,
   {a6666450-42a7-41d7-a9ca-11af88d34f88}, !- Handle
   unit=5|bed=nil|bath=nil|space={f5865fb8-da6e-46c6-b4d5-1c42cd5b6990}, !- Name
   {b5a9923a-0bfe-4fd0-bf68-f9c1d26c0416}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
+  {f5865fb8-da6e-46c6-b4d5-1c42cd5b6990}, !- Space or SpaceType Name
   {3cae269d-4f65-4fd4-b4af-bf025b761fe1}; !- Schedule Name
 
 OS:ScheduleTypeLimits,
@@ -1302,7 +1302,7 @@ OS:ElectricEquipment,
   {3ed9479e-ad86-4fd3-8002-098bf4838b71}, !- Handle
   unit=6|bed=nil|bath=nil|space={8d63d987-d805-4ab0-9968-14c59c0bdc9a}, !- Name
   {6edeac63-c911-4b38-9c96-1d58ec7b83dc}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
+  {8d63d987-d805-4ab0-9968-14c59c0bdc9a}, !- Space or SpaceType Name
   {9b77843e-847c-4878-9f44-51407e4508af}; !- Schedule Name
 
 OS:ScheduleTypeLimits,
@@ -1339,7 +1339,7 @@ OS:ElectricEquipment,
   {db5003fa-f066-4592-9f38-5c1d3933249f}, !- Handle
   unit=7|bed=nil|bath=nil|space={70257a76-c2a6-43f6-98d9-172584c7cce3}, !- Name
   {bc0dd829-7ff8-4bea-a0d3-1efd597d654b}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
+  {70257a76-c2a6-43f6-98d9-172584c7cce3}, !- Space or SpaceType Name
   {f248338e-ae6a-4100-89fd-b6c23fc330e1}; !- Schedule Name
 
 OS:ScheduleTypeLimits,
@@ -1376,7 +1376,7 @@ OS:ElectricEquipment,
   {c4763b21-2325-458c-afe6-95f4e827451d}, !- Handle
   unit=8|bed=nil|bath=nil|space={dc54e5ab-b5e1-4655-b563-3d4cf9e536f6}, !- Name
   {3f259a02-7d78-4fe9-b567-7f7c5d5c93a5}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
+  {dc54e5ab-b5e1-4655-b563-3d4cf9e536f6}, !- Space or SpaceType Name
   {24f32d5e-fdc7-464a-9c2d-bda8685e4f10}; !- Schedule Name
 
 OS:ScheduleTypeLimits,
