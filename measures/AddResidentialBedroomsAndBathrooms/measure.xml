@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>2cf84558-9cc4-464d-80e3-d1749399bd8a</version_id>
-  <version_modified>20160811T202200Z</version_modified>
+  <version_id>57acdfbf-9b6a-495c-805e-dd213bde2dc0</version_id>
+  <version_modified>20160812T160111Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -119,6 +119,12 @@
       <checksum>1C95CF61</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>87F77F47</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -128,12 +134,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>92D75E46</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>87F77F47</checksum>
     </file>
   </files>
 </measure>
