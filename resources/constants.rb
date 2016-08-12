@@ -122,9 +122,6 @@ class Constants
   def self.CrawlSpace
     return 'crawl space'
   end
-  def self.CrawlSpaceType
-    return 'crawl space type'
-  end
   def self.CrawlZone
     return 'crawl zone'
   end
@@ -149,23 +146,29 @@ class Constants
   def self.FacadeRight
     return 'Right'
   end
-  def self.FinishedAtticSpace
-    return 'finished attic space'
+  def self.FinishedAtticSpace(unit=1)
+    if unit == 1
+      return "finished attic space"
+    end
+    return "finished attic space, unit #{unit}"
   end
-  def self.FinishedAtticZone
-    return 'finished attic zone'
+  def self.FinishedAtticZone(unit=1)
+    if unit == 1
+      return "finished attic zone"
+    end
+    return "finished attic zone, unit #{unit}"
   end
-  def self.FinishedAtticSpaceType
-    return 'finished attic space type'
+  def self.FinishedBasementSpace(unit=1)
+    if unit == 1
+      return "finished basement space"
+    end
+    return "finished basement space, unit #{unit}"
   end
-  def self.FinishedBasementSpace
-    return 'finished basement space'
-  end
-  def self.FinishedBasementSpaceType
-    return 'finished basement space type'
-  end
-  def self.FinishedBasementZone
-    return 'finished basement zone'
+  def self.FinishedBasementZone(unit=1)
+    if unit == 1
+      return "finished basement zone"
+    end
+    return "finished basement zone, unit #{unit}"
   end
   def self.FluidWater
     return 'water'
@@ -193,9 +196,6 @@ class Constants
   end
   def self.GarageAtticSpace
     return 'garage attic space'
-  end
-  def self.GarageSpaceType
-    return 'garage space type'
   end
   def self.GarageZone
     return 'garage zone'
@@ -233,17 +233,20 @@ class Constants
   def self.InsulationXPS
     return 'xps'
   end
-  def self.LivingSpace(story)
-      if story == 1
-        return 'living space'
+  def self.LivingSpace(story, unit=1)
+      if story == 1 and unit == 1
+        return "living space"
       end
-    return 'living space ' + story.to_s
+      if unit == 1
+        return "living space, story #{story}"
+      end
+    return "living space, unit #{unit}, story #{story}"
   end
-  def self.LivingSpaceType
-    return 'living space type'
-  end
-  def self.LivingZone
-    return 'living zone'
+  def self.LivingZone(unit=1)
+    if unit == 1
+      return "living zone"
+    end
+    return "living zone, unit #{unit}"
   end
   def self.LocationInterior
     return 'interior'
@@ -420,9 +423,6 @@ class Constants
   def self.PierBeamZone
     return 'pier and beam zone'
   end
-  def self.PierBeamSpaceType
-    return 'pier and beam space type'
-  end
   def self.PipeTypeTrunkBranch
     return 'trunk and branch'
   end
@@ -477,9 +477,6 @@ class Constants
   def self.SlabSpace
     return 'slab space'
   end
-  def self.SlabSpaceType
-    return 'slab space type'
-  end
   def self.TerrainOcean
     return 'ocean'
   end
@@ -498,17 +495,11 @@ class Constants
   def self.UnfinishedAtticSpace
     return 'unfinished attic space'
   end
-  def self.UnfinishedAtticSpaceType
-    return 'unfinished attic space type'
-  end
   def self.UnfinishedAtticZone
     return 'unfinished attic zone'
   end
   def self.UnfinishedBasementSpace
     return 'unfinished basement space'
-  end
-  def self.UnfinishedBasementSpaceType
-    return 'unfinished basement space type'
   end
   def self.UnfinishedBasementZone
     return 'unfinished basement zone'
