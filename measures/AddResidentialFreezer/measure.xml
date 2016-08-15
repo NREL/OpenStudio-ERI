@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>1df31b8e-8278-4ed7-b681-a18ce63fc863</version_id>
-  <version_modified>20160815T214304Z</version_modified>
+  <version_id>86a2b7aa-72c5-4f64-95c8-9de2bb61b9ec</version_id>
+  <version_modified>20160815T222224Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
@@ -108,12 +108,6 @@
       <checksum>94E03665</checksum>
     </file>
     <file>
-      <filename>ResidentialFreezer_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>849FF8F2</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -141,6 +135,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>F0F23347</checksum>
+    </file>
+    <file>
+      <filename>ResidentialFreezer_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7C8C81DE</checksum>
     </file>
   </files>
 </measure>

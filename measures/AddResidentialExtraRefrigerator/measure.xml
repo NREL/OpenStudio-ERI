@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_extra_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>a67fa32a-aabb-485d-bc7e-ad8d1c0340fc</version_id>
-  <version_modified>20160815T214304Z</version_modified>
+  <version_id>1132b957-aeb5-47fa-964c-2563773a2152</version_id>
+  <version_modified>20160815T222224Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialExtraRefrigerator</class_name>
   <display_name>Set Residential Extra Refrigerator</display_name>
@@ -108,12 +108,6 @@
       <checksum>94E03665</checksum>
     </file>
     <file>
-      <filename>ResidentialExtraRefrigerator_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>37FF923D</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -141,6 +135,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>F0F23347</checksum>
+    </file>
+    <file>
+      <filename>ResidentialExtraRefrigerator_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>619710F2</checksum>
     </file>
   </files>
 </measure>

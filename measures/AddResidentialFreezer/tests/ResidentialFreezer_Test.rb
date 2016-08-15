@@ -11,11 +11,11 @@ class ResidentialFreezerTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA.osm"
   end
 
-  def osm_geo_mf_3_units
+  def osm_geo_multifamily_3_units
     return "multifamily_3_units.osm"
   end
   
-  def osm_urbanopt_8_units
+  def osm_geo_multifamily_urbanopt_8_units
     return "multifamily_urbanopt.osm"
   end
   
@@ -87,41 +87,46 @@ class ResidentialFreezerTest < MiniTest::Test
     _test_measure(model, args_hash, 1, 0, 0.0, 1)
   end
   
-  def test_mf_new_construction
+  def test_multifamily_new_construction
+    num_units = 3
     args_hash = {}
     args_hash["freezer_E"] = 935.0
-    _test_measure(osm_geo_mf_3_units, args_hash, 0, 3, 935.0*3, 3)
+    _test_measure(osm_geo_multifamily_3_units, args_hash, 0, num_units, 935.0*num_units, num_units)
   end
   
-  def test_mf_new_construction_basement
+  def test_multifamily_new_construction_basement
+    num_units = 3
     args_hash = {}
     args_hash["freezer_E"] = 935.0
     args_hash["space"] = "finishedbasement_1"
-    _test_measure(osm_geo_mf_3_units, args_hash, 0, 1, 935.0)
+    _test_measure(osm_geo_multifamily_3_units, args_hash, 0, 1, 935.0)
   end
   
-  def test_mf_retrofit_replace
+  def test_multifamily_retrofit_replace
+    num_units = 3
     args_hash = {}
     args_hash["freezer_E"] = 935.0
-    model = _test_measure(osm_geo_mf_3_units, args_hash, 0, 3, 935.0*3, 3)
+    model = _test_measure(osm_geo_multifamily_3_units, args_hash, 0, num_units, 935.0*num_units, num_units)
     args_hash = {}
     args_hash["freezer_E"] = 417.0
-    _test_measure(model, args_hash, 3, 3, 417.0*3, 6)
+    _test_measure(model, args_hash, num_units, num_units, 417.0*num_units, num_units*2)
   end
   
-  def test_mf_retrofit_remove
+  def test_multifamily_retrofit_remove
+    num_units = 3
     args_hash = {}
     args_hash["freezer_E"] = 935.0
-    model = _test_measure(osm_geo_mf_3_units, args_hash, 0, 3, 935.0*3, 3)
+    model = _test_measure(osm_geo_multifamily_3_units, args_hash, 0, num_units, 935.0*num_units, num_units)
     args_hash = {}
     args_hash["freezer_E"] = 0.0
-    _test_measure(model, args_hash, 3, 0, 0.0, 3)
+    _test_measure(model, args_hash, num_units, 0, 0.0, num_units)
   end
   
-  def test_mf_urbanopt
+  def test_multifamily_urbanopt
+    num_units = 8
     args_hash = {}
     args_hash["freezer_E"] = 1102.0
-    _test_measure(osm_urbanopt_8_units, args_hash, 0, 8, 1102.0*8, 8)
+    _test_measure(osm_geo_multifamily_urbanopt_8_units, args_hash, 0, num_units, 1102.0*num_units, num_units)
   end
   
   def test_argument_error_freezer_E_negative
