@@ -354,11 +354,17 @@ class Constants
   def self.ObjectNameDishwasher
     return 'residential dishwasher'
   end
-  def self.ObjectNameExtraRefrigerator
-    return 'residential extra refrigerator'
+  def self.ObjectNameExtraRefrigerator(unit=1)
+    if unit == 1
+        return "residential extra refrigerator"
+    end
+    return "residential extra refrigerator, unit #{unit}"
   end
-  def self.ObjectNameFreezer
-    return 'residential freezer'
+  def self.ObjectNameFreezer(unit=1)
+    if unit == 1
+        return "residential freezer"
+    end
+    return "residential freezer, unit #{unit}"
   end
   def self.ObjectNameFurniture
     return 'residential furniture'

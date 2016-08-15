@@ -140,6 +140,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
             runner.registerError("Could not determine the spaces associated with unit #{unit_num + 1}.")
             return false
         end
+        
         # Get space
         space = Geometry.get_space_from_string(unit_spaces, space_r)
         if space.nil? and space_r != Constants.Default
@@ -188,11 +189,11 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     end
 
     #reporting final condition of model
-    if fridge_ann > 0
+    if tot_fridge_ann > 0
         if set_multiple_objects
             runner.registerFinalCondition("The building has been assigned refrigerators totaling #{tot_fridge_ann} kWhs annual energy consumption across #{num_units} units.")
         else
-            runner.registerFinalCondition("A refrigerator with #{fridge_ann.round} kWhs annual energy consumption has been assigned to space '#{single_space.name.to_s}'.")
+            runner.registerFinalCondition("A refrigerator with #{tot_fridge_ann.round} kWhs annual energy consumption has been assigned to space '#{single_space.name.to_s}'.")
         end
     else
         runner.registerFinalCondition("No refrigerator has been assigned.")
