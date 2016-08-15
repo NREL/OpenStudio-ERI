@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>03893358-f5c3-4b07-b656-744f2ff9cfee</version_id>
-  <version_modified>20160815T200315Z</version_modified>
+  <version_id>3bfa119e-8cc7-4d6b-8f26-c7c53e07da43</version_id>
+  <version_modified>20160815T214305Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
@@ -149,7 +149,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0ED5DCFF</checksum>
+      <checksum>8208D03D</checksum>
     </file>
   </files>
 </measure>

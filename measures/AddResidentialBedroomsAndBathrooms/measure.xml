@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>de6c0f53-70e3-4928-8d33-86747fa70747</version_id>
-  <version_modified>20160815T213631Z</version_modified>
+  <version_id>92b51190-ec69-48b6-a42b-b07f95c52ef5</version_id>
+  <version_modified>20160815T214304Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -69,12 +69,6 @@
       <checksum>4F0FB841</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0ED5DCFF</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -132,6 +126,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>098B3442</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8208D03D</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>f0259bdc-1391-41eb-80eb-efc10bd1bc02</uid>
-  <version_id>1bd6bf22-3822-4e3d-b36a-6cc4a8a40dce</version_id>
-  <version_modified>20160815T213632Z</version_modified>
+  <version_id>6890def7-07b5-4459-b089-16cd9a5d7f90</version_id>
+  <version_modified>20160815T214305Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Set Residential Refrigerator</display_name>
@@ -114,6 +114,18 @@
       <checksum>F0F23347</checksum>
     </file>
     <file>
+      <filename>ResidentialRefrigerator_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>42F7A030</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>098B3442</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -122,25 +134,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A9E2F48E</checksum>
-    </file>
-    <file>
-      <filename>ResidentialRefrigerator_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>42F7A030</checksum>
+      <checksum>57E0C3B1</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0ED5DCFF</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>098B3442</checksum>
+      <checksum>8208D03D</checksum>
     </file>
   </files>
 </measure>
