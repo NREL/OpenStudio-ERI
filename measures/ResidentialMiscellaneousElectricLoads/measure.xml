@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_electric_loads</name>
   <uid>3ac41688-ef52-4679-b79c-8cbdf7cbd0e7</uid>
-  <version_id>e33bca86-91bd-4662-98ac-fe760a063c44</version_id>
-  <version_modified>20160815T185924Z</version_modified>
+  <version_id>c10b469c-53dc-47da-8d02-f80eca54d7f9</version_id>
+  <version_modified>20160815T213638Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialMiscellaneousElectricLoads</class_name>
   <display_name>Set Residential Plug Loads</display_name>
@@ -93,16 +93,16 @@
       <checksum>AD69C4DA</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BC6A09D7</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>4F0FB841</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0ED5DCFF</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>

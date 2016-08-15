@@ -153,25 +153,25 @@ class Constants
     if unit == 1
       return "finished attic space"
     end
-    return "finished attic space, unit #{unit}"
+    return "finished attic space|unit #{unit}"
   end
   def self.FinishedAtticZone(unit=1)
     if unit == 1
       return "finished attic zone"
     end
-    return "finished attic zone, unit #{unit}"
+    return "finished attic zone|unit #{unit}"
   end
   def self.FinishedBasementSpace(unit=1)
     if unit == 1
       return "finished basement space"
     end
-    return "finished basement space, unit #{unit}"
+    return "finished basement space|unit #{unit}"
   end
   def self.FinishedBasementZone(unit=1)
     if unit == 1
       return "finished basement zone"
     end
-    return "finished basement zone, unit #{unit}"
+    return "finished basement zone|unit #{unit}"
   end
   def self.FluidWater
     return 'water'
@@ -241,15 +241,15 @@ class Constants
         return "living space"
       end
       if unit == 1
-        return "living space, story #{story}"
+        return "living space|story #{story}"
       end
-    return "living space, unit #{unit}, story #{story}"
+    return "living space|unit #{unit}|story #{story}"
   end
   def self.LivingZone(unit=1)
     if unit == 1
       return "living zone"
     end
-    return "living zone, unit #{unit}"
+    return "living zone|unit #{unit}"
   end
   def self.LocationInterior
     return 'interior'

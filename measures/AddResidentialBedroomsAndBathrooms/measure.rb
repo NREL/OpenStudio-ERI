@@ -143,6 +143,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     
     # Update number of bedrooms/bathrooms
     (0...num_units).to_a.each do |unit_num|
+
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
       if unit_spaces.nil?
           runner.registerError("Could not determine the spaces associated with unit #{unit_num + 1}.")
