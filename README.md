@@ -1,9 +1,9 @@
 Residential OpenStudio Measures
 ===============
 
-[![CircleCI](https://circleci.com/gh/NREL/OpenStudio-BEopt.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-BEopt)
+**Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-BEopt.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-BEopt)
 
-[![Coverage Status](https://coveralls.io/repos/github/NREL/OpenStudio-Beopt/badge.svg?branch=master)](https://coveralls.io/github/NREL/OpenStudio-Beopt?branch=master)
+**Code Coverage:** [![Coverage Status](https://coveralls.io/repos/github/NREL/OpenStudio-Beopt/badge.svg?branch=master)](https://coveralls.io/github/NREL/OpenStudio-Beopt?branch=master)
 
 This project includes OpenStudio measures used to model residential buildings.
 
