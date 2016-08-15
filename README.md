@@ -1,7 +1,7 @@
 Residential OpenStudio Measures
 ===============
 
-[![CircleCI](https://circleci.com/gh/NREL/OpenStudio-Beopt.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-Beopt)
+[![CircleCI](https://circleci.com/gh/NREL/OpenStudio-BEopt.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-BEopt)
 
 [![Coverage Status](https://coveralls.io/repos/github/NREL/OpenStudio-Beopt/badge.svg?branch=master)](https://coveralls.io/github/NREL/OpenStudio-Beopt?branch=master)
 
