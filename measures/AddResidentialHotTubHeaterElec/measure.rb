@@ -120,7 +120,7 @@ class ResidentialHotTubHeaterElec < OpenStudio::Ruleset::ModelUserScript
         hth_ann = ann_elec # kWh/yr
     end
 
-    space = Geometry.get_default_space(model, runner)
+    space = Geometry.get_unit_default_finished_space(Geometry.get_finished_spaces(model), runner)
     if space.nil?
         return false
     end

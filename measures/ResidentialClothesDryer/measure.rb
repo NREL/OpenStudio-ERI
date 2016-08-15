@@ -127,7 +127,7 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
 	space_r = runner.getStringArgumentValue("space",user_arguments)
 
     #Get space
-    space = Geometry.get_space_from_string(model, space_r, runner)
+    space = Geometry.get_space_from_string(model.getSpaces, space_r, runner)
     if space.nil?
         return false
     end

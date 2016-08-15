@@ -184,7 +184,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	end
     
     #Get space
-    space = Geometry.get_space_from_string(model, space_r, runner)
+    space = Geometry.get_space_from_string(model.getSpaces, space_r, runner)
     if space.nil?
         return false
     end

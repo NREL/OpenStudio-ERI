@@ -350,7 +350,7 @@ class Waterheater
                 ba_cz_name = climateZone.value.to_s
             end
         end
-        living = Geometry.get_default_space(model)
+        living = Geometry.get_unit_default_finished_space(Geometry.get_finished_spaces(model), runner)
         garage = Geometry.get_garage_spaces(model)
         fin_basement = Geometry.get_finished_basement_spaces(model)
         unfin_basement = Geometry.get_unfinished_basement_spaces(model)

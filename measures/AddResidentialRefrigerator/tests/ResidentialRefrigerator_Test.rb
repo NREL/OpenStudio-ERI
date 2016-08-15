@@ -10,19 +10,23 @@ class ResidentialRefrigeratorTest < MiniTest::Test
   def osm_geo
     return "2000sqft_2story_FB_GRG_UA.osm"
   end
+  
+  def osm_geo_mf
+    return "multifamily_3_units.osm"
+  end
 
   def test_new_construction_none1
     # Using rated annual consumption
     args_hash = {}
     args_hash["fridge_E"] = 0.0
-    _test_measure(osm_geo, args_hash)
+    _test_measure(osm_geo, args_hash, 0, 0, 0.0)
   end
   
   def test_new_construction_none2
     # Using energy multiplier
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure(osm_geo, args_hash)
+    _test_measure(osm_geo, args_hash, 0, 0, 0.0)
   end
   
   def test_new_construction_ef_17_6
@@ -67,7 +71,7 @@ class ResidentialRefrigeratorTest < MiniTest::Test
     model = _test_measure(osm_geo, args_hash, 0, 1, 434.0)
     args_hash = {}
     args_hash["fridge_E"] = 348.0
-    _test_measure(model, args_hash, 1, 1, 348.0)
+    _test_measure(model, args_hash, 1, 1, 348.0, 1)
   end
     
   def test_retrofit_remove
@@ -76,9 +80,40 @@ class ResidentialRefrigeratorTest < MiniTest::Test
     model = _test_measure(osm_geo, args_hash, 0, 1, 434.0)
     args_hash = {}
     args_hash["fridge_E"] = 0.0
-    _test_measure(model, args_hash, 1, 0)
+    _test_measure(model, args_hash, 1, 0, 0.0, 1)
   end
   
+  def test_mf_new_construction
+    args_hash = {}
+    args_hash["fridge_E"] = 434.0
+    _test_measure(osm_geo_mf, args_hash, 0, 3, 434.0*3, 3)
+  end
+  
+  def test_mf_new_construction_basement
+    args_hash = {}
+    args_hash["fridge_E"] = 434.0
+    args_hash["space"] = "finishedbasement_1"
+    _test_measure(osm_geo_mf, args_hash, 0, 1, 434.0)
+  end
+  
+  def test_mf_retrofit_replace
+    args_hash = {}
+    args_hash["fridge_E"] = 434.0
+    model = _test_measure(osm_geo_mf, args_hash, 0, 3, 434.0*3, 3)
+    args_hash = {}
+    args_hash["fridge_E"] = 348.0
+    _test_measure(model, args_hash, 3, 3, 348.0*3, 6)
+  end
+  
+  def test_mf_retrofit_remove
+    args_hash = {}
+    args_hash["fridge_E"] = 434.0
+    model = _test_measure(osm_geo_mf, args_hash, 0, 3, 434.0*3, 3)
+    args_hash = {}
+    args_hash["fridge_E"] = 0.0
+    _test_measure(model, args_hash, 3, 0, 0.0, 3)
+  end
+
   def test_argument_error_fridge_E_negative
     args_hash = {}
     args_hash["fridge_E"] = -1.0
@@ -168,7 +203,7 @@ class ResidentialRefrigeratorTest < MiniTest::Test
     assert(result.errors.size == 1)
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialRefrigerator.new
 
@@ -207,12 +242,8 @@ class ResidentialRefrigeratorTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_del_objects > 0
-        assert(result.info.size == 1)
-    else
-        assert(result.info.size == 0)
-    end
-    assert(result.warnings.size == 0)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
     
     # get new/deleted electric equipment objects
     new_objects = []
@@ -233,13 +264,11 @@ class ResidentialRefrigeratorTest < MiniTest::Test
     actual_annual_kwh = 0.0
     new_objects.each do |new_object|
         # check that the new object has the correct name
-        assert_equal(new_object.name.to_s, Constants.ObjectNameRefrigerator)
+        assert(new_object.name.to_s.start_with?(Constants.ObjectNameRefrigerator))
         
         # check new object is in correct space
         if argument_map["space"].hasValue
             assert_equal(new_object.space.get.name.to_s, argument_map["space"].valueAsString)
-        else
-            assert_equal(new_object.space.get.name.to_s, argument_map["space"].defaultValueAsString)
         end
         
         # check for the correct annual energy consumption

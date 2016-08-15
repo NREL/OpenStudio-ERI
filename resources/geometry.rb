@@ -106,6 +106,35 @@ class Geometry
         return [nbeds, nbaths, spaces_list]
     end
     
+    def self.get_unit_default_finished_space(unit_spaces, runner)
+        # For the specified unit, chooses an arbitrary finished space on the lowest above-grade story.
+        # If no above-grade finished spaces are available, reverts to an arbitrary below-grade finished space.
+        space = nil
+        # Get lowest above-grade space
+        bldg_min_z = 100000
+        unit_spaces.each do |s|
+            next if Geometry.space_is_below_grade(s)
+            next if Geometry.space_is_unfinished(s)
+            space_min_z = Geometry.getSurfaceZValues(s.surfaces).min + OpenStudio::convert(s.zOrigin,"m","ft").get
+            next if space_min_z >= bldg_min_z
+            bldg_min_z = space_min_z
+            space = s
+        end
+        if space.nil?
+            # Try below-grade space
+            unit_spaces.each do |s|
+                next if Geometry.space_is_above_grade(s)
+                next if Geometry.space_is_unfinished(s)
+                space = s
+                break
+            end
+        end
+        if space.nil?
+            runner.registerError("Could not find a finished space for unit #{unit_num}.")
+        end
+        return space
+    end
+    
     # Retrieves the finished floor area for the building
     def self.get_building_finished_floor_area(model, runner=nil)
         floor_area = 0
@@ -335,39 +364,19 @@ class Geometry
         return false
     end
 
-    def self.get_default_space(model, runner=nil)
-        # FIXME: Can we eventually get rid of this method?
+    def self.get_space_from_string(spaces, space_s, runner=nil)
+        if space_s == Constants.Default
+            return Geometry.get_unit_default_finished_space(spaces, runner)
+        end
         space = nil
-        model.getSpaces.each do |s|
-            if s.name.to_s == Constants.LivingSpace(1) # Prioritize returning our standard living space
-                return s
-            elsif space.nil? and Geometry.space_is_finished(s) and Geometry.space_is_above_grade(s) # Return first above-grade conditioned space in list if our living space not found
-                space = s
-            end
-        end
-        if space.nil? and model.getSpaces.size > 0
-            space = model.getSpaces[0]
-        end
-        if space.nil? and not runner.nil?
-            runner.registerError("Could not find any spaces in the model.")
-        end
-        return space
-    end
-
-    def self.get_space_from_string(model, space_s, runner, print_err=true)
-        space = nil
-        model.getSpaces.each do |s|
+        spaces.each do |s|
             if s.name.to_s == space_s
                 space = s
                 break
             end
         end
-        if space.nil?
-            if print_err
-                runner.registerError("Could not find space with the name '#{space_s}'.")
-            else
-                runner.registerWarning("Could not find space with the name '#{space_s}'.")
-            end
+        if space.nil? and !runner.nil?
+            runner.registerError("Could not find space with the name '#{space_s}'.")
         end
         return space
     end

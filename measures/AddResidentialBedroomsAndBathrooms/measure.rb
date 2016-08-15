@@ -111,6 +111,9 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     end
 
     num_units = Geometry.get_num_units(model, runner)
+    if num_units.nil?
+      return false
+    end
     num_br = num_br.split(",").map(&:strip)
     num_ba = num_ba.split(",").map(&:strip)
     
@@ -139,10 +142,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     activity_sch = OpenStudio::Model::ScheduleRuleset.new(model, activity_per_person)    
     
     # Update number of bedrooms/bathrooms
-    tot_space_num_occ = 0
     (0...num_units).to_a.each do |unit_num|
-      puts unit_num+1
-    
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
       if unit_spaces.nil?
           runner.registerError("Could not determine the spaces associated with unit #{unit_num + 1}.")
@@ -159,7 +159,9 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       num_br[unit_num] = num_br[unit_num].to_f.round(1).to_s
       num_ba[unit_num] = num_ba[unit_num].to_f.round(1).to_s
       Geometry.set_unit_beds_baths_spaces(model, unit_num + 1, unit_spaces, num_br[unit_num], num_ba[unit_num])
-      runner.registerInfo("Unit #{unit_num + 1} has been assigned #{num_br[unit_num]} bedrooms and #{num_ba[unit_num]} bathrooms.")
+      if num_units > 1
+        runner.registerInfo("Unit #{unit_num + 1} has been assigned #{num_br[unit_num]} bedroom(s) and #{num_ba[unit_num]} bathroom(s).")
+      end
 
       # Get FFA
       ffa = Geometry.get_unit_finished_floor_area(model, unit_spaces, runner)
@@ -186,7 +188,6 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       
           obj_name_space = "#{obj_name} #{space.name.to_s}"
           space_num_occ = num_occ * OpenStudio.convert(space.floorArea, "m^2", "ft^2").get / ffa
-          tot_space_num_occ += space_num_occ
 
           #Add people definition for the occ
           occ_def = OpenStudio::Model::PeopleDefinition.new(model)
@@ -208,7 +209,11 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     end
     
     #reporting final condition of model
-    runner.registerFinalCondition("The building has been assigned #{tot_space_num_occ} occupants,  #{num_br.collect { |i| i.to_f }.inject(:+)} bedrooms, and #{num_ba.collect { |i| i.to_f }.inject(:+)} bathrooms across #{num_units} unit(s).")
+    if num_units > 1
+      runner.registerFinalCondition("The building has been assigned #{num_br.collect { |i| i.to_f }.inject(:+)} bedroom(s) and #{num_ba.collect { |i| i.to_f }.inject(:+)} bathroom(s) across #{num_units} unit(s).")
+    else
+      runner.registerFinalCondition("The building has been assigned #{num_br[0]} bedroom(s) and #{num_ba[0]} bathroom(s).")
+    end
 
     return true
 

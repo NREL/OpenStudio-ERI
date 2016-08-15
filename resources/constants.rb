@@ -134,6 +134,9 @@ class Constants
   def self.DDYClgWetbulb
     return 'Clg .4. Condns DB=>MWB'
   end
+  def self.Default
+    return 'Default'
+  end
   def self.FacadeFront
     return 'Front'
   end
@@ -396,8 +399,11 @@ class Constants
   def self.ObjectNamePoolPump
     return 'residential pool pump'
   end
-  def self.ObjectNameRefrigerator
-    return 'residential refrigerator'
+  def self.ObjectNameRefrigerator(unit=1)
+    if unit == 1
+      return "residential refrigerator"
+    end
+    return "residential refrigerator, unit #{unit}"
   end
   def self.ObjectNameShower
     return 'residential shower'

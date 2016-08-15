@@ -118,7 +118,7 @@ class ResidentialGasLighting < OpenStudio::Ruleset::ModelUserScript
         gl_ann_g = ann_g # therm/yr
     end
     
-    space = Geometry.get_default_space(model, runner)
+    space = Geometry.get_unit_default_finished_space(Geometry.get_finished_spaces(model), runner)
     if space.nil?
         return false
     end

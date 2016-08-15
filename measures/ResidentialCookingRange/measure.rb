@@ -128,7 +128,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     range_ann_e = ((86.5 + 28.9 * nbeds) / c_ef + (14.6 + 4.9 * nbeds) / o_ef)*mult #kWh/yr
 
     #Get space
-    space = Geometry.get_space_from_string(model, space_r, runner)
+    space = Geometry.get_space_from_string(model.getSpaces, space_r, runner)
     if space.nil?
         return false
     end

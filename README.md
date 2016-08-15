@@ -13,7 +13,7 @@ Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d
 
 ## Setup
 
-To get started, go through the [OpenStudio Installation Instructions](http://nrel.github.io/OpenStudio-user-documentation/getting_started/getting_started/#installation-instructions), including the "Optional - Install Ruby" section. The "Optional - Setup a Building Component Library (BCL) Account" is recommended but not required.
+To get started, go through the [OpenStudio Installation Instructions](http://nrel.github.io/OpenStudio-user-documentation/getting_started/getting_started/#installation-instructions), including the "Optional - Install Ruby" section. The "Optional - Setup a Building Component Library (BCL) Account" section is recommended but not required.
 
 A number of measures in this GitHub repository share the same resource files, found in the top-level ```resources``` directory. In order to run the measures, these resources need to be distributed to each measure. This process has been automated via a rake task (a task defined in the rakefile).
 

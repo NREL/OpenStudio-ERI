@@ -634,8 +634,10 @@ class Schedule
     schedule = schedule.to_ScheduleRuleset.get
 
     # Define the start and end date
-    year_start_date = OpenStudio::Date.new(OpenStudio::MonthOfYear.new("January"),1,2009)
-    year_end_date = OpenStudio::Date.new(OpenStudio::MonthOfYear.new("December"),31,2009)
+    year_description = model.yearDescription.get
+    year = year_description.assumedYear
+    year_start_date = OpenStudio::Date.new(OpenStudio::MonthOfYear.new("January"),1,year)
+    year_end_date = OpenStudio::Date.new(OpenStudio::MonthOfYear.new("December"),31,year)
 
     # Get the ordered list of all the day schedules
     # that are used by this schedule ruleset
