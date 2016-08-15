@@ -210,7 +210,7 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
     
     #reporting final condition of model
     if num_units > 1
-      runner.registerFinalCondition("The building has been assigned #{num_br.collect { |i| i.to_f }.inject(:+)} bedroom(s) and #{num_ba.collect { |i| i.to_f }.inject(:+)} bathroom(s) across #{num_units} unit(s).")
+      runner.registerFinalCondition("The building has been assigned #{num_br.collect { |i| i.to_f }.inject(:+)} bedroom(s) and #{num_ba.collect { |i| i.to_f }.inject(:+)} bathroom(s) across #{num_units} units.")
     else
       runner.registerFinalCondition("The building has been assigned #{num_br[0]} bedroom(s) and #{num_ba[0]} bathroom(s).")
     end

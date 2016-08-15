@@ -147,10 +147,12 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
         end
         next if space.nil?
         
+        unit_obj_name = Constants.ObjectNameRefrigerator(unit_num + 1)
+
         # Remove any existing refrigerator
         frg_removed = false
         space.electricEquipment.each do |space_equipment|
-            if space_equipment.name.to_s.start_with? obj_name
+            if space_equipment.name.to_s == unit_obj_name
                 space_equipment.remove
                 frg_removed = true
             end
@@ -160,7 +162,6 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
         end
 
         if fridge_ann > 0
-            unit_obj_name = Constants.ObjectNameRefrigerator(unit_num + 1)
             design_level = sch.calcDesignLevelFromDailykWh(fridge_ann/365.0)
             
             #Add electric equipment for the fridge
@@ -189,7 +190,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
     if fridge_ann > 0
         if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned refrigerators totaling #{tot_fridge_ann} kWhs annual energy consumption across #{num_units} unit(s).")
+            runner.registerFinalCondition("The building has been assigned refrigerators totaling #{tot_fridge_ann} kWhs annual energy consumption across #{num_units} units.")
         else
             runner.registerFinalCondition("A refrigerator with #{fridge_ann.round} kWhs annual energy consumption has been assigned to space '#{single_space.name.to_s}'.")
         end

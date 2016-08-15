@@ -11,8 +11,12 @@ class ResidentialRefrigeratorTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA.osm"
   end
   
-  def osm_geo_mf
+  def osm_geo_mf_3_units
     return "multifamily_3_units.osm"
+  end
+  
+  def osm_urbanopt_8_units
+    return "multifamily_urbanopt.osm"
   end
 
   def test_new_construction_none1
@@ -86,20 +90,20 @@ class ResidentialRefrigeratorTest < MiniTest::Test
   def test_mf_new_construction
     args_hash = {}
     args_hash["fridge_E"] = 434.0
-    _test_measure(osm_geo_mf, args_hash, 0, 3, 434.0*3, 3)
+    _test_measure(osm_geo_mf_3_units, args_hash, 0, 3, 434.0*3, 3)
   end
   
   def test_mf_new_construction_basement
     args_hash = {}
     args_hash["fridge_E"] = 434.0
     args_hash["space"] = "finishedbasement_1"
-    _test_measure(osm_geo_mf, args_hash, 0, 1, 434.0)
+    _test_measure(osm_geo_mf_3_units, args_hash, 0, 1, 434.0)
   end
   
   def test_mf_retrofit_replace
     args_hash = {}
     args_hash["fridge_E"] = 434.0
-    model = _test_measure(osm_geo_mf, args_hash, 0, 3, 434.0*3, 3)
+    model = _test_measure(osm_geo_mf_3_units, args_hash, 0, 3, 434.0*3, 3)
     args_hash = {}
     args_hash["fridge_E"] = 348.0
     _test_measure(model, args_hash, 3, 3, 348.0*3, 6)
@@ -108,10 +112,16 @@ class ResidentialRefrigeratorTest < MiniTest::Test
   def test_mf_retrofit_remove
     args_hash = {}
     args_hash["fridge_E"] = 434.0
-    model = _test_measure(osm_geo_mf, args_hash, 0, 3, 434.0*3, 3)
+    model = _test_measure(osm_geo_mf_3_units, args_hash, 0, 3, 434.0*3, 3)
     args_hash = {}
     args_hash["fridge_E"] = 0.0
     _test_measure(model, args_hash, 3, 0, 0.0, 3)
+  end
+  
+  def test_mf_urbanopt
+    args_hash = {}
+    args_hash["fridge_E"] = 434.0
+    _test_measure(osm_urbanopt_8_units, args_hash, 0, 8, 434.0*8, 8)
   end
 
   def test_argument_error_fridge_E_negative
