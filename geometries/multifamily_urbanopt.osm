@@ -165,7 +165,7 @@ OS:Surface,
 
 OS:ThermalZone,
   {ee566ce0-e8f6-4d00-9ed2-8910ec8195b9}, !- Handle
-  Building Story 1 ThermalZone 1,         !- Name
+  Building Story 2 ThermalZone,           !- Name
   1,                                      !- Multiplier
   2.4384,                                 !- Ceiling Height {m}
   254.851623,                             !- Volume {m3}

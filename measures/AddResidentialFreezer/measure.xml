@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>86a2b7aa-72c5-4f64-95c8-9de2bb61b9ec</version_id>
-  <version_modified>20160815T222224Z</version_modified>
+  <version_id>d4d9b835-7d82-4c81-acfa-c0a470b5b8cf</version_id>
+  <version_modified>20160816T202527Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
@@ -96,12 +96,6 @@
       <checksum>4F0FB841</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>098B3442</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -141,6 +135,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>7C8C81DE</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>70CABD5C</checksum>
     </file>
   </files>
 </measure>

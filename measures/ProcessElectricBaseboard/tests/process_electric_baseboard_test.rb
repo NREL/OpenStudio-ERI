@@ -10,75 +10,103 @@ class ProcessElectricBaseboardTest < MiniTest::Test
   def test_branch_to_slave_zone_hardsized_electric_baseboard
     args_hash = {}
     args_hash["selectedbaseboardcap"] = "20 kBtu/hr"
-    result = _test_error("finished_basement_geometry_location.osm", args_hash)
+    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
   end
     
   def test_retrofit_replace_ashp
     args_hash = {}
-    _test_measure("default_geometry_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
   end
   
   def test_retrofit_replace_furnace
     args_hash = {}
-    _test_measure("default_geometry_location_furnace.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_furnace.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
   end
   
   def test_retrofit_replace_central_air_conditioner
     args_hash = {}
-    _test_measure("default_geometry_location_central_air_conditioner.osm", args_hash, [])
+    _test_measure("singlefamily_fbsmt_location_central_air_conditioner.osm", args_hash, [])
   end
   
   def test_retrofit_replace_room_air_conditioner
     args_hash = {}
-    _test_measure("default_geometry_location_room_air_conditioner.osm", args_hash, [])
+    _test_measure("singlefamily_fbsmt_location_room_air_conditioner.osm", args_hash, [])
   end  
   
   def test_retrofit_replace_electric_baseboard
     args_hash = {}
-    _test_measure("default_geometry_location_electric_baseboard.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
+    _test_measure("singlefamily_fbsmt_location_electric_baseboard.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
   end
   
   def test_retrofit_replace_boiler
     args_hash = {}
-    _test_measure("default_geometry_location_boiler.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
+    _test_measure("singlefamily_fbsmt_location_boiler.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
   end
   
   def test_retrofit_replace_mshp
     args_hash = {}
-    _test_measure("default_geometry_location_mshp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
   end
   
   def test_retrofit_replace_furnace_central_air_conditioner
     args_hash = {}
-    _test_measure("default_geometry_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil 1' from air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil 1' from air loop 'Central Air System'"])
   end
   
   def test_retrofit_replace_furnace_room_air_conditioner
     args_hash = {}
-    _test_measure("default_geometry_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System'"])
   end    
   
   def test_retrofit_replace_electric_baseboard_central_air_conditioner
     args_hash = {}
-    _test_measure("default_geometry_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
+    _test_measure("singlefamily_fbsmt_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
   end
 
   def test_retrofit_replace_boiler_central_air_conditioner
     args_hash = {}
-    _test_measure("default_geometry_location_boiler_central_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
+    _test_measure("singlefamily_fbsmt_location_boiler_central_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
   end
   
   def test_retrofit_replace_electric_baseboard_room_air_conditioner
     args_hash = {}
-    _test_measure("default_geometry_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
+    _test_measure("singlefamily_fbsmt_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
   end
 
   def test_retrofit_replace_boiler_room_air_conditioner
     args_hash = {}
-    _test_measure("default_geometry_location_boiler_room_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
+    _test_measure("singlefamily_fbsmt_location_boiler_room_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
   end  
+  
+  def test_mf
+    num_units = 3
+    args_hash = {}
+    result = _test_error("multifamily_3_units_location.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Added baseboard convective electric 'Living Zone Electric Baseboards' to thermal zone 'living zone 1' of unit 1")
+    assert_includes(result.info.map{ |x| x.logMessage }, "Added baseboard convective electric 'FBsmt Zone Electric Baseboards' to thermal zone 'finished basement zone 1' of unit 1")    
+    (2..num_units).to_a.each do |unit_num|
+      assert_includes(result.info.map{ |x| x.logMessage }, "Added baseboard convective electric 'Living Zone Electric Baseboards #{unit_num - 1}' to thermal zone 'living zone #{unit_num}' of unit #{unit_num}")
+    end
+  end
+  
+  def test_mf_urbanopt
+    num_units = 8
+    args_hash = {}
+    result = _test_error("multifamily_urbanopt_location.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Added baseboard convective electric 'Living Zone Electric Baseboards' to thermal zone 'Building Story 0 ThermalZone' of unit 1")
+    (2..5).to_a.each do |unit_num|
+      assert_includes(result.info.map{ |x| x.logMessage }, "Added baseboard convective electric 'Living Zone Electric Baseboards #{unit_num - 1}' to thermal zone 'Building Story #{unit_num - 1} ThermalZone' of unit #{unit_num}")
+    end
+    assert_includes(result.info.map{ |x| x.logMessage }, "Added baseboard convective electric 'Living Zone Electric Baseboards 5' to thermal zone 'Building Story 1 ThermalZone' of unit 6")
+    assert_includes(result.info.map{ |x| x.logMessage }, "Added baseboard convective electric 'Living Zone Electric Baseboards 6' to thermal zone 'Building Story 2 ThermalZone' of unit 7")
+    assert_includes(result.info.map{ |x| x.logMessage }, "Added baseboard convective electric 'Living Zone Electric Baseboards 7' to thermal zone 'Building Story 3 ThermalZone' of unit 8")
+  end    
   
   private
   
@@ -145,7 +173,7 @@ class ProcessElectricBaseboardTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    expected_infos += ["Added baseboard convective electric 'Living Zone Electric Baseboards' to thermal zone 'living zone'"]
+    expected_infos += ["Added baseboard convective electric 'Living Zone Electric Baseboards' to thermal zone 'living zone' of unit 1"]
     expected_infos.each do |expected_info|
       assert_includes(result.info.map{ |x| x.logMessage }, expected_info)
     end   

@@ -83,7 +83,7 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
     # assign the availability schedules to the equipment objects
     htg_equip = false
     model.getThermalZones.each do |thermal_zone|
-    htg_coil = HelperMethods.existing_heating_equipment(model, runner, thermal_zone)
+      htg_coil = HelperMethods.existing_heating_equipment(model, runner, thermal_zone)
       unless htg_coil.nil?
         if htg_coil.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
           air_loop_unitary = htg_coil
