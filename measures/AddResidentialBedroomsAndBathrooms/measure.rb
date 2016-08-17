@@ -53,20 +53,36 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-    num_br = runner.getStringArgumentValue("Num_Br", user_arguments)
-    num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments)
+    num_br = runner.getStringArgumentValue("Num_Br", user_arguments).split(",").map(&:strip)
+    num_ba = runner.getStringArgumentValue("Num_Ba", user_arguments).split(",").map(&:strip)
     
     num_units = Geometry.get_num_units(model, runner)
     if num_units.nil?
       return false
     end
-    num_br = num_br.split(",").map(&:strip)
-    num_ba = num_ba.split(",").map(&:strip)
-    
+        
     #error checking
-    total_num_br = 0
-    total_num_ba = 0
-    if num_br.length != num_ba.length
+    if not num_br.all? {|x| HelperMethods.valid_float?(x)}
+      runner.registerError("Number of bedrooms must be a numerical value.")
+      return false
+    else
+      num_br = num_br.map(&:to_f)
+    end
+    if not num_ba.all? {|x| HelperMethods.valid_float?(x)}
+      runner.registerError("Number of bathrooms must be a numerical value.")
+      return false
+    else
+      num_ba = num_ba.map(&:to_f)
+    end
+    if num_br.any? {|x| x <= 0 or x % 1 != 0}
+      runner.registerError("Number of bedrooms must be a positive integer.")
+      return false
+    end
+    if num_ba.any? {|x| x <= 0 or x % 0.25 != 0}
+      runner.registerError("Number of bathrooms must be a positive multiple of 0.25.")
+      return false
+    end
+    if num_br.length > 1 and num_ba.length > 1 and num_br.length != num_ba.length
       runner.registerError("Number of bedroom elements specified inconsistent with number of bathroom elements specified.")
       return false
     end
@@ -74,13 +90,23 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
       runner.registerError("Number of bedroom elements specified inconsistent with number of multifamily units defined in the model.")
       return false
     end
+    if num_ba.length > 1 and num_ba.length != num_units
+      runner.registerError("Number of bathroom elements specified inconsistent with number of multifamily units defined in the model.")
+      return false
+    end    
     
     if num_units > 1 and num_br.length == 1
-      num_br = Array.new(num_units, num_br[0])
-      num_ba = Array.new(num_units, num_ba[0])
-    end 
-    
+      if num_br.length == 1
+        num_br = Array.new(num_units, num_br[0])
+      end
+      if num_ba.length == 1
+        num_ba = Array.new(num_units, num_ba[0])
+      end    
+    end
+      
     # Update number of bedrooms/bathrooms
+    total_num_br = 0
+    total_num_ba = 0    
     (0...num_units).to_a.each do |unit_num|
 
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
@@ -88,16 +114,9 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
           runner.registerError("Could not determine the spaces associated with unit #{unit_num + 1}.")
           return false
       end
-      if num_br[unit_num].to_f > 5
-        runner.registerWarning("Number of bedrooms for Unit #{unit_num + 1} exceeds 5.0; setting number of bedrooms to 5.0.")
-        num_br[unit_num] = "5.0"
-      end
-      if num_ba[unit_num].to_f > 3
-        runner.registerWarning("Number of bathrooms for Unit #{unit_num + 1} exceeds 3.0; setting number of bathrooms to 3.0.")
-        num_ba[unit_num] = "3.0"
-      end
-      num_br[unit_num] = num_br[unit_num].to_f.round(2).to_s
-      num_ba[unit_num] = num_ba[unit_num].to_f.round(2).to_s
+
+      num_br[unit_num] = num_br[unit_num].round(2).to_s
+      num_ba[unit_num] = num_ba[unit_num].round(2).to_s
       Geometry.set_unit_beds_baths_spaces(model, unit_num + 1, unit_spaces, num_br[unit_num], num_ba[unit_num])
       if num_units > 1
         runner.registerInfo("Unit #{unit_num + 1} has been assigned #{num_br[unit_num]} bedroom(s) and #{num_ba[unit_num]} bathroom(s).")

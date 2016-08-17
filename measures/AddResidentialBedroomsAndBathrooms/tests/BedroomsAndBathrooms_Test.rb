@@ -9,21 +9,66 @@ class BedroomsAndBathroomsTest < MiniTest::Test
   
   def test_argument_error_beds_not_equal_to_baths
     args_hash = {}
-    args_hash["Num_Br"] = "3.0, 3.0"
+    args_hash["Num_Br"] = "3.0, 3.0, 3.0"
+    args_hash["Num_Ba"] = "2.0, 2.0"
     result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bedroom elements specified inconsistent with number of bathroom elements specified.")
   end
   
-  def test_argument_error_beds_and_baths_not_equal_to_units
+  def test_argument_error_beds_not_equal_to_units
     args_hash = {}
     args_hash["Num_Br"] = "3.0, 3.0"
-    args_hash["Num_Ba"] = "2.0, 2.0"
     result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bedroom elements specified inconsistent with number of multifamily units defined in the model.")
+  end
+  
+  def test_argument_error_baths_not_equal_to_units
+    args_hash = {}
+    args_hash["Num_Ba"] = "2.0, 2.0"
+    result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "Number of bathroom elements specified inconsistent with number of multifamily units defined in the model.")
+  end  
+  
+  def test_argument_error_beds_not_numerical
+    args_hash = {}
+    args_hash["Num_Br"] = "3.0, 3.0, typo"
+    result = _test_error("multifamily_3_units.osm", args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "Number of bedrooms must be a numerical value.")
+  end
+  
+  def test_argument_error_baths_not_numerical
+    args_hash = {}
+    args_hash["Num_Ba"] = "2.0, 2.0, typo"
+    result = _test_error("multifamily_3_units.osm", args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "Number of bathrooms must be a numerical value.")  
+  end
+  
+  def test_argument_error_beds_not_positive_integer
+    args_hash = {}
+    args_hash["Num_Br"] = "3.0, 3.0, 3.5"
+    result = _test_error("multifamily_3_units.osm", args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "Number of bedrooms must be a positive integer.")    
+  end
+  
+  def test_argument_error_baths_not_positive_multiple_of_0pt25
+    args_hash = {}
+    args_hash["Num_Ba"] = "2.0, 2.0, 2.8"
+    result = _test_error("multifamily_3_units.osm", args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "Number of bathrooms must be a positive multiple of 0.25.")    
   end
   
   def test_error_no_units_defined_in_model
@@ -143,12 +188,6 @@ class BedroomsAndBathroomsTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_beds > 5
-      expected_num_beds = 5
-    end
-    if expected_num_baths > 3
-      expected_num_baths = 3
-    end
 
     if expected_num_units > 1
       assert_equal(result.finalCondition.get.logMessage, "The building has been assigned #{(expected_num_beds*expected_num_units).round(1)} bedroom(s) and #{(expected_num_baths*expected_num_units).round(1)} bathroom(s) across #{expected_num_units} units.")

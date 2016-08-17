@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>d791e430-617f-451a-929b-ed8093420cc2</version_id>
-  <version_modified>20160817T162344Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>15703778-c57b-45a7-a1a6-f470f9fca889</version_id>
+  <version_modified>20160817T201413Z</version_modified>
+  <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
   <description>Sets the number of bedrooms and bathrooms in the building. For multifamily buildings, the bedrooms/bathrooms can be set for all units of the building.</description>
@@ -31,7 +31,7 @@
   </arguments>
   <provenances/>
   <tags>
-    <tag>Envelope.Form</tag>
+    <tag>People.Characteristics</tag>
   </tags>
   <attributes>
     <attribute>
@@ -61,6 +61,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2792E40D</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4F0FB841</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -114,7 +120,7 @@
       <filename>BedroomsAndBathrooms_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>84905B77</checksum>
+      <checksum>92592FE3</checksum>
     </file>
     <file>
       <version>
@@ -125,7 +131,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EBFE48FD</checksum>
+      <checksum>2B7E8164</checksum>
     </file>
   </files>
 </measure>
