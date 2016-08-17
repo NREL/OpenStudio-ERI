@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>f880ffe4-9f6a-4462-a5fc-863f2bce464f</version_id>
-  <version_modified>20160817T162948Z</version_modified>
+  <version_id>b5d7bdf6-a075-4527-8ee6-a39ee3491698</version_id>
+  <version_modified>20160817T204011Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -87,58 +87,16 @@
       <checksum>4F0FB841</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>94E03665</checksum>
-    </file>
-    <file>
-      <filename>multifamily_3_units.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F0401975</checksum>
-    </file>
-    <file>
-      <filename>multifamily_urbanopt.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F0F23347</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8208D03D</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA_no_spaces_in_unit.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>57B74851</checksum>
-    </file>
-    <file>
-      <filename>EmptySeedModel.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>94409751</checksum>
-    </file>
-    <file>
-      <filename>multifamily_4_units_listed_3_units_defined.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2B310635</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>70CABD5C</checksum>
-    </file>
-    <file>
-      <filename>Occupants_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7C88973B</checksum>
     </file>
     <file>
       <version>
