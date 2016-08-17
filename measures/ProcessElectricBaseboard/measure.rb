@@ -21,7 +21,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
   end
   
   def description
-    return "This measure removes any existing electric baseboards from the building and adds electric baseboards. For multifamily buildings, the electric baseboard can bet set for all units of the building."
+    return "This measure removes any existing electric baseboards from the building and adds electric baseboards. For multifamily buildings, the electric baseboard can be set for all units of the building."
   end
   
   def modeler_description

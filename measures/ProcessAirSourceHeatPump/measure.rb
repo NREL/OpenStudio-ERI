@@ -140,7 +140,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
   end
   
   def description
-    return "This measure removes any existing HVAC components from the building and adds an air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the air source heat pump can bet set for all units of the building."
+    return "This measure removes any existing HVAC components from the building and adds an air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the air source heat pump can be set for all units of the building."
   end
   
   def modeler_description

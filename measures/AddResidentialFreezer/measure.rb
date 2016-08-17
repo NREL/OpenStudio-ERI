@@ -10,7 +10,7 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
   end
   
   def description
-    return "Adds (or replaces) a residential freezer with the specified efficiency, operation, and schedule. For multifamily buildings, the freezer can bet set for all units of the building."
+    return "Adds (or replaces) a residential freezer with the specified efficiency, operation, and schedule. For multifamily buildings, the freezer can be set for all units of the building."
   end
   
   def modeler_description

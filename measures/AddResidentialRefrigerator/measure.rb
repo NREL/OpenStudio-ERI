@@ -10,7 +10,7 @@ class ResidentialRefrigerator < OpenStudio::Ruleset::ModelUserScript
   end
   
   def description
-    return "Adds (or replaces) a residential refrigerator with the specified efficiency, operation, and schedule. For multifamily buildings, the refrigerator can bet set for all units of the building."
+    return "Adds (or replaces) a residential refrigerator with the specified efficiency, operation, and schedule. For multifamily buildings, the refrigerator can be set for all units of the building."
   end
   
   def modeler_description

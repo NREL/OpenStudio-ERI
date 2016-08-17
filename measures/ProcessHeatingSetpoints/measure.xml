@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>9521b1b6-c5de-4c08-8fc9-956a5ff1bf24</version_id>
-  <version_modified>20160816T202532Z</version_modified>
+  <version_id>2cfd54fb-e765-442c-aa1f-08d537cfa493</version_id>
+  <version_modified>20160817T154335Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -13,7 +13,7 @@
     <argument>
       <name>htg_wkdy</name>
       <display_name>Weekday Setpoint</display_name>
-      <description>Specify a single heating setpoint or a 24-hour heating schedule for the weekdays.</description>
+      <description>Specify a single heating setpoint or a 24-hour comma-separated heating schedule for the weekdays.</description>
       <type>String</type>
       <units>degrees F</units>
       <required>false</required>
@@ -23,7 +23,7 @@
     <argument>
       <name>htg_wked</name>
       <display_name>Weekend Setpoint</display_name>
-      <description>Specify a single heating setpoint or a 24-hour heating schedule for the weekend.</description>
+      <description>Specify a single heating setpoint or a 24-hour comma-separated heating schedule for the weekend.</description>
       <type>String</type>
       <units>degrees F</units>
       <required>false</required>
@@ -139,6 +139,12 @@
       <checksum>8208D03D</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>70CABD5C</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -147,13 +153,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DE762CEE</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>70CABD5C</checksum>
+      <checksum>F12F82EC</checksum>
     </file>
   </files>
 </measure>

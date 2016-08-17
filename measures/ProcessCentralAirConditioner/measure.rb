@@ -94,7 +94,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
   end
   
   def description
-    return "This measure removes any existing HVAC cooling components from the building and adds a central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the central air conditioner can bet set for all units of the building."
+    return "This measure removes any existing HVAC cooling components from the building and adds a central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the central air conditioner can be set for all units of the building."
   end
   
   def modeler_description

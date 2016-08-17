@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>50d458fc-3d36-4bd1-8da4-44e0c23d347b</version_id>
-  <version_modified>20160816T210439Z</version_modified>
+  <version_id>831ebb38-1eb8-45c4-9905-d25723b90594</version_id>
+  <version_modified>20160817T153458Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
-  <description>This measure removes any existing HVAC cooling components from the building and adds a room air conditioner. For multifamily buildings, the room air conditioner can bet set for all units of the building.</description>
+  <description>This measure removes any existing HVAC cooling components from the building and adds a room air conditioner. For multifamily buildings, the room air conditioner can be set for all units of the building.</description>
   <modeler_description>Any cooling components are removed from any existing air loops or zones. Any existing air loops are also removed. An HVAC packaged terminal air conditioner is added to the living zone.</modeler_description>
   <arguments>
     <argument>
@@ -185,23 +185,6 @@
       <checksum>8208D03D</checksum>
     </file>
     <file>
-      <filename>process_room_air_conditioner_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>244BB3D0</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>D1B9DA80</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -302,6 +285,23 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>2910049D</checksum>
+    </file>
+    <file>
+      <filename>process_room_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>592725D5</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>24828A17</checksum>
     </file>
   </files>
 </measure>

@@ -29,7 +29,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return "This measure removes any existing HVAC cooling components (except electric baseboard) from the building and adds a mini-split heat pump. For multifamily buildings, the mini-split heat pump can bet set for all units of the building."
+    return "This measure removes any existing HVAC cooling components (except electric baseboard) from the building and adds a mini-split heat pump. For multifamily buildings, the mini-split heat pump can be set for all units of the building."
   end
 
   # human readable description of modeling approach

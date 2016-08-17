@@ -13,7 +13,7 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Number of units based on number of bedroom elements specified inconsistent with number of units based on number of bathroom elements specified.")    
+    assert_equal(result.errors[0].logMessage, "Number of bedroom elements specified inconsistent with number of bathroom elements specified.")
   end
   
   def test_argument_error_beds_and_baths_not_equal_to_units
@@ -23,7 +23,7 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Number of units based on number of bedrooms elements specified in consistent with number of units defined in the model.")    
+    assert_equal(result.errors[0].logMessage, "Number of bedroom elements specified inconsistent with number of multifamily units defined in the model.")
   end
   
   def test_error_no_units_defined_in_model

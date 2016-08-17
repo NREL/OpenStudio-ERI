@@ -37,13 +37,14 @@ The New Construction workflow illustrates how to build up a complete residential
 |:---|:---|:---|
 |1. Location|1. Set Residential Location||
 |2. Geometry|1. Create Residential Geometry||
-||2. Set Residential Number of Beds, Baths, and Occupants||
-||3. Set Residential Orientation||
-||4. Set Residential Eaves||
+||2. Set Residential Number of Beds and Baths||
+||3. Set Residential Number of Occupants|Beds/Baths|
+||4. Set Residential Orientation||
+||5. Set Residential Eaves||
 ||6. Set Residential Overhangs|Window Area|
 ||7. Set Residential Door Area||
-||7. Set Residential Window Areas||
-||8. Set Neighbors||
+||8. Set Residential Window Areas||
+||9. Set Neighbors||
 |3. Envelope Constructions|1. Set Residential Ceilings/Roofs - Unfinished Attic Constructions||
 ||2. Set Residential Ceilings/Roofs - Finished Roof Construction||
 ||3. Set Residential Ceilings/Roofs - Roof Sheathing||
