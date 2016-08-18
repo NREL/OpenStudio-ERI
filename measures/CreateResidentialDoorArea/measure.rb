@@ -46,18 +46,14 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-    door_area = OpenStudio::convert(runner.getDoubleArgumentValue("userdefineddoorarea",user_arguments),"ft^2","m^2").get
-
+    door_area = OpenStudio::convert(runner.getDoubleArgumentValue("userdefineddoorarea",user_arguments),"ft^2","m^2").get    
+    
     model.getSpaces.each do |space|
         space.surfaces.each do |surface|
             next if not (surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors")
-            door_removed = false
             surface.subSurfaces.each do |sub_surface|
                 next if sub_surface.subSurfaceType.downcase != "door"
                 sub_surface.remove
-                door_removed = true
-            end    
-            if door_removed
                 runner.registerInfo("Removed door(s) from #{surface.name}.")
             end
         end
@@ -79,85 +75,104 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
     # get building orientation
     building_orientation = model.getBuilding.northAxis.round
 	
-    # get all exterior front walls on the lowest story
-    front_walls = []
-    Geometry.get_finished_spaces(model).each do |space|
-        next if Geometry.space_is_below_grade(space)
-        space.surfaces.each do |surface|
-            next if not (surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors")
-            wall_azimuth = OpenStudio::Quantity.new(surface.azimuth, OpenStudio::createSIAngle)
-            wall_orientation = (OpenStudio.convert(wall_azimuth, OpenStudio::createIPAngle).get.value + building_orientation).round			
-            next if wall_orientation - 180 != building_orientation
-            front_walls << surface
-        end
-    end
-    
-    first_story_front_walls = []
-    first_story_front_wall_minz = 99999
-    front_walls.each do |front_wall|
-        zvalues = Geometry.getSurfaceZValues([front_wall])
-        minz = zvalues.min + front_wall.space.get.zOrigin
-        if minz < first_story_front_wall_minz
-            first_story_front_walls.clear
-            first_story_front_walls << front_wall
-            first_story_front_wall_minz = minz
-        elsif minz == first_story_front_wall_minz
-            first_story_front_walls << front_wall
-        end
-    end
-    
-    if first_story_front_walls.size == 0
-        runner.registerError("Could not find appropriate surface for the door. No door was added.")
+    num_units = Geometry.get_num_units(model, runner)
+    if num_units.nil?
         return false
-    end
-    
-    door_sub_surface = nil
-    first_story_front_walls.each do |first_story_front_wall|
-      # Try to place door on any surface with enough area
-      next if door_area >= first_story_front_wall.grossArea
-      
-      front_wall_least_x = 10000
-      front_wall_least_z = 10000	
-      sw_point = nil
-      vertices = first_story_front_wall.vertices
-      vertices.each do |vertex|
-        if vertex.x < front_wall_least_x
-          front_wall_least_x = vertex.x
-        end
-        if vertex.z < front_wall_least_z
-          front_wall_least_z = vertex.z
-        end	
-      end
-      vertices.each do |vertex|
-        if vertex.x == front_wall_least_x and vertex.z == front_wall_least_z
-          sw_point = vertex
-        end
-      end
-      
-      if (door_offset + door_width) * door_height > first_story_front_wall.grossArea
-        # Reduce door offset to fit door on surface
-        door_offset = 0
+    end  
+  
+    (0...num_units).to_a.each do |unit_num|
+      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)  
+  
+      # get all exterior front walls on the lowest story
+      front_walls = []
+      Geometry.get_finished_spaces(model, unit_spaces).each do |space|
+          next if Geometry.space_is_below_grade(space)
+          space.surfaces.each do |surface|
+              next if not (surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors")
+              wall_azimuth = OpenStudio::Quantity.new(surface.azimuth, OpenStudio::createSIAngle)
+              wall_orientation = (OpenStudio.convert(wall_azimuth, OpenStudio::createIPAngle).get.value + building_orientation).round			
+              next if wall_orientation - 180 != building_orientation
+              front_walls << surface
+          end
       end
 
-      door_sw_point = OpenStudio::Point3d.new(sw_point.x + door_offset, sw_point.y, sw_point.z)
-      door_nw_point = OpenStudio::Point3d.new(sw_point.x + door_offset, sw_point.y, sw_point.z + door_height)
-      door_ne_point = OpenStudio::Point3d.new(sw_point.x + door_offset + door_width, sw_point.y, sw_point.z + door_height)
-      door_se_point = OpenStudio::Point3d.new(sw_point.x + door_offset + door_width, sw_point.y, sw_point.z)	
-      
-      door_polygon = Geometry.make_polygon(door_sw_point, door_se_point, door_ne_point, door_nw_point)
-      door_sub_surface = OpenStudio::Model::SubSurface.new(door_polygon, model)
-      door_sub_surface.setName("#{first_story_front_wall.name} - Front Door")
-      door_sub_surface.setSubSurfaceType("Door")
-      door_sub_surface.setSurface(first_story_front_wall)	
-      added_door = true
+      first_story_front_walls = []
+      first_story_front_wall_minz = 99999
+      front_walls.each do |front_wall|
+          zvalues = Geometry.getSurfaceZValues([front_wall])
+          minz = zvalues.min + front_wall.space.get.zOrigin
+          if minz < first_story_front_wall_minz
+              first_story_front_walls.clear
+              first_story_front_walls << front_wall
+              first_story_front_wall_minz = minz
+          elsif minz == first_story_front_wall_minz
+              first_story_front_walls << front_wall
+          end
+      end
+
+      unit_has_door = true
+      if first_story_front_walls.size == 0
+          runner.registerInfo("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
+          unit_has_door = false
+      end
+
+      door_sub_surface = nil
+      first_story_front_walls.each do |first_story_front_wall|
+        # Try to place door on any surface with enough area
+        next if door_area >= first_story_front_wall.grossArea
+        
+        front_wall_least_x = 10000
+        front_wall_least_z = 10000	
+        sw_point = nil
+        vertices = first_story_front_wall.vertices
+        vertices.each do |vertex|
+          if vertex.x < front_wall_least_x
+            front_wall_least_x = vertex.x
+          end
+          if vertex.z < front_wall_least_z
+            front_wall_least_z = vertex.z
+          end	
+        end
+        vertices.each do |vertex|
+          if vertex.x == front_wall_least_x and vertex.z == front_wall_least_z
+            sw_point = vertex
+          end
+        end
+        
+        if (door_offset + door_width) * door_height > first_story_front_wall.grossArea
+          # Reduce door offset to fit door on surface
+          door_offset = 0
+        end
+        
+        num_existing_doors_on_this_surface = 0
+        first_story_front_wall.subSurfaces.each do |sub_surface|
+          if sub_surface.subSurfaceType == "Door"
+            num_existing_doors_on_this_surface += 1
+          end
+        end
+        new_door_offset = door_offset + (door_offset + door_width) * num_existing_doors_on_this_surface
+
+        door_sw_point = OpenStudio::Point3d.new(sw_point.x + new_door_offset, sw_point.y, sw_point.z)
+        door_nw_point = OpenStudio::Point3d.new(sw_point.x + new_door_offset, sw_point.y, sw_point.z + door_height)
+        door_ne_point = OpenStudio::Point3d.new(sw_point.x + new_door_offset + door_width, sw_point.y, sw_point.z + door_height)
+        door_se_point = OpenStudio::Point3d.new(sw_point.x + new_door_offset + door_width, sw_point.y, sw_point.z)	
+        
+        door_polygon = Geometry.make_polygon(door_sw_point, door_se_point, door_ne_point, door_nw_point)
+        door_sub_surface = OpenStudio::Model::SubSurface.new(door_polygon, model)
+        door_sub_surface.setName("Unit #{unit_num + 1} - #{first_story_front_wall.name} - Front Door")
+        door_sub_surface.setSubSurfaceType("Door")
+        door_sub_surface.setSurface(first_story_front_wall)	
+        added_door = true
+      end
+
+      if door_sub_surface.nil? and unit_has_door
+          runner.registerInfo("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
+      elsif not door_sub_surface.nil?
+          runner.registerInfo("For unit #{unit_num + 1} added #{OpenStudio::convert(door_area,"m^2","ft^2").get.round(1)} ft^2 door with name '#{door_sub_surface.name}'.")
+      end
+    
     end
     
-    if door_sub_surface.nil? then
-        runner.registerError("Could not find appropriate surface for the door. No door was added.")
-        return false
-    end
-
-    runner.registerInfo("Added #{OpenStudio::convert(door_area,"m^2","ft^2").get.round(1)} ft^2 door with name '#{door_sub_surface.name}'.")
     return true
 
   end
