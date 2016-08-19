@@ -5,7 +5,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class CreateBasicGeometryTest < MiniTest::Test
+class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
 
   def test_error_existing_geometry
     args_hash = {}
@@ -347,7 +347,7 @@ class CreateBasicGeometryTest < MiniTest::Test
   
   def _test_error(osm_file_or_model, args_hash)
     # create an instance of the measure
-    measure = CreateBasicGeometry.new
+    measure = CreateResidentialSingleFamilyDetachedGeometry.new
 
     # check for standard methods
     assert(!measure.name.empty?)

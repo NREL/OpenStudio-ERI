@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>bc4239b4-a1f3-4a10-9f4b-ed7cd3c328b0</version_id>
-  <version_modified>20160818T205014Z</version_modified>
+  <version_id>347bc641-2830-420a-acbf-fbd5252351ff</version_id>
+  <version_modified>20160819T160232Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
-  <description>Sets the opaque door area for the building. Doors with glazing should be set as window area.</description>
-  <modeler_description>Sets the opaque door area for the lowest above-grade front surface of the building attached to living space. Any existing doors are removed.</modeler_description>
+  <description>Sets the opaque door area for the building. Doors with glazing should be set as window area. For multifamily buildings, applies to each unit.</description>
+  <modeler_description>Sets the opaque door area for the lowest above-grade front surface of the building attached to living space. Any existing doors are removed. For multifamily buildings, applies to each unit.</modeler_description>
   <arguments>
     <argument>
       <name>userdefineddoorarea</name>
@@ -55,12 +55,6 @@
       <checksum>8208D03D</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>70CABD5C</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -79,6 +73,18 @@
       <checksum>F0F23347</checksum>
     </file>
     <file>
+      <filename>DoorArea_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>72E2A074</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8FE6002</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -87,13 +93,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6D742D51</checksum>
-    </file>
-    <file>
-      <filename>DoorArea_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>72E2A074</checksum>
+      <checksum>E87DB01B</checksum>
     </file>
   </files>
 </measure>

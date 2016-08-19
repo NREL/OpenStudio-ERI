@@ -1,12 +1,12 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>create_basic_geometry</name>
+  <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>08db0bfe-6079-4f03-bcca-4a79053cb9f2</version_id>
-  <version_modified>20160816T203419Z</version_modified>
+  <version_id>2e582c29-d430-41ea-a859-ed32a0fdf5e5</version_id>
+  <version_modified>20160819T162341Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
-  <class_name>CreateBasicGeometry</class_name>
-  <display_name>Create Residential Geometry</display_name>
+  <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
+  <display_name>Create Residential Single-Family Detached Geometry</display_name>
   <description>Sets the basic geometry for the building. Building is limited to one foundation type. Garage is tucked within the building, on the front left or front right corners of the building.</description>
   <modeler_description>Gathers living space area, wall height per floor, number of floors, aspect ratio, garage width and depth, garage position, foundation type and wall height, attic and roof type, and roof pitch. Constructs building by calculating footprint and performing a series of affine transformations into living, foundation, and attic spaces.</modeler_description>
   <arguments>
@@ -276,10 +276,22 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8208D03D</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8FE6002</checksum>
+    </file>
+    <file>
       <filename>create_basic_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>01A1152E</checksum>
+      <checksum>B63838B9</checksum>
     </file>
     <file>
       <version>
@@ -290,19 +302,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DF333770</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8208D03D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>70CABD5C</checksum>
+      <checksum>B27F98FE</checksum>
     </file>
   </files>
 </measure>

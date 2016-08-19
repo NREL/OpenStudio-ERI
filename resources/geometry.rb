@@ -50,7 +50,7 @@ class Geometry
         
         # Update existing object?
         model.getElectricEquipments.each do |ee|
-            next if !ee.name.to_s.start_with?("unit=#{unit_num}")
+            next if !ee.name.to_s.start_with?("unit=#{unit_num}|")
             ee.setName(str)
             ee.electricEquipmentDefinition.setName(str)
             return
@@ -74,7 +74,7 @@ class Geometry
         spaces_list = nil
         
         model.getElectricEquipments.each do |ee|
-            next if !ee.name.to_s.start_with?("unit=#{unit_num}")
+            next if !ee.name.to_s.start_with?("unit=#{unit_num}|")
             ee.name.to_s.split("|").each do |data|
                 if data.include?("bed") and !data.include?("nil")
                     vals = data.split("=")

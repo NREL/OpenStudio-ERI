@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>36409e27-1f41-4da9-b7d8-1e454c4aec58</version_id>
-  <version_modified>20160817T154335Z</version_modified>
+  <version_id>4a95c88a-70f0-4ab1-b171-cb70315c3a08</version_id>
+  <version_modified>20160819T150458Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -155,12 +155,6 @@
       <checksum>8208D03D</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>70CABD5C</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.11.5</identifier>
@@ -170,6 +164,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>48AD7589</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8FE6002</checksum>
     </file>
   </files>
 </measure>

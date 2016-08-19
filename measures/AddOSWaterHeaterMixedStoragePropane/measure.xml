@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_propane</name>
   <uid>202bfb71-76e0-4615-867b-5d51e8e25223</uid>
-  <version_id>0898b055-4de9-47a1-9d1b-a5e15a6e5276</version_id>
-  <version_modified>20160816T202527Z</version_modified>
+  <version_id>0c9b95b9-7ad5-4591-a6df-1343de70efcb</version_id>
+  <version_modified>20160819T150453Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStoragePropane</class_name>
   <display_name>Set Residential Propane Tank Water Heater</display_name>
@@ -163,7 +163,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>70CABD5C</checksum>
+      <checksum>B8FE6002</checksum>
     </file>
   </files>
 </measure>

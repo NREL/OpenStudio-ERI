@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>e70602e9-a4c5-481f-8e5a-88360fc3c8e9</version_id>
-  <version_modified>20160817T153457Z</version_modified>
+  <version_id>d8c21835-46cb-4b00-865e-b8b5dfb863c9</version_id>
+  <version_modified>20160819T150459Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -338,12 +338,6 @@
       <checksum>DDBF85D7</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>70CABD5C</checksum>
-    </file>
-    <file>
       <filename>process_furnace_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -359,6 +353,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>025BEC61</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8FE6002</checksum>
     </file>
   </files>
 </measure>

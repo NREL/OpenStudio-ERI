@@ -5,11 +5,11 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
+class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::ModelUserScript
     
   # human readable name
   def name
-    return "Create Residential Geometry"
+    return "Create Residential Single-Family Detached Geometry"
   end
 
   # human readable description
@@ -720,4 +720,4 @@ class CreateBasicGeometry < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 # register the measure to be used by the application
-CreateBasicGeometry.new.registerWithApplication
+CreateResidentialSingleFamilyDetachedGeometry.new.registerWithApplication

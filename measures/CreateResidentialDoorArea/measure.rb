@@ -14,12 +14,12 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return "Sets the opaque door area for the building. Doors with glazing should be set as window area."
+    return "Sets the opaque door area for the building. Doors with glazing should be set as window area. For multifamily buildings, applies to each unit."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "Sets the opaque door area for the lowest above-grade front surface of the building attached to living space. Any existing doors are removed."
+    return "Sets the opaque door area for the lowest above-grade front surface of the building attached to living space. Any existing doors are removed. For multifamily buildings, applies to each unit."
   end
 
   # define the arguments that the user will input
@@ -110,14 +110,28 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
           end
       end
 
+      first_story_most_front_walls = []
+      first_story_front_wall_miny = 99999
+      first_story_front_walls.each do |front_wall|
+          yvalues = Geometry.getSurfaceYValues([front_wall])
+          miny = yvalues.min + front_wall.space.get.yOrigin
+          if miny < first_story_front_wall_miny
+              first_story_most_front_walls.clear
+              first_story_most_front_walls << front_wall
+              first_story_front_wall_miny = miny
+          elsif miny == first_story_front_wall_miny
+              first_story_most_front_walls << front_wall
+          end
+      end      
+
       unit_has_door = true
       if first_story_front_walls.size == 0
-          runner.registerInfo("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
+          runner.registerWarning("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
           unit_has_door = false
       end
 
       door_sub_surface = nil
-      first_story_front_walls.each do |first_story_front_wall|
+      first_story_most_front_walls.each do |first_story_front_wall|
         # Try to place door on any surface with enough area
         next if door_area >= first_story_front_wall.grossArea
         
@@ -166,7 +180,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       end
 
       if door_sub_surface.nil? and unit_has_door
-          runner.registerInfo("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
+          runner.registerWarning("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
       elsif not door_sub_surface.nil?
           runner.registerInfo("For unit #{unit_num + 1} added #{OpenStudio::convert(door_area,"m^2","ft^2").get.round(1)} ft^2 door with name '#{door_sub_surface.name}'.")
       end
