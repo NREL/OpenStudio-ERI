@@ -98,7 +98,7 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     offset.setDisplayName("Offset Depth")
     offset.setUnits("ft")
     offset.setDescription("The depth of the offset.")
-    offset.setDefaultValue(8.0)
+    offset.setDefaultValue(0.0)
     args << offset      
     
     return args
@@ -122,6 +122,24 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     inset_depth = OpenStudio::convert(runner.getDoubleArgumentValue("inset_depth",user_arguments),"ft","m").get
     inset_pos = runner.getStringArgumentValue("inset_pos",user_arguments)
     offset = OpenStudio::convert(runner.getDoubleArgumentValue("offset",user_arguments),"ft","m").get    
+    
+    # error checking
+    if model.getSpaces.size > 0
+      runner.registerError("Starting model is not empty.")
+      return false
+    end
+    if aspect_ratio < 0
+      runner.registerError("Invalid aspect ratio entered.")
+      return false
+    end
+    if num_floors > 6
+      runner.registerError("Too many floors.")
+      return false
+    end    
+    
+    # starting spaces
+    starting_spaces = model.getSpaces
+    runner.registerInitialCondition("The building started with #{starting_spaces.size} spaces.")    
     
     # calculate the dimensions of the building
     footprint = (unit_ffa / num_floors) + inset_width * inset_depth
