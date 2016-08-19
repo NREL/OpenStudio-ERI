@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>951705f2-3992-444d-96fc-e1f76d044797</version_id>
-  <version_modified>20160819T150458Z</version_modified>
+  <version_id>f58779a9-ec3a-47b7-9fcb-001d67556b9a</version_id>
+  <version_modified>20160819T200254Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>
@@ -95,7 +95,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B8FE6002</checksum>
+      <checksum>BF0D655D</checksum>
     </file>
   </files>
 </measure>

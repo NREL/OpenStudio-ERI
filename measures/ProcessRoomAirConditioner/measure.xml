@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>9a9f7ca0-a89a-41d9-87c4-91f72815b75e</version_id>
-  <version_modified>20160819T150459Z</version_modified>
+  <version_id>d0dbc8ec-b38b-4b4e-b9a1-f383cdc4c16e</version_id>
+  <version_modified>20160819T201511Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -287,6 +287,12 @@
       <checksum>592725D5</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BF0D655D</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -296,12 +302,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>24828A17</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B8FE6002</checksum>
     </file>
   </files>
 </measure>

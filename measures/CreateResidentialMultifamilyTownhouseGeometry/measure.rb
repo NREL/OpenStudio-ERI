@@ -99,7 +99,14 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     offset.setUnits("ft")
     offset.setDescription("The depth of the offset.")
     offset.setDefaultValue(0.0)
-    args << offset      
+    args << offset
+    
+    #make an argument for using zone multipliers
+    use_zone_mult = OpenStudio::Ruleset::OSArgument::makeBoolArgument("use_zone_mult", true)
+    use_zone_mult.setDisplayName("Use Zone Multipliers?")
+    use_zone_mult.setDescription("Model only one interior unit with its thermal zone multiplier equal to the number of interior units.")
+    use_zone_mult.setDefaultValue(true)
+    args << use_zone_mult    
     
     return args
   end
@@ -121,7 +128,8 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     inset_width = OpenStudio::convert(runner.getDoubleArgumentValue("inset_width",user_arguments),"ft","m").get
     inset_depth = OpenStudio::convert(runner.getDoubleArgumentValue("inset_depth",user_arguments),"ft","m").get
     inset_pos = runner.getStringArgumentValue("inset_pos",user_arguments)
-    offset = OpenStudio::convert(runner.getDoubleArgumentValue("offset",user_arguments),"ft","m").get    
+    offset = OpenStudio::convert(runner.getDoubleArgumentValue("offset",user_arguments),"ft","m").get
+    use_zone_mult = runner.getBoolArgumentValue("use_zone_mult",user_arguments)
     
     # error checking
     if model.getSpaces.size > 0
@@ -169,7 +177,7 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     
     # create living zone
     living_zone = OpenStudio::Model::ThermalZone.new(model)
-    living_zone.setName(Constants.LivingZone)    
+    living_zone.setName(Constants.LivingZone)
     
     # first floor
     living_spaces = []
@@ -183,6 +191,7 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     # additional floors
     if num_floors > 1
       (1...num_floors).to_a.each do |floor|
+      
         new_living_space = living_space.clone.to_Space.get
         
         m = OpenStudio::Matrix.new(4,4,0)
@@ -204,9 +213,17 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
         
     (1...num_units).to_a.each do |unit_num|
 
-      living_zone = OpenStudio::Model::ThermalZone.new(model)
-      living_zone.setName(Constants.LivingZone)    
-    
+      if use_zone_mult and (unit_num == 1 or unit_num + 1 == num_units)
+        living_zone = OpenStudio::Model::ThermalZone.new(model)
+        living_zone.setName(Constants.LivingZone)
+        if unit_num == 1
+          living_zone.setMultiplier(num_units - 2)
+        end
+      elsif !use_zone_mult
+        living_zone = OpenStudio::Model::ThermalZone.new(model)
+        living_zone.setName(Constants.LivingZone)       
+      end
+      
       new_living_spaces = []
       living_spaces.each do |living_space|
     
@@ -224,14 +241,22 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
         new_living_space.changeTransformation(OpenStudio::Transformation.new(m))
         new_living_space.setXOrigin(0)
         new_living_space.setYOrigin(0)
-        new_living_space.setThermalZone(living_zone)
+        if (use_zone_mult and (unit_num == 1 or unit_num + 1 == num_units)) or !use_zone_mult
+          new_living_space.setThermalZone(living_zone)
+        else
+          new_living_space.resetThermalZone          
+        end        
      
         new_living_spaces << new_living_space
       
       end
       
-      Geometry.set_unit_beds_baths_spaces(model, unit_num + 1, new_living_spaces)
-          
+      if unit_num == 1 or !use_zone_mult
+        Geometry.set_unit_beds_baths_spaces(model, unit_num + 1, new_living_spaces)
+      elsif use_zone_mult and unit_num + 1 == num_units
+        Geometry.set_unit_beds_baths_spaces(model, 3, new_living_spaces)
+      end
+      
     end   
     
     # put all of the spaces in the model into a vector
@@ -243,9 +268,35 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     # intersect and match surfaces for each space in the vector
     OpenStudio::Model.intersectSurfaces(spaces)
     OpenStudio::Model.matchSurfaces(spaces)    
+
+    spaces_associated_with_units = []
+    (1..num_units).to_a.each do |unit_num|
+      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
+      next if unit_spaces.nil?
+      unit_spaces.each do |space|
+        spaces_associated_with_units << space
+      end
+    end
+    model.getSpaces.each do |space|
+      unless spaces_associated_with_units.include? space
+        space.remove
+      end
+    end
+    
+    model.getSurfaces.each do |surface|
+      next unless surface.outsideBoundaryCondition.downcase == "surface"
+      next if surface.adjacentSurface.is_initialized
+      surface.setOutsideBoundaryCondition("Adiabatic")
+    end
     
     # Store dwelling unit information (for consistency with multifamily buildings)
+    if use_zone_mult
+      num_units = 3
+    end
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)    
+    
+    # reporting final condition of model
+    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")	    
     
     return true
 

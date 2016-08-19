@@ -296,13 +296,16 @@ class Geometry
           end
         end
       end
-      control_slave_zones_hash[control_zone] = slave_zones
+      unless control_zone.nil?
+        control_slave_zones_hash[control_zone] = slave_zones
+      end
       return control_slave_zones_hash
     end
     
     def self.get_thermal_zones_from_unit_spaces(unit_spaces)
       thermal_zones = []
       unit_spaces.each do |space|
+        next unless space.thermalZone.is_initialized
         unless thermal_zones.include? space.thermalZone.get
           thermal_zones << space.thermalZone.get
         end

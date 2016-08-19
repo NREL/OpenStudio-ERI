@@ -53,14 +53,23 @@ class CreateResidentialMultifamilyTownhouseGeometryTest < MiniTest::Test
   
   def test_fourplex_with_left_inset
     args_hash = {}
-    args_hash["num_units"] = 2
+    args_hash["num_units"] = 4
     args_hash["inset_width"] = 6
     args_hash["inset_depth"] = 6
     args_hash["inset_pos"] = "Left"
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
-  end    
+  end
+  
+  def test_fourplex_no_zone_multipliers
+    args_hash = {}
+    args_hash["num_units"] = 4
+    args_hash["use_zone_mult"] = false
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end  
   
   private
   

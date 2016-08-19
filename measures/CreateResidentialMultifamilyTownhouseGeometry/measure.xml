@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_townhouse_geometry</name>
   <uid>0042e6a0-fc07-4080-9ba7-7bf0b930dc99</uid>
-  <version_id>0b8dfb35-f4bc-4c88-b02d-2403be09fca0</version_id>
-  <version_modified>20160819T162552Z</version_modified>
+  <version_id>1b110279-f319-4fff-a4ed-0e28b201c8e2</version_id>
+  <version_modified>20160819T211429Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyTownhouseGeometry</class_name>
   <display_name>Create Residential Multifamily Townhouse Geometry</display_name>
@@ -107,7 +107,26 @@
       <units>ft</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>8</default_value>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>use_zone_mult</name>
+      <display_name>Use Zone Multipliers?</display_name>
+      <description>Model only one interior unit with its thermal zone multiplier equal to the number of interior units.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
     </argument>
   </arguments>
   <provenances/>
@@ -144,10 +163,22 @@
       <checksum>8208D03D</checksum>
     </file>
     <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A2C693E7</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B8FE6002</checksum>
+      <checksum>BF0D655D</checksum>
+    </file>
+    <file>
+      <filename>create_residential_multifamily_townhouse_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B2FCD05B</checksum>
     </file>
     <file>
       <version>
@@ -158,7 +189,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0B4D5FCC</checksum>
+      <checksum>553C713F</checksum>
     </file>
   </files>
 </measure>
