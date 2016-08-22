@@ -5,7 +5,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class CreateResidentialMultifamilyTownhouseGeometryTest < MiniTest::Test
+class CreateResidentialMultifamilyApartmentsInteriorCorridorGeometryTest < MiniTest::Test
 
   def test_error_existing_geometry
     args_hash = {}
@@ -24,56 +24,48 @@ class CreateResidentialMultifamilyTownhouseGeometryTest < MiniTest::Test
     assert_equal(result.errors[0].logMessage, "Invalid aspect ratio entered.")
   end 
   
-  def test_argument_error_num_floors_invalid
+  def test_argument_error_num_units_per_floor_invalid
     args_hash = {}
-    args_hash["num_floors"] = 7
+    args_hash["num_units_per_floor"] = 3
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Too many floors.")
+    assert_equal(result.errors[0].logMessage, "The number of units per floor must be even.")
   end
 
-  def test_duplex
+  def test_right_inset
     args_hash = {}
-    args_hash["num_units"] = 2
+    args_hash["corr_width"] = 0
+    args_hash["inset_width"] = 6
+    args_hash["inset_depth"] = 6    
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
   end
   
-  def test_threeplex_with_right_inset
+  def test_left_inset
     args_hash = {}
-    args_hash["num_units"] = 3
-    args_hash["inset_width"] = 6
-    args_hash["inset_depth"] = 6
-    result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
-  end  
-  
-  def test_fourplex_with_left_inset
-    args_hash = {}
-    args_hash["inset_width"] = 6
-    args_hash["inset_depth"] = 6
     args_hash["inset_pos"] = "Left"
+    args_hash["inset_width"] = 6
+    args_hash["inset_depth"] = 6
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
   end
   
-  def test_fourplex_no_zone_multipliers
+  def test_no_corridor
     args_hash = {}
-    args_hash["use_zone_mult"] = "false"
+    args_hash["corr_width"] = 0
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
-  end  
+  end
   
   private
   
   def _test_error(osm_file_or_model, args_hash)
     # create an instance of the measure
-    measure = CreateResidentialMultifamilyTownhouseGeometry.new
+    measure = CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry.new
 
     # check for standard methods
     assert(!measure.name.empty?)

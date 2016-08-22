@@ -1,14 +1,14 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>create_residential_multifamily_townhouse_geometry</name>
-  <uid>0042e6a0-fc07-4080-9ba7-7bf0b930dc99</uid>
-  <version_id>46e06b68-b7f8-402a-97bf-af6817e27c69</version_id>
+  <name>create_residential_multifamily_apartments_interior_corridor_geometry</name>
+  <uid>5118a1e1-bc21-4cfa-9687-1590c9727d06</uid>
+  <version_id>34ede824-6f48-4d3a-aeb0-affc7c8eadaa</version_id>
   <version_modified>20160822T222923Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
-  <class_name>CreateResidentialMultifamilyTownhouseGeometry</class_name>
-  <display_name>Create Residential Multifamily Townhouse Geometry</display_name>
-  <description>Sets the basic geometry for the townhouse.</description>
-  <modeler_description>Sets the basic geometry for the townhouse by cloning a prototype unit.</modeler_description>
+  <class_name>CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry</class_name>
+  <display_name>Create Residential Multifamily Apartments Interior Corridor Geometry</display_name>
+  <description>Sets the basic geometry for the apartments w/interior corridor.</description>
+  <modeler_description>Sets the basic geometry for the apartments w/interior corridor by cloning a prototype unit.</modeler_description>
   <arguments>
     <argument>
       <name>unit_ffa</name>
@@ -48,17 +48,17 @@
       <units>#</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>4</default_value>
+      <default_value>24</default_value>
     </argument>
     <argument>
-      <name>num_floors</name>
-      <display_name>Num Floors Per Unit</display_name>
-      <description>The number of floors per unit.</description>
+      <name>num_units_per_floor</name>
+      <display_name>Num Units Per Floor</display_name>
+      <description>The number of units per floor.</description>
       <type>Integer</type>
       <units>#</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>2</default_value>
+      <default_value>8</default_value>
     </argument>
     <argument>
       <name>inset_width</name>
@@ -100,14 +100,14 @@
       </choices>
     </argument>
     <argument>
-      <name>offset</name>
-      <display_name>Offset Depth</display_name>
-      <description>The depth of the offset.</description>
+      <name>corr_width</name>
+      <display_name>Corridor Width</display_name>
+      <description>The width of the corridor.</description>
       <type>Double</type>
       <units>ft</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>4</default_value>
     </argument>
     <argument>
       <name>use_zone_mult</name>
@@ -157,16 +157,10 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A2C693E7</checksum>
-    </file>
-    <file>
-      <filename>create_residential_multifamily_townhouse_geometry_test.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>60A9F47C</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>B60C7385</checksum>
     </file>
     <file>
       <version>
@@ -177,13 +171,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>15378CE1</checksum>
+      <checksum>6E437D77</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A2C693E7</checksum>
+    </file>
+    <file>
+      <filename>create_residential_multifamily_apartments_interior_corridor_geometry_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B60C7385</checksum>
+      <usage_type>test</usage_type>
+      <checksum>CACED15B</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>

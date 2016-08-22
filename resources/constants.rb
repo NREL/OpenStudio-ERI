@@ -119,6 +119,12 @@ class Constants
   def self.CondenserTypeAir
     return 'aircooled'
   end
+  def self.CorridorSpace
+    return 'corridor space'
+  end
+  def self.CorridorZone
+    return 'corridor zone'
+  end
   def self.CrawlSpace
     return 'crawl space'
   end

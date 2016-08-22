@@ -44,7 +44,7 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
 	
     #make an argument for aspect ratio
     aspect_ratio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("aspect_ratio",true)
-    aspect_ratio.setDisplayName("Aspect Ratio")
+    aspect_ratio.setDisplayName("Unit Aspect Ratio")
     aspect_ratio.setUnits("FB/LR")
     aspect_ratio.setDescription("The ratio of the front/back wall length to the left/right wall length.")
     aspect_ratio.setDefaultValue(2.0)
@@ -105,8 +105,8 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     use_zone_mult = OpenStudio::Ruleset::OSArgument::makeBoolArgument("use_zone_mult", true)
     use_zone_mult.setDisplayName("Use Zone Multipliers?")
     use_zone_mult.setDescription("Model only one interior unit with its thermal zone multiplier equal to the number of interior units.")
-    use_zone_mult.setDefaultValue(true)
-    args << use_zone_mult    
+    use_zone_mult.setDefaultValue(false)
+    args << use_zone_mult
     
     return args
   end
@@ -221,7 +221,7 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
         end
       elsif !use_zone_mult
         living_zone = OpenStudio::Model::ThermalZone.new(model)
-        living_zone.setName(Constants.LivingZone)       
+        living_zone.setName(Constants.LivingZone)
       end
       
       new_living_spaces = []

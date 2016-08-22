@@ -49,6 +49,12 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
     door_area = OpenStudio::convert(runner.getDoubleArgumentValue("userdefineddoorarea",user_arguments),"ft^2","m^2").get    
     
     model.getSpaces.each do |space|
+      next unless space.name.to_s.include? Constants.CorridorSpace
+      runner.registerAsNotApplicable("Building has an interior corridor.")
+      return true
+    end
+    
+    model.getSpaces.each do |space|
         space.surfaces.each do |surface|
             next if not (surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors")
             surface.subSurfaces.each do |sub_surface|
