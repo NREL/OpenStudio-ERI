@@ -21,7 +21,7 @@ class Geometry
         model.getElectricEquipments.each do |ee|
             next if !ee.name.to_s.start_with?("unit=")
             ee.name.to_s.split("|").each do |data|
-                next if !data.include?("unit")
+                next if !data.start_with?("unit=")
                 vals = data.split("=")
                 units_found << vals[1].to_i
             end
@@ -76,13 +76,13 @@ class Geometry
         model.getElectricEquipments.each do |ee|
             next if !ee.name.to_s.start_with?("unit=#{unit_num}|")
             ee.name.to_s.split("|").each do |data|
-                if data.include?("bed") and !data.include?("nil")
+                if data.start_with?("bed=") and !data.end_with?("nil")
                     vals = data.split("=")
                     nbeds = vals[1].to_f
-                elsif data.include?("bath") and !data.include?("nil")
+                elsif data.start_with?("bath=") and !data.end_with?("nil")
                     vals = data.split("=")
                     nbaths = vals[1].to_f
-                elsif data.include?("space")
+                elsif data.start_with?("space=")
                     vals = data.split("=")
                     space_handle_s = vals[1].to_s
                     space_found = false

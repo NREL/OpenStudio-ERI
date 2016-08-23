@@ -338,11 +338,11 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    (0...num_units).to_a.each do |unit_num|
-      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
+    (1..num_units).to_a.each do |unit_num|
+      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
       thermal_zones = Geometry.get_thermal_zones_from_unit_spaces(unit_spaces)
       if thermal_zones.length > 1
-        runner.registerInfo("Unit #{unit_num + 1} spans more than one thermal zone.")
+        runner.registerInfo("Unit #{unit_num} spans more than one thermal zone.")
       end
       control_slave_zones_hash = Geometry.get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
@@ -363,7 +363,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
         living_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, model.alwaysOnDiscreteSchedule, baseboard_coil)
         living_baseboard_heater.setName("Living Zone Baseboards")
         living_baseboard_heater.addToThermalZone(control_zone)
-        runner.registerInfo("Added baseboard convective water '#{living_baseboard_heater.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num + 1}")
+        runner.registerInfo("Added baseboard convective water '#{living_baseboard_heater.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num}")
         
         plant_loop.addDemandBranchForComponent(baseboard_coil)
         
@@ -385,7 +385,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
           fbasement_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, model.alwaysOnDiscreteSchedule, baseboard_coil)
           fbasement_baseboard_heater.setName("FBsmt Zone Baseboards")
           fbasement_baseboard_heater.addToThermalZone(slave_zone)
-          runner.registerInfo("Added baseboard convective water '#{fbasement_baseboard_heater.name}' to thermal zone '#{slave_zone.name}' of unit #{unit_num + 1}")
+          runner.registerInfo("Added baseboard convective water '#{fbasement_baseboard_heater.name}' to thermal zone '#{slave_zone.name}' of unit #{unit_num}")
           
           plant_loop.addDemandBranchForComponent(baseboard_coil)
 

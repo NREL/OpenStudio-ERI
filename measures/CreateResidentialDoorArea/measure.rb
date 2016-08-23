@@ -80,8 +80,8 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
         return false
     end  
   
-    (0...num_units).to_a.each do |unit_num|
-      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)  
+    (1..num_units).to_a.each do |unit_num|
+      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)  
   
       # get all exterior front walls on the lowest story
       front_walls = []
@@ -145,7 +145,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       
       unit_has_door = true
       if first_story_most_front_walls.size == 0
-          runner.registerWarning("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
+          runner.registerWarning("For unit #{unit_num} could not find appropriate surface for the door. No door was added.")
           unit_has_door = false
       end
 
@@ -197,14 +197,14 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
           door_polygon = Geometry.make_polygon(door_sw_point, door_se_point, door_ne_point, door_nw_point)
         end
         door_sub_surface = OpenStudio::Model::SubSurface.new(door_polygon, model)
-        door_sub_surface.setName("Unit #{unit_num + 1} - #{first_story_front_wall.name} - Front Door")
+        door_sub_surface.setName("Unit #{unit_num} - #{first_story_front_wall.name} - Front Door")
         door_sub_surface.setSubSurfaceType("Door")
         door_sub_surface.setSurface(first_story_front_wall)
         
         if first_story_front_wall.adjacentSurface.is_initialized
           adjacent_surface = first_story_front_wall.adjacentSurface.get
           adjacent_door_sub_surface = OpenStudio::Model::SubSurface.new(door_sub_surface.vertices.reverse, model)
-          adjacent_door_sub_surface.setName("Unit #{unit_num + 1} - #{first_story_front_wall.name} - Front Door Adjacent")
+          adjacent_door_sub_surface.setName("Unit #{unit_num} - #{first_story_front_wall.name} - Front Door Adjacent")
           adjacent_door_sub_surface.setSubSurfaceType("Door")
           adjacent_door_sub_surface.setSurface(adjacent_surface)
           door_sub_surface.setAdjacentSubSurface(adjacent_door_sub_surface)
@@ -214,9 +214,9 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       end
 
       if door_sub_surface.nil? and unit_has_door
-          runner.registerWarning("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
+          runner.registerWarning("For unit #{unit_num} could not find appropriate surface for the door. No door was added.")
       elsif not door_sub_surface.nil?
-          runner.registerInfo("For unit #{unit_num + 1} added #{OpenStudio::convert(door_area,"m^2","ft^2").get.round(1)} ft^2 door with name '#{door_sub_surface.name}'.")
+          runner.registerInfo("For unit #{unit_num} added #{OpenStudio::convert(door_area,"m^2","ft^2").get.round(1)} ft^2 door with name '#{door_sub_surface.name}'.")
       end
     
     end 

@@ -102,8 +102,6 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
 		return false
     end
     
-    obj_name = Constants.ObjectNameExtraRefrigerator
-    
     num_units = Geometry.get_num_units(model, runner)
     if num_units.nil?
         return false
@@ -124,20 +122,13 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     fridge_conv = 1
     fridge_lost = 1 - fridge_lat - fridge_rad - fridge_conv
     
-    # Create schedule
-    if fridge_ann > 0
-        sch = MonthWeekdayWeekendSchedule.new(model, runner, obj_name + " schedule", weekday_sch, weekend_sch, monthly_sch)
-        if not sch.validated?
-            return false
-        end
-    end
-    
     tot_fridge_ann = 0
     single_space = nil
-    (0...num_units).to_a.each do |unit_num|
-        _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
+    sch = nil
+    (1..num_units).to_a.each do |unit_num|
+        _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
         if unit_spaces.nil?
-            runner.registerError("Could not determine the spaces associated with unit #{unit_num + 1}.")
+            runner.registerError("Could not determine the spaces associated with unit #{unit_num}.")
             return false
         end
         
@@ -148,7 +139,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
         end
         next if space.nil?
         
-        unit_obj_name = Constants.ObjectNameExtraRefrigerator(unit_num + 1)
+        unit_obj_name = Constants.ObjectNameExtraRefrigerator(unit_num)
 
         # Remove any existing extra fridge
         frg_removed = false
@@ -163,6 +154,14 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
         end
 
         if fridge_ann > 0
+            if sch.nil?
+                # Create schedule
+                sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameExtraRefrigerator + " schedule", weekday_sch, weekend_sch, monthly_sch)
+                if not sch.validated?
+                    return false
+                end
+            end
+            
             design_level = sch.calcDesignLevelFromDailykWh(fridge_ann/365.0)
             
             #Add electric equipment for the extra fridge
@@ -190,7 +189,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
     if tot_fridge_ann > 0
         if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned extra refrigerators totaling #{tot_fridge_ann} kWhs annual energy consumption across #{num_units} units.")
+            runner.registerFinalCondition("The building has been assigned extra refrigerators totaling #{tot_fridge_ann.round} kWhs annual energy consumption across #{num_units} units.")
         else
             runner.registerFinalCondition("An extra refrigerator with #{tot_fridge_ann.round} kWhs annual energy consumption has been assigned to space '#{single_space.name.to_s}'.")
         end

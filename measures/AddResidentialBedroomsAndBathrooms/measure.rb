@@ -103,23 +103,27 @@ class AddResidentialBedroomsAndBathrooms < OpenStudio::Ruleset::ModelUserScript
         num_ba = Array.new(num_units, num_ba[0])
       end    
     end
+    
+    # Change to 1-based arrays for simplification
+    num_br.unshift(nil)
+    num_ba.unshift(nil)
       
     # Update number of bedrooms/bathrooms
     total_num_br = 0
     total_num_ba = 0    
-    (0...num_units).to_a.each do |unit_num|
+    (1..num_units).to_a.each do |unit_num|
 
-      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
+      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
       if unit_spaces.nil?
-          runner.registerError("Could not determine the spaces associated with unit #{unit_num + 1}.")
+          runner.registerError("Could not determine the spaces associated with unit #{unit_num}.")
           return false
       end
 
       num_br[unit_num] = num_br[unit_num].round(2).to_s
       num_ba[unit_num] = num_ba[unit_num].round(2).to_s
-      Geometry.set_unit_beds_baths_spaces(model, unit_num + 1, unit_spaces, num_br[unit_num], num_ba[unit_num])
+      Geometry.set_unit_beds_baths_spaces(model, unit_num, unit_spaces, num_br[unit_num], num_ba[unit_num])
       if num_units > 1
-        runner.registerInfo("Unit #{unit_num + 1} has been assigned #{num_br[unit_num]} bedroom(s) and #{num_ba[unit_num]} bathroom(s).")
+        runner.registerInfo("Unit #{unit_num} has been assigned #{num_br[unit_num]} bedroom(s) and #{num_ba[unit_num]} bathroom(s).")
       end
       
       total_num_br += num_br[unit_num].to_f

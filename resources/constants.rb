@@ -156,28 +156,32 @@ class Constants
     return 'Right'
   end
   def self.FinishedAtticSpace(unit=1)
-    if unit == 1
-      return "finished attic space"
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
     end
-    return "finished attic space|unit #{unit}"
+    return "finished attic space#{s_unit}"
   end
   def self.FinishedAtticZone(unit=1)
-    if unit == 1
-      return "finished attic zone"
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
     end
-    return "finished attic zone|unit #{unit}"
+    return "finished attic zone#{s_unit}"
   end
   def self.FinishedBasementSpace(unit=1)
-    if unit == 1
-      return "finished basement space"
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
     end
-    return "finished basement space|unit #{unit}"
+    return "finished basement space#{s_unit}"
   end
   def self.FinishedBasementZone(unit=1)
-    if unit == 1
-      return "finished basement zone"
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
     end
-    return "finished basement zone|unit #{unit}"
+    return "finished basement zone#{s_unit}"
   end
   def self.FluidWater
     return 'water'
@@ -243,19 +247,22 @@ class Constants
     return 'xps'
   end
   def self.LivingSpace(story, unit=1)
-      if story == 1 and unit == 1
-        return "living space"
-      end
-      if unit == 1
-        return "living space|story #{story}"
-      end
-    return "living space|unit #{unit}|story #{story}"
+    s_unit = ""
+    s_story = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    if story > 1
+      s_story = "|story #{story}"
+    end
+    return "living space#{s_unit}#{s_story}"
   end
   def self.LivingZone(unit=1)
-    if unit == 1
-      return "living zone"
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
     end
-    return "living zone|unit #{unit}"
+    return "living zone#{s_unit}"
   end
   def self.LocationInterior
     return 'interior'
@@ -344,12 +351,16 @@ class Constants
   def self.ObjectNameClothesDryer(fueltype)
     return "residential clothes dryer #{fueltype}"
   end
-  def self.ObjectNameCookingRange(fueltype, ignition=false)
+  def self.ObjectNameCookingRange(fueltype, ignition=false, unit=1)
     s_ignition = ""
+    s_unit = ""
     if ignition
-        s_ignition = " ignition"
+      s_ignition = " ignition"
     end
-    return "residential range #{fueltype}#{s_ignition}"
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential range #{fueltype}#{s_ignition}#{s_unit}"
   end
   def self.ObjectNameCoolingSeason
     return 'residential cooling season'
@@ -361,16 +372,18 @@ class Constants
     return 'residential dishwasher'
   end
   def self.ObjectNameExtraRefrigerator(unit=1)
-    if unit == 1
-        return "residential extra refrigerator"
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
     end
-    return "residential extra refrigerator, unit #{unit}"
+    return "residential extra refrigerator#{s_unit}"
   end
   def self.ObjectNameFreezer(unit=1)
-    if unit == 1
-        return "residential freezer"
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
     end
-    return "residential freezer, unit #{unit}"
+    return "residential freezer#{s_unit}"
   end
   def self.ObjectNameFurniture
     return 'residential furniture'
@@ -412,10 +425,11 @@ class Constants
     return 'residential pool pump'
   end
   def self.ObjectNameRefrigerator(unit=1)
-    if unit == 1
-      return "residential refrigerator"
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
     end
-    return "residential refrigerator, unit #{unit}"
+    return "residential refrigerator#{s_unit}"
   end
   def self.ObjectNameShower
     return 'residential shower'

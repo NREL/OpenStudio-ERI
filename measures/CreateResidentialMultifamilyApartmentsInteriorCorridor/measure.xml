@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_apartments_interior_corridor_geometry</name>
   <uid>5118a1e1-bc21-4cfa-9687-1590c9727d06</uid>
-  <version_id>19c23548-b299-43f9-b214-f290d1a36497</version_id>
-  <version_modified>20160823T175012Z</version_modified>
+  <version_id>820f9fbd-26d6-4adf-a935-907754155886</version_id>
+  <version_modified>20160823T203140Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry</class_name>
   <display_name>Create Residential Multifamily Apartments Interior Corridor Geometry</display_name>
@@ -157,12 +157,6 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B60C7385</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -186,10 +180,16 @@
       <checksum>6BF5399F</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A5CA5B20</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>242CB46F</checksum>
+      <checksum>239A6D5F</checksum>
     </file>
   </files>
 </measure>

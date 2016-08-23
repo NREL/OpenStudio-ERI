@@ -102,8 +102,6 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
 		return false
     end
     
-    obj_name = Constants.ObjectNameFreezer
-    
     num_units = Geometry.get_num_units(model, runner)
     if num_units.nil?
         return false
@@ -124,20 +122,13 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
     freezer_conv = 1
     freezer_lost = 1 - freezer_lat - freezer_rad - freezer_conv
     
-    # Create schedule
-    if freezer_ann > 0
-        sch = MonthWeekdayWeekendSchedule.new(model, runner, obj_name + " schedule", weekday_sch, weekend_sch, monthly_sch)
-        if not sch.validated?
-            return false
-        end
-    end
-    
     tot_freezer_ann = 0
     single_space = nil
-    (0...num_units).to_a.each do |unit_num|
-        _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
+    sch = nil
+    (1..num_units).to_a.each do |unit_num|
+        _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
         if unit_spaces.nil?
-            runner.registerError("Could not determine the spaces associated with unit #{unit_num + 1}.")
+            runner.registerError("Could not determine the spaces associated with unit #{unit_num}.")
             return false
         end
         
@@ -148,7 +139,7 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
         end
         next if space.nil?
         
-        unit_obj_name = Constants.ObjectNameFreezer(unit_num + 1)
+        unit_obj_name = Constants.ObjectNameFreezer(unit_num)
 	
         # Remove any existing freezer
         frz_removed = false
@@ -163,6 +154,14 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
         end
 
         if freezer_ann > 0
+            if sch.nil?
+                # Create schedule
+                sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameFreezer + " schedule", weekday_sch, weekend_sch, monthly_sch)
+                if not sch.validated?
+                    return false
+                end
+            end
+            
             design_level = sch.calcDesignLevelFromDailykWh(freezer_ann/365.0)
             
             #Add electric equipment for the freezer
@@ -190,7 +189,7 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
     #reporting final condition of model
     if tot_freezer_ann > 0
         if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned freezers totaling #{tot_freezer_ann} kWhs annual energy consumption across #{num_units} units.")
+            runner.registerFinalCondition("The building has been assigned freezers totaling #{tot_freezer_ann.round} kWhs annual energy consumption across #{num_units} units.")
         else
             runner.registerFinalCondition("A freezer with #{tot_freezer_ann.round} kWhs annual energy consumption has been assigned to space '#{single_space.name.to_s}'.")
         end

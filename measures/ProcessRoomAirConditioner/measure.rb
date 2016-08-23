@@ -167,11 +167,11 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         return false
     end    
     
-    (0...num_units).to_a.each do |unit_num|
-      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
+    (1..num_units).to_a.each do |unit_num|
+      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
       thermal_zones = Geometry.get_thermal_zones_from_unit_spaces(unit_spaces)
       if thermal_zones.length > 1
-        runner.registerInfo("Unit #{unit_num + 1} spans more than one thermal zone.")
+        runner.registerInfo("Unit #{unit_num} spans more than one thermal zone.")
       end
       control_slave_zones_hash = Geometry.get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
@@ -218,7 +218,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         ptac.setName("Window AC")
         ptac.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
         ptac.addToThermalZone(control_zone)
-        runner.registerInfo("Added packaged terminal air conditioner '#{ptac.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num + 1}")
+        runner.registerInfo("Added packaged terminal air conditioner '#{ptac.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num}")
       
       end
       

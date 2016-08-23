@@ -109,7 +109,7 @@ class ResidentialRefrigeratorTest < MiniTest::Test
     model = _test_measure(osm_geo_multifamily_3_units, args_hash, 0, num_units, 434.0*num_units, num_units)
     args_hash = {}
     args_hash["fridge_E"] = 348.0
-    _test_measure(model, args_hash, num_units, num_units, 348.0*num_units, num_units*2)
+    _test_measure(model, args_hash, num_units, num_units, 348.0*num_units, 2*num_units)
   end
   
   def test_multifamily_retrofit_remove

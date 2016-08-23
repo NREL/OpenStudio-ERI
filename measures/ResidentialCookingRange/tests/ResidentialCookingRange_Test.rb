@@ -23,11 +23,31 @@ class ResidentialCookingRangeTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasCookingRangeWithElecIgnition.osm"
   end
 
+  def osm_geo_beds_elecrange
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm"
+  end
+
+  def osm_geo_multifamily_3_units
+    return "multifamily_3_units.osm"
+  end
+  
+  def osm_geo_multifamily_3_units_beds
+    return "multifamily_3_units_3Beds_2Baths.osm"
+  end
+
+  def osm_geo_multifamily_urbanopt_8_units
+    return "multifamily_urbanopt.osm"
+  end
+
+  def osm_geo_multifamily_urbanopt_8_units_beds
+    return "multifamily_urbanopt_3Beds_2Baths.osm"
+  end
+
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure(osm_geo_beds, args_hash)
+    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0)
   end
   
   def test_new_construction_electric
@@ -77,7 +97,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     model = _test_measure(osm_geo_beds, args_hash, 0, 1, 500)
     args_hash = {}
     args_hash["c_ef"] = 0.84
-    _test_measure(model, args_hash, 1, 1, 473)
+    _test_measure(model, args_hash, 1, 1, 473, 1)
   end
   
   def test_retrofit_replace_gas_cooking_range
@@ -85,7 +105,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     args_hash = {}
     args_hash["c_ef"] = 0.74
     args_hash["o_ef"] = 0.11
-    _test_measure(model, args_hash, 1, 1, 500)
+    _test_measure(model, args_hash, 1, 1, 500, 1)
   end
 
   def test_retrofit_replace_gas_cooking_range_ignition
@@ -93,7 +113,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     args_hash = {}
     args_hash["c_ef"] = 0.74
     args_hash["o_ef"] = 0.11
-    _test_measure(model, args_hash, 2, 1, 500)
+    _test_measure(model, args_hash, 2, 1, 500, 1)
   end
     
   def test_retrofit_remove
@@ -103,7 +123,54 @@ class ResidentialCookingRangeTest < MiniTest::Test
     model = _test_measure(osm_geo_beds, args_hash, 0, 1, 500)
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure(model, args_hash, 1, 0)
+    _test_measure(model, args_hash, 1, 0, 0.0, 1)
+  end
+  
+  def test_multifamily_new_construction
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.74
+    args_hash["o_ef"] = 0.11
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 500*num_units, num_units)
+  end
+  
+  def test_multifamily_new_construction_basement
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.74
+    args_hash["o_ef"] = 0.11
+    args_hash["space"] = "finishedbasement_1"
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 1, 500)
+  end
+  
+  def test_multifamily_retrofit_replace
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.74
+    args_hash["o_ef"] = 0.11
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 500*num_units, num_units)
+    args_hash = {}
+    args_hash["c_ef"] = 0.84
+    _test_measure(model, args_hash, num_units, num_units, 473*num_units, 2*num_units)
+  end
+  
+  def test_multifamily_retrofit_remove
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.74
+    args_hash["o_ef"] = 0.11
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 500*num_units, num_units)
+    args_hash = {}
+    args_hash["mult"] = 0.0
+    _test_measure(model, args_hash, num_units, 0, 0.0, num_units)
+  end
+  
+  def test_multifamily_urbanopt
+    num_units = 8
+    args_hash = {}
+    args_hash["c_ef"] = 0.74
+    args_hash["o_ef"] = 0.11
+    _test_measure(osm_geo_multifamily_urbanopt_8_units_beds, args_hash, 0, num_units, 500*num_units, num_units)
   end
   
   def test_argument_error_c_ef_lt_0
@@ -189,6 +256,16 @@ class ResidentialCookingRangeTest < MiniTest::Test
     _test_error(osm_geo, args_hash)
   end
     
+  def test_error_missing_beds_multifamily
+    args_hash = {}
+    _test_error(osm_geo_multifamily_3_units, args_hash)
+  end
+
+  def test_error_missing_beds_multifamily_urbanopt
+    args_hash = {}
+    _test_error(osm_geo_multifamily_urbanopt_8_units, args_hash)
+  end
+  
   def test_error_missing_geometry
     args_hash = {}
     _test_error(nil, args_hash)
@@ -230,7 +307,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     assert(result.errors.size == 1)
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialCookingRange.new
 
@@ -269,12 +346,8 @@ class ResidentialCookingRangeTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_del_objects > 0
-        assert(result.info.size == 1)
-    else
-        assert(result.info.size == 0)
-    end
-    assert(result.warnings.size == 0)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
     
     # get new/deleted equipment objects
     new_objects = []
@@ -295,13 +368,11 @@ class ResidentialCookingRangeTest < MiniTest::Test
     actual_annual_kwh = 0.0
     new_objects.each do |new_object|
         # check that the new object has the correct name
-        assert_equal(new_object.name.to_s, Constants.ObjectNameCookingRange(Constants.FuelTypeElectric))
+        assert(new_object.name.to_s.start_with?(Constants.ObjectNameCookingRange(Constants.FuelTypeElectric)))
         
         # check new object is in correct space
         if argument_map["space"].hasValue
             assert_equal(new_object.space.get.name.to_s, argument_map["space"].valueAsString)
-        else
-            assert_equal(new_object.space.get.name.to_s, argument_map["space"].defaultValueAsString)
         end
 
         # check for the correct annual energy consumption

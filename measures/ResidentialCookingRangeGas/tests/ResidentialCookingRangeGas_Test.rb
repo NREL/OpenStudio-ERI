@@ -19,11 +19,27 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm"
   end
 
+  def osm_geo_multifamily_3_units
+    return "multifamily_3_units.osm"
+  end
+  
+  def osm_geo_multifamily_3_units_beds
+    return "multifamily_3_units_3Beds_2Baths.osm"
+  end
+
+  def osm_geo_multifamily_urbanopt_8_units
+    return "multifamily_urbanopt.osm"
+  end
+
+  def osm_geo_multifamily_urbanopt_8_units_beds
+    return "multifamily_urbanopt_3Beds_2Baths.osm"
+  end
+
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure(osm_geo_beds, args_hash)
+    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0, 0.0)
   end
   
   def test_new_construction_gas
@@ -75,7 +91,7 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     args_hash = {}
     args_hash["c_ef"] = 0.2
     args_hash["o_ef"] = 0.02
-    _test_measure(model, args_hash, 2, 2, 70.9, 80)
+    _test_measure(model, args_hash, 2, 2, 70.9, 80, 1)
   end
   
   def test_retrofit_replace_add_ignition
@@ -88,7 +104,7 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     args_hash["c_ef"] = 0.2
     args_hash["o_ef"] = 0.02
     args_hash["e_ignition"] = "true"
-    _test_measure(model, args_hash, 1, 2, 70.9, 80)
+    _test_measure(model, args_hash, 1, 2, 70.9, 80, 1)
   end
   
   def test_retrofit_replace_remove_ignition
@@ -101,7 +117,7 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     args_hash["c_ef"] = 0.2
     args_hash["o_ef"] = 0.02
     args_hash["e_ignition"] = "false"
-    _test_measure(model, args_hash, 2, 1, 70.9, 0)
+    _test_measure(model, args_hash, 2, 1, 70.9, 0, 1)
   end
 
   def test_retrofit_replace_elec_cooking_range
@@ -109,7 +125,7 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     args_hash = {}
     args_hash["c_ef"] = 0.4
     args_hash["o_ef"] = 0.058
-    _test_measure(model, args_hash, 1, 2, 28.5, 80)
+    _test_measure(model, args_hash, 1, 2, 28.5, 80, 1)
   end
     
   def test_retrofit_remove
@@ -119,9 +135,57 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     model = _test_measure(osm_geo_beds, args_hash, 0, 2, 28.5, 80)
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure(model, args_hash, 2, 0)
+    _test_measure(model, args_hash, 2, 0, 0.0, 0.0, 1)
   end
   
+  def test_multifamily_new_construction
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 28.5*num_units, 80*num_units, num_units)
+  end
+  
+  def test_multifamily_new_construction_basement
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    args_hash["space"] = "finishedbasement_1"
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2, 28.5, 80)
+  end
+  
+  def test_multifamily_retrofit_replace
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 28.5*num_units, 80*num_units, num_units)
+    args_hash = {}
+    args_hash["c_ef"] = 0.2
+    args_hash["o_ef"] = 0.02
+    _test_measure(model, args_hash, 2*num_units, 2*num_units, 70.9*num_units, 80*num_units, 2*num_units)
+  end
+  
+  def test_multifamily_retrofit_remove
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 28.5*num_units, 80*num_units, num_units)
+    args_hash = {}
+    args_hash["mult"] = 0.0
+    _test_measure(model, args_hash, 2*num_units, 0, 0.0, 0.0, num_units)
+  end
+  
+  def test_multifamily_urbanopt
+    num_units = 8
+    args_hash = {}
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    _test_measure(osm_geo_multifamily_urbanopt_8_units_beds, args_hash, 0, 2*num_units, 28.5*num_units, 80*num_units, num_units)
+  end
+
   def test_argument_error_c_ef_lt_0
     args_hash = {}
     args_hash["c_ef"] = -1.0
@@ -205,6 +269,16 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     _test_error(osm_geo, args_hash)
   end
     
+  def test_error_missing_beds_multifamily
+    args_hash = {}
+    _test_error(osm_geo_multifamily_3_units, args_hash)
+  end
+
+  def test_error_missing_beds_multifamily_urbanopt
+    args_hash = {}
+    _test_error(osm_geo_multifamily_urbanopt_8_units, args_hash)
+  end
+
   def test_error_missing_geometry
     args_hash = {}
     _test_error(nil, args_hash)
@@ -246,7 +320,7 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     assert(result.errors.size == 1)
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_therm=0.0, expected_annual_kwh=0.0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_therm, expected_annual_kwh, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialCookingRangeGas.new
 
@@ -285,12 +359,8 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_del_objects > 0
-        assert(result.info.size == 1)
-    else
-        assert(result.info.size == 0)
-    end
-    assert(result.warnings.size == 0)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
     
     # get new/deleted equipment objects
     new_objects = []
@@ -313,16 +383,14 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     new_objects.each do |new_object|
         # check that the new object has the correct name
         if new_object.is_a?(OpenStudio::Model::GasEquipment)
-            assert_equal(new_object.name.to_s, Constants.ObjectNameCookingRange(Constants.FuelTypeGas))
+            assert(new_object.name.to_s.start_with?(Constants.ObjectNameCookingRange(Constants.FuelTypeGas)))
         elsif new_object.is_a?(OpenStudio::Model::ElectricEquipment)
-            assert_equal(new_object.name.to_s, Constants.ObjectNameCookingRange(Constants.FuelTypeElectric, true))
+            assert(new_object.name.to_s.start_with?(Constants.ObjectNameCookingRange(Constants.FuelTypeElectric, true)))
         end
         
         # check new object is in correct space
         if argument_map["space"].hasValue
             assert_equal(new_object.space.get.name.to_s, argument_map["space"].valueAsString)
-        else
-            assert_equal(new_object.space.get.name.to_s, argument_map["space"].defaultValueAsString)
         end
 
         # check for the correct annual energy consumption

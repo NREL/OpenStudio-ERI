@@ -88,6 +88,9 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
     if num_units > 1 and num_occ.length == 1
       num_occ = Array.new(num_units, num_occ[0])
     end 
+    
+    # Change to 1-based arrays or simplification
+    num_occ.unshift(nil)
 
     obj_name = Constants.ObjectNameOccupants
     
@@ -119,7 +122,7 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
         
     # Update number of occupants
     total_num_occ = 0
-    (0...num_units).to_a.each do |unit_num|
+    (1..num_units).to_a.each do |unit_num|
     
       unit_occ = num_occ[unit_num]
 
@@ -134,7 +137,7 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
       end
 
       # Get number of beds and unit spaces
-      nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num + 1, runner)
+      nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
       if nbeds.nil? or unit_spaces.nil?
           return false
       end
@@ -181,7 +184,7 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
           people_sch.setSchedule(occ)
           
           if num_units > 1
-            runner.registerInfo("Space #{space.name.to_s} of Unit #{unit_num + 1} has been assigned #{space_num_occ.round(2)} occupant(s).")
+            runner.registerInfo("Space #{space.name.to_s} of Unit #{unit_num} has been assigned #{space_num_occ.round(2)} occupant(s).")
           end
       end
 
