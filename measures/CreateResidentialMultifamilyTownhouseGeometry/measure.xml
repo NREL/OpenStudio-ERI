@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_townhouse_geometry</name>
   <uid>0042e6a0-fc07-4080-9ba7-7bf0b930dc99</uid>
-  <version_id>46e06b68-b7f8-402a-97bf-af6817e27c69</version_id>
-  <version_modified>20160822T222923Z</version_modified>
+  <version_id>8272e207-fb00-4323-a6d3-f1c621055e03</version_id>
+  <version_modified>20160823T165408Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyTownhouseGeometry</class_name>
   <display_name>Create Residential Multifamily Townhouse Geometry</display_name>
@@ -107,7 +107,7 @@
       <units>ft</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>6</default_value>
     </argument>
     <argument>
       <name>use_zone_mult</name>
@@ -169,6 +169,12 @@
       <checksum>60A9F47C</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B60C7385</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.2</identifier>
@@ -177,19 +183,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>15378CE1</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B60C7385</checksum>
+      <checksum>8B6E1473</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2927DDD2</checksum>
+      <checksum>BF0D655D</checksum>
     </file>
   </files>
 </measure>

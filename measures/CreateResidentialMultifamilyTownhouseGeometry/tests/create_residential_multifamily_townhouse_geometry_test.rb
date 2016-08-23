@@ -61,9 +61,9 @@ class CreateResidentialMultifamilyTownhouseGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
   
-  def test_fourplex_no_zone_multipliers
+  def test_fourplex_zone_multipliers
     args_hash = {}
-    args_hash["use_zone_mult"] = "false"
+    args_hash["use_zone_mult"] = "true"
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    

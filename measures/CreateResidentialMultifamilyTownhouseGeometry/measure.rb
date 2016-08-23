@@ -98,7 +98,7 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     offset.setDisplayName("Offset Depth")
     offset.setUnits("ft")
     offset.setDescription("The depth of the offset.")
-    offset.setDefaultValue(0.0)
+    offset.setDefaultValue(6.0)
     args << offset
     
     #make an argument for using zone multipliers

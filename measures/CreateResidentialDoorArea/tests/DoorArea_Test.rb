@@ -47,6 +47,14 @@ class DoorAreaTest < MiniTest::Test
     model = _test_measure("multifamily_urbanopt.osm", args_hash, 0, num_units - 1)
     args_hash = {}
     _test_measure(model, args_hash, num_units - 1, num_units - 1)
+  end
+  
+  def test_mf_corridor
+    num_units = 24
+    args_hash = {}
+    model = _test_measure("multifamily_corridor.osm", args_hash, 0, num_units)
+    args_hash = {}
+    _test_measure(model, args_hash, num_units * 2, num_units)
   end  
   
   private

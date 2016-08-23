@@ -46,17 +46,11 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-    door_area = OpenStudio::convert(runner.getDoubleArgumentValue("userdefineddoorarea",user_arguments),"ft^2","m^2").get    
-    
-    model.getSpaces.each do |space|
-      next unless space.name.to_s.include? Constants.CorridorSpace
-      runner.registerAsNotApplicable("Building has an interior corridor.")
-      return true
-    end
+    door_area = OpenStudio::convert(runner.getDoubleArgumentValue("userdefineddoorarea",user_arguments),"ft^2","m^2").get
     
     model.getSpaces.each do |space|
         space.surfaces.each do |surface|
-            next if not (surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors")
+            next if not surface.surfaceType.downcase == "wall"
             surface.subSurfaces.each do |sub_surface|
                 next if sub_surface.subSurfaceType.downcase != "door"
                 sub_surface.remove
@@ -128,16 +122,36 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
           elsif miny == first_story_front_wall_miny
               first_story_most_front_walls << front_wall
           end
-      end      
+      end
 
+      corridor_walls = []
+      Geometry.get_finished_spaces(model, unit_spaces).each do |space|
+          space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.adjacentSurface.is_initialized
+              model.getSpaces.each do |potential_corridor_space|
+                  next unless potential_corridor_space.name.to_s.include? Constants.CorridorSpace
+                  potential_corridor_space.surfaces.each do |potential_corridor_surface|
+                      next unless potential_corridor_surface.handle.to_s == surface.adjacentSurface.get.handle.to_s
+                      corridor_walls << potential_corridor_surface
+                  end
+              end
+          end 
+      end
+
+      unless corridor_walls.size == 0
+        first_story_most_front_walls = corridor_walls
+      end
+      
       unit_has_door = true
-      if first_story_front_walls.size == 0
+      if first_story_most_front_walls.size == 0
           runner.registerWarning("For unit #{unit_num + 1} could not find appropriate surface for the door. No door was added.")
           unit_has_door = false
       end
 
       door_sub_surface = nil
       first_story_most_front_walls.each do |first_story_front_wall|
+      
         # Try to place door on any surface with enough area
         next if door_area >= first_story_front_wall.grossArea
         
@@ -177,11 +191,25 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
         door_ne_point = OpenStudio::Point3d.new(sw_point.x + new_door_offset + door_width, sw_point.y, sw_point.z + door_height)
         door_se_point = OpenStudio::Point3d.new(sw_point.x + new_door_offset + door_width, sw_point.y, sw_point.z)	
         
-        door_polygon = Geometry.make_polygon(door_sw_point, door_se_point, door_ne_point, door_nw_point)
+        if OpenStudio::getOutwardNormal(first_story_front_wall.vertices).get.y == 1 # doors facing in positive y direction
+          door_polygon = Geometry.make_polygon(door_nw_point, door_ne_point, door_se_point, door_sw_point)
+        else # doors facing in negative y direction
+          door_polygon = Geometry.make_polygon(door_sw_point, door_se_point, door_ne_point, door_nw_point)
+        end
         door_sub_surface = OpenStudio::Model::SubSurface.new(door_polygon, model)
         door_sub_surface.setName("Unit #{unit_num + 1} - #{first_story_front_wall.name} - Front Door")
         door_sub_surface.setSubSurfaceType("Door")
-        door_sub_surface.setSurface(first_story_front_wall)	
+        door_sub_surface.setSurface(first_story_front_wall)
+        
+        if first_story_front_wall.adjacentSurface.is_initialized
+          adjacent_surface = first_story_front_wall.adjacentSurface.get
+          adjacent_door_sub_surface = OpenStudio::Model::SubSurface.new(door_sub_surface.vertices.reverse, model)
+          adjacent_door_sub_surface.setName("Unit #{unit_num + 1} - #{first_story_front_wall.name} - Front Door Adjacent")
+          adjacent_door_sub_surface.setSubSurfaceType("Door")
+          adjacent_door_sub_surface.setSurface(adjacent_surface)
+          door_sub_surface.setAdjacentSubSurface(adjacent_door_sub_surface)
+        end
+        
         added_door = true
       end
 
@@ -191,7 +219,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
           runner.registerInfo("For unit #{unit_num + 1} added #{OpenStudio::convert(door_area,"m^2","ft^2").get.round(1)} ft^2 door with name '#{door_sub_surface.name}'.")
       end
     
-    end
+    end 
     
     return true
 
