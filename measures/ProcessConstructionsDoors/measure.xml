@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>b5b793ee-7797-44ed-93c3-8438a3e1cdd2</version_id>
-  <version_modified>20160823T165409Z</version_modified>
+  <version_id>e1ffb73e-fd2a-4f25-8fdb-63ce077e9704</version_id>
+  <version_modified>20160823T175013Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>Set Residential Door Construction</display_name>
@@ -65,7 +65,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BF0D655D</checksum>
+      <checksum>242CB46F</checksum>
     </file>
   </files>
 </measure>

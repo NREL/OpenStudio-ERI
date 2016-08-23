@@ -271,6 +271,7 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
 
     spaces_associated_with_units = []
     (1..num_units).to_a.each do |unit_num|
+      Geometry.set_unit_space_association(model, unit_num, runner)
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
       next if unit_spaces.nil?
       unit_spaces.each do |space|
@@ -293,10 +294,10 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     if use_zone_mult
       num_units = 3
     end
-    model.getBuilding.setStandardsNumberOfLivingUnits(num_units)    
+    model.getBuilding.setStandardsNumberOfLivingUnits(num_units)
     
     # reporting final condition of model
-    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")	    
+    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")
     
     return true
 

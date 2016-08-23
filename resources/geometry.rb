@@ -106,6 +106,23 @@ class Geometry
         return [nbeds, nbaths, spaces_list]
     end
     
+    def self.set_unit_space_association(model, unit_num, runner)
+        model.getElectricEquipments.each do |ee|
+            next if !ee.name.to_s.start_with?("unit=#{unit_num}|")
+            ee.name.to_s.split("|").each do |data|
+                if data.include?("space")
+                    vals = data.split("=")
+                    space_handle_s = vals[1].to_s
+                    model.getSpaces.each do |space|
+                        next if space.handle.to_s != space_handle_s
+                        ee.setSpace(space)
+                        return
+                    end
+                end
+            end
+        end
+    end
+    
     def self.get_unit_default_finished_space(unit_spaces, runner)
         # For the specified unit, chooses an arbitrary finished space on the lowest above-grade story.
         # If no above-grade finished spaces are available, reverts to an arbitrary below-grade finished space.

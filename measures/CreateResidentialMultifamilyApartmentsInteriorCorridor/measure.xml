@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_apartments_interior_corridor_geometry</name>
   <uid>5118a1e1-bc21-4cfa-9687-1590c9727d06</uid>
-  <version_id>41670cb3-a675-4121-84c3-4731a64c7469</version_id>
-  <version_modified>20160823T165658Z</version_modified>
+  <version_id>19c23548-b299-43f9-b214-f290d1a36497</version_id>
+  <version_modified>20160823T175012Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry</class_name>
   <display_name>Create Residential Multifamily Apartments Interior Corridor Geometry</display_name>
@@ -163,17 +163,6 @@
       <checksum>B60C7385</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.12.2</identifier>
-        <min_compatible>1.12.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>6E437D77</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -186,10 +175,21 @@
       <checksum>CACED15B</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.12.2</identifier>
+        <min_compatible>1.12.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>6BF5399F</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BF0D655D</checksum>
+      <checksum>242CB46F</checksum>
     </file>
   </files>
 </measure>

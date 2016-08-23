@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_townhouse_geometry</name>
   <uid>0042e6a0-fc07-4080-9ba7-7bf0b930dc99</uid>
-  <version_id>8272e207-fb00-4323-a6d3-f1c621055e03</version_id>
-  <version_modified>20160823T165408Z</version_modified>
+  <version_id>4e390c19-960c-4a6b-995c-33c738d3cdf2</version_id>
+  <version_modified>20160823T175012Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyTownhouseGeometry</class_name>
   <display_name>Create Residential Multifamily Townhouse Geometry</display_name>
@@ -163,16 +163,16 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
-      <filename>create_residential_multifamily_townhouse_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>60A9F47C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B60C7385</checksum>
+    </file>
+    <file>
+      <filename>create_residential_multifamily_townhouse_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7F446563</checksum>
     </file>
     <file>
       <version>
@@ -183,13 +183,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8B6E1473</checksum>
+      <checksum>AEB59658</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BF0D655D</checksum>
+      <checksum>242CB46F</checksum>
     </file>
   </files>
 </measure>
