@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_apartments_interior_corridor_geometry</name>
   <uid>5118a1e1-bc21-4cfa-9687-1590c9727d06</uid>
-  <version_id>820f9fbd-26d6-4adf-a935-907754155886</version_id>
-  <version_modified>20160823T203140Z</version_modified>
+  <version_id>335a9b0b-9d87-432d-99b6-44182f373c9e</version_id>
+  <version_modified>20160824T225927Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry</class_name>
   <display_name>Create Residential Multifamily Apartments Interior Corridor Geometry</display_name>
@@ -163,10 +163,22 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A5CA5B20</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>08A41123</checksum>
+    </file>
+    <file>
       <filename>create_residential_multifamily_apartments_interior_corridor_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>CACED15B</checksum>
+      <checksum>B34BD2D0</checksum>
     </file>
     <file>
       <version>
@@ -177,19 +189,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6BF5399F</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A5CA5B20</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>239A6D5F</checksum>
+      <checksum>EB6830DF</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_townhouse_geometry</name>
   <uid>0042e6a0-fc07-4080-9ba7-7bf0b930dc99</uid>
-  <version_id>21c453c0-671e-4a19-95cc-244825b9d34d</version_id>
-  <version_modified>20160823T203140Z</version_modified>
+  <version_id>8218efb5-fe8b-4365-89d4-7dd7bd8b9fe4</version_id>
+  <version_modified>20160824T163952Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyTownhouseGeometry</class_name>
   <display_name>Create Residential Multifamily Townhouse Geometry</display_name>
@@ -48,7 +48,7 @@
       <units>#</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>4</default_value>
+      <default_value>5</default_value>
     </argument>
     <argument>
       <name>num_floors</name>
@@ -163,10 +163,22 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A5CA5B20</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>08A41123</checksum>
+    </file>
+    <file>
       <filename>create_residential_multifamily_townhouse_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>7F446563</checksum>
+      <checksum>DE500DED</checksum>
     </file>
     <file>
       <version>
@@ -177,19 +189,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>AEB59658</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A5CA5B20</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>239A6D5F</checksum>
+      <checksum>E3153078</checksum>
     </file>
   </files>
 </measure>

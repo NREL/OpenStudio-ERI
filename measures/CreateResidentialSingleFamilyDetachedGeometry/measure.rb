@@ -709,7 +709,6 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
       unit_spaces << foundation_space
     end
     Geometry.set_unit_beds_baths_spaces(model, 1, unit_spaces)
-    Geometry.set_unit_space_association(model, 1, runner)
   
     # reporting final condition of model
     runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")	

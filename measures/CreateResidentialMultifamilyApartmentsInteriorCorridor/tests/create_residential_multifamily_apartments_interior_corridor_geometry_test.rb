@@ -35,7 +35,6 @@ class CreateResidentialMultifamilyApartmentsInteriorCorridorGeometryTest < MiniT
 
   def test_right_inset
     args_hash = {}
-    args_hash["corr_width"] = 0
     args_hash["inset_width"] = 6
     args_hash["inset_depth"] = 6    
     result = _test_error(nil, args_hash)

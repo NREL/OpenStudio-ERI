@@ -17,12 +17,12 @@ class ProcessElectricBaseboardTest < MiniTest::Test
     
   def test_retrofit_replace_ashp
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
   end
   
   def test_retrofit_replace_furnace
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_furnace.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
   end
   
   def test_retrofit_replace_central_air_conditioner
@@ -47,17 +47,17 @@ class ProcessElectricBaseboardTest < MiniTest::Test
   
   def test_retrofit_replace_mshp
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System'", "Removed air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
   end
   
   def test_retrofit_replace_furnace_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil 1' from air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil 1' from air loop 'Central Air System_1'"])
   end
   
   def test_retrofit_replace_furnace_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System'"])
+    _test_measure("singlefamily_fbsmt_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System_1'"])
   end    
   
   def test_retrofit_replace_electric_baseboard_central_air_conditioner

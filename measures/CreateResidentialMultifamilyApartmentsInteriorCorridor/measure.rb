@@ -291,6 +291,7 @@ class CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry < OpenStudi
     
     floor = 0
     pos = 0
+    top_floor_corridor_space = nil
     (2...num_units).to_a.each do |unit_num|
 
       if unit_num % num_units_per_floor == 0
@@ -313,7 +314,8 @@ class CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry < OpenStudi
             m[2,3] = -floor
             new_corridor_space.changeTransformation(OpenStudio::Transformation.new(m))
             new_corridor_space.setZOrigin(0)
-            new_corridor_space.setThermalZone(corridor_zone)          
+            new_corridor_space.setThermalZone(corridor_zone)
+            top_floor_corridor_space = new_corridor_space
           end
         
         end
@@ -354,6 +356,14 @@ class CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry < OpenStudi
       
     end
     
+    unless top_floor_corridor_space.nil?
+      top_floor_corridor_space.surfaces.each do |surface|
+        next unless surface.outsideBoundaryCondition.downcase == "outdoors"
+        next unless surface.surfaceType.downcase == "roofceiling"
+        surface.setOutsideBoundaryCondition("Adiabatic")
+      end
+    end
+    
     # put all of the spaces in the model into a vector
     spaces = OpenStudio::Model::SpaceVector.new
     model.getSpaces.each do |space|
@@ -366,7 +376,6 @@ class CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry < OpenStudi
 
     spaces_associated_with_units = []
     (1..num_units).to_a.each do |unit_num|
-      Geometry.set_unit_space_association(model, unit_num, runner)    
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
       next if unit_spaces.nil?
       unit_spaces.each do |space|

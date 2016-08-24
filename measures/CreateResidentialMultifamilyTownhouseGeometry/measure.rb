@@ -55,7 +55,7 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
     num_units.setDisplayName("Num Units")
     num_units.setUnits("#")
     num_units.setDescription("The number of residential units.")
-    num_units.setDefaultValue(4)
+    num_units.setDefaultValue(5)
     args << num_units
     
     #make an argument for number of floors per unit
@@ -271,7 +271,6 @@ class CreateResidentialMultifamilyTownhouseGeometry < OpenStudio::Ruleset::Model
 
     spaces_associated_with_units = []
     (1..num_units).to_a.each do |unit_num|
-      Geometry.set_unit_space_association(model, unit_num, runner)
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
       next if unit_spaces.nil?
       unit_spaces.each do |space|

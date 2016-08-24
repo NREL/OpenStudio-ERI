@@ -106,23 +106,6 @@ class Geometry
         return [nbeds, nbaths, spaces_list]
     end
     
-    def self.set_unit_space_association(model, unit_num, runner)
-        model.getElectricEquipments.each do |ee|
-            next if !ee.name.to_s.start_with?("unit=#{unit_num}|")
-            ee.name.to_s.split("|").each do |data|
-                if data.include?("space")
-                    vals = data.split("=")
-                    space_handle_s = vals[1].to_s
-                    model.getSpaces.each do |space|
-                        next if space.handle.to_s != space_handle_s
-                        ee.setSpace(space)
-                        return
-                    end
-                end
-            end
-        end
-    end
-    
     def self.get_unit_default_finished_space(unit_spaces, runner)
         # For the specified unit, chooses an arbitrary finished space on the lowest above-grade story.
         # If no above-grade finished spaces are available, reverts to an arbitrary below-grade finished space.
@@ -198,6 +181,23 @@ class Geometry
       end
       return floor_area      
     end
+    
+    def self.get_unit_above_grade_finished_floor_area(model, unit_spaces, runner=nil)
+      floor_area = 0
+      model.getThermalZones.each do |zone|
+        zone.spaces.each do |space|
+          next unless unit_spaces.include? space
+          if self.zone_is_finished(zone) and self.zone_is_above_grade(zone)
+              floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
+          end
+        end
+      end
+      if floor_area == 0 and not runner.nil?
+          runner.registerError("Could not find any finished floor area.")
+          return nil
+      end
+      return floor_area      
+    end    
     
     def self.get_building_window_area(model, runner=nil)
       window_area = 0
