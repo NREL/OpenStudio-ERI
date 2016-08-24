@@ -132,11 +132,16 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
             return false
         end
         
+        if unit_num == 1 and space_r != Constants.Default
+            # Append unfinished spaces to this unit in case the specified location is an unfinished space
+            model.getSpaces.each do |space|
+                next if Geometry.space_is_finished(space)
+                unit_spaces << space
+            end
+        end
+
         # Get space
         space = Geometry.get_space_from_string(unit_spaces, space_r)
-        if space.nil? and space_r != Constants.Default
-            return false
-        end
         next if space.nil?
         
         unit_obj_name = Constants.ObjectNameFreezer(unit_num)

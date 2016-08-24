@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_gas</name>
   <uid>33d8c300-8f2b-4d36-b6cc-545422c7b407</uid>
-  <version_id>e72c2310-e1bb-4805-b9e4-54d3443b4f97</version_id>
-  <version_modified>20160823T203146Z</version_modified>
+  <version_id>ea643712-e85a-4ed8-9b7e-5c87e7f9450e</version_id>
+  <version_modified>20160824T163321Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeGas</class_name>
   <display_name>Set Residential Gas Cooking Range</display_name>
@@ -129,12 +129,6 @@
       <checksum>94E03665</checksum>
     </file>
     <file>
-      <filename>ResidentialCookingRangeGas_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CF9ABF1C</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -145,17 +139,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>B8029928</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>4EC4F1C8</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -192,6 +175,23 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>4527BBA1</checksum>
+    </file>
+    <file>
+      <filename>ResidentialCookingRangeGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4BDA7D1F</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>30E0B98C</checksum>
     </file>
   </files>
 </measure>

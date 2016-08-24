@@ -134,7 +134,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 500*num_units, num_units)
   end
   
-  def test_multifamily_new_construction_basement
+  def test_multifamily_new_construction_finished_basement
     num_units = 3
     args_hash = {}
     args_hash["c_ef"] = 0.74
@@ -143,6 +143,15 @@ class ResidentialCookingRangeTest < MiniTest::Test
     _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 1, 500)
   end
   
+  def test_multifamily_new_construction_unfinished_basement
+    num_units = 3
+    args_hash = {}
+    args_hash["c_ef"] = 0.74
+    args_hash["o_ef"] = 0.11
+    args_hash["space"] = "unfinishedbasement"
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 1, 500)
+  end
+
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}
@@ -348,6 +357,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)
     assert(result.info.size == num_infos)
     assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get new/deleted equipment objects
     new_objects = []

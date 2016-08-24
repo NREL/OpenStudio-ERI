@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>aeade46a-eb8b-41a9-8c9f-ef30619d2f23</version_id>
-  <version_modified>20160823T203139Z</version_modified>
+  <version_id>fbaf0342-6f6f-4b9f-90c8-b56e52038e39</version_id>
+  <version_modified>20160824T163319Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
@@ -114,23 +114,6 @@
       <checksum>F0F23347</checksum>
     </file>
     <file>
-      <filename>ResidentialFreezer_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7C8C81DE</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>D8BF8C24</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -141,6 +124,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>239A6D5F</checksum>
+    </file>
+    <file>
+      <filename>ResidentialFreezer_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2D5C8838</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>9636C1C2</checksum>
     </file>
   </files>
 </measure>

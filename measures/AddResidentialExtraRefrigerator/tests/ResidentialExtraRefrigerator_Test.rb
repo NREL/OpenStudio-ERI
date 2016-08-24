@@ -94,7 +94,7 @@ class ResidentialExtraRefrigeratorTest < MiniTest::Test
     _test_measure(osm_geo_multifamily_3_units, args_hash, 0, num_units, 1102.0*num_units, num_units)
   end
   
-  def test_multifamily_new_construction_basement
+  def test_multifamily_new_construction_finished_basement
     num_units = 3
     args_hash = {}
     args_hash["fridge_E"] = 1102.0
@@ -102,6 +102,14 @@ class ResidentialExtraRefrigeratorTest < MiniTest::Test
     _test_measure(osm_geo_multifamily_3_units, args_hash, 0, 1, 1102.0)
   end
   
+  def test_multifamily_new_construction_unfinished_basement
+    num_units = 3
+    args_hash = {}
+    args_hash["fridge_E"] = 1102.0
+    args_hash["space"] = "unfinishedbasement"
+    _test_measure(osm_geo_multifamily_3_units, args_hash, 0, 1, 1102.0)
+  end
+
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}
@@ -259,6 +267,7 @@ class ResidentialExtraRefrigeratorTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)
     assert(result.info.size == num_infos)
     assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get new/deleted electric equipment objects
     new_objects = []
