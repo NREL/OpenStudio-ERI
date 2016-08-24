@@ -1527,7 +1527,7 @@ OS:ElectricEquipment:Definition,
 
 OS:ElectricEquipment,
   {6151208d-ef42-4db0-85f1-7849f19710f7}, !- Handle
-  unit=3|bed=nil|bath=nil|space={b00e995e-1c99-49d2-afaa-fd3045f2ab66}, !- Name
+  unit=3|bed=nil|bath=nil|space={b00e995e-1c99-49d2-afaa-fd3045f2ab66}|space={b00e995e-1c99-49d2-afaa-fd3045f2ab67}, !- Name
   {ce73262d-5e9f-4fed-b61d-ffca9507d539}, !- Electric Equipment Definition Name
   {b00e995e-1c99-49d2-afaa-fd3045f2ab66}, !- Space or SpaceType Name
   {85b80225-f6fa-44df-b2a3-8680b0aa2275}; !- Schedule Name
