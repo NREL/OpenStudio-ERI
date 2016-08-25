@@ -24,15 +24,7 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
   end
   
   def osm_geo_multifamily_3_units_beds
-    return "multifamily_3_units_3Beds_2Baths.osm"
-  end
-
-  def osm_geo_multifamily_urbanopt_8_units
-    return "multifamily_urbanopt.osm"
-  end
-
-  def osm_geo_multifamily_urbanopt_8_units_beds
-    return "multifamily_urbanopt_3Beds_2Baths.osm"
+    return "multifamily_3_units_Beds_Baths.osm"
   end
 
   def test_new_construction_none
@@ -80,6 +72,14 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     args_hash["c_ef"] = 0.4
     args_hash["o_ef"] = 0.058
     args_hash["space"] = Constants.FinishedBasementSpace
+    _test_measure(osm_geo_beds, args_hash, 0, 2, 28.5, 80)
+  end
+  
+  def test_new_construction_garage
+    args_hash = {}
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    args_hash["space"] = Constants.GarageSpace
     _test_measure(osm_geo_beds, args_hash, 0, 2, 28.5, 80)
   end
   
@@ -143,7 +143,7 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     args_hash = {}
     args_hash["c_ef"] = 0.4
     args_hash["o_ef"] = 0.058
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 28.5*num_units, 80*num_units, num_units)
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 27*num_units, 75*num_units, num_units)
   end
   
   def test_multifamily_new_construction_finished_basement
@@ -155,25 +155,16 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2, 28.5, 80)
   end
   
-  def test_multifamily_new_construction_unfinished_basement
-    num_units = 3
-    args_hash = {}
-    args_hash["c_ef"] = 0.4
-    args_hash["o_ef"] = 0.058
-    args_hash["space"] = "unfinishedbasement"
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2, 28.5, 80)
-  end
-
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}
     args_hash["c_ef"] = 0.4
     args_hash["o_ef"] = 0.058
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 28.5*num_units, 80*num_units, num_units)
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 27*num_units, 75*num_units, num_units)
     args_hash = {}
     args_hash["c_ef"] = 0.2
     args_hash["o_ef"] = 0.02
-    _test_measure(model, args_hash, 2*num_units, 2*num_units, 70.9*num_units, 80*num_units, 2*num_units)
+    _test_measure(model, args_hash, 2*num_units, 2*num_units, 67*num_units, 75*num_units, 2*num_units)
   end
   
   def test_multifamily_retrofit_remove
@@ -181,20 +172,12 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     args_hash = {}
     args_hash["c_ef"] = 0.4
     args_hash["o_ef"] = 0.058
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 28.5*num_units, 80*num_units, num_units)
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 27*num_units, 75*num_units, num_units)
     args_hash = {}
     args_hash["mult"] = 0.0
     _test_measure(model, args_hash, 2*num_units, 0, 0.0, 0.0, num_units)
   end
   
-  def test_multifamily_urbanopt
-    num_units = 8
-    args_hash = {}
-    args_hash["c_ef"] = 0.4
-    args_hash["o_ef"] = 0.058
-    _test_measure(osm_geo_multifamily_urbanopt_8_units_beds, args_hash, 0, 2*num_units, 28.5*num_units, 80*num_units, num_units)
-  end
-
   def test_argument_error_c_ef_lt_0
     args_hash = {}
     args_hash["c_ef"] = -1.0
@@ -283,16 +266,11 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     _test_error(osm_geo_multifamily_3_units, args_hash)
   end
 
-  def test_error_missing_beds_multifamily_urbanopt
-    args_hash = {}
-    _test_error(osm_geo_multifamily_urbanopt_8_units, args_hash)
-  end
-
   def test_error_missing_geometry
     args_hash = {}
     _test_error(nil, args_hash)
   end
-
+  
   private
   
   def _test_error(osm_file, args_hash)

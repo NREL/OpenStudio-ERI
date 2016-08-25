@@ -15,10 +15,6 @@ class ResidentialRefrigeratorTest < MiniTest::Test
     return "multifamily_3_units.osm"
   end
   
-  def osm_geo_multifamily_urbanopt_8_units
-    return "multifamily_urbanopt.osm"
-  end
-
   def test_new_construction_none1
     # Using rated annual consumption
     args_hash = {}
@@ -130,13 +126,6 @@ class ResidentialRefrigeratorTest < MiniTest::Test
     _test_measure(model, args_hash, num_units, 0, 0.0, num_units)
   end
   
-  def test_multifamily_urbanopt
-    num_units = 8
-    args_hash = {}
-    args_hash["fridge_E"] = 434.0
-    _test_measure(osm_geo_multifamily_urbanopt_8_units, args_hash, 0, num_units, 434.0*num_units, num_units)
-  end
-
   def test_argument_error_fridge_E_negative
     args_hash = {}
     args_hash["fridge_E"] = -1.0

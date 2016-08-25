@@ -19,11 +19,19 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecClothesDryer.osm"
   end
 
+  def osm_geo_multifamily_3_units
+    return "multifamily_3_units.osm"
+  end
+  
+  def osm_geo_multifamily_3_units_beds
+    return "multifamily_3_units_Beds_Baths.osm"
+  end
+
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
     args_hash["cd_mult"] = 0.0
-    _test_measure(osm_geo_beds, args_hash)
+    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0, 0.0)
   end
   
   def test_new_construction_standard
@@ -77,20 +85,27 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     _test_measure(osm_geo_beds, args_hash, 0, 2, 81.0, 36.7)
   end
 
+  def test_new_construction_garage
+    args_hash = {}
+    args_hash["cd_ef"] = 2.75
+    args_hash["space"] = Constants.GarageSpace
+    _test_measure(osm_geo_beds, args_hash, 0, 2, 81.0, 36.7)
+  end
+
   def test_retrofit_replace
     args_hash = {}
     args_hash["cd_ef"] = 2.75
     model = _test_measure(osm_geo_beds, args_hash, 0, 2, 81.0, 36.7)
     args_hash = {}
     args_hash["cd_ef"] = 3.48
-    _test_measure(model, args_hash, 2, 2, 64.0, 29.0)
+    _test_measure(model, args_hash, 2, 2, 64.0, 29.0, 1)
   end
     
   def test_retrofit_replace_elec_clothes_dryer
     model = _get_model(osm_geo_beds_elecdryer)
     args_hash = {}
     args_hash["cd_ef"] = 3.48
-    _test_measure(model, args_hash, 1, 2, 64.0, 29.0)
+    _test_measure(model, args_hash, 1, 2, 64.0, 29.0, 1)
   end
 
   def test_retrofit_remove
@@ -99,7 +114,42 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     model = _test_measure(osm_geo_beds, args_hash, 0, 2, 81.0, 36.7)
     args_hash = {}
     args_hash["cd_mult"] = 0.0
-    _test_measure(model, args_hash, 2, 0)
+    _test_measure(model, args_hash, 2, 0, 0.0, 0.0, 1)
+  end
+  
+  def test_multifamily_new_construction
+    num_units = 3
+    args_hash = {}
+    args_hash["cd_ef"] = 2.75
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 76.5*num_units, 34.7*num_units, num_units)
+  end
+  
+  def test_multifamily_new_construction_finished_basement
+    num_units = 3
+    args_hash = {}
+    args_hash["cd_ef"] = 2.75
+    args_hash["space"] = "finishedbasement_1"
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2, 81.0, 36.7)
+  end
+  
+  def test_multifamily_retrofit_replace
+    num_units = 3
+    args_hash = {}
+    args_hash["cd_ef"] = 2.75
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 76.5*num_units, 34.7*num_units, num_units)
+    args_hash = {}
+    args_hash["cd_ef"] = 3.48
+    _test_measure(model, args_hash, 2*num_units, 2*num_units, 60.4*num_units, 27.4*num_units, 2*num_units)
+  end
+  
+  def test_multifamily_retrofit_remove
+    num_units = 3
+    args_hash = {}
+    args_hash["cd_ef"] = 2.75
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 76.5*num_units, 34.7*num_units, num_units)
+    args_hash = {}
+    args_hash["cd_mult"] = 0.0
+    _test_measure(model, args_hash, 2*num_units, 0, 0.0, 0.0, num_units)
   end
   
   def test_argument_error_cd_ef_negative
@@ -202,6 +252,11 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     args_hash = {}
     _test_error(osm_geo, args_hash)
   end
+  
+  def test_error_missing_beds_multifamily
+    args_hash = {}
+    _test_error(osm_geo_multifamily_3_units, args_hash)
+  end
     
   def test_error_missing_geometry
     args_hash = {}
@@ -244,7 +299,7 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     assert(result.errors.size == 1)
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0, expected_annual_therm=0.0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, expected_annual_therm, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialClothesDryerGas.new
 
@@ -283,12 +338,9 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_del_objects > 0
-        assert(result.info.size == 1)
-    else
-        assert(result.info.size == 0)
-    end
-    assert(result.warnings.size == 0)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get new/deleted electric equipment objects
     new_objects = []
@@ -311,16 +363,14 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     new_objects.each do |new_object|
         # check that the new object has the correct name
         if new_object.is_a?(OpenStudio::Model::GasEquipment)
-            assert_equal(new_object.name.to_s, Constants.ObjectNameClothesDryer(Constants.FuelTypeGas))
+            assert(new_object.name.to_s.start_with?(Constants.ObjectNameClothesDryer(Constants.FuelTypeGas)))
         elsif new_object.is_a?(OpenStudio::Model::ElectricEquipment)
-            assert_equal(new_object.name.to_s, Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric))
+            assert(new_object.name.to_s.start_with?(Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric)))
         end
     
         # check new object is in correct space
         if argument_map["space"].hasValue
             assert_equal(new_object.space.get.name.to_s, argument_map["space"].valueAsString)
-        else
-            assert_equal(new_object.space.get.name.to_s, argument_map["space"].defaultValueAsString)
         end
         
         # check for the correct annual energy consumption

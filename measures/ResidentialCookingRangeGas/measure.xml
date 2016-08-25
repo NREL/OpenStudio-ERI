@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_gas</name>
   <uid>33d8c300-8f2b-4d36-b6cc-545422c7b407</uid>
-  <version_id>26853b10-cffc-4d39-b80d-ad797283c43d</version_id>
-  <version_modified>20160824T225929Z</version_modified>
+  <version_id>d038dbe8-16a9-4802-a4c7-b62ddc8927c1</version_id>
+  <version_modified>20160825T211545Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeGas</class_name>
   <display_name>Set Residential Gas Cooking Range</display_name>
@@ -86,15 +86,15 @@
     <argument>
       <name>space</name>
       <display_name>Location</display_name>
-      <description>Select the space where the cooking range is located. 'Default' will choose the lowest above-grade finished space available (e.g., first story living space), or a below-grade finished space as last resort. For multifamily buildings, 'Default' will choose a space for each unit of the building.</description>
+      <description>Select the space where the cooking range is located. 'auto' will choose the lowest above-grade finished space available (e.g., first story living space), or a below-grade finished space as last resort. For multifamily buildings, 'auto' will choose a space for each unit of the building.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Default</default_value>
+      <default_value>auto</default_value>
       <choices>
         <choice>
-          <value>Default</value>
-          <display_name>Default</display_name>
+          <value>auto</value>
+          <display_name>auto</display_name>
         </choice>
       </choices>
     </argument>
@@ -123,58 +123,34 @@
       <checksum>4F0FB841</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>94E03665</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>85107701</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B8029928</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A5CA5B20</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>F0401975</checksum>
     </file>
     <file>
-      <filename>multifamily_3_units_3Beds_2Baths.osm</filename>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1DFEE0BF</checksum>
+      <checksum>3185EE43</checksum>
     </file>
     <file>
-      <filename>multifamily_urbanopt.osm</filename>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F0F23347</checksum>
+      <checksum>AE8F0F88</checksum>
     </file>
     <file>
-      <filename>multifamily_urbanopt_3Beds_2Baths.osm</filename>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4527BBA1</checksum>
+      <checksum>C727167F</checksum>
     </file>
     <file>
       <filename>ResidentialCookingRangeGas_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>4BDA7D1F</checksum>
+      <checksum>5450AB60</checksum>
     </file>
     <file>
       <version>
@@ -185,13 +161,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>30E0B98C</checksum>
+      <checksum>0C998796</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>08A41123</checksum>
+      <checksum>A91122C3</checksum>
+    </file>
+    <file>
+      <filename>multifamily_3_units_Beds_Baths.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9E636226</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7762857F</checksum>
     </file>
   </files>
 </measure>

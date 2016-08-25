@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>3dfc1a8d-4847-469b-a84f-94c116976c60</version_id>
-  <version_modified>20160825T192242Z</version_modified>
+  <version_id>e48fdec3-57ce-41ac-a626-c98568d2446c</version_id>
+  <version_modified>20160825T211543Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSteelStud</class_name>
   <display_name>Set Residential Walls - Steel Stud Construction</display_name>
@@ -131,22 +131,22 @@
       <checksum>9C9BDB5B</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A5CA5B20</checksum>
+      <checksum>0F260377</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>08A41123</checksum>
+      <checksum>A91122C3</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0F260377</checksum>
+      <checksum>7762857F</checksum>
     </file>
   </files>
 </measure>

@@ -1127,7 +1127,7 @@ OS:Surface,
 
 OS:ElectricEquipment:Definition,
   {d4eb5113-be74-4ee3-9fa9-f5a9ce34d4cd}, !- Handle
-  unit=1|bed=3.0|bath=2.0|space={59fc425b-e98e-42bf-a6d7-37f9c2809156}|space={e5db0cd2-d11a-4aa4-8606-748aa9c473f2}|space={8e83990d-2e24-422b-939a-fedfcd998894}, !- Name
+  unit=1|bed=3.0|bath=2.0|space={59fc425b-e98e-42bf-a6d7-37f9c2809156}|space={e5db0cd2-d11a-4aa4-8606-748aa9c473f2}|space={8e83990d-2e24-422b-939a-fedfcd998894}|space={e1c71ea2-2463-4bbc-b106-c2d83d7b5967}|space={202c2286-b1eb-4fc2-8c59-a1b9b6610e26}, !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -1150,7 +1150,7 @@ OS:Schedule:Day,
 
 OS:ElectricEquipment,
   {9be4ec38-036d-4884-8f15-81a28bc8fe01}, !- Handle
-  unit=1|bed=3.0|bath=2.0|space={59fc425b-e98e-42bf-a6d7-37f9c2809156}|space={e5db0cd2-d11a-4aa4-8606-748aa9c473f2}|space={8e83990d-2e24-422b-939a-fedfcd998894}, !- Name
+  unit=1|bed=3.0|bath=2.0|space={59fc425b-e98e-42bf-a6d7-37f9c2809156}|space={e5db0cd2-d11a-4aa4-8606-748aa9c473f2}|space={8e83990d-2e24-422b-939a-fedfcd998894}|space={e1c71ea2-2463-4bbc-b106-c2d83d7b5967}|space={202c2286-b1eb-4fc2-8c59-a1b9b6610e26}, !- Name
   {d4eb5113-be74-4ee3-9fa9-f5a9ce34d4cd}, !- Electric Equipment Definition Name
   ,                                       !- Space or SpaceType Name
   {f3cf25f9-e00c-44dc-a7bf-8746a3396529}; !- Schedule Name

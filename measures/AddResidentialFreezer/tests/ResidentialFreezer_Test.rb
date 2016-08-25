@@ -15,10 +15,6 @@ class ResidentialFreezerTest < MiniTest::Test
     return "multifamily_3_units.osm"
   end
   
-  def osm_geo_multifamily_urbanopt_8_units
-    return "multifamily_urbanopt.osm"
-  end
-  
   def test_new_construction_none1
     # Using rated annual consumption
     args_hash = {}
@@ -128,13 +124,6 @@ class ResidentialFreezerTest < MiniTest::Test
     args_hash = {}
     args_hash["freezer_E"] = 0.0
     _test_measure(model, args_hash, num_units, 0, 0.0, num_units)
-  end
-  
-  def test_multifamily_urbanopt
-    num_units = 8
-    args_hash = {}
-    args_hash["freezer_E"] = 1102.0
-    _test_measure(osm_geo_multifamily_urbanopt_8_units, args_hash, 0, num_units, 1102.0*num_units, num_units)
   end
   
   def test_argument_error_freezer_E_negative

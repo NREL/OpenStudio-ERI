@@ -1445,7 +1445,7 @@ OS:ScheduleTypeLimits,
 
 OS:ElectricEquipment:Definition,
   {6b07feb0-446d-43c9-85f1-5189c7057aad}, !- Handle
-  unit=1|bed=nil|bath=nil|space={10503839-5360-4afe-abaa-d375072eb067}|space={5b6fa6ec-32b3-4fef-abee-3cfedbde106b}, !- Name
+  unit=1|bed=3.0|bath=2.0|space={10503839-5360-4afe-abaa-d375072eb067}|space={5b6fa6ec-32b3-4fef-abee-3cfedbde106b}, !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -1453,7 +1453,7 @@ OS:ElectricEquipment:Definition,
 
 OS:ElectricEquipment,
   {2ce28a3d-e83b-47e6-9811-5701accffb8c}, !- Handle
-  unit=1|bed=nil|bath=nil|space={10503839-5360-4afe-abaa-d375072eb067}|space={5b6fa6ec-32b3-4fef-abee-3cfedbde106b}, !- Name
+  unit=1|bed=3.0|bath=2.0|space={10503839-5360-4afe-abaa-d375072eb067}|space={5b6fa6ec-32b3-4fef-abee-3cfedbde106b}, !- Name
   {6b07feb0-446d-43c9-85f1-5189c7057aad}, !- Electric Equipment Definition Name
   {10503839-5360-4afe-abaa-d375072eb067}, !- Space or SpaceType Name
   {7a87b567-b4c3-41a6-a7dd-7202457220fb}; !- Schedule Name
@@ -1482,7 +1482,7 @@ OS:ScheduleTypeLimits,
 
 OS:ElectricEquipment:Definition,
   {f55cb27b-3c55-4382-909a-170443eab95f}, !- Handle
-  unit=2|bed=nil|bath=nil|space={4afe5085-f784-493f-a444-cba146ba21e3}, !- Name
+  unit=2|bed=1.0|bath=1.5|space={4afe5085-f784-493f-a444-cba146ba21e3}, !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -1490,7 +1490,7 @@ OS:ElectricEquipment:Definition,
 
 OS:ElectricEquipment,
   {75f25e79-8934-460c-bcb6-faf366415b6c}, !- Handle
-  unit=2|bed=nil|bath=nil|space={4afe5085-f784-493f-a444-cba146ba21e3}, !- Name
+  unit=2|bed=1.0|bath=1.5|space={4afe5085-f784-493f-a444-cba146ba21e3}, !- Name
   {f55cb27b-3c55-4382-909a-170443eab95f}, !- Electric Equipment Definition Name
   {4afe5085-f784-493f-a444-cba146ba21e3}, !- Space or SpaceType Name
   {8bc5a99d-7d77-4c96-8cbb-359f18922d50}; !- Schedule Name
@@ -1519,7 +1519,7 @@ OS:ScheduleTypeLimits,
 
 OS:ElectricEquipment:Definition,
   {ce73262d-5e9f-4fed-b61d-ffca9507d539}, !- Handle
-  unit=3|bed=nil|bath=nil|space={b00e995e-1c99-49d2-afaa-fd3045f2ab66}|space={b00e995e-1c99-49d2-afaa-fd3045f2ab67}, !- Name
+  unit=3|bed=4.0|bath=3.0|space={b00e995e-1c99-49d2-afaa-fd3045f2ab66}|space={b00e995e-1c99-49d2-afaa-fd3045f2ab67}, !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -1527,7 +1527,7 @@ OS:ElectricEquipment:Definition,
 
 OS:ElectricEquipment,
   {6151208d-ef42-4db0-85f1-7849f19710f7}, !- Handle
-  unit=3|bed=nil|bath=nil|space={b00e995e-1c99-49d2-afaa-fd3045f2ab66}|space={b00e995e-1c99-49d2-afaa-fd3045f2ab67}, !- Name
+  unit=3|bed=4.0|bath=3.0|space={b00e995e-1c99-49d2-afaa-fd3045f2ab66}|space={b00e995e-1c99-49d2-afaa-fd3045f2ab67}, !- Name
   {ce73262d-5e9f-4fed-b61d-ffca9507d539}, !- Electric Equipment Definition Name
   {b00e995e-1c99-49d2-afaa-fd3045f2ab66}, !- Space or SpaceType Name
   {85b80225-f6fa-44df-b2a3-8680b0aa2275}; !- Schedule Name

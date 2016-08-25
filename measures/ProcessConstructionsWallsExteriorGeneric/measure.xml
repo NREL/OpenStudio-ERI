@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>f8aa7858-dabb-45b6-bf8b-90c47d3b1028</version_id>
-  <version_modified>20160825T192241Z</version_modified>
+  <version_id>6e2b2894-790a-4699-bdfa-d770495b12ac</version_id>
+  <version_modified>20160825T211543Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
@@ -224,22 +224,22 @@
       <checksum>70E0A28D</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A5CA5B20</checksum>
+      <checksum>0F260377</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>08A41123</checksum>
+      <checksum>A91122C3</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0F260377</checksum>
+      <checksum>7762857F</checksum>
     </file>
   </files>
 </measure>

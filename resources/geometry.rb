@@ -10,9 +10,11 @@ class Geometry
         return p
     end
     
-    def self.get_num_units(model, runner)
+    def self.get_num_units(model, runner=nil)
         if not model.getBuilding.standardsNumberOfLivingUnits.is_initialized
-            runner.registerError("Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+            if !runner.nil?
+                runner.registerError("Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+            end
             return nil
         end
         num_units = model.getBuilding.standardsNumberOfLivingUnits.get
@@ -27,7 +29,9 @@ class Geometry
             end
         end
         if num_units != units_found.size
-            runner.registerError("Cannot determine number of building units; inconsistent number of units defined in the model.")
+            if !runner.nil?
+                runner.registerError("Cannot determine number of building units; inconsistent number of units defined in the model.")
+            end
             return nil
         end
         return num_units
@@ -66,7 +70,7 @@ class Geometry
         ee.setSchedule(sch)
     end
     
-    def self.get_unit_beds_baths_spaces(model, unit_num, runner)
+    def self.get_unit_beds_baths_spaces(model, unit_num, runner=nil)
         # Retrieves information temporarily stored in the name of a dummy ElectricEquipment object.
         # Returns a vector with #beds, #baths, and a list of spaces
         nbeds = nil
@@ -135,6 +139,26 @@ class Geometry
         return space
     end
     
+    # Returns all spaces in the model associated with a unit
+    def self.get_all_unit_spaces(model, runner=nil)
+        num_units = Geometry.get_num_units(model, runner)
+        if num_units.nil?
+            return nil
+        end
+        all_unit_spaces = []
+        (1..num_units).to_a.each do |unit_num|
+            _nbeds, _nbaths, unit_spaces = self.get_unit_beds_baths_spaces(model, unit_num, runner)
+            if unit_spaces.nil?
+                return nil
+            end
+            unit_spaces.each do |unit_space|
+                next if all_unit_spaces.include?(unit_space)
+                all_unit_spaces << unit_space
+            end
+        end
+        return all_unit_spaces
+    end
+    
     # Retrieves the finished floor area for the building
     def self.get_building_finished_floor_area(model, runner=nil)
         floor_area = 0
@@ -153,13 +177,10 @@ class Geometry
     # Retrieves the finished floor area for a unit
     def self.get_unit_finished_floor_area(model, unit_spaces, runner=nil)
         floor_area = 0
-        model.getThermalZones.each do |zone|
-          zone.spaces.each do |space|
-            next unless unit_spaces.include? space
-            if self.zone_is_finished(zone)
-                floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
-            end            
-          end
+        unit_spaces.each do |space|
+          if self.space_is_finished(space)
+              floor_area += OpenStudio.convert(space.floorArea,"m^2","ft^2").get
+          end            
         end
         if floor_area == 0 and not runner.nil?
             runner.registerError("Could not find any finished floor area.")
@@ -176,7 +197,7 @@ class Geometry
           end
       end
       if floor_area == 0 and not runner.nil?
-          runner.registerError("Could not find any finished floor area.")
+          runner.registerError("Could not find any above-grade finished floor area.")
           return nil
       end
       return floor_area      
@@ -184,16 +205,13 @@ class Geometry
     
     def self.get_unit_above_grade_finished_floor_area(model, unit_spaces, runner=nil)
       floor_area = 0
-      model.getThermalZones.each do |zone|
-        zone.spaces.each do |space|
-          next unless unit_spaces.include? space
-          if self.zone_is_finished(zone) and self.zone_is_above_grade(zone)
-              floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
-          end
+      unit_spaces.each do |space|
+        if self.space_is_finished(space) and self.space_is_above_grade(space)
+            floor_area += OpenStudio.convert(space.floorArea,"m^2","ft^2").get
         end
       end
       if floor_area == 0 and not runner.nil?
-          runner.registerError("Could not find any finished floor area.")
+          runner.registerError("Could not find any above-grade finished floor area.")
           return nil
       end
       return floor_area      
@@ -388,7 +406,7 @@ class Geometry
     end
 
     def self.get_space_from_string(spaces, space_s, runner=nil)
-        if space_s == Constants.Default
+        if space_s == Constants.Auto
             return Geometry.get_unit_default_finished_space(spaces, runner)
         end
         space = nil
