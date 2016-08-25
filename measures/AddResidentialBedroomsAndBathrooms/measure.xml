@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>52470581-ab0c-481a-8c81-e14bab458a47</version_id>
-  <version_modified>20160825T211538Z</version_modified>
+  <version_id>1dce379c-5ca1-4df5-a376-86ad0fb43326</version_id>
+  <version_modified>20160825T215813Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -57,12 +57,6 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>94E03665</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -73,18 +67,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>F0F23347</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_no_spaces_in_unit.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>57B74851</checksum>
-    </file>
-    <file>
-      <filename>EmptySeedModel.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>94409751</checksum>
     </file>
     <file>
       <filename>multifamily_4_units_listed_3_units_defined.osm</filename>
@@ -126,6 +108,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7762857F</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9ECD7B7B</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_no_spaces_in_unit.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5D9A054F</checksum>
+    </file>
+    <file>
+      <filename>EmptySeedModel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A0EFDE7A</checksum>
     </file>
   </files>
 </measure>

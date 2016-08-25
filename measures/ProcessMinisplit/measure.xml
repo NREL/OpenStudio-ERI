@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_minisplit</name>
   <uid>257a8095-0b3d-4ac7-acf5-c537ecbaa945</uid>
-  <version_id>8f0c44fa-861b-4f69-95c8-2410ce161d05</version_id>
-  <version_modified>20160825T211545Z</version_modified>
+  <version_id>e6c39475-d6ee-4391-8204-b999713bf276</version_id>
+  <version_modified>20160825T215816Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
@@ -475,42 +475,6 @@
       <checksum>DDBF85D7</checksum>
     </file>
     <file>
-      <filename>singlefamily_fbsmt_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>87221C09</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbsmt_location_boiler.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FFC14C0A</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbsmt_location_boiler_room_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2DC3E704</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbsmt_location_electric_baseboard.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3CE12A3B</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbsmt_location_electric_baseboard_room_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D150A4B0</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbsmt_location_room_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2910049D</checksum>
-    </file>
-    <file>
       <filename>process_minisplit_heat_pump_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -592,6 +556,42 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7762857F</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2E5C600C</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location_boiler.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>913FAA34</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location_boiler_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9440AFB2</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location_electric_baseboard.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F27DFDA2</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location_electric_baseboard_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>02E488CA</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>331E51A2</checksum>
     </file>
   </files>
 </measure>

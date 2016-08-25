@@ -4,3 +4,4 @@ ResidentialDistribution,DrawProfiles/ShowerSchedule_1bed_unit0.csv,DrawProfiles/
 ResidentialClothesWasher,DrawProfiles/ClothesWasherSchedule_1bed_unit0.csv,DrawProfiles/ClothesWasherSchedule_2bed_unit0.csv,DrawProfiles/ClothesWasherSchedule_3bed_unit0.csv,DrawProfiles/ClothesWasherSchedule_4bed_unit0.csv,DrawProfiles/ClothesWasherSchedule_5bed_unit0.csv,DrawProfiles/MinuteDrawProfilesMaxFlows.csv,,,,,,,,,,
 ResidentialDishwasher,DrawProfiles/DishwasherSchedule_1bed_unit0.csv,DrawProfiles/DishwasherSchedule_2bed_unit0.csv,DrawProfiles/DishwasherSchedule_3bed_unit0.csv,DrawProfiles/DishwasherSchedule_4bed_unit0.csv,DrawProfiles/DishwasherSchedule_5bed_unit0.csv,DrawProfiles/MinuteDrawProfilesMaxFlows.csv,,,,,,,,,,
 SetResidentialEPWFile,USA_CO_Denver_Intl_AP_725650_TMY3.ddy,USA_CO_Denver_Intl_AP_725650_TMY3.epw,climate_zones.csv,,,,,,,,,,,,,
+ProcessAirflow,ASHRAE622WSF.csv,,,,,,,,,,,,,,,

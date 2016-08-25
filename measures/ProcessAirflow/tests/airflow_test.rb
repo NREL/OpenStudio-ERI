@@ -54,6 +54,23 @@ class AirflowTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end  
   
+  def test_mech_vent_exhaust
+    args_hash = {}
+    args_hash["selectedventtype"] = Constants.VentTypeExhaust
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end  
+
+  def test_mech_vent_exhaust_ashrae_622_2013
+    args_hash = {}
+    args_hash["selectedventtype"] = Constants.VentTypeExhaust
+    args_hash["selectedashraestandard"] = "2013"
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end  
+
   def test_mech_vent_balanced
     args_hash = {}
     args_hash["selectedventtype"] = Constants.VentTypeBalanced

@@ -2965,7 +2965,10 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
             # rate shall not be reduced as described in Section 4.1.3.").     
             ela = infil.A_o # Effective leakage area, ft^2
             nl = 1000.0 * ela / living_space.area * (living_space.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
-            qinf = nl * @weather.header.WSF * living_space.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+            puts "============================================"
+            puts @weather.data.WSF.to_s
+            puts "============================================"
+            qinf = nl * @weather.data.WSF * living_space.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
             infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
         end
     end

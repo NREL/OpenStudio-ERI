@@ -58,9 +58,6 @@ OS:Sizing:Parameters,
   1.25,                                   !- Heating Sizing Factor
   1.15;                                   !- Cooling Sizing Factor
 
-OS:ProgramControl,
-  {05027a99-f2b3-4aeb-afc6-1425fbb4371d}; !- Handle
-
 OS:Timestep,
   {4ebc9f1e-4707-402e-9844-67eb1ffbd522}, !- Handle
   2;                                      !- Number of Timesteps per Hour
