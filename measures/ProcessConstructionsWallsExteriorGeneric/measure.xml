@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>9ac9d4e0-7f2b-447a-a0b3-488d7c28bb56</version_id>
-  <version_modified>20160824T215654Z</version_modified>
+  <version_id>f8aa7858-dabb-45b6-bf8b-90c47d3b1028</version_id>
+  <version_modified>20160825T192241Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
@@ -239,7 +239,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2792E40D</checksum>
+      <checksum>0F260377</checksum>
     </file>
   </files>
 </measure>

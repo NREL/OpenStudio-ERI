@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_finished</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>ddd9aad0-ae1f-48be-91ce-a3cb0563bdbf</version_id>
-  <version_modified>20160824T215653Z</version_modified>
+  <version_id>dd16fdff-f772-439d-b1ac-0cf29b0cff36</version_id>
+  <version_modified>20160825T192240Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementFinished</class_name>
   <display_name>Set Residential Foundations/Floors - Finished Basement Constructions</display_name>
@@ -177,7 +177,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2792E40D</checksum>
+      <checksum>0F260377</checksum>
     </file>
   </files>
 </measure>

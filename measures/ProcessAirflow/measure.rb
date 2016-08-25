@@ -790,9 +790,6 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     if infiltrationLivingSpaceACH50 == 0
       infiltrationLivingSpaceACH50 = nil
     end
-    if infiltrationGarageACH50 == 0
-      infiltrationGarageACH50 = nil
-    end
 	
     # Create the material class instances
     si = Infiltration.new(infiltrationLivingSpaceACH50, infiltrationShelterCoefficient, infiltrationGarageACH50)
@@ -926,7 +923,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     end    
     
     duct_locations = {}
-    
+
     num_units = Geometry.get_num_units(model, runner)
     if num_units.nil?
         return false
@@ -977,12 +974,12 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       ufbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, ufbasement_thermal_zone_r.to_s, runner)
       crawl_thermal_zone = Geometry.get_thermal_zone_from_string(model, crawl_thermal_zone_r.to_s, runner)
       ufattic_thermal_zone = Geometry.get_thermal_zone_from_string(model, ufattic_thermal_zone_r.to_s, runner)
-        
-      if duct_location != "none" and HelperMethods.has_central_air_conditioner(model, runner, living_thermal_zone).nil? and HelperMethods.has_furnace(model, runner, living_thermal_zone).nil? and HelperMethods.has_air_source_heat_pump(model, runner, living_thermal_zone).nil?
+
+      if duct_location != "none" and HelperMethods.has_central_air_conditioner(model, runner, living_thermal_zone, false, false).nil? and HelperMethods.has_furnace(model, runner, living_thermal_zone, false, false).nil? and HelperMethods.has_air_source_heat_pump(model, runner, living_thermal_zone, false).nil?
         runner.registerWarning("No ducted HVAC equipment was found but ducts were specified. Overriding duct specification.")
         duct_location = "none"
       end
-        
+
       zones = workspace.getObjectsByType("Zone".to_IddObjectType)
       zones.each do |zone|
         zone_name = zone.getString(0).to_s
@@ -1043,13 +1040,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       end        
 
       has_cd = false
-      workspace.getObjectsByType("ElectricEquipment".to_IddObjectType).each do |electric_equipment|
-        if electric_equipment.getString(1).to_s == living_thermal_zone_r
-          has_cd = true
-        end
-      end
-      workspace.getObjectsByType("GasEquipment".to_IddObjectType).each do |gas_equipment|
-        if gasEquipment.getString(1).to_s == living_thermal_zone_r
+      (workspace.getObjectsByType("ElectricEquipment".to_IddObjectType) + workspace.getObjectsByType("GasEquipment".to_IddObjectType)).each do |equipment|
+        if equipment.getString(1).to_s == living_thermal_zone_r
           has_cd = true
         end
       end
@@ -1669,7 +1661,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       end
       
       has_mini_split_hp = false
-      unless HelperMethods.has_mini_split_heat_pump(model, runner, living_thermal_zone).nil?
+      unless HelperMethods.has_mini_split_heat_pump(model, runner, living_thermal_zone, false).nil?
         has_mini_split_hp = true
       end
       if has_mini_split_hp and ( d.DuctLocation != (living_thermal_zone_r or "none") )
@@ -2966,7 +2958,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
             # 2 cfm per 100ft^2 of occupiable floor area
             infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
             # Half the excess infiltration rate above the default rate is credited toward mech vent:
-            infil.rate_credit = [(living_space.inf_flow - default_rate) / 2.0, 0].max          
+            infil.rate_credit = [(living_space.inf_flow - infil.default_rate) / 2.0, 0].max          
         elsif vent.MechVentASHRAEStandard == '2013' and geometry.num_units == 1
             # ASHRAE Standard 62.2 2013
             # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
@@ -3043,9 +3035,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     sch_hourly = "
     Schedule:Day:Hourly,
       MechanicalVentilationEnergyDay_#{unit_num},         !- Name
-      FRACTION,                                           !- Schedule Type
-      "
-    vent.hourly_energy_schedule[0..23].each do |hour|
+      FRACTION,                                           !- Schedule Type"
+
+    vent.hourly_energy_schedule[0..22].each do |hour|
       sch_hourly += "#{hour},\n"
     end
     sch_hourly += "#{vent.hourly_energy_schedule[23]};"
@@ -3092,9 +3084,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     sch_hourly = "
     Schedule:Day:Hourly,
       MechanicalVentilationDay_#{unit_num},               !- Name
-      FRACTION,                                           !- Schedule Type
-      "
-    vent.hourly_schedule[0..23].each do |hour|
+      FRACTION,                                           !- Schedule Type"
+
+    vent.hourly_schedule[0..22].each do |hour|
       sch_hourly += "#{hour},\n"
     end
     sch_hourly += "#{vent.hourly_schedule[23]};"
@@ -3131,7 +3123,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       BathExhaustDay_#{unit_num},                         !- Name
       FRACTION,                                           !- Schedule Type
       "
-    bath_exhaust_hourly[0..23].each do |hour|
+    bath_exhaust_hourly[0..22].each do |hour|
       sch_hourly += "#{hour}\n,"
     end
     sch_hourly += "#{bath_exhaust_hourly[23]};"
@@ -3168,7 +3160,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       ClothesDryerExhaustDay_#{unit_num},                 !- Name
       FRACTION,                                           !- Schedule Type
       "
-    clothes_dryer_exhaust_hourly[0..23].each do |hour|
+    clothes_dryer_exhaust_hourly[0..22].each do |hour|
       sch_hourly += "#{hour},\n"
     end
     sch_hourly += "#{clothes_dryer_exhaust_hourly[23]};"
@@ -3205,7 +3197,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       RangeHoodDay_#{unit_num},                           !- Name
       FRACTION,                                           !- Schedule Type
       "
-    range_hood_hourly[0..23].each do |hour|
+    range_hood_hourly[0..22].each do |hour|
       sch_hourly += "#{hour},\n"
     end
     sch_hourly += "#{range_hood_hourly[23]};"
@@ -3370,9 +3362,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentHtgSsnTempWkDay_hourly = "
     Schedule:Day:Hourly,
       NatVentHtgSsnTempWkDay_#{unit_num},                 !- Name
-      TEMPERATURE,                                        !- Schedule Type
-      "
-    nv.htg_ssn_hourly_temp[0..23].each do |hour|
+      TEMPERATURE,                                        !- Schedule Type"
+
+    nv.htg_ssn_hourly_temp[0..22].each do |hour|
       natVentHtgSsnTempWkDay_hourly += "#{hour}\n,"
     end
     natVentHtgSsnTempWkDay_hourly += "#{nv.htg_ssn_hourly_temp[23]};"
@@ -3380,9 +3372,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentHtgSsnTempWkEnd_hourly = "
     Schedule:Day:Hourly,
       NatVentHtgSsnTempWkEnd_#{unit_num},                 !- Name
-      TEMPERATURE,                                        !- Schedule Type
-      "
-    nv.htg_ssn_hourly_weekend_temp[0..23].each do |hour|
+      TEMPERATURE,                                        !- Schedule Type"
+
+    nv.htg_ssn_hourly_weekend_temp[0..22].each do |hour|
       natVentHtgSsnTempWkEnd_hourly += "#{hour}\n,"
     end
     natVentHtgSsnTempWkEnd_hourly += "#{nv.htg_ssn_hourly_weekend_temp[23]};"
@@ -3390,9 +3382,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentClgSsnTempWkDay_hourly = "
     Schedule:Day:Hourly,
       NatVentClgSsnTempWkDay_#{unit_num},                 !- Name
-      TEMPERATURE,                                        !- Schedule Type
-      "
-    nv.clg_ssn_hourly_temp[0..23].each do |hour|
+      TEMPERATURE,                                        !- Schedule Type"
+
+    nv.clg_ssn_hourly_temp[0..22].each do |hour|
       natVentClgSsnTempWkDay_hourly += "#{hour}\n,"
     end
     natVentClgSsnTempWkDay_hourly += "#{nv.clg_ssn_hourly_temp[23]};"
@@ -3400,9 +3392,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentClgSsnTempWkEnd_hourly = "
     Schedule:Day:Hourly,
       NatVentClgSsnTempWkEnd_#{unit_num},                 !- Name
-      TEMPERATURE,                                        !- Schedule Type
-      "
-    nv.clg_ssn_hourly_weekend_temp[0..23].each do |hour|
+      TEMPERATURE,                                        !- Schedule Type"
+
+    nv.clg_ssn_hourly_weekend_temp[0..22].each do |hour|
       natVentClgSsnTempWkEnd_hourly += "#{hour}\n,"
     end
     natVentClgSsnTempWkEnd_hourly += "#{nv.clg_ssn_hourly_weekend_temp[23]};"
@@ -3410,9 +3402,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentOvlpSsnTempWkDay_hourly = "
     Schedule:Day:Hourly,
       NatVentOvlpSsnTempWkDay_#{unit_num},                !- Name
-      TEMPERATURE,                                        !- Schedule Type
-      "
-    nv.ovlp_ssn_hourly_temp[0..23].each do |hour|
+      TEMPERATURE,                                        !- Schedule Type"
+
+    nv.ovlp_ssn_hourly_temp[0..22].each do |hour|
       natVentOvlpSsnTempWkDay_hourly += "#{hour}\n,"
     end
     natVentOvlpSsnTempWkDay_hourly += "#{nv.ovlp_ssn_hourly_temp[23]};"
@@ -3420,9 +3412,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     natVentOvlpSsnTempWkEnd_hourly = "
     Schedule:Day:Hourly,
       NatVentOvlpSsnTempWkEnd_#{unit_num},                !- Name
-      TEMPERATURE,                                        !- Schedule Type
-      "
-    nv.ovlp_ssn_hourly_weekend_temp[0..23].each do |hour|
+      TEMPERATURE,                                        !- Schedule Type"
+      
+    nv.ovlp_ssn_hourly_weekend_temp[0..22].each do |hour|
       natVentOvlpSsnTempWkEnd_hourly += "#{hour}\n,"
     end
     natVentOvlpSsnTempWkEnd_hourly += "#{nv.ovlp_ssn_hourly_weekend_temp[23]};"
@@ -3472,6 +3464,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     Schedule:Year,
       NatVentTemp_#{unit_num},     !- Name
       TEMPERATURE,                 !- Schedule Type"
+      
     nv.season_type.each_with_index do |ssn_type, month|
       if ssn_type == Constants.SeasonHeating
         week_schedule_name = "NatVentHtgSsnTempWeek_#{unit_num}"
@@ -3574,9 +3567,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     on_day = "
     Schedule:Day:Hourly,
       NatVentOn-Day_#{unit_num},                       !- Name
-      FRACTION,                                        !- Schedule Type
-      "
-    natventon_day_hourly[0..23].each do |hour|
+      FRACTION,                                        !- Schedule Type"
+      
+    natventon_day_hourly[0..22].each do |hour|
       on_day += "#{hour}\n,"
     end
     on_day += "#{natventon_day_hourly[23]};"
@@ -3586,9 +3579,9 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     off_day = "
     Schedule:Day:Hourly,
       NatVentOff-Day_#{unit_num},                      !- Name
-      FRACTION,                                        !- Schedule Type
-      "
-    natventoff_day_hourly[0..23].each do |hour|
+      FRACTION,                                        !- Schedule Type"
+      
+    natventoff_day_hourly[0..22].each do |hour|
       off_day += "#{hour}\n,"
     end
     off_day += "#{natventoff_day_hourly[23]};"
@@ -3660,6 +3653,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
     Schedule:Year,
       NatVent_#{unit_num},      !- Name
       FRACTION,                 !- Schedule Type"
+      
     (0...12).to_a.each do |month|
       if ((nv.season_type[month] == Constants.SeasonHeating and nv.NatVentHeatingSeason) or (nv.season_type[month] == Constants.SeasonCooling and nv.NatVentCoolingSeason) or (nv.season_type[month] == Constants.SeasonOverlap and nv.NatVentOverlapSeason)) and (not days[0] == "None")
         week_schedule_name = "NatVent-Week_#{unit_num}"

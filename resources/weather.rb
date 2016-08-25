@@ -68,7 +68,7 @@ class WeatherProcess
         header.Altitude = OpenStudio::convert(epw_file.elevation,"m","ft").get
         header.LocalPressure = Math::exp(-0.0000368 * header.Altitude) # atm
         
-        # header.WSF = get_ashrae_622_wsf(header.Station) TODO: getting utf-8 byte error on linux server when parsing this csv
+        # header.WSF = get_ashrae_622_wsf(header.Station) # TODO: getting utf-8 byte error on linux server when parsing this csv
         
         if header_only
             return header, nil
@@ -266,7 +266,7 @@ class WeatherProcess
         
         @runner.registerInfo("Getting ASHRAE 62.2 WSF...")
         
-        ashrae_csv = File.join(measure_dir, "resources", 'ASHRAE622WSF.csv')
+        ashrae_csv = File.join(@measure_dir, "resources", 'ASHRAE622WSF.csv')
         ashrae_csvlines = []
         File.open(ashrae_csv) do |file|
           # if not os.path.exists(ashrae_csv):

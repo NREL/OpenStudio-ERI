@@ -7,6 +7,37 @@ require 'fileutils'
 
 class AirflowTest < MiniTest::Test
   
+  def test_has_clothes_dryer
+    args_hash = {}
+    result = _test_error("singlefamily_slab_location_beds_furnace_clothes_dryer.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)   
+  end
+  
+  def test_non_ducted_hvac_equipment
+    args_hash = {}
+    result = _test_error("singlefamily_slab_location_beds_electric_baseboard.osm", args_hash)
+    assert_equal("Success", result.value.valueName)
+    assert_includes(result.warnings.map{ |x| x.logMessage }, "No ducted HVAC equipment was found but ducts were specified. Overriding duct specification.")
+  end  
+  
+  def test_neighbors
+    args_hash = {}
+    result = _test_error("singlefamily_slab_location_neighbors_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end  
+  
+  def test_no_living_garage_attic_infiltration
+    args_hash = {}
+    args_hash["userdefinedinflivingspace"] = 0
+    args_hash["userdefinedinfgarage"] = 0
+    args_hash["userdefinedinfunfinattic"] = 0
+    result = _test_error("singlefamily_garage_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end  
+  
   def test_mech_vent_none
     args_hash = {}
     args_hash["selectedventtype"] = "none"
@@ -15,6 +46,14 @@ class AirflowTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
   
+  def test_mech_vent_supply
+    args_hash = {}
+    args_hash["selectedventtype"] = Constants.VentTypeSupply
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end  
+  
   def test_mech_vent_balanced
     args_hash = {}
     args_hash["selectedventtype"] = Constants.VentTypeBalanced
@@ -22,6 +61,14 @@ class AirflowTest < MiniTest::Test
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
   end  
+  
+  def test_new_construction
+    args_hash = {}
+    args_hash["userdefinedhomeage"] = 1
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
   
   def test_garage
     args_hash = {}  
@@ -90,13 +137,6 @@ class AirflowTest < MiniTest::Test
     result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
-  end  
-  
-  def test_mshp # TODO: has_minisplit = false?
-    args_hash = {}
-    result = _test_error("singlefamily_slab_location_beds_mshp.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
   end
   
   def test_duct_norm_leak_to_outside
@@ -138,6 +178,66 @@ class AirflowTest < MiniTest::Test
     result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
+  end
+  
+  def test_mech_vent_erv
+    args_hash = {}
+    args_hash["selectedventtype"] = Constants.VentTypeBalanced
+    args_hash["userdefinedtotaleff"] = 0.48
+    args_hash["userdefinedsenseff"] = 0.72
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end     
+  
+  def test_mech_vent_hrv
+    args_hash = {}
+    args_hash["selectedventtype"] = Constants.VentTypeBalanced
+    args_hash["userdefinedsenseff"] = 0.6
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+  
+  def test_nat_vent_1_wkdy_1_wked
+    args_hash = {}
+    args_hash["userdefinedventweekdays"] = 1
+    args_hash["userdefinedventweekenddays"] = 1
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+  
+  def test_nat_vent_2_wkdy_2_wked
+    args_hash = {}
+    args_hash["userdefinedventweekdays"] = 2
+    args_hash["userdefinedventweekenddays"] = 2
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+  
+  def test_nat_vent_4_wkdy
+    args_hash = {}
+    args_hash["userdefinedventweekdays"] = 4
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end
+  
+  def test_nat_vent_5_wkdy
+    args_hash = {}
+    args_hash["userdefinedventweekdays"] = 5
+    result = _test_error("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+  
+  def test_mshp
+    args_hash = {}
+    result = _test_error("singlefamily_slab_location_beds_mshp.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
   end
   
   private
