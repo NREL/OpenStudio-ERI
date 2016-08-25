@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>e385f0f5-d7f9-44b7-923e-9adb2c356c87</version_id>
-  <version_modified>20160825T222130Z</version_modified>
+  <version_id>5e0d306d-0d9b-41e1-8a3a-a3de1d7ab417</version_id>
+  <version_modified>20160825T224052Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -642,10 +642,16 @@
       <checksum>299CD3E0</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9D657C02</checksum>
+    </file>
+    <file>
       <filename>ASHRAE622WSF.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1C1BB835</checksum>
+      <checksum>850DDB63</checksum>
     </file>
     <file>
       <version>
@@ -656,13 +662,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C3F6F7D9</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9D657C02</checksum>
+      <checksum>6694D72C</checksum>
     </file>
   </files>
 </measure>
