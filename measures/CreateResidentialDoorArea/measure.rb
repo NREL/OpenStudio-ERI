@@ -139,8 +139,22 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
           end 
       end
 
-      unless corridor_walls.size == 0
-        first_story_most_front_walls = corridor_walls
+      first_story_corridor_walls = []
+      first_story_corridor_wall_minz = 99999
+      corridor_walls.each do |corridor_wall|
+          zvalues = Geometry.getSurfaceZValues([corridor_wall])
+          minz = zvalues.min + corridor_wall.space.get.zOrigin
+          if minz < first_story_corridor_wall_minz
+              first_story_corridor_walls.clear
+              first_story_corridor_walls << corridor_wall
+              first_story_corridor_wall_minz = minz
+          elsif minz == first_story_corridor_wall_minz
+              first_story_corridor_walls << corridor_wall
+          end
+      end      
+      
+      unless first_story_corridor_walls.size == 0
+        first_story_most_front_walls = first_story_corridor_walls
       end
       
       unit_has_door = true

@@ -295,51 +295,7 @@ class AirflowTest < MiniTest::Test
       
     return result
     
-  end
-  
-  def _test_measure(osm_file_or_model, args_hash, expected_infos)
-    # create an instance of the measure
-    measure = ProcessAirflow.new
-
-    # check for standard methods
-    assert(!measure.name.empty?)
-    assert(!measure.description.empty?)
-    assert(!measure.modeler_description.empty?)
-
-    # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
-    
-    model = _get_model(osm_file_or_model)
-    translator = OpenStudio::EnergyPlus::ForwardTranslator.new
-    workspace = translator.translateModel(model)
-    runner.setLastOpenStudioModel(model)
-
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
-    end
-
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    expected_infos += ["Added heating coil 'Furnace Heating Coil' to branch 'Forced Air System' of air loop 'Central Air System'"]
-    expected_infos.each do |expected_info|
-      assert_includes(result.info.map{ |x| x.logMessage }, expected_info)
-    end   
-
-    return model
-  end  
+  end 
   
   def _get_model(osm_file_or_model)
     if osm_file_or_model.is_a?(OpenStudio::Model::Model)

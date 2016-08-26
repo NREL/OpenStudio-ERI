@@ -35,18 +35,10 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     assert_equal(result.errors[0].logMessage, "Invalid aspect ratio entered.")
   end
   
-  def test_argument_error_basement_height_invalid
-    args_hash = {}
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
-    result = _test_error(nil, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Currently the basement height is restricted to 8 ft.")
-  end
-  
   def test_argument_error_crawl_height_invalid
     args_hash = {}
     args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
@@ -56,6 +48,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_argument_error_pierbeam_height_invalid
     args_hash = {}
     args_hash["foundation_type"] = Constants.PierBeamSpace
+    args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)

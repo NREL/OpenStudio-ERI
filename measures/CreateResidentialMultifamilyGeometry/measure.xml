@@ -1,0 +1,223 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>create_residential_multifamily_geometry</name>
+  <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
+  <version_id>c93787a8-7cf2-4dea-a301-c962c9d58e1e</version_id>
+  <version_modified>20160826T222916Z</version_modified>
+  <xml_checksum>2AF3A68E</xml_checksum>
+  <class_name>CreateResidentialMultifamilyGeometry</class_name>
+  <display_name>Create Residential Multifamily Geometry</display_name>
+  <description>Sets the basic geometry for the building.</description>
+  <modeler_description>Creates multifamily geometry.</modeler_description>
+  <arguments>
+    <argument>
+      <name>unit_ffa</name>
+      <display_name>Unit Finished Floor Area</display_name>
+      <description>Unit floor area of the finished space (including any finished basement floor area).</description>
+      <type>Double</type>
+      <units>ft^2</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>900</default_value>
+    </argument>
+    <argument>
+      <name>living_height</name>
+      <display_name>Wall Height (Per Floor)</display_name>
+      <description>The height of the living space (and garage) walls.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>8</default_value>
+    </argument>
+    <argument>
+      <name>building_num_floors</name>
+      <display_name>Building Num Floors</display_name>
+      <description>The number of floors above grade. Must be multiplier of number of floors per unit.</description>
+      <type>Integer</type>
+      <units>#</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>num_units_per_floor</name>
+      <display_name>Num Units Per Floor</display_name>
+      <description>The number of units per floor.</description>
+      <type>Integer</type>
+      <units>#</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2</default_value>
+    </argument>
+    <argument>
+      <name>num_stories_per_unit</name>
+      <display_name>Num Stories Per Unit</display_name>
+      <description>The number of stories per unit.</description>
+      <type>Integer</type>
+      <units>#</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>unit_aspect_ratio</name>
+      <display_name>Unit Aspect Ratio</display_name>
+      <description>The ratio of the front/back wall length to the left/right wall length.</description>
+      <type>Double</type>
+      <units>FB/LR</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>2</default_value>
+    </argument>
+    <argument>
+      <name>offset</name>
+      <display_name>Offset Depth</display_name>
+      <description>The depth of the offset.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>corr_width</name>
+      <display_name>Corridor Width</display_name>
+      <description>The width of the corridor.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>corr_pos</name>
+      <display_name>Corridor Position</display_name>
+      <description>The position of the corridor.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>None</default_value>
+      <choices>
+        <choice>
+          <value>None</value>
+          <display_name>None</display_name>
+        </choice>
+        <choice>
+          <value>Double-Loaded Interior</value>
+          <display_name>Double-Loaded Interior</display_name>
+        </choice>
+        <choice>
+          <value>Single Exterior (Front)</value>
+          <display_name>Single Exterior (Front)</display_name>
+        </choice>
+        <choice>
+          <value>Double Exterior</value>
+          <display_name>Double Exterior</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>inset_width</name>
+      <display_name>Inset Width</display_name>
+      <description>The width of the inset.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>inset_depth</name>
+      <display_name>Inset Depth</display_name>
+      <description>The depth of the inset.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>inset_pos</name>
+      <display_name>Inset Position</display_name>
+      <description>The position of the inset.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Right</default_value>
+      <choices>
+        <choice>
+          <value>Right</value>
+          <display_name>Right</display_name>
+        </choice>
+        <choice>
+          <value>Left</value>
+          <display_name>Left</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <provenances/>
+  <tags>
+    <tag>Envelope.Form</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A2C693E7</checksum>
+    </file>
+    <file>
+      <filename>create_residential_multifamily_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9E15836A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3CF748BE</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A91122C3</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.12.2</identifier>
+        <min_compatible>1.12.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>94A38B51</checksum>
+    </file>
+  </files>
+</measure>
