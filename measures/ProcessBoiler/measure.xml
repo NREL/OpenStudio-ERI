@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>c1ac06b5-5214-44e9-9e1b-756f158b3071</version_id>
-  <version_modified>20160825T215815Z</version_modified>
+  <version_id>e9f60dc5-f3dc-4083-9eb7-45568552aa3e</version_id>
+  <version_modified>20160826T143201Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -403,12 +403,6 @@
       <checksum>A91122C3</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7762857F</checksum>
-    </file>
-    <file>
       <filename>singlefamily_fbsmt_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -443,6 +437,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>331E51A2</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D7521874</checksum>
     </file>
   </files>
 </measure>

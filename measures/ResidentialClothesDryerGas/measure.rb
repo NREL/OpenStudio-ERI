@@ -289,7 +289,7 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
                 # Create schedule
                 mult_weekend = 1.15
                 mult_weekday = 0.94
-                sch = MonthWeekdayWeekendSchedule.new(model, runner, unit_obj_name_g + " schedule", cd_weekday_sch, cd_weekend_sch, cd_monthly_sch, mult_weekday, mult_weekend)
+                sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameClothesDryer(Constants.FuelTypeGas) + " schedule", cd_weekday_sch, cd_weekend_sch, cd_monthly_sch, mult_weekday, mult_weekend)
                 if not sch.validated?
                     return false
                 end

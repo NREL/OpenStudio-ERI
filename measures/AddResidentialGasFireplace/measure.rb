@@ -10,7 +10,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
   end
   
   def description
-    return "Adds (or replaces) a residential gas fireplace with the specified efficiency and schedule. For multifamily buildings, the clothes dryer can be set for all units of the building."
+    return "Adds (or replaces) a residential gas fireplace with the specified efficiency and schedule. For multifamily buildings, the fireplace can be set for all units of the building."
   end
   
   def modeler_description
@@ -186,7 +186,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
             
             if sch.nil?
                 # Create schedule
-                sch = MonthWeekdayWeekendSchedule.new(model, runner, unit_obj_name + " schedule", weekday_sch, weekend_sch, monthly_sch)
+                sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameGasFireplace + " schedule", weekday_sch, weekend_sch, monthly_sch)
                 if not sch.validated?
                     return false
                 end

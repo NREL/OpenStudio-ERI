@@ -416,11 +416,19 @@ class Constants
     end
     return "residential gas fireplace#{s_unit}"
   end
-  def self.ObjectNameGasGrill
-    return 'residential gas grill'
+  def self.ObjectNameGasGrill(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential gas grill#{s_unit}"
   end
-  def self.ObjectNameGasLighting
-    return 'residential gas lighting'
+  def self.ObjectNameGasLighting(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential gas lighting#{s_unit}"
   end
   def self.ObjectNameHeatingSeason
     return 'residential heating season'

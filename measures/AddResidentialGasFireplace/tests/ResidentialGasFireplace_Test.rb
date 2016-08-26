@@ -62,7 +62,7 @@ class ResidentialGasFireplaceTest < MiniTest::Test
   def test_new_construction_no_scale_energy
     args_hash = {}
     args_hash["base_energy"] = 60.0
-    args_hash["scale_energy"] = "false" # FIXME: Why does this need to be a string?
+    args_hash["scale_energy"] = "false"
     _test_measure(osm_geo_beds, args_hash, 0, 1, 60.0)
   end
 
