@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>7b6f08be-77ac-45da-9c41-d3ea31906d8a</version_id>
-  <version_modified>20160826T143205Z</version_modified>
+  <version_id>a13a43cf-16f5-4889-9c83-c8e9500ec520</version_id>
+  <version_modified>20160826T180406Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -292,7 +292,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>D7521874</checksum>
+      <checksum>3CF748BE</checksum>
     </file>
   </files>
 </measure>

@@ -121,7 +121,7 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     num_units = 3
     args_hash = {}
     args_hash["cd_ef"] = 2.75
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 76.5*num_units, 34.7*num_units, num_units)
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 229.5, 104.1, num_units)
   end
   
   def test_multifamily_new_construction_finished_basement
@@ -136,17 +136,17 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     num_units = 3
     args_hash = {}
     args_hash["cd_ef"] = 2.75
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 76.5*num_units, 34.7*num_units, num_units)
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 229.5, 104.1, num_units)
     args_hash = {}
     args_hash["cd_ef"] = 3.48
-    _test_measure(model, args_hash, 2*num_units, 2*num_units, 60.4*num_units, 27.4*num_units, 2*num_units)
+    _test_measure(model, args_hash, 2*num_units, 2*num_units, 181.2, 82.2, 2*num_units)
   end
   
   def test_multifamily_retrofit_remove
     num_units = 3
     args_hash = {}
     args_hash["cd_ef"] = 2.75
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 76.5*num_units, 34.7*num_units, num_units)
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 2*num_units, 229.5, 104.1, num_units)
     args_hash = {}
     args_hash["cd_mult"] = 0.0
     _test_measure(model, args_hash, 2*num_units, 0, 0.0, 0.0, num_units)

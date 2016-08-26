@@ -436,11 +436,19 @@ class Constants
   def self.ObjectNameHeatingSetpoint
     return 'residential heating setpoint'
   end
-  def self.ObjectNameHotTubHeater(fueltype)
-    return "residential hot tub heater #{fueltype}"
+  def self.ObjectNameHotTubHeater(fueltype, unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential hot tub heater #{fueltype}#{s_unit}"
   end
-  def self.ObjectNameHotTubPump
-    return 'residential hot tub pump'
+  def self.ObjectNameHotTubPump(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential hot tub pump#{s_unit}"
   end
   def self.ObjectNameLighting
     return 'residential lighting'
@@ -451,11 +459,19 @@ class Constants
   def self.ObjectNameOccupants
     return 'residential occupants'
   end
-  def self.ObjectNamePoolHeater(fueltype)
-    return "residential pool heater #{fueltype}"
+  def self.ObjectNamePoolHeater(fueltype, unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential pool heater #{fueltype}#{s_unit}"
   end
-  def self.ObjectNamePoolPump
-    return 'residential pool pump'
+  def self.ObjectNamePoolPump(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential pool pump#{s_unit}"
   end
   def self.ObjectNameRefrigerator(unit=1)
     s_unit = ""
@@ -476,8 +492,12 @@ class Constants
       def self.ObjectNameSinkDist
     return 'residential sink dist'
   end
-  def self.ObjectNameWellPump
-    return 'residential well pump'
+  def self.ObjectNameWellPump(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential well pump#{s_unit}"
   end
   def self.ObjectNameWindowShading
     return 'residential window shading'

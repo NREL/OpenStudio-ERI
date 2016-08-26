@@ -189,7 +189,7 @@ class ResidentialGasGrill < OpenStudio::Ruleset::ModelUserScript
             sch.setSchedule(gg)
             
             if set_multiple_objects
-                #reporting final condition of model
+                # Report each assignment plus final condition
                 runner.registerInfo("A gas grill with #{gg_ann_g.round} therms annual energy consumption has been assigned to outside.")
             end
             

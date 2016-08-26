@@ -88,24 +88,24 @@ class ResidentialGasLightingTest < MiniTest::Test
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 19.0
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 16.9*num_units, num_units)
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 50.8, num_units)
   end
   
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 19.0
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 16.9*num_units, num_units)
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 50.8, num_units)
     args_hash = {}
     args_hash["base_energy"] = 9.5
-    _test_measure(model, args_hash, num_units, num_units, 8.45*num_units, 2*num_units)
+    _test_measure(model, args_hash, num_units, num_units, 25.4, 2*num_units)
   end
   
   def test_multifamily_retrofit_remove
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 19.0
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 16.9*num_units, num_units)
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 50.8, num_units)
     args_hash = {}
     args_hash["base_energy"] = 0.0
     _test_measure(model, args_hash, num_units, 0, 0.0, num_units)
@@ -170,10 +170,6 @@ class ResidentialGasLightingTest < MiniTest::Test
   end
 
   private
-  
-  def _scale_energy(base_energy, nbr, ffa)
-    return base_energy * (0.5 + 0.25 * nbr / 3.0 + 0.25 * ffa / 1920.0)
-  end
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure

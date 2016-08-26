@@ -15,31 +15,39 @@ class ResidentialHotTubPumpTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
   end
   
+  def osm_geo_multifamily_3_units
+    return "multifamily_3_units.osm"
+  end
+  
+  def osm_geo_multifamily_3_units_beds
+    return "multifamily_3_units_Beds_Baths.osm"
+  end
+
   def test_new_construction_none1
     # Using annual energy
     args_hash = {}
     args_hash["base_energy"] = 0.0
-    _test_measure(osm_geo_beds, args_hash)
+    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0)
   end
   
   def test_new_construction_none2
     # Using energy multiplier
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure(osm_geo_beds, args_hash)
+    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0)
   end
   
   def test_new_construction_electric
     args_hash = {}
     args_hash["base_energy"] = 1014.1
-    _test_measure(osm_geo_beds, args_hash, 0, 1, _scale_energy(1014.1, 3, 2000))
+    _test_measure(osm_geo_beds, args_hash, 0, 1, 1024.7)
   end
   
   def test_new_construction_mult_0_059
     args_hash = {}
     args_hash["base_energy"] = 1014.1
     args_hash["mult"] = 0.059
-    _test_measure(osm_geo_beds, args_hash, 0, 1, _scale_energy(59.8319, 3, 2000))
+    _test_measure(osm_geo_beds, args_hash, 0, 1, 60.5)
   end
   
   def test_new_construction_modified_schedule
@@ -48,7 +56,7 @@ class ResidentialHotTubPumpTest < MiniTest::Test
     args_hash["weekday_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["weekend_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["monthly_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12"
-    _test_measure(osm_geo_beds, args_hash, 0, 1, _scale_energy(1014.1, 3, 2000))
+    _test_measure(osm_geo_beds, args_hash, 0, 1, 1024.7)
   end
 
   def test_new_construction_no_scale_energy
@@ -61,19 +69,46 @@ class ResidentialHotTubPumpTest < MiniTest::Test
   def test_retrofit_replace
     args_hash = {}
     args_hash["base_energy"] = 1014.1
-    model = _test_measure(osm_geo_beds, args_hash, 0, 1, _scale_energy(1014.1, 3, 2000))
+    model = _test_measure(osm_geo_beds, args_hash, 0, 1, 1024.7)
     args_hash = {}
     args_hash["base_energy"] = 550.0
-    _test_measure(model, args_hash, 1, 1, _scale_energy(550.0, 3, 2000))
+    _test_measure(model, args_hash, 1, 1, 560.8, 1)
   end
   
   def test_retrofit_remove
     args_hash = {}
     args_hash["base_energy"] = 1014.1
-    model = _test_measure(osm_geo_beds, args_hash, 0, 1, _scale_energy(1014.1, 3, 2000))
+    model = _test_measure(osm_geo_beds, args_hash, 0, 1, 1024.7)
     args_hash = {}
     args_hash["base_energy"] = 0.0
-    _test_measure(model, args_hash, 1, 0)
+    _test_measure(model, args_hash, 1, 0, 0.0, 1)
+  end
+  
+  def test_multifamily_new_construction
+    num_units = 3
+    args_hash = {}
+    args_hash["base_energy"] = 1014.1
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 2712.2, num_units)
+  end
+  
+  def test_multifamily_retrofit_replace
+    num_units = 3
+    args_hash = {}
+    args_hash["base_energy"] = 1014.1
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 2712.2, num_units)
+    args_hash = {}
+    args_hash["base_energy"] = 555.0
+    _test_measure(model, args_hash, num_units, num_units, 1484.3, 2*num_units)
+  end
+  
+  def test_multifamily_retrofit_remove
+    num_units = 3
+    args_hash = {}
+    args_hash["base_energy"] = 1014.1
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 2712.2, num_units)
+    args_hash = {}
+    args_hash["base_energy"] = 0.0
+    _test_measure(model, args_hash, num_units, 0, 0.0, num_units)
   end
   
   def test_argument_error_base_energy_negative
@@ -128,6 +163,11 @@ class ResidentialHotTubPumpTest < MiniTest::Test
     args_hash = {}
     _test_error(osm_geo, args_hash)
   end
+  
+  def test_error_missing_beds_multifamily
+    args_hash = {}
+    _test_error(osm_geo_multifamily_3_units, args_hash)
+  end
     
   def test_error_missing_geometry
     args_hash = {}
@@ -135,10 +175,6 @@ class ResidentialHotTubPumpTest < MiniTest::Test
   end
 
   private
-  
-  def _scale_energy(base_energy, nbr, ffa)
-    return base_energy * (0.5 + 0.25 * nbr / 3.0 + 0.25 * ffa / 1920.0)
-  end
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
@@ -174,7 +210,7 @@ class ResidentialHotTubPumpTest < MiniTest::Test
     assert(result.errors.size == 1)
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialHotTubPump.new
 
@@ -213,12 +249,9 @@ class ResidentialHotTubPumpTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_del_objects > 0
-        assert(result.info.size == 1)
-    else
-        assert(result.info.size == 0)
-    end
-    assert(result.warnings.size == 0)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get new/deleted equipment objects
     new_objects = []
@@ -239,7 +272,7 @@ class ResidentialHotTubPumpTest < MiniTest::Test
     actual_annual_kwh = 0.0
     new_objects.each do |new_object|
         # check that the new object has the correct name
-        assert_equal(new_object.name.to_s, Constants.ObjectNameHotTubPump)
+        assert(new_object.name.to_s.start_with?(Constants.ObjectNameHotTubPump))
         
         # check new object has no internal gains
         assert_equal(new_object.electricEquipmentDefinition.fractionLost, 1.0)

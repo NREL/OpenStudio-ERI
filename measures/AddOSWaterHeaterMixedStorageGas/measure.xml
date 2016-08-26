@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>46a86e8d-11d5-4542-bb94-f49e401fd41f</version_id>
-  <version_modified>20160826T143157Z</version_modified>
+  <version_id>69f7f3ec-b67c-421a-a9b6-416cdfe946f4</version_id>
+  <version_modified>20160826T180358Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageGas</class_name>
   <display_name>Set Residential Gas Tank Water Heater</display_name>
@@ -163,7 +163,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>D7521874</checksum>
+      <checksum>3CF748BE</checksum>
     </file>
   </files>
 </measure>

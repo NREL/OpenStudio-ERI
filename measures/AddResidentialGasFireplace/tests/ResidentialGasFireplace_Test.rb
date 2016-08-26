@@ -102,7 +102,7 @@ class ResidentialGasFireplaceTest < MiniTest::Test
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 60.0
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 53.5*num_units, num_units)
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 160.5, num_units)
   end
   
   def test_multifamily_new_construction_finished_basement
@@ -117,17 +117,17 @@ class ResidentialGasFireplaceTest < MiniTest::Test
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 60.0
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 53.5*num_units, num_units)
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 160.5, num_units)
     args_hash = {}
     args_hash["base_energy"] = 30.0
-    _test_measure(model, args_hash, num_units, num_units, 26.7*num_units, 2*num_units)
+    _test_measure(model, args_hash, num_units, num_units, 80.2, 2*num_units)
   end
   
   def test_multifamily_retrofit_remove
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 60.0
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 53.5*num_units, num_units)
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 160.5, num_units)
     args_hash = {}
     args_hash["base_energy"] = 0.0
     _test_measure(model, args_hash, num_units, 0, 0.0, num_units)

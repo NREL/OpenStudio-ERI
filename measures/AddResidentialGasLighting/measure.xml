@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_lighting</name>
   <uid>6b9211da-6274-4b09-8c76-9edbc85886c0</uid>
-  <version_id>85920911-fe9c-4a2c-a1be-6e6983862118</version_id>
-  <version_modified>20160826T152510Z</version_modified>
+  <version_id>5fa0d66f-ae74-4136-a0fc-ad6aa6eb4747</version_id>
+  <version_modified>20160826T214222Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasLighting</class_name>
   <display_name>Set Residential Gas Lighting</display_name>
@@ -106,12 +106,6 @@
       <checksum>A91122C3</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D7521874</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -122,12 +116,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>22260550</checksum>
-    </file>
-    <file>
-      <filename>ResidentialGasLighting_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AE265800</checksum>
     </file>
     <file>
       <filename>multifamily_3_units.osm</filename>
@@ -142,6 +130,12 @@
       <checksum>9E636226</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3CF748BE</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -150,7 +144,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>22032A32</checksum>
+      <checksum>2FB97AB1</checksum>
+    </file>
+    <file>
+      <filename>ResidentialGasLighting_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DC092FBE</checksum>
     </file>
   </files>
 </measure>

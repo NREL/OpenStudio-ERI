@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>90fb8f49-d953-4998-bdf4-c35d6e98d0b7</version_id>
-  <version_modified>20160826T143200Z</version_modified>
+  <version_id>0e7439c4-8d45-4e2c-a02b-0f86fb60722d</version_id>
+  <version_modified>20160826T180401Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -662,7 +662,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>D7521874</checksum>
+      <checksum>3CF748BE</checksum>
     </file>
   </files>
 </measure>
