@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_pump</name>
   <uid>b5648903-279f-4e58-9139-c44134c0cf76</uid>
-  <version_id>d9c58495-f98a-42cd-8d79-d22a5bfb677c</version_id>
-  <version_modified>20160829T144038Z</version_modified>
+  <version_id>f8bcf20d-43db-4400-9243-d9a1aa67f519</version_id>
+  <version_modified>20160829T154234Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolPump</class_name>
   <display_name>Set Residential Pool Pump</display_name>
@@ -150,7 +150,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FB87ADA8</checksum>
+      <checksum>4A9EBA9C</checksum>
     </file>
   </files>
 </measure>

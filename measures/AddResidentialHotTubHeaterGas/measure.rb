@@ -100,12 +100,6 @@ class ResidentialHotTubHeaterGas < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    #hard coded convective, radiative, latent, and lost fractions
-    hth_lat = 0
-    hth_rad = 0
-    hth_conv = 0
-    hth_lost = 1 - hth_lat - hth_rad - hth_conv
-    
     tot_hth_ann_g = 0
     info_msgs = []
     sch = nil
@@ -185,9 +179,9 @@ class ResidentialHotTubHeaterGas < OpenStudio::Ruleset::ModelUserScript
             hth.setSpace(space)
             hth_def.setName(unit_obj_name_g)
             hth_def.setDesignLevel(design_level)
-            hth_def.setFractionRadiant(hth_rad)
-            hth_def.setFractionLatent(hth_lat)
-            hth_def.setFractionLost(hth_lost)
+            hth_def.setFractionRadiant(0)
+            hth_def.setFractionLatent(0)
+            hth_def.setFractionLost(1)
             sch.setSchedule(hth)
             
             info_msgs << "A hot tub heater with #{hth_ann_g.round} therms annual energy consumption has been assigned to outside."

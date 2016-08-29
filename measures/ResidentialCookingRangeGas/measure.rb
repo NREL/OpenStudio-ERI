@@ -128,16 +128,6 @@ class ResidentialCookingRangeGas < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    #hard coded convective, radiative, latent, and lost fractions
-    range_lat_e = 0.3
-    range_conv_e = 0.16
-    range_rad_e = 0.24
-    range_lost_e = 1 - range_lat_e - range_conv_e - range_rad_e
-    range_lat_g = 0.2
-    range_conv_g = 0.12
-    range_rad_g = 0.18
-    range_lost_g = 1 - range_lat_g - range_conv_g - range_rad_g
-
     tot_range_ann_g = 0
     tot_range_ann_i = 0
     info_msgs = []
@@ -209,9 +199,9 @@ class ResidentialCookingRangeGas < OpenStudio::Ruleset::ModelUserScript
             rng.setSpace(space)
             rng_def.setName(unit_obj_name_g)
             rng_def.setDesignLevel(design_level_g)
-            rng_def.setFractionRadiant(range_rad_g)
-            rng_def.setFractionLatent(range_lat_g)
-            rng_def.setFractionLost(range_lost_g)
+            rng_def.setFractionRadiant(0.18)
+            rng_def.setFractionLatent(0.2)
+            rng_def.setFractionLost(0.5)
             sch.setSchedule(rng)
             
             if e_ignition == true
@@ -221,9 +211,9 @@ class ResidentialCookingRangeGas < OpenStudio::Ruleset::ModelUserScript
                 rng2.setSpace(space)
                 rng_def2.setName(unit_obj_name_i)
                 rng_def2.setDesignLevel(design_level_i)
-                rng_def2.setFractionRadiant(range_rad_e)
-                rng_def2.setFractionLatent(range_lat_e)
-                rng_def2.setFractionLost(range_lost_e)
+                rng_def2.setFractionRadiant(0.24)
+                rng_def2.setFractionLatent(0.3)
+                rng_def2.setFractionLost(0.3)
                 sch.setSchedule(rng2)
             end
 

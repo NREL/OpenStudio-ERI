@@ -111,12 +111,6 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
     #Calculate fridge daily energy use
 	fridge_ann = fridge_E*mult
     
-    #hard coded convective, radiative, latent, and lost fractions
-    fridge_lat = 0
-    fridge_rad = 0
-    fridge_conv = 1
-    fridge_lost = 1 - fridge_lat - fridge_rad - fridge_conv
-    
     tot_fridge_ann = 0
     info_msgs = []
     sch = nil
@@ -174,9 +168,9 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
             frg.setSpace(space)
             frg_def.setName(unit_obj_name)
             frg_def.setDesignLevel(design_level)
-            frg_def.setFractionRadiant(fridge_rad)
-            frg_def.setFractionLatent(fridge_lat)
-            frg_def.setFractionLost(fridge_lost)
+            frg_def.setFractionRadiant(0)
+            frg_def.setFractionLatent(0)
+            frg_def.setFractionLost(0)
             sch.setSchedule(frg)
             
             info_msgs << "An extra refrigerator with #{fridge_ann.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."

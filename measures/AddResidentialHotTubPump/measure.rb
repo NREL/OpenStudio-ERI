@@ -102,12 +102,6 @@ class ResidentialHotTubPump < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    #hard coded convective, radiative, latent, and lost fractions
-    htp_lat = 0
-    htp_rad = 0
-    htp_conv = 0
-    htp_lost = 1 - htp_lat - htp_rad - htp_conv
-    
     tot_htp_ann = 0
     info_msgs = []
     sch = nil
@@ -180,9 +174,9 @@ class ResidentialHotTubPump < OpenStudio::Ruleset::ModelUserScript
             htp.setSpace(space)
             htp_def.setName(unit_obj_name)
             htp_def.setDesignLevel(design_level)
-            htp_def.setFractionRadiant(htp_rad)
-            htp_def.setFractionLatent(htp_lat)
-            htp_def.setFractionLost(htp_lost)
+            htp_def.setFractionRadiant(0)
+            htp_def.setFractionLatent(0)
+            htp_def.setFractionLost(1)
             sch.setSchedule(htp)
             
             info_msgs << "A hot tub pump with #{htp_ann.round} kWhs annual energy consumption has been assigned to outside."

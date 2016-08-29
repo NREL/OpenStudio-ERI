@@ -153,12 +153,6 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    #hard coded convective, radiative, latent, and lost fractions
-	cd_lat_e = 0.05
-	cd_rad_e = 0.09
-	cd_conv_e = 0.06
-	cd_lost_e = 1 - cd_lat_e - cd_rad_e - cd_conv_e
-    
     tot_cd_ann_e = 0
     info_msgs = []
     sch = nil
@@ -276,9 +270,9 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
             cd.setSpace(space)
             cd_def.setName(unit_obj_name_e)
             cd_def.setDesignLevel(design_level_e)
-            cd_def.setFractionRadiant(cd_rad_e)
-            cd_def.setFractionLatent(cd_lat_e)
-            cd_def.setFractionLost(cd_lost_e)
+            cd_def.setFractionRadiant(0.09)
+            cd_def.setFractionLatent(0.05)
+            cd_def.setFractionLost(0.8)
             sch.setSchedule(cd)
             
             info_msgs << "A clothes dryer with #{cd_ann_e.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."

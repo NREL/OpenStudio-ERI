@@ -122,12 +122,6 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    #hard coded convective, radiative, latent, and lost fractions
-    range_lat_e = 0.3
-    range_conv_e = 0.16
-    range_rad_e = 0.24
-    range_lost_e = 1 - range_lat_e - range_conv_e - range_rad_e
-    
     tot_range_ann_e = 0
     info_msgs = []
     sch = nil
@@ -192,9 +186,9 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
             rng.setSpace(space)
             rng_def.setName(unit_obj_name_e)
             rng_def.setDesignLevel(design_level_e)
-            rng_def.setFractionRadiant(range_rad_e)
-            rng_def.setFractionLatent(range_lat_e)
-            rng_def.setFractionLost(range_lost_e)
+            rng_def.setFractionRadiant(0.24)
+            rng_def.setFractionLatent(0.3)
+            rng_def.setFractionLost(0.3)
             sch.setSchedule(rng)
             
             info_msgs << "A cooking range with #{range_ann_e.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."

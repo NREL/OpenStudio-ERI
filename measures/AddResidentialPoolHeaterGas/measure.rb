@@ -100,12 +100,6 @@ class ResidentialPoolHeaterGas < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    #hard coded convective, radiative, latent, and lost fractions
-    ph_lat = 0
-    ph_rad = 0
-    ph_conv = 0
-    ph_lost = 1 - ph_lat - ph_rad - ph_conv
-    
     tot_ph_ann_g = 0
     info_msgs = []
     sch = nil
@@ -185,9 +179,9 @@ class ResidentialPoolHeaterGas < OpenStudio::Ruleset::ModelUserScript
             ph.setSpace(space)
             ph_def.setName(unit_obj_name_g)
             ph_def.setDesignLevel(design_level)
-            ph_def.setFractionRadiant(ph_rad)
-            ph_def.setFractionLatent(ph_lat)
-            ph_def.setFractionLost(ph_lost)
+            ph_def.setFractionRadiant(0)
+            ph_def.setFractionLatent(0)
+            ph_def.setFractionLost(1)
             sch.setSchedule(ph)
             
             info_msgs << "A pool heater with #{ph_ann_g.round} therms annual energy consumption has been assigned to outside."

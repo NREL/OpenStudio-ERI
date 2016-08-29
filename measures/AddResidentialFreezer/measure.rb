@@ -111,12 +111,6 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
     #Calculate freezer daily energy use
 	freezer_ann = freezer_E*mult
     
-    #hard coded convective, radiative, latent, and lost fractions
-    freezer_lat = 0
-    freezer_rad = 0
-    freezer_conv = 1
-    freezer_lost = 1 - freezer_lat - freezer_rad - freezer_conv
-    
     tot_freezer_ann = 0
     info_msgs = []
     sch = nil
@@ -174,9 +168,9 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
             frz.setSpace(space)
             frz_def.setName(unit_obj_name)
             frz_def.setDesignLevel(design_level)
-            frz_def.setFractionRadiant(freezer_rad)
-            frz_def.setFractionLatent(freezer_lat)
-            frz_def.setFractionLost(freezer_lost)
+            frz_def.setFractionRadiant(0)
+            frz_def.setFractionLatent(0)
+            frz_def.setFractionLost(0)
             sch.setSchedule(frz)
             
             info_msgs << "A freezer with #{freezer_ann.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."

@@ -100,12 +100,6 @@ class ResidentialGasGrill < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    #hard coded convective, radiative, latent, and lost fractions
-    gg_lat = 0
-    gg_rad = 0
-    gg_conv = 0
-    gg_lost = 1 - gg_lat - gg_rad - gg_conv
-    
     tot_gg_ann_g = 0
     info_msgs = []
     sch = nil
@@ -178,9 +172,9 @@ class ResidentialGasGrill < OpenStudio::Ruleset::ModelUserScript
             gg.setSpace(space)
             gg_def.setName(unit_obj_name)
             gg_def.setDesignLevel(design_level)
-            gg_def.setFractionRadiant(gg_rad)
-            gg_def.setFractionLatent(gg_lat)
-            gg_def.setFractionLost(gg_lost)
+            gg_def.setFractionRadiant(0)
+            gg_def.setFractionLatent(0)
+            gg_def.setFractionLost(1)
             sch.setSchedule(gg)
             
             info_msgs << "A gas grill with #{gg_ann_g.round} therms annual energy consumption has been assigned to outside."

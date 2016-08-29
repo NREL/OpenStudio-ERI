@@ -100,12 +100,6 @@ class ResidentialGasLighting < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    #hard coded convective, radiative, latent, and lost fractions
-    gl_lat = 0
-    gl_rad = 0
-    gl_conv = 0
-    gl_lost = 1 - gl_lat - gl_rad - gl_conv
-    
     tot_gl_ann_g = 0
     info_msgs = []
     sch = nil
@@ -178,9 +172,9 @@ class ResidentialGasLighting < OpenStudio::Ruleset::ModelUserScript
             gl.setSpace(space)
             gl_def.setName(unit_obj_name)
             gl_def.setDesignLevel(design_level)
-            gl_def.setFractionRadiant(gl_rad)
-            gl_def.setFractionLatent(gl_lat)
-            gl_def.setFractionLost(gl_lost)
+            gl_def.setFractionRadiant(0)
+            gl_def.setFractionLatent(0)
+            gl_def.setFractionLost(1)
             sch.setSchedule(gl)
             
             info_msgs << "Gas lighting with #{gl_ann_g.round} therms annual energy consumption has been assigned to outside."

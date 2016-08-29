@@ -117,12 +117,6 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    #hard coded convective, radiative, latent, and lost fractions
-    gf_lat = 0.1
-    gf_rad = 0.3
-    gf_conv = 0.2
-    gf_lost = 1 - gf_lat - gf_rad - gf_conv
-
     tot_gf_ann_g = 0
     info_msgs = []
     sch = nil
@@ -195,9 +189,9 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
             gf.setSpace(space)
             gf_def.setName(unit_obj_name)
             gf_def.setDesignLevel(design_level)
-            gf_def.setFractionRadiant(gf_rad)
-            gf_def.setFractionLatent(gf_lat)
-            gf_def.setFractionLost(gf_lost)
+            gf_def.setFractionRadiant(0.3)
+            gf_def.setFractionLatent(0.1)
+            gf_def.setFractionLost(0.4)
             sch.setSchedule(gf)
     
             info_msgs << "A gas fireplace with #{gf_ann_g.round} therms annual energy consumption has been assigned to space '#{space.name.to_s}'."

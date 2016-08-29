@@ -7,106 +7,154 @@ require 'fileutils'
 
 class ResidentialMiscellaneousElectricLoadsTest < MiniTest::Test
 
+  def osm_geo
+    return "2000sqft_2story_FB_GRG_UA.osm"
+  end
+
+  def osm_geo_beds
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
+  end
+  
+  def osm_geo_multifamily_3_units
+    return "multifamily_3_units.osm"
+  end
+  
+  def osm_geo_multifamily_3_units_beds
+    return "multifamily_3_units_Beds_Baths.osm"
+  end
+
   def test_new_construction_none
-    # Using energy multiplier
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0)
   end
   
   def test_new_construction_mult_1_0
+    num_fin_spaces = 3
     args_hash = {}
     args_hash["mult"] = 1.0
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, 0, 3, _calc_energy(1.0, 3, 2000))
+    _test_measure(osm_geo_beds, args_hash, 0, num_fin_spaces, 2206, num_fin_spaces)
   end
   
   def test_new_construction_mult_1_5
+    num_fin_spaces = 3
     args_hash = {}
     args_hash["mult"] = 1.5
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, 0, 3, _calc_energy(1.5, 3, 2000))
+    _test_measure(osm_geo_beds, args_hash, 0, num_fin_spaces, 3309, num_fin_spaces)
   end
   
   def test_new_construction_modified_schedule
+    num_fin_spaces = 3
     args_hash = {}
     args_hash["weekday_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["weekend_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["monthly_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12"
-    _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, 0, 3, _calc_energy(1.0, 3, 2000))
+    _test_measure(osm_geo_beds, args_hash, 0, num_fin_spaces, 2206, num_fin_spaces)
   end
 
   def test_retrofit_replace
+    num_fin_spaces = 3
     args_hash = {}
-    model = _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, 0, 3, _calc_energy(1.0, 3, 2000))
+    model = _test_measure(osm_geo_beds, args_hash, 0, num_fin_spaces, 2206, num_fin_spaces)
     args_hash = {}
     args_hash["mult"] = 0.5
-    _test_measure(model, args_hash, 3, 3, _calc_energy(0.5, 3, 2000))
+    _test_measure(model, args_hash, num_fin_spaces, num_fin_spaces, 1103, 2*num_fin_spaces)
   end
     
   def test_retrofit_remove
+    num_fin_spaces = 3
     args_hash = {}
-    model = _test_measure("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash, 0, 3, _calc_energy(1.0, 3, 2000))
+    model = _test_measure(osm_geo_beds, args_hash, 0, num_fin_spaces, 2206, num_fin_spaces)
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure(model, args_hash, 3, 0)
+    _test_measure(model, args_hash, num_fin_spaces, 0, 0.0, num_fin_spaces)
+  end
+  
+  def test_multifamily_new_construction
+    num_fin_spaces = 5
+    args_hash = {}
+    args_hash["mult"] = 1.0
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_fin_spaces, 5853, num_fin_spaces)
+  end
+  
+  def test_multifamily_retrofit_replace
+    num_fin_spaces = 5
+    args_hash = {}
+    args_hash["mult"] = 1.0
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_fin_spaces, 5853, num_fin_spaces)
+    args_hash = {}
+    args_hash["mult"] = 0.5
+    _test_measure(model, args_hash, num_fin_spaces, num_fin_spaces, 2925, 2*num_fin_spaces)
+  end
+  
+  def test_multifamily_retrofit_remove
+    num_fin_spaces = 5
+    args_hash = {}
+    args_hash["mult"] = 1.0
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_fin_spaces, 5853, num_fin_spaces)
+    args_hash = {}
+    args_hash["mult"] = 0.0
+    _test_measure(model, args_hash, num_fin_spaces, 0, 0.0, num_fin_spaces)
   end
   
   def test_argument_error_mult_negative
     args_hash = {}
     args_hash["mult"] = -1.0
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_error(osm_geo_beds, args_hash)
   end
   
   def test_argument_error_weekday_sch_wrong_number_of_values
     args_hash = {}
     args_hash["weekday_sch"] = "1,1"
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_error(osm_geo_beds, args_hash)
   end
   
   def test_argument_error_weekday_sch_not_number
     args_hash = {}
     args_hash["weekday_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_error(osm_geo_beds, args_hash)
   end
     
   def test_argument_error_weekend_sch_wrong_number_of_values
     args_hash = {}
     args_hash["weekend_sch"] = "1,1"
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_error(osm_geo_beds, args_hash)
   end
     
   def test_argument_error_weekend_sch_not_number
     args_hash = {}
     args_hash["weekend_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_error(osm_geo_beds, args_hash)
   end
   
   def test_argument_error_monthly_sch_wrong_number_of_values  
     args_hash = {}
     args_hash["monthly_sch"] = "1,1"
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_error(osm_geo_beds, args_hash)
   end
   
   def test_argument_error_monthly_sch_not_number
     args_hash = {}
     args_hash["monthly_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1"
-    _test_error("2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm", args_hash)
+    _test_error(osm_geo_beds, args_hash)
   end
   
   def test_error_missing_beds
     args_hash = {}
-    _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
+    _test_error(osm_geo, args_hash)
   end
     
+  def test_error_missing_beds_multifamily
+    args_hash = {}
+    _test_error(osm_geo_multifamily_3_units, args_hash)
+  end
+
   def test_error_missing_geometry
     args_hash = {}
     _test_error(nil, args_hash)
   end
 
   private
-  
-  def _calc_energy(multiplier, nbr, ffa)
-    return (1108.1 + 180.2 * nbr + 0.2785 * ffa) * multiplier
-  end
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
@@ -142,7 +190,7 @@ class ResidentialMiscellaneousElectricLoadsTest < MiniTest::Test
     assert(result.errors.size == 1)
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialMiscellaneousElectricLoads.new
 
@@ -181,12 +229,9 @@ class ResidentialMiscellaneousElectricLoadsTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_del_objects > 0
-        assert(result.info.size == 1)
-    else
-        assert(result.info.size == 0)
-    end
-    assert(result.warnings.size == 0)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get new/deleted electric equipment objects
     new_objects = []

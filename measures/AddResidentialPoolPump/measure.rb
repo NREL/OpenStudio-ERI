@@ -102,12 +102,6 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    #hard coded convective, radiative, latent, and lost fractions
-    pp_lat = 0
-    pp_rad = 0
-    pp_conv = 0
-    pp_lost = 1 - pp_lat - pp_rad - pp_conv
-    
     tot_pp_ann = 0
     info_msgs = []
     sch = nil
@@ -180,9 +174,9 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
             pp.setSpace(space)
             pp_def.setName(unit_obj_name)
             pp_def.setDesignLevel(design_level)
-            pp_def.setFractionRadiant(pp_rad)
-            pp_def.setFractionLatent(pp_lat)
-            pp_def.setFractionLost(pp_lost)
+            pp_def.setFractionRadiant(0)
+            pp_def.setFractionLatent(0)
+            pp_def.setFractionLost(1)
             sch.setSchedule(pp)
             
             info_msgs << "A pool pump with #{pp_ann.round} kWhs annual energy consumption has been assigned to outside."

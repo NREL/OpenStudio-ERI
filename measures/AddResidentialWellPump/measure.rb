@@ -102,12 +102,6 @@ class ResidentialWellPump < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    #hard coded convective, radiative, latent, and lost fractions
-    wp_lat = 0
-    wp_rad = 0
-    wp_conv = 0
-    wp_lost = 1 - wp_lat - wp_rad - wp_conv
-    
     tot_wp_ann = 0
     info_msgs = []
     sch = nil
@@ -180,9 +174,9 @@ class ResidentialWellPump < OpenStudio::Ruleset::ModelUserScript
             wp.setSpace(space)
             wp_def.setName(unit_obj_name)
             wp_def.setDesignLevel(design_level)
-            wp_def.setFractionRadiant(wp_rad)
-            wp_def.setFractionLatent(wp_lat)
-            wp_def.setFractionLost(wp_lost)
+            wp_def.setFractionRadiant(0)
+            wp_def.setFractionLatent(0)
+            wp_def.setFractionLost(1)
             sch.setSchedule(wp)
             
             info_msgs << "A well pump with #{wp_ann.round} kWhs annual energy consumption has been assigned to outside."
