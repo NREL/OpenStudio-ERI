@@ -182,11 +182,17 @@ class Waterheater
 	
 	def self.create_new_pump(model)
 		#Add a pump to the new DHW loop
-		pump = OpenStudio::Model::PumpConstantSpeed.new(model)
+		pump = OpenStudio::Model::PumpVariableSpeed.new(model)
+        pump.setRatedFlowRate(0.01)
 		pump.setFractionofMotorInefficienciestoFluidStream(0)
 		pump.setMotorEfficiency(1)
 		pump.setRatedPowerConsumption(0)
 		pump.setRatedPumpHead(1)
+        pump.setCoefficient1ofthePartLoadPerformanceCurve(0)
+        pump.setCoefficient2ofthePartLoadPerformanceCurve(1)
+        pump.setCoefficient3ofthePartLoadPerformanceCurve(0)
+        pump.setCoefficient4ofthePartLoadPerformanceCurve(0)
+        pump.setPumpControlType("Intermittent")
 		return pump
 	end
 	
