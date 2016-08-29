@@ -128,12 +128,6 @@ class ResidentialCookingRangeGas < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    # Will we be setting multiple objects?
-    set_multiple_objects = false
-    if num_units > 1 and space_r == Constants.Auto
-        set_multiple_objects = true
-    end
-
     #hard coded convective, radiative, latent, and lost fractions
     range_lat_e = 0.3
     range_conv_e = 0.16
@@ -146,7 +140,7 @@ class ResidentialCookingRangeGas < OpenStudio::Ruleset::ModelUserScript
 
     tot_range_ann_g = 0
     tot_range_ann_i = 0
-    last_space = nil
+    info_msgs = []
     sch = nil
     (1..num_units).to_a.each do |unit_num|
     
@@ -233,33 +227,31 @@ class ResidentialCookingRangeGas < OpenStudio::Ruleset::ModelUserScript
                 sch.setSchedule(rng2)
             end
 
-            if set_multiple_objects
-                # Report each assignment plus final condition
-                s_ignition = ""
-                if e_ignition
-                    s_ignition = " and #{range_ann_i.round} kWhs"
-                end
-                runner.registerInfo("A cooking range with #{range_ann_g.round} therms#{s_ignition} annual energy consumption has been assigned to space '#{space.name.to_s}'.")
+            # Report each assignment plus final condition
+            s_ignition = ""
+            if e_ignition
+                s_ignition = " and #{range_ann_i.round} kWhs"
             end
+            info_msgs << "A cooking range with #{range_ann_g.round} therms#{s_ignition} annual energy consumption has been assigned to space '#{space.name.to_s}'."
             
             tot_range_ann_g += range_ann_g
             tot_range_ann_i += range_ann_i
-            last_space = space
         end
         
     end
-            
-    #reporting final condition of model
-    if tot_range_ann_g > 0
+          
+    # Reporting
+    if info_msgs.size > 1
+        info_msgs.each do |info_msg|
+            runner.registerInfo(info_msg)
+        end
         s_ignition = ""
         if e_ignition
             s_ignition = " and #{tot_range_ann_i.round} kWhs"
         end
-        if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned cooking ranges totaling #{tot_range_ann_g.round} therms#{s_ignition} annual energy consumption across #{num_units} units.")
-        else
-            runner.registerFinalCondition("A cooking range with #{tot_range_ann_g.round} therms#{s_ignition} annual energy consumption has been assigned to space '#{last_space.name.to_s}'.")
-        end
+        runner.registerFinalCondition("The building has been assigned cooking ranges totaling #{tot_range_ann_g.round} therms#{s_ignition} annual energy consumption across #{num_units} units.")
+    elsif info_msgs.size == 1
+        runner.registerFinalCondition(info_msgs[0])
     else
         runner.registerFinalCondition("No cooking range has been assigned.")
     end

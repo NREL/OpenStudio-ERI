@@ -100,12 +100,6 @@ class ResidentialGasGrill < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    # Will we be setting multiple objects?
-    set_multiple_objects = false
-    if num_units > 1
-        set_multiple_objects = true
-    end
-
     #hard coded convective, radiative, latent, and lost fractions
     gg_lat = 0
     gg_rad = 0
@@ -113,6 +107,7 @@ class ResidentialGasGrill < OpenStudio::Ruleset::ModelUserScript
     gg_lost = 1 - gg_lat - gg_rad - gg_conv
     
     tot_gg_ann_g = 0
+    info_msgs = []
     sch = nil
     (1..num_units).to_a.each do |unit_num|
     
@@ -188,23 +183,21 @@ class ResidentialGasGrill < OpenStudio::Ruleset::ModelUserScript
             gg_def.setFractionLost(gg_lost)
             sch.setSchedule(gg)
             
-            if set_multiple_objects
-                # Report each assignment plus final condition
-                runner.registerInfo("A gas grill with #{gg_ann_g.round} therms annual energy consumption has been assigned to outside.")
-            end
+            info_msgs << "A gas grill with #{gg_ann_g.round} therms annual energy consumption has been assigned to outside."
             
             tot_gg_ann_g += gg_ann_g
         end
         
     end
-	
-    #reporting final condition of model
-    if tot_gg_ann_g > 0
-        if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned gas grill totaling #{tot_gg_ann_g.round} therms annual energy consumption across #{num_units} units.")
-        else
-            runner.registerFinalCondition("A gas grill with #{tot_gg_ann_g.round} therms annual energy consumption has been assigned to outside.")
+    
+    # Reporting
+    if info_msgs.size > 1
+        info_msgs.each do |info_msg|
+            runner.registerInfo(info_msg)
         end
+        runner.registerFinalCondition("The building has been assigned gas grills totaling #{tot_gg_ann_g.round} therms annual energy consumption across #{num_units} units.")
+    elsif info_msgs.size == 1
+        runner.registerFinalCondition(info_msgs[0])
     else
         runner.registerFinalCondition("No gas grill has been assigned.")
     end

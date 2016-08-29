@@ -108,12 +108,6 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    # Will we be setting multiple objects?
-    set_multiple_objects = false
-    if num_units > 1 and space_r == Constants.Auto
-        set_multiple_objects = true
-    end
-
     #Calculate freezer daily energy use
 	freezer_ann = freezer_E*mult
     
@@ -124,7 +118,7 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
     freezer_lost = 1 - freezer_lat - freezer_rad - freezer_conv
     
     tot_freezer_ann = 0
-    last_space = nil
+    info_msgs = []
     sch = nil
     (1..num_units).to_a.each do |unit_num|
     
@@ -185,23 +179,20 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
             frz_def.setFractionLost(freezer_lost)
             sch.setSchedule(frz)
             
-            if set_multiple_objects
-                # Report each assignment plus final condition
-                runner.registerInfo("A freezer with #{freezer_ann.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'.")
-            end
+            info_msgs << "A freezer with #{freezer_ann.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."
             
             tot_freezer_ann += freezer_ann
-            last_space = space
         end
     end
-	
-    #reporting final condition of model
-    if tot_freezer_ann > 0
-        if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned freezers totaling #{tot_freezer_ann.round} kWhs annual energy consumption across #{num_units} units.")
-        else
-            runner.registerFinalCondition("A freezer with #{tot_freezer_ann.round} kWhs annual energy consumption has been assigned to space '#{last_space.name.to_s}'.")
+    
+    # Reporting
+    if info_msgs.size > 1
+        info_msgs.each do |info_msg|
+            runner.registerInfo(info_msg)
         end
+        runner.registerFinalCondition("The building has been assigned freezers totaling #{tot_freezer_ann.round} kWhs annual energy consumption across #{num_units} units.")
+    elsif info_msgs.size == 1
+        runner.registerFinalCondition(info_msgs[0])
     else
         runner.registerFinalCondition("No freezer has been assigned.")
     end

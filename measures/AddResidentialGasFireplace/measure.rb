@@ -117,12 +117,6 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    # Will we be setting multiple objects?
-    set_multiple_objects = false
-    if num_units > 1 and space_r == Constants.Auto
-        set_multiple_objects = true
-    end
-
     #hard coded convective, radiative, latent, and lost fractions
     gf_lat = 0.1
     gf_rad = 0.3
@@ -130,7 +124,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
     gf_lost = 1 - gf_lat - gf_rad - gf_conv
 
     tot_gf_ann_g = 0
-    last_space = nil
+    info_msgs = []
     sch = nil
     (1..num_units).to_a.each do |unit_num|
     
@@ -206,24 +200,21 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
             gf_def.setFractionLost(gf_lost)
             sch.setSchedule(gf)
     
-            if set_multiple_objects
-                # Report each assignment plus final condition
-                runner.registerInfo("A gas fireplace with #{gf_ann_g.round} therms annual energy consumption has been assigned to space '#{space.name.to_s}'.")
-            end
+            info_msgs << "A gas fireplace with #{gf_ann_g.round} therms annual energy consumption has been assigned to space '#{space.name.to_s}'."
             
             tot_gf_ann_g += gf_ann_g
-            last_space = space
         end
         
     end
     
-    #reporting final condition of model
-    if tot_gf_ann_g > 0
-        if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned gas fireplaces totaling #{tot_gf_ann_g.round} therms annual energy consumption across #{num_units} units.")
-        else
-            runner.registerFinalCondition("A gas fireplace with #{tot_gf_ann_g.round} therms annual energy consumption has been assigned to space '#{last_space.name.to_s}'.")
+    # Reporting
+    if info_msgs.size > 1
+        info_msgs.each do |info_msg|
+            runner.registerInfo(info_msg)
         end
+        runner.registerFinalCondition("The building has been assigned gas fireplaces totaling #{tot_gf_ann_g.round} therms annual energy consumption across #{num_units} units.")
+    elsif info_msgs.size == 1
+        runner.registerFinalCondition(info_msgs[0])
     else
         runner.registerFinalCondition("No gas fireplace has been assigned.")
     end

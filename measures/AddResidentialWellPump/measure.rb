@@ -102,12 +102,6 @@ class ResidentialWellPump < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    # Will we be setting multiple objects?
-    set_multiple_objects = false
-    if num_units > 1
-        set_multiple_objects = true
-    end
-
     #hard coded convective, radiative, latent, and lost fractions
     wp_lat = 0
     wp_rad = 0
@@ -115,6 +109,7 @@ class ResidentialWellPump < OpenStudio::Ruleset::ModelUserScript
     wp_lost = 1 - wp_lat - wp_rad - wp_conv
     
     tot_wp_ann = 0
+    info_msgs = []
     sch = nil
     (1..num_units).to_a.each do |unit_num|
     
@@ -190,23 +185,21 @@ class ResidentialWellPump < OpenStudio::Ruleset::ModelUserScript
             wp_def.setFractionLost(wp_lost)
             sch.setSchedule(wp)
             
-            if set_multiple_objects
-                # Report each assignment plus final condition
-                runner.registerInfo("A well pump with #{wp_ann.round} kWhs annual energy consumption has been assigned to outside.")
-            end
+            info_msgs << "A well pump with #{wp_ann.round} kWhs annual energy consumption has been assigned to outside."
             
             tot_wp_ann += wp_ann
         end
         
     end
-	
-    #reporting final condition of model
-    if tot_wp_ann > 0
-        if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned well pumps totaling #{tot_wp_ann.round} kWhs annual energy consumption across #{num_units} units.")
-        else
-            runner.registerFinalCondition("A well pump with #{tot_wp_ann.round} kWhs annual energy consumption has been assigned to outside.")
+    
+    # Reporting
+    if info_msgs.size > 1
+        info_msgs.each do |info_msg|
+            runner.registerInfo(info_msg)
         end
+        runner.registerFinalCondition("The building has been assigned well pumps totaling #{tot_wp_ann.round} kWhs annual energy consumption across #{num_units} units.")
+    elsif info_msgs.size == 1
+        runner.registerFinalCondition(info_msgs[0])
     else
         runner.registerFinalCondition("No well pump has been assigned.")
     end

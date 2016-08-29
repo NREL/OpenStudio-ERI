@@ -122,12 +122,6 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    # Will we be setting multiple objects?
-    set_multiple_objects = false
-    if num_units > 1 and space_r == Constants.Auto
-        set_multiple_objects = true
-    end
-
     #hard coded convective, radiative, latent, and lost fractions
     range_lat_e = 0.3
     range_conv_e = 0.16
@@ -135,7 +129,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
     range_lost_e = 1 - range_lat_e - range_conv_e - range_rad_e
     
     tot_range_ann_e = 0
-    last_space = nil
+    info_msgs = []
     sch = nil
     (1..num_units).to_a.each do |unit_num|
     
@@ -203,24 +197,21 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
             rng_def.setFractionLost(range_lost_e)
             sch.setSchedule(rng)
             
-            if set_multiple_objects
-                # Report each assignment plus final condition
-                runner.registerInfo("A cooking range with #{range_ann_e.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'.")
-            end
+            info_msgs << "A cooking range with #{range_ann_e.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."
             
             tot_range_ann_e += range_ann_e
-            last_space = space
         end
         
     end
     
-    #reporting final condition of model
-    if tot_range_ann_e > 0
-        if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned cooking ranges totaling #{tot_range_ann_e.round} kWhs annual energy consumption across #{num_units} units.")
-        else
-            runner.registerFinalCondition("A cooking range with #{tot_range_ann_e.round} kWhs annual energy consumption has been assigned to space '#{last_space.name.to_s}'.")
+    # Reporting
+    if info_msgs.size > 1
+        info_msgs.each do |info_msg|
+            runner.registerInfo(info_msg)
         end
+        runner.registerFinalCondition("The building has been assigned cooking ranges totaling #{tot_range_ann_e.round} kWhs annual energy consumption across #{num_units} units.")
+    elsif info_msgs.size == 1
+        runner.registerFinalCondition(info_msgs[0])
     else
         runner.registerFinalCondition("No cooking range has been assigned.")
     end

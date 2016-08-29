@@ -102,12 +102,6 @@ class ResidentialHotTubPump < OpenStudio::Ruleset::ModelUserScript
         return false
     end
 
-    # Will we be setting multiple objects?
-    set_multiple_objects = false
-    if num_units > 1
-        set_multiple_objects = true
-    end
-
     #hard coded convective, radiative, latent, and lost fractions
     htp_lat = 0
     htp_rad = 0
@@ -115,6 +109,7 @@ class ResidentialHotTubPump < OpenStudio::Ruleset::ModelUserScript
     htp_lost = 1 - htp_lat - htp_rad - htp_conv
     
     tot_htp_ann = 0
+    info_msgs = []
     sch = nil
     (1..num_units).to_a.each do |unit_num|
     
@@ -190,25 +185,23 @@ class ResidentialHotTubPump < OpenStudio::Ruleset::ModelUserScript
             htp_def.setFractionLost(htp_lost)
             sch.setSchedule(htp)
             
-            if set_multiple_objects
-                # Report each assignment plus final condition
-                runner.registerInfo("A hot tub heater with #{htp_ann.round} kWhs annual energy consumption has been assigned to outside.")
-            end
+            info_msgs << "A hot tub pump with #{htp_ann.round} kWhs annual energy consumption has been assigned to outside."
             
             tot_htp_ann += htp_ann
         end
         
     end
-	
-    #reporting final condition of model
-    if tot_htp_ann > 0
-        if set_multiple_objects
-            runner.registerFinalCondition("The building has been assigned hot tub heaters totaling #{tot_htp_ann.round} kWhs annual energy consumption across #{num_units} units.")
-        else
-            runner.registerFinalCondition("A hot tub heater with #{tot_htp_ann.round} kWhs annual energy consumption has been assigned to outside.")
+    
+    # Reporting
+    if info_msgs.size > 1
+        info_msgs.each do |info_msg|
+            runner.registerInfo(info_msg)
         end
+        runner.registerFinalCondition("The building has been assigned hot tub pumps totaling #{tot_htp_ann.round} kWhs annual energy consumption across #{num_units} units.")
+    elsif info_msgs.size == 1
+        runner.registerFinalCondition(info_msgs[0])
     else
-        runner.registerFinalCondition("No hot tub heater has been assigned.")
+        runner.registerFinalCondition("No hot tub pump has been assigned.")
     end
     
     return true
