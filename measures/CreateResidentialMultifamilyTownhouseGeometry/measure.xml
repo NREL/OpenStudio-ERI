@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_townhouse_geometry</name>
   <uid>0042e6a0-fc07-4080-9ba7-7bf0b930dc99</uid>
-  <version_id>9274a0bf-e316-460e-b21a-3428570e3a71</version_id>
-  <version_modified>20160829T144039Z</version_modified>
+  <version_id>0e279eb6-1f8f-461e-8a13-22d93c673ebe</version_id>
+  <version_modified>20160829T211342Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyTownhouseGeometry</class_name>
   <display_name>Create Residential Multifamily Townhouse Geometry</display_name>
@@ -174,12 +174,6 @@
       <checksum>E3153078</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A91122C3</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -190,6 +184,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>76512DEB</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E805176A</checksum>
     </file>
   </files>
 </measure>

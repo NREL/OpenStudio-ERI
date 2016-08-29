@@ -7,55 +7,83 @@ require 'fileutils'
 
 class DoorAreaTest < MiniTest::Test
   
-  def test_argument_error_invalid_door_area
-    args_hash = {}
-    args_hash["userdefineddoorarea"] = -20
-    result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Invalid door area.")
+  def osm_geo
+    return "2000sqft_2story_FB_GRG_UA.osm"
   end
   
-  def test_argument_no_door
+  def osm_geo_rotated
+    return "2000sqft_2story_FB_GRG_UA_Southwest_Orientation.osm"
+  end
+  
+  def osm_geo_multifamily
+    return "multifamily_3_units.osm"
+  end
+  
+  def osm_geo_multifamily_urbanopt
+    return "multifamily_urbanopt.osm"
+  end
+  
+  def osm_geo_multifamily_corridor
+    return "multifamily_corridor.osm"
+  end
+  
+  def test_no_door_area
     args_hash = {}
-    args_hash["userdefineddoorarea"] = 0
-    result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
+    args_hash["door_area"] = 0
+    result = _test_error(osm_geo, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
-    assert_equal(result.info[0].logMessage, "No door added because door area was set to 0 ft^2.")  
+    assert_equal(result.finalCondition.get.logMessage, "No doors added because door area was set to 0.")  
+  end
+
+  def test_sfd_new_construction_rotated
+    args_hash = {}
+    model = _test_measure(osm_geo_rotated, args_hash, 0, 20)
   end
   
   def test_sfd_retrofit_replace
-    num_units = 1
     args_hash = {}
-    model = _test_measure("2000sqft_2story_FB_GRG_UA.osm", args_hash, 0, num_units)
+    model = _test_measure(osm_geo, args_hash, 0, 20)
     args_hash = {}
-    _test_measure(model, args_hash, num_units, num_units)
+    args_hash["door_area"] = 30
+    _test_measure(model, args_hash, 20, 30)
   end
   
   def test_mf_retrofit_replace
     num_units = 3
     args_hash = {}
-    model = _test_measure("multifamily_3_units.osm", args_hash, 0, num_units)
+    model = _test_measure(osm_geo_multifamily, args_hash, 0, 20*num_units)
     args_hash = {}
-    _test_measure(model, args_hash, num_units, num_units)
+    args_hash["door_area"] = 30
+    _test_measure(model, args_hash, 20*num_units, 30*num_units)
   end
   
   def test_mf_urbanopt_retrofit_replace
     num_units = 8
     args_hash = {}
-    model = _test_measure("multifamily_urbanopt.osm", args_hash, 0, num_units - 1)
+    model = _test_measure(osm_geo_multifamily_urbanopt, args_hash, 0, 20*(num_units-1))
     args_hash = {}
-    _test_measure(model, args_hash, num_units - 1, num_units - 1)
+    args_hash["door_area"] = 30
+    _test_measure(model, args_hash, 20*(num_units-1), 30*(num_units-1))
   end
   
   def test_mf_corridor
     num_units = 24
     args_hash = {}
-    model = _test_measure("multifamily_corridor.osm", args_hash, 0, num_units)
+    model = _test_measure(osm_geo_multifamily_corridor, args_hash, 0, 20*num_units)
     args_hash = {}
-    _test_measure(model, args_hash, num_units * 2, num_units)
+    args_hash["door_area"] = 30
+    _test_measure(model, args_hash, 20*num_units, 30*num_units)
   end  
+
+  def test_argument_error_invalid_door_area
+    args_hash = {}
+    args_hash["door_area"] = -20
+    result = _test_error(osm_geo, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "Invalid door area.")
+  end
   
   private
   
@@ -89,7 +117,7 @@ class DoorAreaTest < MiniTest::Test
     
   end
   
-  def _test_measure(osm_file_or_model, args_hash, expected_num_doors_removed=0, expected_num_doors_added=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_door_area_removed, expected_door_area_added)
     # create an instance of the measure
     measure = CreateResidentialDoorArea.new
 
@@ -102,6 +130,17 @@ class DoorAreaTest < MiniTest::Test
     runner = OpenStudio::Ruleset::OSRunner.new
     
     model = _get_model(osm_file_or_model)
+
+    # store the original doors in the model
+    orig_doors = []
+    model.getSubSurfaces.each do |sub_surface|
+        next if sub_surface.subSurfaceType.downcase != "door"
+        # Exclude adjacent subsurfaces (for interior doors)
+        if sub_surface.adjacentSubSurface.is_initialized
+            next if orig_doors.include?(sub_surface.adjacentSubSurface.get)
+        end
+        orig_doors << sub_surface
+    end
 
     # get arguments
     arguments = measure.arguments(model)
@@ -119,24 +158,52 @@ class DoorAreaTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
+    
+    # show the output
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
+    assert(result.finalCondition.is_initialized)
 
-    doors_removed = 0
-    doors_added = 0
-    
-    result.info.each do |info|
-      if info.logMessage.include? "Removed door(s) from"
-        doors_removed += 1
-      end
-      if info.logMessage.include? "added "
-        doors_added += 1
-      end
+    # get new/deleted door objects
+    new_objects = []
+    model.getSubSurfaces.each do |sub_surface|
+        next if sub_surface.subSurfaceType.downcase != "door"
+        next if orig_doors.include?(sub_surface)
+        # Exclude adjacent subsurfaces (for interior doors)
+        if sub_surface.adjacentSubSurface.is_initialized
+            next if new_objects.include?(sub_surface.adjacentSubSurface.get)
+        end
+        new_objects << sub_surface
+    end
+    del_objects = []
+    orig_doors.each do |orig_door|
+        has_door = false
+        model.getSubSurfaces.each do |sub_surface|
+            next if sub_surface != orig_door
+            has_door = true
+        end
+        next if has_door
+        # Exclude adjacent subsurfaces (for interior doors)
+        if orig_door.adjacentSubSurface.is_initialized
+            next if del_objects.include?(orig_door.adjacentSubSurface.get)
+        end
+        del_objects << orig_door
     end
     
-    assert_equal(expected_num_doors_removed, doors_removed)
-    assert_equal(expected_num_doors_added, doors_added)
+    new_door_area = 0
+    new_objects.each do |door|
+        new_door_area += OpenStudio.convert(door.grossArea, "m^2", "ft^2").get
+    end
+
+    del_door_area = 0
+    del_objects.each do |door|
+        del_door_area += OpenStudio.convert(door.grossArea, "m^2", "ft^2").get
+    end
+
+    assert_in_epsilon(expected_door_area_added, new_door_area, 0.01)
+    assert_in_epsilon(expected_door_area_removed, del_door_area, 0.01)
 
     return model
   end  
@@ -158,5 +225,18 @@ class DoorAreaTest < MiniTest::Test
     end
     return model
   end  
+  
+  def _get_doors(model)
+    doors = []
+    model.getSpaces.each do |space|
+        space.surfaces.each do |surface|
+            surface.subSurfaces.each do |sub_surface|
+                next if sub_surface.subSurfaceType.downcase != "door"
+                doors << door
+            end
+        end
+    end
+    return doors
+  end
 
 end

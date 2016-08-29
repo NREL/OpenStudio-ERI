@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>2c69a60e-501a-4516-a253-725d23808b2d</uid>
-  <version_id>b4fbca96-8f34-4c10-a033-a5a1f39e7618</version_id>
-  <version_modified>20160829T154236Z</version_modified>
+  <version_id>fe17a816-78a6-4a9f-a622-16071fc7dbb2</version_id>
+  <version_modified>20160829T211348Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -165,12 +165,6 @@
       <checksum>0F260377</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A91122C3</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -210,6 +204,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>D065B864</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E805176A</checksum>
     </file>
   </files>
 </measure>
