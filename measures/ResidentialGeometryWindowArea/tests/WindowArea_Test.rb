@@ -128,6 +128,15 @@ class WindowAreaTest < MiniTest::Test
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Right window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
+  
+  def test_argument_error_invalid_aspect_ratio
+    args_hash = {}
+    args_hash["aspect_ratio"] = 0
+    result = _test_error(osm_geo, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "Window Aspect Ratio must be greater than 0.")
+  end
 
   private
   

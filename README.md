@@ -35,64 +35,64 @@ The New Construction workflow illustrates how to build up a complete residential
 
 |Group|Measure|Dependencies*|
 |:---|:---|:---|
-|1. Location|1. Set Residential Location||
-|2. Geometry|1. Create Residential Geometry||
-||2. Set Residential Number of Beds and Baths||
-||3. Set Residential Number of Occupants|Beds/Baths|
-||4. Set Residential Orientation||
-||5. Set Residential Eaves||
-||6. Set Residential Overhangs|Window Area|
-||7. Set Residential Door Area||
-||8. Set Residential Window Areas||
-||9. Set Neighbors||
-|3. Envelope Constructions|1. Set Residential Ceilings/Roofs - Unfinished Attic Constructions||
-||2. Set Residential Ceilings/Roofs - Finished Roof Construction||
-||3. Set Residential Ceilings/Roofs - Roof Sheathing||
-||4. Set Residential Ceilings/Roofs - Roofing Material||
-||5. Set Residential Ceilings/Roofs - Radiant Barrier||
-||6. Set Residential Ceilings/Roofs - Ceiling Thermal Mass||
-||7. Set Residential Foundations/Floors - Finished Basement Constructions||
-||8. Set Residential Foundations/Floors - Unfinished Basement Constructions||
-||9. Set Residential Foundations/Floors - Crawlspace Constructions||
-||10. Set Residential Foundations/Floors - Slab Construction||
-||11. Set Residential Foundations/Floors - Interzonal Floor Construction||
-||12. Set Residential Foundations/Floors - Floor Covering||
-||13. Set Residential Foundations/Floors - Floor Sheathing||
-||14. Set Residential Foundations/Floors - Floor Thermal Mass||
-||15. Set Residential Walls - Wood Stud Construction (or Double Stud, CMU, etc.)||
-||16. Set Residential Walls - Interzonal Construction||
-||17. Set Residential Walls - Wall Sheathing||
-||18. Set Residential Walls - Exterior Finish||
-||19. Set Residential Walls - Exterior Thermal Mass||
-||20. Set Residential Walls - Partition Thermal Mass||
-||21. Set Residential Uninsulated Surfaces||
-||22. Set Residential Window Construction|Window Area|
-||23. Set Residential Door Construction|Door Area|
-||24. Set Residential Furniture Thermal Mass||
-|4. Domestic Hot Water|1. Set Residential Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
-||2. Set Residential Hot Water Fixtures|Water Heater|
-||3. Set Residential Hot Water Distribution|Hot Water Fixtures, Location|
-|5. HVAC|1. Set Residential Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)||
-||2. Set Residential Heating Setpoints and Schedules|HVAC Equipment|
-||3. Set Residential Cooling Setpoints and Schedules|HVAC Equipment|
-|6. Major Appliances|1. Set Residential Refrigerator||
-||2. Set Residential Clothes Washer|Water Heater, Location|
-||3. Set Residential Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
-||4. Set Residential Dishwasher|Water Heater, Location|
-||5. Set Residential Cooking Range (Electric or Gas)|Beds/Baths|
-|7. Lighting|1. Set Residential Lighting|Location|
-|8. Misc Loads|1. Set Residential Plug Loads|Beds/Baths|
-||2. Set Residential Extra Refrigerator||
-||3. Set Residential Freezer||
-||4. Set Residential Hot Tub Heater (Electric or Gas)|Beds/Baths|
-||5. Set Residential Hot Tub Pump|Beds/Baths|
-||6. Set Residential Pool Heater (Electric or Gas)|Beds/Baths|
-||7. Set Residential Pool Pump|Beds/Baths|
-||8. Set Residential Well Pump|Beds/Baths|
-||9. Set Residential Gas Fireplace|Beds/Baths|
-||10. Set Residential Gas Grill|Beds/Baths|
-||11. Set Residential Gas Lighting|Beds/Baths|
-|9. EnergyPlus Measures|1. Set Residential Airflow|HVAC Equipment, Clothes Dryer|
+|1. Location|1. Location||
+|2. Geometry|1. Geometry (Single Family Detached or Multifamily)||
+||2. Number of Beds and Baths||
+||3. Number of Occupants|Beds/Baths|
+||4. Orientation||
+||5. Eaves||
+||6. Overhangs|Window Area|
+||7. Door Area||
+||8. Window Areas||
+||9. Neighbors||
+|3. Envelope Constructions|1. Ceilings/Roofs - Unfinished Attic Constructions||
+||2. Ceilings/Roofs - Finished Roof Construction||
+||3. Ceilings/Roofs - Roof Sheathing||
+||4. Ceilings/Roofs - Roofing Material||
+||5. Ceilings/Roofs - Radiant Barrier||
+||6. Ceilings/Roofs - Ceiling Thermal Mass||
+||7. Foundations/Floors - Finished Basement Constructions||
+||8. Foundations/Floors - Unfinished Basement Constructions||
+||9. Foundations/Floors - Crawlspace Constructions||
+||10. Foundations/Floors - Slab Construction||
+||11. Foundations/Floors - Interzonal Floor Construction||
+||12. Foundations/Floors - Floor Covering||
+||13. Foundations/Floors - Floor Sheathing||
+||14. Foundations/Floors - Floor Thermal Mass||
+||15. Walls - Wood Stud Construction (or Double Stud, CMU, etc.)||
+||16. Walls - Interzonal Construction||
+||17. Walls - Wall Sheathing||
+||18. Walls - Exterior Finish||
+||19. Walls - Exterior Thermal Mass||
+||20. Walls - Partition Thermal Mass||
+||21. Uninsulated Surfaces||
+||22. Window Construction|Window Area|
+||23. Door Construction|Door Area|
+||24. Furniture Thermal Mass||
+|4. Domestic Hot Water|1. Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
+||2. Hot Water Fixtures|Water Heater|
+||3. Hot Water Distribution|Hot Water Fixtures, Location|
+|5. HVAC|1. Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)||
+||2. Heating Setpoints and Schedules|HVAC Equipment|
+||3. Cooling Setpoints and Schedules|HVAC Equipment|
+|6. Major Appliances|1. Refrigerator||
+||2. Clothes Washer|Water Heater, Location|
+||3. Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
+||4. Dishwasher|Water Heater, Location|
+||5. Cooking Range (Electric or Gas)|Beds/Baths|
+|7. Lighting|1. Lighting|Location|
+|8. Misc Loads|1. Plug Loads|Beds/Baths|
+||2. Extra Refrigerator||
+||3. Freezer||
+||4. Hot Tub Heater (Electric or Gas)|Beds/Baths|
+||5. Hot Tub Pump|Beds/Baths|
+||6. Pool Heater (Electric or Gas)|Beds/Baths|
+||7. Pool Pump|Beds/Baths|
+||8. Well Pump|Beds/Baths|
+||9. Gas Fireplace|Beds/Baths|
+||10. Gas Grill|Beds/Baths|
+||11. Gas Lighting|Beds/Baths|
+|9. EnergyPlus Measures|1. Airflow|HVAC Equipment, Clothes Dryer|
 
 ## Retrofit Workflow for Users
 
