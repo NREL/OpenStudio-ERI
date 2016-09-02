@@ -41,9 +41,9 @@ The New Construction workflow illustrates how to build up a complete residential
 ||3. Number of Occupants|Beds/Baths|
 ||4. Orientation||
 ||5. Eaves||
-||6. Overhangs|Window Area|
-||7. Door Area||
-||8. Window Areas||
+||6. Door Area||
+||7. Window Areas||
+||8. Overhangs|Window Area|
 ||9. Neighbors||
 |3. Envelope Constructions|1. Ceilings/Roofs - Unfinished Attic Constructions||
 ||2. Ceilings/Roofs - Finished Roof Construction||
