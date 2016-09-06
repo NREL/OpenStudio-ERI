@@ -613,7 +613,7 @@ class Geometry
             vertex_hash = {}
             vertex_counter = 0
             surface.vertices.each do |vertex|
-                next if not vertex.z == matchz
+                next if (OpenStudio.convert(vertex.z, "m", "ft").get - matchz).abs > 0.0001
                 vertex_counter += 1
                 vertex_hash[vertex_counter] = [vertex.x + surface.space.get.xOrigin,
                                                vertex.y + surface.space.get.yOrigin,
