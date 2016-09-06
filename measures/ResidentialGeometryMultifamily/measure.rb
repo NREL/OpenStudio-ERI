@@ -82,14 +82,6 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     offset.setDefaultValue(0.0)
     args << offset    
     
-    #make an argument for corridor width
-    corr_width = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("corr_width", true)
-    corr_width.setDisplayName("Corridor Width")
-    corr_width.setUnits("ft")
-    corr_width.setDescription("The width of the corridor.")
-    corr_width.setDefaultValue(0.0)
-    args << corr_width
-    
     #make an argument for corridor position
     corr_pos_display_names = OpenStudio::StringVector.new
     corr_pos_display_names << "None"
@@ -101,7 +93,15 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     corr_pos.setDisplayName("Corridor Position")
     corr_pos.setDescription("The position of the corridor.")
     corr_pos.setDefaultValue("None")
-    args << corr_pos
+    args << corr_pos    
+    
+    #make an argument for corridor width
+    corr_width = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("corr_width", true)
+    corr_width.setDisplayName("Corridor Width")
+    corr_width.setUnits("ft")
+    corr_width.setDescription("The width of the corridor.")
+    corr_width.setDefaultValue(10.0)
+    args << corr_width
     
     #make an argument for inset width
     inset_width = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("inset_width", true)
@@ -149,8 +149,8 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     num_stories_per_unit = runner.getIntegerArgumentValue("num_stories_per_unit",user_arguments)
     unit_aspect_ratio = runner.getDoubleArgumentValue("unit_aspect_ratio",user_arguments)
     offset = OpenStudio::convert(runner.getDoubleArgumentValue("offset",user_arguments),"ft","m").get
-    corr_width = OpenStudio::convert(runner.getDoubleArgumentValue("corr_width",user_arguments),"ft","m").get
     corr_pos = runner.getStringArgumentValue("corr_pos",user_arguments)
+    corr_width = OpenStudio::convert(runner.getDoubleArgumentValue("corr_width",user_arguments),"ft","m").get    
     inset_width = OpenStudio::convert(runner.getDoubleArgumentValue("inset_width",user_arguments),"ft","m").get
     inset_depth = OpenStudio::convert(runner.getDoubleArgumentValue("inset_depth",user_arguments),"ft","m").get
     inset_pos = runner.getStringArgumentValue("inset_pos",user_arguments)
@@ -233,14 +233,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
 
     # create living zone
     living_zone = OpenStudio::Model::ThermalZone.new(model)
-    living_zone.setName(Constants.LivingZone)
+    living_zone.setName(Constants.LivingZone(1))
     
     # first floor front
     living_spaces_front = []
     living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
     living_space = living_space.get
-    living_space_name = Constants.LivingSpace(1)
-    living_space.setName(living_space_name)
+    living_space.setName(Constants.LivingSpace(1, 1))
     living_space.setThermalZone(living_zone)    
     
     # add the shade
@@ -253,16 +252,17 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     living_spaces_front << living_space
     
     # additional floors
-    (1...num_stories_per_unit).to_a.each do |story|
+    (2..num_stories_per_unit).to_a.each do |story|
     
       new_living_space = living_space.clone.to_Space.get
+      new_living_space.setName(Constants.LivingSpace(story, 1))
       
       m = OpenStudio::Matrix.new(4,4,0)
       m[0,0] = 1
       m[1,1] = 1
       m[2,2] = 1
       m[3,3] = 1
-      m[2,3] = living_height * story
+      m[2,3] = living_height * (story - 1)
       new_living_space.setTransformation(OpenStudio::Transformation.new(m))
       new_living_space.setThermalZone(living_zone)
       
@@ -315,14 +315,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       
       # create living zone
       living_zone = OpenStudio::Model::ThermalZone.new(model)
-      living_zone.setName(Constants.LivingZone)
+      living_zone.setName(Constants.LivingZone(2))
       
       # first floor back
       living_spaces_back = []
       living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
       living_space = living_space.get
-      living_space_name = Constants.LivingSpace(1)
-      living_space.setName(living_space_name)
+      living_space.setName(Constants.LivingSpace(1, 2))
       living_space.setThermalZone(living_zone)
       
       # add the shade
@@ -335,16 +334,17 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       living_spaces_back << living_space
       
       # additional floors
-      (1...num_stories_per_unit).to_a.each do |story|
+      (2..num_stories_per_unit).to_a.each do |story|
       
         new_living_space = living_space.clone.to_Space.get
+        new_living_space.setName(Constants.LivingSpace(story, 2))
         
         m = OpenStudio::Matrix.new(4,4,0)
         m[0,0] = 1
         m[1,1] = 1
         m[2,2] = 1
         m[3,3] = 1
-        m[2,3] = living_height * story
+        m[2,3] = living_height * (story - 1)
         new_living_space.setTransformation(OpenStudio::Transformation.new(m))
         new_living_space.setThermalZone(living_zone)
         
@@ -368,12 +368,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         end
         
         living_zone = OpenStudio::Model::ThermalZone.new(model)
-        living_zone.setName(Constants.LivingZone)        
+        living_zone.setName(Constants.LivingZone(unit_num))        
       
         new_living_spaces = []
-        living_spaces.each do |living_space|
+        living_spaces.each_with_index do |living_space, story|
       
           new_living_space = living_space.clone.to_Space.get
+          new_living_space.setName(Constants.LivingSpace(story + 1, unit_num))
         
           m = OpenStudio::Matrix.new(4,4,0)
           m[0,0] = 1
@@ -502,12 +503,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         pos += 1
         
         living_zone = OpenStudio::Model::ThermalZone.new(model)
-        living_zone.setName(Constants.LivingZone)        
+        living_zone.setName(Constants.LivingZone(unit_num))
       
         new_living_spaces = []
-        living_spaces.each do |living_space|
+        living_spaces.each_with_index do |living_space, story|
       
           new_living_space = living_space.clone.to_Space.get
+          new_living_space.setName(Constants.LivingSpace(story + 1, unit_num))
         
           m = OpenStudio::Matrix.new(4,4,0)
           m[0,0] = 1
@@ -560,8 +562,6 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       end      
     
     end
-
-
     
     # put all of the spaces in the model into a vector
     spaces = OpenStudio::Model::SpaceVector.new

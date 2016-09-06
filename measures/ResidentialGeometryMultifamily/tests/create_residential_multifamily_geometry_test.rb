@@ -10,6 +10,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
   def test_warning_implied_front_and_back_units
     args_hash = {}
     args_hash["corr_pos"] = "Double-Loaded Interior"
+    args_hash["corr_width"] = 0
     result = _test_error(nil, args_hash)
     assert(result.warnings.size == 1)
     assert_equal("Success", result.value.valueName)

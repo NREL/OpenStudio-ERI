@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>dbaeeef4-b767-4f68-be93-c12fec58ae6f</version_id>
-  <version_modified>20160906T184336Z</version_modified>
+  <version_id>d73be795-6739-4323-bf59-f98cd61c54ab</version_id>
+  <version_modified>20160906T201345Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -81,16 +81,6 @@
       <default_value>0</default_value>
     </argument>
     <argument>
-      <name>corr_width</name>
-      <display_name>Corridor Width</display_name>
-      <description>The width of the corridor.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
       <name>corr_pos</name>
       <display_name>Corridor Position</display_name>
       <description>The position of the corridor.</description>
@@ -116,6 +106,16 @@
           <display_name>Double Exterior</display_name>
         </choice>
       </choices>
+    </argument>
+    <argument>
+      <name>corr_width</name>
+      <display_name>Corridor Width</display_name>
+      <description>The width of the corridor.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>10</default_value>
     </argument>
     <argument>
       <name>inset_width</name>
@@ -191,23 +191,6 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
-      <filename>create_residential_multifamily_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9E15836A</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.12.2</identifier>
-        <min_compatible>1.12.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>94A38B51</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -218,6 +201,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6B6F5FEB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.12.2</identifier>
+        <min_compatible>1.12.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>6ACFA4B4</checksum>
+    </file>
+    <file>
+      <filename>create_residential_multifamily_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C191D54F</checksum>
     </file>
   </files>
 </measure>
