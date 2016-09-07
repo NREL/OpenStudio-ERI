@@ -18,6 +18,10 @@ class ResidentialLightingTest < MiniTest::Test
   def osm_geo_beds_loc
     return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm"
   end
+  
+  def osm_geo_multifamily_3_units_loc
+    return "multifamily_3_units_Denver.osm"
+  end
 
   def test_new_construction_100_incandescent
     args_hash = {}
@@ -27,7 +31,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.0
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 2085)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 2085, 5, 0)
   end
   
   def test_new_construction_20_cfl_hw_34_cfl_pg
@@ -38,7 +42,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1848)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1848, 5, 0)
   end
   
   def test_new_construction_34_cfl_hw_34_cfl_pg
@@ -49,7 +53,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1733)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1733, 5, 0)
   end
   
   def test_new_construction_60_led_hw_34_cfl_pg
@@ -60,7 +64,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1461)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1461, 5, 0)
   end
   
   def test_new_construction_100_cfl
@@ -71,7 +75,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 1.0
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1110)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1110, 5, 0)
   end
   
   def test_new_construction_100_led
@@ -82,7 +86,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.0
     args_hash["pg_led"] = 1.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 957)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 957, 5, 0)
   end
   
   def test_new_construction_100_led_low_efficacy
@@ -94,15 +98,30 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_led"] = 1.0
     args_hash["pg_lfl"] = 0.0
     args_hash["led_eff"] = 50
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1159)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1159, 5, 0)
   end
   
   def test_retrofit_replace
     args_hash = {}
-    model = _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1733)
+    model = _test_measure(osm_geo_beds_loc, args_hash, 0, 5, 1733, 5, 0)
     args_hash = {}
     args_hash["hw_cfl"] = 1.0
-    _test_measure(model, args_hash, 5, 5, 1252)
+    _test_measure(model, args_hash, 5, 5, 1252, 6, 0)
+  end
+  
+  def test_multifamily_new_construction
+    num_ltg_spaces = 5
+    args_hash = {}
+    _test_measure(osm_geo_multifamily_3_units_loc, args_hash, 0, num_ltg_spaces, 3684, num_ltg_spaces, 0)
+  end
+  
+  def test_multifamily_retrofit_replace
+    num_ltg_spaces = 5
+    args_hash = {}
+    model = _test_measure(osm_geo_multifamily_3_units_loc, args_hash, 0, num_ltg_spaces, 3684, num_ltg_spaces, 0)
+    args_hash = {}
+    args_hash["hw_cfl"] = 1.0
+    _test_measure(model, args_hash, num_ltg_spaces, num_ltg_spaces, 2670, num_ltg_spaces+1, 0)
   end
 
   def test_argument_error_hw_cfl_lt_0
@@ -268,7 +287,7 @@ class ResidentialLightingTest < MiniTest::Test
     assert(result.errors.size == 1)
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialLighting.new
 
@@ -307,12 +326,9 @@ class ResidentialLightingTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_del_objects > 0
-        assert(result.info.size == 1)
-    else
-        assert(result.info.size == 0)
-    end
-    assert(result.warnings.size == 0)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get new/deleted light objects
     new_objects = []

@@ -703,6 +703,7 @@ class Geometry
             next if Geometry.space_is_finished(space)
             next if Geometry.space_is_below_grade(space)
             next if Geometry.space_below_is_finished(space, model)
+            next if Geometry.space_has_roof(space)
             spaces << space
         end
         return spaces

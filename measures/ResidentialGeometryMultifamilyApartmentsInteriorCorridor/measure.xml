@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_apartments_interior_corridor_geometry</name>
   <uid>5118a1e1-bc21-4cfa-9687-1590c9727d06</uid>
-  <version_id>eb8a3df0-97a5-4a65-9003-acd1f43b8500</version_id>
-  <version_modified>20160906T184336Z</version_modified>
+  <version_id>268692fd-4c1f-42d3-9449-d1c6b4f11d0c</version_id>
+  <version_modified>20160907T214003Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyApartmentsInteriorCorridorGeometry</class_name>
   <display_name>Create Residential Multifamily Apartments Interior Corridor Geometry</display_name>
@@ -189,7 +189,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6B6F5FEB</checksum>
+      <checksum>85378005</checksum>
     </file>
   </files>
 </measure>

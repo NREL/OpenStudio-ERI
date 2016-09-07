@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_showers_sinks_baths</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>58023ae4-6f37-4eb2-a334-2df4b82ff26c</version_id>
-  <version_modified>20160906T184337Z</version_modified>
+  <version_id>2d678b7c-1101-4ffe-913b-30d1de24eee4</version_id>
+  <version_modified>20160907T214004Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialShowersSinksBaths</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -238,7 +238,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6B6F5FEB</checksum>
+      <checksum>85378005</checksum>
     </file>
   </files>
 </measure>
