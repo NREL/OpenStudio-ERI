@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>a028ba66-80e1-4280-9a6a-90c67a308c1d</version_id>
-  <version_modified>20160907T164605Z</version_modified>
+  <version_id>066abded-431a-4b3d-810b-8a81147e4fe8</version_id>
+  <version_modified>20160907T183945Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -53,7 +53,7 @@
     <argument>
       <name>all_surfaces</name>
       <display_name>Copy all surfaces?</display_name>
-      <description>Indicates whether to copy all house surfaces (useful for rendering purposes). Otherwise, only the minimal required surfaces are copied (e.g., only the lest-most surfaces for the right neighbor).</description>
+      <description>Indicates whether to copy all house surfaces (useful for rendering purposes). Otherwise, only the minimal required surfaces are copied (e.g., only the left-most surfaces for the right neighbor) in order to reduce simulation runtime.</description>
       <type>Boolean</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -116,6 +116,12 @@
       <checksum>55BD6CF0</checksum>
     </file>
     <file>
+      <filename>create_residential_neighbors_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3B42475C</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -124,13 +130,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E084425A</checksum>
-    </file>
-    <file>
-      <filename>create_residential_neighbors_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3B42475C</checksum>
+      <checksum>178A2390</checksum>
     </file>
   </files>
 </measure>

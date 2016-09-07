@@ -270,7 +270,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Ruleset::ModelUserSc
     # Process the roofs
     if not roof_surfaces.empty?
         # Define materials
-        mat_cavity = Material.AirCavityClosed(Material.Stud2x4.thick_in)
+        mat_cavity = Material.AirCavityOpen(Material.Stud2x4.thick_in)
         mat_framing = Material.new(name=nil, thick_in=Material.Stud2x4.thick_in, mat_base=BaseMaterial.Wood)
 
         # Set paths
