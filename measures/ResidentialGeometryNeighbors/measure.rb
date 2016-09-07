@@ -58,7 +58,7 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     #make a bool argument for copying all house surfaces
     all_surfaces = OpenStudio::Ruleset::OSArgument::makeBoolArgument("all_surfaces", false)
     all_surfaces.setDisplayName("Copy all surfaces?")
-    all_surfaces.setDescription("Indicates whether to copy all house surfaces (useful for rendering purposes). Otherwise, only the minimal required surfaces are copied (e.g., only the lest-most surfaces for the right neighbor).")
+    all_surfaces.setDescription("Indicates whether to copy all house surfaces (useful for rendering purposes). Otherwise, only the minimal required surfaces are copied (e.g., only the left-most surfaces for the right neighbor) in order to reduce simulation runtime.")
     all_surfaces.setDefaultValue(false)
     args << all_surfaces    
 

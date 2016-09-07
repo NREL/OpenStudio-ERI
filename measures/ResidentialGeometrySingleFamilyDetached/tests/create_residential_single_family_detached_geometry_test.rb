@@ -131,6 +131,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
 
   def test_finished_attic
     args_hash = {}
+    args_hash["num_floors"] = 1
     args_hash["attic_type"] = Constants.FinishedAtticSpace
     args_hash["garage_width"] = 12
     args_hash["garage_protrusion"] = 0.5
