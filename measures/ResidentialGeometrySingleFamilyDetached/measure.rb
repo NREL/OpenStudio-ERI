@@ -636,10 +636,10 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
               sw_point = OpenStudio::Point3d.new(sw_point.x, sw_point.y, living_space.zOrigin+sw_point.z)
               se_point = OpenStudio::Point3d.new(se_point.x, se_point.y, living_space.zOrigin+se_point.z)
           else
-              nw_point = OpenStudio::Point3d.new(nw_point.x, nw_point.y, nw_point.z-living_space.zOrigin)
-              ne_point = OpenStudio::Point3d.new(ne_point.x, ne_point.y, ne_point.z-living_space.zOrigin)
-              sw_point = OpenStudio::Point3d.new(sw_point.x, sw_point.y, sw_point.z-living_space.zOrigin)
-              se_point = OpenStudio::Point3d.new(se_point.x, se_point.y, se_point.z-living_space.zOrigin)
+              nw_point = OpenStudio::Point3d.new(nw_point.x, nw_point.y, nw_point.z-(living_space.zOrigin/(num_floors-1)))
+              ne_point = OpenStudio::Point3d.new(ne_point.x, ne_point.y, ne_point.z-(living_space.zOrigin/(num_floors-1)))
+              sw_point = OpenStudio::Point3d.new(sw_point.x, sw_point.y, sw_point.z-(living_space.zOrigin/(num_floors-1)))
+              se_point = OpenStudio::Point3d.new(se_point.x, se_point.y, se_point.z-(living_space.zOrigin/(num_floors-1)))
           end
           
           garage_attic_height = (ne_point.x - nw_point.x)/2 * roof_pitch          
@@ -655,8 +655,8 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
               roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2, nw_point.y+garage_attic_height/roof_pitch, living_space.zOrigin+living_height+garage_attic_height)
               roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2, sw_point.y, living_space.zOrigin+living_height+garage_attic_height)
           else
-              roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2, nw_point.y+garage_attic_height/roof_pitch, living_height+garage_attic_height-living_space.zOrigin)
-              roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2, sw_point.y, living_height+garage_attic_height-living_space.zOrigin)
+              roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2, nw_point.y+garage_attic_height/roof_pitch, living_height+garage_attic_height-(living_space.zOrigin/(num_floors-1)))
+              roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2, sw_point.y, living_height+garage_attic_height-(living_space.zOrigin/(num_floors-1)))
           end
           
           polygon_w_roof = Geometry.make_polygon(nw_point, sw_point, roof_s_point, roof_n_point)

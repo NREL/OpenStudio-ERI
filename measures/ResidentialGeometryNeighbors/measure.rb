@@ -158,8 +158,9 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
                 m[3,3] = 1
                 m[0,3] = -x_offset
                 m[1,3] = -y_offset
+                m[2,3] = space.zOrigin
                 transformation = OpenStudio::Transformation.new(m)
-                new_vertices = transformation * surface.vertices              
+                new_vertices = transformation * surface.vertices
                 shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices, model)
                 shading_surface.setName("#{dir} Neighbor")
                 shading_surface.setShadingSurfaceGroup(shading_surface_group)
