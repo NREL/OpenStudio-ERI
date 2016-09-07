@@ -103,7 +103,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     result.info.each do |info|
         if info.logMessage.include? "Removed existing neighbors."
             existing_neighbors = true
-        elsif info.logMessage.include? "Translated space living space by"
+        elsif info.logMessage.include? "Created shading surface"
             new_neighbors = true
         end
     end    
