@@ -1,6 +1,8 @@
 # see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
+require "#{File.dirname(__FILE__)}/resources/geometry"
+
 # start the measure
 class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
 
@@ -134,7 +136,7 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     back_offset = -((greatest_y - least_y) + back_neighbor_offset)
     front_offset = ((greatest_y - least_y) + front_neighbor_offset)
 			
-    directions = [["Left", left_neighbor_offset, left_offset, 0], ["Right", right_neighbor_offset, right_offset, 0], ["Back", back_neighbor_offset, 0, back_offset], ["Front", front_neighbor_offset, 0, front_offset]]
+    directions = [[Constants.FacadeLeft, left_neighbor_offset, left_offset, 0], [Constants.FacadeRight, right_neighbor_offset, right_offset, 0], [Constants.FacadeBack, back_neighbor_offset, 0, back_offset], [Constants.FacadeFront, front_neighbor_offset, 0, front_offset]]
             
     shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
     model.getSpaces.each do |space|
@@ -142,30 +144,39 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
         if neighbor_offset != 0
           space.surfaces.each do |surface|
               next if surface.outsideBoundaryCondition.downcase != "outdoors" and surface.outsideBoundaryCondition.downcase != "adiabatic"
-              copy = true
               if !all_surfaces
-                surface.vertices.each do |vertex|
-                    if (dir == "Left" and vertex.x != greatest_x) or (dir == "Right" and vertex.x != least_x) or (dir == "Back" and vertex.y != least_y) or (dir == "Front" and vertex.y != greatest_y)
-                        copy = false
+                if dir == Constants.FacadeLeft
+                    if Geometry.get_facade_for_surface(surface) != Constants.FacadeRight
+                        next
                     end
+                elsif dir == Constants.FacadeRight
+                    if Geometry.get_facade_for_surface(surface) != Constants.FacadeLeft
+                        next
+                    end                
+                elsif dir == Constants.FacadeFront
+                    if Geometry.get_facade_for_surface(surface) != Constants.FacadeBack
+                        next
+                    end                
+                elsif dir == Constants.FacadeBack
+                    if Geometry.get_facade_for_surface(surface) != Constants.FacadeFront
+                        next
+                    end                
                 end
               end
-              if copy
-                m = OpenStudio::Matrix.new(4,4,0)
-                m[0,0] = 1
-                m[1,1] = 1
-                m[2,2] = 1
-                m[3,3] = 1
-                m[0,3] = -x_offset
-                m[1,3] = -y_offset
-                m[2,3] = space.zOrigin
-                transformation = OpenStudio::Transformation.new(m)
-                new_vertices = transformation * surface.vertices
-                shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices, model)
-                shading_surface.setName("#{dir} Neighbor")
-                shading_surface.setShadingSurfaceGroup(shading_surface_group)
-                runner.registerInfo("Created shading surface #{shading_surface.name} from surface #{surface.name}.")				
-              end
+              m = OpenStudio::Matrix.new(4,4,0)
+              m[0,0] = 1
+              m[1,1] = 1
+              m[2,2] = 1
+              m[3,3] = 1
+              m[0,3] = -x_offset
+              m[1,3] = -y_offset
+              m[2,3] = space.zOrigin
+              transformation = OpenStudio::Transformation.new(m)
+              new_vertices = transformation * surface.vertices
+              shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices, model)
+              shading_surface.setName("#{dir} Neighbor")
+              shading_surface.setShadingSurfaceGroup(shading_surface_group)
+              runner.registerInfo("Created shading surface #{shading_surface.name} from surface #{surface.name}.")				
           end
         end
       end

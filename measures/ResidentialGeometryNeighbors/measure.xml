@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>d8b80f44-6350-4a1d-9c0d-cfa6057cbd3a</version_id>
-  <version_modified>20160907T195316Z</version_modified>
+  <version_id>77237796-c7e4-48e6-8b0e-3f133aafeaec</version_id>
+  <version_modified>20160907T221013Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -116,10 +116,22 @@
       <checksum>55BD6CF0</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>76512DEB</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D2C9FD88</checksum>
+    </file>
+    <file>
       <filename>create_residential_neighbors_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>3B42475C</checksum>
+      <checksum>71C21AD6</checksum>
     </file>
     <file>
       <version>
@@ -130,7 +142,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5CC1DB0D</checksum>
+      <checksum>3BDC17F6</checksum>
     </file>
   </files>
 </measure>

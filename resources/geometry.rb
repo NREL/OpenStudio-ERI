@@ -723,16 +723,27 @@ class Geometry
     def self.get_facade_for_surface(surface)
         tol = 0.001
         n = surface.outwardNormal
-            
         facade = nil
-        if (n.x).abs < tol and (n.y + 1).abs < tol and (n.z).abs < tol
-            facade = Constants.FacadeFront
-        elsif (n.x - 1).abs < tol and (n.y).abs < tol and (n.z).abs < tol
-            facade = Constants.FacadeRight
-        elsif (n.x).abs < tol and (n.y - 1).abs < tol and (n.z).abs < tol
-            facade = Constants.FacadeBack
-        elsif (n.x + 1).abs < tol and (n.y).abs < tol and (n.z).abs < tol
-            facade = Constants.FacadeLeft
+        if (n.z).abs < tol
+            if (n.x).abs < tol and (n.y + 1).abs < tol
+                facade = Constants.FacadeFront
+            elsif (n.x - 1).abs < tol and (n.y).abs < tol
+                facade = Constants.FacadeRight
+            elsif (n.x).abs < tol and (n.y - 1).abs < tol
+                facade = Constants.FacadeBack
+            elsif (n.x + 1).abs < tol and (n.y).abs < tol
+                facade = Constants.FacadeLeft
+            end
+        elsif
+            if (n.x).abs < tol and n.y < 0
+                facade = Constants.FacadeFront
+            elsif n.x > 0 and (n.y).abs < tol
+                facade = Constants.FacadeRight
+            elsif (n.x).abs < tol and n.y > 0
+                facade = Constants.FacadeBack
+            elsif n.x < 0 and (n.y).abs < tol
+                facade = Constants.FacadeLeft
+            end
         end
         return facade
     end

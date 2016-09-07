@@ -27,6 +27,9 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   def test_retrofit_replace
     args_hash = {}
     args_hash["left_neighbor_offset"] = 10
+    args_hash["right_neighbor_offset"] = 10
+    args_hash["back_neighbor_offset"] = 10
+    args_hash["front_neighbor_offset"] = 10
     model = _test_measure("default_geometry_location.osm", args_hash, false, true)
     args_hash = {}
     args_hash["left_neighbor_offset"] = 20
