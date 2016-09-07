@@ -680,11 +680,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
               garage_attic_space = OpenStudio::Model::Space.new(model)
               garage_attic_space_name = Constants.GarageAtticSpace
               garage_attic_space.setName(garage_attic_space_name)
-              if attic_type == Constants.FinishedAtticSpace
-                garage_attic_space.setThermalZone(living_zone)
-              else
-                garage_attic_space.setThermalZone(garage_zone)
-              end
+              garage_attic_space.setThermalZone(garage_zone)
               deck_w.setSpace(garage_attic_space)
               deck_e.setSpace(garage_attic_space)
               wall_n.setSpace(garage_attic_space)
