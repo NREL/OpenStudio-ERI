@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>7b352b6f-7016-4b60-a428-5249a7d901e6</version_id>
-  <version_modified>20160908T182408Z</version_modified>
+  <version_id>8fe282f9-d6de-41b9-a75c-b3c0cf673ef0</version_id>
+  <version_modified>20160908T201315Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -197,16 +197,16 @@
       <checksum>76512DEB</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7C90E5AB</checksum>
-    </file>
-    <file>
       <filename>create_residential_multifamily_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>5107639D</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0C6A57EB</checksum>
     </file>
     <file>
       <version>
@@ -217,7 +217,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9407036F</checksum>
+      <checksum>26A69FBE</checksum>
     </file>
   </files>
 </measure>

@@ -159,12 +159,16 @@ class Geometry
         return all_unit_spaces
     end
     
-    # Retrieves the finished floor area for the building
-    def self.get_building_finished_floor_area(model, runner=nil)
+    # Returns all spaces in the model not associated with a unit
+    def self.get_all_common_spaces(model, runner=nil)
+        return (model.getSpaces - self.get_all_unit_spaces(model, runner))
+    end
+    
+    def self.get_finished_floor_area_from_spaces(spaces, runner=nil)
         floor_area = 0
-        model.getThermalZones.each do |zone|
-            if self.zone_is_finished(zone)
-                floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
+        spaces.each do |space|
+            if self.space_is_finished(space)
+                floor_area += OpenStudio.convert(space.floorArea,"m^2","ft^2").get
             end
         end
         if floor_area == 0 and not runner.nil?
@@ -174,38 +178,9 @@ class Geometry
         return floor_area
     end
     
-    # Retrieves the finished floor area for a unit
-    def self.get_unit_finished_floor_area(model, unit_spaces, runner=nil)
-        floor_area = 0
-        unit_spaces.each do |space|
-          if self.space_is_finished(space)
-              floor_area += OpenStudio.convert(space.floorArea,"m^2","ft^2").get
-          end            
-        end
-        if floor_area == 0 and not runner.nil?
-            runner.registerError("Could not find any finished floor area.")
-            return nil
-        end
-        return floor_area
-    end    
-    
-    def self.get_building_above_grade_finished_floor_area(model, runner=nil)
+    def self.get_above_grade_finished_floor_area_from_spaces(spaces, runner=nil)
       floor_area = 0
-      model.getThermalZones.each do |zone|
-          if self.zone_is_finished(zone) and self.zone_is_above_grade(zone)
-              floor_area += OpenStudio.convert(zone.floorArea,"m^2","ft^2").get
-          end
-      end
-      if floor_area == 0 and not runner.nil?
-          runner.registerError("Could not find any above-grade finished floor area.")
-          return nil
-      end
-      return floor_area      
-    end
-    
-    def self.get_unit_above_grade_finished_floor_area(model, unit_spaces, runner=nil)
-      floor_area = 0
-      unit_spaces.each do |space|
+      spaces.each do |space|
         if self.space_is_finished(space) and self.space_is_above_grade(space)
             floor_area += OpenStudio.convert(space.floorArea,"m^2","ft^2").get
         end
@@ -226,14 +201,6 @@ class Geometry
         end
       end
       return window_area
-    end
-    
-    def self.get_building_garage_floor_area(model)
-        floor_area = 0
-        Geometry.get_garage_spaces(model).each do |space|
-            floor_area += OpenStudio.convert(space.floorArea,"m^2","ft^2").get
-        end
-        return floor_area
     end
     
     # Calculates the space height as the max z coordinate minus the min z coordinate
@@ -317,29 +284,9 @@ class Geometry
       return finished_living_zones, finished_basement_zones
     end
     
-    def self.get_control_and_slave_zones(thermal_zones)
-      control_slave_zones_hash = {}
-      finished_above_grade_zones, finished_below_grade_zones = Geometry.get_finished_above_and_below_grade_zones(thermal_zones)
-      control_zone = nil
-      slave_zones = []
-      [finished_above_grade_zones, finished_below_grade_zones].each do |finished_zones| # Preference to above-grade zone as control zone
-        finished_zones.each do |finished_zone|
-          if control_zone.nil?
-            control_zone = finished_zone
-          else
-            slave_zones << finished_zone
-          end
-        end
-      end
-      unless control_zone.nil?
-        control_slave_zones_hash[control_zone] = slave_zones
-      end
-      return control_slave_zones_hash
-    end
-    
-    def self.get_thermal_zones_from_unit_spaces(unit_spaces)
+    def self.get_thermal_zones_from_spaces(spaces)
       thermal_zones = []
-      unit_spaces.each do |space|
+      spaces.each do |space|
         next unless space.thermalZone.is_initialized
         unless thermal_zones.include? space.thermalZone.get
           thermal_zones << space.thermalZone.get
@@ -487,7 +434,7 @@ class Geometry
     end
     
     # Takes in a list of spaces and returns the total floor area
-    def self.calculate_floor_area(spaces)
+    def self.calculate_floor_area_from_spaces(spaces)
         floor_area = 0
         spaces.each do |space|
             floor_area += space.floorArea
@@ -634,17 +581,17 @@ class Geometry
         return edge_hash
     end
     
-    def self.get_crawl_spaces(model)
-        spaces = []
-        model.getSpaces.each do |space|
+    def self.get_crawl_spaces(spaces)
+        crawl_spaces = []
+        spaces.each do |space|
             next if Geometry.space_is_above_grade(space)
             next if Geometry.space_height(space) >= Constants.MinimumBasementHeight
-            spaces << space
+            crawl_spaces << space
         end
-        return spaces
+        return crawl_spaces
     end
     
-    def self.get_finished_spaces(model, spaces=model.getSpaces)
+    def self.get_finished_spaces(spaces)
         finished_spaces = []
         spaces.each do |space|
             next if Geometry.space_is_unfinished(space)
@@ -653,71 +600,71 @@ class Geometry
         return finished_spaces
     end
     
-    def self.get_finished_basement_spaces(model)
-        spaces = []
-        model.getSpaces.each do |space|
+    def self.get_finished_basement_spaces(spaces)
+        finished_basement_spaces = []
+        spaces.each do |space|
             next if Geometry.space_is_unfinished(space)
             next if Geometry.space_is_above_grade(space)
             next if Geometry.space_height(space) < Constants.MinimumBasementHeight
-            spaces << space
+            finished_basement_spaces << space
         end
-        return spaces
+        return finished_basement_spaces
     end
     
-    def self.get_unfinished_basement_spaces(model)
-        spaces = []
-        model.getSpaces.each do |space|
+    def self.get_unfinished_basement_spaces(spaces)
+        unfinished_basement_spaces = []
+        spaces.each do |space|
             next if Geometry.space_is_finished(space)
             next if Geometry.space_is_above_grade(space)
             next if Geometry.space_height(space) < Constants.MinimumBasementHeight
-            spaces << space
+            unfinished_basement_spaces << space
         end
-        return spaces
+        return unfinished_basement_spaces
     end
    
-    def self.get_unfinished_attic_spaces(model)
-        spaces = []
-        model.getSpaces.each do |space|
+    def self.get_unfinished_attic_spaces(spaces, model)
+        unfinished_attic_spaces = []
+        spaces.each do |space|
             next if Geometry.space_is_finished(space)
             next if not Geometry.space_has_roof(space)
             next if not Geometry.space_below_is_finished(space, model)
-            spaces << space
+            unfinished_attic_spaces << space
         end
-        return spaces
+        return unfinished_attic_spaces
     end
     
-    def self.get_finished_attic_spaces(model)
-        spaces = []
-        model.getSpaces.each do |space|
+    def self.get_finished_attic_spaces(spaces, model)
+        finished_attic_spaces = []
+        spaces.each do |space|
             next if Geometry.space_is_unfinished(space)
             next if not Geometry.space_has_roof(space)
             next if not Geometry.space_below_is_finished(space, model)
-            spaces << space
+            finished_attic_spaces << space
         end
-        return spaces
+        return finished_attic_spaces
     end
     
-    def self.get_garage_spaces(model) #unfinished, above grade spaces without a finished space below
-        spaces = []
-        model.getSpaces.each do |space|
+    def self.get_garage_spaces(spaces, model) #unfinished, above grade spaces without a finished space below
+        garage_spaces = []
+        spaces.each do |space|
             next if Geometry.space_is_finished(space)
             next if Geometry.space_is_below_grade(space)
             next if Geometry.space_below_is_finished(space, model)
             next if Geometry.space_has_roof(space)
-            spaces << space
+            garage_spaces << space
         end
-        return spaces
+        return garage_spaces
     end
     
-    def self.get_non_attic_unfinished_roof_spaces(model)
-        spaces = []
-        model.getSpaces.each do |space|
+    def self.get_non_attic_unfinished_roof_spaces(spaces, model)
+        non_attic_unfinished_roof_spaces = []
+        spaces.each do |space|
             next if Geometry.space_is_finished(space)
             next if not Geometry.space_has_roof(space)
             next if Geometry.space_below_is_finished(space, model)
-            spaces << space
+            non_attic_unfinished_roof_spaces << space
         end
-        return spaces
+        return non_attic_unfinished_roof_spaces
     end
     
     def self.get_facade_for_surface(surface)

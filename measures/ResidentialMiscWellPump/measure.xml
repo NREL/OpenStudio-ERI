@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_well_pump</name>
   <uid>13183743-6249-4762-8050-cf80f5d4650b</uid>
-  <version_id>96f2d2cf-c2b7-4e69-9367-a5634423c38f</version_id>
-  <version_modified>20160907T222408Z</version_modified>
+  <version_id>21b35ffe-232e-47be-8bd1-754b5cc04e14</version_id>
+  <version_modified>20160908T201332Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialWellPump</class_name>
   <display_name>Set Residential Well Pump</display_name>
@@ -144,13 +144,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>28AC310D</checksum>
+      <checksum>F51AF7CD</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7C90E5AB</checksum>
+      <checksum>0C6A57EB</checksum>
     </file>
   </files>
 </measure>

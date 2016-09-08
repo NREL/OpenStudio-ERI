@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>46524351-545f-42d0-a9cd-d4d0e01114a8</version_id>
-  <version_modified>20160907T222406Z</version_modified>
+  <version_id>4aced001-4c91-4218-a399-6fbc2571eaaf</version_id>
+  <version_modified>20160908T201330Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -242,17 +242,6 @@
       <checksum>DDBF85D7</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>738A70A1</checksum>
-    </file>
-    <file>
       <filename>singlefamily_fbsmt_location_ashp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -307,12 +296,6 @@
       <checksum>EFBF843E</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0F260377</checksum>
-    </file>
-    <file>
       <filename>singlefamily_fbsmt_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -355,10 +338,33 @@
       <checksum>76512DEB</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>CF94DAB5</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E3043A6F</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7C90E5AB</checksum>
+      <checksum>0C6A57EB</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3E4C5757</checksum>
     </file>
   </files>
 </measure>

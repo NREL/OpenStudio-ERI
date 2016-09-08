@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_covering</name>
   <uid>c0a10f27-c095-4b45-91f8-faee094a1d42</uid>
-  <version_id>97d064f1-de52-4f6a-ac2b-216252de2d91</version_id>
-  <version_modified>20160907T222400Z</version_modified>
+  <version_id>1fc6885b-ff5d-43d6-b12e-5ea3a71a9e12</version_id>
+  <version_modified>20160908T201313Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCovering</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Covering</display_name>
@@ -59,22 +59,22 @@
       <checksum>78D2AE76</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0F260377</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>76512DEB</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E3043A6F</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7C90E5AB</checksum>
+      <checksum>0C6A57EB</checksum>
     </file>
   </files>
 </measure>

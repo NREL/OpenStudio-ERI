@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_propane</name>
   <uid>202bfb71-76e0-4615-867b-5d51e8e25223</uid>
-  <version_id>b02f9548-2bd1-4fca-9b84-3f0273854ded</version_id>
-  <version_modified>20160907T222405Z</version_modified>
+  <version_id>b0047110-2d93-4ef7-9cb9-4c41ea206b34</version_id>
+  <version_modified>20160908T201329Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStoragePropane</class_name>
   <display_name>Set Residential Propane Tank Water Heater</display_name>
@@ -136,12 +136,6 @@
       <checksum>C5077384</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0F260377</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -160,10 +154,16 @@
       <checksum>D4AA73A5</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E3043A6F</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7C90E5AB</checksum>
+      <checksum>0C6A57EB</checksum>
     </file>
   </files>
 </measure>

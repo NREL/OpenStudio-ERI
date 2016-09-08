@@ -933,7 +933,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
       geometry.num_bedrooms = _nbeds
       geometry.num_bathrooms = _nbaths
-      thermal_zones = Geometry.get_thermal_zones_from_unit_spaces(unit_spaces)
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)
       if thermal_zones.length > 1
         runner.registerInfo("Unit #{unit_num} spans more than one thermal zone.")
       end
@@ -998,11 +998,11 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         end
       end    
       
-      geometry.finished_floor_area = Geometry.get_unit_finished_floor_area(model, unit_spaces, runner)
+      geometry.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(unit_spaces, runner)
       if geometry.finished_floor_area.nil?
         return false
       end
-      geometry.above_grade_finished_floor_area = Geometry.get_unit_above_grade_finished_floor_area(model, unit_spaces, runner)
+      geometry.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(unit_spaces, runner)
       if geometry.above_grade_finished_floor_area.nil?
         return false
       end
@@ -2523,7 +2523,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         
     (1..num_units).to_a.each do |unit_num|
       _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
-      thermal_zones = Geometry.get_thermal_zones_from_unit_spaces(unit_spaces)      
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)      
       living_thermal_zone_r = nil   
       thermal_zones.each do |thermal_zone|
         if thermal_zone.name.to_s.start_with? Constants.LivingZone

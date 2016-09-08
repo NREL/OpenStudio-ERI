@@ -80,7 +80,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       facades = [Constants.FacadeFront, Constants.FacadeBack]
       avail_walls = []
       facades.each do |facade|
-          Geometry.get_finished_spaces(model, unit_spaces).each do |space|
+          Geometry.get_finished_spaces(unit_spaces).each do |space|
               next if Geometry.space_is_below_grade(space)
               space.surfaces.each do |surface|
                   next if Geometry.get_facade_for_surface(surface) != facade
@@ -120,7 +120,7 @@ class CreateResidentialDoorArea < OpenStudio::Ruleset::ModelUserScript
       end
 
       corridor_walls = []
-      Geometry.get_finished_spaces(model, unit_spaces).each do |space|
+      Geometry.get_finished_spaces(unit_spaces).each do |space|
           space.surfaces.each do |surface|
               next unless surface.surfaceType.downcase == "wall"
               next unless surface.adjacentSurface.is_initialized
