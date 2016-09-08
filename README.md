@@ -43,7 +43,7 @@ The New Construction workflow illustrates how to build up a complete residential
 ||5. Eaves||
 ||6. Door Area||
 ||7. Window Areas||
-||8. Overhangs|Window Area|
+||8. Overhangs|Window Areas|
 ||9. Neighbors||
 |3. Envelope Constructions|1. Ceilings/Roofs - Unfinished Attic Constructions||
 ||2. Ceilings/Roofs - Finished Roof Construction||
@@ -66,7 +66,7 @@ The New Construction workflow illustrates how to build up a complete residential
 ||19. Walls - Exterior Thermal Mass||
 ||20. Walls - Partition Thermal Mass||
 ||21. Uninsulated Surfaces||
-||22. Window Construction|Window Area|
+||22. Window Construction|Window Areas, Location|
 ||23. Door Construction|Door Area|
 ||24. Furniture Thermal Mass||
 |4. Domestic Hot Water|1. Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
