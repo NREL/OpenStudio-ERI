@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>9e0e3a2f-f4d0-46d8-8cf7-f5aeda36839e</version_id>
-  <version_modified>20160908T205917Z</version_modified>
+  <version_id>39620d1c-7443-4d81-8831-5e3654d4ef6f</version_id>
+  <version_modified>20160908T212608Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -307,7 +307,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>984ECD7B</checksum>
+      <checksum>D3BE39FC</checksum>
     </file>
   </files>
 </measure>

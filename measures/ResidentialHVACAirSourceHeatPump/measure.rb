@@ -16,113 +16,6 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 #start the measure
 class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
-  class HeatPump
-    def initialize(hpNumberSpeeds, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, hpHeatingCOP, hpHeatingInstalledHSPF, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, hpRatedAirFlowRateCooling, hpRatedAirFlowRateHeating)
-      @hpNumberSpeeds = hpNumberSpeeds
-      @hpCoolingEER = hpCoolingEER
-      @hpCoolingInstalledSEER = hpCoolingInstalledSEER
-      @hpSupplyFanPowerInstalled = hpSupplyFanPowerInstalled
-      @hpSupplyFanPowerRated = hpSupplyFanPowerRated
-      @hpSHRRated = hpSHRRated
-      @hpCapacityRatio = hpCapacityRatio
-      @hpFanspeedRatioCooling = hpFanspeedRatioCooling
-      @hpCrankcase = hpCrankcase
-      @hpCrankcaseMaxT = hpCrankcaseMaxT
-      @hpEERCapacityDerateFactor = hpEERCapacityDerateFactor
-      @hpHeatingCOP = hpHeatingCOP
-      @hpHeatingInstalledHSPF = hpHeatingInstalledHSPF
-      @hpFanspeedRatioHeating = hpFanspeedRatioHeating
-      @hpMinT = hpMinT
-      @hpCOPCapacityDerateFactor = hpCOPCapacityDerateFactor
-      @hpRatedAirFlowRateCooling = hpRatedAirFlowRateCooling
-      @hpRatedAirFlowRateHeating = hpRatedAirFlowRateHeating
-    end
-
-    def HPNumberSpeeds
-      return @hpNumberSpeeds
-    end
-
-    def HPCoolingEER
-      return @hpCoolingEER
-    end
-
-    def HPCoolingInstalledSEER
-      return @hpCoolingInstalledSEER
-    end
-
-    def HPSupplyFanPowerInstalled
-      return @hpSupplyFanPowerInstalled
-    end
-
-    def HPSupplyFanPowerRated
-      return @hpSupplyFanPowerRated
-    end
-
-    def HPSHRRated
-      return @hpSHRRated
-    end
-
-    def HPCapacityRatio
-      return @hpCapacityRatio
-    end
-
-    def HPFanspeedRatioCooling
-      return @hpFanspeedRatioCooling
-    end
-
-    def HPCrankcase
-      return @hpCrankcase
-    end
-
-    def HPCrankcaseMaxT
-      return @hpCrankcaseMaxT
-    end
-
-    def HPEERCapacityDerateFactor
-      return @hpEERCapacityDerateFactor
-    end
-
-    def HPHeatingCOP
-      return @hpHeatingCOP
-    end
-
-    def HPHeatingInstalledHSPF
-      return @hpHeatingInstalledHSPF
-    end
-
-    def HPFanspeedRatioHeating
-      return @hpFanspeedRatioHeating
-    end
-
-    def HPMinT
-      return @hpMinT
-    end
-
-    def HPCOPCapacityDerateFactor
-      return @hpCOPCapacityDerateFactor
-    end
-
-    def HPRatedAirFlowRateCooling
-      return @hpRatedAirFlowRateCooling
-    end
-
-    def HPRatedAirFlowRateHeating
-      return @hpRatedAirFlowRateHeating
-    end
-  end
-
-  class AirConditioner
-    def initialize(acCoolingInstalledSEER)
-      @acCoolingInstalledSEER = acCoolingInstalledSEER
-    end
-
-    attr_accessor(:hasIdealAC)
-
-    def ACCoolingInstalledSEER
-      return @acCoolingInstalledSEER
-    end
-  end
-
   class Supply
     def initialize
     end
@@ -435,17 +328,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Create the material class instances
-    air_conditioner = AirConditioner.new(nil)
-    heat_pump = HeatPump.new(hpNumberSpeeds, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, hpHeatingCOP, hpHeatingInstalledHSPF, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, hpRatedAirFlowRateCooling, hpRatedAirFlowRateHeating)
     supply = Supply.new
-
-    # _processAirSystem
-    
-    if air_conditioner.ACCoolingInstalledSEER == 999
-      air_conditioner.hasIdealAC = true
-    else
-      air_conditioner.hasIdealAC = false
-    end
 
     supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
@@ -456,15 +339,15 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     supply.SpaceConditionedMult = 1 # Default used for central equipment    
     
     # Cooling Coil
-    supply = HVAC.get_cooling_coefficients(runner, heat_pump.HPNumberSpeeds, false, true, supply)
-    supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(heat_pump.HPRatedAirFlowRateCooling, heat_pump.HPFanspeedRatioCooling, heat_pump.HPCapacityRatio)
-    supply = HVAC._processAirSystemCoolingCoil(runner, heat_pump.HPNumberSpeeds, heat_pump.HPCoolingEER, heat_pump.HPCoolingInstalledSEER, heat_pump.HPSupplyFanPowerInstalled, heat_pump.HPSupplyFanPowerRated, heat_pump.HPSHRRated, heat_pump.HPCapacityRatio, heat_pump.HPFanspeedRatioCooling, Constants.CondenserTypeAir, heat_pump.HPCrankcase, heat_pump.HPCrankcaseMaxT, heat_pump.HPEERCapacityDerateFactor, air_conditioner, supply, true)
+    supply = HVAC.get_cooling_coefficients(runner, hpNumberSpeeds, true, supply)
+    supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateCooling, hpFanspeedRatioCooling, hpCapacityRatio)
+    supply = HVAC._processAirSystemCoolingCoil(runner, hpNumberSpeeds, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, Constants.CondenserTypeAir, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, supply)
 
     # Heating Coil
     has_cchp = hpIsColdClimate
-    supply = HVAC.get_heating_coefficients(runner, supply.Number_Speeds, false, supply, heat_pump.HPMinT)
-    supply.CFM_TON_Rated_Heat = HVAC.calc_cfm_ton_rated(heat_pump.HPRatedAirFlowRateHeating, heat_pump.HPFanspeedRatioHeating, heat_pump.HPCapacityRatio)
-    supply = HVAC._processAirSystemHeatingCoil(heat_pump.HPHeatingCOP, heat_pump.HPHeatingInstalledHSPF, heat_pump.HPSupplyFanPowerRated, heat_pump.HPCapacityRatio, heat_pump.HPFanspeedRatioHeating, heat_pump.HPMinT, heat_pump.HPCOPCapacityDerateFactor, supply)    
+    supply = HVAC.get_heating_coefficients(runner, supply.Number_Speeds, supply, hpMinT)
+    supply.CFM_TON_Rated_Heat = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateHeating, hpFanspeedRatioHeating, hpCapacityRatio)
+    supply = HVAC._processAirSystemHeatingCoil(hpHeatingCOP, hpHeatingInstalledHSPF, hpSupplyFanPowerRated, hpCapacityRatio, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, supply)    
 
     # Determine if the compressor is multi-speed (in our case 2 speed).
     # If the minimum flow ratio is less than 1, then the fan and
@@ -571,33 +454,16 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
           if hpOutputCapacity != Constants.SizingAuto
             clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
           end
-          if air_conditioner.hasIdealAC
-            if hpOutputCapacity != Constants.SizingAuto
-              clg_coil.setRatedSensibleHeatRatio(0.8)
-              clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
-            end
-            clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0))
-          else
-            if hpOutputCapacity != Constants.SizingAuto
-              clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
-              clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
-            end
-            clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0 / supply.CoolingEIR[0]))
+          if hpOutputCapacity != Constants.SizingAuto
+            clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
+            clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
           end
+          clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0 / supply.CoolingEIR[0]))
           clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(supply.fan_power_rated / OpenStudio::convert(1.0,"cfm","m^3/s").get))
-
-          if air_conditioner.hasIdealAC
-            clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(0))
-            clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(0))
-            clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(0))
-            clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(0))
-          else
-            clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(1000.0))
-            clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(1.5))
-            clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(3.0))
-            clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(45.0))
-          end
-
+          clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(1000.0))
+          clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(1.5))
+          clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(3.0))
+          clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(45.0))
           clg_coil.setCondenserType(supply.CondenserType)
 
         else

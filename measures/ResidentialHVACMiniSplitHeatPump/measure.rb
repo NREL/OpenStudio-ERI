@@ -238,19 +238,19 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         
     # _processAirSystem       
         
-    has_cchp = miniSplitHPIsColdClimate
+    has_cchp = miniSplitHPIsColdClimate # FIXME: Currently unused
     
     curves.mshp_indices = [1,3,5,9]
     
     # Cooling Coil
-    curves = HVAC.get_cooling_coefficients(runner, Constants.Num_Speeds_MSHP, false, true, curves)
+    curves = HVAC.get_cooling_coefficients(runner, Constants.Num_Speeds_MSHP, true, curves)
 
     curves, supply = _processAirSystemMiniSplitCooling(runner, miniSplitHPCoolingRatedSEER, miniSplitHPCoolingMinCapacity, miniSplitHPCoolingMaxCapacity, miniSplitHPCoolingMinAirflow, miniSplitHPCoolingMaxAirflow, miniSplitHPRatedSHR, miniSplitHPSupplyFanPower, curves, supply)
                                            
     supply.HPCoolingOversizingFactor = miniSplitHPCoolingOversizeFactor
     
     # Heating Coil
-    curves = HVAC.get_heating_coefficients(runner, Constants.Num_Speeds_MSHP, false, curves, miniSplitHPMinT)
+    curves = HVAC.get_heating_coefficients(runner, Constants.Num_Speeds_MSHP, curves, miniSplitHPMinT)
                                                     
     curves, supply = _processAirSystemMiniSplitHeating(runner, miniSplitHPHeatingRatedHSPF, miniSplitHPHeatingMinCapacity, miniSplitHPHeatingMaxCapacity, miniSplitHPHeatingMinAirflow, miniSplitHPHeatingMaxAirflow, miniSplitHPSupplyFanPower, miniSplitHPMinT, curves, supply)    
     
@@ -672,7 +672,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     
     #Note: Make sure this method still works for BEopt central, variable speed units, which have 4 speeds (if needed in future)
     
-    curves = HVAC.get_cooling_coefficients(runner, num_speeds, false, isHeatPump, curves)
+    curves = HVAC.get_cooling_coefficients(runner, num_speeds, isHeatPump, curves)
 
     n_max = (eer_A.length-1.0)-3.0 # Don't use max speed
     n_min = 0.0
@@ -869,7 +869,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     
     #TODO: Make sure this method still works for BEopt central, variable speed units, which have 4 speeds, if needed in future
     
-    curves = HVAC.get_heating_coefficients(runner, 10, false, curves, min_temp)
+    curves = HVAC.get_heating_coefficients(runner, 10, curves, min_temp)
     
     n_max = (cop_47.length-1.0)#-3 # Don't use max speed
     n_min = 0

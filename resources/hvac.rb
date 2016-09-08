@@ -20,29 +20,13 @@ class HVAC
         return array
     end      
     
-    def self.get_cooling_coefficients(runner, num_speeds, is_ideal_system, isHeatPump, curves)
-    if not [1,2,4,Constants.Num_Speeds_MSHP].include? num_speeds
-        runner.registerError("Number_Speeds = #{num_speeds} is not supported. Only 1, 2, 4, and 10 cooling equipment can be modeled.")
-        return false
-    end
-
-    # Hard coded curves
-    if is_ideal_system
-        if num_speeds == 1
-            curves.COOL_CAP_FT_SPEC_coefficients = [1, 0, 0, 0, 0, 0]
-            curves.COOL_EIR_FT_SPEC_coefficients = [1, 0, 0, 0, 0, 0]
-            curves.COOL_CAP_FFLOW_SPEC_coefficients = [1, 0, 0]
-            curves.COOL_EIR_FFLOW_SPEC_coefficients = [1, 0, 0]
-            
-        elsif num_speeds > 1
-            curves.COOL_CAP_FT_SPEC_coefficients = [[1, 0, 0, 0, 0, 0]]*num_speeds
-            curves.COOL_EIR_FT_SPEC_coefficients = [[1, 0, 0, 0, 0, 0]]*num_speeds
-            curves.COOL_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]]*num_speeds
-            curves.COOL_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]]*num_speeds
-        
+    def self.get_cooling_coefficients(runner, num_speeds, isHeatPump, curves)
+        if not [1,2,4,Constants.Num_Speeds_MSHP].include? num_speeds
+            runner.registerError("Number_Speeds = #{num_speeds} is not supported. Only 1, 2, 4, and 10 cooling equipment can be modeled.")
+            return false
         end
-            
-    else
+
+        # Hard coded curves
         if isHeatPump
             if num_speeds == 1
                 curves.COOL_CAP_FT_SPEC_coefficients = [3.68637657, -0.098352478, 0.000956357, 0.005838141, -0.0000127, -0.000131702]
@@ -117,28 +101,11 @@ class HVAC
                 
             end
         end
-    end   
-    return curves
+        return curves
     end
 
-    def self.get_heating_coefficients(runner, num_speeds, is_ideal_system, curves, min_compressor_temp=nil)
-    # Hard coded curves
-    if is_ideal_system
-        if num_speeds == 1
-            curves.HEAT_CAP_FT_SPEC_coefficients = [1, 0, 0, 0, 0, 0]
-            curves.HEAT_EIR_FT_SPEC_coefficients = [1, 0, 0, 0, 0, 0]
-            curves.HEAT_CAP_FFLOW_SPEC_coefficients = [1, 0, 0]
-            curves.HEAT_EIR_FFLOW_SPEC_coefficients = [1, 0, 0]
-            
-        else
-            curves.HEAT_CAP_FT_SPEC_coefficients = [[1, 0, 0, 0, 0, 0]]*num_speeds
-            curves.HEAT_EIR_FT_SPEC_coefficients = [[1, 0, 0, 0, 0, 0]]*num_speeds
-            curves.HEAT_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]]*num_speeds
-            curves.HEAT_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]]*num_speeds
-            
-        end
-
-    else
+    def self.get_heating_coefficients(runner, num_speeds, curves, min_compressor_temp=nil)
+        # Hard coded curves
         if num_speeds == 1
             curves.HEAT_CAP_FT_SPEC_coefficients = [0.566333415, -0.000744164, -0.0000103, 0.009414634, 0.0000506, -0.00000675]
             curves.HEAT_EIR_FT_SPEC_coefficients = [0.718398423, 0.003498178, 0.000142202, -0.005724331, 0.00014085, -0.000215321]
@@ -185,8 +152,7 @@ class HVAC
             curves.HEAT_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]] * num_speeds
             curves.HEAT_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]] * num_speeds
         end
-    end
-    return curves
+        return curves
     end  
   
     def self._processCurvesSupplyFan(model)
@@ -480,129 +446,110 @@ class HVAC
         end
     end
   
-    def self._processAirSystemCoolingCoil(runner, number_Speeds, coolingEER, coolingSEER, supplyFanPower, supplyFanPower_Rated, shr_Rated, capacity_Ratio, fanspeed_Ratio, condenserType, crankcase, crankcase_MaxT, eer_CapacityDerateFactor, air_conditioner, supply, hasHeatPump)
+    def self._processAirSystemCoolingCoil(runner, number_Speeds, coolingEER, coolingSEER, supplyFanPower, supplyFanPower_Rated, shr_Rated, capacity_Ratio, fanspeed_Ratio, condenserType, crankcase, crankcase_MaxT, eer_CapacityDerateFactor, supply)
 
-    # if len(Capacity_Ratio) > len(set(Capacity_Ratio)):
-    #     SimError("Capacity Ratio values must be unique ({})".format(Capacity_Ratio))
+        # if len(Capacity_Ratio) > len(set(Capacity_Ratio)):
+        #     SimError("Capacity Ratio values must be unique ({})".format(Capacity_Ratio))
 
-    # Curves are hardcoded for both one and two speed models
-    supply.Number_Speeds = number_Speeds
+        # Curves are hardcoded for both one and two speed models
+        supply.Number_Speeds = number_Speeds
 
-    if air_conditioner.hasIdealAC
-      supply = HVAC.get_cooling_coefficients(runner, supply.Number_Speeds, true, nil, supply)
-    end
+        supply.CoolingEIR = Array.new
+        supply.SHR_Rated = Array.new
+        (0...supply.Number_Speeds).to_a.each do |speed|
 
-    supply.CoolingEIR = Array.new
-    supply.SHR_Rated = Array.new
-    (0...supply.Number_Speeds).to_a.each do |speed|
+          eir = calc_EIR_from_EER(coolingEER[speed], supplyFanPower_Rated)
+          supply.CoolingEIR << eir
 
-      if air_conditioner.hasIdealAC
-        eir = calc_EIR_from_COP(1.0, supplyFanPower_Rated)
-        supply.CoolingEIR << eir
+          # Convert SHRs from net to gross
+          qtot_net_nominal = 12000.0
+          qsens_net_nominal = qtot_net_nominal * shr_Rated[speed]
+          qtot_gross_nominal = qtot_net_nominal + OpenStudio::convert(supply.CFM_TON_Rated[speed] * supplyFanPower_Rated,"Wh","Btu").get
+          qsens_gross_nominal = qsens_net_nominal + OpenStudio::convert(supply.CFM_TON_Rated[speed] * supplyFanPower_Rated,"Wh","Btu").get
+          supply.SHR_Rated << (qsens_gross_nominal / qtot_gross_nominal)
 
-        shr_Rated = 0.8
-        supply.SHR_Rated << shr_Rated
-        supply.SHR_Rated[speed] = shr_Rated
-        supply.FAN_EIR_FPLR_SPEC_coefficients = [1.00000000, 0.00000000, 0.00000000, 0.00000000]
+          # Make sure SHR's are in valid range based on E+ model limits.
+          # The following correlation was devloped by Jon Winkler to test for maximum allowed SHR based on the 300 - 450 cfm/ton limits in E+
+          maxSHR = 0.3821066 + 0.001050652 * supply.CFM_TON_Rated[speed] - 0.01
+          supply.SHR_Rated[speed] = [supply.SHR_Rated[speed], maxSHR].min
+          minSHR = 0.60   # Approximate minimum SHR such that an ADP exists
+          supply.SHR_Rated[speed] = [supply.SHR_Rated[speed], minSHR].max
+        end
 
-      else
-        eir = calc_EIR_from_EER(coolingEER[speed], supplyFanPower_Rated)
-        supply.CoolingEIR << eir
+        if supply.Number_Speeds == 1.0
+            c_d = HVAC.calc_Cd_from_SEER_EER_SingleSpeed(coolingSEER)
+        elsif supply.Number_Speeds == 2.0
+            c_d = HVAC.calc_Cd_from_SEER_EER_TwoSpeed()
+        elsif supply.Number_Speeds == 4.0
+            c_d = HVAC.calc_Cd_from_SEER_EER_FourSpeed()
 
-        # Convert SHRs from net to gross
-        qtot_net_nominal = 12000.0
-        qsens_net_nominal = qtot_net_nominal * shr_Rated[speed]
-        qtot_gross_nominal = qtot_net_nominal + OpenStudio::convert(supply.CFM_TON_Rated[speed] * supplyFanPower_Rated,"Wh","Btu").get
-        qsens_gross_nominal = qsens_net_nominal + OpenStudio::convert(supply.CFM_TON_Rated[speed] * supplyFanPower_Rated,"Wh","Btu").get
-        supply.SHR_Rated << (qsens_gross_nominal / qtot_gross_nominal)
+        else
+            runner.registerError("AC number of speeds must equal 1, 2, or 4.")
+            return false
+        end
 
-        # Make sure SHR's are in valid range based on E+ model limits.
-        # The following correlation was devloped by Jon Winkler to test for maximum allowed SHR based on the 300 - 450 cfm/ton limits in E+
-        maxSHR = 0.3821066 + 0.001050652 * supply.CFM_TON_Rated[speed] - 0.01
-        supply.SHR_Rated[speed] = [supply.SHR_Rated[speed], maxSHR].min
-        minSHR = 0.60   # Approximate minimum SHR such that an ADP exists
-        supply.SHR_Rated[speed] = [supply.SHR_Rated[speed], minSHR].max
-      end
-    end
+        supply.COOL_CLOSS_FPLR_SPEC_coefficients = [(1.0 - c_d), c_d, 0.0]    # Linear part load model
 
-    if supply.Number_Speeds == 1.0
-        c_d = HVAC.calc_Cd_from_SEER_EER_SingleSpeed(coolingSEER, coolingEER[0],supplyFanPower_Rated, hasHeatPump, supply)
-    elsif supply.Number_Speeds == 2.0
-        c_d = HVAC.calc_Cd_from_SEER_EER_TwoSpeed(coolingSEER, coolingEER, capacity_Ratio, fanspeed_Ratio, supplyFanPower_Rated, hasHeatPump)
-    elsif supply.Number_Speeds == 4.0
-        c_d = HVAC.calc_Cd_from_SEER_EER_FourSpeed(coolingSEER, coolingEER, capacity_Ratio, fanspeed_Ratio, supplyFanPower_Rated, hasHeatPump)
+        supply.Capacity_Ratio_Cooling = capacity_Ratio
+        supply.fanspeed_ratio = fanspeed_Ratio
+        supply.CondenserType = condenserType
+        supply.Crankcase = crankcase
+        supply.Crankcase_MaxT = crankcase_MaxT
 
-    else
-        runner.registerError("AC number of speeds must equal 1, 2, or 4.")
-        return false
-    end
+        # Supply Fan
+        supply.fan_power = supplyFanPower
+        supply.fan_power_rated = supplyFanPower_Rated
+        supply.eff = OpenStudio::convert(supply.static / supply.fan_power,"cfm","m^3/s").get # Overall Efficiency of the Supply Fan, Motor and Drive
+        supply.min_flow_ratio = fanspeed_Ratio[0] / fanspeed_Ratio[-1]
 
-    if air_conditioner.hasIdealAC
-      supply.COOL_CLOSS_FPLR_SPEC_coefficients = [1.0, 0.0, 0.0]
-    else
-      supply.COOL_CLOSS_FPLR_SPEC_coefficients = [(1.0 - c_d), c_d, 0.0]    # Linear part load model
-    end
+        supply.EER_CapacityDerateFactor = eer_CapacityDerateFactor
 
-    supply.Capacity_Ratio_Cooling = capacity_Ratio
-    supply.fanspeed_ratio = fanspeed_Ratio
-    supply.CondenserType = condenserType
-    supply.Crankcase = crankcase
-    supply.Crankcase_MaxT = crankcase_MaxT
-
-    # Supply Fan
-    supply.fan_power = supplyFanPower
-    supply.fan_power_rated = supplyFanPower_Rated
-    supply.eff = OpenStudio::convert(supply.static / supply.fan_power,"cfm","m^3/s").get # Overall Efficiency of the Supply Fan, Motor and Drive
-    supply.min_flow_ratio = fanspeed_Ratio[0] / fanspeed_Ratio[-1]
-
-    supply.EER_CapacityDerateFactor = eer_CapacityDerateFactor
-
-    return supply
+        return supply
 
     end
 
     def self._processAirSystemHeatingCoil(heatingCOP, heatingHSPF, supplyFanPower_Rated, capacity_Ratio, fanspeed_Ratio_Heating, min_T, cop_CapacityDerateFactor, supply)
 
-    # if len(Capacity_Ratio) > len(set(Capacity_Ratio)):
-    #     SimError("Capacity Ratio values must be unique ({})".format(Capacity_Ratio))
+        # if len(Capacity_Ratio) > len(set(Capacity_Ratio)):
+        #     SimError("Capacity Ratio values must be unique ({})".format(Capacity_Ratio))
 
-    supply.HeatingEIR = Array.new
-    (0...supply.Number_Speeds).to_a.each do |speed|
-      eir = calc_EIR_from_COP(heatingCOP[speed], supplyFanPower_Rated)
-      supply.HeatingEIR << eir
-    end
+        supply.HeatingEIR = Array.new
+        (0...supply.Number_Speeds).to_a.each do |speed|
+          eir = calc_EIR_from_COP(heatingCOP[speed], supplyFanPower_Rated)
+          supply.HeatingEIR << eir
+        end
 
-    if supply.Number_Speeds == 1.0
-      c_d = HVAC.calc_Cd_from_HSPF_COP_SingleSpeed(heatingHSPF, heatingCOP[0], supplyFanPower_Rated)
-    elsif supply.Number_Speeds == 2.0
-      c_d = HVAC.calc_Cd_from_HSPF_COP_TwoSpeed(heatingHSPF, heatingCOP, capacity_Ratio, fanspeed_Ratio_Heating, supplyFanPower_Rated)
-    elsif supply.Number_Speeds == 4.0
-      c_d = HVAC.calc_Cd_from_HSPF_COP_FourSpeed(heatingHSPF, heatingCOP, capacity_Ratio, fanspeed_Ratio_Heating, supplyFanPower_Rated)
-    else
-      runner.registerError("HP number of speeds must equal 1, 2, or 4.")
-      return false
-    end
+        if supply.Number_Speeds == 1.0
+          c_d = HVAC.calc_Cd_from_HSPF_COP_SingleSpeed(heatingHSPF)
+        elsif supply.Number_Speeds == 2.0
+          c_d = HVAC.calc_Cd_from_HSPF_COP_TwoSpeed()
+        elsif supply.Number_Speeds == 4.0
+          c_d = HVAC.calc_Cd_from_HSPF_COP_FourSpeed()
+        else
+          runner.registerError("HP number of speeds must equal 1, 2, or 4.")
+          return false
+        end
 
-    supply.HEAT_CLOSS_FPLR_SPEC_coefficients = [(1 - c_d), c_d, 0] # Linear part load model
+        supply.HEAT_CLOSS_FPLR_SPEC_coefficients = [(1 - c_d), c_d, 0] # Linear part load model
 
-    supply.Capacity_Ratio_Heating = capacity_Ratio
-    supply.fanspeed_ratio_heating = fanspeed_Ratio_Heating
-    supply.max_temp = 105.0             # Hardcoded due to all heat pumps options having this value. Also effects the sizing so it shouldn't be a user variable
-    supply.min_hp_temp = min_T          # Minimum temperature for Heat Pump operation
-    supply.supp_htg_max_outdoor_temp = 40.0 # Moved from DOE-2. DOE-2 Default
-    supply.max_defrost_temp = 40.0      # Moved from DOE-2. DOE-2 Default
+        supply.Capacity_Ratio_Heating = capacity_Ratio
+        supply.fanspeed_ratio_heating = fanspeed_Ratio_Heating
+        supply.max_temp = 105.0             # Hardcoded due to all heat pumps options having this value. Also effects the sizing so it shouldn't be a user variable
+        supply.min_hp_temp = min_T          # Minimum temperature for Heat Pump operation
+        supply.supp_htg_max_outdoor_temp = 40.0 # Moved from DOE-2. DOE-2 Default
+        supply.max_defrost_temp = 40.0      # Moved from DOE-2. DOE-2 Default
 
-    # Supply Air Tempteratures
-    supply.htg_supply_air_temp = 105.0 # used for sizing heating flow rate
-    supply.supp_htg_max_supply_temp = 170.0 # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
-    
-    supply.COP_CapacityDerateFactor = cop_CapacityDerateFactor
+        # Supply Air Tempteratures
+        supply.htg_supply_air_temp = 105.0 # used for sizing heating flow rate
+        supply.supp_htg_max_supply_temp = 170.0 # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
+        
+        supply.COP_CapacityDerateFactor = cop_CapacityDerateFactor
 
-    return supply
+        return supply
 
     end  
   
-    def self.calc_Cd_from_SEER_EER_SingleSpeed(seer, eer_A, supplyFanPower_Rated, isHeatPump, supply)
+    def self.calc_Cd_from_SEER_EER_SingleSpeed(seer)
       # Use hard-coded Cd values
       if seer < 13.0
         return 0.20
@@ -611,17 +558,17 @@ class HVAC
       end
     end
 
-    def self.calc_Cd_from_SEER_EER_TwoSpeed(seer, eer_A, capacityRatio, fanSpeedRatio, supplyFanPower_Rated, isHeatPump)
+    def self.calc_Cd_from_SEER_EER_TwoSpeed()
       # Use hard-coded Cd values
       return 0.11
     end
 
-    def self.calc_Cd_from_SEER_EER_FourSpeed(seer, eer_A, capacityRatio, fanSpeedRatio, supplyFanPower_Rated, isHeatPump)
+    def self.calc_Cd_from_SEER_EER_FourSpeed()
       # Use hard-coded Cd values
       return 0.25
     end
 
-    def self.calc_Cd_from_HSPF_COP_SingleSpeed(hspf, cop_47, supplyFanPower_Rated)
+    def self.calc_Cd_from_HSPF_COP_SingleSpeed(hspf)
       # Use hard-coded Cd values
       if hspf < 7.0
           return 0.20
@@ -630,12 +577,12 @@ class HVAC
       end
     end
 
-    def self.calc_Cd_from_HSPF_COP_TwoSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, supplyFanPower_Rated)
+    def self.calc_Cd_from_HSPF_COP_TwoSpeed()
       # Use hard-coded Cd values
       return 0.11
     end
 
-    def self.calc_Cd_from_HSPF_COP_FourSpeed(hspf, cop_47, capacityRatio, fanSpeedRatio, supplyFanPower_Rated)
+    def self.calc_Cd_from_HSPF_COP_FourSpeed()
       # Use hard-coded Cd values
       return 0.24
     end  

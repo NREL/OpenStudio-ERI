@@ -359,8 +359,8 @@ class Waterheater
         end
         living = Geometry.get_unit_default_finished_space(spaces, runner)
         garage = Geometry.get_garage_spaces(spaces, model)
-        fin_basement = Geometry.get_finished_basement_spaces(model)
-        unfin_basement = Geometry.get_unfinished_basement_spaces(model)
+        fin_basement = Geometry.get_finished_basement_spaces(spaces)
+        unfin_basement = Geometry.get_unfinished_basement_spaces(spaces)
         wh_tz = nil
         if ba_cz_name == Constants.BAZoneHotDry or ba_cz_name == Constants.BAZoneHotHumid
             #check if the building has a garage
