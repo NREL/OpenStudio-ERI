@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>4aced001-4c91-4218-a399-6fbc2571eaaf</version_id>
-  <version_modified>20160908T201330Z</version_modified>
+  <version_id>f68dbfad-442b-4000-b5ec-58179d80486c</version_id>
+  <version_modified>20160908T205917Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -364,7 +364,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3E4C5757</checksum>
+      <checksum>984ECD7B</checksum>
     </file>
   </files>
 </measure>

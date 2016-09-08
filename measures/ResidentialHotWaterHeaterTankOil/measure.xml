@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_os_water_heater_mixed_storage_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>34d06dac-91a6-4e4e-a853-85f6c9075c87</version_id>
-  <version_modified>20160908T201329Z</version_modified>
+  <version_id>51a77a81-5fc4-4072-a074-93cd9955c66f</version_id>
+  <version_modified>20160908T205916Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>AddOSWaterHeaterMixedStorageOil</class_name>
   <display_name>Set Residential Oil Tank Water Heater</display_name>
@@ -148,12 +148,6 @@
       <checksum>76512DEB</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D4AA73A5</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -164,6 +158,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0C6A57EB</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>06ABB01A</checksum>
     </file>
   </files>
 </measure>

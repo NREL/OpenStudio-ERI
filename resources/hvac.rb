@@ -1,4 +1,5 @@
 require "#{File.dirname(__FILE__)}/constants"
+require "#{File.dirname(__FILE__)}/geometry"
 
 class HVAC
 

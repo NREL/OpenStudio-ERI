@@ -346,6 +346,7 @@ class Waterheater
     end
     
     def self.get_water_heater_location_auto(model, runner)
+        spaces = model.getSpaces
         #If auto is picked, get the BA climate zone, 
         #check if the building has a garage/basement, 
         #and assign the water heater location appropriately
@@ -356,8 +357,8 @@ class Waterheater
                 ba_cz_name = climateZone.value.to_s
             end
         end
-        living = Geometry.get_unit_default_finished_space(Geometry.get_finished_spaces(model), runner)
-        garage = Geometry.get_garage_spaces(model)
+        living = Geometry.get_unit_default_finished_space(spaces, runner)
+        garage = Geometry.get_garage_spaces(spaces, model)
         fin_basement = Geometry.get_finished_basement_spaces(model)
         unfin_basement = Geometry.get_unfinished_basement_spaces(model)
         wh_tz = nil

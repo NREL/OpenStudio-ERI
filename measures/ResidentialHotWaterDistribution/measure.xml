@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>48f5e52d-eb19-4481-b66c-285713659829</version_id>
-  <version_modified>20160908T201328Z</version_modified>
+  <version_id>999f8f7a-c6a7-48c6-b53f-5f2b169797f7</version_id>
+  <version_modified>20160908T205915Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>
@@ -256,12 +256,6 @@
       <checksum>76512DEB</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D4AA73A5</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -272,6 +266,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0C6A57EB</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>06ABB01A</checksum>
     </file>
   </files>
 </measure>
