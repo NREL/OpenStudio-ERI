@@ -265,8 +265,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     end    
 	
     # starting spaces
-    starting_spaces = model.getSpaces
-    runner.registerInitialCondition("The building started with #{starting_spaces.size} spaces.")
+    runner.registerInitialCondition("The building started with #{model.getSpaces.size} spaces.")
 	
     # create living zone
     living_zone = OpenStudio::Model::ThermalZone.new(model)
@@ -727,7 +726,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     Geometry.set_unit_beds_baths_spaces(model, 1, model.getSpaces)
   
     # reporting final condition of model
-    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")	
+    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")
     
     return true
 

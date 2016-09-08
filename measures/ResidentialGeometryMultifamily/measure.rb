@@ -196,8 +196,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     num_units = num_units_per_floor * building_num_floors / num_stories_per_unit
     
     # starting spaces
-    starting_spaces = model.getSpaces
-    runner.registerInitialCondition("The building started with #{starting_spaces.size} spaces.") 
+    runner.registerInitialCondition("The building started with #{model.getSpaces.size} spaces.")
     
     # calculate the dimensions of the unit
     footprint = (unit_ffa / num_stories_per_unit) + inset_width * inset_depth
@@ -280,7 +279,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     
     # create the unit
     Geometry.set_unit_beds_baths_spaces(model, 1, living_spaces_front)
-    
+        
     # create back units
     if corr_pos == "Double-Loaded Interior" or corr_pos == "Double Exterior" # units in front and back
     
@@ -296,7 +295,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       sw_point = OpenStudio::Point3d.new(0, interior_corr_width, 0)
       se_point = OpenStudio::Point3d.new(x, interior_corr_width, 0)
       if inset_width * inset_depth > 0
-        if inset_pos == "Right"
+        if inset_pos == "Left"
           inset_point = OpenStudio::Point3d.new(x - inset_width, y - inset_depth + interior_corr_width, 0)
           front_point = OpenStudio::Point3d.new(x - inset_width, y + interior_corr_width, 0)
           side_point = OpenStudio::Point3d.new(x, y - inset_depth + interior_corr_width, 0)
@@ -433,14 +432,12 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
           corridor_zone.setName(Constants.CorridorZone)
           
           # first floor corridor
-          corridor_spaces = []
           corridor_space = OpenStudio::Model::Space::fromFloorPrint(corr_polygon, living_height, model)
           corridor_space = corridor_space.get
           corridor_space_name = Constants.CorridorSpace
           corridor_space.setName(corridor_space_name)
           corridor_space.setThermalZone(corridor_zone)
-          top_floor_corridor_space = corridor_space
-          
+                    
           (1...building_num_floors).to_a.each do |floor|
           
             corridor_zone = OpenStudio::Model::ThermalZone.new(model)
@@ -455,14 +452,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
             new_corridor_space.changeTransformation(OpenStudio::Transformation.new(m))
             new_corridor_space.setZOrigin(0)
             new_corridor_space.setThermalZone(corridor_zone)
-            top_floor_corridor_space = new_corridor_space
           
-          end
-          
-          top_floor_corridor_space.surfaces.each do |surface|
-            next unless surface.outsideBoundaryCondition.downcase == "outdoors"
-            next unless surface.surfaceType.downcase == "roofceiling"
-            surface.setOutsideBoundaryCondition("Adiabatic")
           end
           
         else
@@ -495,7 +485,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
             shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)      
             shading_surface.setShadingSurfaceGroup(shading_surface_group)
           
-          end          
+          end
         
         end        
         
@@ -581,8 +571,22 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     OpenStudio::Model.intersectSurfaces(spaces)
     OpenStudio::Model.matchSurfaces(spaces)
     
+    # make all surfaces adjacent to corridor spaces into adiabatic surfaces
+    model.getSpaces.each do |space|
+        next unless space.name.to_s.include? Constants.CorridorSpace
+        space.surfaces.each do |surface|
+            if surface.adjacentSurface.is_initialized
+                surface.adjacentSurface.get.setOutsideBoundaryCondition("Adiabatic")
+            end
+            surface.setOutsideBoundaryCondition("Adiabatic")
+        end
+    end
+    
     # Store dwelling unit information (for consistency with multifamily buildings)
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)
+    
+    # reporting final condition of model
+    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")
     
     # (1...num_units).to_a.each do |unit_num|
 
