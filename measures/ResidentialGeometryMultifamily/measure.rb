@@ -181,8 +181,8 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       offset = 0
     end
     if corr_pos == "None" and corr_width > 0
-      runner.registerWarning("Specified no corridor with a nonzero corridor width. Assuming a single exterior access in front.")
-      corr_pos = "Single Exterior (Front)"
+      runner.registerWarning("Specified no corridor with a nonzero corridor width. Assuming there is no corridor.")
+      corr_width = 0
     end
     if corr_pos == "Double-Loaded Interior" and corr_width == 0
       runner.registerWarning("Specified an interior corridor with a zero corridor width. Assuming the building has front units as well as adjacent rear units.")

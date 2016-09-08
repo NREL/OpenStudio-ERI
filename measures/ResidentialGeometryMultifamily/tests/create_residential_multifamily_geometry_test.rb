@@ -62,7 +62,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     result = _test_error(nil, args_hash)
     assert(result.warnings.size == 1)
     assert_equal("Success", result.value.valueName)
-    assert_equal(result.warnings[0].logMessage, "Specified no corridor with a nonzero corridor width. Assuming a single exterior access in front.")
+    assert_equal(result.warnings[0].logMessage, "Specified no corridor with a nonzero corridor width. Assuming there is no corridor.")
   end
   
   def test_warning_uneven_units_per_floor_with_interior_corr
