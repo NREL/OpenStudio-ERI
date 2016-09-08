@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_roofing_material</name>
   <uid>3239e82d-5efc-4a17-9223-c7c1cd8c9cf7</uid>
-  <version_id>6521b410-a7e9-4025-ba06-1285eb7f59ff</version_id>
-  <version_modified>20160907T214002Z</version_modified>
+  <version_id>14985dae-7f0c-4f65-a974-dffc34f93fcb</version_id>
+  <version_modified>20160907T222400Z</version_modified>
   <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRoofingMaterial</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roofing Material</display_name>
@@ -98,7 +98,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>85378005</checksum>
+      <checksum>7C90E5AB</checksum>
     </file>
   </files>
 </measure>

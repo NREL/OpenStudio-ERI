@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_thermal_mass</name>
   <uid>b2da04af-0f9f-4a30-b2a0-cc2dbc20d5aa</uid>
-  <version_id>7f38ba22-efc2-4ca1-b99a-03dc7f355039</version_id>
-  <version_modified>20160907T214003Z</version_modified>
+  <version_id>c283f818-1513-45e7-a160-a080e40b87d0</version_id>
+  <version_modified>20160907T222402Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorThermalMass</class_name>
   <display_name>Set Residential Walls - Exterior Thermal Mass</display_name>
@@ -131,7 +131,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>85378005</checksum>
+      <checksum>7C90E5AB</checksum>
     </file>
   </files>
 </measure>
