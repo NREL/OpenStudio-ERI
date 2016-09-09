@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>3359f5b6-9696-4bfd-8555-49684766852f</version_id>
-  <version_modified>20160909T181726Z</version_modified>
+  <version_id>7f08effb-6d3a-44a1-a1f3-34bb79a8e6a1</version_id>
+  <version_modified>20160909T200732Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorICF</class_name>
   <display_name>Set Residential Walls - ICF Construction</display_name>
@@ -105,7 +105,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DD38B0CF</checksum>
+      <checksum>99161DFB</checksum>
     </file>
   </files>
 </measure>

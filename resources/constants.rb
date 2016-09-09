@@ -499,14 +499,21 @@ class Constants
   def self.ObjectNameShower
     return 'residential shower'
   end
-    def self.ObjectNameShowerDist
+  def self.ObjectNameShowerDist
     return 'residential shower dist'
   end
   def self.ObjectNameSink
     return 'residential sink'
   end
-      def self.ObjectNameSinkDist
+  def self.ObjectNameSinkDist
     return 'residential sink dist'
+  end
+  def self.ObjectNameWaterHeater(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential water heater#{s_unit}"
   end
   def self.ObjectNameWellPump(unit=1)
     s_unit = ""
@@ -538,8 +545,12 @@ class Constants
   def self.PipeTypeHomeRun
     return 'home run'
   end
-  def self.PlantLoopDomesticWater
-    return 'Domestic Hot Water Loop'
+  def self.PlantLoopDomesticWater(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "Domestic Hot Water Loop#{s_unit}"
   end
   def self.RADuctZone
     return 'RA Duct Zone'

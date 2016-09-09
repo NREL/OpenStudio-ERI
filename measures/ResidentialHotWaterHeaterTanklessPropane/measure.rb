@@ -16,11 +16,11 @@ class AddOSWaterHeaterMixedTanklessPropane < OpenStudio::Ruleset::ModelUserScrip
     end
   
     def description
-        return "This measure adds a new residential propane tankless water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced."
+        return "This measure adds a new residential propane tankless water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building."
     end
   
     def modeler_description
-        return "The measure will create a new instance of the OS:WaterHeater:Mixed object representing a propane tankless water heater. The measure will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created."
+        return "The measure will create a new instance of the OS:WaterHeater:Mixed object representing a propane tankless water heater. The water heater will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created."
     end
 
     OS = OpenStudio
@@ -104,7 +104,7 @@ class AddOSWaterHeaterMixedTanklessPropane < OpenStudio::Ruleset::ModelUserScrip
         cap = runner.getStringArgumentValue("water_heater_capacity",user_arguments)
         ef = runner.getStringArgumentValue("rated_energy_factor",user_arguments)
         cd = runner.getDoubleArgumentValue("water_heater_cycling_derate",user_arguments)
-        water_heater_tz = runner.getStringArgumentValue("water_heater_location",user_arguments)
+        water_heater_loc = runner.getStringArgumentValue("water_heater_location",user_arguments)
         t_set = runner.getDoubleArgumentValue("dhw_setpoint_temperature",user_arguments).to_f
         oncycle_p = runner.getDoubleArgumentValue("oncyc_power",user_arguments)
         offcycle_p = runner.getDoubleArgumentValue("offcyc_power",user_arguments)
@@ -138,76 +138,84 @@ class AddOSWaterHeaterMixedTanklessPropane < OpenStudio::Ruleset::ModelUserScrip
             return false
         end
         
-        #If location is Auto, get the location
-        if water_heater_tz == Constants.Auto
-            water_heater_tz = Waterheater.get_water_heater_location_auto(model, runner)
-            if water_heater_tz.nil?
-                runner.registerError("The water heater cannot be automatically assigned to a thermal zone. Please manually select which zone the water heater should be located in.")
-                return false
-            else
-                runner.registerInfo("Water heater is located in #{water_heater_tz} thermal zone")
-            end
-        end
-        
-        # Get number of bedrooms/bathrooms
-        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 1, runner)
-        if nbeds.nil? or nbaths.nil?
-            runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+        # Get number of units
+        num_units = Geometry.get_num_units(model, runner)
+        if num_units.nil?
             return false
         end
-        
+
         #Check if mains temperature has been set
         t_mains = model.getSiteWaterMainsTemperature
         if t_mains.calculationMethod.nil?
-            runner.registerError("Mains water temperature must be set before adding a water heater")
+            runner.registerError("Mains water temperature must be set before adding a water heater.")
             return false
         end
-	
-        #Check if a DHW plant loop already exists, if not add it
-        loop = nil
-	
-        model.getPlantLoops.each do |pl|
-            if pl.name.to_s == Constants.PlantLoopDomesticWater
-                runner.registerInfo("A propane tankless water heater will be added to the existing DHW plant loop")
-                loop = HelperMethods.get_plant_loop_from_string(model, Constants.PlantLoopDomesticWater, runner)
-                if loop.nil?
+        
+        (1..num_units).to_a.each do |unit_num|
+        
+            # Get unit beds/baths/spaces
+            nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
+            if unit_spaces.nil?
+                runner.registerError("Could not determine the spaces associated with unit #{unit_num}.")
+                return false
+            end
+            if nbeds.nil? or nbaths.nil?
+                runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+                return false
+            end
+        
+            #If location is Auto, get the location
+            if water_heater_loc == Constants.Auto
+                water_heater_tz = Waterheater.get_water_heater_location_auto(model, unit_spaces, runner)
+                if water_heater_tz.nil?
+                    runner.registerError("The water heater cannot be automatically assigned to a thermal zone. Please manually select which zone the water heater should be located in.")
                     return false
                 end
-                #Remove the existing water heater
-                pl.supplyComponents.each do |wh|
-                    if wh.to_WaterHeaterMixed.is_initialized
-                        waterHeater = wh.to_WaterHeaterMixed.get
-                        waterHeater.remove
-                        runner.registerInitialCondition("The existing mixed water heater has been removed and will be replaced with the new user specified water heater")
-                    elsif wh.to_WaterHeaterStratified.is_initialized
-                        waterHeater = wh.to_WaterHeaterStratified.get
-                        waterHeater.remove
-                        runner.registerInitialCondition("The existing stratified water heater has been removed and will be replaced with the new user specified water heater")
+            else
+                water_heater_tz = model.getThermalZones.find{|tz| tz.name.get == water_heater_loc.to_s}
+            end
+        
+            #Check if a DHW plant loop already exists, if not add it
+            loop = nil
+        
+            model.getPlantLoops.each do |pl|
+                if pl.name.to_s == Constants.PlantLoopDomesticWater(unit_num)
+                    loop = pl
+                    #Remove any existing water heater
+                    wh_removed = false
+                    pl.supplyComponents.each do |wh|
+                        next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized
+                        wh.remove
+                        wh_removed = true
+                    end
+                    if wh_removed
+                        runner.registerInfo("Removed existing water heater from plant loop #{pl.name.to_s}.")
                     end
                 end
             end
-        end
 
-        if loop.nil?
-            runner.registerInfo("A new plant loop for DHW will be added to the model")
-            runner.registerInitialCondition("No water heater model currently exists")
-            loop = Waterheater.create_new_loop(model)
-        end
+            if loop.nil?
+                runner.registerInfo("A new plant loop for DHW will be added to the model")
+                runner.registerInitialCondition("No water heater model currently exists")
+                loop = Waterheater.create_new_loop(model, Constants.PlantLoopDomesticWater(unit_num))
+            end
 
-        if loop.components(OSM::PumpConstantSpeed::iddObjectType).empty?
-            new_pump = Waterheater.create_new_pump(model)
-            new_pump.addToNode(loop.supplyInletNode)
-        end
+            if loop.components(OSM::PumpConstantSpeed::iddObjectType).empty?
+                new_pump = Waterheater.create_new_pump(model)
+                new_pump.addToNode(loop.supplyInletNode)
+            end
 
-        if loop.supplyOutletNode.setpointManagers.empty?
-            new_manager = create_new_schedule_manager(t_set, model)
-            new_manager.addToNode(loop.supplyOutletNode)
+            if loop.supplyOutletNode.setpointManagers.empty?
+                new_manager = Waterheater.create_new_schedule_manager(t_set, model)
+                new_manager.addToNode(loop.supplyOutletNode)
+            end
+        
+                
+            new_heater = Waterheater.create_new_heater(Constants.ObjectNameWaterHeater(unit_num), cap, Constants.FuelTypePropane, 1, nbeds, nbaths, ef, 0, t_set, water_heater_tz, oncycle_p, offcycle_p, tanktype, cd, model, runner)
+        
+            loop.addSupplyBranchForComponent(new_heater)
+            
         end
-	
-			
-        new_heater = Waterheater.create_new_heater(cap, Constants.FuelTypePropane, 1, nbeds, nbaths, ef, 0, t_set, water_heater_tz, oncycle_p, offcycle_p, tanktype, cd, model, runner)
-	
-        loop.addSupplyBranchForComponent(new_heater)
         
         register_final_conditions(runner, model)
   
@@ -216,11 +224,6 @@ class AddOSWaterHeaterMixedTanklessPropane < OpenStudio::Ruleset::ModelUserScrip
     end #end the run method
 
     private
-
-    def create_new_schedule_manager(t_set, model)
-        new_schedule = Waterheater.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get, model)
-        OSM::SetpointManagerScheduled.new(model, new_schedule)
-    end
 
     def register_final_conditions(runner, model)
         final_condition = list_water_heaters(model, runner).join("\n")

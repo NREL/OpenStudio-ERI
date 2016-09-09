@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_double_wood_stud</name>
   <uid>d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651</uid>
-  <version_id>db40b2d5-8a55-484a-a376-62b797400eff</version_id>
-  <version_modified>20160909T181725Z</version_modified>
+  <version_id>99fd61e2-75e6-4e43-895a-a99b32e11956</version_id>
+  <version_modified>20160909T200732Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorDoubleWoodStud</class_name>
   <display_name>Set Residential Walls - Double Wood Stud Construction</display_name>
@@ -147,7 +147,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DD38B0CF</checksum>
+      <checksum>99161DFB</checksum>
     </file>
   </files>
 </measure>

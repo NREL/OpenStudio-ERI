@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>b3779960-d188-47fe-a52e-2de656adc76f</version_id>
-  <version_modified>20160909T181727Z</version_modified>
+  <version_id>9eb63f1e-a0ec-4314-b9d4-5bae66ca27bb</version_id>
+  <version_modified>20160909T200734Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -107,7 +107,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DD38B0CF</checksum>
+      <checksum>99161DFB</checksum>
     </file>
   </files>
 </measure>
