@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>c2331ad4-316b-4237-99da-5dad67e9d1c1</version_id>
-  <version_modified>20160908T211659Z</version_modified>
+  <version_id>f25b23e0-d037-4789-a3b3-759d346eff94</version_id>
+  <version_modified>20160909T181728Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>
@@ -250,12 +250,6 @@
       <checksum>9D657C02</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>76512DEB</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -272,6 +266,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>CC3B95B0</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DD38B0CF</checksum>
     </file>
   </files>
 </measure>

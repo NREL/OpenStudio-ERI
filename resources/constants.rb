@@ -119,8 +119,12 @@ class Constants
   def self.CondenserTypeAir
     return 'aircooled'
   end
-  def self.CorridorSpace
-    return 'corridor space'
+  def self.CorridorSpace(story=1)
+    s_story = ""
+    if story > 1
+      s_story = "|story #{story}"
+    end
+    return "corridor space#{s_story}"
   end
   def self.CorridorZone
     return 'corridor zone'
@@ -263,7 +267,7 @@ class Constants
   def self.InsulationXPS
     return 'xps'
   end
-  def self.LivingSpace(story, unit=1)
+  def self.LivingSpace(story=1, unit=1)
     s_unit = ""
     s_story = ""
     if unit > 1

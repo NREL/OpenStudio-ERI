@@ -443,14 +443,12 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
           # first floor corridor
           corridor_space = OpenStudio::Model::Space::fromFloorPrint(corr_polygon, living_height, model)
           corridor_space = corridor_space.get
-          corridor_space_name = Constants.CorridorSpace
+          corridor_space_name = Constants.CorridorSpace(1)
           corridor_space.setName(corridor_space_name)
           corridor_space.setThermalZone(corridor_zone)
                     
           (1...building_num_floors).to_a.each do |floor|
           
-            corridor_zone = OpenStudio::Model::ThermalZone.new(model)
-            corridor_zone.setName(Constants.CorridorZone)
             new_corridor_space = corridor_space.clone.to_Space.get
             m = OpenStudio::Matrix.new(4,4,0)
             m[0,0] = 1
@@ -461,6 +459,8 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
             new_corridor_space.changeTransformation(OpenStudio::Transformation.new(m))
             new_corridor_space.setZOrigin(0)
             new_corridor_space.setThermalZone(corridor_zone)
+            corridor_space_name = Constants.CorridorSpace(floor+1)
+            new_corridor_space.setName(corridor_space_name)
           
           end
           
