@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>5997670d-948b-4643-af51-4934697ca0c0</version_id>
-  <version_modified>20160909T200733Z</version_modified>
+  <version_id>b8ec94d3-9f13-4019-b4b9-15863dcc58b0</version_id>
+  <version_modified>20160909T225333Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -156,6 +156,16 @@
         </choice>
       </choices>
     </argument>
+    <argument>
+      <name>balc_depth</name>
+      <display_name>Balcony Depth</display_name>
+      <description>The depth of the balcony.</description>
+      <type>Double</type>
+      <units>ft</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -191,12 +201,6 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
-      <filename>create_residential_multifamily_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5107639D</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -211,13 +215,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F8CE041D</checksum>
+      <checksum>BDEEAAE0</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>99161DFB</checksum>
+    </file>
+    <file>
+      <filename>create_residential_multifamily_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>52CBC137</checksum>
     </file>
   </files>
 </measure>

@@ -74,6 +74,16 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     assert(result.warnings.size == 1)
     assert_equal("Success", result.value.valueName)
     assert_equal(result.warnings[0].logMessage, "Specified a double-loaded corridor and an odd number of units per floor. Subtracting one unit per floor.")
+  end
+  
+  def test_warning_balc_but_no_inset
+    args_hash = {}
+    args_hash["corr_width"] = 0
+    args_hash["balc_depth"] = 6
+    result = _test_error(nil, args_hash)
+    assert(result.warnings.size == 1)
+    assert_equal("Success", result.value.valueName)
+    assert_equal(result.warnings[0].logMessage, "Specified a balcony, but there is no inset.")
   end  
   
   def test_two_story_fourplex_left_inset
@@ -85,7 +95,8 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash["corr_pos"] = "Double Exterior"
     args_hash["inset_width"] = 8
     args_hash["inset_depth"] = 6
-    args_hash["inset_pos"] = "Left"    
+    args_hash["inset_pos"] = "Left"
+    args_hash["balc_depth"] = 6
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    

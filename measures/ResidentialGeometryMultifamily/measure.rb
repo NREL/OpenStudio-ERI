@@ -131,12 +131,12 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     args << inset_pos
     
     #make an argument for balcony depth
-    # balc_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("balc_depth", true)
-    # balc_depth.setDisplayName("Balcony Depth")
-    # balc_depth.setUnits("ft")
-    # balc_depth.setDescription("The depth of the balcony.")
-    # balc_depth.setDefaultValue(0.0)
-    # args << balc_depth      
+    balc_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("balc_depth", true)
+    balc_depth.setDisplayName("Balcony Depth")
+    balc_depth.setUnits("ft")
+    balc_depth.setDescription("The depth of the balcony.")
+    balc_depth.setDefaultValue(0.0)
+    args << balc_depth      
     
     #make an argument for using zone multipliers
     # use_zone_mult = OpenStudio::Ruleset::OSArgument::makeBoolArgument("use_zone_mult", true)
@@ -169,7 +169,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     inset_width = OpenStudio::convert(runner.getDoubleArgumentValue("inset_width",user_arguments),"ft","m").get
     inset_depth = OpenStudio::convert(runner.getDoubleArgumentValue("inset_depth",user_arguments),"ft","m").get
     inset_pos = runner.getStringArgumentValue("inset_pos",user_arguments)
-    # balc_depth = OpenStudio::convert(runner.getDoubleArgumentValue("balc_depth",user_arguments),"ft","m").get
+    balc_depth = OpenStudio::convert(runner.getDoubleArgumentValue("balc_depth",user_arguments),"ft","m").get
     # use_zone_mult = runner.getBoolArgumentValue("use_zone_mult",user_arguments)
     
     # error checking
@@ -201,6 +201,10 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       runner.registerWarning("Specified a double-loaded corridor and an odd number of units per floor. Subtracting one unit per floor.")
       num_units_per_floor -= 1
     end
+    if balc_depth > 0 and inset_width * inset_depth == 0
+      runner.registerWarning("Specified a balcony, but there is no inset.")
+      balc_depth = 0
+    end
     
     num_units = num_units_per_floor * building_num_floors / num_stories_per_unit
     
@@ -224,24 +228,28 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         front_point = OpenStudio::Point3d.new(x - inset_width, -y, 0)
         side_point = OpenStudio::Point3d.new(x, inset_depth - y, 0)
         living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, side_point, inset_point, front_point)
-        # unit shading
-        inset_point = OpenStudio::Point3d.new(x - inset_width, inset_depth - y, living_height)
-        side_point = OpenStudio::Point3d.new(x, inset_depth - y, living_height)
-        se_point = OpenStudio::Point3d.new(x, -y, living_height)
-        front_point = OpenStudio::Point3d.new(x - inset_width, -y, living_height)
-        # shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Point3dVector.new([inset_point, side_point, se_point, front_point]), model)        
+        # unit balcony
+        if balc_depth > 0
+          inset_point = OpenStudio::Point3d.new(x - inset_width, inset_depth - y, living_height)
+          side_point = OpenStudio::Point3d.new(x, inset_depth - y, living_height)
+          se_point = OpenStudio::Point3d.new(x, inset_depth - y - balc_depth, living_height)
+          front_point = OpenStudio::Point3d.new(x - inset_width, inset_depth - y - balc_depth, living_height)
+          shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Point3dVector.new([inset_point, side_point, se_point, front_point]), model)
+        end
       else
         # unit footprint
         inset_point = OpenStudio::Point3d.new(inset_width, inset_depth - y, 0)
         front_point = OpenStudio::Point3d.new(inset_width, -y, 0)
         side_point = OpenStudio::Point3d.new(0, inset_depth - y, 0)
         living_polygon = Geometry.make_polygon(side_point, nw_point, ne_point, se_point, front_point, inset_point)
-        # unit shading
-        inset_point = OpenStudio::Point3d.new(inset_width, inset_depth - y, living_height)
-        front_point = OpenStudio::Point3d.new(inset_width, -y, living_height)
-        sw_point = OpenStudio::Point3d.new(0, -y, living_height)
-        side_point = OpenStudio::Point3d.new(0, inset_depth - y, living_height)
-        # shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Point3dVector.new([inset_point, front_point, sw_point, side_point]), model)        
+        # unit balcony
+        if balc_depth > 0
+          inset_point = OpenStudio::Point3d.new(inset_width, inset_depth - y, living_height)
+          side_point = OpenStudio::Point3d.new(0, inset_depth - y, living_height)
+          sw_point = OpenStudio::Point3d.new(0, inset_depth - y - balc_depth, living_height)
+          front_point = OpenStudio::Point3d.new(inset_width, inset_depth - y - balc_depth, living_height)
+          shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Point3dVector.new([inset_point, front_point, sw_point, side_point]), model)
+        end
       end
     else
       living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)
@@ -258,12 +266,12 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     living_space.setName(Constants.LivingSpace(1, 1))
     living_space.setThermalZone(living_zone)    
     
-    # add the shade
-    # if inset_width * inset_depth > 0
-      # shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)      
-      # shading_surface_group.setSpace(living_space)
-      # shading_surface.setShadingSurfaceGroup(shading_surface_group)
-    # end    
+    # add the balcony
+    if balc_depth > 0
+      shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)      
+      shading_surface_group.setSpace(living_space)
+      shading_surface.setShadingSurfaceGroup(shading_surface_group)
+    end    
     
     living_spaces_front << living_space
     
@@ -305,25 +313,33 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       se_point = OpenStudio::Point3d.new(x, interior_corr_width, 0)
       if inset_width * inset_depth > 0
         if inset_pos == "Left"
+          # unit footprint
           inset_point = OpenStudio::Point3d.new(x - inset_width, y - inset_depth + interior_corr_width, 0)
           front_point = OpenStudio::Point3d.new(x - inset_width, y + interior_corr_width, 0)
           side_point = OpenStudio::Point3d.new(x, y - inset_depth + interior_corr_width, 0)
           living_polygon = Geometry.make_polygon(sw_point, nw_point, front_point, inset_point, side_point, se_point)
-          inset_point = OpenStudio::Point3d.new(x - inset_width, y - inset_depth + interior_corr_width, living_height)
-          side_point = OpenStudio::Point3d.new(x, y - inset_depth + interior_corr_width, living_height)
-          ne_point = OpenStudio::Point3d.new(x, y + interior_corr_width, living_height)
-          front_point = OpenStudio::Point3d.new(x - inset_width, y + interior_corr_width, living_height)
-          # shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Point3dVector.new([inset_point, front_point, ne_point, side_point]), model)        
+          # unit balcony
+          if balc_depth > 0
+            inset_point = OpenStudio::Point3d.new(x - inset_width, y - inset_depth + interior_corr_width, living_height)
+            side_point = OpenStudio::Point3d.new(x, y - inset_depth + interior_corr_width, living_height)
+            ne_point = OpenStudio::Point3d.new(x, y - inset_depth + balc_depth + interior_corr_width, living_height)
+            front_point = OpenStudio::Point3d.new(x - inset_width, y - inset_depth + balc_depth + interior_corr_width, living_height)
+            shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Point3dVector.new([inset_point, front_point, ne_point, side_point]), model)
+          end
         else
+          # unit footprint
           inset_point = OpenStudio::Point3d.new(inset_width, y - inset_depth + interior_corr_width, 0)
           front_point = OpenStudio::Point3d.new(inset_width, y + interior_corr_width, 0)
           side_point = OpenStudio::Point3d.new(0, y - inset_depth + interior_corr_width, 0)
           living_polygon = Geometry.make_polygon(side_point, inset_point, front_point, ne_point, se_point, sw_point)
-          inset_point = OpenStudio::Point3d.new(inset_width, y - inset_depth + interior_corr_width, living_height)
-          front_point = OpenStudio::Point3d.new(inset_width, y + interior_corr_width, living_height)
-          nw_point = OpenStudio::Point3d.new(0, y + interior_corr_width, living_height)
-          side_point = OpenStudio::Point3d.new(0, y - inset_depth + interior_corr_width, living_height)
-          # shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Point3dVector.new([inset_point, side_point, nw_point, front_point]), model)        
+          # unit balcony
+          if balc_depth > 0
+            inset_point = OpenStudio::Point3d.new(inset_width, y - inset_depth + interior_corr_width, living_height)
+            side_point = OpenStudio::Point3d.new(0, y - inset_depth + interior_corr_width, living_height)
+            nw_point = OpenStudio::Point3d.new(0, y - inset_depth + balc_depth + interior_corr_width, living_height)
+            front_point = OpenStudio::Point3d.new(inset_width, y - inset_depth + balc_depth + interior_corr_width, living_height)
+            shading_surface = OpenStudio::Model::ShadingSurface.new(OpenStudio::Point3dVector.new([inset_point, side_point, nw_point, front_point]), model)
+          end
         end    
       else
         living_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)
@@ -340,12 +356,12 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       living_space.setName(Constants.LivingSpace(1, 2))
       living_space.setThermalZone(living_zone)
       
-      # add the shade
-      # if inset_width * inset_depth > 0
-        # shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)      
-        # shading_surface_group.setSpace(living_space)
-        # shading_surface.setShadingSurfaceGroup(shading_surface_group)
-      # end    
+      # add the balcony
+      if balc_depth > 0
+        shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)      
+        shading_surface_group.setSpace(living_space)
+        shading_surface.setShadingSurfaceGroup(shading_surface_group)
+      end    
       
       living_spaces_back << living_space
       
