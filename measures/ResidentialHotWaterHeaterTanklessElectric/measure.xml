@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>add_os_water_heater_mixed_tankless_electric</name>
+  <name>residential_hot_water_heater_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>49c8fad7-3c70-408f-9a36-cdd5f54ae591</version_id>
-  <version_modified>20160909T215137Z</version_modified>
+  <version_id>315d76ef-5fbe-4ce8-ba4d-e8d86c0beabc</version_id>
+  <version_modified>20160910T164322Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
-  <class_name>AddOSWaterHeaterMixedTanklessElectric</class_name>
+  <class_name>ResidentialHotWaterHeaterTanklessElectric</class_name>
   <display_name>Set Residential Electric Tankless Water Heater</display_name>
   <description>This measure adds a new residential electric tankless water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building.</description>
   <modeler_description>The measure will create a new instance of the OS:WaterHeater:Mixed object representing a electric tankless water heater. The water heater will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created.</modeler_description>
@@ -107,22 +107,28 @@
       <checksum>E3043A6F</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0C6A57EB</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>99161DFB</checksum>
     </file>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4F0FB841</checksum>
+    </file>
+    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>15E8D067</checksum>
+      <checksum>66CE3599</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BDE4441E</checksum>
     </file>
     <file>
       <version>
@@ -133,7 +139,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8C1C6B86</checksum>
+      <checksum>8DF358C8</checksum>
     </file>
   </files>
 </measure>

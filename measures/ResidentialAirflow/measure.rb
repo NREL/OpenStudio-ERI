@@ -965,15 +965,16 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         end
       end
         
-      living_thermal_zone = Geometry.get_thermal_zone_from_string(model, living_thermal_zone_r.to_s, runner)
+      zones = model.getThermalZones
+      living_thermal_zone = Geometry.get_thermal_zone_from_string(zones, living_thermal_zone_r.to_s, runner)
       if living_thermal_zone.nil?
           return false
       end      
-      garage_thermal_zone = Geometry.get_thermal_zone_from_string(model, garage_thermal_zone_r.to_s, runner)
-      fbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, fbasement_thermal_zone_r.to_s, runner)
-      ufbasement_thermal_zone = Geometry.get_thermal_zone_from_string(model, ufbasement_thermal_zone_r.to_s, runner)
-      crawl_thermal_zone = Geometry.get_thermal_zone_from_string(model, crawl_thermal_zone_r.to_s, runner)
-      ufattic_thermal_zone = Geometry.get_thermal_zone_from_string(model, ufattic_thermal_zone_r.to_s, runner)
+      garage_thermal_zone = Geometry.get_thermal_zone_from_string(zones, garage_thermal_zone_r.to_s)
+      fbasement_thermal_zone = Geometry.get_thermal_zone_from_string(zones, fbasement_thermal_zone_r.to_s)
+      ufbasement_thermal_zone = Geometry.get_thermal_zone_from_string(zones, ufbasement_thermal_zone_r.to_s)
+      crawl_thermal_zone = Geometry.get_thermal_zone_from_string(zones, crawl_thermal_zone_r.to_s)
+      ufattic_thermal_zone = Geometry.get_thermal_zone_from_string(zones, ufattic_thermal_zone_r.to_s)
 
       if duct_location != "none" and HelperMethods.has_central_air_conditioner(model, runner, living_thermal_zone, false, false).nil? and HelperMethods.has_furnace(model, runner, living_thermal_zone, false, false).nil? and HelperMethods.has_air_source_heat_pump(model, runner, living_thermal_zone, false).nil?
         runner.registerWarning("No ducted HVAC equipment was found but ducts were specified. Overriding duct specification.")

@@ -3,6 +3,7 @@ require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/util"
 require "#{File.dirname(__FILE__)}/weather"
 require "#{File.dirname(__FILE__)}/geometry"
+require "#{File.dirname(__FILE__)}/schedules"
 
 class Waterheater
     def self.deadband(tank_type)
@@ -109,7 +110,7 @@ class Waterheater
                 else
                     input_power = 5.5
                 end
-                return input power
+                return input_power
             end
             
         else #fixed heater size

@@ -369,26 +369,18 @@ class Geometry
         return space
     end
 
-    def self.get_thermal_zone_from_string(model, thermalzone_s, runner, print_err=true)
-        unless thermalzone_s.empty?
-            thermal_zone = nil
-            model.getThermalZones.each do |tz|
-                if tz.name.to_s == thermalzone_s
-                    thermal_zone = tz
-                    break
-                end
+    def self.get_thermal_zone_from_string(zones, thermalzone_s, runner=nil)
+        thermal_zone = nil
+        zones.each do |tz|
+            if tz.name.to_s == thermalzone_s
+                thermal_zone = tz
+                break
             end
-            if thermal_zone.nil?
-                if print_err
-                    runner.registerError("Could not find thermal zone with the name '#{thermalzone_s}'.")
-                else
-                    runner.registerWarning("Could not find thermal zone with the name '#{thermalzone_s}'.")
-                end
-            end
-            return thermal_zone
-        else
-            return nil
         end
+        if thermal_zone.nil? and !runner.nil?
+            runner.registerError("Could not find zone with the name '#{thermalzone_s}'.")
+        end
+        return thermal_zone
     end
 
     # Return an array of x values for surfaces passed in. The values will be relative to the parent origin. This was intended for spaces.

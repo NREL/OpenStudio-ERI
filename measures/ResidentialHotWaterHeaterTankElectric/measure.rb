@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScript
+class ResidentialHotWaterHeaterTankElectric < OpenStudio::Ruleset::ModelUserScript
 
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
@@ -23,9 +23,6 @@ class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScrip
         return "The measure will create a new instance of the OS:WaterHeater:Mixed object representing an electric storage water heater. The water heater will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created."
     end
 
-    OS = OpenStudio
-    OSM = OS::Model
-  
     #define the arguments that the user will input
     def arguments(model)
         ruleset = OpenStudio::Ruleset
@@ -124,8 +121,7 @@ class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScrip
         end
 
         #Check if mains temperature has been set
-        t_mains = model.getSiteWaterMainsTemperature
-        if t_mains.calculationMethod.nil?
+        if !model.getSite.siteWaterMainsTemperature.is_initialized
             runner.registerError("Mains water temperature must be set before adding a water heater.")
             return false
         end
@@ -151,7 +147,9 @@ class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScrip
                     return false
                 end
             else
-                water_heater_tz = model.getThermalZones.find{|tz| tz.name.get == water_heater_loc.to_s}
+                unit_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)
+                water_heater_tz = Geometry.get_thermal_zone_from_string(unit_zones, water_heater_loc.to_s)
+                next if water_heater_tz.nil?
             end
         
             #Check if a DHW plant loop already exists, if not add it
@@ -163,7 +161,7 @@ class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScrip
                     #Remove any existing water heater
                     wh_removed = false
                     pl.supplyComponents.each do |wh|
-                        next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized
+                        next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized and !wh.to_WaterHeaterHeatPump.is_initialized
                         wh.remove
                         wh_removed = true
                     end
@@ -179,7 +177,7 @@ class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScrip
                 loop = Waterheater.create_new_loop(model, Constants.PlantLoopDomesticWater(unit_num))
             end
 
-            if loop.components(OSM::PumpConstantSpeed::iddObjectType).empty?
+            if loop.components(OpenStudio::Model::PumpConstantSpeed::iddObjectType).empty?
                 new_pump = Waterheater.create_new_pump(model)
                 new_pump.addToNode(loop.supplyInletNode)
             end
@@ -305,4 +303,4 @@ class AddOSWaterHeaterMixedStorageElectric < OpenStudio::Ruleset::ModelUserScrip
 end #end the measure
 
 #this allows the measure to be use by the application
-AddOSWaterHeaterMixedStorageElectric.new.registerWithApplication
+ResidentialHotWaterHeaterTankElectric.new.registerWithApplication
