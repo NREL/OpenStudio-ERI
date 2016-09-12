@@ -249,7 +249,7 @@ class MonthWeekdayWeekendSchedule
     private 
     
         def validateValues(values, num_values, sch_name)
-            err_msg = "Either a comma-separated string of #{num_values.to_s} numbers or an array of #{num_values.to_s} numbers must be entered for the #{sch_name} schedule."
+            err_msg = "A comma-separated string of #{num_values.to_s} numbers must be entered for the #{sch_name} schedule."
             if values.is_a?(Array)
                 if values.length != num_values
                     @runner.registerError(err_msg)

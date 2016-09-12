@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>cecae57f-4df1-4673-8942-5f43efb0c9b3</version_id>
-  <version_modified>20160910T161521Z</version_modified>
+  <version_id>b26ec11f-3a67-4413-8430-63ba5e6621c8</version_id>
+  <version_modified>20160912T190157Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -262,18 +262,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>ResidentialClothesWasher_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F26B746E</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F0FB841</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -298,6 +286,18 @@
       <checksum>9D657C02</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <filename>ResidentialClothesWasher_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>49AEE7A7</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -306,31 +306,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3BEA6D9C</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E3043A6F</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
+      <checksum>6A440D9A</checksum>
     </file>
     <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>66CE3599</checksum>
+      <checksum>FA9DC222</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BDE4441E</checksum>
+      <checksum>D751AB70</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0FC994AC</checksum>
     </file>
   </files>
 </measure>

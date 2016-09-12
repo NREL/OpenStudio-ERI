@@ -227,7 +227,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     # Cooling Coil
     supply = HVAC.get_cooling_coefficients(runner, acNumberSpeeds, false, supply)
     supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(acRatedAirFlowRate, acFanspeedRatio, acCapacityRatio)
-    supply = HVAC._processAirSystemCoolingCoil(runner, acNumberSpeeds, acCoolingEER, acCoolingInstalledSEER, acSupplyFanPowerInstalled, acSupplyFanPowerRated, acSHRRated, acCapacityRatio, acFanspeedRatio, Constants.CondenserTypeAir, acCrankcase, acCrankcaseMaxT, acEERCapacityDerateFactor, supply)
+    supply = HVAC._processAirSystemCoolingCoil(runner, acNumberSpeeds, acCoolingEER, acCoolingInstalledSEER, acSupplyFanPowerInstalled, acSupplyFanPowerRated, acSHRRated, acCapacityRatio, acFanspeedRatio, acCrankcase, acCrankcaseMaxT, acEERCapacityDerateFactor, supply)
         
     # Determine if the compressor is multi-speed (in our case 2 speed).
     # If the minimum flow ratio is less than 1, then the fan and
@@ -253,7 +253,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # Remove existing equipment
-        htg_coil = HelperMethods.remove_existing_hvac_equipment(model, runner, "Central Air Conditioner", control_zone)
+        htg_coil = HVAC.remove_existing_hvac_equipment(model, runner, "Central Air Conditioner", control_zone)
       
         # _processCurvesDXCooling
         
@@ -280,7 +280,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
           clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(3.0))
           clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(45.0))
 
-          clg_coil.setCondenserType(supply.CondenserType)
+          clg_coil.setCondenserType("AirCooled")
           clg_coil.setCrankcaseHeaterCapacity(OpenStudio::OptionalDouble.new(OpenStudio::convert(supply.Crankcase,"kW","W").get))
           clg_coil.setMaximumOutdoorDryBulbTemperatureForCrankcaseHeaterOperation(OpenStudio::OptionalDouble.new(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get))
 
@@ -288,7 +288,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
           clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
           clg_coil.setName("DX Cooling Coil")
-          clg_coil.setCondenserType(supply.CondenserType)
+          clg_coil.setCondenserType("AirCooled")
           clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
           clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
           clg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)

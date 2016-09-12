@@ -188,8 +188,8 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     
     boiler_eff_curve = _processCurvesBoiler(model, runner, hasBoilerCondensing)
     
-    # Check if has equipment
-    HelperMethods.remove_hot_water_loop(model, runner)
+    # Remove boiler hot water loop if it exists
+    HVAC.remove_hot_water_loop(model, runner)
     
     # _processSystemHydronic
     
@@ -298,7 +298,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
 
         # Remove existing equipment
-        HelperMethods.remove_existing_hvac_equipment(model, runner, "Boiler", control_zone)
+        HVAC.remove_existing_hvac_equipment(model, runner, "Boiler", control_zone)
       
         baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
         baseboard_coil.setName("Living Water Baseboard Coil")
@@ -320,7 +320,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
-          HelperMethods.remove_existing_hvac_equipment(model, runner, "Boiler", slave_zone)       
+          HVAC.remove_existing_hvac_equipment(model, runner, "Boiler", slave_zone)       
         
           baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
           baseboard_coil.setName("FBsmt Water Baseboard Coil")

@@ -15,10 +15,6 @@ class ResidentialPoolHeaterGasTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
   end
   
-  def osm_geo_multifamily_3_units
-    return "multifamily_3_units.osm"
-  end
-  
   def osm_geo_multifamily_3_units_beds
     return "multifamily_3_units_Beds_Baths.osm"
   end
@@ -121,64 +117,69 @@ class ResidentialPoolHeaterGasTest < MiniTest::Test
   def test_argument_error_base_energy_negative
     args_hash = {}
     args_hash["base_energy"] = -1.0
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "Base energy use must be greater than or equal to 0.")
   end
   
   def test_argument_error_mult_negative
     args_hash = {}
     args_hash["mult"] = -1.0
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "Energy multiplier must be greater than or equal to 0.")
   end
   
   def test_argument_error_weekday_sch_wrong_number_of_values
     args_hash = {}
     args_hash["weekday_sch"] = "1,1"
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
   end
   
   def test_argument_error_weekday_sch_not_number
     args_hash = {}
     args_hash["weekday_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
   end
     
   def test_argument_error_weekend_sch_wrong_number_of_values
     args_hash = {}
     args_hash["weekend_sch"] = "1,1"
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
   end
     
   def test_argument_error_weekend_sch_not_number
     args_hash = {}
     args_hash["weekend_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
   end
   
   def test_argument_error_monthly_sch_wrong_number_of_values  
     args_hash = {}
     args_hash["monthly_sch"] = "1,1"
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
   end
   
   def test_argument_error_monthly_sch_not_number
     args_hash = {}
     args_hash["monthly_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1"
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
   end
   
   def test_error_missing_beds
     args_hash = {}
-    _test_error(osm_geo, args_hash)
+    result = _test_error(osm_geo, args_hash)
+    assert_equal(result.errors[0].logMessage, "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
     
-  def test_error_missing_beds_multifamily
-    args_hash = {}
-    _test_error(osm_geo_multifamily_3_units, args_hash)
-  end
-
   def test_error_missing_geometry
     args_hash = {}
-    _test_error(nil, args_hash)
+    result = _test_error(nil, args_hash)
+    assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
 
   private
@@ -215,6 +216,8 @@ class ResidentialPoolHeaterGasTest < MiniTest::Test
     # assert that it didn't run
     assert_equal("Fail", result.value.valueName)
     assert(result.errors.size == 1)
+    
+    return result
   end
 
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_therm, num_infos=0, num_warnings=0)

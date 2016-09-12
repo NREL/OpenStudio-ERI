@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>315d76ef-5fbe-4ce8-ba4d-e8d86c0beabc</version_id>
-  <version_modified>20160910T164322Z</version_modified>
+  <version_id>a9b8ce8c-5b14-4e0e-924c-d25a89346f25</version_id>
+  <version_modified>20160912T190159Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessElectric</class_name>
   <display_name>Set Residential Electric Tankless Water Heater</display_name>
@@ -101,30 +101,6 @@
       <checksum>9D657C02</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E3043A6F</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F0FB841</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66CE3599</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -140,6 +116,30 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>8DF358C8</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FA9DC222</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D751AB70</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0FC994AC</checksum>
     </file>
   </files>
 </measure>

@@ -12,8 +12,6 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash["Num_Br"] = "3.0, 3.0, 3.0"
     args_hash["Num_Ba"] = "2.0, 2.0"
     result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bedroom elements specified inconsistent with number of bathroom elements specified.")
   end
   
@@ -21,8 +19,6 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash = {}
     args_hash["Num_Br"] = "3.0, 3.0"
     result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bedroom elements specified inconsistent with number of multifamily units defined in the model.")
   end
   
@@ -30,8 +26,6 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash = {}
     args_hash["Num_Ba"] = "2.0, 2.0"
     result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bathroom elements specified inconsistent with number of multifamily units defined in the model.")
   end  
   
@@ -39,8 +33,6 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash = {}
     args_hash["Num_Br"] = "3.0, 3.0, typo"
     result = _test_error("multifamily_3_units.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bedrooms must be a numerical value.")
   end
   
@@ -48,8 +40,6 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash = {}
     args_hash["Num_Ba"] = "2.0, 2.0, typo"
     result = _test_error("multifamily_3_units.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bathrooms must be a numerical value.")  
   end
   
@@ -57,8 +47,6 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash = {}
     args_hash["Num_Br"] = "3.0, 3.0, 3.5"
     result = _test_error("multifamily_3_units.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bedrooms must be a positive integer.")    
   end
   
@@ -66,34 +54,25 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash = {}
     args_hash["Num_Ba"] = "2.0, 2.0, 2.8"
     result = _test_error("multifamily_3_units.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Number of bathrooms must be a positive multiple of 0.25.")    
   end
   
   def test_error_no_units_defined_in_model
     args_hash = {}
     result = _test_error("EmptySeedModel.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")   
   end
   
   def test_error_inconsistent_units_defined_in_model
     args_hash = {}
     result = _test_error("multifamily_4_units_listed_3_units_defined.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; inconsistent number of units defined in the model.")   
    end
   
   def test_error_unit_has_no_spaces
     args_hash = {}
     result = _test_error("2000sqft_2story_FB_GRG_UA_no_spaces_in_unit.osm", args_hash)
-    assert(result.errors.size == 2)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Could not find the space '{59fc425b-e98e-42bf-a6d7-37f9c2809157}' associated with unit 1.")
-    assert_equal(result.errors[1].logMessage, "Could not determine the spaces associated with unit 1.")   
   end  
   
   def test_sfd_retrofit_replace
@@ -151,6 +130,10 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
       
+    # assert that it didn't run
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
+
     return result
     
   end

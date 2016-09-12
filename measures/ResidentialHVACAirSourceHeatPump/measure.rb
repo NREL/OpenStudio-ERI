@@ -341,7 +341,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     # Cooling Coil
     supply = HVAC.get_cooling_coefficients(runner, hpNumberSpeeds, true, supply)
     supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateCooling, hpFanspeedRatioCooling, hpCapacityRatio)
-    supply = HVAC._processAirSystemCoolingCoil(runner, hpNumberSpeeds, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, Constants.CondenserTypeAir, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, supply)
+    supply = HVAC._processAirSystemCoolingCoil(runner, hpNumberSpeeds, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, supply)
 
     # Heating Coil
     has_cchp = hpIsColdClimate
@@ -378,8 +378,8 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
     clg_coil_stage_data = HVAC._processCurvesDXCooling(model, supply, hpOutputCapacity)
 
-    # Check if has equipment
-    HelperMethods.remove_hot_water_loop(model, runner)    
+    # Remove boiler hot water loop if it exists
+    HVAC.remove_hot_water_loop(model, runner)    
     
     num_units = Geometry.get_num_units(model, runner)
     if num_units.nil?
@@ -396,7 +396,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # Remove existing equipment
-        HelperMethods.remove_existing_hvac_equipment(model, runner, "Air Source Heat Pump", control_zone)    
+        HVAC.remove_existing_hvac_equipment(model, runner, "Air Source Heat Pump", control_zone)    
       
         # _processSystemHeatingCoil
         
@@ -464,13 +464,13 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
           clg_coil.setRatioOfInitialMoistureEvaporationRateAndSteadyStateLatentCapacity(OpenStudio::OptionalDouble.new(1.5))
           clg_coil.setMaximumCyclingRate(OpenStudio::OptionalDouble.new(3.0))
           clg_coil.setLatentCapacityTimeConstant(OpenStudio::OptionalDouble.new(45.0))
-          clg_coil.setCondenserType(supply.CondenserType)
+          clg_coil.setCondenserType("AirCooled")
 
         else
 
           clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
           clg_coil.setName("DX Cooling Coil")
-          clg_coil.setCondenserType(supply.CondenserType)
+          clg_coil.setCondenserType("AirCooled")
           clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
           clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)        
           clg_coil.setFuelType("Electricity")
@@ -550,8 +550,8 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
         slave_zones.each do |slave_zone|
 
-          HelperMethods.has_boiler(model, runner, slave_zone, true)
-          HelperMethods.has_electric_baseboard(model, runner, slave_zone, true)
+          HVAC.has_boiler(model, runner, slave_zone, true)
+          HVAC.has_electric_baseboard(model, runner, slave_zone, true)
       
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName("FBsmt Zone Direct Air")

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_propane</name>
   <uid>202bfb71-76e0-4615-867b-5d51e8e25223</uid>
-  <version_id>cefcb34a-323f-4a56-9dc7-99955395a637</version_id>
-  <version_modified>20160910T164322Z</version_modified>
+  <version_id>88003934-e562-4b52-9984-00b987ab0793</version_id>
+  <version_modified>20160912T190200Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankPropane</class_name>
   <display_name>Set Residential Propane Tank Water Heater</display_name>
@@ -131,30 +131,6 @@
       <checksum>9D657C02</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E3043A6F</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F0FB841</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66CE3599</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -170,6 +146,30 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>AB28CA5A</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FA9DC222</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D751AB70</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0FC994AC</checksum>
     </file>
   </files>
 </measure>

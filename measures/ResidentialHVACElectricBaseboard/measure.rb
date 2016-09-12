@@ -72,8 +72,8 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end
    
-    # Check if has equipment
-    HelperMethods.remove_hot_water_loop(model, runner)   
+    # Remove boiler hot water loop if it exists
+    HVAC.remove_hot_water_loop(model, runner)   
    
     num_units = Geometry.get_num_units(model, runner)
     if num_units.nil?
@@ -90,7 +90,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # Remove existing equipment
-        HelperMethods.remove_existing_hvac_equipment(model, runner, "Electric Baseboard", control_zone)
+        HVAC.remove_existing_hvac_equipment(model, runner, "Electric Baseboard", control_zone)
       
         htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
         htg_coil.setName("Living Zone Electric Baseboards")
@@ -105,7 +105,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
         slave_zones.each do |slave_zone|
         
           # Remove existing equipment
-          HelperMethods.remove_existing_hvac_equipment(model, runner, "Electric Baseboard", slave_zone)    
+          HVAC.remove_existing_hvac_equipment(model, runner, "Electric Baseboard", slave_zone)    
         
           htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
           htg_coil.setName("FBsmt Zone Electric Baseboards")

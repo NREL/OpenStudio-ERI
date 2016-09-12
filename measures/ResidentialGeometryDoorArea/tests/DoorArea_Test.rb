@@ -77,8 +77,6 @@ class DoorAreaTest < MiniTest::Test
     args_hash = {}
     args_hash["door_area"] = -20
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Invalid door area.")
   end
   
@@ -110,6 +108,10 @@ class DoorAreaTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
       
+    # assert that it didn't run
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
+
     return result
     
   end

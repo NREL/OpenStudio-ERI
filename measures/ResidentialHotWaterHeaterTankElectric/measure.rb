@@ -292,10 +292,10 @@ class ResidentialHotWaterHeaterTankElectric < OpenStudio::Ruleset::ModelUserScri
             return nil
         end
         if cap < 2
-            runner.registerWarning("Commercially available residential electtic storage water heaters should have a minimum nominal capacity of 2 kW.")
+            runner.registerWarning("Commercially available residential electric storage water heaters should have a minimum nominal capacity of 2 kW.")
         end
         if cap > 6
-            runner.registerWarning("Commercially available residential electtic storage water heaters should have a maximum nominal capacity of 6 kW.")
+            runner.registerWarning("Commercially available residential electric storage water heaters should have a maximum nominal capacity of 6 kW.")
         end
         return true
     end

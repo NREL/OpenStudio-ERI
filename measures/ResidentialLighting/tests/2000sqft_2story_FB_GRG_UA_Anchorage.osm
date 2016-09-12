@@ -1,7 +1,7 @@
 
 OS:Version,
-  {fc003c06-618b-4051-9b37-6b6f71b12672}, !- Handle
-  1.12.2;                                 !- Version Identifier
+  {f6d99664-8a19-464a-bf17-51a04851866c}, !- Handle
+  1.12.4;                                 !- Version Identifier
 
 OS:ClimateZones,
   {135edfab-17e7-40db-a436-27d385a8cd6d}, !- Handle
@@ -18,7 +18,7 @@ OS:ClimateZones,
   Building America,                       !- Climate Zone Institution Name 3
   ,                                       !- Climate Zone Document Name 3
   0,                                      !- Climate Zone Document Year 3
-  Cold;                                   !- Climate Zone Value 3
+  Very Cold;                              !- Climate Zone Value 3
 
 OS:YearDescription,
   {513d8dda-86cb-442a-b01c-1f7f0e0ac70e}; !- Handle
@@ -1128,7 +1128,7 @@ OS:Surface,
 
 OS:ElectricEquipment:Definition,
   {d4eb5113-be74-4ee3-9fa9-f5a9ce34d4cd}, !- Handle
-  unit=1|bed=3.0|bath=2.0|space={59fc425b-e98e-42bf-a6d7-37f9c2809156}|space={e5db0cd2-d11a-4aa4-8606-748aa9c473f2}|space={8e83990d-2e24-422b-939a-fedfcd998894}|space={e1c71ea2-2463-4bbc-b106-c2d83d7b5967}|space={202c2286-b1eb-4fc2-8c59-a1b9b6610e26}, !- Name
+  unit=1|bed=nil|bath=nil|space={59fc425b-e98e-42bf-a6d7-37f9c2809156}|space={e5db0cd2-d11a-4aa4-8606-748aa9c473f2}|space={8e83990d-2e24-422b-939a-fedfcd998894}|space={e1c71ea2-2463-4bbc-b106-c2d83d7b5967}|space={202c2286-b1eb-4fc2-8c59-a1b9b6610e26}, !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -1151,7 +1151,7 @@ OS:Schedule:Day,
 
 OS:ElectricEquipment,
   {9be4ec38-036d-4884-8f15-81a28bc8fe01}, !- Handle
-  unit=1|bed=3.0|bath=2.0|space={59fc425b-e98e-42bf-a6d7-37f9c2809156}|space={e5db0cd2-d11a-4aa4-8606-748aa9c473f2}|space={8e83990d-2e24-422b-939a-fedfcd998894}|space={e1c71ea2-2463-4bbc-b106-c2d83d7b5967}|space={202c2286-b1eb-4fc2-8c59-a1b9b6610e26}, !- Name
+  unit=1|bed=nil|bath=nil|space={59fc425b-e98e-42bf-a6d7-37f9c2809156}|space={e5db0cd2-d11a-4aa4-8606-748aa9c473f2}|space={8e83990d-2e24-422b-939a-fedfcd998894}|space={e1c71ea2-2463-4bbc-b106-c2d83d7b5967}|space={202c2286-b1eb-4fc2-8c59-a1b9b6610e26}, !- Name
   {d4eb5113-be74-4ee3-9fa9-f5a9ce34d4cd}, !- Electric Equipment Definition Name
   ,                                       !- Space or SpaceType Name
   {f3cf25f9-e00c-44dc-a7bf-8746a3396529}; !- Schedule Name
@@ -1165,41 +1165,109 @@ OS:ScheduleTypeLimits,
 
 OS:WeatherFile,
   {19319176-0b03-4f29-ac90-d2e29f348d27}, !- Handle
-  Denver Intl Ap,                         !- City
-  CO,                                     !- State Province Region
+  Anchorage Intl Ap,                      !- City
+  AK,                                     !- State Province Region
   USA,                                    !- Country
   TMY3,                                   !- Data Source
-  725650,                                 !- WMO Number
-  39.83,                                  !- Latitude {deg}
-  -104.65,                                !- Longitude {deg}
-  -7,                                     !- Time Zone {hr}
-  1650,                                   !- Elevation {m}
-  file:../tests/USA_CO_Denver_Intl_AP_725650_TMY3.epw, !- Url
-  E23378AA;                               !- Checksum
+  702730,                                 !- WMO Number
+  61.18,                                  !- Latitude {deg}
+  -150,                                   !- Longitude {deg}
+  -9,                                     !- Time Zone {hr}
+  35,                                     !- Elevation {m}
+  file:../tests/USA_AK_Anchorage.Intl.AP.702730_TMY3.epw, !- Url
+  01DBB4A1;                               !- Checksum
 
 OS:Site,
   {d94c7ded-a695-4ad3-ad33-8384f4a425ac}, !- Handle
-  Denver Intl Ap_CO_USA,                  !- Name
-  39.83,                                  !- Latitude {deg}
-  -104.65,                                !- Longitude {deg}
-  -7,                                     !- Time Zone {hr}
-  1650,                                   !- Elevation {m}
+  Anchorage Intl Ap_AK_USA,               !- Name
+  61.18,                                  !- Latitude {deg}
+  -150,                                   !- Longitude {deg}
+  -9,                                     !- Time Zone {hr}
+  35,                                     !- Elevation {m}
   ;                                       !- Terrain
 
+OS:Site:WaterMainsTemperature,
+  {3e96dd33-7cab-4a99-a2a5-9a40194f2e5a}, !- Handle
+  Correlation,                            !- Calculation Method
+  ,                                       !- Temperature Schedule Name
+  2.96162100456615,                       !- Annual Average Outdoor Air Temperature {C}
+  22.8602150537634;                       !- Maximum Difference In Monthly Average Outdoor Air Temperatures {deltaC}
+
+OS:RunPeriodControl:DaylightSavingTime,
+  {209141d7-f51a-4566-9d36-4535517b95ae}, !- Handle
+  4/7,                                    !- Start Date
+  10/26;                                  !- End Date
+
+OS:Site:GroundTemperature:BuildingSurface,
+  {afa1dbf6-7726-4186-9ac4-c856eddeff9a}, !- Handle
+  -1.14666139686932,                      !- January Ground Temperature {C}
+  -2.89492020137078,                      !- February Ground Temperature {C}
+  -3.03657190373923,                      !- March Ground Temperature {C}
+  -2.20902680327515,                      !- April Ground Temperature {C}
+  1.11716082333498,                       !- May Ground Temperature {C}
+  4.43063754648125,                       !- June Ground Temperature {C}
+  7.30632294844844,                       !- July Ground Temperature {C}
+  9.13259073460432,                       !- August Ground Temperature {C}
+  9.29598368112698,                       !- September Ground Temperature {C}
+  7.8243604109017,                        !- October Ground Temperature {C}
+  5.03071882253272,                       !- November Ground Temperature {C}
+  1.81910318680616;                       !- December Ground Temperature {C}
+
+OS:Site:GroundTemperature:Deep,
+  {73d7fb5e-a763-4267-814d-083f776e89c7}, !- Handle
+  2.96162100456615,                       !- January Deep Ground Temperature {C}
+  2.96162100456615,                       !- February Deep Ground Temperature {C}
+  2.96162100456615,                       !- March Deep Ground Temperature {C}
+  2.96162100456615,                       !- April Deep Ground Temperature {C}
+  2.96162100456615,                       !- May Deep Ground Temperature {C}
+  2.96162100456615,                       !- June Deep Ground Temperature {C}
+  2.96162100456615,                       !- July Deep Ground Temperature {C}
+  2.96162100456615,                       !- August Deep Ground Temperature {C}
+  2.96162100456615,                       !- September Deep Ground Temperature {C}
+  2.96162100456615,                       !- October Deep Ground Temperature {C}
+  2.96162100456615,                       !- November Deep Ground Temperature {C}
+  2.96162100456615;                       !- December Deep Ground Temperature {C}
+
 OS:SizingPeriod:DesignDay,
-  {741fde91-3825-4be5-8108-4d1c2aa2cc55}, !- Handle
-  Denver Intl Ap Ann Htg 99.6% Condns DB, !- Name
-  -17.4,                                  !- Maximum Dry-Bulb Temperature {C}
-  0,                                      !- Daily Dry-Bulb Temperature Range {deltaC}
-  -17.4,                                  !- Humidity Indicating Conditions at Maximum Dry-Bulb
-  83011,                                  !- Barometric Pressure {Pa}
-  3.3,                                    !- Wind Speed {m/s}
-  160,                                    !- Wind Direction {deg}
+  {44bab32a-f07d-42e1-aa9d-e1134be3b27f}, !- Handle
+  Anchorage Intl Ap Ann Clg .4% Condns WB=>MDB, !- Name
+  20.5,                                   !- Maximum Dry-Bulb Temperature {C}
+  6.6,                                    !- Daily Dry-Bulb Temperature Range {deltaC}
+  15.7,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  100905,                                 !- Barometric Pressure {Pa}
+  3.6,                                    !- Wind Speed {m/s}
+  300,                                    !- Wind Direction {deg}
   0,                                      !- Sky Clearness
   0,                                      !- Rain Indicator
   0,                                      !- Snow Indicator
   21,                                     !- Day of Month
-  12,                                     !- Month
+  7,                                      !- Month
+  SummerDesignDay,                        !- Day Type
+  0,                                      !- Daylight Saving Time Indicator
+  Wetbulb,                                !- Humidity Indicating Type
+  ,                                       !- Humidity Indicating Day Schedule Name
+  DefaultMultipliers,                     !- Dry-Bulb Temperature Range Modifier Type
+  ,                                       !- Dry-Bulb Temperature Range Modifier Schedule Name
+  ASHRAETau,                              !- Solar Model Indicator
+  ,                                       !- Beam Solar Day Schedule Name
+  ,                                       !- Diffuse Solar Day Schedule Name
+  0.387,                                  !- ASHRAE Taub {dimensionless}
+  2.172;                                  !- ASHRAE Taud {dimensionless}
+
+OS:SizingPeriod:DesignDay,
+  {8a79d1ec-cd8b-4cd5-980a-afb7ee141db2}, !- Handle
+  Anchorage Intl Ap Ann Htg 99.6% Condns DB, !- Name
+  -22.7,                                  !- Maximum Dry-Bulb Temperature {C}
+  0,                                      !- Daily Dry-Bulb Temperature Range {deltaC}
+  -22.7,                                  !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  100905,                                 !- Barometric Pressure {Pa}
+  1.8,                                    !- Wind Speed {m/s}
+  350,                                    !- Wind Direction {deg}
+  0,                                      !- Sky Clearness
+  0,                                      !- Rain Indicator
+  0,                                      !- Snow Indicator
+  21,                                     !- Day of Month
+  1,                                      !- Month
   WinterDesignDay,                        !- Day Type
   0,                                      !- Daylight Saving Time Indicator
   Wetbulb,                                !- Humidity Indicating Type
@@ -1209,14 +1277,14 @@ OS:SizingPeriod:DesignDay,
   ASHRAEClearSky;                         !- Solar Model Indicator
 
 OS:SizingPeriod:DesignDay,
-  {d6663a72-e369-40b2-8471-b976c2fabd82}, !- Handle
-  Denver Intl Ap Ann Clg .4% Condns WB=>MDB, !- Name
-  27.3,                                   !- Maximum Dry-Bulb Temperature {C}
-  15.2,                                   !- Daily Dry-Bulb Temperature Range {deltaC}
-  18.3,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
-  83011,                                  !- Barometric Pressure {Pa}
-  4.2,                                    !- Wind Speed {m/s}
-  80,                                     !- Wind Direction {deg}
+  {1f23326e-f8d7-4839-8efa-8e46540771c8}, !- Handle
+  Anchorage Intl Ap Ann Clg .4% Condns DB=>MWB, !- Name
+  21.9,                                   !- Maximum Dry-Bulb Temperature {C}
+  6.6,                                    !- Daily Dry-Bulb Temperature Range {deltaC}
+  14.9,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  100905,                                 !- Barometric Pressure {Pa}
+  3.6,                                    !- Wind Speed {m/s}
+  300,                                    !- Wind Direction {deg}
   0,                                      !- Sky Clearness
   0,                                      !- Rain Indicator
   0,                                      !- Snow Indicator
@@ -1231,73 +1299,6 @@ OS:SizingPeriod:DesignDay,
   ASHRAETau,                              !- Solar Model Indicator
   ,                                       !- Beam Solar Day Schedule Name
   ,                                       !- Diffuse Solar Day Schedule Name
-  0.424,                                  !- ASHRAE Taub {dimensionless}
-  2.012;                                  !- ASHRAE Taud {dimensionless}
+  0.387,                                  !- ASHRAE Taub {dimensionless}
+  2.172;                                  !- ASHRAE Taud {dimensionless}
 
-OS:SizingPeriod:DesignDay,
-  {93995d6f-f42f-47a6-be56-aa70fc8c9d82}, !- Handle
-  Denver Intl Ap Ann Clg .4% Condns DB=>MWB, !- Name
-  34.6,                                   !- Maximum Dry-Bulb Temperature {C}
-  15.2,                                   !- Daily Dry-Bulb Temperature Range {deltaC}
-  15.7,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
-  83011,                                  !- Barometric Pressure {Pa}
-  4.2,                                    !- Wind Speed {m/s}
-  80,                                     !- Wind Direction {deg}
-  0,                                      !- Sky Clearness
-  0,                                      !- Rain Indicator
-  0,                                      !- Snow Indicator
-  21,                                     !- Day of Month
-  7,                                      !- Month
-  SummerDesignDay,                        !- Day Type
-  0,                                      !- Daylight Saving Time Indicator
-  Wetbulb,                                !- Humidity Indicating Type
-  ,                                       !- Humidity Indicating Day Schedule Name
-  DefaultMultipliers,                     !- Dry-Bulb Temperature Range Modifier Type
-  ,                                       !- Dry-Bulb Temperature Range Modifier Schedule Name
-  ASHRAETau,                              !- Solar Model Indicator
-  ,                                       !- Beam Solar Day Schedule Name
-  ,                                       !- Diffuse Solar Day Schedule Name
-  0.424,                                  !- ASHRAE Taub {dimensionless}
-  2.012;                                  !- ASHRAE Taud {dimensionless}
-
-OS:Site:WaterMainsTemperature,
-  {3e96dd33-7cab-4a99-a2a5-9a40194f2e5a}, !- Handle
-  Correlation,                            !- Calculation Method
-  ,                                       !- Temperature Schedule Name
-  10.8753424657535,                       !- Annual Average Outdoor Air Temperature {C}
-  23.1524007936508;                       !- Maximum Difference In Monthly Average Outdoor Air Temperatures {deltaC}
-
-OS:RunPeriodControl:DaylightSavingTime,
-  {209141d7-f51a-4566-9d36-4535517b95ae}, !- Handle
-  4/7,                                    !- Start Date
-  10/26;                                  !- End Date
-
-OS:Site:GroundTemperature:BuildingSurface,
-  {afa1dbf6-7726-4186-9ac4-c856eddeff9a}, !- Handle
-  6.71220717182217,                       !- January Ground Temperature {C}
-  4.94160315792055,                       !- February Ground Temperature {C}
-  4.79814094732353,                       !- March Ground Temperature {C}
-  5.63626323951138,                       !- April Ground Temperature {C}
-  9.00496422788996,                       !- May Ground Temperature {C}
-  12.3607918495591,                       !- June Ground Temperature {C}
-  15.2732325604715,                       !- July Ground Temperature {C}
-  17.1228426206644,                       !- August Ground Temperature {C}
-  17.2883239591317,                       !- September Ground Temperature {C}
-  15.7978912711895,                       !- October Ground Temperature {C}
-  12.9685430093462,                       !- November Ground Temperature {C}
-  9.71587840323366;                       !- December Ground Temperature {C}
-
-OS:Site:GroundTemperature:Deep,
-  {73d7fb5e-a763-4267-814d-083f776e89c7}, !- Handle
-  10.8753424657535,                       !- January Deep Ground Temperature {C}
-  10.8753424657535,                       !- February Deep Ground Temperature {C}
-  10.8753424657535,                       !- March Deep Ground Temperature {C}
-  10.8753424657535,                       !- April Deep Ground Temperature {C}
-  10.8753424657535,                       !- May Deep Ground Temperature {C}
-  10.8753424657535,                       !- June Deep Ground Temperature {C}
-  10.8753424657535,                       !- July Deep Ground Temperature {C}
-  10.8753424657535,                       !- August Deep Ground Temperature {C}
-  10.8753424657535,                       !- September Deep Ground Temperature {C}
-  10.8753424657535,                       !- October Deep Ground Temperature {C}
-  10.8753424657535,                       !- November Deep Ground Temperature {C}
-  10.8753424657535;                       !- December Deep Ground Temperature {C}

@@ -113,12 +113,6 @@ class Constants
   def self.CollectorTypeICS
     return 'ics'
   end
-  def self.CondenserTypeWater
-    return 'watercooled'
-  end
-  def self.CondenserTypeAir
-    return 'aircooled'
-  end
   def self.CorridorSpace(story=1)
     s_story = ""
     if story > 1

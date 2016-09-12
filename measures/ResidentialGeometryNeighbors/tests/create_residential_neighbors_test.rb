@@ -10,7 +10,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   def test_error_invalid_neighbor_offset
     args_hash = {}
     args_hash["left_neighbor_offset"] = -10
-    result = _test_error("default_geometry_location.osm", args_hash)
+    result = _test_error_or_NA("default_geometry_location.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Neighbor offsets must be greater than or equal to 0.")
@@ -18,7 +18,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   
   def test_not_applicable_no_surfaces
     args_hash = {}
-    result = _test_error(nil, args_hash)
+    result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("NA", result.value.valueName)
     assert_equal(result.info[0].logMessage, "No surfaces found to copy for neighboring buildings.")
@@ -38,7 +38,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   
   private
   
-  def _test_error(osm_file, args_hash)
+  def _test_error_or_NA(osm_file, args_hash)
     # create an instance of the measure
     measure = CreateResidentialNeighbors.new
 

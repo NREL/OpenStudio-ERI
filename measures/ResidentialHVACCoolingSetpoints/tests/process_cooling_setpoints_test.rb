@@ -21,7 +21,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     result = _test_error("default_geometry_location_central_air_conditioner.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Either a comma-separated string of 24 numbers or an array of 24 numbers must be entered for the weekday schedule.")    
+    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")    
   end
 
   def test_warning_no_equip

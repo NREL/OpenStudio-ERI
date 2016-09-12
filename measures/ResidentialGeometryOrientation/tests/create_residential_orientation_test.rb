@@ -11,8 +11,6 @@ class CreateResidentialOrientationTest < MiniTest::Test
     args_hash = {}
     args_hash["orientation"] = -180
     result = _test_error("default_geometry_location.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Invalid orientation entered.")
   end
     
@@ -53,6 +51,10 @@ class CreateResidentialOrientationTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
       
+    # assert that it didn't run
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
+
     return result
     
   end

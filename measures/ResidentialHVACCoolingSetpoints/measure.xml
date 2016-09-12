@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>7d3f2b21-bff8-4ec2-9753-35e8cc7da2ad</version_id>
-  <version_modified>20160910T161527Z</version_modified>
+  <version_id>e78a2457-2be7-4041-ad7f-7b949574c9f9</version_id>
+  <version_modified>20160912T193620Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -83,29 +83,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>process_cooling_setpoints_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7E4FB05C</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F0FB841</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.11.5</identifier>
-        <min_compatible>1.11.5</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>48AD7589</checksum>
-    </file>
-    <file>
       <filename>default_geometry.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -154,22 +131,51 @@
       <checksum>9D657C02</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.11.5</identifier>
+        <min_compatible>1.11.5</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>5E3BE0D4</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E3043A6F</checksum>
+      <checksum>D751AB70</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CA18F65A</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
+      <checksum>FBA77703</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BDE4441E</checksum>
+      <checksum>0FC994AC</checksum>
+    </file>
+    <file>
+      <filename>process_cooling_setpoints_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DCFA1A14</checksum>
     </file>
   </files>
 </measure>

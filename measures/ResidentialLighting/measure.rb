@@ -181,6 +181,12 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
+    # Get number of units
+    num_units = Geometry.get_num_units(model, runner)
+    if num_units.nil?
+        return false
+    end
+
     # Fractions hardwired vs plugin
     frac_hw = 0.8
     frac_pg = 0.2
@@ -347,12 +353,6 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
         runner.registerInfo("Removed existing interior/exterior lighting from the model.")
     end
 
-    # Get number of units
-    num_units = Geometry.get_num_units(model, runner)
-    if num_units.nil?
-        return false
-    end
-    
     tot_ltg = 0
     all_unit_garage_spaces = []
     num_units_without_garage = 0
@@ -442,7 +442,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     common_garage_ann = (common_bm_garage_e * (((hw_inc * er_inc + (1 - bab_frac_inc) * bab_er_inc) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
     
     common_garage_spaces.each do |garage_space|
-        space_obj_name = "#{Constants.ObjectNameLighting} #{space.name.to_s}"
+        space_obj_name = "#{Constants.ObjectNameLighting} #{garage_space.name.to_s}"
     
         if sch.nil?
             # Create schedule
@@ -452,14 +452,14 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
             end
         end
         
-        space_ltg_ann = common_garage_ann * OpenStudio.convert(space.floorArea, "m^2", "ft^2").get / common_gfa
+        space_ltg_ann = common_garage_ann * OpenStudio.convert(garage_space.floorArea, "m^2", "ft^2").get / common_gfa
         space_design_level = sch.calcDesignLevel(sch_max*space_ltg_ann)
     
         # Add lighting
         ltg_def = OpenStudio::Model::LightsDefinition.new(model)
         ltg = OpenStudio::Model::Lights.new(ltg_def)
         ltg.setName(space_obj_name)
-        ltg.setSpace(space)
+        ltg.setSpace(garage_space)
         ltg_def.setName(space_obj_name)
         ltg_def.setLightingLevel(space_design_level)
         ltg_def.setFractionRadiant(0.6)
@@ -467,7 +467,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
         ltg_def.setReturnAirFraction(0.0)
         sch.setSchedule(ltg)
 
-        info_msgs << "Lighting with #{space_ltg_ann.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."
+        info_msgs << "Lighting with #{space_ltg_ann.round} kWhs annual energy consumption has been assigned to space '#{garage_space.name.to_s}'."
         tot_ltg += space_ltg_ann
         
     end

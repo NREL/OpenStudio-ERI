@@ -11,7 +11,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
     args_hash = {}
     args_hash["weather_directory"] = "./resuorces" # misspelled
     args_hash["weather_file_name"] = "USA_CO_Denver_Intl_AP_725650_TMY3.epw"
-    result = _test_error("default_geometry.osm", args_hash)
+    result = _test_error_or_NA("default_geometry.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "'#{File.join(File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_directory"])), args_hash["weather_file_name"])}' does not exist or is not an .epw file.")
@@ -20,7 +20,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
   def test_error_invalid_daylight_saving
     args_hash = {}
     args_hash["dst_start_date"] = "April 31"
-    result = _test_error("default_geometry.osm", args_hash)
+    result = _test_error_or_NA("default_geometry.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Invalid daylight saving date specified.")
@@ -30,7 +30,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
     args_hash = {}
     args_hash["dst_start_date"] = "NA"
     args_hash["dst_end_date"] = "NA"
-    result = _test_error("default_geometry.osm", args_hash)
+    result = _test_error_or_NA("default_geometry.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
   end
@@ -44,7 +44,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
   
   private
   
-  def _test_error(osm_file, args_hash)
+  def _test_error_or_NA(osm_file, args_hash)
     # create an instance of the measure
     measure = SetResidentialEPWFile.new
 

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_surfaces</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>3806b9c8-356e-4f31-b2e0-f088fee8771a</version_id>
-  <version_modified>20160910T161523Z</version_modified>
+  <version_id>790d3b65-1326-4f7a-9a0c-e58071ab66b8</version_id>
+  <version_modified>20160912T184845Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedSurfaces</class_name>
   <display_name>Set Residential Uninsulated Surfaces</display_name>
@@ -28,12 +28,6 @@
   </attributes>
   <files>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E3043A6F</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -45,16 +39,22 @@
       <checksum>727E8E45</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D751AB70</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
     </file>
   </files>
 </measure>

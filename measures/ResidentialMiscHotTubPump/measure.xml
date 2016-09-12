@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_pump</name>
   <uid>58b3f782-0d34-455c-9101-df36412196f1</uid>
-  <version_id>7708af3b-d898-4ffb-9c81-1042ecfa48c5</version_id>
-  <version_modified>20160910T161529Z</version_modified>
+  <version_id>5a89f5a4-f16f-493c-beac-dcb40ae8e9ae</version_id>
+  <version_modified>20160912T193621Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialHotTubPump</class_name>
   <display_name>Set Residential Hot Tub Pump</display_name>
@@ -94,12 +94,6 @@
   </attributes>
   <files>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F0FB841</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -112,22 +106,10 @@
       <checksum>22260550</checksum>
     </file>
     <file>
-      <filename>multifamily_3_units.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F0401975</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units_Beds_Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>9E636226</checksum>
-    </file>
-    <file>
-      <filename>ResidentialHotTubPump_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E2676519</checksum>
     </file>
     <file>
       <version>
@@ -141,16 +123,28 @@
       <checksum>70DCB569</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0FC994AC</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotTubPump_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B00754E5</checksum>
     </file>
   </files>
 </measure>

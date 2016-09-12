@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_sheathing</name>
   <uid>b59d63a5-8d7b-41e2-b290-6d22cdfc0c0c</uid>
-  <version_id>6afe5ec1-5ce3-494d-9b12-a19e20701d2a</version_id>
-  <version_modified>20160910T161523Z</version_modified>
+  <version_id>1cdd5d0f-5c54-445f-8b93-8c786dd4dc64</version_id>
+  <version_modified>20160912T184845Z</version_modified>
   <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSheathing</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Sheathing</display_name>
@@ -110,22 +110,22 @@
       <checksum>DBF494D4</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BDE4441E</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E3043A6F</checksum>
+      <checksum>D751AB70</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BDE4441E</checksum>
+      <checksum>FBA77703</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>31afcebe-e5b0-4da3-99d6-607ac1e129bf</version_id>
-  <version_modified>20160910T161524Z</version_modified>
+  <version_id>aa881b71-936c-45fa-be5f-3b4913c96787</version_id>
+  <version_modified>20160912T184846Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
@@ -84,28 +84,28 @@
       <checksum>100DB9B3</checksum>
     </file>
     <file>
-      <filename>DoorArea_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>88A72252</checksum>
-    </file>
-    <file>
       <filename>multifamily_interior_corridor.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>CD6F7971</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <filename>DoorArea_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C8F9339A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
     </file>
   </files>
 </measure>

@@ -7,8 +7,8 @@ require 'fileutils'
 
 class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
-  def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+  def osm_geo_loc
+    return "2000sqft_2story_FB_GRG_UA_Denver.osm"
   end
   
   def osm_geo_beds
@@ -139,88 +139,103 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
   def test_argument_error_tank_volume_invalid_str
     args_hash = {}
     args_hash["storage_tank_volume"] = "test"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 gallons. Make sure that the volume entered is a number > 0 or #{Constants.Auto}.")
   end
   
   def test_argument_error_tank_volume_lt_0
     args_hash = {}
     args_hash["storage_tank_volume"] = "-10"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 gallons. Make sure that the volume entered is a number > 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_tank_volume_eq_0
     args_hash = {}
     args_hash["storage_tank_volume"] = "0"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 gallons. Make sure that the volume entered is a number > 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_setpoint_lt_0
     args_hash = {}
     args_hash["dhw_setpoint_temperature"] = "-10"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Hot water temperature must be greater than 0.")
   end
 
   def test_argument_error_setpoint_lg_300
     args_hash = {}
     args_hash["dhw_setpoint_temperature"] = "300"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Hot water temperature must be less than the boiling point of water.")
   end
 
   def test_argument_error_capacity_invalid_str
     args_hash = {}
-    args_hash["storage_tank_volume"] = "test"
-    _test_error(osm_geo_beds_loc, args_hash)
+    args_hash["water_heater_capacity"] = "test"
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Electric storage water heater nominal capacity must be greater than 0 kW. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_capacity_lt_0
     args_hash = {}
     args_hash["water_heater_capacity"] = "-10"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Electric storage water heater nominal capacity must be greater than 0 kW. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_capacity_eq_0
     args_hash = {}
     args_hash["water_heater_capacity"] = "0"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Electric storage water heater nominal capacity must be greater than 0 kW. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_invalid_str
     args_hash = {}
     args_hash["rated_energy_factor"] = "test"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_lt_0
     args_hash = {}
     args_hash["rated_energy_factor"] = "-10"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_eq_0
     args_hash = {}
     args_hash["rated_energy_factor"] = "0"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_gt_1
     args_hash = {}
     args_hash["rated_energy_factor"] = "1.1"
-    _test_error(osm_geo_beds_loc, args_hash)
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Rated energy factor has a maximum value of 1.0 for electric resistance water heaters.")
   end
 
   def test_error_missing_geometry
     args_hash = {}
-    _test_error(nil, args_hash)
+    result = _test_error(nil, args_hash)
+    assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
   
   def test_error_missing_beds
     args_hash = {}
-    _test_error(osm_geo, args_hash)
+    result = _test_error(osm_geo_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
-    
-  def test_error_missing_location
+  
+  def test_error_missing_mains_temp
     args_hash = {}
-    _test_error(osm_geo_beds, args_hash)
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "Mains water temperature must be set before adding a water heater.")
   end
 
   private
@@ -257,6 +272,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     # assert that it didn't run
     assert_equal("Fail", result.value.valueName)
     assert(result.errors.size == 1)
+    
+    return result
   end
 
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_tank_vol, expected_location, expected_input_cap, expected_thermal_eff, expected_ua, expected_setpoint, num_infos=0, num_warnings=0)

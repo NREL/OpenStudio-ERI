@@ -146,8 +146,8 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
     supply.compressor_speeds = nil   
     
-    # Check if has equipment
-    HelperMethods.remove_hot_water_loop(model, runner)    
+    # Remove boiler hot water loop if it exists
+    HVAC.remove_hot_water_loop(model, runner)    
 
     num_units = Geometry.get_num_units(model, runner)
     if num_units.nil?
@@ -164,7 +164,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
       
         # Remove existing equipment
-        clg_coil = HelperMethods.remove_existing_hvac_equipment(model, runner, "Furnace", control_zone)
+        clg_coil = HVAC.remove_existing_hvac_equipment(model, runner, "Furnace", control_zone)
       
         # _processSystemHeatingCoil
         
@@ -265,8 +265,8 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         slave_zones.each do |slave_zone|
         
           # Remove existing equipment
-          HelperMethods.has_boiler(model, runner, slave_zone, true)
-          HelperMethods.has_electric_baseboard(model, runner, slave_zone, true)        
+          HVAC.has_boiler(model, runner, slave_zone, true)
+          HVAC.has_electric_baseboard(model, runner, slave_zone, true)        
         
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName("FBsmt Zone Direct Air")

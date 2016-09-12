@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>8cbd8b07-f779-41b1-b457-280a499ec64c</version_id>
-  <version_modified>20160910T161521Z</version_modified>
+  <version_id>e6a67fc0-5563-47e4-b1d7-11fe0a9a8e7d</version_id>
+  <version_modified>20160912T193618Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>
@@ -120,18 +120,6 @@
   </attributes>
   <files>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F0FB841</checksum>
-    </file>
-    <file>
-      <filename>multifamily_3_units.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F0401975</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units_Beds_Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -156,12 +144,6 @@
       <checksum>BBCF88E5</checksum>
     </file>
     <file>
-      <filename>ResidentialClothesDryer_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9F664574</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -173,16 +155,28 @@
       <checksum>DEE4538B</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0FC994AC</checksum>
+    </file>
+    <file>
+      <filename>ResidentialClothesDryer_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>799C9FE7</checksum>
     </file>
   </files>
 </measure>

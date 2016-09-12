@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>5f94cadd-5428-4801-942e-34b9280b8eae</version_id>
-  <version_modified>20160910T161525Z</version_modified>
+  <version_id>32374ce1-e4ff-4079-9fda-879fa372cd1b</version_id>
+  <version_modified>20160912T184847Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -116,12 +116,6 @@
       <checksum>55BD6CF0</checksum>
     </file>
     <file>
-      <filename>create_residential_neighbors_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>71C21AD6</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -133,16 +127,22 @@
       <checksum>3BDC17F6</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <filename>create_residential_neighbors_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5B69CA64</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
     </file>
   </files>
 </measure>

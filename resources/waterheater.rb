@@ -6,6 +6,25 @@ require "#{File.dirname(__FILE__)}/geometry"
 require "#{File.dirname(__FILE__)}/schedules"
 
 class Waterheater
+
+    def self.get_plant_loop_from_string(model, plantloop_s, runner, print_err=true)
+        plant_loop = nil
+        model.getPlantLoops.each do |pl|
+            if pl.name.to_s == plantloop_s
+                plant_loop = pl
+                break
+            end
+        end
+        if plant_loop.nil?
+            if print_err
+                runner.registerError("Could not find plant loop with the name '#{plantloop_s}'.")
+            else
+                runner.registerWarning("Could not find plant loop with the name '#{plantloop_s}'.")
+            end
+        end
+        return plant_loop
+    end
+
     def self.deadband(tank_type)
         if tank_type == Constants.WaterHeaterTypeTank
             return 2.0 # deg-C

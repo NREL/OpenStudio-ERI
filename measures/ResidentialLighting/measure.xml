@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>2c69a60e-501a-4516-a253-725d23808b2d</uid>
-  <version_id>e98307e6-c436-4419-8352-5e510ada3726</version_id>
-  <version_modified>20160910T161528Z</version_modified>
+  <version_id>4cb26e80-9309-488a-b246-55d31ff9db36</version_id>
+  <version_modified>20160912T190201Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -147,12 +147,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F0FB841</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -165,34 +159,64 @@
       <checksum>BD2CE49B</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>22260550</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>71438C40</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>FF4CE9E0</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1025BF57</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_CommonGRG_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>703E2FA9</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_Anchorage.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9E654038</checksum>
+    </file>
+    <file>
+      <filename>USA_AK_Anchorage.Intl.AP.702730_TMY3.ddy</filename>
+      <filetype>ddy</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EF86E8EC</checksum>
+    </file>
+    <file>
+      <filename>USA_AK_Anchorage.Intl.AP.702730_TMY3.epw</filename>
+      <filetype>epw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>01DBB4A1</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E3043A6F</checksum>
+      <checksum>D751AB70</checksum>
     </file>
     <file>
-      <filename>ResidentialLighting_Test.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DD137935</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0FC994AC</checksum>
     </file>
     <file>
       <version>
@@ -203,19 +227,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D1E810AA</checksum>
+      <checksum>216FD353</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>ResidentialLighting_Test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BDE4441E</checksum>
+      <usage_type>test</usage_type>
+      <checksum>7FDAED94</checksum>
     </file>
   </files>
 </measure>

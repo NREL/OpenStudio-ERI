@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_lighting</name>
   <uid>6b9211da-6274-4b09-8c76-9edbc85886c0</uid>
-  <version_id>50163c77-b813-407c-baa5-263236a3bde4</version_id>
-  <version_modified>20160910T161529Z</version_modified>
+  <version_id>ab19aacd-5ac7-404c-863a-8e1255d2616c</version_id>
+  <version_modified>20160912T193620Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasLighting</class_name>
   <display_name>Set Residential Gas Lighting</display_name>
@@ -94,12 +94,6 @@
   </attributes>
   <files>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F0FB841</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -124,12 +118,6 @@
       <checksum>9E636226</checksum>
     </file>
     <file>
-      <filename>ResidentialGasLighting_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DC092FBE</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -141,16 +129,28 @@
       <checksum>EBEC7277</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BDE4441E</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FBA77703</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0FC994AC</checksum>
+    </file>
+    <file>
+      <filename>ResidentialGasLighting_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BD642D6B</checksum>
     </file>
   </files>
 </measure>

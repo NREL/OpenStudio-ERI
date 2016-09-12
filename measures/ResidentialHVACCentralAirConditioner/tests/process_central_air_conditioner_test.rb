@@ -85,15 +85,6 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
   
-  def test_hardsized_evaporatively_cooled_unit
-    args_hash = {}
-    args_hash["acCoolingOutputCapacity"] = "3.0 tons"
-    args_hash["acCondenserType"] = "evaporativelycooled"
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
-  end
-  
   def test_hardsized_has_ideal_ac
     args_hash = {}
     args_hash["acCoolingInstalledSEER"] = 999

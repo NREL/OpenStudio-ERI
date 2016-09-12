@@ -119,71 +119,83 @@ class ResidentialDishwasherTest < MiniTest::Test
   def test_argument_error_num_settings_negative
     args_hash = {}
     args_hash["num_settings"] = -1
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Number of place settings must be greater than or equal to 1.")
   end
   
   def test_argument_error_num_settings_zero
     args_hash = {}
     args_hash["num_settings"] = 0
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Number of place settings must be greater than or equal to 1.")
   end
 
   def test_argument_error_dw_E_negative
     args_hash = {}
     args_hash["dw_E"] = -1.0
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Rated annual energy consumption must be greater than or equal to 0.")
   end
   
   def test_argument_error_cold_use_negative
     args_hash = {}
     args_hash["cold_use"] = -1.0
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Cold water connection use must be greater than or equal to 0.")
   end
 
   def test_argument_error_eg_date_negative
     args_hash = {}
     args_hash["eg_date"] = -1
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Energy Guide date must be greater than or equal to 1900.")
   end
 
   def test_argument_error_eg_date_zero
     args_hash = {}
     args_hash["eg_date"] = 0
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Energy Guide date must be greater than or equal to 1900.")
   end
 
   def test_argument_error_eg_gas_cost_negative
     args_hash = {}
     args_hash["eg_gas_cost"] = -1
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Energy Guide annual gas cost must be greater than 0.")
   end
 
   def test_argument_error_eg_gas_cost_zero
     args_hash = {}
     args_hash["eg_gas_cost"] = 0
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Energy Guide annual gas cost must be greater than 0.")
   end
 
   def test_argument_error_mult_e_negative
     args_hash = {}
     args_hash["mult_e"] = -1
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Occupancy energy multiplier must be greater than or equal to 0.")
   end
 
   def test_argument_error_mult_hw_negative
     args_hash = {}
     args_hash["mult_hw"] = -1
-    _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
+    assert_equal(result.errors[0].logMessage, "Occupancy hot water multiplier must be greater than or equal to 0.")
   end
 
   def test_error_missing_geometry
     args_hash = {}
-    _test_error(nil, args_hash)
+    result = _test_error(nil, args_hash)
+    assert_equal(result.errors[0].logMessage, "Could not find space with the name '#{Constants.LivingSpace(1)}'.")
   end
   
   def test_error_missing_water_heater
     args_hash = {}
-    _test_error(osm_geo, args_hash)
+    result = _test_error(osm_geo, args_hash)
+    assert_equal(result.errors[0].logMessage, "Could not find plant loop with the name '#{Constants.PlantLoopDomesticWater}'.")
   end
 
   private
@@ -220,6 +232,8 @@ class ResidentialDishwasherTest < MiniTest::Test
     # assert that it didn't run
     assert_equal("Fail", result.value.valueName)
     assert(result.errors.size == 1)
+    
+    return result
   end
 
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0, expected_hw_gpd=0.0)

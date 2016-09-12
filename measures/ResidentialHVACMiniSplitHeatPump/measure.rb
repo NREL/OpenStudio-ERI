@@ -430,8 +430,8 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     defrosteir.setMinimumValueofy(-100)
     defrosteir.setMaximumValueofy(100)
     
-    # Check if has equipment
-    HelperMethods.remove_hot_water_loop(model, runner)    
+    # Remove boiler hot water loop if it exists
+    HVAC.remove_hot_water_loop(model, runner)    
     
     num_units = Geometry.get_num_units(model, runner)
     if num_units.nil?
@@ -448,7 +448,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
 
         # Remove existing equipment
-        HelperMethods.remove_existing_hvac_equipment(model, runner, "Mini-Split Heat Pump", control_zone)
+        HVAC.remove_existing_hvac_equipment(model, runner, "Mini-Split Heat Pump", control_zone)
       
         # _processSystemHeatingCoil
         
@@ -561,8 +561,8 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
 
         slave_zones.each do |slave_zone|
 
-          HelperMethods.has_boiler(model, runner, slave_zone, true)
-          HelperMethods.has_electric_baseboard(model, runner, slave_zone, true)
+          HVAC.has_boiler(model, runner, slave_zone, true)
+          HVAC.has_electric_baseboard(model, runner, slave_zone, true)
       
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName("FBsmt Zone Direct Air")

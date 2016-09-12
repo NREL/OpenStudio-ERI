@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>a118a6ba-8c40-4b19-949f-df66e9766d43</version_id>
-  <version_modified>20160909T200737Z</version_modified>
+  <version_id>bbd7370a-4fb6-4b39-bef2-400e71f33f10</version_id>
+  <version_modified>20160912T190201Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
@@ -116,12 +116,6 @@
       <checksum>49CEE97F</checksum>
     </file>
     <file>
-      <filename>set_location_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>50E07F4F</checksum>
-    </file>
-    <file>
       <filename>default_geometry.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -137,13 +131,19 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E3043A6F</checksum>
+      <checksum>D751AB70</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>99161DFB</checksum>
+      <checksum>FBA77703</checksum>
+    </file>
+    <file>
+      <filename>set_location_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>20EC4214</checksum>
     </file>
   </files>
 </measure>
