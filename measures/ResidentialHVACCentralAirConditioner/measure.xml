@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>39717da8-d82a-45df-b6c1-dc4401490e92</version_id>
-  <version_modified>20160912T193845Z</version_modified>
+  <version_id>ce29635b-09c1-4571-92c1-ef6f97577c79</version_id>
+  <version_modified>20160913T183256Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -425,12 +425,6 @@
       <checksum>CA18F65A</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FBA77703</checksum>
-    </file>
-    <file>
       <filename>process_central_air_conditioner_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -446,6 +440,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>029D87DA</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9CC553AE</checksum>
     </file>
   </files>
 </measure>

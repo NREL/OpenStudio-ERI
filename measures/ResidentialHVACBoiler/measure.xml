@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>1c5db41e-3fe7-4e30-aa9c-39ff4006edf0</version_id>
-  <version_modified>20160912T193845Z</version_modified>
+  <version_id>1d9158e4-bdae-4d8c-ac84-602d4faff616</version_id>
+  <version_modified>20160913T183256Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -434,12 +434,6 @@
       <checksum>CA18F65A</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FBA77703</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.6</identifier>
@@ -449,6 +443,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>F1A826E0</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9CC553AE</checksum>
     </file>
   </files>
 </measure>

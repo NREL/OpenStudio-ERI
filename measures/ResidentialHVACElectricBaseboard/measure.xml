@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>3e1aad87-0700-4c48-a332-d41f59283894</version_id>
-  <version_modified>20160912T193845Z</version_modified>
+  <version_id>029de5bc-335b-4093-8645-eb4730edf807</version_id>
+  <version_modified>20160913T183257Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -305,12 +305,6 @@
       <checksum>CA18F65A</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FBA77703</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -320,6 +314,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>922725A7</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9CC553AE</checksum>
     </file>
   </files>
 </measure>

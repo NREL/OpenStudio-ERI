@@ -7,6 +7,16 @@ require 'fileutils'
 
 class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
 
+  def test_argument_error_crawl_height_invalid
+    args_hash = {}
+    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_height"] = 0
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors[0].logMessage, "The crawlspace height can be set between 1.5 and 5 ft.")
+  end
+  
   def test_warning_implied_front_and_back_units
     args_hash = {}
     args_hash["corr_pos"] = "Double-Loaded Interior"
@@ -95,7 +105,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash["corr_pos"] = "Double Exterior"
     args_hash["inset_width"] = 8
     args_hash["inset_depth"] = 6
-    args_hash["inset_pos"] = "Left"
+    args_hash["inset_pos"] = "Right"
     args_hash["balc_depth"] = 6
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -110,6 +120,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash["corr_pos"] = "Double-Loaded Interior"
     args_hash["inset_width"] = 8
     args_hash["inset_depth"] = 6
+    args_hash["foundation_type"] = Constants.FinishedBasementSpace
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -125,6 +136,8 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash["inset_width"] = 8
     args_hash["inset_depth"] = 6
     args_hash["inset_pos"] = "Left"
+    args_hash["balc_depth"] = 6
+    args_hash["foundation_type"] = Constants.UnfinishedBasementSpace
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -136,10 +149,39 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash["num_units_per_floor"] = 12
     args_hash["corr_width"] = 5
     args_hash["corr_pos"] = "Single Exterior (Front)"
+    args_hash["foundation_type"] = Constants.CrawlSpace
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
-  end  
+  end
+  
+  def test_crawlspace_double_loaded_corr
+    args_hash = {}
+    args_hash["num_units_per_floor"] = 4
+    args_hash["corr_pos"] = "Double-Loaded Interior"
+    args_hash["foundation_type"] = Constants.CrawlSpace
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+  
+  def test_ufbasement_no_corr
+    args_hash = {}
+    args_hash["num_units_per_floor"] = 4
+    args_hash["foundation_type"] = Constants.UnfinishedBasementSpace
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+  
+  def test_fbasement_no_corr
+    args_hash = {}
+    args_hash["num_units_per_floor"] = 4
+    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end   
   
   private
   

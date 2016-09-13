@@ -115,7 +115,7 @@ class Constants
   end
   def self.CorridorSpace(story=1)
     s_story = ""
-    if story > 1
+    if story > 1 or story == 0
       s_story = "|story #{story}"
     end
     return "corridor space#{s_story}"
