@@ -117,9 +117,9 @@ class Geometry
         # Get lowest above-grade space
         bldg_min_z = 100000
         unit_spaces.each do |s|
-            next if Geometry.space_is_below_grade(s)
-            next if Geometry.space_is_unfinished(s)
-            space_min_z = Geometry.getSurfaceZValues(s.surfaces).min + OpenStudio::convert(s.zOrigin,"m","ft").get
+            next if self.space_is_below_grade(s)
+            next if self.space_is_unfinished(s)
+            space_min_z = self.getSurfaceZValues(s.surfaces).min + OpenStudio::convert(s.zOrigin,"m","ft").get
             next if space_min_z >= bldg_min_z
             bldg_min_z = space_min_z
             space = s
@@ -127,8 +127,8 @@ class Geometry
         if space.nil?
             # Try below-grade space
             unit_spaces.each do |s|
-                next if Geometry.space_is_above_grade(s)
-                next if Geometry.space_is_unfinished(s)
+                next if self.space_is_above_grade(s)
+                next if self.space_is_unfinished(s)
                 space = s
                 break
             end
@@ -141,7 +141,7 @@ class Geometry
     
     # Returns all spaces in the model associated with a unit
     def self.get_all_unit_spaces(model, runner=nil)
-        num_units = Geometry.get_num_units(model, runner)
+        num_units = self.get_num_units(model, runner)
         if num_units.nil?
             return nil
         end
@@ -205,7 +205,7 @@ class Geometry
     
     # Calculates the space height as the max z coordinate minus the min z coordinate
     def self.space_height(space)
-        zvalues = Geometry.getSurfaceZValues(space.surfaces)
+        zvalues = self.getSurfaceZValues(space.surfaces)
         minz = zvalues.min
         maxz = zvalues.max
         return maxz - minz
@@ -215,7 +215,7 @@ class Geometry
       minzs = []
       maxzs = []
       spaces.each do |space|
-        zvalues = Geometry.getSurfaceZValues(space.surfaces)
+        zvalues = self.getSurfaceZValues(space.surfaces)
         minzs << zvalues.min + OpenStudio::convert(space.zOrigin,"m","ft").get
         maxzs << zvalues.max + OpenStudio::convert(space.zOrigin,"m","ft").get
       end
@@ -226,10 +226,10 @@ class Geometry
     def self.get_building_stories(spaces)
       space_min_zs = []
       spaces.each do |space|
-        next if not Geometry.space_is_finished(space)
+        next if not self.space_is_finished(space)
         surfaces_min_zs = []
         space.surfaces.each do |surface|
-          zvalues = Geometry.getSurfaceZValues([surface])
+          zvalues = self.getSurfaceZValues([surface])
           surfaces_min_zs << zvalues.min + OpenStudio::convert(space.zOrigin,"m","ft").get
         end
         space_min_zs << surfaces_min_zs.min
@@ -239,7 +239,7 @@ class Geometry
     
     # Calculates the surface height as the max z coordinate minus the min z coordinate
     def self.surface_height(surface)
-        zvalues = Geometry.getSurfaceZValues([surface])
+        zvalues = self.getSurfaceZValues([surface])
         minz = zvalues.min
         maxz = zvalues.max
         return maxz - minz
@@ -257,7 +257,7 @@ class Geometry
     def self.zone_is_above_grade(zone)
       spaces_are_above_grade = []
       zone.spaces.each do |space|
-        spaces_are_above_grade << Geometry.space_is_above_grade(space)
+        spaces_are_above_grade << self.space_is_above_grade(space)
       end
       if spaces_are_above_grade.all?
         return true
@@ -267,17 +267,17 @@ class Geometry
 
     # Returns true if all spaces in zone are either fully or partially below grade
     def self.zone_is_below_grade(zone)
-      return !Geometry.zone_is_above_grade(zone)
+      return !self.zone_is_above_grade(zone)
     end       
     
     def self.get_finished_above_and_below_grade_zones(thermal_zones)
       finished_living_zones = []
       finished_basement_zones = []
       thermal_zones.each do |thermal_zone|
-        next unless Geometry.zone_is_finished(thermal_zone)
-        if Geometry.zone_is_above_grade(thermal_zone)
+        next unless self.zone_is_finished(thermal_zone)
+        if self.zone_is_above_grade(thermal_zone)
           finished_living_zones << thermal_zone
-        elsif Geometry.zone_is_below_grade(thermal_zone)
+        elsif self.zone_is_below_grade(thermal_zone)
           finished_basement_zones << thermal_zone
         end
       end
@@ -304,19 +304,19 @@ class Geometry
    end
     
     def self.space_is_unfinished(space)
-        return !Geometry.space_is_finished(space)
+        return !self.space_is_finished(space)
     end
     
     def self.space_is_finished(space)
         if space.thermalZone.is_initialized
-            return Geometry.zone_is_finished(space.thermalZone.get)
+            return self.zone_is_finished(space.thermalZone.get)
         end
         return false
     end
     
     # Returns true if space is fully above grade
     def self.space_is_above_grade(space)
-        return !Geometry.space_is_below_grade(space)
+        return !self.space_is_below_grade(space)
     end
     
     # Returns true if space is either fully or partially below grade
@@ -346,7 +346,7 @@ class Geometry
             next if not surface.adjacentSurface.is_initialized
             next if not surface.adjacentSurface.get.space.is_initialized
             adjacent_space = surface.adjacentSurface.get.space.get
-            next if not Geometry.space_is_finished(adjacent_space)
+            next if not self.space_is_finished(adjacent_space)
             return true
         end
         return false
@@ -354,7 +354,7 @@ class Geometry
 
     def self.get_space_from_string(spaces, space_s, runner=nil)
         if space_s == Constants.Auto
-            return Geometry.get_unit_default_finished_space(spaces, runner)
+            return self.get_unit_default_finished_space(spaces, runner)
         end
         space = nil
         spaces.each do |s|
@@ -420,7 +420,7 @@ class Geometry
     def self.spaces_avg_height(spaces)
         sum_height = 0
         spaces.each do |space|
-            sum_height += Geometry.space_height(space)
+            sum_height += self.space_height(space)
         end
         return sum_height/spaces.size
     end
@@ -481,7 +481,7 @@ class Geometry
         if not adjacent_surface.space.is_initialized
             return false
         end
-        if Geometry.space_is_finished(surface.space.get) == Geometry.space_is_finished(adjacent_surface.space.get)
+        if self.space_is_finished(surface.space.get) == self.space_is_finished(adjacent_surface.space.get)
             return false
         end
         return true
@@ -497,7 +497,7 @@ class Geometry
         # Get ground edges
         if not has_foundation_walls
             # Use edges from floor surface
-            ground_edge_hash = Geometry.get_edges_for_surfaces(ground_floor_surfaces)
+            ground_edge_hash = self.get_edges_for_surfaces(ground_floor_surfaces)
         else
             # Use top edges from foundation walls instead
             surfaces = []
@@ -510,17 +510,17 @@ class Geometry
                     surfaces << surface
                 end
             end
-            ground_edge_hash = Geometry.get_edges_for_surfaces(surfaces, true)
+            ground_edge_hash = self.get_edges_for_surfaces(surfaces, true)
         end
         
         # Get bottom edges of exterior exposed walls or interzonal walls
         surfaces = []
         model.getSurfaces.each do |surface|
             next if not surface.surfaceType.downcase == "wall"
-            next if not (surface.outsideBoundaryCondition.downcase == "outdoors" or Geometry.is_interzonal_surface(surface))
+            next if not (surface.outsideBoundaryCondition.downcase == "outdoors" or self.is_interzonal_surface(surface))
             surfaces << surface
         end
-        model_edge_hash = Geometry.get_edges_for_surfaces(surfaces)
+        model_edge_hash = self.get_edges_for_surfaces(surfaces)
         
         # check edges for matches
         ground_edge_hash.each do |k1,v1|
@@ -544,9 +544,9 @@ class Geometry
         surfaces.each do |surface|
             # ensure we only process bottom or top edge of wall surfaces
             if use_top_edge
-                matchz = Geometry.getSurfaceZValues([surface]).max
+                matchz = self.getSurfaceZValues([surface]).max
             else
-                matchz = Geometry.getSurfaceZValues([surface]).min
+                matchz = self.getSurfaceZValues([surface]).min
             end
             # get vertices
             vertex_hash = {}
@@ -576,8 +576,8 @@ class Geometry
     def self.get_crawl_spaces(spaces)
         crawl_spaces = []
         spaces.each do |space|
-            next if Geometry.space_is_above_grade(space)
-            next if Geometry.space_height(space) >= Constants.MinimumBasementHeight
+            next if self.space_is_above_grade(space)
+            next if self.space_height(space) >= Constants.MinimumBasementHeight
             crawl_spaces << space
         end
         return crawl_spaces
@@ -586,7 +586,7 @@ class Geometry
     def self.get_finished_spaces(spaces)
         finished_spaces = []
         spaces.each do |space|
-            next if Geometry.space_is_unfinished(space)
+            next if self.space_is_unfinished(space)
             finished_spaces << space
         end
         return finished_spaces
@@ -595,9 +595,9 @@ class Geometry
     def self.get_finished_basement_spaces(spaces)
         finished_basement_spaces = []
         spaces.each do |space|
-            next if Geometry.space_is_unfinished(space)
-            next if Geometry.space_is_above_grade(space)
-            next if Geometry.space_height(space) < Constants.MinimumBasementHeight
+            next if self.space_is_unfinished(space)
+            next if self.space_is_above_grade(space)
+            next if self.space_height(space) < Constants.MinimumBasementHeight
             finished_basement_spaces << space
         end
         return finished_basement_spaces
@@ -606,9 +606,9 @@ class Geometry
     def self.get_unfinished_basement_spaces(spaces)
         unfinished_basement_spaces = []
         spaces.each do |space|
-            next if Geometry.space_is_finished(space)
-            next if Geometry.space_is_above_grade(space)
-            next if Geometry.space_height(space) < Constants.MinimumBasementHeight
+            next if self.space_is_finished(space)
+            next if self.space_is_above_grade(space)
+            next if self.space_height(space) < Constants.MinimumBasementHeight
             unfinished_basement_spaces << space
         end
         return unfinished_basement_spaces
@@ -617,9 +617,9 @@ class Geometry
     def self.get_unfinished_attic_spaces(spaces, model)
         unfinished_attic_spaces = []
         spaces.each do |space|
-            next if Geometry.space_is_finished(space)
-            next if not Geometry.space_has_roof(space)
-            next if not Geometry.space_below_is_finished(space, model)
+            next if self.space_is_finished(space)
+            next if not self.space_has_roof(space)
+            next if not self.space_below_is_finished(space, model)
             unfinished_attic_spaces << space
         end
         return unfinished_attic_spaces
@@ -628,9 +628,9 @@ class Geometry
     def self.get_finished_attic_spaces(spaces, model)
         finished_attic_spaces = []
         spaces.each do |space|
-            next if Geometry.space_is_unfinished(space)
-            next if not Geometry.space_has_roof(space)
-            next if not Geometry.space_below_is_finished(space, model)
+            next if self.space_is_unfinished(space)
+            next if not self.space_has_roof(space)
+            next if not self.space_below_is_finished(space, model)
             finished_attic_spaces << space
         end
         return finished_attic_spaces
@@ -639,10 +639,10 @@ class Geometry
     def self.get_garage_spaces(spaces, model) #unfinished, above grade spaces without a finished space below
         garage_spaces = []
         spaces.each do |space|
-            next if Geometry.space_is_finished(space)
-            next if Geometry.space_is_below_grade(space)
-            next if Geometry.space_below_is_finished(space, model)
-            next if Geometry.space_has_roof(space)
+            next if self.space_is_finished(space)
+            next if self.space_is_below_grade(space)
+            next if self.space_below_is_finished(space, model)
+            next if self.space_has_roof(space)
             garage_spaces << space
         end
         return garage_spaces
@@ -651,9 +651,9 @@ class Geometry
     def self.get_non_attic_unfinished_roof_spaces(spaces, model)
         non_attic_unfinished_roof_spaces = []
         spaces.each do |space|
-            next if Geometry.space_is_finished(space)
-            next if not Geometry.space_has_roof(space)
-            next if Geometry.space_below_is_finished(space, model)
+            next if self.space_is_finished(space)
+            next if not self.space_has_roof(space)
+            next if self.space_below_is_finished(space, model)
             non_attic_unfinished_roof_spaces << space
         end
         return non_attic_unfinished_roof_spaces
@@ -688,8 +688,8 @@ class Geometry
     end
     
     def self.get_surface_length(surface)
-        xvalues = Geometry.getSurfaceXValues([surface])
-        yvalues = Geometry.getSurfaceYValues([surface])
+        xvalues = self.getSurfaceXValues([surface])
+        yvalues = self.getSurfaceYValues([surface])
         xrange = xvalues.max - xvalues.min
         yrange = yvalues.max - yvalues.min
         if xrange > yrange
@@ -699,7 +699,7 @@ class Geometry
    end
    
    def self.get_surface_height(surface) 
-        zvalues = Geometry.getSurfaceZValues([surface])
+        zvalues = self.getSurfaceZValues([surface])
         zrange = zvalues.max - zvalues.min
         return zrange
    end
@@ -715,7 +715,7 @@ class Geometry
             return false
         end
         space = surface.space.get
-        if not Geometry.space_has_roof(space)
+        if not self.space_has_roof(space)
             return false
         end
         return true
@@ -728,9 +728,9 @@ class Geometry
         if surface.vertices.size != 4
             return false
         end        
-        xvalues = Geometry.getSurfaceXValues([surface])
-        yvalues = Geometry.getSurfaceYValues([surface])
-        zvalues = Geometry.getSurfaceZValues([surface])
+        xvalues = self.getSurfaceXValues([surface])
+        yvalues = self.getSurfaceYValues([surface])
+        zvalues = self.getSurfaceZValues([surface])
         if not ((xvalues.uniq.size == 1 and yvalues.uniq.size == 2) or
                 (xvalues.uniq.size == 2 and yvalues.uniq.size == 1))
             return false

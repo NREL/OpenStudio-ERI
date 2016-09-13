@@ -360,8 +360,12 @@ class Constants
   def self.ObjectNameBathDist
     return 'residential bath dist'
   end
-  def self.ObjectNameClothesWasher
-    return 'residential clothes washer'
+  def self.ObjectNameClothesWasher(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential clothes washer#{s_unit}"
   end
   def self.ObjectNameClothesDryer(fueltype, unit=1)
     s_unit = ""
@@ -387,8 +391,12 @@ class Constants
   def self.ObjectNameCoolingSetpoint
     return 'residential cooling setpoint'
   end
-  def self.ObjectNameDishwasher
-    return 'residential dishwasher'
+  def self.ObjectNameDishwasher(unit=1)
+    s_unit = ""
+    if unit > 1
+      s_unit = "|unit #{unit}"
+    end
+    return "residential dishwasher#{s_unit}"
   end
   def self.ObjectNameExtraRefrigerator(unit=1)
     s_unit = ""

@@ -250,7 +250,7 @@ class SimpleMaterial
     attr_accessor :name, :rvalue
 
     def self.Adiabatic
-        return SimpleMaterial.new(name='Adiabatic', rvalue=1000)
+        return self.new(name='Adiabatic', rvalue=1000)
     end
 
 end
@@ -330,45 +330,45 @@ class Material
     
     def self.AirCavityClosed(thick_in)
         rvalue = Gas.AirGapRvalue
-        return Material.new(name=nil, thick_in=thick_in, mat_base=nil, k_in=thick_in/rvalue, rho=Gas.Air.rho, cp=Gas.Air.cp)
+        return self.new(name=nil, thick_in=thick_in, mat_base=nil, k_in=thick_in/rvalue, rho=Gas.Air.rho, cp=Gas.Air.cp)
     end
     
     def self.AirCavityOpen(thick_in)
-        return Material.new(name=nil, thick_in=thick_in, mat_base=nil, k_in=10000000.0, rho=Gas.Air.rho, cp=Gas.Air.cp)
+        return self.new(name=nil, thick_in=thick_in, mat_base=nil, k_in=10000000.0, rho=Gas.Air.rho, cp=Gas.Air.cp)
     end
     
     def self.AirFilmOutside
         rvalue = 0.197 # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmVertical
         rvalue = 0.68 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmFlatEnhanced
         rvalue = 0.61 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmFlatReduced
         rvalue = 0.92 # hr-ft-F/Btu (ASHRAE 2005, F25.2, Table 1)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmFloorAverage
         # For floors between conditioned spaces where heat does not flow across
         # the floor; heat transfer is only important with regards to the thermal
-        rvalue = (Material.AirFilmFlatReduced.rvalue + Material.AirFilmFlatEnhanced.rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        rvalue = (self.AirFilmFlatReduced.rvalue + self.AirFilmFlatEnhanced.rvalue) / 2.0 # hr-ft-F/Btu
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmFloorReduced
         # For floors above unconditioned basement spaces, where heat will
         # always flow down through the floor.
-        rvalue = Material.AirFilmFlatReduced.rvalue # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        rvalue = self.AirFilmFlatReduced.rvalue # hr-ft-F/Btu
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmSlopeEnhanced(highest_roof_pitch)
@@ -377,7 +377,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
         rvalue = 0.002 * Math::exp(0.0398 * highest_roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmSlopeReduced(highest_roof_pitch)
@@ -386,7 +386,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
         rvalue = 0.32 * Math::exp(-0.0154 * highest_roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmSlopeEnhancedReflective(highest_roof_pitch)
@@ -395,7 +395,7 @@ class Material
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
         rvalue = 0.00893 * Math::exp(0.0419 * highest_roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmSlopeReducedReflective(highest_roof_pitch)
@@ -404,136 +404,136 @@ class Material
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
         rvalue = 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmRoof(highest_roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return Material.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue * hdd_frac + Material.AirFilmSlopeReduced(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
+        #return self.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue * hdd_frac + self.AirFilmSlopeReduced(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        rvalue = (Material.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue + Material.AirFilmSlopeReduced(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        rvalue = (self.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue + self.AirFilmSlopeReduced(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.AirFilmRoofRadiantBarrier(highest_roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue * hdd_frac + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
+        #return self.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue * hdd_frac + self.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        rvalue = (Material.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue + Material.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
-        return Material.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
+        rvalue = (self.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue + self.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
+        return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
     def self.CoveringBare(floorFraction=0.8, rvalue=2.08)
         # Combined layer of, e.g., carpet and bare floor
         thickness = 0.5 # in
-        return Material.new(name=Constants.MaterialFloorCovering, thick_in=thickness, mat_base=nil, k_in=thickness / (rvalue * floorFraction), rho=3.4, cp=0.32, tAbs=0.9, sAbs=0.9)
+        return self.new(name=Constants.MaterialFloorCovering, thick_in=thickness, mat_base=nil, k_in=thickness / (rvalue * floorFraction), rho=3.4, cp=0.32, tAbs=0.9, sAbs=0.9)
     end
 
     def self.Concrete8in
-        return Material.new(name='Concrete-8in', thick_in=8, mat_base=BaseMaterial.Concrete, k_in=nil, rho=nil, cp=nil, tAbs=0.9)
+        return self.new(name='Concrete-8in', thick_in=8, mat_base=BaseMaterial.Concrete, k_in=nil, rho=nil, cp=nil, tAbs=0.9)
     end
 
     def self.Concrete4in
-        return Material.new(name='Concrete-4in', thick_in=4, mat_base=BaseMaterial.Concrete, k_in=nil, rho=nil, cp=nil, tAbs=0.9)
+        return self.new(name='Concrete-4in', thick_in=4, mat_base=BaseMaterial.Concrete, k_in=nil, rho=nil, cp=nil, tAbs=0.9)
     end
     
     def self.DefaultCeilingMass
-        mat = Material.GypsumWall1_2in
+        mat = self.GypsumWall1_2in
         mat.name = Constants.MaterialCeilingMass
         return mat
     end
     
     def self.DefaultExteriorFinish
         thick_in = 0.375
-        return Material.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, k_in=thick_in/0.6, rho=11.1, cp=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
+        return self.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, k_in=thick_in/0.6, rho=11.1, cp=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
     end
     
     def self.DefaultFloorCovering
-        mat = Material.CoveringBare
+        mat = self.CoveringBare
         mat.name = Constants.MaterialFloorCovering
         return mat
     end
 
     def self.DefaultFloorMass
-        return Material.new(name=Constants.MaterialFloorMass, thick_in=0.625, mat_base=nil, k_in=0.8004, rho=34.0, cp=0.29) # wood surface
+        return self.new(name=Constants.MaterialFloorMass, thick_in=0.625, mat_base=nil, k_in=0.8004, rho=34.0, cp=0.29) # wood surface
     end
     
     def self.DefaultFloorSheathing
-        mat = Material.Plywood3_4in
+        mat = self.Plywood3_4in
         mat.name = Constants.MaterialFloorSheathing
         return mat
     end
     
     def self.DefaultRoofMaterial
-        mat = Material.RoofMaterial(0.91, 0.85)
+        mat = self.RoofMaterial(0.91, 0.85)
         mat.name = Constants.MaterialRoofMaterial
         return mat
     end
     
     def self.DefaultRoofSheathing
-        mat = Material.Plywood3_4in
+        mat = self.Plywood3_4in
         mat.name = Constants.MaterialRoofSheathing
         return mat
     end
     
     def self.DefaultWallMass
-        mat = Material.GypsumWall1_2in
+        mat = self.GypsumWall1_2in
         mat.name = Constants.MaterialWallMass
         return mat
     end
     
     def self.DefaultWallSheathing
-        mat = Material.Plywood1_2in
+        mat = self.Plywood1_2in
         mat.name = Constants.MaterialWallSheathing
         return mat
     end
 
     def self.GypsumWall1_2in
-        return Material.new(name='WallGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, k_in=nil, rho=nil, cp=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
+        return self.new(name='WallGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, k_in=nil, rho=nil, cp=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsWall, vAbs=0.1)
     end
 
     def self.GypsumCeiling1_2in
-        return Material.new(name='CeilingGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, k_in=nil, rho=nil, cp=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
+        return self.new(name='CeilingGypsumBoard-1_2in', thick_in=0.5, mat_base=BaseMaterial.Gypsum, k_in=nil, rho=nil, cp=nil, tAbs=0.9, sAbs=Constants.DefaultSolarAbsCeiling, vAbs=0.1)
     end
 
     def self.Soil12in
-        return Material.new(name='Soil-12in', thick_in=12, mat_base=BaseMaterial.Soil)
+        return self.new(name='Soil-12in', thick_in=12, mat_base=BaseMaterial.Soil)
     end
 
     def self.Stud2x(thick_in)
-        return Material.new(name="Stud2x#{thick_in.to_s}", thick_in=thick_in, mat_base=BaseMaterial.Wood)
+        return self.new(name="Stud2x#{thick_in.to_s}", thick_in=thick_in, mat_base=BaseMaterial.Wood)
     end
     
     def self.Stud2x4
-        return Material.new(name='Stud2x4', thick_in=3.5, mat_base=BaseMaterial.Wood)
+        return self.new(name='Stud2x4', thick_in=3.5, mat_base=BaseMaterial.Wood)
     end
 
     def self.Stud2x6
-        return Material.new(name='Stud2x6', thick_in=5.5, mat_base=BaseMaterial.Wood)
+        return self.new(name='Stud2x6', thick_in=5.5, mat_base=BaseMaterial.Wood)
     end
 
     def self.Plywood1_2in
-        return Material.new(name='Plywood-1_2in', thick_in=0.5, mat_base=BaseMaterial.Wood)
+        return self.new(name='Plywood-1_2in', thick_in=0.5, mat_base=BaseMaterial.Wood)
     end
 
     def self.Plywood3_4in
-        return Material.new(name='Plywood-3_4in', thick_in=0.75, mat_base=BaseMaterial.Wood)
+        return self.new(name='Plywood-3_4in', thick_in=0.75, mat_base=BaseMaterial.Wood)
     end
 
     def self.Plywood3_2in
-        return Material.new(name='Plywood-3_2in', thick_in=1.5, mat_base=BaseMaterial.Wood)
+        return self.new(name='Plywood-3_2in', thick_in=1.5, mat_base=BaseMaterial.Wood)
     end
 
     def self.RadiantBarrier
-        return Material.new(name=Constants.MaterialRadiantBarrier, thick_in=0.00084, mat_base=nil, k_in=1629.6, rho=168.6, cp=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
+        return self.new(name=Constants.MaterialRadiantBarrier, thick_in=0.00084, mat_base=nil, k_in=1629.6, rho=168.6, cp=0.22, tAbs=0.05, sAbs=0.05, vAbs=0.05)
     end
 
     def self.RoofMaterial(roofMatEmissivity, roofMatAbsorptivity)
-        return Material.new(name=Constants.MaterialRoofMaterial, thick_in=0.375, mat_base=nil, k_in=1.128, rho=70, cp=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
+        return self.new(name=Constants.MaterialRoofMaterial, thick_in=0.375, mat_base=nil, k_in=1.128, rho=70, cp=0.35, tAbs=roofMatEmissivity, sAbs=roofMatAbsorptivity, vAbs=roofMatAbsorptivity)
     end
 
 end
@@ -1217,52 +1217,52 @@ class BaseMaterial
     attr_accessor :rho, :cp, :k_in
 
     def self.Gypsum
-        return BaseMaterial.new(rho=50.0, cp=0.2, k_in=1.1112)
+        return self.new(rho=50.0, cp=0.2, k_in=1.1112)
     end
 
     def self.Wood
-        return BaseMaterial.new(rho=32.0, cp=0.29, k_in=0.8004)
+        return self.new(rho=32.0, cp=0.29, k_in=0.8004)
     end
     
     def self.Concrete
-        return BaseMaterial.new(rho=140.0, cp=0.2, k_in=9.0912)
+        return self.new(rho=140.0, cp=0.2, k_in=9.0912)
     end
 
     def self.Gypcrete
         # http://www.maxxon.com/gyp-crete/data
-        return BaseMaterial.new(rho=100.0, cp=0.223, k_in=4.7424)
+        return self.new(rho=100.0, cp=0.223, k_in=4.7424)
     end
 
     def self.InsulationRigid
-        return BaseMaterial.new(rho=2.0, cp=0.29, k_in=0.204)
+        return self.new(rho=2.0, cp=0.29, k_in=0.204)
     end
     
     def self.InsulationCelluloseDensepack
-        return BaseMaterial.new(rho=3.5, cp=0.25, k=nil)
+        return self.new(rho=3.5, cp=0.25, k=nil)
     end
 
     def self.InsulationCelluloseLoosefill
-        return BaseMaterial.new(rho=1.5, cp=0.25, k=nil)
+        return self.new(rho=1.5, cp=0.25, k=nil)
     end
 
     def self.InsulationFiberglassDensepack
-        return BaseMaterial.new(rho=2.2, cp=0.25, k=nil)
+        return self.new(rho=2.2, cp=0.25, k=nil)
     end
 
     def self.InsulationFiberglassLoosefill
-        return BaseMaterial.new(rho=0.5, cp=0.25, k=nil)
+        return self.new(rho=0.5, cp=0.25, k=nil)
     end
 
     def self.InsulationGenericDensepack
-        return BaseMaterial.new(rho=(BaseMaterial.InsulationFiberglassDensepack.rho + BaseMaterial.InsulationCelluloseDensepack.rho) / 2.0, cp=0.25, k=nil)
+        return self.new(rho=(self.InsulationFiberglassDensepack.rho + self.InsulationCelluloseDensepack.rho) / 2.0, cp=0.25, k=nil)
     end
 
     def self.InsulationGenericLoosefill
-        return BaseMaterial.new(rho=(BaseMaterial.InsulationFiberglassLoosefill.rho + BaseMaterial.InsulationCelluloseLoosefill.rho) / 2.0, cp=0.25, k=nil)
+        return self.new(rho=(self.InsulationFiberglassLoosefill.rho + self.InsulationCelluloseLoosefill.rho) / 2.0, cp=0.25, k=nil)
     end
 
     def self.Soil
-        return BaseMaterial.new(rho=115.0, cp=0.1, k_in=12.0)
+        return self.new(rho=115.0, cp=0.1, k_in=12.0)
     end
 
 end
@@ -1283,12 +1283,12 @@ class Liquid
 
     def self.H2O_l
         # From EES at STP
-        return Liquid.new(62.32,0.9991,0.3386,2.424,1055,32.0,212.0,nil)
+        return self.new(62.32,0.9991,0.3386,2.424,1055,32.0,212.0,nil)
     end
 
     def self.R22_l
         # Converted from EnthDR22 f77 in ResAC (Brandemuehl)
-        return Liquid.new(nil,0.2732,nil,nil,100.5,nil,-41.35,204.9)
+        return self.new(nil,0.2732,nil,nil,100.5,nil,-41.35,204.9)
     end
   
 end
@@ -1312,7 +1312,7 @@ class Gas
   
     def self.Air
         # From EES at STP
-        return Gas.new(0.07518,0.2399,0.01452,0.04415,28.97)
+        return self.new(0.07518,0.2399,0.01452,0.04415,28.97)
     end
     
     def self.AirGapRvalue
@@ -1321,16 +1321,16 @@ class Gas
 
     def self.H2O_v
         # From EES at STP
-        return Gas.new(nil,0.4495,nil,nil,18.02)
+        return self.new(nil,0.4495,nil,nil,18.02)
     end
     
     def self.R22_v
         # Converted from EnthDR22 f77 in ResAC (Brandemuehl)
-        return Gas.new(nil,0.1697,nil,nil,nil)
+        return self.new(nil,0.1697,nil,nil,nil)
     end
 
     def self.PsychMassRat
-        return Gas.H2O_v.m / Gas.Air.m
+        return self.H2O_v.m / self.Air.m
     end
 end
 
@@ -1355,13 +1355,13 @@ class AirFilms
     def self.FloorAverageR
         # For floors between conditioned spaces where heat does not flow across
         # the floor; heat transfer is only important with regards to the thermal
-        return (AirFilms.FlatReducedR + AirFilms.FlatEnhancedR) / 2.0 # hr-ft-F/Btu
+        return (self.FlatReducedR + self.FlatEnhancedR) / 2.0 # hr-ft-F/Btu
     end
 
     def self.FloorReducedR
         # For floors above unconditioned basement spaces, where heat will
         # always flow down through the floor.
-        return AirFilms.FlatReducedR # hr-ft-F/Btu
+        return self.FlatReducedR # hr-ft-F/Btu
     end
   
     def self.SlopeEnhancedR(highest_roof_pitch)
@@ -1400,18 +1400,18 @@ class AirFilms
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return AirFilms.SlopeEnhancedR(highest_roof_pitch) * hdd_frac + AirFilms.SlopeReducedR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+        #return self.SlopeEnhancedR(highest_roof_pitch) * hdd_frac + self.SlopeReducedR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        return (AirFilms.SlopeEnhancedR(highest_roof_pitch) + AirFilms.SlopeReducedR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
+        return (self.SlopeEnhancedR(highest_roof_pitch) + self.SlopeReducedR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
     end
   
     def self.RoofRadiantBarrierR(highest_roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return AirFilms.SlopeEnhancedReflectiveR(highest_roof_pitch) * hdd_frac + AirFilms.SlopeReducedReflectiveR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+        #return self.SlopeEnhancedReflectiveR(highest_roof_pitch) * hdd_frac + self.SlopeReducedReflectiveR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        return (AirFilms.SlopeEnhancedReflectiveR(highest_roof_pitch) + AirFilms.SlopeReducedReflectiveR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
+        return (self.SlopeEnhancedReflectiveR(highest_roof_pitch) + self.SlopeReducedReflectiveR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
     end
     
 end
@@ -1495,6 +1495,9 @@ class EnergyGuideLabel
         elsif date >= 2015
             # http://www.gpo.gov/fdsys/pkg/FR-2015-08-27/pdf/2015-21243.pdf
             return 100.3
+        elsif date >= 2016
+            # https://www.gpo.gov/fdsys/pkg/FR-2016-03-23/pdf/2016-06505.pdf
+            return 932.0
         end
     end
   
@@ -1575,6 +1578,9 @@ class EnergyGuideLabel
         elsif date >= 2015
             # http://www.gpo.gov/fdsys/pkg/FR-2015-08-27/pdf/2015-21243.pdf
             return 12.70
+        elsif date >= 2016
+            # https://www.gpo.gov/fdsys/pkg/FR-2016-03-23/pdf/2016-06505.pdf
+            return 12.60
         end
     end
   

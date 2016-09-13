@@ -114,7 +114,7 @@ class HVAC
 
         elsif num_speeds == 2
             
-            if min_compressor_temp.nil? or not HVAC.is_cold_climate_hp(num_speeds, min_compressor_temp)
+            if min_compressor_temp.nil? or not self.is_cold_climate_hp(num_speeds, min_compressor_temp)
             
                 # one set for low, one set for high
                 curves.HEAT_CAP_FT_SPEC_coefficients = [[0.335690634, 0.002405123, -0.0000464, 0.013498735, 0.0000499, -0.00000725], [0.306358843, 0.005376987, -0.0000579, 0.011645092, 0.0000591, -0.0000203]]
@@ -173,7 +173,7 @@ class HVAC
   
     def self._processCurvesDXCooling(model, supply, outputCapacity)
 
-      const_biquadratic = HVAC._processCurvesSupplyFan(model)
+      const_biquadratic = self._processCurvesSupplyFan(model)
     
       clg_coil_stage_data = []
       (0...supply.Number_Speeds).to_a.each do |speed|
@@ -309,7 +309,7 @@ class HVAC
       
     def self._processCurvesDXHeating(model, supply, outputCapacity)
     
-      const_biquadratic = HVAC._processCurvesSupplyFan(model)
+      const_biquadratic = self._processCurvesSupplyFan(model)
     
       htg_coil_stage_data = []
       # Loop through speeds to create curves for each speed
@@ -477,11 +477,11 @@ class HVAC
         end
 
         if supply.Number_Speeds == 1.0
-            c_d = HVAC.calc_Cd_from_SEER_EER_SingleSpeed(coolingSEER)
+            c_d = self.calc_Cd_from_SEER_EER_SingleSpeed(coolingSEER)
         elsif supply.Number_Speeds == 2.0
-            c_d = HVAC.calc_Cd_from_SEER_EER_TwoSpeed()
+            c_d = self.calc_Cd_from_SEER_EER_TwoSpeed()
         elsif supply.Number_Speeds == 4.0
-            c_d = HVAC.calc_Cd_from_SEER_EER_FourSpeed()
+            c_d = self.calc_Cd_from_SEER_EER_FourSpeed()
 
         else
             runner.registerError("AC number of speeds must equal 1, 2, or 4.")
@@ -519,11 +519,11 @@ class HVAC
         end
 
         if supply.Number_Speeds == 1.0
-          c_d = HVAC.calc_Cd_from_HSPF_COP_SingleSpeed(heatingHSPF)
+          c_d = self.calc_Cd_from_HSPF_COP_SingleSpeed(heatingHSPF)
         elsif supply.Number_Speeds == 2.0
-          c_d = HVAC.calc_Cd_from_HSPF_COP_TwoSpeed()
+          c_d = self.calc_Cd_from_HSPF_COP_TwoSpeed()
         elsif supply.Number_Speeds == 4.0
-          c_d = HVAC.calc_Cd_from_HSPF_COP_FourSpeed()
+          c_d = self.calc_Cd_from_HSPF_COP_FourSpeed()
         else
           runner.registerError("HP number of speeds must equal 1, 2, or 4.")
           return false

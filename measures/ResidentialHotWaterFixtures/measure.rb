@@ -158,7 +158,7 @@ class ResidentialShowersSinksBaths < OpenStudio::Ruleset::ModelUserScript
         end
 
         #Get plant loop
-        plant_loop = Waterheater.get_plant_loop_from_string(model, plant_loop_s, runner)
+        plant_loop = Waterheater.get_plant_loop_from_string(model.getPlantLoops, plant_loop_s, model.getSpaces, runner)
         if plant_loop.nil?
             return false
         end

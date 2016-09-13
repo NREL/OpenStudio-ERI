@@ -7,22 +7,49 @@ require "#{File.dirname(__FILE__)}/schedules"
 
 class Waterheater
 
-    def self.get_plant_loop_from_string(model, plantloop_s, runner, print_err=true)
+    def self.get_plant_loop_from_string(plant_loops, plantloop_s, spaces, runner=nil)
+        if plantloop_s == Constants.Auto
+            return self.get_plant_loop_for_spaces(plant_loops, spaces, runner)
+        end
         plant_loop = nil
-        model.getPlantLoops.each do |pl|
+        plant_loops.each do |pl|
             if pl.name.to_s == plantloop_s
                 plant_loop = pl
                 break
             end
         end
-        if plant_loop.nil?
-            if print_err
-                runner.registerError("Could not find plant loop with the name '#{plantloop_s}'.")
-            else
-                runner.registerWarning("Could not find plant loop with the name '#{plantloop_s}'.")
-            end
+        if plant_loop.nil? and !runner
+            runner.registerError("Could not find plant loop with the name '#{plantloop_s}'.")
         end
         return plant_loop
+    end
+    
+    def self.get_plant_loop_for_spaces(plant_loops, spaces, runner=nil)
+        # We obtain the plant loop for a given set of space by comparing 
+        # their associated thermal zones to the thermal zone that each plant
+        # loop water heater is located in.
+        spaces.each do |space|
+            next if !space.thermalZone.is_initialized
+            zone = space.thermalZone.get
+            plant_loops.each do |pl|
+                pl.supplyComponents.each do |wh|
+                    if wh.to_WaterHeaterMixed.is_initialized
+                        waterHeater = wh.to_WaterHeaterMixed.get
+                    elsif wh.to_WaterHeaterStratified.is_initialized
+                        waterHeater = wh.to_WaterHeaterStratified.get
+                    else
+                        next
+                    end
+                    next if !waterHeater.ambientTemperatureThermalZone.is_initialized
+                    next if waterHeater.ambientTemperatureThermalZone.get.name.to_s != zone.name.to_s
+                    return pl
+                end
+            end
+        end
+        if !runner.nil?
+            runner.registerError("Could not find plant loop.")
+        end
+        return nil
     end
 
     def self.deadband(tank_type)

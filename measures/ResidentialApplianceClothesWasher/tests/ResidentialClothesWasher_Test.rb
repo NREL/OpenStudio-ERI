@@ -7,8 +7,16 @@ require 'fileutils'
 
 class ResidentialClothesWasherTest < MiniTest::Test
 
-  def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+  def osm_geo_beds
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
+  end
+
+  def osm_geo_loc
+    return "2000sqft_2story_FB_GRG_UA_Denver.osm"
+  end
+
+  def osm_geo_beds_loc
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm"
   end
 
   def osm_geo_beds_loc_tankwh
@@ -19,12 +27,16 @@ class ResidentialClothesWasherTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtankless.osm"
   end
   
+  def osm_geo_multifamily_3_units_beds_loc_tankwh
+    return "multifamily_3_units_Beds_Baths_Denver_ElecWHtank.osm"
+  end
+  
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
     args_hash["cw_mult_e"] = 0.0
     args_hash["cw_mult_hw"] = 0.0
-    _test_measure(osm_geo_beds_loc_tankwh, args_hash)
+    _test_measure(osm_geo_beds_loc_tankwh, args_hash, 0, 0, 0.0, 0.0)
   end
   
   def test_new_construction_standard
@@ -114,7 +126,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_rated_annual_energy"] = 123.0
     args_hash["cw_annual_cost"] = 9.0
     args_hash["cw_drum_volume"] = 3.68
-    _test_measure(model, args_hash, 2, 2, 34.9, 2.27)
+    _test_measure(model, args_hash, 2, 2, 34.9, 2.27, 1)
   end
     
   def test_retrofit_remove
@@ -125,7 +137,50 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash = {}
     args_hash["cw_mult_e"] = 0.0
     args_hash["cw_mult_hw"] = 0.0
-    _test_measure(model, args_hash, 2, 0)
+    _test_measure(model, args_hash, 2, 0, 0.0, 0.0, 1)
+  end
+  
+  def test_multifamily_new_construction
+    num_units = 3
+    args_hash = {}
+    args_hash["cw_mef"] = 1.41
+    args_hash["cw_rated_annual_energy"] = 387
+    _test_measure(osm_geo_multifamily_3_units_beds_loc_tankwh, args_hash, 0, 2*num_units, 121.5, 28.3, num_units)
+  end
+  
+  def test_multifamily_new_construction_finished_basement
+    num_units = 3
+    args_hash = {}
+    args_hash["cw_mef"] = 1.41
+    args_hash["cw_rated_annual_energy"] = 387
+    args_hash["space"] = "finishedbasement_1"
+    _test_measure(osm_geo_multifamily_3_units_beds_loc_tankwh, args_hash, 0, 2, 42.9, 10.0)
+  end
+  
+  def test_multifamily_retrofit_replace
+    num_units = 3
+    args_hash = {}
+    args_hash["cw_mef"] = 1.41
+    args_hash["cw_rated_annual_energy"] = 387
+    model = _test_measure(osm_geo_multifamily_3_units_beds_loc_tankwh, args_hash, 0, 2*num_units, 121.5, 28.3, num_units)
+    args_hash = {}
+    args_hash["cw_mef"] = 2.47
+    args_hash["cw_rated_annual_energy"] = 123
+    args_hash["cw_annual_cost"] = 9.0
+    args_hash["cw_drum_volume"] = 3.68
+    _test_measure(model, args_hash, 2*num_units, 2*num_units, 98.9, 6.4, 2*num_units)
+  end
+  
+  def test_multifamily_retrofit_remove
+    num_units = 3
+    args_hash = {}
+    args_hash["cw_mef"] = 1.41
+    args_hash["cw_rated_annual_energy"] = 387
+    model = _test_measure(osm_geo_multifamily_3_units_beds_loc_tankwh, args_hash, 0, 2*num_units, 121.5, 28.3, num_units)
+    args_hash = {}
+    args_hash["cw_mult_e"] = 0.0
+    args_hash["cw_mult_hw"] = 0.0
+    _test_measure(model, args_hash, 2*num_units, 0, 0.0, 0.0, num_units)
   end
   
   def test_argument_error_cw_mef_negative
@@ -215,13 +270,25 @@ class ResidentialClothesWasherTest < MiniTest::Test
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors[0].logMessage, "Could not find space with the name '#{Constants.LivingSpace(1)}'.")
+    assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
   
+  def test_error_missing_beds
+    args_hash = {}
+    result = _test_error(osm_geo_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+  end
+  
+  def test_error_missing_location
+    args_hash = {}
+    result = _test_error(osm_geo_beds, args_hash)
+    assert_equal(result.errors[0].logMessage, "Model has not been assigned a weather file.")
+  end
+
   def test_error_missing_water_heater
     args_hash = {}
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors[0].logMessage, "Could not find plant loop with the name '#{Constants.PlantLoopDomesticWater}'.")
+    result = _test_error(osm_geo_beds_loc, args_hash)
+    assert_equal(result.errors[0].logMessage, "Could not find plant loop.")
   end
 
   private
@@ -262,7 +329,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     return result
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects=0, expected_num_new_objects=0, expected_annual_kwh=0.0, expected_hw_gpd=0.0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, expected_hw_gpd, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialClothesWasher.new
 
@@ -301,12 +368,9 @@ class ResidentialClothesWasherTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    if expected_num_del_objects > 0
-        assert(result.info.size == 1)
-    else
-        assert(result.info.size == 0)
-    end
-    assert(result.warnings.size == 0)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get new/deleted electric equipment objects
     new_objects = []
@@ -324,29 +388,29 @@ class ResidentialClothesWasherTest < MiniTest::Test
     assert_equal(expected_num_del_objects, del_objects.size)
     assert_equal(expected_num_new_objects, new_objects.size)
     
+    actual_annual_kwh = 0.0
+    actual_hw_gpd = 0.0
     new_objects.each do |new_object|
         # check that the new object has the correct name
-        assert_equal(new_object.name.to_s, Constants.ObjectNameClothesWasher)
+        assert(new_object.name.to_s.start_with?(Constants.ObjectNameClothesWasher))
     
         # check new object is in correct space
         if argument_map["space"].hasValue
             assert_equal(new_object.space.get.name.to_s, argument_map["space"].valueAsString)
-        else
-            assert_equal(new_object.space.get.name.to_s, argument_map["space"].defaultValueAsString)
         end
         
         if new_object.is_a?(OpenStudio::Model::ElectricEquipment)
             # check for the correct annual energy consumption
             full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
-            actual_annual_kwh = OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "kWh").get
-            assert_in_epsilon(expected_annual_kwh, actual_annual_kwh, 0.01)
+            actual_annual_kwh += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "kWh").get
         elsif new_object.is_a?(OpenStudio::Model::WaterUseEquipment)
             # check for the correct daily hot water consumption
             full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.flowRateFractionSchedule.get)
-            actual_hw_gpd = OpenStudio.convert(full_load_hrs * new_object.waterUseEquipmentDefinition.peakFlowRate * new_object.multiplier, "m^3/s", "gal/min").get * 60.0 / 365.0
-            assert_in_epsilon(expected_hw_gpd, actual_hw_gpd, 0.02)
+            actual_hw_gpd += OpenStudio.convert(full_load_hrs * new_object.waterUseEquipmentDefinition.peakFlowRate * new_object.multiplier, "m^3/s", "gal/min").get * 60.0 / 365.0
         end
     end
+    assert_in_epsilon(expected_annual_kwh, actual_annual_kwh, 0.01)
+    assert_in_epsilon(expected_hw_gpd, actual_hw_gpd, 0.02)
 
     return model
   end
