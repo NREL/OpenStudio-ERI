@@ -230,7 +230,7 @@ class Waterheater
         return new_schedule
     end
     
-    def self.create_new_heater(name, cap, fuel, vol, nbeds, nbaths, ef, re, t_set, thermal_zone, oncycle_p, offcycle_p, tanktype, cyc_derate, model, runner)
+    def self.create_new_heater(unit_num, name, cap, fuel, vol, nbeds, nbaths, ef, re, t_set, thermal_zone, oncycle_p, offcycle_p, tanktype, cyc_derate, measure_dir, model, runner)
     
         new_heater = OpenStudio::Model::WaterHeaterMixed.new(model)
         new_heater.setName(name)
@@ -249,11 +249,10 @@ class Waterheater
         new_heater.setMaximumTemperatureLimit(99.0)
         if tanktype == Constants.WaterHeaterTypeTankless
             new_heater.setHeaterControlType("Modulate")
-            new_heater.setDeadbandTemperatureDifference(self.deadband(tanktype))
         else
             new_heater.setHeaterControlType("Cycle")
-            new_heater.setDeadbandTemperatureDifference(self.deadband(tanktype))
         end
+        new_heater.setDeadbandTemperatureDifference(self.deadband(tanktype))
         
         vol_m3 = OpenStudio::convert(act_vol, "gal", "m^3").get
         new_heater.setHeaterMinimumCapacity(0.0)
@@ -265,30 +264,26 @@ class Waterheater
         
         #Set parasitic power consumption
         if tanktype == Constants.WaterHeaterTypeTankless 
-            if fuel == Constants.FuelTypeGas
-                #TODO: Different fractions if the home only has certain appliances (say no dishwasher or cw)
-                runtime_frac = [[0.0275, 0.0267, 0.0270, 0.0267, 0.0270, 0.0264, 0.0265, 0.0269, 0.0269, 0.0269], [0.0327, 0.0334, 0.0333, 0.0336, 0.0333, 0.0334, 0.0340, 0.0337, 0.0326, 0.0334], [0.0397, 0.0393, 0.0394, 0.0399, 0.0401, 0.0397, 0.0395, 0.0393, 0.0397, 0.0399], [0.0454, 0.0470, 0.0459, 0.0458, 0.0457, 0.0469, 0.0461, 0.0459, 0.0462, 0.0469], [0.0527, 0.0519, 0.0526, 0.0534, 0.0528, 0.0524, 0.0533, 0.0531, 0.0526, 0.0537]]
-                avg_elec = oncycle_p * runtime_frac[nbeds-1][0] + offcycle_p * (1-runtime_frac[nbeds-1][0]) #TODO: for MF, this needs to take into account unit number
-                new_heater.setOnCycleParasiticFuelConsumptionRate(avg_elec)
-                new_heater.setOnCycleParasiticFuelType("Electricity")
-                new_heater.setOnCycleParasiticHeatFractiontoTank(0)
-                
-                new_heater.setOffCycleParasiticFuelConsumptionRate(avg_elec)
-                new_heater.setOffCycleParasiticFuelType("Electricity")
-                new_heater.setOffCycleParasiticHeatFractiontoTank(0)
-            else
-                new_heater.setOnCycleParasiticFuelConsumptionRate(0)
-                new_heater.setOffCycleParasiticFuelConsumptionRate(0)
+            # Tankless WHs are set to "modulate", not "cycle", so they end up
+            # effectively always on. Thus, we need to use a weighted-average of
+            # on-cycle and off-cycle parasitics.
+            sch = HotWaterSchedule.new(model, runner, "", "", nbeds, unit_num, nil, 0, measure_dir)
+            if not sch.validated?
+                return nil
             end
+            runtime_frac = sch.getOntimeFraction
+            avg_elec = oncycle_p * runtime_frac + offcycle_p * (1-runtime_frac)
+            
+            new_heater.setOnCycleParasiticFuelConsumptionRate(avg_elec)
+            new_heater.setOffCycleParasiticFuelConsumptionRate(avg_elec)
         else
             new_heater.setOnCycleParasiticFuelConsumptionRate(oncycle_p)
-            new_heater.setOnCycleParasiticFuelType("Electricity")
-            new_heater.setOnCycleParasiticHeatFractiontoTank(0)
-            
             new_heater.setOffCycleParasiticFuelConsumptionRate(offcycle_p)
-            new_heater.setOffCycleParasiticFuelType("Electricity")
-            new_heater.setOffCycleParasiticHeatFractiontoTank(0)
         end
+        new_heater.setOnCycleParasiticFuelType("Electricity")
+        new_heater.setOffCycleParasiticFuelType("Electricity")
+        new_heater.setOnCycleParasiticHeatFractiontoTank(0)
+        new_heater.setOffCycleParasiticHeatFractiontoTank(0)
         
         #Set fraction of heat loss from tank to ambient (vs out flue)
         #Based on lab testing done by LBNL
@@ -298,7 +293,7 @@ class Waterheater
             if fuel  == Constants.FuelTypeGas or fuel == Constants.FuelTypePropane
                 if oncycle_p == 0
                     skinlossfrac = 0.64
-                elsif ef < 0.8
+                elsif energy_factor < 0.8
                     skinlossfrac = 0.91
                 else
                     skinlossfrac = 0.96

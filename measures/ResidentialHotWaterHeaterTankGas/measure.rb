@@ -218,7 +218,7 @@ class ResidentialHotWaterHeaterTankGas < OpenStudio::Ruleset::ModelUserScript
                 new_manager.addToNode(loop.supplyOutletNode)
             end
         
-            new_heater = Waterheater.create_new_heater(Constants.ObjectNameWaterHeater(unit_num), cap, Constants.FuelTypeGas, vol, nbeds, nbaths, ef, re, t_set, water_heater_tz, oncycle_p, offcycle_p, Constants.WaterHeaterTypeTank, 0, model, runner)
+            new_heater = Waterheater.create_new_heater(unit_num, Constants.ObjectNameWaterHeater(unit_num), cap, Constants.FuelTypeGas, vol, nbeds, nbaths, ef, re, t_set, water_heater_tz, oncycle_p, offcycle_p, Constants.WaterHeaterTypeTank, 0, File.dirname(__FILE__), model, runner)
         
             loop.addSupplyBranchForComponent(new_heater)
             
@@ -263,15 +263,9 @@ class ResidentialHotWaterHeaterTankGas < OpenStudio::Ruleset::ModelUserScript
         vol = vol.to_f
 
         if vol <= 0
-            runner.registerError("Storage tank volume must be greater than 0 gallons. Make sure that the volume entered is a number > 0 or #{Constants.Auto}.")   
+            runner.registerError("Storage tank volume must be greater than 0 or #{Constants.Auto}.")   
             return nil
         end
-        if vol < 25
-            runner.registerWarning("A storage tank volume of less than 25 gallons and a certified rating is not commercially available. Please review the input.")
-        end     
-        if vol > 120
-            runner.registerWarning("A water heater with a storage tank volume of greater than 120 gallons and a certified rating is not commercially available. Please review the input.")
-        end    
         return true
     end
 
@@ -279,38 +273,18 @@ class ResidentialHotWaterHeaterTankGas < OpenStudio::Ruleset::ModelUserScript
         return true if (ef == Constants.Auto)  # flag for autosizing
         ef = ef.to_f
 
-        if (ef >= 1)
-            runner.registerError("Rated energy factor has a maximum value of 1.0 for gas water heaters.")
+        if (ef >= 1 or ef <= 0)
+            runner.registerError("Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
             return nil
         end
-        if (ef <= 0)
-            runner.registerError("Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0 or #{Constants.Auto}.")
-            return nil
-        end
-        if (ef >0.82)
-            runner.registerWarning("Rated energy factor for commercially available gas storage water heaters should be less than 0.82")
-        end    
-        if (ef <0.48)
-            runner.registerWarning("Rated energy factor for commercially available gas storage water heaters should be greater than 0.48")
-        end    
         return true
     end
   
     def validate_setpoint_temperature(t_set, runner)
-        if (t_set <= 0)
-            runner.registerError("Hot water temperature must be greater than 0.")
+        if (t_set <= 0 or t_set >= 212)
+            runner.registerError("Hot water temperature must be greater than 0 and less than 212.")
             return nil
         end
-        if (t_set >= 212)
-            runner.registerError("Hot water temperature must be less than the boiling point of water.")
-            return nil
-        end
-        if (t_set > 140)
-            runner.registerWarning("Hot water setpoint schedule DHW_Temp has values greater than 140F. This temperature, if achieved, may cause scalding.")
-        end    
-        if (t_set < 120)
-            runner.registerWarning("Hot water setpoint schedule DHW_Temp has values less than 120F. This temperature may promote the growth of Legionellae or other bacteria.")               
-        end    
         return true
     end
 
@@ -319,50 +293,28 @@ class ResidentialHotWaterHeaterTankGas < OpenStudio::Ruleset::ModelUserScript
         cap = cap.to_f
 
         if cap <= 0
-            runner.registerError("Gas storage water heater nominal capacity must be greater than 0 kBtu/hr. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
+            runner.registerError("Nominal capacity must be greater than 0 or #{Constants.Auto}.")
             return nil
-        end
-        if cap < 25
-            runner.registerWarning("Commercially available residential gas storage water heaters should have a minimum nominal capacity of 25 kBtu/h.")
-        end
-        if cap > 75
-            runner.registerWarning("Commercially available residential gas storage water heaters should have a maximum nominal capacity of 75 kBtu/h.")
         end
         return true
     end
     
     def validate_water_heater_recovery_efficiency(re, runner)
-        if (re < 0)
-            runner.registerError("Gas storage water heater recovery efficiency must be at least 0 and at most 1.")
+        if (re < 0 or re > 1)
+            runner.registerError("Recovery efficiency must be at least 0 and at most 1.")
             return nil
-        end
-        if (re > 1)
-            runner.registerError("Gas storage water heater recovery efficiency must be at least 0 and at most 1.")
-            return nil
-        end
-        if (re < 0.70)
-            runner.registerWarning("Commercially available gas storage water heaters should have a minimum rated recovery efficiency of 0.70.")
-        end
-        if (re > 0.90)
-            runner.registerWarning("Commercially available gas storage water heaters should have a maximum rated recovery efficiency of 0.90.")
         end
         return true
     end
   
     def validate_parasitic_elec(oncycle_p, offcycle_p, runner)
         if oncycle_p < 0
-            runner.registerError("Forced draft fan power must be greater than 0")
+            runner.registerError("Forced draft fan power must be greater than 0.")
             return nil
         end
         if offcycle_p < 0
-            runner.registerError("Parasitic electricity power must be greater than 0")
+            runner.registerError("Parasitic electricity power must be greater than 0.")
             return nil
-        end
-        if oncycle_p > 100
-            runner.registerWarning("Forced draft power consumption is larger than typically seen for residential water heaters, double check inputs")
-        end
-        if offcycle_p > 30
-            runner.registerWarning("Parasitic power consumption is larger than typically seen for residential water heaters, double check inputs")
         end
         return true
     end

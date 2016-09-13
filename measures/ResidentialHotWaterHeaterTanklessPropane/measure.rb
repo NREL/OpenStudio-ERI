@@ -46,23 +46,23 @@ class ResidentialHotWaterHeaterTanklessPropane < OpenStudio::Ruleset::ModelUserS
         water_heater_location = osargument::makeChoiceArgument("water_heater_location",thermal_zone_names, true)
         water_heater_location.setDefaultValue(Constants.Auto)
         water_heater_location.setDisplayName("Location")
-        water_heater_location.setDescription("Thermal zone where the water heater is located. #{Constants.Auto} will locate the water heater according the BA House Simulation Protocols: A garage (if available) or the living space in hot-dry and hot-humid climates, a basement (finished or unfinished, if available) or living space in all other climates")
+        water_heater_location.setDescription("Thermal zone where the water heater is located. #{Constants.Auto} will locate the water heater according the BA House Simulation Protocols: A garage (if available) or the living space in hot-dry and hot-humid climates, a basement (finished or unfinished, if available) or living space in all other climates.")
 	
         args << water_heater_location
 
         # make an argument for water_heater_capacity
-        water_heater_capacity = osargument::makeStringArgument("water_heater_capacity", true)
+        water_heater_capacity = osargument::makeDoubleArgument("water_heater_capacity", true)
         water_heater_capacity.setDisplayName("Input Capacity")
         water_heater_capacity.setDescription("The maximum energy input rating of the water heater.")
         water_heater_capacity.setUnits("kBtu/hr")
-        water_heater_capacity.setDefaultValue("199.0")
+        water_heater_capacity.setDefaultValue(100000000.0)
         args << water_heater_capacity
 
         # make an argument for the rated energy factor
-        rated_energy_factor = osargument::makeStringArgument("rated_energy_factor", true)
+        rated_energy_factor = osargument::makeDoubleArgument("rated_energy_factor", true)
         rated_energy_factor.setDisplayName("Rated Energy Factor")
         rated_energy_factor.setDescription("For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procedures to test the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B.")
-        rated_energy_factor.setDefaultValue("0.82")
+        rated_energy_factor.setDefaultValue(0.82)
         args << rated_energy_factor
 
         # make an argument for cycling_derate
@@ -98,8 +98,8 @@ class ResidentialHotWaterHeaterTanklessPropane < OpenStudio::Ruleset::ModelUserS
 
 	
         #Assign user inputs to variables
-        cap = runner.getStringArgumentValue("water_heater_capacity",user_arguments)
-        ef = runner.getStringArgumentValue("rated_energy_factor",user_arguments)
+        cap = runner.getDoubleArgumentValue("water_heater_capacity",user_arguments)
+        ef = runner.getDoubleArgumentValue("rated_energy_factor",user_arguments)
         cd = runner.getDoubleArgumentValue("water_heater_cycling_derate",user_arguments)
         water_heater_loc = runner.getStringArgumentValue("water_heater_location",user_arguments)
         t_set = runner.getDoubleArgumentValue("dhw_setpoint_temperature",user_arguments).to_f
@@ -159,7 +159,7 @@ class ResidentialHotWaterHeaterTanklessPropane < OpenStudio::Ruleset::ModelUserS
                 runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
                 return false
             end
-        
+    
             #If location is Auto, get the location
             if water_heater_loc == Constants.Auto
                 water_heater_tz = Waterheater.get_water_heater_location_auto(model, unit_spaces, runner)
@@ -172,7 +172,7 @@ class ResidentialHotWaterHeaterTanklessPropane < OpenStudio::Ruleset::ModelUserS
                 water_heater_tz = Geometry.get_thermal_zone_from_string(unit_zones, water_heater_loc.to_s)
                 next if water_heater_tz.nil?
             end
-        
+
             #Check if a DHW plant loop already exists, if not add it
             loop = nil
         
@@ -191,7 +191,7 @@ class ResidentialHotWaterHeaterTanklessPropane < OpenStudio::Ruleset::ModelUserS
                     end
                 end
             end
-
+            
             if loop.nil?
                 runner.registerInfo("A new plant loop for DHW will be added to the model")
                 runner.registerInitialCondition("No water heater model currently exists")
@@ -208,13 +208,12 @@ class ResidentialHotWaterHeaterTanklessPropane < OpenStudio::Ruleset::ModelUserS
                 new_manager.addToNode(loop.supplyOutletNode)
             end
         
-                
-            new_heater = Waterheater.create_new_heater(Constants.ObjectNameWaterHeater(unit_num), cap, Constants.FuelTypePropane, 1, nbeds, nbaths, ef, 0, t_set, water_heater_tz, oncycle_p, offcycle_p, tanktype, cd, model, runner)
+            new_heater = Waterheater.create_new_heater(unit_num, Constants.ObjectNameWaterHeater(unit_num), cap, Constants.FuelTypePropane, 1, nbeds, nbaths, ef, 0, t_set, water_heater_tz, oncycle_p, offcycle_p, tanktype, cd, File.dirname(__FILE__), model, runner)
         
             loop.addSupplyBranchForComponent(new_heater)
             
         end
-        
+            
         register_final_conditions(runner, model)
   
         return true
@@ -242,91 +241,52 @@ class ResidentialHotWaterHeaterTanklessPropane < OpenStudio::Ruleset::ModelUserS
             volume = OpenStudio.convert(volume_si.value, volume_si.units.standardString, "gal").get
             te = heater.getHeaterThermalEfficiency.get.value
           
-            water_heaters << "Water heater '#{heatername}' added to plant loop '#{loopname}', with a capacity of #{capacity.round(1)} kBtu/hr." +
+            water_heaters << "Water heater '#{heatername}' added to plant loop '#{loopname}', with a capacity of #{capacity.round(1)} kBtu/hr" +
             " and a burner efficiency of  #{te.round(2)}."
         end
         water_heaters
     end
 
     def validate_rated_energy_factor(ef, runner)
-        return true if (ef == Constants.Auto)  # flag for autosizing
-        ef = ef.to_f
-
-        if (ef >= 1)
-            runner.registerError("Rated energy factor has a maximum value of 1.0 for propane water heaters.")
+        if (ef >= 1 or ef <= 0)
+            runner.registerError("Rated energy factor must be greater than 0 and less than 1.")
             return nil
         end
-        if (ef <= 0)
-            runner.registerError("Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0.0")
-            return nil
-        end
-        if (ef <0.82)
-            runner.registerWarning("Rated energy factor for commercially available propane tankless water heaters should be greater than 0.82")
-        end    
         return true
     end
   
     def validate_setpoint_temperature(t_set, runner)
-        if (t_set <= 0)
-            runner.registerError("Hot water temperature must be greater than 0.")
+        if (t_set <= 0 or t_set >= 212)
+            runner.registerError("Hot water temperature must be greater than 0 and less than 212.")
             return nil
         end
-        if (t_set >= 212)
-            runner.registerError("Hot water temperature must be less than the boiling point of water.")
-            return nil
-        end
-        if (t_set > 140)
-            runner.registerWarning("Hot water setpoint schedule DHW_Temp has values greater than 140F. This temperature, if achieved, may cause scalding.")
-        end    
-        if (t_set < 120)
-            runner.registerWarning("Hot water setpoint schedule DHW_Temp has values less than 120F. This temperature may promote the growth of Legionellae or other bacteria.")               
-        end    
         return true
     end
 
     def validate_water_heater_capacity(cap, runner)
-        return true if cap == Constants.Auto # Autosized
-        cap = cap.to_f
-
         if cap <= 0
-            runner.registerError("Propane tankless water heater nominal capacity must be greater than 0 kBtu/hr. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
+            runner.registerError("Nominal capacity must be greater than 0.")
             return nil
-        end
-        if cap < 120
-            runner.registerWarning("Commercially available residential propane tankless water heaters should have a nominal capacity greater than 120 kBtu/h.")
         end
         return true
     end
     
     def validate_water_heater_cycling_derate(cd, runner)
-        if (cd < 0)
-            runner.registerError("Propane tankless water heater cycling derate must be at least 0 and at most 1.")
+        if (cd < 0 or cd > 1)
+            runner.registerError("Cycling derate must be at least 0 and at most 1.")
             return nil
-        end
-        if (cd > 1)
-            runner.registerError("Propane tankless water heater cycling derate must be at least 0 and at most 1.")
-            return nil
-        end
-        if (cd > 0.20)
-            runner.registerWarning("Most tankless water heaters have a cycling derate of about 0.08, double check inputs.")
         end
         return true
     end
   
     def validate_parasitic_elec(oncycle_p, offcycle_p, runner)
         if oncycle_p < 0
-            runner.registerError("Forced draft fan power must be greater than 0")
+            runner.registerError("Forced draft fan power must be greater than 0.")
             return nil
         end
         if offcycle_p < 0
-            runner.registerError("Parasitic electricity power must be greater than 0")
+            runner.registerError("Parasitic electricity power must be greater than 0.")
             return nil
-        end
-        if oncycle_p > 100
-            runner.registerWarning("Forced draft power consumption is larger than typically seen for residential water heaters, double check inputs")
-        end
-        if offcycle_p > 30
-            runner.registerWarning("Parasitic power consumption is larger than typically seen for residential water heaters, double check inputs")
         end
         return true
     end

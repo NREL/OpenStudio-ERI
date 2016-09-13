@@ -399,7 +399,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
 	
     if dw_ann > 0
         
-        sch = HotWaterSchedule.new(model, runner, obj_name + " schedule", obj_name + " temperature schedule", nbeds, 0, "Dishwasher", wh_setpoint, File.dirname(__FILE__))
+        sch = HotWaterSchedule.new(model, runner, obj_name + " schedule", obj_name + " temperature schedule", nbeds, 1, "Dishwasher", wh_setpoint, File.dirname(__FILE__))
         if not sch.validated?
             return false
         end

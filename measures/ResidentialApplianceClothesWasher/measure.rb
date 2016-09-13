@@ -503,7 +503,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     end
 
     if cw_ann_e > 0
-        sch = HotWaterSchedule.new(model, runner, obj_name + " schedule", obj_name + " temperature schedule", nbeds, 0, "ClothesWasher", cw_water_temp, File.dirname(__FILE__))
+        sch = HotWaterSchedule.new(model, runner, obj_name + " schedule", obj_name + " temperature schedule", nbeds, 1, "ClothesWasher", cw_water_temp, File.dirname(__FILE__))
         if not sch.validated?
             return false
         end

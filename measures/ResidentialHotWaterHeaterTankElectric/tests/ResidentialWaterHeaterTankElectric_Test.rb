@@ -34,6 +34,30 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
   def osm_geo_beds_loc_5_3
     return "2000sqft_2story_FB_GRG_UA_5Beds_3Baths_Denver.osm"
   end
+  
+  def osm_geo_beds_loc_tank_gas
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankGas.osm"
+  end
+
+  def osm_geo_beds_loc_tank_oil
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankOil.osm"
+  end
+
+  def osm_geo_beds_loc_tank_propane
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankPropane.osm"
+  end
+
+  def osm_geo_beds_loc_tankless_electric
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessElectric.osm"
+  end
+
+  def osm_geo_beds_loc_tankless_gas
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessGas.osm"
+  end
+
+  def osm_geo_beds_loc_tankless_propane
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessPropane.osm"
+  end
 
   def osm_geo_multifamily_3_units_beds_loc
     return "multifamily_3_units_Beds_Baths_Denver.osm"
@@ -41,183 +65,212 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_new_construction_standard
     args_hash = {}
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
   end
     
   def test_new_construction_premium
     args_hash = {}
     args_hash["rated_energy_factor"] = "0.95"
     args_hash["water_heater_capacity"] = "5.5"
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 5.5, 1.0, 1.34, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 5.5, 1.0, 1.34, 125, 0, 0, 1, 0)
   end
 
   def test_new_construction_standard_auto_ef_and_capacity
     args_hash = {}
     args_hash["rated_energy_factor"] = Constants.Auto
     args_hash["water_heater_capacity"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 5.5, 1.0, 2.69, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 5.5, 1.0, 2.69, 125, 0, 0, 1, 0)
   end
   
   def test_new_construction_standard_living
     args_hash = {}
     args_hash["water_heater_location"] = Constants.LivingZone
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.LivingZone, 4.5, 1.0, 2.21, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.LivingZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
   end
 
   def test_new_construction_standard_setpoint_130
     args_hash = {}
     args_hash["dhw_setpoint_temperature"] = 130
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 130, 1, 0)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 130, 0, 0, 1, 0)
   end
 
   def test_new_construction_standard_volume_30
     args_hash = {}
     args_hash["storage_tank_volume"] = "30"
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 30, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 30, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
   end
 
   def test_new_construction_beds_baths_1_1
     args_hash = {}
     args_hash["water_heater_capacity"] = Constants.Auto
     args_hash["rated_energy_factor"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc_1_1, args_hash, 0, 1, 20, Constants.FinishedBasementZone, 2.5, 1.0, 1.52, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc_1_1, args_hash, 0, 1, 20, Constants.FinishedBasementZone, 2.5, 1.0, 1.52, 125, 0, 0, 1, 0)
   end
 
   def test_new_construction_beds_baths_2_1
     args_hash = {}
     args_hash["water_heater_capacity"] = Constants.Auto
     args_hash["rated_energy_factor"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc_2_1, args_hash, 0, 1, 30, Constants.FinishedBasementZone, 3.5, 1.0, 1.90, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc_2_1, args_hash, 0, 1, 30, Constants.FinishedBasementZone, 3.5, 1.0, 1.90, 125, 0, 0, 1, 0)
   end
 
   def test_new_construction_beds_baths_2_2
     args_hash = {}
     args_hash["water_heater_capacity"] = Constants.Auto
     args_hash["rated_energy_factor"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc_2_2, args_hash, 0, 1, 40, Constants.FinishedBasementZone, 4.5, 1.0, 2.29, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc_2_2, args_hash, 0, 1, 40, Constants.FinishedBasementZone, 4.5, 1.0, 2.29, 125, 0, 0, 1, 0)
   end
 
   def test_new_construction_beds_baths_5_3
     args_hash = {}
     args_hash["water_heater_capacity"] = Constants.Auto
     args_hash["rated_energy_factor"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc_5_3, args_hash, 0, 1, 66, Constants.FinishedBasementZone, 5.5, 1.0, 3.36, 125, 1, 0)
+    _test_measure(osm_geo_beds_loc_5_3, args_hash, 0, 1, 66, Constants.FinishedBasementZone, 5.5, 1.0, 3.36, 125, 0, 0, 1, 0)
   end
 
   def test_retrofit_replace
     args_hash = {}
-    model = _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 1, 0)
+    model = _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
     args_hash = {}
     args_hash["rated_energy_factor"] = "0.95"
     args_hash["water_heater_capacity"] = "5.5"
-    _test_measure(model, args_hash, 1, 1, 50, Constants.FinishedBasementZone, 5.5, 1.0, 1.34, 125, 1, 0)
+    _test_measure(model, args_hash, 1, 1, 50, Constants.FinishedBasementZone, 5.5, 1.0, 1.34, 125, 0, 0, 1, 0)
   end
   
+  def test_retrofit_replace_tank_gas
+    args_hash = {}
+    _test_measure(osm_geo_beds_loc_tank_gas, args_hash, 1, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
+  end
+
+  def test_retrofit_replace_tank_oil
+    args_hash = {}
+    _test_measure(osm_geo_beds_loc_tank_oil, args_hash, 1, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
+  end
+
+  def test_retrofit_replace_tank_propane
+    args_hash = {}
+    _test_measure(osm_geo_beds_loc_tank_propane, args_hash, 1, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
+  end
+
+  def test_retrofit_replace_tankless_electric
+    args_hash = {}
+    _test_measure(osm_geo_beds_loc_tankless_electric, args_hash, 1, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
+  end
+
+  def test_retrofit_replace_tankless_gas
+    args_hash = {}
+    _test_measure(osm_geo_beds_loc_tankless_gas, args_hash, 1, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
+  end
+
+  def test_retrofit_replace_tankless_propane
+    args_hash = {}
+    _test_measure(osm_geo_beds_loc_tankless_propane, args_hash, 1, 1, 50, Constants.FinishedBasementZone, 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
+  end
+
   def test_multifamily_new_construction
     num_units = 3
     args_hash = {}
-    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, num_units, 136, nil, 13.5, 3.0, 6.62, 375, num_units, 0)
+    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, num_units, 136, nil, 13.5, 3.0, 6.62, 375, 0, 0, num_units, 0)
   end
   
   def test_multifamily_new_construction_living_zone
-    num_units = 3
     args_hash = {}
     args_hash["water_heater_location"] = "living zone 1"
-    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, 1, 50, "living zone 1", 4.5, 1.0, 2.21, 125, 1, 0)
+    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, 1, 50, "living zone 1", 4.5, 1.0, 2.21, 125, 0, 0, 1, 0)
   end
 
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}
-    model = _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, num_units, 136, nil, 13.5, 3.0, 6.62, 375, num_units, 0)
+    model = _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, num_units, 136, nil, 13.5, 3.0, 6.62, 375, 0, 0, num_units, 0)
     args_hash = {}
     args_hash["rated_energy_factor"] = "0.95"
     args_hash["water_heater_capacity"] = "5.5"
-    _test_measure(model, args_hash, num_units, num_units, 136, nil, 16.5, 3.0, 4.01, 375, num_units, 0)
+    _test_measure(model, args_hash, num_units, num_units, 136, nil, 16.5, 3.0, 4.01, 375, 0, 0, num_units, 0)
   end
 
   def test_argument_error_tank_volume_invalid_str
     args_hash = {}
     args_hash["storage_tank_volume"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 gallons. Make sure that the volume entered is a number > 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
   
   def test_argument_error_tank_volume_lt_0
     args_hash = {}
     args_hash["storage_tank_volume"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 gallons. Make sure that the volume entered is a number > 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_tank_volume_eq_0
     args_hash = {}
     args_hash["storage_tank_volume"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 gallons. Make sure that the volume entered is a number > 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_setpoint_lt_0
     args_hash = {}
-    args_hash["dhw_setpoint_temperature"] = "-10"
+    args_hash["dhw_setpoint_temperature"] = -10
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Hot water temperature must be greater than 0.")
+    assert_equal(result.errors[0].logMessage, "Hot water temperature must be greater than 0 and less than 212.")
   end
 
   def test_argument_error_setpoint_lg_300
     args_hash = {}
-    args_hash["dhw_setpoint_temperature"] = "300"
+    args_hash["dhw_setpoint_temperature"] = 300
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Hot water temperature must be less than the boiling point of water.")
+    assert_equal(result.errors[0].logMessage, "Hot water temperature must be greater than 0 and less than 212.")
   end
 
   def test_argument_error_capacity_invalid_str
     args_hash = {}
     args_hash["water_heater_capacity"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Electric storage water heater nominal capacity must be greater than 0 kW. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_capacity_lt_0
     args_hash = {}
     args_hash["water_heater_capacity"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Electric storage water heater nominal capacity must be greater than 0 kW. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_capacity_eq_0
     args_hash = {}
     args_hash["water_heater_capacity"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Electric storage water heater nominal capacity must be greater than 0 kW. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_invalid_str
     args_hash = {}
     args_hash["rated_energy_factor"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_lt_0
     args_hash = {}
     args_hash["rated_energy_factor"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_eq_0
     args_hash = {}
     args_hash["rated_energy_factor"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0 or #{Constants.Auto}.")
+    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_gt_1
     args_hash = {}
     args_hash["rated_energy_factor"] = "1.1"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Rated energy factor has a maximum value of 1.0 for electric resistance water heaters.")
+    assert_equal(result.errors[0].logMessage, "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_error_missing_geometry
@@ -276,7 +329,7 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     return result
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_tank_vol, expected_location, expected_input_cap, expected_thermal_eff, expected_ua, expected_setpoint, num_infos=0, num_warnings=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_tank_vol, expected_location, expected_input_cap, expected_thermal_eff, expected_ua, expected_setpoint, expected_oncycle_power, expected_offcycle_power, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialHotWaterHeaterTankElectric.new
 
@@ -366,6 +419,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     tot_ua1 = 0
     tot_ua2 = 0
     tot_setpoint = 0
+    tot_oncycle_power = 0
+    tot_offcycle_power = 0
     new_objects.each do |new_object|
         # check that the new object has the correct name
         assert(new_object.name.to_s.start_with?(Constants.ObjectNameWaterHeater))
@@ -391,6 +446,12 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
         
         # check setpoint
         tot_setpoint += Waterheater.get_water_heater_setpoint(model, new_object.plantLoop.get, nil)
+        
+        # check on-cycle consumption
+        tot_oncycle_power += new_object.onCycleParasiticFuelConsumptionRate
+        
+        # check off-cycle consumption
+        tot_offcycle_power += new_object.offCycleParasiticFuelConsumptionRate
     end
     assert_in_epsilon(tot_vol, Waterheater.calc_actual_tankvol(expected_tank_vol, Constants.FuelTypeElectric, Constants.WaterHeaterTypeTank), 0.01)
     assert_in_epsilon(tot_cap, expected_input_cap, 0.01)
@@ -398,6 +459,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     assert_in_epsilon(tot_ua1, expected_ua, 0.01)
     assert_in_epsilon(tot_ua2, expected_ua, 0.01)
     assert_in_epsilon(tot_setpoint, expected_setpoint, 0.01)
+    assert_in_epsilon(tot_oncycle_power, expected_oncycle_power, 0.01)
+    assert_in_epsilon(tot_offcycle_power, expected_offcycle_power, 0.01)
     
     del_objects.each do |del_object|
         # check that the del object had the correct name

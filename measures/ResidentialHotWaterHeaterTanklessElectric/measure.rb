@@ -51,18 +51,18 @@ class ResidentialHotWaterHeaterTanklessElectric < OpenStudio::Ruleset::ModelUser
         args << water_heater_location
 
         # make an argument for water_heater_capacity
-        water_heater_capacity = osargument::makeStringArgument("water_heater_capacity", true)
+        water_heater_capacity = osargument::makeDoubleArgument("water_heater_capacity", true)
         water_heater_capacity.setDisplayName("Input Capacity")
         water_heater_capacity.setDescription("The maximum energy input rating of the water heater.")
         water_heater_capacity.setUnits("kW")
-        water_heater_capacity.setDefaultValue("12.0")
+        water_heater_capacity.setDefaultValue(100000000.0)
         args << water_heater_capacity
 
         # make an argument for the rated energy factor
-        rated_energy_factor = osargument::makeStringArgument("rated_energy_factor", true)
+        rated_energy_factor = osargument::makeDoubleArgument("rated_energy_factor", true)
         rated_energy_factor.setDisplayName("Rated Energy Factor")
         rated_energy_factor.setDescription("For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procedures to test the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B.")
-        rated_energy_factor.setDefaultValue("0.99")
+        rated_energy_factor.setDefaultValue(0.99)
         args << rated_energy_factor
 
         # make an argument for cycling_derate
@@ -82,8 +82,8 @@ class ResidentialHotWaterHeaterTanklessElectric < OpenStudio::Ruleset::ModelUser
 
 	
         #Assign user inputs to variables
-        cap = runner.getStringArgumentValue("water_heater_capacity",user_arguments)
-        ef = runner.getStringArgumentValue("rated_energy_factor",user_arguments)
+        cap = runner.getDoubleArgumentValue("water_heater_capacity",user_arguments)
+        ef = runner.getDoubleArgumentValue("rated_energy_factor",user_arguments)
         cd = runner.getDoubleArgumentValue("water_heater_cycling_derate",user_arguments)
         water_heater_loc = runner.getStringArgumentValue("water_heater_location",user_arguments)
         t_set = runner.getDoubleArgumentValue("dhw_setpoint_temperature",user_arguments).to_f
@@ -186,7 +186,7 @@ class ResidentialHotWaterHeaterTanklessElectric < OpenStudio::Ruleset::ModelUser
                 new_manager.addToNode(loop.supplyOutletNode)
             end
 
-            new_heater = Waterheater.create_new_heater(Constants.ObjectNameWaterHeater(unit_num), cap, Constants.FuelTypeElectric, 1, nbeds, nbaths, ef, 0, t_set, water_heater_tz, 0, 0, tanktype, cd, model, runner)
+            new_heater = Waterheater.create_new_heater(unit_num, Constants.ObjectNameWaterHeater(unit_num), cap, Constants.FuelTypeElectric, 1, nbeds, nbaths, ef, 0, t_set, water_heater_tz, 0, 0, tanktype, cd, File.dirname(__FILE__), model, runner)
         
             loop.addSupplyBranchForComponent(new_heater)
             
@@ -210,7 +210,6 @@ class ResidentialHotWaterHeaterTanklessElectric < OpenStudio::Ruleset::ModelUser
 
         existing_heaters = model.getWaterHeaterMixeds
         for heater in existing_heaters do
-            runner.registerInfo("Heater exists and it's named #{heater.name.get}")
             heatername = heater.name.get
             loopname = heater.plantLoop.get.name.get
 
@@ -220,73 +219,40 @@ class ResidentialHotWaterHeaterTanklessElectric < OpenStudio::Ruleset::ModelUser
             volume = OpenStudio.convert(volume_si.value, volume_si.units.standardString, "gal").get
             te = heater.getHeaterThermalEfficiency.get.value
           
-            water_heaters << "Water heater '#{heatername}' added to plant loop '#{loopname}', with a capacity of #{capacity.round(1)} kW." +
+            water_heaters << "Water heater '#{heatername}' added to plant loop '#{loopname}', with a capacity of #{capacity.round(1)} kW" +
             " and a burner efficiency of  #{te.round(2)}."
         end
         water_heaters
     end
 
     def validate_rated_energy_factor(ef, runner)
-        return true if (ef == Constants.Auto)  # flag for autosizing
-        ef = ef.to_f
-
-        if (ef >= 1)
-            runner.registerError("Rated energy factor has a maximum value of 1.0 for electric water heaters.")
+        if (ef >= 1 or ef <= 0)
+            runner.registerError("Rated energy factor must be greater than 0 and less than 1.")
             return nil
         end
-        if (ef <= 0)
-            runner.registerError("Rated energy factor must be greater than 0. Make sure that the entered value is a number > 0.0")
-            return nil
-        end
-        if (ef <0.96)
-            runner.registerWarning("Rated energy factor for commercially available electric tankless water heaters should be greater than 0.96")
-        end    
         return true
     end
   
     def validate_setpoint_temperature(t_set, runner)
-        if (t_set <= 0)
-            runner.registerError("Hot water temperature must be greater than 0.")
+        if (t_set <= 0 or t_set >= 212)
+            runner.registerError("Hot water temperature must be greater than 0 and less than 212.")
             return nil
         end
-        if (t_set >= 212)
-            runner.registerError("Hot water temperature must be less than the boiling point of water.")
-            return nil
-        end
-        if (t_set > 140)
-            runner.registerWarning("Hot water setpoint schedule DHW_Temp has values greater than 140F. This temperature, if achieved, may cause scalding.")
-        end    
-        if (t_set < 120)
-            runner.registerWarning("Hot water setpoint schedule DHW_Temp has values less than 120F. This temperature may promote the growth of Legionellae or other bacteria.")               
-        end    
         return true
     end
 
     def validate_water_heater_capacity(cap, runner)
-        return true if cap == Constants.Auto # Autosized
-        cap = cap.to_f
-
         if cap <= 0
-            runner.registerError("Electric tankless water heater nominal capacity must be greater than 0 kBtu/hr. Make sure that the entered capacity is a number greater than 0 or #{Constants.Auto}.")
+            runner.registerError("Nominal capacity must be greater than 0.")
             return nil
-        end
-        if cap < 2.4
-            runner.registerWarning("Commercially available residential electric tankless water heaters should have a nominal capacity greater than 2.4 kW.")
         end
         return true
     end
     
     def validate_water_heater_cycling_derate(cd, runner)
-        if (cd < 0)
-            runner.registerError("Gas tankless water heater cycling derate must be at least 0 and at most 1.")
+        if (cd < 0 or cd > 1)
+            runner.registerError("Cycling derate must be at least 0 and at most 1.")
             return nil
-        end
-        if (cd > 1)
-            runner.registerError("Gas tankless water heater cycling derate must be at least 0 and at most 1.")
-            return nil
-        end
-        if (cd > 0.20)
-            runner.registerWarning("Most tankless water heaters have a cycling derate of about 0.08, double check inputs.")
         end
         return true
     end
