@@ -695,7 +695,9 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       foundation_spaces << foundation_space
       
       # create the unit
-      Geometry.set_unit_beds_baths_spaces(model, num_units + 1, foundation_space_front)
+      if foundation_type == Constants.FinishedBasementSpace
+        Geometry.set_unit_beds_baths_spaces(model, num_units + 1, foundation_space_front)
+      end
 
       if corr_pos == "Double-Loaded Interior" or corr_pos == "Double Exterior" # units in front and back
             
@@ -725,7 +727,9 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         foundation_spaces << foundation_space
         
         # create the unit
-        Geometry.set_unit_beds_baths_spaces(model, num_units + 2, foundation_space_back)
+        if foundation_type == Constants.FinishedBasementSpace
+          Geometry.set_unit_beds_baths_spaces(model, num_units + 2, foundation_space_back)
+        end
     
         pos = 0
         (num_units+3..num_units+num_units_per_floor).to_a.each do |unit_num|
@@ -773,7 +777,9 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
           
           end        
         
-          Geometry.set_unit_beds_baths_spaces(model, unit_num, new_living_spaces)
+          if foundation_type == Constants.FinishedBasementSpace
+            Geometry.set_unit_beds_baths_spaces(model, unit_num, new_living_spaces)
+          end
           
         end
     
@@ -818,9 +824,11 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
             new_living_spaces << new_living_space
             foundation_spaces << new_living_space
           
-          end        
+          end
         
-          Geometry.set_unit_beds_baths_spaces(model, unit_num, new_living_spaces)
+          if foundation_type == Constants.FinishedBasementSpace
+            Geometry.set_unit_beds_baths_spaces(model, unit_num, new_living_spaces)
+          end
 
         end
       
@@ -887,7 +895,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     end
     
     # Store dwelling unit information (for consistency with multifamily buildings)
-    if foundation_height > 0
+    if foundation_height > 0 and foundation_type == Constants.FinishedBasementSpace
       model.getBuilding.setStandardsNumberOfLivingUnits(num_units+num_units_per_floor)
     else
       model.getBuilding.setStandardsNumberOfLivingUnits(num_units)

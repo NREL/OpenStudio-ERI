@@ -1998,7 +1998,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
         workspace.getObjectsByType("ZoneHVAC:EquipmentConnections".to_IddObjectType).each do |zonehvac|
           if zonehvac.getString(0).to_s == living_thermal_zone.name.to_s
             living_zone_return_air_node_name = zonehvac.getString(5)
-          elsif zonehvac.getString(0).to_s == fbasement_thermal_zone.name.to_s
+          elsif zonehvac.getString(0).to_s == fbasement_thermal_zone_r
             fbasement_zone_return_air_node_name = zonehvac.getString(5)
           end
         end
@@ -2563,6 +2563,16 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
           end
         end      
       end
+    end
+    
+    # terrain
+    terrain = {Constants.TerrainOcean=> 'Ocean',      # Ocean, Bayou flat country
+               Constants.TerrainPlains=> 'Country',   # Flat, open country
+               Constants.TerrainRural=> 'Country',    # Flat, open country
+               Constants.TerrainSuburban=> 'Suburbs', # Rough, wooded country, suburbs
+               Constants.TerrainCity=> 'City'}        # Towns, city outskirts, center of large cities
+    workspace.getObjectsByType("Building".to_IddObjectType).each do |building|
+      building.setString(2, terrain[terrainType])
     end
     
     return true
