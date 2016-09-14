@@ -95,7 +95,8 @@ class AirflowTest < MiniTest::Test
   end
   
   def test_crawl
-    args_hash = {}  
+    args_hash = {}
+    args_hash["userdefinedinfcrawl"] = 0.1
     result = _test_measure("singlefamily_crawl_location_beds_furnace_central_air_conditioner.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -109,7 +110,8 @@ class AirflowTest < MiniTest::Test
   end
   
   def test_fbasement
-    args_hash = {}  
+    args_hash = {}
+    args_hash["userdefinedinffbsmt"] = 0.1
     result = _test_measure("singlefamily_fbasement_location_beds_furnace_central_air_conditioner.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    

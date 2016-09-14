@@ -311,7 +311,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
     living_space = living_space.get
     living_space.setName(Constants.LivingSpace(1, 1))
-    living_space.setThermalZone(living_zone)    
+    living_space.setThermalZone(living_zone)   
     
     # add the balcony
     if balc_depth > 0
@@ -395,7 +395,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       # foundation
       if foundation_height > 0 and foundation_back_polygon.nil?
         foundation_back_polygon = living_polygon
-      end      
+      end
       
       # create living zone
       living_zone = OpenStudio::Model::ThermalZone.new(model)
@@ -645,20 +645,28 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     # foundation
     if foundation_height > 0
       
+      foundation_spaces = []
+      
       # foundation corridor
       if corr_width > 0 and corr_pos == "Double-Loaded Interior"
         corridor_space = OpenStudio::Model::Space::fromFloorPrint(foundation_corr_polygon, foundation_height, model)
         corridor_space = corridor_space.get
-        corridor_space_name = Constants.CorridorSpace(0)
-        corridor_space.setName(corridor_space_name)
-        corridor_space.setThermalZone(corridor_zone)
+        if foundation_type == Constants.FinishedBasementSpace
+          corridor_space.setName(Constants.CorridorSpace(0))
+          corridor_space.setThermalZone(corridor_zone)
+        end
         m = OpenStudio::Matrix.new(4,4,0)
         m[0,0] = 1
         m[1,1] = 1
         m[2,2] = 1
         m[3,3] = 1
-        m[2,3] = -foundation_height
-        corridor_space.setTransformation(OpenStudio::Transformation.new(m))
+        m[2,3] = foundation_height
+        corridor_space.changeTransformation(OpenStudio::Transformation.new(m))
+        corridor_space.setXOrigin(0)
+        corridor_space.setYOrigin(0)
+        corridor_space.setZOrigin(0)        
+        
+        foundation_spaces << corridor_space
       end
       
       # foundation front
@@ -670,27 +678,27 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       m[1,1] = 1
       m[2,2] = 1
       m[3,3] = 1
-      m[2,3] = -foundation_height
-      foundation_space.setTransformation(OpenStudio::Transformation.new(m))      
-      foundation_zone = OpenStudio::Model::ThermalZone.new(model)
-      if foundation_type == Constants.UnfinishedBasementSpace
-        foundation_space.setName(Constants.UnfinishedBasementSpace(num_units + 1))
-        foundation_zone.setName(Constants.UnfinishedBasementZone(num_units + 1))
-      elsif foundation_type == Constants.FinishedBasementSpace
+      m[2,3] = foundation_height
+      foundation_space.changeTransformation(OpenStudio::Transformation.new(m))
+      foundation_space.setXOrigin(0)
+      foundation_space.setYOrigin(0)
+      foundation_space.setZOrigin(0)
+      
+      if foundation_type == Constants.FinishedBasementSpace
+        foundation_zone = OpenStudio::Model::ThermalZone.new(model)
         foundation_space.setName(Constants.FinishedBasementSpace(num_units + 1))
         foundation_zone.setName(Constants.FinishedBasementZone(num_units + 1))
-      elsif foundation_type == Constants.CrawlSpace
-        foundation_space.setName(Constants.CrawlSpace(num_units + 1))
-        foundation_zone.setName(Constants.CrawlZone(num_units + 1))        
+        foundation_space.setThermalZone(foundation_zone)
       end
-      foundation_space.setThermalZone(foundation_zone)
+      
       foundation_space_front << foundation_space
+      foundation_spaces << foundation_space
       
       # create the unit
       Geometry.set_unit_beds_baths_spaces(model, num_units + 1, foundation_space_front)
 
       if corr_pos == "Double-Loaded Interior" or corr_pos == "Double Exterior" # units in front and back
-      
+            
         # foundation back
         foundation_space_back = []
         foundation_space = OpenStudio::Model::Space::fromFloorPrint(foundation_back_polygon, foundation_height, model)
@@ -700,21 +708,21 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         m[1,1] = 1
         m[2,2] = 1
         m[3,3] = 1
-        m[2,3] = -foundation_height
-        foundation_space.setTransformation(OpenStudio::Transformation.new(m))      
-        foundation_zone = OpenStudio::Model::ThermalZone.new(model)
-        if foundation_type == Constants.UnfinishedBasementSpace
-          foundation_space.setName(Constants.UnfinishedBasementSpace(num_units + 2))
-          foundation_zone.setName(Constants.UnfinishedBasementZone(num_units + 2))
-        elsif foundation_type == Constants.FinishedBasementSpace
+        m[2,3] = foundation_height
+        foundation_space.changeTransformation(OpenStudio::Transformation.new(m))
+        foundation_space.setXOrigin(0)
+        foundation_space.setYOrigin(0)
+        foundation_space.setZOrigin(0)
+        
+        if foundation_type == Constants.FinishedBasementSpace
+          foundation_zone = OpenStudio::Model::ThermalZone.new(model)
           foundation_space.setName(Constants.FinishedBasementSpace(num_units + 2))
           foundation_zone.setName(Constants.FinishedBasementZone(num_units + 2))
-        elsif foundation_type == Constants.CrawlSpace
-          foundation_space.setName(Constants.CrawlSpace(num_units + 2))
-          foundation_zone.setName(Constants.CrawlZone(num_units + 2))        
+          foundation_space.setThermalZone(foundation_zone)
         end
-        foundation_space.setThermalZone(foundation_zone)
+        
         foundation_space_back << foundation_space
+        foundation_spaces << foundation_space
         
         # create the unit
         Geometry.set_unit_beds_baths_spaces(model, num_units + 2, foundation_space_back)
@@ -730,25 +738,17 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
             living_spaces = foundation_space_back
           end
           
-          living_zone = OpenStudio::Model::ThermalZone.new(model)
-          if foundation_type == Constants.UnfinishedBasementSpace
-            living_zone.setName(Constants.UnfinishedBasementZone(unit_num))
-          elsif foundation_type == Constants.FinishedBasementSpace
+          if foundation_type == Constants.FinishedBasementSpace
+            living_zone = OpenStudio::Model::ThermalZone.new(model)
             living_zone.setName(Constants.FinishedBasementZone(unit_num))
-          elsif foundation_type == Constants.CrawlSpace
-            living_zone.setName(Constants.CrawlZone(unit_num))        
           end
         
           new_living_spaces = []
           living_spaces.each do |living_space|
         
             new_living_space = living_space.clone.to_Space.get
-            if foundation_type == Constants.UnfinishedBasementSpace
-              new_living_space.setName(Constants.UnfinishedBasementSpace(unit_num))
-            elsif foundation_type == Constants.FinishedBasementSpace
+            if foundation_type == Constants.FinishedBasementSpace
               new_living_space.setName(Constants.FinishedBasementSpace(unit_num))
-            elsif foundation_type == Constants.CrawlSpace
-              new_living_space.setName(Constants.CrawlSpace(unit_num))
             end
           
             m = OpenStudio::Matrix.new(4,4,0)
@@ -764,9 +764,12 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
             new_living_space.setXOrigin(0)
             new_living_space.setYOrigin(0)
             new_living_space.setZOrigin(0)
-            new_living_space.setThermalZone(living_zone)
+            if foundation_type == Constants.FinishedBasementSpace
+              new_living_space.setThermalZone(living_zone)
+            end
          
             new_living_spaces << new_living_space
+            foundation_spaces << new_living_space
           
           end        
         
@@ -774,7 +777,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
           
         end
     
-      else
+      else # units only in front
       
         pos = 0
         (num_units+2..num_units+num_units_per_floor).to_a.each do |unit_num|
@@ -782,25 +785,17 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
           living_spaces = foundation_space_front
           pos += 1
           
-          living_zone = OpenStudio::Model::ThermalZone.new(model)
-          if foundation_type == Constants.UnfinishedBasementSpace
-            living_zone.setName(Constants.UnfinishedBasementZone(unit_num))
-          elsif foundation_type == Constants.FinishedBasementSpace
+          if foundation_type == Constants.FinishedBasementSpace
+            living_zone = OpenStudio::Model::ThermalZone.new(model)
             living_zone.setName(Constants.FinishedBasementZone(unit_num))
-          elsif foundation_type == Constants.CrawlSpace
-            living_zone.setName(Constants.CrawlZone(unit_num))        
           end
         
           new_living_spaces = []
           living_spaces.each do |living_space|
             
             new_living_space = living_space.clone.to_Space.get
-            if foundation_type == Constants.UnfinishedBasementSpace
-              new_living_space.setName(Constants.UnfinishedBasementSpace(unit_num))
-            elsif foundation_type == Constants.FinishedBasementSpace
+            if foundation_type == Constants.FinishedBasementSpace
               new_living_space.setName(Constants.FinishedBasementSpace(unit_num))
-            elsif foundation_type == Constants.CrawlSpace
-              new_living_space.setName(Constants.CrawlSpace(unit_num))
             end
           
             m = OpenStudio::Matrix.new(4,4,0)
@@ -816,9 +811,12 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
             new_living_space.setXOrigin(0)
             new_living_space.setYOrigin(0)
             new_living_space.setZOrigin(0)
-            new_living_space.setThermalZone(living_zone)
+            if foundation_type == Constants.FinishedBasementSpace
+              new_living_space.setThermalZone(living_zone)
+            end
          
             new_living_spaces << new_living_space
+            foundation_spaces << new_living_space
           
           end        
         
@@ -826,6 +824,43 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
 
         end
       
+      end
+    
+      # put all of the spaces in the model into a vector
+      spaces = OpenStudio::Model::SpaceVector.new
+      model.getSpaces.each do |space|
+        spaces << space
+      end    
+      
+      # intersect and match surfaces for each space in the vector
+      OpenStudio::Model.intersectSurfaces(spaces)
+      OpenStudio::Model.matchSurfaces(spaces)    
+    
+      if [Constants.CrawlSpace, Constants.UnfinishedBasementSpace].include? foundation_type
+        foundation_space = Geometry.make_one_space_from_multiple_spaces(model, foundation_spaces)
+        if foundation_type == Constants.CrawlSpace
+          foundation_space.setName(Constants.CrawlSpace)
+          foundation_zone = OpenStudio::Model::ThermalZone.new(model)
+          foundation_zone.setName(Constants.CrawlZone)
+          foundation_space.setThermalZone(foundation_zone)
+        elsif foundation_type == Constants.UnfinishedBasementSpace
+          foundation_space.setName(Constants.UnfinishedBasementSpace)
+          foundation_zone = OpenStudio::Model::ThermalZone.new(model)
+          foundation_zone.setName(Constants.UnfinishedBasementZone)
+          foundation_space.setThermalZone(foundation_zone)
+        end
+      end
+    
+      # set foundation walls to ground
+      spaces = model.getSpaces
+      spaces.each do |space|
+        if space.name.to_s.start_with? Constants.CrawlSpace or space.name.to_s.start_with? Constants.UnfinishedBasementSpace or space.name.to_s.start_with? Constants.FinishedBasementSpace
+          surfaces = space.surfaces
+          surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "wall"
+            surface.setOutsideBoundaryCondition("Ground")
+          end
+        end
       end
     
     end     
