@@ -294,7 +294,7 @@ class Waterheater
             # Tankless WHs are set to "modulate", not "cycle", so they end up
             # effectively always on. Thus, we need to use a weighted-average of
             # on-cycle and off-cycle parasitics.
-            sch = HotWaterSchedule.new(model, runner, "", "", nbeds, unit_num, nil, 0, measure_dir)
+            sch = HotWaterSchedule.new(model, runner, "", "", nbeds, unit_num, nil, 0, measure_dir, false)
             if not sch.validated?
                 return nil
             end

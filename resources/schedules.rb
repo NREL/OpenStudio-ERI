@@ -6,7 +6,7 @@ class HourlyByMonthSchedule
     # weekday_month_by_hour_values must be a 12-element array of 24-element arrays of numbers.
     # weekend_month_by_hour_values must be a 12-element array of 24-element arrays of numbers.
     def initialize(model, runner, sch_name, weekday_month_by_hour_values, weekend_month_by_hour_values, 
-                   normalize_values=true)
+                   normalize_values=true, create_sch_object=true)
         @validated = true
         @model = model
         @runner = runner
@@ -21,7 +21,9 @@ class HourlyByMonthSchedule
         else
             @maxval = 1.0
         end
-        @schedule = createSchedule()
+        if create_sch_object
+            @schedule = createSchedule()
+        end
     end
     
     def validated?
@@ -174,7 +176,7 @@ class MonthWeekdayWeekendSchedule
     # weekend_hourly_values can either be a comma-separated string of 24 numbers or a 24-element array of numbers.
     # monthly_values can either be a comma-separated string of 12 numbers or a 12-element array of numbers.
     def initialize(model, runner, sch_name, weekday_hourly_values, weekend_hourly_values, monthly_values, 
-                   mult_weekday=1.0, mult_weekend=1.0, normalize_values=true)
+                   mult_weekday=1.0, mult_weekend=1.0, normalize_values=true, create_sch_object=true)
         @validated = true
         @model = model
         @runner = runner
@@ -197,7 +199,9 @@ class MonthWeekdayWeekendSchedule
             @maxval = 1.0
             @schadjust = 1.0
         end
-        @schedule = createSchedule()
+        if create_sch_object
+            @schedule = createSchedule()
+        end
     end
   
     def validated?
@@ -404,7 +408,7 @@ end
 
 class HotWaterSchedule
 
-    def initialize(model, runner, sch_name, temperature_sch_name, num_bedrooms, unit_num, file_prefix, target_water_temperature, measure_dir)
+    def initialize(model, runner, sch_name, temperature_sch_name, num_bedrooms, unit_num, file_prefix, target_water_temperature, measure_dir, create_sch_object=true)
         @validated = true
         @model = model
         @runner = runner
@@ -423,7 +427,9 @@ class HotWaterSchedule
             @validated = false
             return
         end
-        @schedule = createSchedule(data, timestep_minutes)
+        if create_sch_object
+            @schedule = createSchedule(data, timestep_minutes)
+        end
     end
 
     def validated?
