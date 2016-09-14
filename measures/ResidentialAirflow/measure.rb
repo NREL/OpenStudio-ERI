@@ -1276,7 +1276,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
             Set Cw = #{inf.wind_coef * (1246.0 ** inf.n_i)},
             Set n = #{inf.n_i},
             Set sft = (f_t*#{(((wind_speed.S_wo * (1.0 - inf.Y_i)) + (inf.S_wflue * (1.5 * inf.Y_i))))}),
-            Set Qn = (((c*Cs*(DeltaT^n))^2)+(((c*Cw)*((sft*Vwind)^(2*n)))^2))^0.5,"
+            Set Qn = (((c*Cs*(DeltaT^n))^2)+(((c*Cw)*((sft*Vwind_#{unit_num})^(2*n)))^2))^0.5,"
         else
           ems_program += "
             Set Qn = 0,"
@@ -1340,8 +1340,8 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       end
 
       ems_program += "
-        Set RangeHoodFanPowerOverride_#{unit_num} = (Qrange*300)/faneff_sp,
-        Set BathExhaustFanPowerOverride_#{unit_num} = (Qbath*300)/faneff_sp,
+        Set RangeHoodFanPowerOverride_#{unit_num} = (Qrange_#{unit_num}*300)/faneff_sp,
+        Set BathExhaustFanPowerOverride_#{unit_num} = (Qbath_#{unit_num}*300)/faneff_sp,
         Set Q_acctd_for_elsewhere = QhpwhOut + QhpwhIn + QductsOut + QductsIn,
         Set InfilFlow_#{unit_num} = (((Qu^2) + (Qn^2))^0.5) - Q_acctd_for_elsewhere,
         Set InfilFlow_#{unit_num} = (@Max InfilFlow_#{unit_num} 0),
@@ -2460,7 +2460,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
           ems_subroutine += "
           Set h_SA = (@HFnTdbW AH_Tout_#{unit_num} AH_Wout_#{unit_num}),
           Set h_AHZone = (@HFnTdbW AHZone_T_#{unit_num} AHZone_W_#{unit_num}),
-          Set h_RA = (@HFnTdbW RA_T RA_W),
+          Set h_RA = (@HFnTdbW RA_T_#{unit_num} RA_W_#{unit_num}),
           Set h_fg = (@HfgAirFnWTdb AH_Wout_#{unit_num} AH_Tout_#{unit_num}),
           Set SALeakageQtot = f_sup * AH_MFR_#{unit_num} * (h_RA - h_SA),
           Set SupplyLeakLatentLoad_#{unit_num} = f_sup * AH_MFR_#{unit_num} * h_fg * (RA_W_#{unit_num} - AH_Wout_#{unit_num}),
@@ -2470,7 +2470,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
           Set Tsupply = AHZone_T_#{unit_num} + ((AH_Tout_#{unit_num} - AHZone_T_#{unit_num}) * (@Exp expTerm)),
           Set SupplyDuctLoadToLiving_#{unit_num} = AH_MFR_#{unit_num} * 1006.0 * (Tsupply - AH_Tout_#{unit_num}),
           Set ConductionToAHZone_#{unit_num} = 0 - SupplyDuctLoadToLiving_#{unit_num},
-          Set expTerm = (Fan_RTF_#{unit_num} / (AH_MF_#{unit_num}R * 1006.0)) * #{OpenStudio::convert(d.return_duct_ua,"Btu/hr*R","W/K").get},
+          Set expTerm = (Fan_RTF_#{unit_num} / (AH_MFR_#{unit_num} * 1006.0)) * #{OpenStudio::convert(d.return_duct_ua,"Btu/hr*R","W/K").get},
           Set expTerm = 0 - expTerm,
           Set Treturn = AHZone_T_#{unit_num} + ((RA_T_#{unit_num} - AHZone_T_#{unit_num}) * (@Exp expTerm)),
           Set ReturnDuctLoadToPlenum_#{unit_num} = AH_MFR_#{unit_num} * 1006.0 * (Treturn - RA_T_#{unit_num}),
