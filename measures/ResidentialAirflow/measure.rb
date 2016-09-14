@@ -1302,7 +1302,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
 
       if vent.MechVentType == Constants.VentTypeBalanced
         ems_program += "
-          Set Qout = Qrange_#{unit_num}+Qbath_#{unit_num + 1}+Qdryer_#{unit_num}+QhpwhOut+QductsOut,          !- Exhaust flows
+          Set Qout = Qrange_#{unit_num}+Qbath_#{unit_num}+Qdryer_#{unit_num}+QhpwhOut+QductsOut,          !- Exhaust flows
           Set Qin = QhpwhIn+QductsIn,                                 !- Supply flows
           Set Qu = (@Abs (Qout - Qin)),                               !- Unbalanced flow
           Set Qb = QWHV_#{unit_num} + (@Min Qout Qin),                !- Balanced flow"
@@ -1418,7 +1418,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
       ems << "
       EnergyManagementSystem:Program,
         NaturalVentilationProgram_#{unit_num},                          !- Name
-        Set Tdiff = Tin_#{unit_num + 1} - Tout_#{unit_num},
+        Set Tdiff = Tin_#{unit_num} - Tout_#{unit_num},
         Set DeltaT = (@Abs Tdiff),
         Set Phiout = (@RhFnTdbWPb Tout_#{unit_num} Wout_#{unit_num} Pbar_#{unit_num}),
         Set Hin = (@HFnTdbRhPb Tin_#{unit_num} Phiin_#{unit_num} Pbar_#{unit_num}),
