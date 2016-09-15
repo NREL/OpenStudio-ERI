@@ -1,14 +1,14 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>create_residential_multifamily_geometry</name>
-  <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>0ad16406-8006-4ee4-bf97-571ca9fb2756</version_id>
-  <version_modified>20160915T183304Z</version_modified>
+  <name>create_residential_single_family_attached_geometry</name>
+  <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
+  <version_id>d129fa0e-b658-4a63-97a4-d393f18c97d4</version_id>
+  <version_modified>20160915T192013Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
-  <class_name>CreateResidentialMultifamilyGeometry</class_name>
-  <display_name>Create Residential Multifamily Geometry</display_name>
+  <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
+  <display_name>Create Residential Single-Family Attached Geometry</display_name>
   <description>Sets the basic geometry for the building.</description>
-  <modeler_description>Creates multifamily geometry.</modeler_description>
+  <modeler_description>Creates single-family attached geometry.</modeler_description>
   <arguments>
     <argument>
       <name>unit_ffa</name>
@@ -61,86 +61,33 @@
       <default_value>2</default_value>
     </argument>
     <argument>
-      <name>corr_pos</name>
-      <display_name>Corridor Position</display_name>
-      <description>The position of the corridor.</description>
-      <type>Choice</type>
+      <name>offset</name>
+      <display_name>Offset Depth</display_name>
+      <description>The depth of the offset.</description>
+      <type>Double</type>
+      <units>ft</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Double-Loaded Interior</default_value>
+      <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>has_rear_units</name>
+      <display_name>Has Rear Units?</display_name>
+      <description>Whether the building has rear adjacent units.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
       <choices>
         <choice>
-          <value>Double-Loaded Interior</value>
-          <display_name>Double-Loaded Interior</display_name>
+          <value>true</value>
+          <display_name>true</display_name>
         </choice>
         <choice>
-          <value>Single Exterior (Front)</value>
-          <display_name>Single Exterior (Front)</display_name>
-        </choice>
-        <choice>
-          <value>Double Exterior</value>
-          <display_name>Double Exterior</display_name>
+          <value>false</value>
+          <display_name>false</display_name>
         </choice>
       </choices>
-    </argument>
-    <argument>
-      <name>corr_width</name>
-      <display_name>Corridor Width</display_name>
-      <description>The width of the corridor.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>10</default_value>
-    </argument>
-    <argument>
-      <name>inset_width</name>
-      <display_name>Inset Width</display_name>
-      <description>The width of the inset.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>inset_depth</name>
-      <display_name>Inset Depth</display_name>
-      <description>The depth of the inset.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>inset_pos</name>
-      <display_name>Inset Position</display_name>
-      <description>The position of the inset.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>Right</default_value>
-      <choices>
-        <choice>
-          <value>Right</value>
-          <display_name>Right</display_name>
-        </choice>
-        <choice>
-          <value>Left</value>
-          <display_name>Left</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>balc_depth</name>
-      <display_name>Balcony Depth</display_name>
-      <description>The depth of the balcony.</description>
-      <type>Double</type>
-      <units>ft</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
     </argument>
     <argument>
       <name>foundation_type</name>
@@ -162,6 +109,10 @@
         <choice>
           <value>unfinished basement space</value>
           <display_name>unfinished basement space</display_name>
+        </choice>
+        <choice>
+          <value>finished basement space</value>
+          <display_name>finished basement space</display_name>
         </choice>
         <choice>
           <value>pier and beam space</value>
@@ -208,12 +159,6 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A2C693E7</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -226,10 +171,16 @@
       <checksum>FB9C2854</checksum>
     </file>
     <file>
-      <filename>create_residential_multifamily_geometry_test.rb</filename>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A2C693E7</checksum>
+    </file>
+    <file>
+      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>3D8DEB97</checksum>
+      <checksum>A736FCB5</checksum>
     </file>
     <file>
       <version>
@@ -240,7 +191,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8FE7BEE1</checksum>
+      <checksum>EB178B1B</checksum>
     </file>
   </files>
 </measure>
