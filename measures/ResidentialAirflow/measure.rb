@@ -2553,6 +2553,7 @@ class ProcessAirflow < OpenStudio::Ruleset::WorkspaceUserScript
           if return_path.getString(0).to_s == "Central Air System_#{unit_num} Return Path"
             return_path.setString(2, "AirLoopHVAC:ReturnPlenum")
             return_path.setString(3, "Return Plenum_#{unit_num}")
+            workspace = HelperMethods.remove_object_from_idf_based_on_name(workspace, ["Zone Mixer_#{unit_num}"], "AirLoopHVAC:ZoneMixer", runner)
           end
         end
       else # no ducts
