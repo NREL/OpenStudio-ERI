@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>903e6876-57b0-42fa-86b9-8f271276f8ea</version_id>
-  <version_modified>20160916T221643Z</version_modified>
+  <version_id>83850f12-920e-41bf-889d-4a5c254ab21e</version_id>
+  <version_modified>20160919T170259Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>

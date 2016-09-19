@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>173cc90c-471a-4d28-a65e-adbe57a5292d</version_id>
-  <version_modified>20160916T221646Z</version_modified>
+  <version_id>9c117e06-ec30-47a8-8eae-f6c48cdb5055</version_id>
+  <version_modified>20160919T220310Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -227,18 +227,6 @@
       <checksum>E1FBD5BD</checksum>
     </file>
     <file>
-      <filename>singlefamily_fbsmt_location_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D4716743</checksum>
-    </file>
-    <file>
-      <filename>process_room_air_conditioner_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E01227FA</checksum>
-    </file>
-    <file>
       <filename>singlefamily_fbsmt_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -286,12 +274,6 @@
       <checksum>B0F08AA2</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>92DBEC5C</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -308,6 +290,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DFE453BC</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9F94BB8C</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>77A71626</checksum>
+    </file>
+    <file>
+      <filename>process_room_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>32AA8780</checksum>
     </file>
   </files>
 </measure>

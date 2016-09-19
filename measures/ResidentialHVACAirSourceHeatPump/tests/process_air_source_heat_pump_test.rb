@@ -71,22 +71,22 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
   
   def test_retrofit_replace_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_room_air_conditioner.osm", args_hash, ["Removed 'Window AC'"])
+    _test_measure("singlefamily_fbsmt_location_room_air_conditioner.osm", args_hash, ["Removed packaged terminal air conditioner 'Window AC'"])
   end
   
   def test_retrofit_replace_electric_baseboard
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'"])
+    _test_measure("singlefamily_fbsmt_location_electric_baseboard.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'"])
   end
   
   def test_retrofit_replace_boiler
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'"])
+    _test_measure("singlefamily_fbsmt_location_boiler.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'"])
   end
   
   def test_retrofit_replace_mshp
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
+    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed variable refrigerant flow terminal unit 'Indoor Unit'"])
   end
   
   def test_retrofit_replace_furnace_central_air_conditioner
@@ -96,27 +96,27 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
   
   def test_retrofit_replace_furnace_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System_1'", "Removed 'Window AC'", "Removed air loop 'Central Air System_1'"])
+    _test_measure("singlefamily_fbsmt_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System_1'", "Removed packaged terminal air conditioner 'Window AC'", "Removed air loop 'Central Air System_1'"])
   end    
   
   def test_retrofit_replace_electric_baseboard_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'", "Removed 'DX Cooling Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
+    _test_measure("singlefamily_fbsmt_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'", "Removed 'DX Cooling Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
   end
 
   def test_retrofit_replace_boiler_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler_central_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'", "Removed 'DX Cooling Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
+    _test_measure("singlefamily_fbsmt_location_boiler_central_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'", "Removed 'DX Cooling Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
   end
   
   def test_retrofit_replace_electric_baseboard_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed 'Living Zone Electric Baseboards'", "Removed 'Window AC'"])
+    _test_measure("singlefamily_fbsmt_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'", "Removed packaged terminal air conditioner 'Window AC'"])
   end
 
   def test_retrofit_replace_boiler_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler_room_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed 'Living Zone Baseboards'", "Removed 'Window AC'"])
+    _test_measure("singlefamily_fbsmt_location_boiler_room_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'", "Removed packaged terminal air conditioner 'Window AC'"])
   end
   
   def test_mf

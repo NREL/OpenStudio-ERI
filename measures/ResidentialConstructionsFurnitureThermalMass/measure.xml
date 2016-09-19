@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>e4554124-b632-418e-a865-c23bbe8681bf</version_id>
-  <version_modified>20160916T221641Z</version_modified>
+  <version_id>6312d58c-c666-448b-bb8f-c12313fa35f5</version_id>
+  <version_modified>20160919T170258Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>

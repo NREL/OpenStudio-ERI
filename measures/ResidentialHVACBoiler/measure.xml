@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>63de848c-9fa5-4884-808d-fcb324b503b9</version_id>
-  <version_modified>20160916T221645Z</version_modified>
+  <version_id>b1c986d1-466f-443f-bfaf-c70cae452447</version_id>
+  <version_modified>20160919T224706Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -326,12 +326,6 @@
       <checksum>DDBF85D7</checksum>
     </file>
     <file>
-      <filename>process_boiler_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>453D80EC</checksum>
-    </file>
-    <file>
       <filename>singlefamily_fbsmt_location_ashp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -372,12 +366,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>E1FBD5BD</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbsmt_location_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D4716743</checksum>
     </file>
     <file>
       <filename>singlefamily_fbsmt_location.osm</filename>
@@ -427,12 +415,6 @@
       <checksum>F1A826E0</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>92DBEC5C</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -449,6 +431,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DFE453BC</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9F94BB8C</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>77A71626</checksum>
+    </file>
+    <file>
+      <filename>process_boiler_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>412B54B8</checksum>
     </file>
   </files>
 </measure>

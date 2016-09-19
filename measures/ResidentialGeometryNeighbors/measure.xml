@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>58aa6eec-58bf-4cc3-8ac9-8c91fdaa2d11</version_id>
-  <version_modified>20160916T221643Z</version_modified>
+  <version_id>051a9189-c3aa-49aa-9e34-07454a34fdfa</version_id>
+  <version_modified>20160919T170300Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>

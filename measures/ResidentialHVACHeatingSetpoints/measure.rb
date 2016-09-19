@@ -98,6 +98,8 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
           supp_htg_coil = supp_htg_coil.to_CoilHeatingElectric.get
           heatingseasonschedule.setSchedule(supp_htg_coil)           
           runner.registerInfo("Added availability schedule to #{supp_htg_coil.name}.")
+        elsif htg_coil.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow
+          htg_coil = htg_coil.heatingCoil.to_CoilHeatingDXVariableRefrigerantFlow.get        
         end
         heatingseasonschedule.setSchedule(htg_coil)
         runner.registerInfo("Added availability schedule to #{htg_coil.name}.")

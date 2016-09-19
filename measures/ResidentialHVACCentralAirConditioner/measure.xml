@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>f8844942-6140-4484-a0e4-a28d419202b2</version_id>
-  <version_modified>20160916T221645Z</version_modified>
+  <version_id>02178721-5318-423b-9a2a-b52c4ca19f76</version_id>
+  <version_modified>20160919T220310Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -341,12 +341,6 @@
       <checksum>E1FBD5BD</checksum>
     </file>
     <file>
-      <filename>singlefamily_fbsmt_location_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D4716743</checksum>
-    </file>
-    <file>
       <filename>singlefamily_fbsmt_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -401,12 +395,6 @@
       <checksum>331E51A2</checksum>
     </file>
     <file>
-      <filename>process_central_air_conditioner_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0276BD21</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -422,12 +410,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>9A23E14E</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>92DBEC5C</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -446,6 +428,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DFE453BC</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9F94BB8C</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>77A71626</checksum>
+    </file>
+    <file>
+      <filename>process_central_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BAAE02A7</checksum>
     </file>
   </files>
 </measure>

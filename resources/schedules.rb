@@ -239,7 +239,7 @@ class MonthWeekdayWeekendSchedule
               end
               obj.setCoolingSetpointTemperatureSchedule(@schedule)
             end
-        elsif obj.is_a? OpenStudio::Model::CoilHeatingGas or obj.is_a? OpenStudio::Model::CoilHeatingElectric or obj.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed or obj.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed or obj.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveWater or obj.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner or obj.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric or obj.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed or obj.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
+        elsif obj.is_a? OpenStudio::Model::CoilHeatingGas or obj.is_a? OpenStudio::Model::CoilHeatingElectric or obj.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed or obj.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed or obj.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveWater or obj.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner or obj.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric or obj.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed or obj.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed or obj.is_a? OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow or obj.is_a? OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow
             obj.setAvailabilitySchedule(@schedule)
         else
             unless obj.schedule.empty?
