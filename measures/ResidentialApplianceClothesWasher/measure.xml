@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>f14139ac-5df8-433b-be7d-25f057017479</version_id>
-  <version_modified>20160916T222039Z</version_modified>
+  <version_id>1676ab03-45c1-47c5-be91-7044d696dba5</version_id>
+  <version_modified>20160919T201714Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -316,12 +316,6 @@
       <checksum>F4A45188</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4BADD83B</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -349,6 +343,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>8D1092EC</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0088825F</checksum>
     </file>
   </files>
 </measure>

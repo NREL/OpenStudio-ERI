@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>90f7d94e-dcb6-4968-9c48-ddf02b94575f</version_id>
-  <version_modified>20160916T222039Z</version_modified>
+  <version_id>4a3c0274-2a0c-4792-aec7-de6c8788ec3e</version_id>
+  <version_modified>20160919T201716Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -206,12 +206,6 @@
       <checksum>F4A45188</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4BADD83B</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -281,6 +275,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>11C45937</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0088825F</checksum>
     </file>
   </files>
 </measure>
