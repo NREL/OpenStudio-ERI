@@ -30,12 +30,12 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return ""
+    return "This measure removes any existing HVAC components from the building and adds a mini-split heat pump. For multifamily buildings, the mini-split heat pump can be set for all units of the building."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return ""
+    return "Any supply components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. A heating DX coil, cooling DX coil, and an on/off supply fan are added to a variable refrigerant flow terminal unit."
   end
 
   # define the arguments that the user will input
@@ -161,13 +161,6 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     miniSplitHPMinT.setDefaultValue(5.0)
     args << miniSplitHPMinT
     
-    #make a bool argument for whether the minisplit is cold climate
-    miniSplitHPIsColdClimate = OpenStudio::Ruleset::OSArgument::makeBoolArgument("miniSplitHPIsColdClimate", true)
-    miniSplitHPIsColdClimate.setDisplayName("Is Cold Climate")
-    miniSplitHPIsColdClimate.setDescription("Specifies whether the heat pump is a so called 'cold climate heat pump'.")
-    miniSplitHPIsColdClimate.setDefaultValue(false)
-    args << miniSplitHPIsColdClimate
-    
     #make a choice argument for minisplit cooling output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
@@ -187,13 +180,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
       cap_display_names << "#{kbtu} kBtu/hr"
-    end
-    
-    #make a string argument for minisplit supplemental heating output capacity
-    miniSplitSupplementalHeatingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("miniSplitSupplementalHeatingOutputCapacity", cap_display_names, true)
-    miniSplitSupplementalHeatingOutputCapacity.setDisplayName("Supplemental Heating Output Capacity")
-    miniSplitSupplementalHeatingOutputCapacity.setDefaultValue(Constants.SizingAuto)
-    args << miniSplitSupplementalHeatingOutputCapacity    
+    end  
     
     return args
   end
@@ -225,20 +212,13 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     miniSplitHPHeatingMinAirflow = runner.getDoubleArgumentValue("miniSplitHPHeatingMinAirflow",user_arguments) 
     miniSplitHPHeatingMaxAirflow = runner.getDoubleArgumentValue("miniSplitHPHeatingMaxAirflow",user_arguments) 
     miniSplitHPMinT = runner.getDoubleArgumentValue("miniSplitHPMinT",user_arguments) 
-    miniSplitHPIsColdClimate = runner.getBoolArgumentValue("miniSplitHPIsColdClimate",user_arguments)    
     miniSplitCoolingOutputCapacity = runner.getStringArgumentValue("miniSplitCoolingOutputCapacity",user_arguments)
     unless miniSplitCoolingOutputCapacity == Constants.SizingAuto
       miniSplitCoolingOutputCapacity = OpenStudio::convert(miniSplitCoolingOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
       miniSplitHeatingOutputCapacity = miniSplitCoolingOutputCapacity + miniSplitHPHeatingCapacityOffset
     end
-    miniSplitSupplementalHeatingOutputCapacity = runner.getStringArgumentValue("miniSplitSupplementalHeatingOutputCapacity",user_arguments)
-    if not miniSplitSupplementalHeatingOutputCapacity == Constants.SizingAuto and not miniSplitSupplementalHeatingOutputCapacity == "NO SUPP HEAT"
-      miniSplitSupplementalHeatingOutputCapacity = OpenStudio::convert(miniSplitSupplementalHeatingOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
-    end
         
     # _processAirSystem
-        
-    has_cchp = miniSplitHPIsColdClimate # FIXME: Currently unused
     
     curves.mshp_indices = [1,3,5,9]
     
@@ -286,14 +266,14 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemHeatingCoil
         
         htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
-        htg_coil.setName("DX Heating Coil")
+        htg_coil.setName("DX Heating Coil_#{unit_num}")
         htg_coil.setHeatingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
         htg_coil.setHeatingCapacityModifierFunctionofFlowFractionCurve(constant_cubic)
       
         # _processSystemCoolingCoil
         
         clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
-        clg_coil.setName("DX Cooling Coil")
+        clg_coil.setName("DX Cooling Coil_#{unit_num}")
         clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[-1])
         clg_coil.setCoolingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
         clg_coil.setCoolingCapacityModifierCurveFunctionofFlowFraction(constant_cubic)
@@ -301,7 +281,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemAir
       
         vrf = OpenStudio::Model::AirConditionerVariableRefrigerantFlow.new(model)
-        vrf.setName("Multi Split Heat Pump")
+        vrf.setName("Mini Split Heat Pump_#{unit_num}")
         vrf.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         vrf.setRatedCoolingCOP(1.0 / supply.CoolingEIR[-1])
         
@@ -463,7 +443,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemDemandSideAir
         
         tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
-        tu_vrf.setName("Indoor Unit")
+        tu_vrf.setName("Indoor Unit_#{unit_num}")
         tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
         tu_vrf.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
         tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)

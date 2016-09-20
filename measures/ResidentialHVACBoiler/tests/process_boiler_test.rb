@@ -78,7 +78,7 @@ class ProcessBoilerTest < MiniTest::Test
   
   def test_retrofit_replace_mshp
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed variable refrigerant flow terminal unit 'Indoor Unit'"])
+    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed variable refrigerant flow terminal unit 'Indoor Unit_1'"])
   end
   
   def test_retrofit_replace_furnace_central_air_conditioner
