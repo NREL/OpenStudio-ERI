@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>9c117e06-ec30-47a8-8eae-f6c48cdb5055</version_id>
-  <version_modified>20160919T220310Z</version_modified>
+  <version_id>f19e3cab-00ea-4787-b572-a61b26453a2f</version_id>
+  <version_modified>20160920T163355Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -301,13 +301,13 @@
       <filename>singlefamily_fbsmt_location_mshp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>77A71626</checksum>
+      <checksum>27FDF5D9</checksum>
     </file>
     <file>
       <filename>process_room_air_conditioner_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>32AA8780</checksum>
+      <checksum>8A7D8AC5</checksum>
     </file>
   </files>
 </measure>
