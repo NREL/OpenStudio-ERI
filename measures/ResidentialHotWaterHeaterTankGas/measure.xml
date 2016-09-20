@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>7fd8b643-7f8a-40a6-abe8-943154b7f96d</version_id>
-  <version_modified>20160919T225158Z</version_modified>
+  <version_id>7c7ef4aa-7fcf-4c61-abdb-190866eca359</version_id>
+  <version_modified>20160920T195903Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankGas</class_name>
   <display_name>Set Residential Gas Tank Water Heater</display_name>
@@ -283,7 +283,7 @@
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>682E77A8</checksum>
+      <checksum>770D09D0</checksum>
     </file>
   </files>
 </measure>

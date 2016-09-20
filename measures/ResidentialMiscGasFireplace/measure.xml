@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_fireplace</name>
   <uid>0565d3b2-593b-480b-a742-a6ec7058d3c4</uid>
-  <version_id>d1fc5499-7921-40f1-897c-ba99e5089ae3</version_id>
-  <version_modified>20160919T174904Z</version_modified>
+  <version_id>5f95f8ba-304e-4504-b666-c4fb445863e0</version_id>
+  <version_modified>20160920T200707Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasFireplace</class_name>
   <display_name>Set Residential Gas Fireplace</display_name>
@@ -127,17 +127,6 @@
       <checksum>22260550</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>7D02423C</checksum>
-    </file>
-    <file>
       <filename>ResidentialGasFireplace_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -159,7 +148,18 @@
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>682E77A8</checksum>
+      <checksum>770D09D0</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>97106BCF</checksum>
     </file>
   </files>
 </measure>

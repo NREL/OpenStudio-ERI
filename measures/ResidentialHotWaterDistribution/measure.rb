@@ -431,7 +431,7 @@ class ResidentialHotWaterDistribution < OpenStudio::Ruleset::ModelUserScript
             dist_oe_def.setFractionRadiant(0)
             dist_oe_def.setFractionLatent(0)
             dist_oe_def.setFractionLost(0)
-            gain_sch.setSchedule(dist_oe)
+            dist_oe.setSchedule(gain_sch.schedule)
         end
         
         if recirc_type != Constants.RecircTypeNone
@@ -452,7 +452,7 @@ class ResidentialHotWaterDistribution < OpenStudio::Ruleset::ModelUserScript
                 recirc_pump_def.setFractionLatent(0)
                 recirc_pump_def.setFractionLost(1)
             end
-            sh_sch.setSchedule(recirc_pump)
+            recirc_pump.setSchedule(sh_sch.schedule)
         end
         
         #reporting final condition of model

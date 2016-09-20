@@ -444,7 +444,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
             dw_def.setFractionRadiant(0.36)
             dw_def.setFractionLatent(0.15)
             dw_def.setFractionLost(0.25)
-            sch.setSchedule(dw)
+            dw.setSchedule(sch.schedule)
             
             #Add water use equipment for the dw
             dw_def2 = OpenStudio::Model::WaterUseEquipmentDefinition.new(model)
@@ -454,7 +454,8 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
             dw_def2.setName(obj_name)
             dw_def2.setPeakFlowRate(peak_flow)
             dw_def2.setEndUseSubcategory("Domestic Hot Water")
-            sch.setWaterSchedule(dw2)
+            dw2.setFlowRateFractionSchedule(sch.schedule)
+            dw_def2.setTargetTemperatureSchedule(sch.temperatureSchedule)
             water_use_connection.addWaterUseEquipment(dw2)
 
             info_msgs << "A dishwasher with #{dw_ann.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}' and assigned to space '#{space.name.to_s}'."
