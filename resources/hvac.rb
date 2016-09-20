@@ -726,12 +726,30 @@ class HVAC
               runner.registerInfo("Removed '#{clg_coil.name}' from air loop '#{air_loop.name}'")
               air_loop_unitary.resetCoolingCoil
               clg_coil.remove
+              supply_fan = air_loop_unitary.supplyFan.get.to_FanOnOff.get
+              supply_fan.fanPowerRatioFunctionofSpeedRatioCurve.remove
+              supply_fan.fanEfficiencyRatioFunctionofSpeedRatioCurve.remove
+              availability_schedule = supply_fan.availabilitySchedule
+              availability_schedule.remove
+              supply_fan.remove
+              if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
+                air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
+              end
               return true
             else
               if reset_air_loop
                 cloned_clg_coil = clg_coil.clone
                 air_loop_unitary.resetCoolingCoil
                 clg_coil.remove
+                supply_fan = air_loop_unitary.supplyFan.get.to_FanOnOff.get
+                supply_fan.fanPowerRatioFunctionofSpeedRatioCurve.remove
+                supply_fan.fanEfficiencyRatioFunctionofSpeedRatioCurve.remove
+                availability_schedule = supply_fan.availabilitySchedule
+                availability_schedule.remove
+                supply_fan.remove
+                if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
+                  air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
+                end
                 if cloned_clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
                   cloned_clg_coil = cloned_clg_coil.to_CoilCoolingDXSingleSpeed.get
                 elsif cloned_clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
@@ -774,12 +792,30 @@ class HVAC
               runner.registerInfo("Removed '#{htg_coil.name}' from air loop '#{air_loop.name}'")
               air_loop_unitary.resetHeatingCoil
               htg_coil.remove
+              supply_fan = air_loop_unitary.supplyFan.get.to_FanOnOff.get
+              supply_fan.fanPowerRatioFunctionofSpeedRatioCurve.remove
+              supply_fan.fanEfficiencyRatioFunctionofSpeedRatioCurve.remove
+              availability_schedule = supply_fan.availabilitySchedule
+              availability_schedule.remove
+              supply_fan.remove
+              if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
+                air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
+              end
               return true
             else
               if reset_air_loop
                 cloned_htg_coil = htg_coil.clone
                 air_loop_unitary.resetHeatingCoil
                 htg_coil.remove
+                supply_fan = air_loop_unitary.supplyFan.get.to_FanOnOff.get
+                supply_fan.fanPowerRatioFunctionofSpeedRatioCurve.remove
+                supply_fan.fanEfficiencyRatioFunctionofSpeedRatioCurve.remove
+                availability_schedule = supply_fan.availabilitySchedule
+                availability_schedule.remove
+                supply_fan.remove
+                if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
+                  air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
+                end
                 if cloned_htg_coil.to_CoilHeatingGas.is_initialized
                   cloned_htg_coil = cloned_htg_coil.to_CoilHeatingGas.get
                 elsif cloned_htg_coil.to_CoilHeatingElectric.is_initialized
@@ -837,6 +873,15 @@ class HVAC
               air_loop_unitary.resetCoolingCoil              
               htg_coil.remove
               clg_coil.remove
+              supply_fan = air_loop_unitary.supplyFan.get.to_FanOnOff.get
+              supply_fan.fanPowerRatioFunctionofSpeedRatioCurve.remove
+              supply_fan.fanEfficiencyRatioFunctionofSpeedRatioCurve.remove
+              availability_schedule = supply_fan.availabilitySchedule
+              availability_schedule.remove
+              supply_fan.remove
+              if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
+                air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
+              end
               return true
             else
               return true
