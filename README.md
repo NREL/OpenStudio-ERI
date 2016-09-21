@@ -73,8 +73,8 @@ The New Construction workflow illustrates how to build up a complete residential
 ||2. Hot Water Fixtures|Water Heater|
 ||3. Hot Water Distribution|Hot Water Fixtures, Location|
 |5. HVAC|1. Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)||
-||2. Heating Setpoints and Schedules|HVAC Equipment|
-||3. Cooling Setpoints and Schedules|HVAC Equipment|
+||2. Heating Setpoints and Schedules|HVAC Equipment, Location|
+||3. Cooling Setpoints and Schedules|HVAC Equipment, Location|
 |6. Major Appliances|1. Refrigerator||
 ||2. Clothes Washer|Water Heater, Location|
 ||3. Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
