@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>766881b3-341a-4594-9b5c-c9829c0d72bf</version_id>
-  <version_modified>20160920T173956Z</version_modified>
+  <version_id>d90ba334-2c71-4912-a9aa-4e6df3b9a66a</version_id>
+  <version_modified>20160921T165850Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -448,7 +448,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DD5771C1</checksum>
+      <checksum>31C935D5</checksum>
     </file>
   </files>
 </measure>

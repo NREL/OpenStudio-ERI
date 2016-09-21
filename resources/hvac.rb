@@ -995,12 +995,50 @@ class HVAC
         if removed_mshp or removed_ac or removed_furnace or removed_ashp
           self.has_air_loop(model, runner, thermal_zone, true)
         end
+      when "Mini-Split Heat Pump Original Model" # TODO: remove after testing new vrf mshp model
+        removed_mshp = self.has_mini_split_heat_pump_original_model(model, runner, thermal_zone, true)
+        removed_ashp = self.has_air_source_heat_pump(model, runner, thermal_zone, true)
+        removed_ac = self.has_central_air_conditioner(model, runner, thermal_zone, true)
+        removed_room_ac = self.has_room_air_conditioner(model, runner, thermal_zone, true)
+        removed_furnace = self.has_furnace(model, runner, thermal_zone, true)
+        removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
+        removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
+        if removed_mshp or removed_ac or removed_furnace or removed_ashp
+          self.has_air_loop(model, runner, thermal_zone, true)
+        end        
       end
       unless counterpart_equip.nil?
         return counterpart_equip
       end
     end
 
+    def self.has_mini_split_heat_pump_original_model(model, runner, thermal_zone, remove=false) # TODO: remove after testing new vrf mshp model
+      model.getAirLoopHVACs.each do |air_loop|
+        air_loop.thermalZones.each do |thermalZone|
+          next unless thermal_zone.handle.to_s == thermalZone.handle.to_s
+          air_loop.supplyComponents.each do |supply_component|
+            next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+            air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
+            next unless air_loop_unitary.coolingCoil.is_initialized and air_loop_unitary.heatingCoil.is_initialized
+            clg_coil = air_loop_unitary.coolingCoil.get
+            htg_coil = air_loop_unitary.heatingCoil.get
+            next unless clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized
+            if remove
+                runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from air loop '#{air_loop.name}'")
+                air_loop_unitary.resetHeatingCoil
+                air_loop_unitary.resetCoolingCoil              
+                htg_coil.remove
+                clg_coil.remove
+                return true
+            else
+              return true
+            end
+          end
+        end
+      end
+      return nil
+    end    
+    
     def self.remove_hot_water_loop(model, runner)
       model.getPlantLoops.each do |plantLoop|
         remove = true

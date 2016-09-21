@@ -281,12 +281,11 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemAir
       
         vrf = OpenStudio::Model::AirConditionerVariableRefrigerantFlow.new(model)
-        vrf.setName("Mini Split Heat Pump_#{unit_num}")
+        vrf.setName("Multi Split Heat Pump_#{unit_num}")
         vrf.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        vrf.setRatedCoolingCOP(1.0 / supply.CoolingEIR[-1])
         
-        min_plr_heat = supply.Capacity_Ratio_Heating[curves.mshp_indices.max] / supply.Capacity_Ratio_Heating[curves.mshp_indices.max]
-        min_plr_cool = supply.Capacity_Ratio_Cooling[curves.mshp_indices.max] / supply.Capacity_Ratio_Cooling[curves.mshp_indices.max]
+        min_plr_heat = supply.Capacity_Ratio_Heating[curves.mshp_indices.min] / supply.Capacity_Ratio_Heating[curves.mshp_indices.max]
+        min_plr_cool = supply.Capacity_Ratio_Cooling[curves.mshp_indices.min] / supply.Capacity_Ratio_Cooling[curves.mshp_indices.max]
         
         if miniSplitCoolingOutputCapacity != Constants.SizingAuto
           vrf.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[-1])
@@ -401,6 +400,9 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         vrf.setZoneforMasterThermostatLocation(control_zone)
         vrf.setMasterThermostatPriorityControlType("LoadPriority")
         vrf.setHeatPumpWasteHeatRecovery(false)
+        vrf.setCrankcaseHeaterPowerperCompressor(0)
+        vrf.setNumberofCompressors(1)
+        vrf.setRatioofCompressorSizetoTotalCompressorCapacity(1)
         vrf.setDefrostStrategy("ReverseCycle")
         vrf.setDefrostControl("OnDemand")
         
@@ -419,7 +421,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         vrf.setDefrostEnergyInputRatioModifierFunctionofTemperatureCurve(defrosteir)
         
         vrf.setMaximumOutdoorDrybulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
-        # vrf.setCondenserType("AirCooled")
+        # vrf.setCondenserType("AirCooled") # TODO: wrapped?
         vrf.setFuelType("Electricity")
 
         # _processSystemFan
@@ -446,6 +448,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         tu_vrf.setName("Indoor Unit_#{unit_num}")
         tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
         tu_vrf.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+        # tu_vrf.setSupplyAirFanPlacement("BlowThrough") # TODO: wrapped?
         tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
         tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
         tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
@@ -455,10 +458,9 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         
         slave_zones.each do |slave_zone|
 
+          # Remove existing equipment
           HVAC.has_boiler(model, runner, slave_zone, true)
           HVAC.has_electric_baseboard(model, runner, slave_zone, true)
-      
-          # TODO
 
         end    
       

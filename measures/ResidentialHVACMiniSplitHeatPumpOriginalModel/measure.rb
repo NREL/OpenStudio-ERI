@@ -420,7 +420,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
 
         # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, "Mini-Split Heat Pump", control_zone)
+        HVAC.remove_existing_hvac_equipment(model, runner, "Mini-Split Heat Pump Original Model", control_zone)
       
         # _processSystemHeatingCoil
         
