@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_gas</name>
   <uid>33d8c300-8f2b-4d36-b6cc-545422c7b407</uid>
-  <version_id>aba3b0e4-805c-4897-bd04-9f9e0bdf2e42</version_id>
-  <version_modified>20160920T200704Z</version_modified>
+  <version_id>25e679fe-8d28-4014-97d1-7b0e2e072966</version_id>
+  <version_modified>20160922T202857Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeGas</class_name>
   <display_name>Set Residential Gas Cooking Range</display_name>
@@ -147,12 +147,6 @@
       <checksum>14561318</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FB9C2854</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -174,6 +168,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>4EF1FA8A</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>03EC0A57</checksum>
     </file>
   </files>
 </measure>

@@ -423,6 +423,10 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         vrf.setMaximumOutdoorDrybulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
         # vrf.setCondenserType("AirCooled") # TODO: wrapped?
         vrf.setFuelType("Electricity")
+        vrf.setEquivalentPipingLengthusedforPipingCorrectionFactorinCoolingMode(0)
+        vrf.setVerticalHeightusedforPipingCorrectionFactor(0)
+        vrf.setPipingCorrectionFactorforHeightinCoolingModeCoefficient(0)
+        vrf.setEquivalentPipingLengthusedforPipingCorrectionFactorinHeatingMode(0)
 
         # _processSystemFan
         

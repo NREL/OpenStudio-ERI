@@ -71,7 +71,16 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
-  end   
+  end
+  
+  def test_zone_mult
+    args_hash = {}
+    args_hash["num_units_per_floor"] = 4
+    args_hash["use_zone_mult"] = "true"
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end    
   
   private
   
