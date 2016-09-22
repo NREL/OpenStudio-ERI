@@ -47,6 +47,10 @@ class ResidentialHotWaterHeaterTanklessPropaneTest < MiniTest::Test
     return "multifamily_3_units_Beds_Baths_Denver.osm"
   end
 
+  def osm_geo_multifamily_12_units_beds_loc
+    return "multifamily_12_units_Beds_Baths_Denver.osm"
+  end
+
   def test_new_construction_standard
     args_hash = {}
     _test_measure(osm_geo_beds_loc, args_hash, 0, 1, Constants.FinishedBasementZone, 29307107, 0.754, 125, 7.38, 7.38, 1, 0)
@@ -118,6 +122,12 @@ class ResidentialHotWaterHeaterTanklessPropaneTest < MiniTest::Test
     args_hash = {}
     args_hash["water_heater_location"] = "living zone 1"
     _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, 1, "living zone 1", 29307107, 0.754, 125, 7.38, 7.38, 1, 0)
+  end
+  
+  def test_multifamily_new_construction_mult_draw_profiles
+    num_units = 12
+    args_hash = {}
+    _test_measure(osm_geo_multifamily_12_units_beds_loc, args_hash, 0, num_units, nil, 351685284, 9.0525, 1500, 88.54, 88.54, num_units, 0)
   end
 
   def test_multifamily_retrofit_replace

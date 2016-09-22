@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_radiant_barrier</name>
   <uid>fd81853a-75a3-4c57-a5b5-373793430f49</uid>
-  <version_id>fcaffd18-8cc2-4cd2-a3d0-53d50c67a426</version_id>
-  <version_modified>20160922T202857Z</version_modified>
+  <version_id>11f90d1b-737f-42db-87e7-7f25accec58a</version_id>
+  <version_modified>20160922T212651Z</version_modified>
   <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRadiantBarrier</class_name>
   <display_name>Set Residential Ceilings/Roofs - Radiant Barrier</display_name>
@@ -113,7 +113,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>03EC0A57</checksum>
+      <checksum>A976F02F</checksum>
     </file>
   </files>
 </measure>

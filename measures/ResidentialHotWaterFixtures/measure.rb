@@ -119,14 +119,20 @@ class ResidentialHotWaterFixtures < OpenStudio::Ruleset::ModelUserScript
         if num_units.nil?
             return false
         end
+        
+        # Hot water schedules vary by number of bedrooms. For a given number of bedroom,
+        # there are 10 different schedules available for different units in a multifamily 
+        # building. This hash tracks which schedule to use.
+        sch_unit_index = {}
+        num_bed_options = (1..5)
+        num_bed_options.each do |num_bed_option|
+            sch_unit_index[num_bed_option.to_f] = -1
+        end
 
         tot_sh_gpd = 0
         tot_s_gpd = 0
         tot_b_gpd = 0
         info_msgs = []
-        sch_sh = nil
-        sch_s = nil
-        sch_b = nil
         (1..num_units).to_a.each do |unit_num|
         
             # Get unit beds/baths/spaces
@@ -213,17 +219,17 @@ class ResidentialHotWaterFixtures < OpenStudio::Ruleset::ModelUserScript
                     plant_loop.addDemandBranchForComponent(water_use_connection)
                 end
                 
+                sch_unit_index[nbeds] = (sch_unit_index[nbeds] + 1) % 10
+                
             end
             
             # Showers
             if sh_gpd > 0
                 
-                if sch_sh.nil?
-                    # Create schedule
-                    sch_sh = HotWaterSchedule.new(model, runner, Constants.ObjectNameShower + " schedule", Constants.ObjectNameShower + " temperature schedule", nbeds, unit_num, "Shower", mixed_use_t, File.dirname(__FILE__))
-                    if not sch_sh.validated?
-                        return false
-                    end
+                # Create schedule
+                sch_sh = HotWaterSchedule.new(model, runner, Constants.ObjectNameShower + " schedule", Constants.ObjectNameShower + " temperature schedule", nbeds, sch_unit_index[nbeds], "Shower", mixed_use_t, File.dirname(__FILE__))
+                if not sch_sh.validated?
+                    return false
                 end
             
                 sh_peak_flow = sch_sh.calcPeakFlowFromDailygpm(sh_gpd)
@@ -259,12 +265,10 @@ class ResidentialHotWaterFixtures < OpenStudio::Ruleset::ModelUserScript
             # Sinks
             if s_gpd > 0
             
-                if sch_s.nil?
-                    # Create schedule
-                    sch_s = HotWaterSchedule.new(model, runner, Constants.ObjectNameSink + " schedule", Constants.ObjectNameSink + " temperature schedule", nbeds, unit_num, "Sink", mixed_use_t, File.dirname(__FILE__))
-                    if not sch_s.validated?
-                        return false
-                    end
+                # Create schedule
+                sch_s = HotWaterSchedule.new(model, runner, Constants.ObjectNameSink + " schedule", Constants.ObjectNameSink + " temperature schedule", nbeds, sch_unit_index[nbeds], "Sink", mixed_use_t, File.dirname(__FILE__))
+                if not sch_s.validated?
+                    return false
                 end
             
                 s_peak_flow = sch_s.calcPeakFlowFromDailygpm(s_gpd)  
@@ -300,12 +304,10 @@ class ResidentialHotWaterFixtures < OpenStudio::Ruleset::ModelUserScript
             # Baths
             if b_gpd > 0
             
-                if sch_b.nil?
-                    # Create schedule
-                    sch_b = HotWaterSchedule.new(model, runner, Constants.ObjectNameSink + " schedule", Constants.ObjectNameSink + " temperature schedule", nbeds, unit_num, "Bath", mixed_use_t, File.dirname(__FILE__))
-                    if not sch_b.validated?
-                        return false
-                    end
+                # Create schedule
+                sch_b = HotWaterSchedule.new(model, runner, Constants.ObjectNameSink + " schedule", Constants.ObjectNameSink + " temperature schedule", nbeds, sch_unit_index[nbeds], "Bath", mixed_use_t, File.dirname(__FILE__))
+                if not sch_b.validated?
+                    return false
                 end
             
                 b_peak_flow = sch_b.calcPeakFlowFromDailygpm(b_gpd)

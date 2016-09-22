@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_gas</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>b4c8d8e9-1192-430e-aa49-95b42530f868</version_id>
-  <version_modified>20160922T202901Z</version_modified>
+  <version_id>582bd647-a4f1-4489-ae16-09461682baed</version_id>
+  <version_modified>20160922T212656Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessGas</class_name>
   <display_name>Set Residential Gas Tankless Water Heater</display_name>
@@ -175,12 +175,6 @@
       <checksum>BEC94D76</checksum>
     </file>
     <file>
-      <filename>ResidentialWaterHeaterTanklessGas_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>17BB0475</checksum>
-    </file>
-    <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
       <usage_type>test</usage_type>
@@ -223,6 +217,12 @@
       <checksum>DFE453BC</checksum>
     </file>
     <file>
+      <filename>ResidentialWaterHeaterTanklessGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D3B6A3B7</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -231,25 +231,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7C91CE75</checksum>
+      <checksum>F588533E</checksum>
     </file>
     <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0088825F</checksum>
+      <checksum>50777146</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>770D09D0</checksum>
+      <checksum>8A5D46BA</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>03EC0A57</checksum>
+      <checksum>A976F02F</checksum>
+    </file>
+    <file>
+      <filename>multifamily_12_units_Beds_Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AC8698FC</checksum>
     </file>
   </files>
 </measure>

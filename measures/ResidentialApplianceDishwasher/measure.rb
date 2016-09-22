@@ -191,10 +191,18 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
             return false
         end
     end
+    
+    # Hot water schedules vary by number of bedrooms. For a given number of bedroom,
+    # there are 10 different schedules available for different units in a multifamily 
+    # building. This hash tracks which schedule to use.
+    sch_unit_index = {}
+    num_bed_options = (1..5)
+    num_bed_options.each do |num_bed_option|
+        sch_unit_index[num_bed_option.to_f] = -1
+    end
 
     tot_dw_ann = 0
     info_msgs = []
-    sch = nil
     (1..num_units).to_a.each do |unit_num|
     
         # Get unit beds/baths/spaces
@@ -410,12 +418,11 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
         
         if dw_ann > 0
             
-            if sch.nil?
-                # Create schedule
-                sch = HotWaterSchedule.new(model, runner, Constants.ObjectNameDishwasher + " schedule", Constants.ObjectNameDishwasher + " temperature schedule", nbeds, unit_num, "Dishwasher", wh_setpoint, File.dirname(__FILE__))
-                if not sch.validated?
-                    return false
-                end
+            # Create schedule
+            sch_unit_index[nbeds] = (sch_unit_index[nbeds] + 1) % 10
+            sch = HotWaterSchedule.new(model, runner, Constants.ObjectNameDishwasher + " schedule", Constants.ObjectNameDishwasher + " temperature schedule", nbeds, sch_unit_index[nbeds], "Dishwasher", wh_setpoint, File.dirname(__FILE__))
+            if not sch.validated?
+                return false
             end
             
             #Reuse existing water use connection if possible

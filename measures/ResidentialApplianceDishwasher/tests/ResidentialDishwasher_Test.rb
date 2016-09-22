@@ -31,6 +31,10 @@ class ResidentialDishwasherTest < MiniTest::Test
     return "multifamily_3_units_Beds_Baths_Denver_ElecWHtank.osm"
   end
   
+  def osm_geo_multifamily_12_units_beds_loc_tankwh
+    return "multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm"
+  end
+
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
@@ -147,6 +151,15 @@ class ResidentialDishwasherTest < MiniTest::Test
     _test_measure(osm_geo_multifamily_3_units_beds_loc_tankwh, args_hash, 0, 2, 111, 3.10)
   end
   
+  def test_multifamily_new_construction_mult_draw_profiles
+    num_units = 12
+    args_hash = {}
+    args_hash["num_settings"] = 8
+    args_hash["dw_E"] = 318
+    args_hash["eg_gas_cost"] = 24
+    _test_measure(osm_geo_multifamily_12_units_beds_loc_tankwh, args_hash, 0, 2*num_units, 1332, 37.2, num_units)
+  end
+
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}

@@ -23,6 +23,10 @@ class ResidentialHotWaterFixturesTest < MiniTest::Test
     return "multifamily_3_units_Beds_Baths_Denver_ElecWHtank.osm"
   end
   
+  def osm_geo_multifamily_12_units_beds_loc_tankwh
+    return "multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm"
+  end
+
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
@@ -83,6 +87,12 @@ class ResidentialHotWaterFixturesTest < MiniTest::Test
     _test_measure(osm_geo_multifamily_3_units_beds_loc_tankwh, args_hash, 0, 6, 445.1, 60)
   end
   
+  def test_multifamily_new_construction_mult_draw_profiles
+    num_units = 12
+    args_hash = {}
+    _test_measure(osm_geo_multifamily_12_units_beds_loc_tankwh, args_hash, 0, 6*num_units, 5341.2, 720, num_units)
+  end
+
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}

@@ -31,6 +31,10 @@ class ResidentialClothesWasherTest < MiniTest::Test
     return "multifamily_3_units_Beds_Baths_Denver_ElecWHtank.osm"
   end
   
+  def osm_geo_multifamily_12_units_beds_loc_tankwh
+    return "multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm"
+  end
+
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
@@ -155,6 +159,14 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["space"] = "finishedbasement_1"
     _test_measure(osm_geo_multifamily_3_units_beds_loc_tankwh, args_hash, 0, 2, 42.9, 10.0)
+  end
+  
+  def test_multifamily_new_construction_mult_draw_profiles
+    num_units = 12
+    args_hash = {}
+    args_hash["cw_mef"] = 1.41
+    args_hash["cw_rated_annual_energy"] = 387
+    _test_measure(osm_geo_multifamily_12_units_beds_loc_tankwh, args_hash, 0, 2*num_units, 514.8, 120, num_units)
   end
   
   def test_multifamily_retrofit_replace

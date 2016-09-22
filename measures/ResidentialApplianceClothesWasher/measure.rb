@@ -208,8 +208,16 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     
     tot_cw_ann_e = 0
     
+    # Hot water schedules vary by number of bedrooms. For a given number of bedroom,
+    # there are 10 different schedules available for different units in a multifamily 
+    # building. This hash tracks which schedule to use.
+    sch_unit_index = {}
+    num_bed_options = (1..5)
+    num_bed_options.each do |num_bed_option|
+        sch_unit_index[num_bed_option.to_f] = -1
+    end
+    
     info_msgs = []
-    sch = nil
     (1..num_units).to_a.each do |unit_num|
     
         # Get unit beds/baths/spaces
@@ -514,12 +522,11 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     
         if cw_ann_e > 0
         
-            if sch.nil?
-                # Create schedule
-                sch = HotWaterSchedule.new(model, runner, Constants.ObjectNameClothesWasher + " schedule", Constants.ObjectNameClothesWasher + " temperature schedule", nbeds, unit_num, "ClothesWasher", cw_water_temp, File.dirname(__FILE__))
-                if not sch.validated?
-                    return false
-                end
+            # Create schedule
+            sch_unit_index[nbeds] = (sch_unit_index[nbeds] + 1) % 10
+            sch = HotWaterSchedule.new(model, runner, Constants.ObjectNameClothesWasher + " schedule", Constants.ObjectNameClothesWasher + " temperature schedule", nbeds, sch_unit_index[nbeds], "ClothesWasher", cw_water_temp, File.dirname(__FILE__))
+            if not sch.validated?
+                return false
             end
             
             #Reuse existing water use connection if possible

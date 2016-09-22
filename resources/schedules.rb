@@ -358,14 +358,14 @@ end
 
 class HotWaterSchedule
 
-    def initialize(model, runner, sch_name, temperature_sch_name, num_bedrooms, unit_num, file_prefix, target_water_temperature, measure_dir, create_sch_object=true)
+    def initialize(model, runner, sch_name, temperature_sch_name, num_bedrooms, unit_index, file_prefix, target_water_temperature, measure_dir, create_sch_object=true)
         @validated = true
         @model = model
         @runner = runner
         @sch_name = sch_name
         @schedule = nil
         @temperature_sch_name = temperature_sch_name
-        @unit_index = (unit_num-1) % 10
+        @unit_index = unit_index
         @nbeds = ([num_bedrooms, 5].min).to_i
         @file_prefix = file_prefix
         @target_water_temperature = OpenStudio.convert(target_water_temperature, "F", "C").get
