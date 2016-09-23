@@ -27,6 +27,10 @@ class DoorAreaTest < MiniTest::Test
     return "multifamily_interior_corridor.osm"
   end
   
+  def osm_geo_multifamily_exterior_corridor_inset
+    return "multifamily_exterior_corridor_inset.osm"
+  end
+  
   def test_no_door_area
     args_hash = {}
     args_hash["door_area"] = 0
@@ -72,6 +76,15 @@ class DoorAreaTest < MiniTest::Test
     args_hash["door_area"] = 30
     _test_measure(model, args_hash, 20*num_units, 0, 30*num_units)
   end  
+  
+  def test_mf_exterior_corridor_inset
+    num_units = 12
+    args_hash = {}
+    model = _test_measure(osm_geo_multifamily_exterior_corridor_inset, args_hash, 0, 20*num_units, 0)
+    args_hash = {}
+    args_hash["door_area"] = 30
+    _test_measure(model, args_hash, 20*num_units, 30*num_units, 0)
+  end
 
   def test_argument_error_invalid_door_area
     args_hash = {}
