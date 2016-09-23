@@ -71,6 +71,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     corr_pos_display_names << "Double-Loaded Interior"
     corr_pos_display_names << "Single Exterior (Front)"
     corr_pos_display_names << "Double Exterior"
+    corr_pos_display_names << "None"
 	
     corr_pos = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("corr_pos", corr_pos_display_names, true)
     corr_pos.setDisplayName("Corridor Position")
@@ -196,7 +197,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       runner.registerError("Invalid aspect ratio entered.")
       return false
     end
-    if corr_width <= 0
+    if corr_width == 0 and corr_pos != "None"
+      corr_pos = "None"
+    end
+    if corr_pos == "None"
+      corr_width = 0
+    end
+    if corr_width < 0
       runner.registerError("Invalid corridor width entered.")
       return false
     end
@@ -758,59 +765,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)
     
     # reporting final condition of model
-    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")
-    
-    # (1...num_units).to_a.each do |unit_num|
-
-      # if use_zone_mult and (unit_num == 1 or unit_num + 1 == num_units)
-        # living_zone = OpenStudio::Model::ThermalZone.new(model)
-        # living_zone.setName(Constants.LivingZone)
-        # if unit_num == 1
-          # living_zone.setMultiplier(num_units - 2)
-        # end
-      # elsif !use_zone_mult
-        # living_zone = OpenStudio::Model::ThermalZone.new(model)
-        # living_zone.setName(Constants.LivingZone)
-      # end
-      
-      # new_living_spaces = []
-      # living_spaces.each do |living_space|
-    
-        # new_living_space = living_space.clone.to_Space.get
-      
-        # m = OpenStudio::Matrix.new(4,4,0)
-        # m[0,0] = 1
-        # m[1,1] = 1
-        # m[2,2] = 1
-        # m[3,3] = 1
-        # if (unit_num + 1) % 2 == 0
-          # m[1,3] = -offset
-        # end
-        # m[0,3] = -unit_num * x
-        # new_living_space.changeTransformation(OpenStudio::Transformation.new(m))
-        # new_living_space.setXOrigin(0)
-        # new_living_space.setYOrigin(0)
-        # if (use_zone_mult and (unit_num == 1 or unit_num + 1 == num_units)) or !use_zone_mult
-          # new_living_space.setThermalZone(living_zone)
-        # else
-          # new_living_space.resetThermalZone          
-        # end        
-     
-        # new_living_spaces << new_living_space
-      
-      # end
-      
-      # if unit_num == 1 or !use_zone_mult
-        # Geometry.set_unit_beds_baths_spaces(model, unit_num + 1, new_living_spaces)
-      # elsif use_zone_mult and unit_num + 1 == num_units
-        # Geometry.set_unit_beds_baths_spaces(model, 3, new_living_spaces)
-      # end
-      
-    # end
-    
-    # if use_zone_mult
-      # num_units = 3
-    # end    
+    runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")   
     
     return true
 

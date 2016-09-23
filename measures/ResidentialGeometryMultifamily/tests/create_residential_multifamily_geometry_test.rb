@@ -46,7 +46,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
   
   def test_error_no_corr
     args_hash = {}
-    args_hash["corr_width"] = 0
+    args_hash["corr_width"] = -1
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
@@ -56,6 +56,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
   def test_warning_balc_but_no_inset
     args_hash = {}
     args_hash["balc_depth"] = 6
+    args_hash["corr_pos"] = "None"
     result = _test_error(nil, args_hash)
     assert(result.warnings.size == 1)
     assert_equal("Success", result.value.valueName)

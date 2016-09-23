@@ -7,156 +7,108 @@ require 'fileutils'
 
 class ProcessFurnaceTest < MiniTest::Test 
   
-  def test_gas_fuel_type_hardsized_output_capacity
+  # expected_objects: [AirLoopHVACUnitarySystem, AirLoopHVAC, CoilHeatingGas, CoilHeatingElectric, FanOnOff, AirTerminalSingleDuctUncontrolled, CoilHeatingDXSingleSpeed, CoilCoolingDXSingleSpeed, ZoneHVACPackagedTerminalAirConditioner, ZoneHVACBaseboardConvectiveElectric, PlantLoop, BoilerHotWater, CoilHeatingWaterBaseboard, AirConditionerVariableRefrigerantFlow, ZoneHVACTerminalUnitVariableRefrigerantFlow]
+  # expected_values: [Efficiency, NominalCapacity, MaximumSupplyAirTemperature]
+
+  def test_new_construction_afue_0_78
     args_hash = {}
-    args_hash["selectedfurnacecap"] = "20 kBtu/hr"
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
+    _test_measure("singlefamily_detached.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 4)
+  end  
+  
+  def test_new_construction_fbsmt_afue_0_78
+    args_hash = {}
+    args_hash["furnacecap"] = "20 kBtu/hr"
+    _test_measure("singlefamily_detached_fbsmt.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, 5861.42, 48.88], 5)
   end
   
-  def test_electric_fuel_type_hardsized_output_capacity
+  def test_new_construction_afue_1
     args_hash = {}
-    args_hash["selectedfurnacefuel"] = Constants.FuelTypeElectric
-    args_hash["selectedfurnacecap"] = "20 kBtu/hr"    
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
-  end
-  
-  def test_branch_to_slave_zone
-    args_hash = {}    
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-  end
-    
-  def test_retrofit_replace_ashp
-    args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
+    args_hash["fueltype"] = Constants.FuelTypeElectric
+    args_hash["afue"] = 1
+    args_hash["furnacecap"] = "40 kBtu/hr"
+    _test_measure("singlefamily_detached.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 2*5861.42, 48.88], 4)
   end
   
   def test_retrofit_replace_furnace
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
+    _test_measure("singlefamily_detached_fbsmt_furnace.osm", args_hash, [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 7)
   end
+  
+  def test_retrofit_replace_ashp
+    args_hash = {}
+    _test_measure("singlefamily_detached_fbsmt_ashp.osm", args_hash, [1, 1, 0, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 7)
+  end  
   
   def test_retrofit_replace_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_central_air_conditioner.osm", args_hash, ["Removed air loop 'Central Air System_1'"])
+    _test_measure("singlefamily_detached_fbsmt_central_air_conditioner.osm", args_hash, [1, 1, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 7)
   end
   
   def test_retrofit_replace_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_room_air_conditioner.osm", args_hash, [])
-  end  
+    _test_measure("singlefamily_detached_fbsmt_room_air_conditioner.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 5)
+  end
   
   def test_retrofit_replace_electric_baseboard
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'"])
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 7)
   end
   
   def test_retrofit_replace_boiler
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'"])
+    _test_measure("singlefamily_detached_fbsmt_boiler.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 8)
   end
   
   def test_retrofit_replace_mshp
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed variable refrigerant flow terminal unit 'Indoor Unit_1'"])
+    _test_measure("singlefamily_detached_fbsmt_mshp.osm", args_hash, [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 6)
   end
   
   def test_retrofit_replace_furnace_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil 1' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
+    _test_measure("singlefamily_detached_fbsmt_furnace_central_air_conditioner.osm", args_hash, [1, 1, 1, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 8)
   end
   
   def test_retrofit_replace_furnace_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
-  end    
+    _test_measure("singlefamily_detached_fbsmt_furnace_room_air_conditioner.osm", args_hash, [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 7)
+  end  
   
   def test_retrofit_replace_electric_baseboard_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'", "Removed air loop 'Central Air System_1'"])
-  end
-
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard_central_air_conditioner.osm", args_hash, [1, 1, 0, 0, 1, 2, 0, 1, 0, 2, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 9)
+  end  
+  
   def test_retrofit_replace_boiler_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler_central_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'", "Removed air loop 'Central Air System_1'"])
-  end
-  
+    _test_measure("singlefamily_detached_fbsmt_boiler_central_air_conditioner.osm", args_hash, [1, 1, 0, 0, 1, 2, 0, 1, 0, 0, 1, 1, 2, 0, 0], [1, 1, 1, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 10)
+  end  
+
   def test_retrofit_replace_electric_baseboard_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'"])
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard_room_air_conditioner.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 7)
   end
-
+  
   def test_retrofit_replace_boiler_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler_room_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'"])
+    _test_measure("singlefamily_detached_fbsmt_boiler_room_air_conditioner.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 0, 0], [1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], 8)
   end
-  
-  def test_mf
-    num_units = 3
+
+  def test_multifamily_new_construction_1
+    num_units = 4
     args_hash = {}
-    result = _test_error("multifamily_3_units_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_1' to thermal zone 'living zone 1' of unit 1")
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_1' to thermal zone 'finished basement zone 1' of unit 1")    
-    (2..num_units).to_a.each do |unit_num|
-      assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_#{unit_num}' to thermal zone 'living zone #{unit_num}' of unit #{unit_num}")
-    end
+    _test_measure("singlefamily_attached_fbsmt_4_units.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [num_units*1, num_units*1, num_units*1, 0, num_units*1, num_units*2, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], num_units*5)
   end
-  
-  def test_mf_urbanopt
+
+  def test_multifamily_new_construction_2
     num_units = 8
     args_hash = {}
-    result = _test_error("multifamily_urbanopt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_1' to thermal zone 'Building Story 0 ThermalZone' of unit 1")
-    (2..5).to_a.each do |unit_num|
-      assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_#{unit_num}' to thermal zone 'Building Story #{unit_num - 1} ThermalZone' of unit #{unit_num}")
-    end
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_6' to thermal zone 'Building Story 1 ThermalZone' of unit 6")
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_7' to thermal zone 'Building Story 2 ThermalZone' of unit 7")
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_8' to thermal zone 'Building Story 3 ThermalZone' of unit 8")
+    _test_measure("multifamily_8_units.osm", args_hash, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [num_units*1, num_units*1, num_units*1, 0, num_units*1, num_units*1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0.78, "AutoSize", 48.88], num_units*3, 0)
   end  
   
   private
   
-  def _test_error(osm_file, args_hash)
-    # create an instance of the measure
-    measure = ProcessFurnace.new
-
-    # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
-
-    model = _get_model(osm_file)
-
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
-    end
-
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-      
-    return result
-    
-  end
-  
-  def _test_measure(osm_file_or_model, args_hash, expected_infos)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
     measure = ProcessFurnace.new
 
@@ -170,6 +122,9 @@ class ProcessFurnaceTest < MiniTest::Test
     
     model = _get_model(osm_file_or_model)
 
+    # store the original equipment in the seed model
+    orig_equips = [model.getAirLoopHVACUnitarySystems, model.getAirLoopHVACs, model.getCoilHeatingGass, model.getCoilHeatingElectrics, model.getFanOnOffs, model.getAirTerminalSingleDuctUncontrolleds, model.getCoilHeatingDXSingleSpeeds, model.getCoilCoolingDXSingleSpeeds, model.getZoneHVACPackagedTerminalAirConditioners, model.getZoneHVACBaseboardConvectiveElectrics, model.getPlantLoops, model.getBoilerHotWaters, model.getCoilHeatingWaterBaseboards, model.getAirConditionerVariableRefrigerantFlows, model.getZoneHVACTerminalUnitVariableRefrigerantFlows]
+    
     # get arguments
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
@@ -189,13 +144,50 @@ class ProcessFurnaceTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    expected_infos += ["Added heating coil 'Furnace Heating Coil' to branch 'Forced Air System' of air loop 'Central Air System_1'"]
-    expected_infos.each do |expected_info|
-      assert_includes(result.info.map{ |x| x.logMessage }, expected_info)
-    end   
-
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    
+    [model.getAirLoopHVACUnitarySystems, model.getAirLoopHVACs, model.getCoilHeatingGass, model.getCoilHeatingElectrics, model.getFanOnOffs, model.getAirTerminalSingleDuctUncontrolleds, model.getCoilHeatingDXSingleSpeeds, model.getCoilCoolingDXSingleSpeeds, model.getZoneHVACPackagedTerminalAirConditioners, model.getZoneHVACBaseboardConvectiveElectrics, model.getPlantLoops, model.getBoilerHotWaters, model.getCoilHeatingWaterBaseboards, model.getAirConditionerVariableRefrigerantFlows, model.getZoneHVACTerminalUnitVariableRefrigerantFlows].each_with_index do |equip, i|
+    
+        # get new/deleted unitary system objects
+        new_objects = []
+        equip.each do |e|
+            next if orig_equips[i].include?(e)
+            new_objects << e
+        end
+        del_objects = []
+        orig_equips[i].each do |e|
+            next if equip.include?(e)
+            del_objects << e
+        end    
+        # check for num new/del objects      
+        assert_equal(expected_num_del_objects[i], del_objects.size)              
+        assert_equal(expected_num_new_objects[i], new_objects.size)
+        
+        next if new_objects.empty?
+        if i == 0 # check the unitary system
+            new_objects.each do |new_object|
+                assert_in_epsilon(expected_values[2], new_object.maximumSupplyAirTemperature.get, 0.01)
+            end    
+        elsif i == 2 # check the gas coil
+            new_objects.each do |new_object|
+                assert_in_epsilon(expected_values[0], new_object.gasBurnerEfficiency, 0.01)
+                if new_object.nominalCapacity.is_initialized
+                  assert_in_epsilon(expected_values[1], new_object.nominalCapacity.get, 0.01)
+                end       
+            end
+        elsif i == 3 # check the electric coil
+            new_objects.each do |new_object|
+                assert_in_epsilon(expected_values[0], new_object.efficiency, 0.01)
+                if new_object.nominalCapacity.is_initialized
+                  assert_in_epsilon(expected_values[1], new_object.nominalCapacity.get, 0.01)
+                end
+            end
+        end
+    end
+    
     return model
-  end  
+  end
   
   def _get_model(osm_file_or_model)
     if osm_file_or_model.is_a?(OpenStudio::Model::Model)
