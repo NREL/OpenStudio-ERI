@@ -36,7 +36,7 @@ The New Construction workflow illustrates how to build up a complete residential
 |Group|Measure|Dependencies*|
 |:---|:---|:---|
 |1. Location|1. Location||
-|2. Geometry|1. Geometry (Single Family Detached or Multifamily)||
+|2. Geometry|1. Geometry (Single-Family Detached, Single-Family Attached, or Multifamily)||
 ||2. Number of Beds and Baths||
 ||3. Number of Occupants|Beds/Baths|
 ||4. Orientation||
