@@ -37,7 +37,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   
   def test_argument_error_crawl_height_invalid
     args_hash = {}
-    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_type"] = Constants.CrawlFoundationType
     args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 1)
@@ -47,7 +47,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   
   def test_argument_error_pierbeam_height_invalid
     args_hash = {}
-    args_hash["foundation_type"] = Constants.PierBeamSpace
+    args_hash["foundation_type"] = Constants.PierBeamFoundationType
     args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 1)
@@ -132,7 +132,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_finished_attic
     args_hash = {}
     args_hash["num_floors"] = 1
-    args_hash["attic_type"] = Constants.FinishedAtticSpace
+    args_hash["attic_type"] = Constants.FinishedAtticSpaceType
     args_hash["garage_width"] = 12
     args_hash["garage_protrusion"] = 0.5
     result = _test_error(nil, args_hash)
@@ -142,7 +142,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   
   def test_crawlspace
     args_hash = {}
-    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_type"] = Constants.CrawlFoundationType
     args_hash["foundation_height"] = 4
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -151,7 +151,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
 
   def test_ufbasement
     args_hash = {}
-    args_hash["foundation_type"] = Constants.UnfinishedBasementSpace
+    args_hash["foundation_type"] = Constants.UnfinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -160,7 +160,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   
   def test_pierandbeam
     args_hash = {}
-    args_hash["foundation_type"] = Constants.PierBeamSpace
+    args_hash["foundation_type"] = Constants.PierBeamFoundationType
     args_hash["foundation_height"] = 4
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -171,7 +171,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_onestory_fbasement_nogarage_noprotrusion_garageright_gableroof
     args_hash = {}
     args_hash["num_floors"] = 1
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -182,7 +182,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -193,7 +193,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     args_hash["garage_protrusion"] = 0.5
     result = _test_error(nil, args_hash)
@@ -205,7 +205,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     args_hash["garage_protrusion"] = 1
     result = _test_error(nil, args_hash)
@@ -216,7 +216,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_twostory_fbasement_hasgarage_noprotrusion_garageright_garagetobackwall_gableroof
     args_hash = {}
     args_hash["garage_width"] = 10
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -226,7 +226,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_twostory_fbasement_hasgarage_noprotrusion_garageright_gableroof
     args_hash = {}
     args_hash["garage_width"] = 12
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -236,7 +236,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_twostory_fbasement_hasgarage_halfprotrusion_garageright_gableroof
     args_hash = {}
     args_hash["garage_width"] = 12
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     args_hash["garage_protrusion"] = 0.5
     result = _test_error(nil, args_hash)
@@ -247,7 +247,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_twostory_fbasement_hasgarage_fullprotrusion_garageright_gableroof
     args_hash = {}
     args_hash["garage_width"] = 12
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     args_hash["garage_protrusion"] = 1
     result = _test_error(nil, args_hash)
@@ -260,7 +260,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
     args_hash["garage_pos"] = "Left"
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -272,7 +272,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
     args_hash["garage_pos"] = "Left"
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     args_hash["garage_protrusion"] = 0.5
     result = _test_error(nil, args_hash)
@@ -285,7 +285,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["num_floors"] = 1
     args_hash["garage_width"] = 12
     args_hash["garage_pos"] = "Left"
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     args_hash["garage_protrusion"] = 1
     result = _test_error(nil, args_hash)
@@ -297,7 +297,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["garage_width"] = 12
     args_hash["garage_pos"] = "Left"
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -308,7 +308,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["garage_width"] = 12
     args_hash["garage_pos"] = "Left"
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     args_hash["garage_protrusion"] = 0.5
     result = _test_error(nil, args_hash)
@@ -320,7 +320,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["garage_width"] = 12
     args_hash["garage_pos"] = "Left"
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     args_hash["foundation_height"] = 8
     args_hash["garage_protrusion"] = 1
     result = _test_error(nil, args_hash)

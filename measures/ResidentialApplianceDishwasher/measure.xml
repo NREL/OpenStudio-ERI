@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>0224e65b-d80b-4da5-b54f-e7eddde76547</version_id>
-  <version_modified>20160923T015546Z</version_modified>
+  <version_id>a07b5762-aa86-473e-8d59-f3eb548e05b7</version_id>
+  <version_modified>20160923T143741Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -240,12 +240,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F4A45188</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DFE453BC</checksum>
     </file>
     <file>
       <filename>DishwasherSchedule_1bed_unit0.csv</filename>
@@ -587,6 +581,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>47F67BEC</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C0E0A630</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>06c36e68-89ae-4a45-9602-5fb083b7ba5b</version_id>
-  <version_modified>20160922T212654Z</version_modified>
+  <version_id>45634a3b-3edf-4d36-932e-de33b07db3d7</version_id>
+  <version_modified>20160923T143744Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
@@ -96,27 +96,27 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>slab space</default_value>
+      <default_value>slab</default_value>
       <choices>
         <choice>
-          <value>slab space</value>
-          <display_name>slab space</display_name>
+          <value>slab</value>
+          <display_name>slab</display_name>
         </choice>
         <choice>
-          <value>crawl space</value>
-          <display_name>crawl space</display_name>
+          <value>crawlspace</value>
+          <display_name>crawlspace</display_name>
         </choice>
         <choice>
-          <value>unfinished basement space</value>
-          <display_name>unfinished basement space</display_name>
+          <value>unfinished basement</value>
+          <display_name>unfinished basement</display_name>
         </choice>
         <choice>
-          <value>finished basement space</value>
-          <display_name>finished basement space</display_name>
+          <value>finished basement</value>
+          <display_name>finished basement</display_name>
         </choice>
         <choice>
-          <value>pier and beam space</value>
-          <display_name>pier and beam space</display_name>
+          <value>pier and beam</value>
+          <display_name>pier and beam</display_name>
         </choice>
       </choices>
     </argument>
@@ -184,22 +184,16 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DFE453BC</checksum>
+      <checksum>A976F02F</checksum>
     </file>
     <file>
       <filename>create_residential_single_family_attached_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>E4A72139</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A976F02F</checksum>
+      <checksum>3D7005F6</checksum>
     </file>
     <file>
       <version>
@@ -210,7 +204,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2877171F</checksum>
+      <checksum>E38BD3D4</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C0E0A630</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>1711cef7-ed66-4ab4-9c2c-7080d0068cdf</version_id>
-  <version_modified>20160922T212658Z</version_modified>
+  <version_id>78d454dc-55fc-4315-afdf-bd059ef63fc2</version_id>
+  <version_modified>20160923T143747Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -337,12 +337,6 @@
       <checksum>F4A45188</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DFE453BC</checksum>
-    </file>
-    <file>
       <filename>singlefamily_fbsmt_location_mshp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -365,6 +359,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>A976F02F</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C0E0A630</checksum>
     </file>
   </files>
 </measure>

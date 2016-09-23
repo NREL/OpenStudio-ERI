@@ -9,7 +9,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
 
   def test_argument_error_crawl_height_invalid
     args_hash = {}
-    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_type"] = Constants.CrawlFoundationType
     args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 1)
@@ -84,7 +84,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash["corr_width"] = 5
     args_hash["inset_width"] = 8
     args_hash["inset_depth"] = 6
-    args_hash["foundation_type"] = Constants.UnfinishedBasementSpace
+    args_hash["foundation_type"] = Constants.UnfinishedBasementFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -99,7 +99,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash["inset_depth"] = 6
     args_hash["inset_pos"] = "Left"
     args_hash["balc_depth"] = 6
-    args_hash["foundation_type"] = Constants.UnfinishedBasementSpace
+    args_hash["foundation_type"] = Constants.UnfinishedBasementFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -111,7 +111,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash["num_units_per_floor"] = 12
     args_hash["corr_width"] = 5
     args_hash["corr_pos"] = "Single Exterior (Front)"
-    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_type"] = Constants.CrawlFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -120,7 +120,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
   def test_crawlspace_double_loaded_corr
     args_hash = {}
     args_hash["num_units_per_floor"] = 4
-    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_type"] = Constants.CrawlFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -129,7 +129,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
   def test_ufbasement_no_corr
     args_hash = {}
     args_hash["num_units_per_floor"] = 4
-    args_hash["foundation_type"] = Constants.UnfinishedBasementSpace
+    args_hash["foundation_type"] = Constants.UnfinishedBasementFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    

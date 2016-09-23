@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_propane</name>
   <uid>0278a4e0-d473-46a4-bfe4-33e92ca0a147</uid>
-  <version_id>03cccbb0-6572-4eea-a86a-e6a56f0382a2</version_id>
-  <version_modified>20160923T015548Z</version_modified>
+  <version_id>ecf4cb45-2baa-4589-a170-e64894e197a9</version_id>
+  <version_modified>20160923T143746Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessPropane</class_name>
   <display_name>Set Residential Propane Tankless Water Heater</display_name>
@@ -211,12 +211,6 @@
       <checksum>F4A45188</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DFE453BC</checksum>
-    </file>
-    <file>
       <filename>ResidentialWaterHeaterTanklessPropane_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -256,6 +250,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>B5BB8DF8</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C0E0A630</checksum>
     </file>
   </files>
 </measure>

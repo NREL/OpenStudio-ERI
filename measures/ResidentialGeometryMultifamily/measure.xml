@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>baef9c27-f0ad-4b20-b777-d22852749f86</version_id>
-  <version_modified>20160922T212654Z</version_modified>
+  <version_id>6ab92126-b5c0-4d4f-85f7-94518b7d601b</version_id>
+  <version_modified>20160923T143743Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -149,23 +149,23 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>slab space</default_value>
+      <default_value>slab</default_value>
       <choices>
         <choice>
-          <value>slab space</value>
-          <display_name>slab space</display_name>
+          <value>slab</value>
+          <display_name>slab</display_name>
         </choice>
         <choice>
-          <value>crawl space</value>
-          <display_name>crawl space</display_name>
+          <value>crawlspace</value>
+          <display_name>crawlspace</display_name>
         </choice>
         <choice>
-          <value>unfinished basement space</value>
-          <display_name>unfinished basement space</display_name>
+          <value>unfinished basement</value>
+          <display_name>unfinished basement</display_name>
         </choice>
         <choice>
-          <value>pier and beam space</value>
-          <display_name>pier and beam space</display_name>
+          <value>pier and beam</value>
+          <display_name>pier and beam</display_name>
         </choice>
       </choices>
     </argument>
@@ -214,10 +214,16 @@
       <checksum>A2C693E7</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A976F02F</checksum>
+    </file>
+    <file>
       <filename>create_residential_multifamily_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>3D8DEB97</checksum>
+      <checksum>F71757E0</checksum>
     </file>
     <file>
       <version>
@@ -228,19 +234,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8FE7BEE1</checksum>
+      <checksum>783E9F9F</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DFE453BC</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A976F02F</checksum>
+      <checksum>C0E0A630</checksum>
     </file>
   </files>
 </measure>

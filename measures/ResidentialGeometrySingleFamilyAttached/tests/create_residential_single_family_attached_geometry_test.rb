@@ -9,7 +9,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
 
   def test_argument_error_crawl_height_invalid
     args_hash = {}
-    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_type"] = Constants.CrawlFoundationType
     args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 1)
@@ -38,7 +38,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["building_num_floors"] = 2
     args_hash["num_units_per_floor"] = 4
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace    
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType    
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -49,7 +49,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["building_num_floors"] = 2
     args_hash["num_units_per_floor"] = 4
     args_hash["has_rear_units"] = true
-    args_hash["foundation_type"] = Constants.FinishedBasementSpace    
+    args_hash["foundation_type"] = Constants.FinishedBasementFoundationType    
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
@@ -58,7 +58,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
   def test_ufbasement
     args_hash = {}
     args_hash["num_units_per_floor"] = 4
-    args_hash["foundation_type"] = Constants.UnfinishedBasementSpace
+    args_hash["foundation_type"] = Constants.UnfinishedBasementFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
@@ -67,7 +67,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
   def test_crawl
     args_hash = {}
     args_hash["num_units_per_floor"] = 4
-    args_hash["foundation_type"] = Constants.CrawlSpace
+    args_hash["foundation_type"] = Constants.CrawlFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    

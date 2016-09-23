@@ -83,17 +83,17 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     
     #make a choice argument for model objects
     foundation_display_names = OpenStudio::StringVector.new
-    foundation_display_names << Constants.SlabSpace
-    foundation_display_names << Constants.CrawlSpace
-    foundation_display_names << Constants.UnfinishedBasementSpace
-    foundation_display_names << Constants.FinishedBasementSpace
-    foundation_display_names << Constants.PierBeamSpace
+    foundation_display_names << Constants.SlabFoundationType
+    foundation_display_names << Constants.CrawlFoundationType
+    foundation_display_names << Constants.UnfinishedBasementFoundationType
+    foundation_display_names << Constants.FinishedBasementFoundationType
+    foundation_display_names << Constants.PierBeamFoundationType
 	
     #make a choice argument for foundation type
     foundation_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("foundation_type", foundation_display_names, true)
     foundation_type.setDisplayName("Foundation Type")
     foundation_type.setDescription("The foundation type of the building.")
-    foundation_type.setDefaultValue(Constants.SlabSpace)
+    foundation_type.setDefaultValue(Constants.SlabFoundationType)
     args << foundation_type
 
     #make an argument for crawlspace height
@@ -134,9 +134,9 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     foundation_height = runner.getDoubleArgumentValue("foundation_height",user_arguments)
     use_zone_mult = runner.getBoolArgumentValue("use_zone_mult",user_arguments)
     
-    if foundation_type == Constants.SlabSpace
+    if foundation_type == Constants.SlabFoundationType
       foundation_height = 0.0
-    elsif foundation_type == Constants.UnfinishedBasementSpace or foundation_type == Constants.FinishedBasementSpace
+    elsif foundation_type == Constants.UnfinishedBasementFoundationType or foundation_type == Constants.FinishedBasementFoundationType
       foundation_height = 8.0
     end    
     
@@ -145,7 +145,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       runner.registerError("Starting model is not empty.")
       return false
     end
-    if foundation_type == Constants.CrawlSpace and ( foundation_height < 1.5 or foundation_height > 5.0 )
+    if foundation_type == Constants.CrawlFoundationType and ( foundation_height < 1.5 or foundation_height > 5.0 )
       runner.registerError("The crawlspace height can be set between 1.5 and 5 ft.")
       return false
     end    
@@ -370,7 +370,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       foundation_space.setYOrigin(0)
       foundation_space.setZOrigin(0)
       
-      if foundation_type == Constants.FinishedBasementSpace
+      if foundation_type == Constants.FinishedBasementFoundationType
         foundation_zone = OpenStudio::Model::ThermalZone.new(model)
         foundation_space.setName(Constants.FinishedBasementSpace(1))
         foundation_zone.setName(Constants.FinishedBasementZone(1))
@@ -381,7 +381,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       foundation_spaces << foundation_space
       
       # create the unit
-      if foundation_type == Constants.FinishedBasementSpace
+      if foundation_type == Constants.FinishedBasementFoundationType
         unit_spaces[1] << foundation_space
       end
 
@@ -402,7 +402,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
         foundation_space.setYOrigin(0)
         foundation_space.setZOrigin(0)
         
-        if foundation_type == Constants.FinishedBasementSpace
+        if foundation_type == Constants.FinishedBasementFoundationType
           foundation_zone = OpenStudio::Model::ThermalZone.new(model)
           foundation_space.setName(Constants.FinishedBasementSpace(2))
           foundation_zone.setName(Constants.FinishedBasementZone(2))
@@ -413,7 +413,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
         foundation_spaces << foundation_space
         
         # create the unit
-        if foundation_type == Constants.FinishedBasementSpace
+        if foundation_type == Constants.FinishedBasementFoundationType
           unit_spaces[2] << foundation_space
         end
     
@@ -428,7 +428,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
             living_spaces = foundation_space_back
           end
           
-          if foundation_type == Constants.FinishedBasementSpace
+          if foundation_type == Constants.FinishedBasementFoundationType
             living_zone = OpenStudio::Model::ThermalZone.new(model)
             living_zone.setName(Constants.FinishedBasementZone(unit_num))
           end
@@ -436,7 +436,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
           living_spaces.each do |living_space|
         
             new_living_space = living_space.clone.to_Space.get
-            if foundation_type == Constants.FinishedBasementSpace
+            if foundation_type == Constants.FinishedBasementFoundationType
               new_living_space.setName(Constants.FinishedBasementSpace(unit_num))
             end
           
@@ -453,13 +453,13 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
             new_living_space.setXOrigin(0)
             new_living_space.setYOrigin(0)
             new_living_space.setZOrigin(0)
-            if foundation_type == Constants.FinishedBasementSpace
+            if foundation_type == Constants.FinishedBasementFoundationType
               new_living_space.setThermalZone(living_zone)
             end
          
             foundation_spaces << new_living_space
             
-            if foundation_type == Constants.FinishedBasementSpace
+            if foundation_type == Constants.FinishedBasementFoundationType
               unit_spaces[unit_num] << new_living_space
             end            
           
@@ -475,7 +475,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
           living_spaces = foundation_space_front
           pos += 1
           
-          if foundation_type == Constants.FinishedBasementSpace
+          if foundation_type == Constants.FinishedBasementFoundationType
             living_zone = OpenStudio::Model::ThermalZone.new(model)
             living_zone.setName(Constants.FinishedBasementZone(unit_num))
           end
@@ -483,7 +483,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
           living_spaces.each do |living_space|
             
             new_living_space = living_space.clone.to_Space.get
-            if foundation_type == Constants.FinishedBasementSpace
+            if foundation_type == Constants.FinishedBasementFoundationType
               new_living_space.setName(Constants.FinishedBasementSpace(unit_num))
             end
           
@@ -500,13 +500,13 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
             new_living_space.setXOrigin(0)
             new_living_space.setYOrigin(0)
             new_living_space.setZOrigin(0)
-            if foundation_type == Constants.FinishedBasementSpace
+            if foundation_type == Constants.FinishedBasementFoundationType
               new_living_space.setThermalZone(living_zone)
             end
          
             foundation_spaces << new_living_space
           
-            if foundation_type == Constants.FinishedBasementSpace
+            if foundation_type == Constants.FinishedBasementFoundationType
               unit_spaces[unit_num] << new_living_space
             end
             
@@ -526,14 +526,14 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       OpenStudio::Model.intersectSurfaces(spaces)
       OpenStudio::Model.matchSurfaces(spaces)    
     
-      if [Constants.CrawlSpace, Constants.UnfinishedBasementSpace].include? foundation_type
+      if [Constants.CrawlFoundationType, Constants.UnfinishedBasementFoundationType].include? foundation_type
         foundation_space = Geometry.make_one_space_from_multiple_spaces(model, foundation_spaces)
-        if foundation_type == Constants.CrawlSpace
+        if foundation_type == Constants.CrawlFoundationType
           foundation_space.setName(Constants.CrawlSpace)
           foundation_zone = OpenStudio::Model::ThermalZone.new(model)
           foundation_zone.setName(Constants.CrawlZone)
           foundation_space.setThermalZone(foundation_zone)
-        elsif foundation_type == Constants.UnfinishedBasementSpace
+        elsif foundation_type == Constants.UnfinishedBasementFoundationType
           foundation_space.setName(Constants.UnfinishedBasementSpace)
           foundation_zone = OpenStudio::Model::ThermalZone.new(model)
           foundation_zone.setName(Constants.UnfinishedBasementZone)
