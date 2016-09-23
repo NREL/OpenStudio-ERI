@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>40072c77-62a9-4d8e-b39a-24ecdb8b3443</version_id>
-  <version_modified>20160922T212656Z</version_modified>
+  <version_id>d1890eae-a2a6-44d9-ab14-0a32c5e5c9b2</version_id>
+  <version_modified>20160923T015548Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankElectric</class_name>
   <display_name>Set Residential Electric Tank Water Heater</display_name>
@@ -259,7 +259,7 @@
       <filename>multifamily_12_units_Beds_Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AC8698FC</checksum>
+      <checksum>B5BB8DF8</checksum>
     </file>
   </files>
 </measure>

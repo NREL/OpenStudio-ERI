@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>bf219398-d842-45b1-b199-369f3f395233</version_id>
-  <version_modified>20160922T212656Z</version_modified>
+  <version_id>7dbdfecf-f11e-4c58-abf9-a6c5e6357b83</version_id>
+  <version_modified>20160923T015547Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -281,12 +281,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>A976F02F</checksum>
-    </file>
-    <file>
-      <filename>multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1CD68F25</checksum>
     </file>
     <file>
       <filename>BathSchedule_1bed_unit1.csv</filename>
@@ -1097,6 +1091,12 @@
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
       <checksum>75FAFE79</checksum>
+    </file>
+    <file>
+      <filename>multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>47F67BEC</checksum>
     </file>
   </files>
 </measure>

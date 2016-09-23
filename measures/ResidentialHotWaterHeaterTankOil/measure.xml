@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>55269503-237d-4ae1-b1d4-d46e8936eb73</version_id>
-  <version_modified>20160922T212657Z</version_modified>
+  <version_id>6850a000-8191-4fb8-822e-bd6d35822266</version_id>
+  <version_modified>20160923T015548Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankOil</class_name>
   <display_name>Set Residential Oil Tank Water Heater</display_name>
@@ -289,7 +289,7 @@
       <filename>multifamily_12_units_Beds_Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AC8698FC</checksum>
+      <checksum>B5BB8DF8</checksum>
     </file>
   </files>
 </measure>
