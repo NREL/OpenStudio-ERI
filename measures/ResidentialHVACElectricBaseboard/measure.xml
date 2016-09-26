@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>c8e667de-0e51-4686-9384-25d15605ac04</version_id>
-  <version_modified>20160923T143747Z</version_modified>
+  <version_id>39cd0e2c-4610-493f-ab32-99680a5e2f82</version_id>
+  <version_modified>20160926T162942Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -304,12 +304,6 @@
       <checksum>27FDF5D9</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31C935D5</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -320,6 +314,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C0E0A630</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>012CC020</checksum>
     </file>
   </files>
 </measure>
