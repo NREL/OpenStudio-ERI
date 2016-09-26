@@ -267,13 +267,19 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         
         htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
         htg_coil.setName("DX Heating Coil_#{unit_num}")
+        if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+          htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]])
+        end        
         htg_coil.setHeatingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
-        htg_coil.setHeatingCapacityModifierFunctionofFlowFractionCurve(constant_cubic)
+        htg_coil.setHeatingCapacityModifierFunctionofFlowFractionCurve(constant_cubic)        
       
         # _processSystemCoolingCoil
         
         clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
         clg_coil.setName("DX Cooling Coil_#{unit_num}")
+        if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+          clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]])
+        end        
         clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[-1])
         clg_coil.setCoolingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
         clg_coil.setCoolingCapacityModifierCurveFunctionofFlowFraction(constant_cubic)
@@ -288,11 +294,11 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         min_plr_cool = supply.Capacity_Ratio_Cooling[curves.mshp_indices.min] / supply.Capacity_Ratio_Cooling[curves.mshp_indices.max]
         
         if miniSplitCoolingOutputCapacity != Constants.SizingAuto
-          vrf.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[-1])
+          vrf.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]])
         end
         vrf.setRatedCoolingCOP(1.0 / supply.CoolingEIR[-1])
         vrf.setMinimumOutdoorTemperatureinCoolingMode(-6)
-        vrf.setMaximumOutdoorTemperatureinCoolingMode(43)
+        vrf.setMaximumOutdoorTemperatureinCoolingMode(60)
         
         cool_cap_ft = OpenStudio::Model::CurveBiquadratic.new(model)
         cool_cap_ft.setName("Cool-Cap-fT#{curves.mshp_indices[-1]+1}")
@@ -342,7 +348,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         vrf.setCoolingPartLoadFractionCorrelationCurve(cool_plf_fplr)
         
         if miniSplitCoolingOutputCapacity != Constants.SizingAuto
-          vrf.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[-1])
+          vrf.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]])
         end
         vrf.setRatedTotalHeatingCapacitySizingRatio(1)
         vrf.setRatedHeatingCOP(1.0 / supply.HeatingEIR[-1])
