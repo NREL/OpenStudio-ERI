@@ -45,7 +45,6 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     #make a double argument for central ac number of speeds
     acNumberSpeeds = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("acNumberSpeeds", true)
     acNumberSpeeds.setDisplayName("Number of Speeds")
-    acNumberSpeeds.setUnits("frac")
     acNumberSpeeds.setDescription("Number of speeds of the compressor.")
     acNumberSpeeds.setDefaultValue(1.0)
     args << acNumberSpeeds
