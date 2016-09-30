@@ -107,7 +107,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     #make an argument for using zone multipliers
     use_zone_mult = OpenStudio::Ruleset::OSArgument::makeBoolArgument("use_zone_mult", true)
     use_zone_mult.setDisplayName("Use Zone Multipliers?")
-    use_zone_mult.setDescription("NO REAR UNITS FOR NOW Model only one interior unit with its thermal zone multiplier equal to the number of interior units.")
+    use_zone_mult.setDescription("Model only one interior unit with its thermal zone multiplier equal to the number of interior units.")
     use_zone_mult.setDefaultValue(false)
     args << use_zone_mult    
     
@@ -606,14 +606,123 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
               end
             end
           else # rename the rightmost unit
-            Geometry.rename_unit_spaces_zones(model, num_units, 3)
+            Geometry.rename_unit_spaces_zones(model, unit_num, 3)
           end       
           
         else # has rear units
-          # TODO
+          next unless unit_num > 2
+
+          zone_names_for_multiplier_adjustment = []        
+          space_names_to_remove = []
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
+          if unit_num == 3 or unit_num == 4 # leftmost interior units
+            unit_spaces.each do |space|
+              thermal_zone = space.thermalZone.get
+              zone_names_for_multiplier_adjustment << thermal_zone.name.to_s
+            end
+            model.getThermalZones.each do |thermal_zone|
+              zone_names_for_multiplier_adjustment.each do |tz|
+                if thermal_zone.name.to_s == tz
+                  thermal_zone.setMultiplier(num_units / 2 - 2)
+                end
+              end
+            end
+          elsif unit_num != num_units - 1 and unit_num != num_units # interior units that get removed
+            unit_spaces.each do |space|
+              space_names_to_remove << space.name.to_s
+            end
+            Geometry.remove_unit(model, unit_num)
+            model.getSpaces.each do |space|
+              space_names_to_remove.each do |s|
+                if space.name.to_s == s
+                  if space.thermalZone.is_initialized
+                    thermal_zone = space.thermalZone.get
+                    thermal_zone.remove
+                  end
+                  space.remove
+                end
+              end
+            end
+          elsif unit_num == num_units - 1
+            Geometry.rename_unit_spaces_zones(model, unit_num, 5)
+          else
+            Geometry.rename_unit_spaces_zones(model, unit_num, 6)
+          end
+        
         end
         
       end      
+    end
+    
+    if use_zone_mult
+      if not has_rear_units
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 2, runner)
+        pseudo_adjacent_surface = nil
+        unit_spaces.each do |space|
+          space.surfaces.each do |surface|
+            next unless surface.surfaceType.downcase == "wall"
+            next unless surface.outsideBoundaryCondition.downcase == "surface"
+            next if surface.adjacentSurface.is_initialized
+            pseudo_adjacent_surface = surface
+            break
+          end
+        end
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)
+        unit_spaces.each do |space|
+          space.surfaces.each do |surface|
+            next unless surface.surfaceType.downcase == "wall"
+            next unless surface.outsideBoundaryCondition.downcase == "surface"
+            next if surface.adjacentSurface.is_initialized
+            surface.setAdjacentSurface(pseudo_adjacent_surface)            
+            break
+          end
+        end
+      else # has rear units
+        # front
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)
+        pseudo_adjacent_surface = nil
+        unit_spaces.each do |space|
+          space.surfaces.each do |surface|
+            next unless surface.surfaceType.downcase == "wall"
+            next unless surface.outsideBoundaryCondition.downcase == "surface"
+            next if surface.adjacentSurface.is_initialized
+            pseudo_adjacent_surface = surface
+            break
+          end
+        end
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 5, runner)
+        unit_spaces.each do |space|
+          space.surfaces.each do |surface|
+            next unless surface.surfaceType.downcase == "wall"
+            next unless surface.outsideBoundaryCondition.downcase == "surface"
+            next if surface.adjacentSurface.is_initialized
+            surface.setAdjacentSurface(pseudo_adjacent_surface)            
+            break
+          end
+        end
+        # rear
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 4, runner)
+        pseudo_adjacent_surface = nil
+        unit_spaces.each do |space|
+          space.surfaces.each do |surface|
+            next unless surface.surfaceType.downcase == "wall"
+            next unless surface.outsideBoundaryCondition.downcase == "surface"
+            next if surface.adjacentSurface.is_initialized
+            pseudo_adjacent_surface = surface
+            break
+          end
+        end
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 6, runner)
+        unit_spaces.each do |space|
+          space.surfaces.each do |surface|
+            next unless surface.surfaceType.downcase == "wall"
+            next unless surface.outsideBoundaryCondition.downcase == "surface"
+            next if surface.adjacentSurface.is_initialized
+            surface.setAdjacentSurface(pseudo_adjacent_surface)            
+            break
+          end
+        end         
+      end
     end
     
     model.getSurfaces.each do |surface|

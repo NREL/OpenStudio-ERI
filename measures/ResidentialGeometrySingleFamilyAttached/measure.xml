@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>263421ac-751d-4d92-a514-f91d964897d8</version_id>
-  <version_modified>20160930T163059Z</version_modified>
+  <version_id>1f7924e0-0f7f-4a84-9524-030394907d24</version_id>
+  <version_modified>20160930T174532Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
@@ -133,7 +133,7 @@
     <argument>
       <name>use_zone_mult</name>
       <display_name>Use Zone Multipliers?</display_name>
-      <description>NO REAR UNITS FOR NOW Model only one interior unit with its thermal zone multiplier equal to the number of interior units.</description>
+      <description>Model only one interior unit with its thermal zone multiplier equal to the number of interior units.</description>
       <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -190,16 +190,16 @@
       <checksum>A976F02F</checksum>
     </file>
     <file>
-      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3D7005F6</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C0E0A630</checksum>
+    </file>
+    <file>
+      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>935F80B4</checksum>
     </file>
     <file>
       <version>
@@ -210,7 +210,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D6BB6309</checksum>
+      <checksum>3B7328DF</checksum>
     </file>
   </files>
 </measure>
