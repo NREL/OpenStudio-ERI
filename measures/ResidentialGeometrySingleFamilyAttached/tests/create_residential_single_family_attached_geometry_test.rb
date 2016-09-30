@@ -37,7 +37,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
   def test_two_story_fourplex_front_units
     args_hash = {}
     args_hash["building_num_floors"] = 2
-    args_hash["num_units_per_floor"] = 4
+    args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.FinishedBasementFoundationType    
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -47,7 +47,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
   def test_two_story_fourplex_rear_units
     args_hash = {}
     args_hash["building_num_floors"] = 2
-    args_hash["num_units_per_floor"] = 4
+    args_hash["num_units"] = 4
     args_hash["has_rear_units"] = true
     args_hash["foundation_type"] = Constants.FinishedBasementFoundationType    
     result = _test_error(nil, args_hash)
@@ -57,7 +57,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
   
   def test_ufbasement
     args_hash = {}
-    args_hash["num_units_per_floor"] = 4
+    args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.UnfinishedBasementFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -66,7 +66,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
   
   def test_crawl
     args_hash = {}
-    args_hash["num_units_per_floor"] = 4
+    args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.CrawlFoundationType
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
@@ -75,7 +75,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
   
   def test_zone_mult
     args_hash = {}
-    args_hash["num_units_per_floor"] = 4
+    args_hash["num_units"] = 4
     args_hash["use_zone_mult"] = "true"
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>45634a3b-3edf-4d36-932e-de33b07db3d7</version_id>
-  <version_modified>20160923T143744Z</version_modified>
+  <version_id>263421ac-751d-4d92-a514-f91d964897d8</version_id>
+  <version_modified>20160930T163059Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
@@ -33,7 +33,7 @@
     <argument>
       <name>building_num_floors</name>
       <display_name>Building Num Floors</display_name>
-      <description>The number of floors above grade. Must be multiplier of number of floors per unit.</description>
+      <description>The number of floors above grade.</description>
       <type>Integer</type>
       <units>#</units>
       <required>true</required>
@@ -41,9 +41,9 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>num_units_per_floor</name>
-      <display_name>Num Units Per Floor</display_name>
-      <description>The number of units per floor.</description>
+      <name>num_units</name>
+      <display_name>Num Units</display_name>
+      <description>The number of units.</description>
       <type>Integer</type>
       <units>#</units>
       <required>true</required>
@@ -196,6 +196,12 @@
       <checksum>3D7005F6</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C0E0A630</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.2</identifier>
@@ -204,13 +210,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E38BD3D4</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C0E0A630</checksum>
+      <checksum>D6BB6309</checksum>
     </file>
   </files>
 </measure>

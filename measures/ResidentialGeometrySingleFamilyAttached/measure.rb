@@ -46,17 +46,17 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     building_num_floors = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("building_num_floors",true)
     building_num_floors.setDisplayName("Building Num Floors")
     building_num_floors.setUnits("#")
-    building_num_floors.setDescription("The number of floors above grade. Must be multiplier of number of floors per unit.")
+    building_num_floors.setDescription("The number of floors above grade.")
     building_num_floors.setDefaultValue(1)
     args << building_num_floors
 
     #make an argument for number of units per floor
-    num_units_per_floor = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("num_units_per_floor",true)
-    num_units_per_floor.setDisplayName("Num Units Per Floor")
-    num_units_per_floor.setUnits("#")
-    num_units_per_floor.setDescription("The number of units per floor.")
-    num_units_per_floor.setDefaultValue(2)
-    args << num_units_per_floor
+    num_units = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("num_units",true)
+    num_units.setDisplayName("Num Units")
+    num_units.setUnits("#")
+    num_units.setDescription("The number of units.")
+    num_units.setDefaultValue(2)
+    args << num_units
     
     #make an argument for unit aspect ratio
     unit_aspect_ratio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("unit_aspect_ratio",true)
@@ -126,7 +126,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     unit_ffa = OpenStudio.convert(runner.getDoubleArgumentValue("unit_ffa",user_arguments),"ft^2","m^2").get
     living_height = OpenStudio.convert(runner.getDoubleArgumentValue("living_height",user_arguments),"ft","m").get
     building_num_floors = runner.getIntegerArgumentValue("building_num_floors",user_arguments)
-    num_units = runner.getIntegerArgumentValue("num_units_per_floor",user_arguments)
+    num_units = runner.getIntegerArgumentValue("num_units",user_arguments)
     unit_aspect_ratio = runner.getDoubleArgumentValue("unit_aspect_ratio",user_arguments)
     offset = OpenStudio::convert(runner.getDoubleArgumentValue("offset",user_arguments),"ft","m").get
     has_rear_units = runner.getBoolArgumentValue("has_rear_units",user_arguments)
@@ -622,7 +622,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       surface.setOutsideBoundaryCondition("Adiabatic")
     end    
     
-    if use_zone_mult
+    if use_zone_mult and num_units > 2
       num_units = 3
     end    
     
