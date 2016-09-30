@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_minisplit</name>
   <uid>257a8095-0b3d-4ac7-acf5-c537ecbaa945</uid>
-  <version_id>db847a86-5e86-478c-bed3-31a1ebca741c</version_id>
-  <version_modified>20160926T162943Z</version_modified>
+  <version_id>c2a36469-fe46-4062-96bd-b941d24ff39c</version_id>
+  <version_modified>20160930T162306Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump - Original Model</display_name>

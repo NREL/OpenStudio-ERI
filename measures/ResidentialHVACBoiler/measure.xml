@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>e61fb04e-b11a-48de-8dd0-88060e1c5370</version_id>
-  <version_modified>20160928T204413Z</version_modified>
+  <version_id>dd34e826-2eca-4ae9-bb43-4b60635318ce</version_id>
+  <version_modified>20160930T162305Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>

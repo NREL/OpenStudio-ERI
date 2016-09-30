@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_dehumidifier</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38d</uid>
-  <version_id>959ab4df-3790-4fde-80e0-ab21f81ebd1f</version_id>
-  <version_modified>20160705T140641Z</version_modified>
+  <version_id>d340b388-7988-4ff7-a13f-1d881f12d983</version_id>
+  <version_modified>20160930T162305Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>AddResidentialDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
