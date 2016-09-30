@@ -70,7 +70,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     offset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("offset", true)
     offset.setDisplayName("Offset Depth")
     offset.setUnits("ft")
-    offset.setDescription("The depth of the offset.")
+    offset.setDescription("DOES NOT CURRENTLY WORK WITH ZONE MULTIPLIERS The depth of the offset.")
     offset.setDefaultValue(0.0)
     args << offset
     
@@ -656,72 +656,124 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     
     if use_zone_mult
       if not has_rear_units
-        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 2, runner)
-        pseudo_adjacent_surface = nil
+        adjacent_surfaces = {}
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 2, runner)        
         unit_spaces.each do |space|
           space.surfaces.each do |surface|
             next unless surface.surfaceType.downcase == "wall"
             next unless surface.outsideBoundaryCondition.downcase == "surface"
             next if surface.adjacentSurface.is_initialized
-            pseudo_adjacent_surface = surface
-            break
+            adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
           end
         end
         nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)
-        unit_spaces.each do |space|
-          space.surfaces.each do |surface|
-            next unless surface.surfaceType.downcase == "wall"
-            next unless surface.outsideBoundaryCondition.downcase == "surface"
-            next if surface.adjacentSurface.is_initialized
-            surface.setAdjacentSurface(pseudo_adjacent_surface)            
-            break
+        adjacent_surfaces.each do |adjacent_surface, max_z|
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+              surface.setAdjacentSurface(adjacent_surface)            
+              break
+            end
           end
         end
       else # has rear units
         # front
-        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)
-        pseudo_adjacent_surface = nil
-        unit_spaces.each do |space|
-          space.surfaces.each do |surface|
-            next unless surface.surfaceType.downcase == "wall"
-            next unless surface.outsideBoundaryCondition.downcase == "surface"
-            next if surface.adjacentSurface.is_initialized
-            pseudo_adjacent_surface = surface
-            break
+        if num_units % 2 == 0
+          adjacent_surfaces = {}
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)        
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+            end
           end
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 5, runner)
+          adjacent_surfaces.each do |adjacent_surface, max_z|
+            unit_spaces.each do |space|
+              space.surfaces.each do |surface|
+                next unless surface.surfaceType.downcase == "wall"
+                next unless surface.outsideBoundaryCondition.downcase == "surface"
+                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+                surface.setAdjacentSurface(adjacent_surface)
+                break
+              end
+            end
+          end
+          # rear
+          adjacent_surfaces = {}
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 4, runner)
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+            end
+          end
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 6, runner)
+          adjacent_surfaces.each do |adjacent_surface, max_z|
+            unit_spaces.each do |space|
+              space.surfaces.each do |surface|
+                next unless surface.surfaceType.downcase == "wall"
+                next unless surface.outsideBoundaryCondition.downcase == "surface"
+                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+                surface.setAdjacentSurface(adjacent_surface)           
+                break
+              end
+            end
+          end
+        else # odd number of units
+          adjacent_surfaces = {}
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)        
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+            end
+          end
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 6, runner)
+          adjacent_surfaces.each do |adjacent_surface, max_z|
+            unit_spaces.each do |space|
+              space.surfaces.each do |surface|
+                next unless surface.surfaceType.downcase == "wall"
+                next unless surface.outsideBoundaryCondition.downcase == "surface"
+                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+                surface.setAdjacentSurface(adjacent_surface)
+                break
+              end
+            end
+          end
+          # rear
+          adjacent_surfaces = {}
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 4, runner)
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+            end
+          end
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 5, runner)
+          adjacent_surfaces.each do |adjacent_surface, max_z|
+            unit_spaces.each do |space|
+              space.surfaces.each do |surface|
+                next unless surface.surfaceType.downcase == "wall"
+                next unless surface.outsideBoundaryCondition.downcase == "surface"
+                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+                surface.setAdjacentSurface(adjacent_surface)           
+                break
+              end
+            end
+          end        
         end
-        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 5, runner)
-        unit_spaces.each do |space|
-          space.surfaces.each do |surface|
-            next unless surface.surfaceType.downcase == "wall"
-            next unless surface.outsideBoundaryCondition.downcase == "surface"
-            next if surface.adjacentSurface.is_initialized
-            surface.setAdjacentSurface(pseudo_adjacent_surface)            
-            break
-          end
-        end
-        # rear
-        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 4, runner)
-        pseudo_adjacent_surface = nil
-        unit_spaces.each do |space|
-          space.surfaces.each do |surface|
-            next unless surface.surfaceType.downcase == "wall"
-            next unless surface.outsideBoundaryCondition.downcase == "surface"
-            next if surface.adjacentSurface.is_initialized
-            pseudo_adjacent_surface = surface
-            break
-          end
-        end
-        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 6, runner)
-        unit_spaces.each do |space|
-          space.surfaces.each do |surface|
-            next unless surface.surfaceType.downcase == "wall"
-            next unless surface.outsideBoundaryCondition.downcase == "surface"
-            next if surface.adjacentSurface.is_initialized
-            surface.setAdjacentSurface(pseudo_adjacent_surface)            
-            break
-          end
-        end         
       end
     end
     

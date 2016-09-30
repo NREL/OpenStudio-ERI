@@ -82,7 +82,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
   
-  def test_zone_mult_with_rear_units
+  def test_zone_mult_with_rear_units_even
     args_hash = {}
     args_hash["num_units"] = 8
     args_hash["has_rear_units"] = "true"
@@ -90,7 +90,17 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
-  end  
+  end
+  
+  def test_zone_mult_with_rear_units_odd
+    args_hash = {}
+    args_hash["num_units"] = 9
+    args_hash["has_rear_units"] = "true"
+    args_hash["use_zone_mult"] = "true"
+    result = _test_error(nil, args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end    
   
   private
   
