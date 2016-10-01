@@ -217,7 +217,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
         sch_unit_index[num_bed_option.to_f] = -1
     end
     
-    info_msgs = []
+    msgs = []
     (1..num_units).to_a.each do |unit_num|
     
         # Get unit beds/baths/spaces
@@ -252,16 +252,14 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
         # Remove any existing clothes washer
         cw_removed = false
         space.electricEquipment.each do |space_equipment|
-            if space_equipment.name.to_s == obj_name
-                space_equipment.remove
-                cw_removed = true
-            end
+            next if space_equipment.name.to_s != obj_name
+            space_equipment.remove
+            cw_removed = true
         end
         space.waterUseEquipment.each do |space_equipment|
-            if space_equipment.name.to_s == obj_name
-                space_equipment.remove
-                cw_removed = true
-            end
+            next if space_equipment.name.to_s != obj_name
+            space_equipment.remove
+            cw_removed = true
         end
         if cw_removed
             runner.registerInfo("Removed existing clothes washer from space #{space.name.to_s}.")
@@ -569,7 +567,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
             cw_def2.setTargetTemperatureSchedule(sch.temperatureSchedule)
             water_use_connection.addWaterUseEquipment(cw2)
             
-            info_msgs << "A clothes washer with #{cw_ann_e.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}' and assigned to space '#{space.name.to_s}'."
+            msgs << "A clothes washer with #{cw_ann_e.round} kWhs annual energy consumption has been added to plant loop '#{plant_loop.name}' and assigned to space '#{space.name.to_s}'."
             
             tot_cw_ann_e += cw_ann_e
         end
@@ -577,13 +575,13 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Reporting
-    if info_msgs.size > 1
-        info_msgs.each do |info_msg|
-            runner.registerInfo(info_msg)
+    if msgs.size > 1
+        msgs.each do |msg|
+            runner.registerInfo(msg)
         end
         runner.registerFinalCondition("The building has been assigned clothes washers totaling #{tot_cw_ann_e.round} kWhs annual energy consumption across #{num_units} units.")
-    elsif info_msgs.size == 1
-        runner.registerFinalCondition(info_msgs[0])
+    elsif msgs.size == 1
+        runner.registerFinalCondition(msgs[0])
     else
         runner.registerFinalCondition("No clothes washer has been assigned.")
     end

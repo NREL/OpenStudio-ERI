@@ -33,6 +33,8 @@ class Geometry
             end
             return nil
         end
+        # FIXME: Update standardsNumberOfLivingUnits in SFA/MF geometry measures;
+        # factor in zone multipliers when checking for consistency.
         num_units = model.getBuilding.standardsNumberOfLivingUnits.get
         # Check that this matches the number of unit specifications
         units_found = []

@@ -356,7 +356,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     tot_ltg = 0
     all_unit_garage_spaces = []
     num_units_without_garage = 0
-    info_msgs = []
+    msgs = []
     sch = nil
     (1..num_units).to_a.each do |unit_num|
     
@@ -427,7 +427,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
             ltg_def.setReturnAirFraction(0.0)
             ltg.setSchedule(sch.schedule)
 
-            info_msgs << "Lighting with #{space_ltg_ann.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."
+            msgs << "Lighting with #{space_ltg_ann.round} kWhs annual energy consumption has been assigned to space '#{space.name.to_s}'."
             tot_ltg += space_ltg_ann
             
         end
@@ -467,7 +467,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
         ltg_def.setReturnAirFraction(0.0)
         ltg.setSchedule(sch.schedule)
 
-        info_msgs << "Lighting with #{space_ltg_ann.round} kWhs annual energy consumption has been assigned to space '#{garage_space.name.to_s}'."
+        msgs << "Lighting with #{space_ltg_ann.round} kWhs annual energy consumption has been assigned to space '#{garage_space.name.to_s}'."
         tot_ltg += space_ltg_ann
         
     end
@@ -488,17 +488,17 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     ltg_def.setDesignLevel(space_design_level)
     ltg.setSchedule(sch.schedule)
     
-    info_msgs << "Lighting with #{outside_ann.round} kWhs annual energy consumption has been assigned to the exterior'."
+    msgs << "Lighting with #{outside_ann.round} kWhs annual energy consumption has been assigned to the exterior'."
     tot_ltg += outside_ann
 
     #reporting final condition of model
-    if info_msgs.size > 1
-        info_msgs.each do |info_msg|
-            runner.registerInfo(info_msg)
+    if msgs.size > 1
+        msgs.each do |msg|
+            runner.registerInfo(msg)
         end
         runner.registerFinalCondition("The building has been assigned lighting totaling #{tot_ltg.round} kWhs annual energy consumption across #{num_units} units.")
-    elsif info_msgs.size == 1
-        runner.registerFinalCondition(info_msgs[0])
+    elsif msgs.size == 1
+        runner.registerFinalCondition(msgs[0])
     else
         runner.registerFinalCondition("No lighting has been assigned.")
     end
