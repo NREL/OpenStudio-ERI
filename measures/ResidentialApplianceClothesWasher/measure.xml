@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>985ac4ef-b823-4271-ad45-337055306211</version_id>
-  <version_modified>20161001T192750Z</version_modified>
+  <version_id>df06f3ae-d588-4709-bfad-1bbbc053bd4a</version_id>
+  <version_modified>20161001T202444Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -220,12 +220,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9D657C02</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -308,12 +302,6 @@
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
       <checksum>20A70B8B</checksum>
-    </file>
-    <file>
-      <filename>ResidentialClothesWasher_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D795B17B</checksum>
     </file>
     <file>
       <filename>waterheater.rb</filename>
@@ -604,17 +592,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>C703326D</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -625,6 +602,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>D136A22C</checksum>
+    </file>
+    <file>
+      <filename>ResidentialClothesWasher_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8AD0DB1C</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>97B219DD</checksum>
     </file>
   </files>
 </measure>

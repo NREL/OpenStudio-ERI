@@ -143,7 +143,7 @@ class ResidentialHotWaterHeaterTanklessGas < OpenStudio::Ruleset::ModelUserScrip
 
         #Check if mains temperature has been set
         if !model.getSite.siteWaterMainsTemperature.is_initialized
-            runner.registerError("Mains water temperature must be set before adding a water heater.")
+            runner.registerError("Mains water temperature has not been set.")
             return false
         end
         

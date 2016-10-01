@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>1e560302-ceaf-4a03-80e3-dce700a10b09</version_id>
-  <version_modified>20161001T192759Z</version_modified>
+  <version_id>36f3e79b-0dfd-4287-b901-1e18d04911ba</version_id>
+  <version_modified>20161001T202449Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -135,12 +135,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9D657C02</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -234,6 +228,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>97B219DD</checksum>
     </file>
   </files>
 </measure>

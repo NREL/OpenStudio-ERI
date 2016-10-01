@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>bffb4c0e-dd8d-4120-b527-49da3ff6e312</version_id>
-  <version_modified>20161001T192750Z</version_modified>
+  <version_id>49457afd-59ab-48ad-b3d2-88a0634d9c93</version_id>
+  <version_modified>20161001T202444Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -182,12 +182,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9D657C02</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -270,12 +264,6 @@
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
       <checksum>E6724679</checksum>
-    </file>
-    <file>
-      <filename>ResidentialDishwasher_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E9F771B0</checksum>
     </file>
     <file>
       <filename>waterheater.rb</filename>
@@ -566,17 +554,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>510811B1</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -587,6 +564,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>3A0983A2</checksum>
+    </file>
+    <file>
+      <filename>ResidentialDishwasher_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0D98B632</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>97B219DD</checksum>
     </file>
   </files>
 </measure>

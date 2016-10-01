@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_gas</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>fdaeb442-032f-44b2-93b6-49317ca290e5</version_id>
-  <version_modified>20161001T192756Z</version_modified>
+  <version_id>6e5d1e54-5b9a-42b6-a577-f8b25a7adbaa</version_id>
+  <version_modified>20161001T202447Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessGas</class_name>
   <display_name>Set Residential Gas Tankless Water Heater</display_name>
@@ -102,12 +102,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9D657C02</checksum>
-    </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
@@ -211,12 +205,6 @@
       <checksum>F4A45188</checksum>
     </file>
     <file>
-      <filename>ResidentialWaterHeaterTanklessGas_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D3B6A3B7</checksum>
-    </file>
-    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -235,17 +223,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>1.4.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>1EA2E6A3</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -256,6 +233,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.4.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>7E3277D1</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTanklessGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FC5D0F89</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>97B219DD</checksum>
     </file>
   </files>
 </measure>

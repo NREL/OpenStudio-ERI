@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>252bf49f-ba69-44f8-89eb-3a75b9137886</version_id>
-  <version_modified>20161001T192756Z</version_modified>
+  <version_id>58c5d83a-912c-47bf-9302-fb299fe676cb</version_id>
+  <version_modified>20161001T202446Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -90,12 +90,6 @@
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
       <checksum>9D722D63</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9D657C02</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
@@ -1097,6 +1091,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>97B219DD</checksum>
     </file>
   </files>
 </measure>

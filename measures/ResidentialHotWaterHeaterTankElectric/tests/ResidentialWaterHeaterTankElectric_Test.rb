@@ -298,7 +298,7 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
   def test_error_missing_mains_temp
     args_hash = {}
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Mains water temperature must be set before adding a water heater.")
+    assert_equal(result.errors[0].logMessage, "Mains water temperature has not been set.")
   end
 
   private

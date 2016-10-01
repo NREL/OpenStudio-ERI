@@ -273,7 +273,7 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash = {}
     args_hash["cold_inlet"] = true
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Model has not been assigned a weather file.")
+    assert_equal(result.errors[0].logMessage, "Mains water temperature has not been set.")
   end
 
   def test_error_missing_water_heater

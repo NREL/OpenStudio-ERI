@@ -108,12 +108,13 @@ class ResidentialHotWaterDistribution < OpenStudio::Ruleset::ModelUserScript
             return false
         end
 
-        #Get mains water temperature and current shower, sink, and bath water uses
-        weather = WeatherProcess.new(model,runner,File.dirname(__FILE__))
-        if weather.error?
+        # Get mains monthly temperatures
+        site = model.getSite
+        if !site.siteWaterMainsTemperature.is_initialized
+            runner.registerError("Mains water temperature has not been set.")
             return false
         end
-        tmains = weather.data.MainsMonthlyTemps
+        mainsMonthlyTemps = WeatherProcess.get_mains_temperature(site.siteWaterMainsTemperature.get, site.latitude)[1]
         
         # Hot water schedules vary by number of bedrooms. For a given number of bedroom,
         # there are 10 different schedules available for different units in a multifamily 
@@ -243,20 +244,20 @@ class ResidentialHotWaterDistribution < OpenStudio::Ruleset::ModelUserScript
             if recirc_type == Constants.RecircTypeTimer
                 for m in 0..11 
                     daily_recovery_load[m] = [(18135.0 + 2538.0 * nbeds + (-12265.0 - 1495.0 * nbeds) * dist_ins / 2.0) / \
-                                    (8.33 * (120.0 - tmains[m]) * 4184.0 * 0.00023886),0].max
+                                    (8.33 * (120.0 - mainsMonthlyTemps[m]) * 4184.0 * 0.00023886),0].max
                 end
                 pump_e_ann = 193.0
             elsif recirc_type == Constants.RecircTypeDemand
                 for m in 0..11
                      daily_recovery_load[m] = [(-3648.0 + 2344.0 * nbeds + (-1328.0 - 761.0 * nbeds) * dist_ins / 2.0) / \
-                                     (8.33 * (120.0 - tmains[m]) * 4184.0 * 0.00023886),0].max
+                                     (8.33 * (120.0 - mainsMonthlyTemps[m]) * 4184.0 * 0.00023886),0].max
                 end
                 pump_e_ann = (-0.13 + 0.72 * nbeds + (0.13 - 0.17 * nbeds) * dist_ins / 2.0)
             end
             
             water_mix_to_h = Array.new(12,0)
             for m in 0..11
-                water_mix_to_h[m] = [(Constants.MixedUseT - tmains[m]) / (wh_setpoint - tmains[m]), 0].max
+                water_mix_to_h[m] = [(Constants.MixedUseT - mainsMonthlyTemps[m]) / (wh_setpoint - mainsMonthlyTemps[m]), 0].max
             end
 
             daily_shower_increase = Array.new(12,0)

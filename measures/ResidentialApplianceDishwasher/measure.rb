@@ -184,12 +184,14 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    # Get weather if needed
+    # Get mains monthly temperatures if needed
     if dw_is_cold_water_inlet_only
-        weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
-        if weather.error?
+        site = model.getSite
+        if !site.siteWaterMainsTemperature.is_initialized
+            runner.registerError("Mains water temperature has not been set.")
             return false
         end
+        mainsMonthlyTemps = WeatherProcess.get_mains_temperature(site.siteWaterMainsTemperature.get, site.latitude)[1]
     end
     
     # Hot water schedules vary by number of bedrooms. For a given number of bedroom,
@@ -366,7 +368,7 @@ class ResidentialDishwasher < OpenStudio::Ruleset::ModelUserScript
         if dw_is_cold_water_inlet_only
 
             monthly_dishwasher_energy = Array.new(12, 0)
-            weather.data.MainsMonthlyTemps.each_with_index do |monthly_main, i|
+            mainsMonthlyTemps.each_with_index do |monthly_main, i|
                 # Adjust for monthly variation in Tmains vs. test cold
                 # water supply temperature.
                 actual_dw_elec_use_per_cycle = test_dw_elec_use_per_cycle + \

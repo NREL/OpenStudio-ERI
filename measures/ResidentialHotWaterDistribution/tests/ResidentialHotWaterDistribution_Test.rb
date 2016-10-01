@@ -444,7 +444,7 @@ class ResidentialHotWaterDistributionTest < MiniTest::Test
   def test_error_missing_location
     args_hash = {}
     result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors[0].logMessage, "Model has not been assigned a weather file.")
+    assert_equal(result.errors[0].logMessage, "Mains water temperature has not been set.")
   end
 
   def test_error_missing_water_heater
