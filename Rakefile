@@ -246,7 +246,7 @@ def get_requires_from_file(filerb)
       d = line.split("/")
       requirerb = File.expand_path("../resources/#{d[-1].to_s}.rb", __FILE__)
       requires << requirerb
-    end
+    end   
   end
   # Recursively look for additional requirements
   requires.each do |requirerb|

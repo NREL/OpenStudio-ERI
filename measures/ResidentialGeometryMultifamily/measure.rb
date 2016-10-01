@@ -46,7 +46,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     building_num_floors = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("building_num_floors",true)
     building_num_floors.setDisplayName("Building Num Floors")
     building_num_floors.setUnits("#")
-    building_num_floors.setDescription("The number of floors above grade. Must be multiplier of number of floors per unit.")
+    building_num_floors.setDescription("The number of floors above grade.")
     building_num_floors.setDefaultValue(1)
     args << building_num_floors
 

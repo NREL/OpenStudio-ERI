@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>4a922a88-b47c-40e6-9d1c-c196fb165d6e</version_id>
-  <version_modified>20161001T192753Z</version_modified>
+  <version_id>b1d8d738-ca5b-4c8e-ae29-c5d11556bcf9</version_id>
+  <version_modified>20161001T194158Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -33,7 +33,7 @@
     <argument>
       <name>building_num_floors</name>
       <display_name>Building Num Floors</display_name>
-      <description>The number of floors above grade. Must be multiplier of number of floors per unit.</description>
+      <description>The number of floors above grade.</description>
       <type>Integer</type>
       <units>#</units>
       <required>true</required>
@@ -224,17 +224,6 @@
       <checksum>A0E435D4</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.12.2</identifier>
-        <min_compatible>1.12.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>6A4D9204</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -245,6 +234,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.12.2</identifier>
+        <min_compatible>1.12.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>01B67A59</checksum>
     </file>
   </files>
 </measure>

@@ -46,17 +46,17 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     building_num_floors = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("building_num_floors",true)
     building_num_floors.setDisplayName("Building Num Floors")
     building_num_floors.setUnits("#")
-    building_num_floors.setDescription("The number of floors above grade. Must be multiplier of number of floors per unit.")
+    building_num_floors.setDescription("The number of floors above grade.")
     building_num_floors.setDefaultValue(1)
     args << building_num_floors
 
     #make an argument for number of units per floor
-    num_units_per_floor = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("num_units_per_floor",true)
-    num_units_per_floor.setDisplayName("Num Units Per Floor")
-    num_units_per_floor.setUnits("#")
-    num_units_per_floor.setDescription("The number of units per floor.")
-    num_units_per_floor.setDefaultValue(2)
-    args << num_units_per_floor
+    num_units = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("num_units",true)
+    num_units.setDisplayName("Num Units")
+    num_units.setUnits("#")
+    num_units.setDescription("The number of units.")
+    num_units.setDefaultValue(2)
+    args << num_units
     
     #make an argument for unit aspect ratio
     unit_aspect_ratio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("unit_aspect_ratio",true)
@@ -70,7 +70,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     offset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("offset", true)
     offset.setDisplayName("Offset Depth")
     offset.setUnits("ft")
-    offset.setDescription("The depth of the offset.")
+    offset.setDescription("DOES NOT CURRENTLY WORK WITH ZONE MULTIPLIERS The depth of the offset.")
     offset.setDefaultValue(0.0)
     args << offset
     
@@ -107,7 +107,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     #make an argument for using zone multipliers
     use_zone_mult = OpenStudio::Ruleset::OSArgument::makeBoolArgument("use_zone_mult", true)
     use_zone_mult.setDisplayName("Use Zone Multipliers?")
-    use_zone_mult.setDescription("NO REAR UNITS FOR NOW Model only one interior unit with its thermal zone multiplier equal to the number of interior units.")
+    use_zone_mult.setDescription("Model only one interior unit with its thermal zone multiplier equal to the number of interior units.")
     use_zone_mult.setDefaultValue(false)
     args << use_zone_mult    
     
@@ -126,7 +126,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     unit_ffa = OpenStudio.convert(runner.getDoubleArgumentValue("unit_ffa",user_arguments),"ft^2","m^2").get
     living_height = OpenStudio.convert(runner.getDoubleArgumentValue("living_height",user_arguments),"ft","m").get
     building_num_floors = runner.getIntegerArgumentValue("building_num_floors",user_arguments)
-    num_units = runner.getIntegerArgumentValue("num_units_per_floor",user_arguments)
+    num_units = runner.getIntegerArgumentValue("num_units",user_arguments)
     unit_aspect_ratio = runner.getDoubleArgumentValue("unit_aspect_ratio",user_arguments)
     offset = OpenStudio::convert(runner.getDoubleArgumentValue("offset",user_arguments),"ft","m").get
     has_rear_units = runner.getBoolArgumentValue("has_rear_units",user_arguments)
@@ -606,14 +606,175 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
               end
             end
           else # rename the rightmost unit
-            Geometry.rename_unit_spaces_zones(model, num_units, 3)
+            Geometry.rename_unit_spaces_zones(model, unit_num, 3)
           end       
           
         else # has rear units
-          # TODO
+          next unless unit_num > 2
+
+          zone_names_for_multiplier_adjustment = []        
+          space_names_to_remove = []
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
+          if unit_num == 3 or unit_num == 4 # leftmost interior units
+            unit_spaces.each do |space|
+              thermal_zone = space.thermalZone.get
+              zone_names_for_multiplier_adjustment << thermal_zone.name.to_s
+            end
+            model.getThermalZones.each do |thermal_zone|
+              zone_names_for_multiplier_adjustment.each do |tz|
+                if thermal_zone.name.to_s == tz
+                  thermal_zone.setMultiplier(num_units / 2 - 2)
+                end
+              end
+            end
+          elsif unit_num != num_units - 1 and unit_num != num_units # interior units that get removed
+            unit_spaces.each do |space|
+              space_names_to_remove << space.name.to_s
+            end
+            Geometry.remove_unit(model, unit_num)
+            model.getSpaces.each do |space|
+              space_names_to_remove.each do |s|
+                if space.name.to_s == s
+                  if space.thermalZone.is_initialized
+                    thermal_zone = space.thermalZone.get
+                    thermal_zone.remove
+                  end
+                  space.remove
+                end
+              end
+            end
+          elsif unit_num == num_units - 1
+            Geometry.rename_unit_spaces_zones(model, unit_num, 5)
+          else
+            Geometry.rename_unit_spaces_zones(model, unit_num, 6)
+          end
+        
         end
         
       end      
+    end
+    
+    if use_zone_mult
+      if not has_rear_units
+        adjacent_surfaces = {}
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 2, runner)        
+        unit_spaces.each do |space|
+          space.surfaces.each do |surface|
+            next unless surface.surfaceType.downcase == "wall"
+            next unless surface.outsideBoundaryCondition.downcase == "surface"
+            next if surface.adjacentSurface.is_initialized
+            adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+          end
+        end
+        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)
+        adjacent_surfaces.each do |adjacent_surface, max_z|
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+              surface.setAdjacentSurface(adjacent_surface)            
+              break
+            end
+          end
+        end
+      else # has rear units
+        # front
+        if num_units % 2 == 0
+          adjacent_surfaces = {}
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)        
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+            end
+          end
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 5, runner)
+          adjacent_surfaces.each do |adjacent_surface, max_z|
+            unit_spaces.each do |space|
+              space.surfaces.each do |surface|
+                next unless surface.surfaceType.downcase == "wall"
+                next unless surface.outsideBoundaryCondition.downcase == "surface"
+                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+                surface.setAdjacentSurface(adjacent_surface)
+                break
+              end
+            end
+          end
+          # rear
+          adjacent_surfaces = {}
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 4, runner)
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+            end
+          end
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 6, runner)
+          adjacent_surfaces.each do |adjacent_surface, max_z|
+            unit_spaces.each do |space|
+              space.surfaces.each do |surface|
+                next unless surface.surfaceType.downcase == "wall"
+                next unless surface.outsideBoundaryCondition.downcase == "surface"
+                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+                surface.setAdjacentSurface(adjacent_surface)           
+                break
+              end
+            end
+          end
+        else # odd number of units
+          adjacent_surfaces = {}
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)        
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+            end
+          end
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 6, runner)
+          adjacent_surfaces.each do |adjacent_surface, max_z|
+            unit_spaces.each do |space|
+              space.surfaces.each do |surface|
+                next unless surface.surfaceType.downcase == "wall"
+                next unless surface.outsideBoundaryCondition.downcase == "surface"
+                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+                surface.setAdjacentSurface(adjacent_surface)
+                break
+              end
+            end
+          end
+          # rear
+          adjacent_surfaces = {}
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 4, runner)
+          unit_spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "wall"
+              next unless surface.outsideBoundaryCondition.downcase == "surface"
+              next if surface.adjacentSurface.is_initialized
+              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
+            end
+          end
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 5, runner)
+          adjacent_surfaces.each do |adjacent_surface, max_z|
+            unit_spaces.each do |space|
+              space.surfaces.each do |surface|
+                next unless surface.surfaceType.downcase == "wall"
+                next unless surface.outsideBoundaryCondition.downcase == "surface"
+                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
+                surface.setAdjacentSurface(adjacent_surface)           
+                break
+              end
+            end
+          end        
+        end
+      end
     end
     
     model.getSurfaces.each do |surface|
@@ -622,7 +783,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       surface.setOutsideBoundaryCondition("Adiabatic")
     end    
     
-    if use_zone_mult
+    if use_zone_mult and num_units > 2
       num_units = 3
     end    
     
