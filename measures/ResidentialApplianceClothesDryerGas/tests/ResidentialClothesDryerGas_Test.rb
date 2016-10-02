@@ -98,7 +98,7 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
   end
     
   def test_retrofit_replace_elec_clothes_dryer
-    model = _get_model(osm_geo_beds_elecdryer)
+    model = get_model(File.dirname(__FILE__), osm_geo_beds_elecdryer)
     args_hash = {}
     args_hash["cd_ef"] = 3.48
     _test_measure(model, args_hash, 1, 2, 64.0, 29.0, 1)
@@ -288,7 +288,7 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
 
-    model = _get_model(osm_file)
+    model = get_model(File.dirname(__FILE__), osm_file)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -329,7 +329,7 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
     
-    model = _get_model(osm_file_or_model)
+    model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
     # store the original equipment in the seed model
     orig_equip = model.getElectricEquipments + model.getGasEquipments
@@ -405,22 +405,4 @@ class ResidentialClothesDryerGasTest < MiniTest::Test
     return model
   end
   
-  def _get_model(osm_file_or_model)
-    if osm_file_or_model.is_a?(OpenStudio::Model::Model)
-        # nothing to do
-        model = osm_file_or_model
-    elsif osm_file_or_model.nil?
-        # make an empty model
-        model = OpenStudio::Model::Model.new
-    else
-        # load the test model
-        translator = OpenStudio::OSVersion::VersionTranslator.new
-        path = OpenStudio::Path.new(File.join(File.dirname(__FILE__), osm_file_or_model))
-        model = translator.loadModel(path)
-        assert((not model.empty?))
-        model = model.get
-    end
-    return model
-  end
-
 end

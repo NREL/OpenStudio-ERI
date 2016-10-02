@@ -351,7 +351,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
 
-    model = _get_model(osm_file_or_model)
+    model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -374,22 +374,4 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     
   end
   
-  def _get_model(osm_file_or_model)
-    if osm_file_or_model.is_a?(OpenStudio::Model::Model)
-        # nothing to do
-        model = osm_file_or_model
-    elsif osm_file_or_model.nil?
-        # make an empty model
-        model = OpenStudio::Model::Model.new
-    else
-        # load the test model
-        translator = OpenStudio::OSVersion::VersionTranslator.new
-        path = OpenStudio::Path.new(File.join(File.dirname(__FILE__), osm_file_or_model))
-        model = translator.loadModel(path)
-        assert((not model.empty?))
-        model = model.get
-    end
-    return model
-  end  
-
 end

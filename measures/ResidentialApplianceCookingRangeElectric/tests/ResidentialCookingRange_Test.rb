@@ -93,7 +93,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
   end
   
   def test_retrofit_replace_gas_cooking_range
-    model = _get_model(osm_geo_beds_gasrange)
+    model = get_model(File.dirname(__FILE__), osm_geo_beds_gasrange)
     args_hash = {}
     args_hash["c_ef"] = 0.74
     args_hash["o_ef"] = 0.11
@@ -101,7 +101,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
   end
 
   def test_retrofit_replace_gas_cooking_range_ignition
-    model = _get_model(osm_geo_beds_gasrange_elecignition)
+    model = get_model(File.dirname(__FILE__), osm_geo_beds_gasrange_elecignition)
     args_hash = {}
     args_hash["c_ef"] = 0.74
     args_hash["o_ef"] = 0.11
@@ -269,7 +269,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
 
-    model = _get_model(osm_file)
+    model = get_model(File.dirname(__FILE__), osm_file)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -310,7 +310,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
     
-    model = _get_model(osm_file_or_model)
+    model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
     # store the original equipment in the seed model
     orig_equip = model.getElectricEquipments + model.getGasEquipments
@@ -373,24 +373,6 @@ class ResidentialCookingRangeTest < MiniTest::Test
     end
     assert_in_epsilon(expected_annual_kwh, actual_annual_kwh, 0.01)
 
-    return model
-  end
-  
-  def _get_model(osm_file_or_model)
-    if osm_file_or_model.is_a?(OpenStudio::Model::Model)
-        # nothing to do
-        model = osm_file_or_model
-    elsif osm_file_or_model.nil?
-        # make an empty model
-        model = OpenStudio::Model::Model.new
-    else
-        # load the test model
-        translator = OpenStudio::OSVersion::VersionTranslator.new
-        path = OpenStudio::Path.new(File.join(File.dirname(__FILE__), osm_file_or_model))
-        model = translator.loadModel(path)
-        assert((not model.empty?))
-        model = model.get
-    end
     return model
   end
   
