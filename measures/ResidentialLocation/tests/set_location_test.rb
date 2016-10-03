@@ -11,7 +11,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
     args_hash = {}
     args_hash["weather_directory"] = "./resuorces" # misspelled
     args_hash["weather_file_name"] = "USA_CO_Denver_Intl_AP_725650_TMY3.epw"
-    result = _test_error_or_NA("default_geometry.osm", args_hash)
+    result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "'#{File.join(File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_directory"])), args_hash["weather_file_name"])}' does not exist or is not an .epw file.")
@@ -20,7 +20,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
   def test_error_invalid_daylight_saving
     args_hash = {}
     args_hash["dst_start_date"] = "April 31"
-    result = _test_error_or_NA("default_geometry.osm", args_hash)
+    result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors[0].logMessage, "Invalid daylight saving date specified.")
@@ -30,28 +30,37 @@ class SetResidentialEPWFileTest < MiniTest::Test
     args_hash = {}
     args_hash["dst_start_date"] = "NA"
     args_hash["dst_end_date"] = "NA"
-    result = _test_error_or_NA("default_geometry.osm", args_hash)
+    result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
+    assert_includes(result.info.map{ |x| x.logMessage }, "No daylight saving time set.")
   end
   
-  def test_retrofit_replace
+  def test_change_daylight_saving
     args_hash = {}
-    model = _test_measure("default_geometry.osm", args_hash, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ClimateZones"=>1, "Site"=>1, "YearDescription"=>1}
+    expected_values = {"StartDate"=>"2009-Apr-07", "EndDate"=>"2009-Oct-26"}
+    model = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
     args_hash = {}
-    _test_measure(model, args_hash, 1, 1)
+    args_hash["dst_start_date"] = "April 8"
+    args_hash["dst_end_date"] = "October 27"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {"StartDate"=>"2009-Apr-08", "EndDate"=>"2009-Oct-27"}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)      
   end  
   
   private
   
-  def _test_error_or_NA(osm_file, args_hash)
+  def _test_error_or_NA(osm_file_or_model, args_hash)
     # create an instance of the measure
     measure = SetResidentialEPWFile.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
 
-    model = get_model(File.dirname(__FILE__), osm_file)
+    model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -72,9 +81,9 @@ class SetResidentialEPWFileTest < MiniTest::Test
       
     return result
     
-  end
+  end 
   
-  def _test_measure(osm_file_or_model, args_hash, expected_num_new_files=0, expected_num_existing_files=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
     measure = SetResidentialEPWFile.new
 
@@ -88,6 +97,9 @@ class SetResidentialEPWFileTest < MiniTest::Test
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
+    # get the initial objects in the model
+    initial_objects = get_objects(model)
+    
     # get arguments
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
@@ -107,23 +119,32 @@ class SetResidentialEPWFileTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    new_file = false
-    existing_file = false
-    result.info.each do |info|
-        if info.logMessage.include? "Setting weather file."
-            new_file = true
-        elsif info.logMessage.include? "Found an existing weather file."
-            existing_file = true
-        end
-    end    
-    if expected_num_existing_files == 0 # new
-        assert(new_file==true)
-        assert(existing_file==false)
-    else # replacement
-        assert(new_file==true)
-        assert(existing_file==true)
-    end   
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    
+    # get the final objects in the model
+    final_objects = get_objects(model)
+    
+    # get new and deleted objects
+    obj_type_exclusions = ["CurveCubic", "Node", "AirLoopHVACZoneMixer", "SizingSystem", "AirLoopHVACZoneSplitter", "ScheduleTypeLimits", "CurveExponent", "ScheduleConstant", "SizingPlant", "PipeAdiabatic", "ConnectorSplitter", "ModelObjectList", "ConnectorMixer"]
+    all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
+    all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
+    
+    # check we have the expected number of new/deleted objects
+    check_num_objects(all_new_objects, expected_num_new_objects, "added")
+    check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
 
+    all_new_objects.each do |obj_type, new_objects|
+        new_objects.each do |new_object|
+            next if not new_object.respond_to?("to_#{obj_type}")
+            new_object = new_object.public_send("to_#{obj_type}").get
+            if obj_type == "RunPeriodControlDaylightSavingTime"
+                assert_equal(expected_values["StartDate"], new_object.startDate.to_s)
+                assert_equal(expected_values["EndDate"], new_object.endDate.to_s)
+            end
+        end
+    end
+    
     return model
   end  
   
