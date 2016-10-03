@@ -148,7 +148,8 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
                 clg_wkdy[hour] = value
               end
             end
-          elsif rule.applySaturday and rule.applySunday
+          end
+          if rule.applySaturday and rule.applySunday
             rule.daySchedule.values.each_with_index do |value, hour|
               if value < clg_wked[hour]
                 clg_wked[hour] = value
@@ -183,6 +184,10 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
           end          
         end
         
+        runner.registerInfo("htg_wkdy_monthly #{htg_wkdy_monthly.to_s}")
+        runner.registerInfo("htg_wked_monthly #{htg_wked_monthly.to_s}")
+        runner.registerInfo("clg_wkdy_monthly #{clg_wkdy_monthly.to_s}")
+        runner.registerInfo("clg_wked_monthly #{clg_wked_monthly.to_s}")
         heatingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
         coolingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
 
@@ -190,6 +195,13 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
           return false
         end
 
+        if thermostatsetpointdualsetpoint.heatingSetpointTemperatureSchedule.is_initialized
+            thermostatsetpointdualsetpoint.heatingSetpointTemperatureSchedule.get.remove
+        end
+        if thermostatsetpointdualsetpoint.coolingSetpointTemperatureSchedule.is_initialized
+            thermostatsetpointdualsetpoint.coolingSetpointTemperatureSchedule.get.remove
+        end
+        
         thermostatsetpointdualsetpoint.setHeatingSetpointTemperatureSchedule(heatingsetpoint.schedule)
         thermostatsetpointdualsetpoint.setCoolingSetpointTemperatureSchedule(coolingsetpoint.schedule)
         
