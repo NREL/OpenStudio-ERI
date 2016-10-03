@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>81c2175c-3b7c-4aee-91a4-c3db20095402</version_id>
-  <version_modified>20161003T144819Z</version_modified>
+  <version_id>63536d1b-3037-417d-9b0d-503d96931e6a</version_id>
+  <version_modified>20161003T181654Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankGas</class_name>
   <display_name>Set Residential Gas Tank Water Heater</display_name>
@@ -257,12 +257,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D1120250</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -290,6 +284,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>B1710906</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4F1113E0</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>7b5cfa95-11ae-496a-b259-ae4e23769447</version_id>
-  <version_modified>20161003T144817Z</version_modified>
+  <version_id>08e02914-afe5-4cbc-9298-ced27f99de71</version_id>
+  <version_modified>20161003T181646Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -624,17 +624,6 @@
       <checksum>F4A45188</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.12.5</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>2EEA5958</checksum>
-    </file>
-    <file>
       <filename>singlefamily_slab_location_beds_mshp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -645,12 +634,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>012CC020</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D1120250</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -669,6 +652,23 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>F28B238E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.12.5</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>CFAD989F</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4F1113E0</checksum>
     </file>
   </files>
 </measure>

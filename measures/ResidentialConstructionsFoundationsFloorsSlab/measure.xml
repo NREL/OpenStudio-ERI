@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>965c1228-917b-420a-a699-5193ca6ebe70</version_id>
-  <version_modified>20161001T192752Z</version_modified>
+  <version_id>939fa7a3-2a9f-45aa-aa2a-355019e34990</version_id>
+  <version_modified>20161003T181649Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
@@ -155,7 +155,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>D1120250</checksum>
+      <checksum>4F1113E0</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_vrf_minisplit</name>
   <uid>402b168f-ed99-46bb-b367-103937011e91</uid>
-  <version_id>1fcf7ef9-84c6-4bee-970c-ad733582cee7</version_id>
-  <version_modified>20161003T144820Z</version_modified>
+  <version_id>7f4b197d-85b8-433d-a31b-d32c85d4fc9c</version_id>
+  <version_modified>20161003T181656Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVRFMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
@@ -425,12 +425,6 @@
       <checksum>86E3C248</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D1120250</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -441,6 +435,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>8EEF1F54</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4F1113E0</checksum>
     </file>
   </files>
 </measure>

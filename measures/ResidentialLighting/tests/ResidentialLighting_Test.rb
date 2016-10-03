@@ -27,6 +27,10 @@ class ResidentialLightingTest < MiniTest::Test
     return "multifamily_3_units_Denver.osm"
   end
   
+  def osm_geo_multifamily_3_units_loc_zone_mult
+    return "multifamily_3_units_Denver_zone_multiplier.osm"
+  end
+
   def test_new_construction_100_incandescent
     args_hash = {}
     args_hash["hw_cfl"] = 0.0
@@ -129,6 +133,12 @@ class ResidentialLightingTest < MiniTest::Test
     _test_measure(osm_geo_multifamily_3_units_loc, args_hash, 0, num_ltg_spaces, 3684, num_ltg_spaces, 0)
   end
   
+  def test_multifamily_new_construction_zone_mult
+    num_ltg_spaces = 5
+    args_hash = {}
+    _test_measure(osm_geo_multifamily_3_units_loc_zone_mult, args_hash, 0, num_ltg_spaces, 4636, num_ltg_spaces, 0)
+  end
+
   def test_multifamily_retrofit_replace
     num_ltg_spaces = 5
     args_hash = {}
@@ -385,7 +395,7 @@ class ResidentialLightingTest < MiniTest::Test
         # check for the correct annual energy consumption
         full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
         if new_object.is_a?(OpenStudio::Model::Lights)
-            actual_annual_kwh += OpenStudio.convert(full_load_hrs * new_object.lightingLevel.get * new_object.multiplier, "Wh", "kWh").get
+            actual_annual_kwh += OpenStudio.convert(full_load_hrs * new_object.lightingLevel.get * new_object.multiplier * new_object.space.get.multiplier, "Wh", "kWh").get
         elsif new_object.is_a?(OpenStudio::Model::ExteriorLights)
             actual_annual_kwh += OpenStudio.convert(full_load_hrs * new_object.exteriorLightsDefinition.designLevel * new_object.multiplier, "Wh", "kWh").get
         end

@@ -369,14 +369,14 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
         
         # Get unit ffa and finished spaces
         unit_finished_spaces = Geometry.get_finished_spaces(unit_spaces)
-        ffa = Geometry.get_finished_floor_area_from_spaces(unit_spaces, runner)
+        ffa = Geometry.get_finished_floor_area_from_spaces(unit_spaces, false, runner)
         if ffa.nil?
             return false
         end
         
         # Get unit garage floor area
         unit_garage_spaces = Geometry.get_garage_spaces(unit_spaces, model)
-        gfa = Geometry.calculate_floor_area_from_spaces(unit_garage_spaces)
+        gfa = Geometry.get_floor_area_from_spaces(unit_garage_spaces)
         if unit_garage_spaces.size == 0
             num_units_without_garage += 1
         end
@@ -437,7 +437,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     # Common garage lighting (garages not associated with a unit)
     common_spaces = Geometry.get_all_common_spaces(model, runner)
     common_garage_spaces = Geometry.get_garage_spaces(common_spaces, model)
-    common_gfa = Geometry.calculate_floor_area_from_spaces(common_garage_spaces)
+    common_gfa = Geometry.get_floor_area_from_spaces(common_garage_spaces)
     common_bm_garage_e =  0.08 * common_gfa + 8 * num_units_without_garage
     common_garage_ann = (common_bm_garage_e * (((hw_inc * er_inc + (1 - bab_frac_inc) * bab_er_inc) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
     
@@ -473,7 +473,7 @@ class ResidentialLighting < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Exterior Lighting
-    total_ffa = Geometry.get_finished_floor_area_from_spaces(model.getSpaces, runner)
+    total_ffa = Geometry.get_finished_floor_area_from_spaces(model.getSpaces, true, runner)
     bm_outside_e = 0.145 * total_ffa
     outside_ann = (bm_outside_e * (((hw_inc * er_inc + (1 - bab_frac_inc) * bab_er_inc) + (hw_cfl * er_cfl - bab_frac_cfl * bab_er_cfl) + (hw_led * er_led - bab_frac_led * bab_er_led) + (hw_lfl * er_lfl - bab_frac_lfl * bab_er_lfl)) * smrt_replce_f * 0.9 + 0.1))
 
