@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater_gas</name>
   <uid>bbb7dbaa-5517-438e-bb14-5b92e9d09284</uid>
-  <version_id>7a10d90c-0032-435f-89d3-534f757669e3</version_id>
-  <version_modified>20161001T192800Z</version_modified>
+  <version_id>db0e2ddd-437a-41ec-954e-fa5603b81e2e</version_id>
+  <version_modified>20161003T144822Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialPoolHeaterGas</class_name>
   <display_name>Set Residential Pool Gas Heater</display_name>
@@ -118,12 +118,6 @@
       <checksum>9FFC2D28</checksum>
     </file>
     <file>
-      <filename>ResidentialPoolHeaterGas_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D987C429</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -151,6 +145,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <filename>ResidentialPoolHeaterGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C6FD2133</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>e6902bc8-43a7-4be0-93f6-f65285654641</version_id>
-  <version_modified>20161001T192753Z</version_modified>
+  <version_id>99282f33-98eb-487d-8c53-386c9a7ad938</version_id>
+  <version_modified>20161003T144818Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
@@ -90,12 +90,6 @@
       <checksum>53F6F3AD</checksum>
     </file>
     <file>
-      <filename>DoorArea_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>36E24FDE</checksum>
-    </file>
-    <file>
       <filename>multifamily_exterior_corridor_inset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -112,6 +106,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <filename>DoorArea_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>100F81C7</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>3e504bd1-ca3f-44e1-a234-3c55785f1774</version_id>
-  <version_modified>20161001T202448Z</version_modified>
+  <version_id>1877bf63-f0e7-485f-9c94-fba6947b9d03</version_id>
+  <version_modified>20161003T144820Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankOil</class_name>
   <display_name>Set Residential Oil Tank Water Heater</display_name>
@@ -280,16 +280,16 @@
       <checksum>CDC634E9</checksum>
     </file>
     <file>
-      <filename>ResidentialWaterHeaterTankOil_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F608AB3C</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>97B219DD</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTankOil_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9066097B</checksum>
     </file>
   </files>
 </measure>

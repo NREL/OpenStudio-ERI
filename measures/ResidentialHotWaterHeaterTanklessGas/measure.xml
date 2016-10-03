@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_gas</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>6e5d1e54-5b9a-42b6-a577-f8b25a7adbaa</version_id>
-  <version_modified>20161001T202447Z</version_modified>
+  <version_id>0c050066-0dd0-4a21-bc26-48502f1d6f0c</version_id>
+  <version_modified>20161003T144819Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessGas</class_name>
   <display_name>Set Residential Gas Tankless Water Heater</display_name>
@@ -246,16 +246,16 @@
       <checksum>7E3277D1</checksum>
     </file>
     <file>
-      <filename>ResidentialWaterHeaterTanklessGas_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FC5D0F89</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>97B219DD</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTanklessGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>06BEA439</checksum>
     </file>
   </files>
 </measure>

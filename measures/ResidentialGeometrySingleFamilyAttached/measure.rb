@@ -783,11 +783,15 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       surface.setOutsideBoundaryCondition("Adiabatic")
     end    
     
-    if use_zone_mult and num_units > 2
-      num_units = 3
+    if use_zone_mult
+      if num_units >= 3 and not has_rear_units
+        num_units = 3
+      elsif num_units >= 6 and has_rear_units
+        num_units = 6
+      end
     end    
     
-    # Store dwelling unit information (for consistency with multifamily buildings)
+    # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)
     
     # reporting final condition of model

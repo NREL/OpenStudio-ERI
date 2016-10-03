@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_extra_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>9cd93e64-1f39-46d3-8880-e49b012287f7</version_id>
-  <version_modified>20161001T192759Z</version_modified>
+  <version_id>fd16740a-2c16-47b1-b643-469701f732a9</version_id>
+  <version_modified>20161003T144821Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialExtraRefrigerator</class_name>
   <display_name>Set Residential Extra Refrigerator</display_name>
@@ -102,12 +102,6 @@
       <checksum>BD2CE49B</checksum>
     </file>
     <file>
-      <filename>ResidentialExtraRefrigerator_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7E64CA40</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -135,6 +129,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <filename>ResidentialExtraRefrigerator_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6389CEC6</checksum>
     </file>
   </files>
 </measure>

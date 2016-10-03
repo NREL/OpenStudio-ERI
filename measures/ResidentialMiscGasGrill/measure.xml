@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>bb750d8b-76d5-48c8-9101-b61a82f4d700</version_id>
-  <version_modified>20161001T192759Z</version_modified>
+  <version_id>580b65a5-809c-45c1-a58b-960389f34121</version_id>
+  <version_modified>20161003T144821Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>
@@ -112,12 +112,6 @@
       <checksum>9E636226</checksum>
     </file>
     <file>
-      <filename>ResidentialGasGrill_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>47309DEB</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -145,6 +139,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B4C82069</checksum>
+    </file>
+    <file>
+      <filename>ResidentialGasGrill_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>73FF3DB9</checksum>
     </file>
   </files>
 </measure>

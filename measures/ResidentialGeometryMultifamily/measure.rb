@@ -761,7 +761,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         end
     end
     
-    # Store dwelling unit information (for consistency with multifamily buildings)
+    # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)
     
     # reporting final condition of model
