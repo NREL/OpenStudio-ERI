@@ -7,26 +7,42 @@ require 'fileutils'
 
 class ProcessAirSourceHeatPumpTest < MiniTest::Test
   
-  def test_error_invalid_compressor_speeds
+  def test_argument_error_comp_speeds
     args_hash = {}
     args_hash["ashpNumberSpeeds"] = 3
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
+    result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors[0].logMessage, "Invalid number of compressor speeds entered.")
   end
   
-  def test_error_wrong_lengths_given_compressor_speeds
+  def test_argument_error_wrong_length
     args_hash = {}
-    args_hash["ashpEER"] = "11.1, 11.1"
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
+    args_hash["ashpNumberSpeeds"] = 2
+    args_hash["ashpEER"] = "11.1"
+    result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors[0].logMessage, "Entered wrong length for EER, COP, Rated SHR, Capacity Ratio, or Fan Speed Ratio given the Number of Speeds.")
-  end  
+  end   
   
-  def test_multi_speed_air_source_heat_pump
+  def test_new_construction_seer_13_7_7_hspf
     args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)  
+  end
+  
+  def test_new_construction_fbsmt_seer_13_7_7_hspf
+    args_hash = {}
+    args_hash["selectedhpcap"] = "3.0 tons"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)    
+  end
+  
+  def test_new_construction_seer_16_8_6_hspf
+    args_hash = {}
+    args_hash["ashpInstalledSEER"] = 16
+    args_hash["ashpInstalledHSPF"] = 8.6
     args_hash["ashpNumberSpeeds"] = 2
     args_hash["ashpEER"] = "13.1, 11.7"
     args_hash["ashpCOP"] = "3.8, 3.3"
@@ -34,129 +50,144 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
     args_hash["ashpCapacityRatio"] = "0.72, 1.0"
     args_hash["ashpFanspeedRatioCooling"] = "0.86, 1.0"
     args_hash["ashpFanspeedRatioHeating"] = "0.8, 1.0"
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
-  end  
-  
-  def test_hardsized_supplmental_output_capacity
-    args_hash = {}
-    args_hash["selectedsupcap"] = "20 kBtu/hr"
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
-  end
-  
-  def test_branch_to_slave_zone
-    args_hash = {}    
-    result = _test_error("singlefamily_fbsmt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-  end
-    
-  def test_retrofit_replace_ashp
-    args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_ashp.osm", args_hash, ["Removed 'DX Cooling Coil' and 'DX Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXMultiSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "CoilHeatingElectric"=>1, "CoilHeatingDXMultiSpeed"=>1, "CoilCoolingDXMultiSpeedStageData"=>2, "CoilHeatingDXMultiSpeedStageData"=>2}
+    expected_values = {"MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)     
   end
   
   def test_retrofit_replace_furnace
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
+    expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_furnace.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)
   end
+  
+  def test_retrofit_replace_ashp
+    args_hash = {}
+    expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingDXSingleSpeed"=>1, "CoilCoolingDXSingleSpeed"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_ashp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)
+  end  
   
   def test_retrofit_replace_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_central_air_conditioner.osm", args_hash, ["Removed 'DX Cooling Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
-  end
+    expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)
+  end  
   
   def test_retrofit_replace_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_room_air_conditioner.osm", args_hash, ["Removed packaged terminal air conditioner 'Window AC'"])
-  end
+    expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
+  end  
   
   def test_retrofit_replace_electric_baseboard
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'"])
+    expected_num_del_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)
   end
   
   def test_retrofit_replace_boiler
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'"])
-  end
+    expected_num_del_objects = {"BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_boiler.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 10)
+  end  
   
   def test_retrofit_replace_mshp
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_mshp.osm", args_hash, ["Removed variable refrigerant flow terminal unit 'Indoor Unit_1'"])
+    expected_num_del_objects = {"FanOnOff"=>1, "AirConditionerVariableRefrigerantFlow"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_mshp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end
   
   def test_retrofit_replace_furnace_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace_central_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil 1' from air loop 'Central Air System_1'", "Removed 'DX Cooling Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
-  end
+    expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 10)
+  end  
   
   def test_retrofit_replace_furnace_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_furnace_room_air_conditioner.osm", args_hash, ["Removed 'Furnace Heating Coil' from air loop 'Central Air System_1'", "Removed packaged terminal air conditioner 'Window AC'", "Removed air loop 'Central Air System_1'"])
-  end    
+    expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>2, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "CoilHeatingElectric"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_furnace_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 10)
+  end  
   
   def test_retrofit_replace_electric_baseboard_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard_central_air_conditioner.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'", "Removed 'DX Cooling Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
-  end
-
+    expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 11)
+  end  
+  
   def test_retrofit_replace_boiler_central_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler_central_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'", "Removed 'DX Cooling Coil' from air loop 'Central Air System_1'", "Removed air loop 'Central Air System_1'"])
-  end
-  
+    expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_boiler_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 12)
+  end  
+
   def test_retrofit_replace_electric_baseboard_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_electric_baseboard_room_air_conditioner.osm", args_hash, ["Removed baseboard convective electric 'Living Zone Electric Baseboards'", "Removed packaged terminal air conditioner 'Window AC'"])
-  end
-
+    expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "FanOnOff"=>1, "CoilHeatingElectric"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 10)
+  end  
+  
   def test_retrofit_replace_boiler_room_air_conditioner
     args_hash = {}
-    _test_measure("singlefamily_fbsmt_location_boiler_room_air_conditioner.osm", args_hash, ["Removed plant loop 'Hydronic Heat Loop'", "Removed baseboard convective water 'Living Zone Baseboards'", "Removed packaged terminal air conditioner 'Window AC'"])
+    expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "FanOnOff"=>1, "CoilHeatingElectric"=>1, "BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_detached_fbsmt_boiler_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 11)
   end
-  
-  def test_mf
-    num_units = 3
+
+  def test_multifamily_new_construction_1
+    num_units = 4
     args_hash = {}
-    result = _test_error("multifamily_3_units_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_1' to thermal zone 'living zone 1' of unit 1")
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_1' to thermal zone 'finished basement zone 1' of unit 1")    
-    (2..num_units).to_a.each do |unit_num|
-      assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_#{unit_num}' to thermal zone 'living zone #{unit_num}' of unit #{unit_num}")
-    end
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilCoolingDXSingleSpeed"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units*2, "CoilHeatingElectric"=>num_units, "CoilHeatingDXSingleSpeed"=>num_units}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("singlefamily_attached_fbsmt_4_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*7)
   end
-  
-  def test_mf_urbanopt
+
+  def test_multifamily_new_construction_2
     num_units = 8
     args_hash = {}
-    result = _test_error("multifamily_urbanopt_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_1' to thermal zone 'Building Story 0 ThermalZone' of unit 1")
-    (2..5).to_a.each do |unit_num|
-      assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_#{unit_num}' to thermal zone 'Building Story #{unit_num - 1} ThermalZone' of unit #{unit_num}")
-    end
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_6' to thermal zone 'Building Story 1 ThermalZone' of unit 6")
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_7' to thermal zone 'Building Story 2 ThermalZone' of unit 7")
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_8' to thermal zone 'Building Story 3 ThermalZone' of unit 8")
-  end    
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilCoolingDXSingleSpeed"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units, "CoilHeatingElectric"=>num_units, "CoilHeatingDXSingleSpeed"=>num_units}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
+    _test_measure("multifamily_8_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*5)
+  end   
   
   private
   
-  def _test_error(osm_file, args_hash)
+  def _test_error(osm_file_or_model, args_hash)
     # create an instance of the measure
     measure = ProcessAirSourceHeatPump.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
 
-    model = get_model(File.dirname(__FILE__), osm_file)
+    model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -179,7 +210,7 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
     
   end
   
-  def _test_measure(osm_file_or_model, args_hash, expected_infos)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
     measure = ProcessAirSourceHeatPump.new
 
@@ -193,6 +224,9 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
+    # get the initial objects in the model
+    initial_objects = get_objects(model)
+    
     # get arguments
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
@@ -212,11 +246,43 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    expected_infos += ["Added DX heating coil 'DX Heating Coil' to branch 'Forced Air System' of air loop 'Central Air System_1'", "Added DX cooling coil 'DX Cooling Coil' to branch 'Forced Air System' of air loop 'Central Air System_1'"]
-    expected_infos.each do |expected_info|
-      assert_includes(result.info.map{ |x| x.logMessage }, expected_info)
-    end
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    
+    # get the final objects in the model
+    final_objects = get_objects(model)
+    
+    # get new and deleted objects
+    obj_type_exclusions = ["CurveQuadratic", "CurveBiquadratic", "CurveCubic", "Node", "AirLoopHVACZoneMixer", "SizingSystem", "AirLoopHVACZoneSplitter", "ScheduleTypeLimits", "CurveExponent", "ScheduleConstant", "SizingPlant", "PipeAdiabatic", "ConnectorSplitter", "ModelObjectList", "ConnectorMixer"]
+    all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
+    all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
+    
+    # check we have the expected number of new/deleted objects
+    check_num_objects(all_new_objects, expected_num_new_objects, "added")
+    check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
 
+    all_new_objects.each do |obj_type, new_objects|
+        new_objects.each do |new_object|
+            next if not new_object.respond_to?("to_#{obj_type}")
+            new_object = new_object.public_send("to_#{obj_type}").get
+            if obj_type == "AirLoopHVACUnitarySystem"
+                assert_in_epsilon(expected_values["MaximumSupplyAirTemperature"], new_object.maximumSupplyAirTemperature.get, 0.01)
+            elsif obj_type == "CoilCoolingDXSingleSpeed"
+                if new_object.ratedCOP.is_initialized
+                  assert_in_epsilon(expected_values["CoolingCOP"], new_object.ratedCOP.get, 0.01)
+                end
+                if new_object.ratedTotalCoolingCapacity.is_initialized
+                  assert_in_epsilon(expected_values["CoolingNominalCapacity"], new_object.ratedTotalCoolingCapacity.get, 0.01)
+                end
+            elsif obj_type == "CoilHeatingDXSingleSpeed"
+                assert_in_epsilon(expected_values["HeatingCOP"], new_object.ratedCOP, 0.01)
+                if new_object.ratedTotalHeatingCapacity.is_initialized
+                  assert_in_epsilon(expected_values["HeatingNominalCapacity"], new_object.ratedTotalHeatingCapacity.get, 0.01)
+                end                
+            end
+        end
+    end
+    
     return model
   end  
   

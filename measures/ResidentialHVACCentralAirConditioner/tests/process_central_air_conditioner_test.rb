@@ -181,14 +181,14 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
   
   private
   
-  def _test_error(osm_file, args_hash)
+  def _test_error(osm_file_or_model, args_hash)
     # create an instance of the measure
     measure = ProcessCentralAirConditioner.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
 
-    model = get_model(File.dirname(__FILE__), osm_file)
+    model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -206,9 +206,6 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
-
-    # show the output
-    #show_output(result)
 
     # assert that it didn't run
     assert_equal("Fail", result.value.valueName)
