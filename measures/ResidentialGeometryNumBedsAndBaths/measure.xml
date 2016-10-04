@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>2924e81c-287d-4b05-a5e2-fbcd822bf0b3</version_id>
-  <version_modified>20161004T174347Z</version_modified>
+  <version_id>7a2a1133-61bf-40be-a319-06974bbda1c0</version_id>
+  <version_modified>20161004T214018Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -104,16 +104,28 @@
       <checksum>01E5DA02</checksum>
     </file>
     <file>
-      <filename>process_beds_and_baths_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>725C5BCC</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>88A9AEC3</checksum>
+    </file>
+    <file>
+      <filename>process_beds_and_baths_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4514637</checksum>
+    </file>
+    <file>
+      <filename>multifamily_8_units.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>35E63C4B</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_attached_fbsmt_4_units.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6A76D306</checksum>
     </file>
   </files>
 </measure>

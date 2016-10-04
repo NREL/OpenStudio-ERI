@@ -48,32 +48,8 @@ def get_objects(model)
     end
     return objects
 end
-
-def get_objects_as_strings(model)
-    # Returns a list with [ObjectTypeString, ModelObject] items
-    objects = []
-    model.modelObjects.each do |obj|
-        objects << [get_model_object_type(obj), obj.to_s]
-    end
-    return objects
-end
   
 def get_object_additions(list1, list2, obj_type_exclusions=nil)
-    # Identifies all objects in list2 that aren't in list1.
-    # Returns a hash with key=ObjectTypeString, value=[ModelObjects]
-    additions = {}
-    list2.each do |obj_type2, obj2|
-        next if list1.include?([obj_type2, obj2])
-        next if not obj_type_exclusions.nil? and obj_type_exclusions.include?(obj_type2)
-        if not additions.keys.include?(obj_type2)
-            additions[obj_type2] = []
-        end
-        additions[obj_type2] << obj2
-    end
-    return additions
-end
-
-def get_object_changes(list1, list2, obj_type_exclusions=nil)
     # Identifies all objects in list2 that aren't in list1.
     # Returns a hash with key=ObjectTypeString, value=[ModelObjects]
     additions = {}

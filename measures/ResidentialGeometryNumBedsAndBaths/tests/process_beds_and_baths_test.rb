@@ -76,38 +76,39 @@ class BedroomsAndBathroomsTest < MiniTest::Test
   end
   
   def test_retrofit_replace
+    num_units = 1
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1}
-    expected_values = {"Beds"=>3.0, "Baths"=>2.0}
+    expected_num_new_objects = {}
+    expected_values = {"Beds"=>3.0, "Baths"=>2.0, "Num_Units"=>num_units}
     model = _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["Num_Br"] = "4"
     args_hash["Num_Ba"] = "3"
-    expected_num_del_objects = {"ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1}
-    expected_num_new_objects = {"ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1}
-    expected_values = {"Beds"=>4.0, "Baths"=>3.0}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {"Beds"=>4.0, "Baths"=>3.0, "Num_Units"=>num_units}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
   end
   
   def test_multifamily_new_construction_1
     num_units = 4
     args_hash = {}
-    args_hash["Num_Br"] = "4"
-    args_hash["Num_Ba"] = "3"
+    args_hash["Num_Br"] = "2"
+    args_hash["Num_Ba"] = "1"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1}
-    expected_values = {"Beds"=>4.0, "Baths"=>3.0}
+    expected_num_new_objects = {}
+    expected_values = {"Beds"=>2.0, "Baths"=>1.0, "Num_Units"=>num_units}
     _test_measure("singlefamily_attached_fbsmt_4_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)    
   end
   
   def test_multifamily_new_construction_2
     num_units = 8
     args_hash = {}
-    args_hash["Num_Br"] = "4"
-    args_hash["Num_Ba"] = "3"
+    args_hash["Num_Br"] = "2"
+    args_hash["Num_Ba"] = "1.5"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1}
-    expected_values = {"Beds"=>4.0, "Baths"=>3.0}
+    expected_num_new_objects = {}
+    expected_values = {"Beds"=>2.0, "Baths"=>1.5, "Num_Units"=>num_units}
     _test_measure("multifamily_8_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)    
   end  
   
@@ -161,8 +162,7 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
     # get the initial objects in the model
-    initial_objects = get_objects_as_strings(model)
-   
+    initial_objects = get_objects(model)   
     
     # get arguments
     arguments = measure.arguments(model)
@@ -187,7 +187,7 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model  
-    final_objects = get_objects_as_strings(model)
+    final_objects = get_objects(model)
     
     # get new and deleted objects
     obj_type_exclusions = []
@@ -197,16 +197,27 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     # check we have the expected number of new/deleted objects
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
-    
-    all_new_objects.each do |obj_type, new_objects|
-        new_objects.each do |new_object|
-            if obj_type == "ElectricEquipment"
-                assert(new_object.split(", !- Name")[0].split(", !- Handle")[1].include?("bed=#{expected_values["Beds"]}|bath=#{expected_values["Baths"]}"))
-            elsif obj_type == "ElectricEquipmentDefinition"
-                assert(new_object.split(", !- Name")[0].split(", !- Handle")[1].include?("bed=#{expected_values["Beds"]}|bath=#{expected_values["Baths"]}"))
+
+    actual_values = {"ElectricEquipment"=>0, "ElectricEquipmentDefinition"=>0}
+    final_objects.each do |obj_type, final_object|
+        next if not final_object.respond_to?("to_#{obj_type}")
+        final_object = final_object.public_send("to_#{obj_type}").get
+        if obj_type == "ElectricEquipment"
+            if final_object.name.to_s.start_with?("unit=")
+                actual_values["ElectricEquipment"] += 1
             end
+        elsif obj_type == "ElectricEquipmentDefinition"
+            if final_object.name.to_s.start_with?("unit=")
+                actual_values["ElectricEquipmentDefinition"] += 1
+            end            
         end
     end
+    assert_equal(expected_values["Num_Units"], actual_values["ElectricEquipment"])
+    assert_equal(expected_values["Num_Units"], actual_values["ElectricEquipmentDefinition"])
+    
+    nbeds, nbaths, spaces_list = Geometry.get_unit_beds_baths_spaces(model, 1)
+    assert_in_epsilon(expected_values["Beds"], nbeds, 0.01)
+    assert_in_epsilon(expected_values["Baths"], nbaths, 0.01)
     
     return model
   end 
