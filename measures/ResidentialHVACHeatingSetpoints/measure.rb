@@ -184,10 +184,6 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
           end          
         end
         
-        runner.registerInfo("htg_wkdy_monthly #{htg_wkdy_monthly.to_s}")
-        runner.registerInfo("htg_wked_monthly #{htg_wked_monthly.to_s}")
-        runner.registerInfo("clg_wkdy_monthly #{clg_wkdy_monthly.to_s}")
-        runner.registerInfo("clg_wked_monthly #{clg_wked_monthly.to_s}")
         heatingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
         coolingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
 

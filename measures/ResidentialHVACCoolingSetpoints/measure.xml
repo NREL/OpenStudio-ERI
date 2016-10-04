@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>6b321921-c981-4884-b5bd-3adf5a5fe59f</version_id>
-  <version_modified>20161003T185318Z</version_modified>
+  <version_id>9a5b8ca3-f4f8-4d4c-8d92-9504f2048871</version_id>
+  <version_modified>20161004T161506Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -71,48 +71,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>default_geometry.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>55200D6A</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>55BD6CF0</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_ashp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>27CEF102</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>460EF7D9</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_furnace_and_central_air_conditioner_with_heating_setpoints.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1EE0EF8D</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_room_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>09D1DF7F</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FFD51DDF</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -143,28 +101,16 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B4C82069</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>97B219DD</checksum>
     </file>
     <file>
-      <filename>process_cooling_setpoints_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A3EC798B</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4F1113E0</checksum>
+      <checksum>B4C82069</checksum>
     </file>
     <file>
       <version>
@@ -176,6 +122,60 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>083260ED</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4F1113E0</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>965B7677</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_ashp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7F0FEECF</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>35DCEAAA</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7350EDE3</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_no_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>88A9AEC3</checksum>
+    </file>
+    <file>
+      <filename>process_cooling_setpoints_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>453A8A73</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_central_air_conditioner_furnace_heating_setpoints.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2CB7C9F2</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>31C06DC6</checksum>
     </file>
   </files>
 </measure>

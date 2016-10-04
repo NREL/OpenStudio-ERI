@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>404e0932-c8ee-41a8-9acf-0cf3f14a9aeb</version_id>
-  <version_modified>20161003T181657Z</version_modified>
+  <version_id>0b853346-e6df-49a9-afd9-7821d3a0fffd</version_id>
+  <version_modified>20161003T225605Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
@@ -137,7 +137,7 @@
       <filename>set_location_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>40B1D619</checksum>
+      <checksum>BA26E436</checksum>
     </file>
   </files>
 </measure>
