@@ -28,9 +28,9 @@ class WindowAreaTest < MiniTest::Test
     args_hash["left_wwr"] = 0
     args_hash["right_wwr"] = 0
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-    assert_equal(result.finalCondition.get.logMessage, "No windows added because all window-to-wall ratios were set to 0.")  
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))
+    assert_equal(result_final_condition(result), "No windows added because all window-to-wall ratios were set to 0.")  
   end
 
   def test_sfd_new_construction_rotated
@@ -61,81 +61,81 @@ class WindowAreaTest < MiniTest::Test
     args_hash = {}
     args_hash["front_wwr"] = -20
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Front window-to-wall ratio must be greater than or equal to 0 and less than 1.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Front window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
   
   def test_argument_error_invalid_window_area_back_lt_0
     args_hash = {}
     args_hash["back_wwr"] = -20
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Back window-to-wall ratio must be greater than or equal to 0 and less than 1.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Back window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
 
   def test_argument_error_invalid_window_area_left_lt_0
     args_hash = {}
     args_hash["left_wwr"] = -20
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Left window-to-wall ratio must be greater than or equal to 0 and less than 1.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Left window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
 
   def test_argument_error_invalid_window_area_right_lt_0
     args_hash = {}
     args_hash["right_wwr"] = -20
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Right window-to-wall ratio must be greater than or equal to 0 and less than 1.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Right window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
 
   def test_argument_error_invalid_window_area_front_eq_1
     args_hash = {}
     args_hash["front_wwr"] = 1
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Front window-to-wall ratio must be greater than or equal to 0 and less than 1.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Front window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
   
   def test_argument_error_invalid_window_area_back_eq_1
     args_hash = {}
     args_hash["back_wwr"] = 1
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Back window-to-wall ratio must be greater than or equal to 0 and less than 1.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Back window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
 
   def test_argument_error_invalid_window_area_left_eq_1
     args_hash = {}
     args_hash["left_wwr"] = 1
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Left window-to-wall ratio must be greater than or equal to 0 and less than 1.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Left window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
 
   def test_argument_error_invalid_window_area_right_eq_1
     args_hash = {}
     args_hash["right_wwr"] = 1
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Right window-to-wall ratio must be greater than or equal to 0 and less than 1.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Right window-to-wall ratio must be greater than or equal to 0 and less than 1.")
   end
   
   def test_argument_error_invalid_aspect_ratio
     args_hash = {}
     args_hash["aspect_ratio"] = 0
     result = _test_error(osm_geo, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Window Aspect Ratio must be greater than 0.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Window Aspect Ratio must be greater than 0.")
   end
 
   private
@@ -212,8 +212,8 @@ class WindowAreaTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(result.finalCondition.is_initialized)
+    assert_equal("Success", result_value(result))
+    assert(result_has_final_condition(result))
 
     # get new/deleted window objects
     new_objects = []

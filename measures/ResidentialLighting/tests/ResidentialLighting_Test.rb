@@ -152,112 +152,112 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash = {}
     args_hash["hw_cfl"] = -1.0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Hardwired Fraction CFL must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Hardwired Fraction CFL must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_hw_cfl_gt_1
     args_hash = {}
     args_hash["hw_cfl"] = 1.1
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Hardwired Fraction CFL must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Hardwired Fraction CFL must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_hw_led_lt_0
     args_hash = {}
     args_hash["hw_led"] = -1.0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Hardwired Fraction LED must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Hardwired Fraction LED must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_hw_led_gt_1
     args_hash = {}
     args_hash["hw_led"] = 1.1
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Hardwired Fraction LED must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Hardwired Fraction LED must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_hw_lfl_lt_0
     args_hash = {}
     args_hash["hw_lfl"] = -1.0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Hardwired Fraction LFL must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Hardwired Fraction LFL must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_hw_lfl_gt_1
     args_hash = {}
     args_hash["hw_lfl"] = 1.1
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Hardwired Fraction LFL must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Hardwired Fraction LFL must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_pg_cfl_lt_0
     args_hash = {}
     args_hash["pg_cfl"] = -1.0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Plugin Fraction CFL must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Plugin Fraction CFL must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_pg_cfl_gt_1
     args_hash = {}
     args_hash["pg_cfl"] = 1.1
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Plugin Fraction CFL must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Plugin Fraction CFL must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_pg_led_lt_0
     args_hash = {}
     args_hash["pg_led"] = -1.0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Plugin Fraction LED must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Plugin Fraction LED must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_pg_led_gt_1
     args_hash = {}
     args_hash["pg_led"] = 1.1
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Plugin Fraction LED must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Plugin Fraction LED must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_pg_lfl_lt_0
     args_hash = {}
     args_hash["pg_lfl"] = -1.0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Plugin Fraction LFL must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Plugin Fraction LFL must be greater than or equal to 0 and less than or equal to 1.")
   end
   
   def test_argument_error_pg_lfl_gt_1
     args_hash = {}
     args_hash["pg_lfl"] = 1.1
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Plugin Fraction LFL must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Plugin Fraction LFL must be greater than or equal to 0 and less than or equal to 1.")
   end
 
   def test_argument_error_in_eff_0
     args_hash = {}
     args_hash["in_eff"] = 0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Incandescent Efficacy must be greater than 0.")
+    assert_equal(result_errors(result)[0], "Incandescent Efficacy must be greater than 0.")
   end
 
   def test_argument_error_cfl_eff_0
     args_hash = {}
     args_hash["cfl_eff"] = 0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "CFL Efficacy must be greater than 0.")
+    assert_equal(result_errors(result)[0], "CFL Efficacy must be greater than 0.")
   end
 
   def test_argument_error_led_eff_0
     args_hash = {}
     args_hash["led_eff"] = 0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "LED Efficacy must be greater than 0.")
+    assert_equal(result_errors(result)[0], "LED Efficacy must be greater than 0.")
   end
 
   def test_argument_error_lfl_eff_0
     args_hash = {}
     args_hash["lfl_eff"] = 0
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "LFL Efficacy must be greater than 0.")
+    assert_equal(result_errors(result)[0], "LFL Efficacy must be greater than 0.")
   end
   
   def test_argument_error_hw_gt_1
@@ -266,7 +266,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["hw_lfl"] = 0.4
     args_hash["hw_led"] = 0.4
     result = _test_error(osm_geo_loc, args_hash)  
-    assert_equal(result.errors[0].logMessage, "Sum of CFL, LED, and LFL Hardwired Fractions must be less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Sum of CFL, LED, and LFL Hardwired Fractions must be less than or equal to 1.")
   end
   
   def test_argument_error_pg_gt_1
@@ -275,19 +275,19 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_lfl"] = 0.4
     args_hash["pg_led"] = 0.4
     result = _test_error(osm_geo_loc, args_hash)  
-    assert_equal(result.errors[0].logMessage, "Sum of CFL, LED, and LFL Plugin Fractions must be less than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Sum of CFL, LED, and LFL Plugin Fractions must be less than or equal to 1.")
   end
 
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result_errors(result)[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
   
   def test_error_missing_location
     args_hash = {}
     result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors[0].logMessage, "Model has not been assigned a weather file.")
+    assert_equal(result_errors(result)[0], "Model has not been assigned a weather file.")
   end
     
   private
@@ -322,8 +322,8 @@ class ResidentialLightingTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result.value.valueName)
-    assert(result.errors.size == 1)
+    assert_equal("Fail", result_value(result))
+    assert(result_errors(result).size == 1)
     
     return result
   end
@@ -366,10 +366,10 @@ class ResidentialLightingTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(result.info.size == num_infos)
-    assert(result.warnings.size == num_warnings)
-    assert(result.finalCondition.is_initialized)
+    assert_equal("Success", result_value(result))
+    assert(result_infos(result).size == num_infos)
+    assert(result_warnings(result).size == num_warnings)
+    assert(result_has_final_condition(result))
     
     # get new/deleted light objects
     new_objects = []

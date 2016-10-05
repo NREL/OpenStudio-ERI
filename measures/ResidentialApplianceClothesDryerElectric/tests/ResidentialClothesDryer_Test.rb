@@ -151,117 +151,117 @@ class ResidentialClothesDryerTest < MiniTest::Test
     args_hash = {}
     args_hash["cd_ef"] = -1
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Energy factor must be greater than 0.0.")
+    assert_equal(result_errors(result)[0], "Energy factor must be greater than 0.0.")
   end
   
   def test_argument_error_cd_ef_zero
     args_hash = {}
     args_hash["cd_ef"] = 0
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Energy factor must be greater than 0.0.")
+    assert_equal(result_errors(result)[0], "Energy factor must be greater than 0.0.")
   end
 
   def test_argument_error_cd_mult_negative
     args_hash = {}
     args_hash["cd_mult"] = -1
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Occupancy energy multiplier must be greater than or equal to 0.0.")
+    assert_equal(result_errors(result)[0], "Occupancy energy multiplier must be greater than or equal to 0.0.")
   end
   
   def test_argument_error_weekday_sch_wrong_number_of_values
     args_hash = {}
     args_hash["cd_weekday_sch"] = "1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
+    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
   end  
 
   def test_argument_error_weekday_sch_not_number
     args_hash = {}
     args_hash["cd_weekday_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
+    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
   end
     
   def test_argument_error_weekend_sch_wrong_number_of_values
     args_hash = {}
     args_hash["cd_weekend_sch"] = "1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
+    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
   end
     
   def test_argument_error_weekend_sch_not_number
     args_hash = {}
     args_hash["cd_weekend_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
+    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
   end
   
   def test_argument_error_monthly_sch_wrong_number_of_values  
     args_hash = {}
     args_hash["cd_monthly_sch"] = "1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
+    assert_equal(result_errors(result)[0], "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
   end
   
   def test_argument_error_monthly_sch_not_number
     args_hash = {}
     args_hash["cd_monthly_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
+    assert_equal(result_errors(result)[0], "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
   end
   
   def test_argument_error_cw_mef_negative
     args_hash = {}
     args_hash["cw_mef"] = -1
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Clothes washer modified energy factor must be greater than 0.0.")
+    assert_equal(result_errors(result)[0], "Clothes washer modified energy factor must be greater than 0.0.")
   end
   
   def test_argument_error_cw_mef_zero
     args_hash = {}
     args_hash["cw_mef"] = 0
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Clothes washer modified energy factor must be greater than 0.0.")
+    assert_equal(result_errors(result)[0], "Clothes washer modified energy factor must be greater than 0.0.")
   end
 
   def test_argument_error_cw_rated_annual_energy_negative
     args_hash = {}
     args_hash["cw_rated_annual_energy"] = -1.0
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Clothes washer rated annual consumption must be greater than 0.0.")
+    assert_equal(result_errors(result)[0], "Clothes washer rated annual consumption must be greater than 0.0.")
   end
   
   def test_argument_error_cw_rated_annual_energy_zero
     args_hash = {}
     args_hash["cw_rated_annual_energy"] = 0.0
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Clothes washer rated annual consumption must be greater than 0.0.")
+    assert_equal(result_errors(result)[0], "Clothes washer rated annual consumption must be greater than 0.0.")
   end
 
   def test_argument_error_cw_drum_volume_negative
     args_hash = {}
     args_hash["cw_drum_volume"] = -1
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Clothes washer drum volume must be greater than 0.0.")
+    assert_equal(result_errors(result)[0], "Clothes washer drum volume must be greater than 0.0.")
   end
 
   def test_argument_error_cw_drum_volume_zero
     args_hash = {}
     args_hash["cw_drum_volume"] = 0
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Clothes washer drum volume must be greater than 0.0.")
+    assert_equal(result_errors(result)[0], "Clothes washer drum volume must be greater than 0.0.")
   end
 
   def test_error_missing_beds
     args_hash = {}
     result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors[0].logMessage, "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+    assert_equal(result_errors(result)[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
     
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result_errors(result)[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
 
   private
@@ -296,8 +296,8 @@ class ResidentialClothesDryerTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result.value.valueName)
-    assert(result.errors.size == 1)
+    assert_equal("Fail", result_value(result))
+    assert(result_errors(result).size == 1)
     
     return result
   end
@@ -340,10 +340,10 @@ class ResidentialClothesDryerTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(result.info.size == num_infos)
-    assert(result.warnings.size == num_warnings)
-    assert(result.finalCondition.is_initialized)
+    assert_equal("Success", result_value(result))
+    assert(result_infos(result).size == num_infos)
+    assert(result_warnings(result).size == num_warnings)
+    assert(result_has_final_condition(result))
     
     # get new/deleted electric equipment objects
     new_objects = []

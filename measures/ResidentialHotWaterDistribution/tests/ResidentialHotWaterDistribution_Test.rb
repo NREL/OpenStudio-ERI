@@ -426,37 +426,37 @@ class ResidentialHotWaterDistributionTest < MiniTest::Test
     args_hash = {}
     args_hash["dist_ins"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh_fixtures, args_hash)
-    assert_equal(result.errors[0].logMessage, "Insulation Nominal R-Value must be greater than or equal to 0.")
+    assert_equal(result_errors(result)[0], "Insulation Nominal R-Value must be greater than or equal to 0.")
   end
   
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result_errors(result)[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
   
   def test_error_missing_beds
     args_hash = {}
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+    assert_equal(result_errors(result)[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
   
   def test_error_missing_location
     args_hash = {}
     result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors[0].logMessage, "Mains water temperature has not been set.")
+    assert_equal(result_errors(result)[0], "Mains water temperature has not been set.")
   end
 
   def test_error_missing_water_heater
     args_hash = {}
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Could not find plant loop.")
+    assert_equal(result_errors(result)[0], "Could not find plant loop.")
   end
   
   def test_error_missing_hot_water_fixtures
     args_hash = {}
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Residential Hot Water Fixture measure must be run prior to running this measure.")
+    assert_equal(result_errors(result)[0], "Residential Hot Water Fixture measure must be run prior to running this measure.")
   end
 
   private
@@ -491,8 +491,8 @@ class ResidentialHotWaterDistributionTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result.value.valueName)
-    assert(result.errors.size == 1)
+    assert_equal("Fail", result_value(result))
+    assert(result_errors(result).size == 1)
     
     return result
   end
@@ -535,10 +535,10 @@ class ResidentialHotWaterDistributionTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(result.info.size == num_infos)
-    assert(result.warnings.size == num_warnings)
-    assert(result.finalCondition.is_initialized)
+    assert_equal("Success", result_value(result))
+    assert(result_infos(result).size == num_infos)
+    assert(result_warnings(result).size == num_warnings)
+    assert(result_has_final_condition(result))
     
     # get the final objects in the model
     final_objects = get_objects(model)

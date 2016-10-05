@@ -191,95 +191,95 @@ class ResidentialDishwasherTest < MiniTest::Test
     args_hash = {}
     args_hash["num_settings"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Number of place settings must be greater than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Number of place settings must be greater than or equal to 1.")
   end
   
   def test_argument_error_num_settings_zero
     args_hash = {}
     args_hash["num_settings"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Number of place settings must be greater than or equal to 1.")
+    assert_equal(result_errors(result)[0], "Number of place settings must be greater than or equal to 1.")
   end
 
   def test_argument_error_dw_E_negative
     args_hash = {}
     args_hash["dw_E"] = -1.0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Rated annual energy consumption must be greater than or equal to 0.")
+    assert_equal(result_errors(result)[0], "Rated annual energy consumption must be greater than or equal to 0.")
   end
   
   def test_argument_error_cold_use_negative
     args_hash = {}
     args_hash["cold_use"] = -1.0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Cold water connection use must be greater than or equal to 0.")
+    assert_equal(result_errors(result)[0], "Cold water connection use must be greater than or equal to 0.")
   end
 
   def test_argument_error_eg_date_negative
     args_hash = {}
     args_hash["eg_date"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Energy Guide date must be greater than or equal to 1900.")
+    assert_equal(result_errors(result)[0], "Energy Guide date must be greater than or equal to 1900.")
   end
 
   def test_argument_error_eg_date_zero
     args_hash = {}
     args_hash["eg_date"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Energy Guide date must be greater than or equal to 1900.")
+    assert_equal(result_errors(result)[0], "Energy Guide date must be greater than or equal to 1900.")
   end
 
   def test_argument_error_eg_gas_cost_negative
     args_hash = {}
     args_hash["eg_gas_cost"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Energy Guide annual gas cost must be greater than 0.")
+    assert_equal(result_errors(result)[0], "Energy Guide annual gas cost must be greater than 0.")
   end
 
   def test_argument_error_eg_gas_cost_zero
     args_hash = {}
     args_hash["eg_gas_cost"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Energy Guide annual gas cost must be greater than 0.")
+    assert_equal(result_errors(result)[0], "Energy Guide annual gas cost must be greater than 0.")
   end
 
   def test_argument_error_mult_e_negative
     args_hash = {}
     args_hash["mult_e"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Occupancy energy multiplier must be greater than or equal to 0.")
+    assert_equal(result_errors(result)[0], "Occupancy energy multiplier must be greater than or equal to 0.")
   end
 
   def test_argument_error_mult_hw_negative
     args_hash = {}
     args_hash["mult_hw"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors[0].logMessage, "Occupancy hot water multiplier must be greater than or equal to 0.")
+    assert_equal(result_errors(result)[0], "Occupancy hot water multiplier must be greater than or equal to 0.")
   end
 
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors[0].logMessage, "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result_errors(result)[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
   
   def test_error_missing_beds
     args_hash = {}
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+    assert_equal(result_errors(result)[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
   
   def test_error_missing_location
     args_hash = {}
     args_hash["cold_inlet"] = true
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors[0].logMessage, "Mains water temperature has not been set.")
+    assert_equal(result_errors(result)[0], "Mains water temperature has not been set.")
   end
 
   def test_error_missing_water_heater
     args_hash = {}
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result.errors[0].logMessage, "Could not find plant loop.")
+    assert_equal(result_errors(result)[0], "Could not find plant loop.")
   end
 
   private
@@ -314,8 +314,8 @@ class ResidentialDishwasherTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result.value.valueName)
-    assert(result.errors.size == 1)
+    assert_equal("Fail", result_value(result))
+    assert(result_errors(result).size == 1)
     
     return result
   end
@@ -358,10 +358,10 @@ class ResidentialDishwasherTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(result.info.size == num_infos)
-    assert(result.warnings.size == num_warnings)
-    assert(result.finalCondition.is_initialized)
+    assert_equal("Success", result_value(result))
+    assert(result_infos(result).size == num_infos)
+    assert(result_warnings(result).size == num_warnings)
+    assert(result_has_final_condition(result))
     
     # get new/deleted electric equipment objects
     new_objects = []

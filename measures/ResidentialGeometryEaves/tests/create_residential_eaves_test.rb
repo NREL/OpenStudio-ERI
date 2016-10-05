@@ -10,9 +10,9 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_not_applicable_no_surfaces
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("NA", result.value.valueName)
-    assert_equal(result.info[0].logMessage, "No surfaces found for adding eaves.")
+    assert(result_errors(result).size == 0)
+    assert_equal("NA", result_value(result))
+    assert_equal(result_infos(result)[0], "No surfaces found for adding eaves.")
   end  
     
   def test_retrofit_replace_gable_roof_aspect_ratio_two
@@ -127,10 +127,10 @@ class CreateResidentialEavesTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
+    assert_equal("Success", result_value(result))
     existing_eaves = false
-    result.info.each do |info|
-        if info.logMessage.include? "Removed existing eaves."
+    result_infos(result).each do |info|
+        if info.include? "Removed existing eaves."
             existing_eaves = true
         end
     end    

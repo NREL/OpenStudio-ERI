@@ -10,14 +10,14 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
   def test_error_no_weather
     args_hash = {}
     result = _test_error("singlefamily_detached_no_location.osm", args_hash)
-    assert_equal(result.errors[0].logMessage, "Model has not been assigned a weather file.")    
+    assert_equal(result_errors(result)[0], "Model has not been assigned a weather file.")    
   end 
 
   def test_argument_error_not_24_values
     args_hash = {}
     args_hash["htg_wkdy"] = "71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71"
     result = _test_error("singlefamily_detached_furnace.osm", args_hash)
-    assert_equal(result.errors[0].logMessage, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")    
+    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")    
   end
   
   def test_warning_no_equip
@@ -126,8 +126,8 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
     result = runner.result
 
     # assert that it didn't run
-    assert_equal("Fail", result.value.valueName)
-    assert(result.errors.size == 1)
+    assert_equal("Fail", result_value(result))
+    assert(result_errors(result).size == 1)
     
     return result
   end  
@@ -167,9 +167,9 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(result.info.size == num_infos)
-    assert(result.warnings.size == num_warnings)
+    assert_equal("Success", result_value(result))
+    assert(result_infos(result).size == num_infos)
+    assert(result_warnings(result).size == num_warnings)
     
     # get the final objects in the model
     final_objects = get_objects(model)

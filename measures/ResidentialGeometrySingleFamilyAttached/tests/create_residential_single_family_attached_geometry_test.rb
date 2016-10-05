@@ -12,26 +12,26 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["foundation_type"] = Constants.CrawlFoundationType
     args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "The crawlspace height can be set between 1.5 and 5 ft.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "The crawlspace height can be set between 1.5 and 5 ft.")
   end
 
   def test_error_existing_geometry
     args_hash = {}
     result = _test_error("2000sqft_2story_FB_GRG_UA.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)    
-    assert_equal(result.errors[0].logMessage, "Starting model is not empty.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))    
+    assert_equal(result_errors(result)[0], "Starting model is not empty.")
   end  
   
   def test_argument_error_aspect_ratio_invalid
     args_hash = {}
     args_hash["unit_aspect_ratio"] = -1.0
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Invalid aspect ratio entered.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Invalid aspect ratio entered.")
   end
   
   def test_two_story_fourplex_front_units
@@ -40,8 +40,8 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.FinishedBasementFoundationType    
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))    
   end  
   
   def test_two_story_fourplex_rear_units
@@ -51,8 +51,8 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["has_rear_units"] = true
     args_hash["foundation_type"] = Constants.FinishedBasementFoundationType    
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))    
   end
   
   def test_ufbasement
@@ -60,8 +60,8 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.UnfinishedBasementFoundationType
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))
   end
   
   def test_crawl
@@ -69,8 +69,8 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.CrawlFoundationType
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))    
   end
   
   def test_zone_mult_front_units_only
@@ -78,8 +78,8 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["num_units"] = 8
     args_hash["use_zone_mult"] = "true"
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))    
   end
   
   def test_zone_mult_with_rear_units_even
@@ -88,8 +88,8 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["has_rear_units"] = "true"
     args_hash["use_zone_mult"] = "true"
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))    
   end
   
   def test_zone_mult_with_rear_units_odd
@@ -98,8 +98,8 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["has_rear_units"] = "true"
     args_hash["use_zone_mult"] = "true"
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))    
   end    
   
   private

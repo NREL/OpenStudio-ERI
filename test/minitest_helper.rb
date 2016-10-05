@@ -87,3 +87,78 @@ def check_num_objects(objects, expected_num_objects, mode)
         assert_equal(num_objects, 0)
     end
 end
+
+def is_openstudio_v2
+    v2 = true
+    begin 
+      got_workflow = OpenStudio::WorkflowJSON
+    rescue NameError
+      v2 = false
+      return v2
+    end
+    return v2
+end
+
+def result_errors(result)
+    if is_openstudio_v2
+        return result.stepErrors
+    else
+        errors = []
+        result.errors.each do |e|
+            errors << e.logMessage
+        end
+        return errors
+    end
+end
+
+def result_warnings(result)
+    if is_openstudio_v2
+        return result.stepWarnings
+    else
+        warnings = []
+        result.warnings.each do |w|
+            warnings << w.logMessage
+        end
+        return warnings
+    end
+end
+
+def result_infos(result)
+    if is_openstudio_v2
+        return result.stepInfo
+    else
+        info = []
+        result.info.each do |i|
+            info << i.logMessage
+        end
+        return info
+    end
+end
+
+def result_value(result)
+    if is_openstudio_v2
+        if result.stepResult.is_initialized
+          return result.stepResult.get.valueDescription
+        else
+          return "Success" # ???
+        end
+    else
+        return result.value.valueName
+    end
+end
+
+def result_has_final_condition(result)
+    if is_openstudio_v2
+        return !result.finalCondition.empty?
+    else
+        return result.finalCondition.is_initialized
+    end
+end
+
+def result_final_condition(result)
+    if is_openstudio_v2
+        return result.finalCondition
+    else
+        return result.finalCondition.get.logMessage
+    end
+end

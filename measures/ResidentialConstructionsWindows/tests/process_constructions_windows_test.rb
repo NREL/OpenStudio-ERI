@@ -11,26 +11,26 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     args_hash = {}
     args_hash["ufactor"] = 0
     result = _test_error("default_geometry_location_windows.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Invalid window U-value.")    
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Invalid window U-value.")    
   end
   
   def test_argument_error_invalid_shgc
     args_hash = {}
     args_hash["shgc"] = 0
     result = _test_error("default_geometry_location_windows.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Invalid window SHGC.")    
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Invalid window SHGC.")    
   end
   
   def test_error_no_weather
     args_hash = {}
     result = _test_error("default_geometry_windows.osm", args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Model has not been assigned a weather file.")    
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Model has not been assigned a weather file.")    
   end  
   
   def test_no_solar_gain_reduction
@@ -38,22 +38,22 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     args_hash["userdefinedintshadeheatingmult"] = 1
     args_hash["userdefinedintshadecoolingmult"] = 1
     result = _test_error("default_geometry_location_windows.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))
   end
   
   def test_skip_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)    
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))    
   end
   
   def test_skip_no_windows
     args_hash = {}
     result = _test_error("default_geometry_location.osm", args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)   
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))   
   end
   
   def test_retrofit_replace
@@ -127,16 +127,16 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
+    assert_equal("Success", result_value(result))
     material_added = false
     construction_added = false
     construction_removed = false
-    result.info.each do |info|
-        if info.logMessage.include? "Material 'GlazingMaterial' was created."
+    result_infos(result).each do |info|
+        if info.include? "Material 'GlazingMaterial' was created."
             material_added = true
-        elsif info.logMessage.include? "Construction 'WindowConstruction' was created with 1 material (GlazingMaterial)." or info.logMessage.include? "Construction 'WindowConstruction 1' was created with 1 material (GlazingMaterial)."
+        elsif info.include? "Construction 'WindowConstruction' was created with 1 material (GlazingMaterial)." or info.include? "Construction 'WindowConstruction 1' was created with 1 material (GlazingMaterial)."
             construction_added = true
-        elsif info.logMessage.include? "Removed construction 'WindowConstruction' because it was orphaned."
+        elsif info.include? "Removed construction 'WindowConstruction' because it was orphaned."
             construction_removed = true
         end
     end    

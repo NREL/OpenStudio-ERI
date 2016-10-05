@@ -12,18 +12,18 @@ class SetResidentialEPWFileTest < MiniTest::Test
     args_hash["weather_directory"] = "./resuorces" # misspelled
     args_hash["weather_file_name"] = "USA_CO_Denver_Intl_AP_725650_TMY3.epw"
     result = _test_error_or_NA(nil, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "'#{File.join(File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_directory"])), args_hash["weather_file_name"])}' does not exist or is not an .epw file.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "'#{File.join(File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_directory"])), args_hash["weather_file_name"])}' does not exist or is not an .epw file.")
   end
   
   def test_error_invalid_daylight_saving
     args_hash = {}
     args_hash["dst_start_date"] = "April 31"
     result = _test_error_or_NA(nil, args_hash)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors[0].logMessage, "Invalid daylight saving date specified.")
+    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result_value(result))
+    assert_equal(result_errors(result)[0], "Invalid daylight saving date specified.")
   end   
   
   def test_NA_daylight_saving
@@ -31,9 +31,9 @@ class SetResidentialEPWFileTest < MiniTest::Test
     args_hash["dst_start_date"] = "NA"
     args_hash["dst_end_date"] = "NA"
     result = _test_error_or_NA(nil, args_hash)
-    assert(result.errors.size == 0)
-    assert_equal("Success", result.value.valueName)
-    assert_includes(result.info.map{ |x| x.logMessage }, "No daylight saving time set.")
+    assert(result_errors(result).size == 0)
+    assert_equal("Success", result_value(result))
+    assert_includes(result_infos(result), "No daylight saving time set.")
   end
   
   def test_change_daylight_saving
@@ -118,9 +118,9 @@ class SetResidentialEPWFileTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(result.info.size == num_infos)
-    assert(result.warnings.size == num_warnings)
+    assert_equal("Success", result_value(result))
+    assert(result_infos(result).size == num_infos)
+    assert(result_warnings(result).size == num_warnings)
     
     # get the final objects in the model
     final_objects = get_objects(model)
