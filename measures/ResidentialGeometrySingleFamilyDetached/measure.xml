@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>e8fdaaa5-4ce3-4a3c-905a-1f3e6d598771</version_id>
-  <version_modified>20161004T150216Z</version_modified>
+  <version_id>c041d7d3-a540-4a03-9ddc-bae8a81f087a</version_id>
+  <version_modified>20161005T163747Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
   <display_name>Create Residential Single-Family Detached Geometry</display_name>
@@ -270,12 +270,6 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>53599206</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.4</identifier>
@@ -285,12 +279,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>E3B6FF30</checksum>
-    </file>
-    <file>
-      <filename>create_residential_single_family_detached_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8B1FB685</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -303,6 +291,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>4F1113E0</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>88A9AEC3</checksum>
+    </file>
+    <file>
+      <filename>create_residential_single_family_detached_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EE77A91A</checksum>
     </file>
   </files>
 </measure>

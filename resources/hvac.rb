@@ -900,6 +900,7 @@ class HVAC
           return true
         end        
       end
+      return nil
     end
     
     def self.has_air_loop(model, runner, thermal_zone, remove=false)
