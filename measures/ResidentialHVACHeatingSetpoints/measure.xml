@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>0de18015-7879-4807-b9bf-5bda21c8a6be</version_id>
-  <version_modified>20161005T144307Z</version_modified>
+  <version_id>c1c8be70-91be-4301-bb90-d6c4e9878ad7</version_id>
+  <version_modified>20161006T135240Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -162,16 +162,16 @@
       <checksum>EA236FAC</checksum>
     </file>
     <file>
-      <filename>process_heating_setpoints_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2981753F</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3B7DA3B8</checksum>
+    </file>
+    <file>
+      <filename>process_heating_setpoints_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F06908BA</checksum>
     </file>
   </files>
 </measure>

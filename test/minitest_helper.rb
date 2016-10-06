@@ -149,7 +149,7 @@ end
 
 def result_has_final_condition(result)
     if is_openstudio_v2
-        return !result.finalCondition.empty?
+        return result.finalCondition.is_initialized
     else
         return result.finalCondition.is_initialized
     end
@@ -157,8 +157,16 @@ end
 
 def result_final_condition(result)
     if is_openstudio_v2
-        return result.finalCondition
+        return result.finalCondition.get
     else
         return result.finalCondition.get.logMessage
+    end
+end
+
+def result_NA_string
+    if is_openstudio_v2
+        return "NotApplicable"
+    else
+        return "NA"
     end
 end

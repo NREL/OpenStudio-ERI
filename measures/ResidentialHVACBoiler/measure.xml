@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>5497a0d0-96c6-4fc3-80ba-c2e51a385d88</version_id>
-  <version_modified>20161005T145015Z</version_modified>
+  <version_id>14b6d39f-8c51-4bdf-87f0-947b8c7771a3</version_id>
+  <version_modified>20161006T135240Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -433,16 +433,16 @@
       <checksum>4F1113E0</checksum>
     </file>
     <file>
-      <filename>process_boiler_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EBA31B6D</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3B7DA3B8</checksum>
+    </file>
+    <file>
+      <filename>process_boiler_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>331E3203</checksum>
     </file>
   </files>
 </measure>

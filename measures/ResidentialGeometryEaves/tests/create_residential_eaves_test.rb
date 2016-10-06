@@ -11,7 +11,7 @@ class CreateResidentialEavesTest < MiniTest::Test
     args_hash = {}
     result = _test_error(nil, args_hash)
     assert(result_errors(result).size == 0)
-    assert_equal("NA", result_value(result))
+    assert_equal(result_NA_string, result_value(result))
     assert_equal(result_infos(result)[0], "No surfaces found for adding eaves.")
   end  
     

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>0a80025b-1974-49fe-b1a2-f91d5c123513</version_id>
-  <version_modified>20161003T181657Z</version_modified>
+  <version_id>a118d6f6-b68a-49c6-a5df-ff651d48d8dc</version_id>
+  <version_modified>20161006T135241Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>
@@ -124,12 +124,6 @@
       <checksum>B4C82069</checksum>
     </file>
     <file>
-      <filename>ResidentialGasGrill_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>73FF3DB9</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -145,6 +139,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>4F1113E0</checksum>
+    </file>
+    <file>
+      <filename>ResidentialGasGrill_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>95A012E1</checksum>
     </file>
   </files>
 </measure>

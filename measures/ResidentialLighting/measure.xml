@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>d0558375-75b6-458a-8b0c-e270001e7f67</version_id>
-  <version_modified>20161003T181656Z</version_modified>
+  <version_id>45553a97-4035-4984-a7f4-57057acd250b</version_id>
+  <version_modified>20161006T135241Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -230,16 +230,16 @@
       <checksum>4F1113E0</checksum>
     </file>
     <file>
-      <filename>ResidentialLighting_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7D5CFB1A</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units_Denver_zone_multiplier.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>1EDCFB49</checksum>
+    </file>
+    <file>
+      <filename>ResidentialLighting_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>ED0CDADA</checksum>
     </file>
   </files>
 </measure>

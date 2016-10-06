@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_pump</name>
   <uid>58b3f782-0d34-455c-9101-df36412196f1</uid>
-  <version_id>0fd4cd8d-95b0-43ec-9025-28d83f42a1d8</version_id>
-  <version_modified>20161003T181657Z</version_modified>
+  <version_id>e74e067d-f7b4-47d6-a5bd-e2242df3f335</version_id>
+  <version_modified>20161006T135242Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialHotTubPump</class_name>
   <display_name>Set Residential Hot Tub Pump</display_name>
@@ -124,12 +124,6 @@
       <checksum>B4C82069</checksum>
     </file>
     <file>
-      <filename>ResidentialHotTubPump_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9F2DB338</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -145,6 +139,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>4F1113E0</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotTubPump_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9129DE40</checksum>
     </file>
   </files>
 </measure>

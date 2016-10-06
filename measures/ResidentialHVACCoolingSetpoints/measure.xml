@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>5cfbca45-8528-4adf-9039-3dda0d5e6ecc</version_id>
-  <version_modified>20161005T144307Z</version_modified>
+  <version_id>c0ad7578-9b6e-4705-a07e-67361c1e6557</version_id>
+  <version_modified>20161006T135240Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -148,12 +148,6 @@
       <checksum>88A9AEC3</checksum>
     </file>
     <file>
-      <filename>process_cooling_setpoints_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DAB03A52</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -176,6 +170,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3B7DA3B8</checksum>
+    </file>
+    <file>
+      <filename>process_cooling_setpoints_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>ADA4F32A</checksum>
     </file>
   </files>
 </measure>
