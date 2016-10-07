@@ -89,15 +89,10 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
       num_occ = Array.new(num_units, num_occ[0])
     end 
     
-    # Change to 1-based arrays or simplification
+    # Change to 1-based arrays for simplification
     num_occ.unshift(nil)
 
-    people_sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameOccupants + " schedule", weekday_sch, weekend_sch, monthly_sch)
-    if not people_sch.validated?
-        return false
-    end
     activity_per_person = 112.5504
-    activity_sch = OpenStudio::Model::ScheduleRuleset.new(model, activity_per_person)    
 
     #hard coded convective, radiative, latent, and lost fractions
     occ_lat = 0.427
@@ -108,6 +103,8 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
     
     # Update number of occupants
     total_num_occ = 0
+    people_sch = nil
+    activity_sch = nil
     (1..num_units).to_a.each do |unit_num|
     
       unit_occ = num_occ[unit_num]
@@ -124,7 +121,10 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
 
       # Get number of beds and unit spaces
       nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
-      if nbeds.nil? or unit_spaces.nil?
+      if unit_spaces.nil?
+          return false
+      elsif nbeds.nil?
+          runner.registerError("Could not determine number of bedrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
           return false
       end
 
@@ -152,37 +152,68 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
           space_obj_name = "#{Constants.ObjectNameOccupants(unit_num)}|#{space.name.to_s}"
           
           # Remove any existing people
-          people_removed = false
+          objects_to_remove = []
           space.people.each do |people|
-              people.remove
-              people_removed = true
+              objects_to_remove << people
+              objects_to_remove << people.peopleDefinition
+              if people.numberofPeopleSchedule.is_initialized
+                  objects_to_remove << people.numberofPeopleSchedule.get
+              end
+              if people.activityLevelSchedule.is_initialized
+                  objects_to_remove << people.activityLevelSchedule.get
+              end
           end
-          if people_removed
+          if objects_to_remove.size > 0
               runner.registerInfo("Removed existing people from space #{space.name.to_s}.")
           end
-          
-          space_num_occ = unit_occ * OpenStudio.convert(space.floorArea, "m^2", "ft^2").get / ffa
-          total_num_occ += space_num_occ
-
-          #Add people definition for the occ
-          occ_def = OpenStudio::Model::PeopleDefinition.new(model)
-          occ = OpenStudio::Model::People.new(occ_def)
-          occ.setName(space_obj_name)
-          occ.setSpace(space)
-          occ_def.setName(space_obj_name)
-          occ_def.setNumberOfPeopleCalculationMethod("People",1)
-          occ_def.setNumberofPeople(space_num_occ)
-          occ_def.setFractionRadiant(occ_rad)
-          occ_def.setSensibleHeatFraction(occ_sens)
-          occ_def.setMeanRadiantTemperatureCalculationType("ZoneAveraged")
-          occ_def.setCarbonDioxideGenerationRate(0)
-          occ_def.setEnableASHRAE55ComfortWarnings(false)
-          occ.setActivityLevelSchedule(activity_sch)
-          occ.setNumberofPeopleSchedule(people_sch.schedule)
-          
-          if num_units > 1
-            runner.registerInfo("Space #{space.name.to_s} of Unit #{unit_num} has been assigned #{space_num_occ.round(2)} occupant(s).")
+          objects_to_remove.uniq.each do |object|
+              begin
+                  object.remove
+              rescue
+                  # no op
+              end
           end
+
+          space_num_occ = unit_occ * OpenStudio.convert(space.floorArea, "m^2", "ft^2").get / ffa
+          
+          if space_num_occ > 0
+          
+              if people_sch.nil?
+                  # Create schedule
+                  people_sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameOccupants + " schedule", weekday_sch, weekend_sch, monthly_sch)
+                  if not people_sch.validated?
+                      return false
+                  end
+              end
+              
+              if activity_sch.nil?
+                  # Create schedule
+                  activity_sch = OpenStudio::Model::ScheduleRuleset.new(model, activity_per_person)
+              end
+
+              #Add people definition for the occ
+              occ_def = OpenStudio::Model::PeopleDefinition.new(model)
+              occ = OpenStudio::Model::People.new(occ_def)
+              occ.setName(space_obj_name)
+              occ.setSpace(space)
+              occ_def.setName(space_obj_name)
+              occ_def.setNumberOfPeopleCalculationMethod("People",1)
+              occ_def.setNumberofPeople(space_num_occ)
+              occ_def.setFractionRadiant(occ_rad)
+              occ_def.setSensibleHeatFraction(occ_sens)
+              occ_def.setMeanRadiantTemperatureCalculationType("ZoneAveraged")
+              occ_def.setCarbonDioxideGenerationRate(0)
+              occ_def.setEnableASHRAE55ComfortWarnings(false)
+              occ.setActivityLevelSchedule(activity_sch)
+              occ.setNumberofPeopleSchedule(people_sch.schedule)
+              
+              total_num_occ += space_num_occ
+          end
+          
+      end
+
+      if num_units > 1
+        runner.registerInfo("Unit #{unit_num} has been assigned #{unit_occ.round(2)} occupant(s).")
       end
 
     end

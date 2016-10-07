@@ -27,32 +27,47 @@ class ResidentialClothesDryerTest < MiniTest::Test
     # Using energy multiplier
     args_hash = {}
     args_hash["cd_mult"] = 0.0
-    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {"Annual_kwh"=>0, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_new_construction_standard
     args_hash = {}
     args_hash["cd_ef"] = 3.1
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 1026.4, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1026.4, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_new_construction_premium
     args_hash = {}
     args_hash["cd_ef"] = 3.93
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 809.6, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>809.6, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_new_construction_hp
     args_hash = {}
     args_hash["cd_ef"] = 4.2
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 757.6, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>757.6, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_new_construction_mult_0_80
     args_hash = {}
     args_hash["cd_ef"] = 3.1
     args_hash["cd_mult"] = 0.8
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 821.1, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>821.1, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_new_construction_estar_washer
@@ -61,7 +76,10 @@ class ResidentialClothesDryerTest < MiniTest::Test
     args_hash["cw_mef"] = 2.47
     args_hash["cw_rated_annual_energy"] = 123.0
     args_hash["cw_drum_volume"] = 3.68
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 788.7, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>788.7, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_new_construction_modified_schedule
@@ -70,53 +88,80 @@ class ResidentialClothesDryerTest < MiniTest::Test
     args_hash["cd_weekday_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["cd_weekend_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["cd_monthly_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12"
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 1026.4, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1026.4, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_new_construction_basement
     args_hash = {}
     args_hash["cd_ef"] = 3.1
     args_hash["space"] = Constants.FinishedBasementSpace
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 1026.4, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1026.4, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_new_construction_garage
     args_hash = {}
     args_hash["cd_ef"] = 3.1
     args_hash["space"] = Constants.GarageSpace
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 1026.4, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1026.4, "Annual_therm"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_retrofit_replace
     args_hash = {}
     args_hash["cd_ef"] = 3.1
-    model = _test_measure(osm_geo_beds, args_hash, 0, 1, 1026.4, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1026.4, "Annual_therm"=>0}
+    model = _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
     args_hash["cd_ef"] = 3.93
-    _test_measure(model, args_hash, 1, 1, 809.6, 0.0, 1)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>809.6, "Annual_therm"=>0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
     
   def test_retrofit_replace_gas_clothes_dryer
     model = get_model(File.dirname(__FILE__), osm_geo_beds_gasdryer)
     args_hash = {}
     args_hash["cd_ef"] = 3.93
-    _test_measure(model, args_hash, 2, 1, 809.6, 0.0, 1)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>809.6, "Annual_therm"=>0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_remove
     args_hash = {}
     args_hash["cd_ef"] = 3.1
-    model = _test_measure(osm_geo_beds, args_hash, 0, 1, 1026.4, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1026.4, "Annual_therm"=>0}
+    model = _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
     args_hash["cd_mult"] = 0.0
-    _test_measure(model, args_hash, 1, 0, 0.0, 0.0, 1)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {}
+    expected_values = {"Annual_kwh"=>0, "Annual_therm"=>0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_multifamily_new_construction
     num_units = 3
     args_hash = {}
     args_hash["cd_ef"] = 3.1
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 2907.9, 0.0, num_units)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2907.9, "Annual_therm"=>0}
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   
   def test_multifamily_new_construction_finished_basement
@@ -124,27 +169,42 @@ class ResidentialClothesDryerTest < MiniTest::Test
     args_hash = {}
     args_hash["cd_ef"] = 3.1
     args_hash["space"] = "finishedbasement_1"
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, 1, 1026.4, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1026.4, "Annual_therm"=>0}
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}
     args_hash["cd_ef"] = 3.1
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 2907.9, 0.0, num_units)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2907.9, "Annual_therm"=>0}
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
     args_hash = {}
     args_hash["cd_ef"] = 3.93
-    _test_measure(model, args_hash, num_units, num_units, 2293.8, 0.0, 2*num_units)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2293.8, "Annual_therm"=>0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2*num_units)
   end
   
   def test_multifamily_retrofit_remove
     num_units = 3
     args_hash = {}
     args_hash["cd_ef"] = 3.1
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 2907.9, 0.0, num_units)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2907.9, "Annual_therm"=>0}
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
     args_hash = {}
     args_hash["cd_mult"] = 0.0
-    _test_measure(model, args_hash, num_units, 0, 0.0, 0.0, num_units)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {}
+    expected_values = {"Annual_kwh"=>0, "Annual_therm"=>0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   
   def test_argument_error_cd_ef_negative
@@ -302,7 +362,7 @@ class ResidentialClothesDryerTest < MiniTest::Test
     return result
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, expected_annual_therm, num_infos=0, num_warnings=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialClothesDryer.new
 
@@ -316,8 +376,8 @@ class ResidentialClothesDryerTest < MiniTest::Test
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
-    # store the original equipment in the seed model
-    orig_equip = model.getElectricEquipments + model.getGasEquipments
+    # get the initial objects in the model
+    initial_objects = get_objects(model)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -345,43 +405,34 @@ class ResidentialClothesDryerTest < MiniTest::Test
     assert(result_warnings(result).size == num_warnings)
     assert(result_has_final_condition(result))
     
-    # get new/deleted electric equipment objects
-    new_objects = []
-    (model.getElectricEquipments + model.getGasEquipments).each do |equip|
-        next if orig_equip.include?(equip)
-        new_objects << equip
-    end
-    del_objects = []
-    orig_equip.each do |equip|
-        next if (model.getElectricEquipments + model.getGasEquipments).include?(equip)
-        del_objects << equip
-    end
+    # get the final objects in the model
+    final_objects = get_objects(model)
+
+    # get new and deleted objects
+    obj_type_exclusions = ["ScheduleRule", "ScheduleDay", "ScheduleTypeLimits"]
+    all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
+    all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
     
-    # check for num new/del objects
-    assert_equal(expected_num_del_objects, del_objects.size)
-    assert_equal(expected_num_new_objects, new_objects.size)
+    # check we have the expected number of new/deleted objects
+    check_num_objects(all_new_objects, expected_num_new_objects, "added")
+    check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
     
-    actual_annual_therm = 0.0
-    actual_annual_kwh = 0.0
-    new_objects.each do |new_object|
-        # check that the new object has the correct name
-        assert(new_object.name.to_s.start_with?(Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric)))
-    
-        # check new object is in correct space
-        if argument_map["space"].hasValue
-            assert_equal(new_object.space.get.name.to_s, argument_map["space"].valueAsString)
-        end
-        
-        # check for the correct annual energy consumption
-        full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
-        if new_object.is_a?(OpenStudio::Model::GasEquipment)
-            actual_annual_therm += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "therm").get
-        elsif new_object.is_a?(OpenStudio::Model::ElectricEquipment)
-            actual_annual_kwh += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "kWh").get
+    actual_values = {"Annual_kwh"=>0, "Annual_therm"=>0}
+    all_new_objects.each do |obj_type, new_objects|
+        new_objects.each do |new_object|
+            next if not new_object.respond_to?("to_#{obj_type}")
+            new_object = new_object.public_send("to_#{obj_type}").get
+            if obj_type == "ElectricEquipment"
+                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
+                actual_values["Annual_kwh"] += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "kWh").get
+            elsif obj_type == "GasEquipment"
+                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
+                actual_values["Annual_therm"] += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "therm").get
+            end
         end
     end
-    assert_in_epsilon(expected_annual_therm, actual_annual_therm, 0.01)
-    assert_in_epsilon(expected_annual_kwh, actual_annual_kwh, 0.01)
+    assert_in_epsilon(expected_values["Annual_kwh"], actual_values["Annual_kwh"], 0.01)
+    assert_in_epsilon(expected_values["Annual_therm"], actual_values["Annual_therm"], 0.01)
 
     return model
   end

@@ -188,19 +188,32 @@ class ResidentialClothesDryerGas < OpenStudio::Ruleset::ModelUserScript
         unit_obj_name_g = Constants.ObjectNameClothesDryer(Constants.FuelTypeGas, unit_num)
         
         # Remove any existing clothes dryer
-        cd_removed = false
+        objects_to_remove = []
         space.electricEquipment.each do |space_equipment|
             next if space_equipment.name.to_s != unit_obj_name_e
-            space_equipment.remove
-            cd_removed = true
+            objects_to_remove << space_equipment
+            objects_to_remove << space_equipment.electricEquipmentDefinition
+            if space_equipment.schedule.is_initialized
+                objects_to_remove << space_equipment.schedule.get
+            end
         end
         space.gasEquipment.each do |space_equipment|
             next if space_equipment.name.to_s != unit_obj_name_g
-            space_equipment.remove
-            cd_removed = true
+            objects_to_remove << space_equipment
+            objects_to_remove << space_equipment.gasEquipmentDefinition
+            if space_equipment.schedule.is_initialized
+                objects_to_remove << space_equipment.schedule.get
+            end
         end
-        if cd_removed
+        if objects_to_remove.size > 0
             runner.registerInfo("Removed existing clothes dryer from space #{space.name.to_s}.")
+        end
+        objects_to_remove.uniq.each do |object|
+            begin
+                object.remove
+            rescue
+                # no op
+            end
         end
         
         # Energy Use is based on "Method for Evaluating Energy Use of Dishwashers, Clothes 
