@@ -145,7 +145,6 @@ DEPENDENCIES
   rake (~> 11.2.2)
   rubocop (~> 0.26.0)
   rubocop-checkstyle_formatter (~> 0.1.1)
-  ruby-prof (~> 0.15.1)
 
 BUNDLED WITH
-   1.12.5
+   1.13.3

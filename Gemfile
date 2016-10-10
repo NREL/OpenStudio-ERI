@@ -14,9 +14,6 @@ gem 'colored', '~> 1.2'
 
 if RUBY_PLATFORM =~ /win32/
   gem 'win32console', '~> 1.3.2', platform: [:mswin, :mingw]
-else
-  # requires native extensions
-  gem 'ruby-prof', '~> 0.15.1', platform: :ruby
 end
 
 group :test do
