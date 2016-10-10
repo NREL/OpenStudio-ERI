@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_finished_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>c87bd97a-7bce-408e-8f09-60c878823c4e</version_id>
-  <version_modified>20161003T225641Z</version_modified>
+  <version_id>46d08a53-d257-447f-b5c1-c575b0d48291</version_id>
+  <version_modified>20161010T215212Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsFinishedRoof</class_name>
   <display_name>Set Residential Ceilings/Roofs - Finished Roof Construction</display_name>
@@ -21,7 +21,7 @@
       <default_value>30</default_value>
     </argument>
     <argument>
-      <name>selectedinstallgrade</name>
+      <name>install_grade</name>
       <display_name>Cavity Install Grade</display_name>
       <description>Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
@@ -44,7 +44,7 @@
       </choices>
     </argument>
     <argument>
-      <name>selectedcavitydepth</name>
+      <name>cavity_depth</name>
       <display_name>Cavity Depth</display_name>
       <description>Depth of the roof cavity. 3.5" for 2x4s, 5.5" for 2x6s, etc.</description>
       <type>Double</type>
@@ -54,7 +54,7 @@
       <default_value>9.25</default_value>
     </argument>
     <argument>
-      <name>selectedinsfills</name>
+      <name>ins_fills_cavity</name>
       <display_name>Insulation Fills Cavity</display_name>
       <description>When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.</description>
       <type>Boolean</type>
@@ -73,7 +73,7 @@
       </choices>
     </argument>
     <argument>
-      <name>userdefinedfrroofff</name>
+      <name>framing_factor</name>
       <display_name>Framing Factor</display_name>
       <description>The framing factor of the finished roof.</description>
       <type>Double</type>
@@ -101,17 +101,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>5DE59230</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -128,6 +117,59 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>4F1113E0</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BD2CE49B</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9B28333E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>9B6BACBD</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA_ceiling_mass.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F474B759</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA_roof_material.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C3BE564B</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA_roof_sheathing.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9545CE8F</checksum>
+    </file>
+    <file>
+      <filename>FinishedRoof_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4A66E92E</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA_all_other_layers.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>10945828</checksum>
     </file>
   </files>
 </measure>

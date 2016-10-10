@@ -40,14 +40,14 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     installgrade_display_names << "III"
     
     #make a choice argument for wall cavity insulation installation grade
-    selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
+    selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("install_grade", installgrade_display_names, true)
     selected_installgrade.setDisplayName("Cavity Install Grade")
     selected_installgrade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     selected_installgrade.setDefaultValue("I")
     args << selected_installgrade
 
     #make a double argument for wall cavity depth
-    selected_cavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedcavitydepth", true)
+    selected_cavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_depth", true)
     selected_cavdepth.setDisplayName("Cavity Depth")
     selected_cavdepth.setUnits("in")
     selected_cavdepth.setDescription("Depth of the roof cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
@@ -55,14 +55,14 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     args << selected_cavdepth
     
 	#make a bool argument for whether the cavity insulation fills the cavity
-	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("selectedinsfills", true)
+	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("ins_fills_cavity", true)
 	selected_insfills.setDisplayName("Insulation Fills Cavity")
 	selected_insfills.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
     selected_insfills.setDefaultValue(false)
 	args << selected_insfills
     
     #make a choice argument for finished roof framing factor
-    userdefined_frroofff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedfrroofff", false)
+    userdefined_frroofff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", false)
     userdefined_frroofff.setDisplayName("Framing Factor")
 	userdefined_frroofff.setUnits("frac")
 	userdefined_frroofff.setDescription("The framing factor of the finished roof.")
@@ -105,10 +105,10 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     
     # Get Inputs
     frRoofCavityInsRvalueInstalled = runner.getDoubleArgumentValue("cavity_r",user_arguments)
-    frRoofCavityInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)]
-    frRoofCavityDepth = runner.getDoubleArgumentValue("selectedcavitydepth",user_arguments)    
-    frRoofCavityInsFillsCavity = runner.getBoolArgumentValue("selectedinsfills",user_arguments)
-    frRoofFramingFactor = runner.getDoubleArgumentValue("userdefinedfrroofff",user_arguments)
+    frRoofCavityInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("install_grade",user_arguments)]
+    frRoofCavityDepth = runner.getDoubleArgumentValue("cavity_depth",user_arguments)    
+    frRoofCavityInsFillsCavity = runner.getBoolArgumentValue("ins_fills_cavity",user_arguments)
+    frRoofFramingFactor = runner.getDoubleArgumentValue("framing_factor",user_arguments)
     
     # Validate Inputs
     if frRoofCavityInsRvalueInstalled < 0.0
@@ -140,15 +140,17 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
         mat_cavity = Material.AirCavityClosed(frRoofCavityDepth)
     end
     mat_framing = Material.new(name=nil, thick_in=frRoofCavityDepth, mat_base=BaseMaterial.Wood)
+    mat_gap = Material.AirCavityClosed(frRoofCavityDepth)
     
     # Set paths
-    path_fracs = [frRoofFramingFactor, 1 - frRoofFramingFactor]
+    gapFactor = Construction.get_wall_gap_factor(frRoofCavityInstallGrade, frRoofFramingFactor, frRoofCavityInsRvalueInstalled)
+    path_fracs = [frRoofFramingFactor, 1 - frRoofFramingFactor - gapFactor, gapFactor]
     
     # Define construction
     roof = Construction.new(path_fracs)
     roof.add_layer(Material.AirFilmRoof(Geometry.calculate_avg_roof_pitch(spaces)), false)
     roof.add_layer(Material.DefaultCeilingMass, false) # thermal mass added in separate measure
-    roof.add_layer([mat_framing, mat_cavity], true, "RoofIns")
+    roof.add_layer([mat_framing, mat_cavity, mat_gap], true, "RoofIns")
     roof.add_layer(Material.DefaultRoofSheathing, false) # roof sheathing added in separate measure
     roof.add_layer(Material.DefaultRoofMaterial, false) # roof material added in separate measure
     roof.add_layer(Material.AirFilmOutside, false)
