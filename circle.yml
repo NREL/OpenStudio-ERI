@@ -5,6 +5,7 @@ machine:
 dependencies:
   pre:
     - gem install bundler -v 1.13.3
+    - gem uninstall bundler -v 1.13.1
   override:
     - echo Running this echo command to skip CircleCI inferred bundle install command
 
