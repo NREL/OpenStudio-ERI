@@ -6,6 +6,7 @@ export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
 cd /OpenStudio-Beopt
+gem install bundler -v 1.13.3 # Temporary fix for https://github.com/bundler/bundler/issues/4467
 bundle install
 
 rake update_resources
