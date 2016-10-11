@@ -630,7 +630,7 @@ class Construction
         
         materials = construct_materials(model, runner)
         
-        if materials.size == 0
+        if materials.size == 0 and @remove_materials.size == 0
             return true
         end
         
@@ -955,7 +955,7 @@ class Construction
         # Returns a boolean denoting whether the execution was successful
         def create_and_assign_construction(surface, materials, runner, model, name)
         
-            if materials.size == 0
+            if materials.size == 0 and @remove_materials.size == 0
                 return true
             end
         
@@ -1148,7 +1148,7 @@ class Construction
                 model.getMasslessOpaqueMaterials.each do |mat|
                     next if mat.name.to_s != name.to_s
                     next if mat.roughness.downcase.to_s != "rough"
-                    next if (mat.thermalResistance - OpenStudio::convert(material.rvalue,"hr*ft^2*R/Btu","m^2*K/W").get) > tolerance
+                    next if (mat.thermalResistance - OpenStudio::convert(material.rvalue,"hr*ft^2*R/Btu","m^2*K/W").get).abs > tolerance
                     return mat
                 end
                 # New material
@@ -1160,8 +1160,8 @@ class Construction
                 # Material already exists?
                 model.getSimpleGlazings.each do |mat|
                     next if mat.name.to_s != name.to_s
-                    next if (mat.uFactor - material.ufactor) > tolerance
-                    next if (mat.solarHeatGainCoefficient - material.shgc) > tolerance
+                    next if (mat.uFactor - material.ufactor).abs > tolerance
+                    next if (mat.solarHeatGainCoefficient - material.shgc).abs > tolerance
                     return mat
                 end
                 # New material
@@ -1174,13 +1174,13 @@ class Construction
                 model.getStandardOpaqueMaterials.each do |mat|
                     next if mat.name.to_s != name.to_s
                     next if mat.roughness.downcase.to_s != "rough"
-                    next if (mat.thickness - OpenStudio::convert(material.thick_in,"in","m").get) > tolerance
-                    next if (mat.conductivity - OpenStudio::convert(material.k,"Btu/hr*ft*R","W/m*K").get) > tolerance
-                    next if (mat.density - OpenStudio::convert(material.rho,"lb/ft^3","kg/m^3").get) > tolerance
-                    next if (mat.specificHeat - OpenStudio::convert(material.cp,"Btu/lb*R","J/kg*K").get) > tolerance
-                    next if not material.tAbs.nil? and (mat.thermalAbsorptance - material.tAbs) > tolerance
-                    next if not material.sAbs.nil? and (mat.solarAbsorptance - material.sAbs) > tolerance
-                    next if not material.vAbs.nil? and (mat.visibleAbsorptance - material.vAbs) > tolerance
+                    next if (mat.thickness - OpenStudio::convert(material.thick_in,"in","m").get).abs > tolerance
+                    next if (mat.conductivity - OpenStudio::convert(material.k,"Btu/hr*ft*R","W/m*K").get).abs > tolerance
+                    next if (mat.density - OpenStudio::convert(material.rho,"lb/ft^3","kg/m^3").get).abs > tolerance
+                    next if (mat.specificHeat - OpenStudio::convert(material.cp,"Btu/lb*R","J/kg*K").get).abs > tolerance
+                    next if not material.tAbs.nil? and (mat.thermalAbsorptance - material.tAbs).abs > tolerance
+                    next if not material.sAbs.nil? and (mat.solarAbsorptance - material.sAbs).abs > tolerance
+                    next if not material.vAbs.nil? and (mat.visibleAbsorptance - material.vAbs).abs > tolerance
                     return mat
                 end
                 # New material

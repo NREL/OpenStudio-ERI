@@ -5,132 +5,154 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
-
-  def osm_geo_finished_attic
-    return "2000sqft_2story_SL_FA.osm"
-  end
-
-  def osm_geo_finished_attic_layers
-    return "2000sqft_2story_SL_FA_layers.osm"
-  end
+class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
 
   def osm_geo_unfinished_attic
     return "2000sqft_2story_SL_UA.osm"
   end
   
-  def test_add_uninsulated_2x6
-    args_hash = {}
-    args_hash["cavity_r"] = 0
-    args_hash["install_grade"] = "I" # no insulation, shouldn't apply
-    args_hash["cavity_depth"] = 5.5
-    args_hash["ins_fills_cavity"] = false # no insulation, shouldn't apply
-    args_hash["framing_factor"] = 0.07
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.140, "LayerConductivity"=>0.682, "LayerDensity"=>36.952, "LayerSpecificHeat"=>1208.183, "LayerIndex"=>0}
-    _test_measure(osm_geo_finished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  def osm_geo_unfinished_attic_layers
+    return "2000sqft_2story_SL_UA_layers.osm"
+  end
+
+  def osm_geo_finished_attic
+    return "2000sqft_2story_SL_FA.osm"
   end
   
-  def test_add_uninsulated_2x6_gr3_ins_fills_cavity
+  def osm_geo_finished_attic_layers
+    return "2000sqft_2story_SL_FA_layers.osm"
+  end
+  
+  def test_unfinished_attic_add_vinyl_light
     args_hash = {}
-    args_hash["cavity_r"] = 0
-    args_hash["install_grade"] = "III" # no insulation, shouldn't apply
-    args_hash["cavity_depth"] = 5.5
-    args_hash["ins_fills_cavity"] = true # no insulation, shouldn't apply
-    args_hash["framing_factor"] = 0.07
+    args_hash["solar_abs"] = 0.3
+    args_hash["conductivity"] = 0.62
+    args_hash["density"] = 11.1
+    args_hash["specific_heat"] = 0.25
+    args_hash["thick_in"] = 0.375
+    args_hash["emissivity"] = 0.9
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.140, "LayerConductivity"=>0.682, "LayerDensity"=>36.952, "LayerSpecificHeat"=>1208.183, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0}
+    _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_finished_attic_add_wood_medium_dark
+    args_hash = {}
+    args_hash["solar_abs"] = 0.75
+    args_hash["conductivity"] = 0.71
+    args_hash["density"] = 34.0
+    args_hash["specific_heat"] = 0.28
+    args_hash["thick_in"] = 1.0
+    args_hash["emissivity"] = 0.92
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
+    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0}
     _test_measure(osm_geo_finished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
-  def test_add_r19_2x6_gr1
+  def test_finished_attic_add_vinyl_light_to_layers_and_replace_with_wood_medium_dark
     args_hash = {}
-    args_hash["cavity_r"] = 17.3 # compressed R-value
-    args_hash["install_grade"] = "I"
-    args_hash["cavity_depth"] = 5.5
-    args_hash["ins_fills_cavity"] = true
-    args_hash["framing_factor"] = 0.07
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.140, "LayerConductivity"=>0.050, "LayerDensity"=>78.346, "LayerSpecificHeat"=>1123.461, "LayerIndex"=>0}
-    _test_measure(osm_geo_finished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
-  def test_add_r19_2x10_gr3_ff11
-    args_hash = {}
-    args_hash["cavity_r"] = 19
-    args_hash["install_grade"] = "III"
-    args_hash["cavity_depth"] = 9.25
-    args_hash["ins_fills_cavity"] = false
-    args_hash["framing_factor"] = 0.11
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.235, "LayerConductivity"=>0.090, "LayerDensity"=>95.044, "LayerSpecificHeat"=>1146.094, "LayerIndex"=>0}
-    _test_measure(osm_geo_finished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
-  def test_add_r19_2x8_gr1_to_layers_and_replace_with_r30c
-    args_hash = {}
-    args_hash["cavity_r"] = 19
-    args_hash["install_grade"] = "I"
-    args_hash["cavity_depth"] = 7.25
-    args_hash["ins_fills_cavity"] = false
-    args_hash["framing_factor"] = 0.07
+    args_hash["solar_abs"] = 0.3
+    args_hash["conductivity"] = 0.62
+    args_hash["density"] = 11.1
+    args_hash["specific_heat"] = 0.25
+    args_hash["thick_in"] = 0.375
+    args_hash["emissivity"] = 0.9
     expected_num_del_objects = {"Construction"=>1}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.184, "LayerConductivity"=>0.056, "LayerDensity"=>78.346, "LayerSpecificHeat"=>1123.461, "LayerIndex"=>2}
+    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0}
     model = _test_measure(osm_geo_finished_attic_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash["cavity_r"] = 28.1 # compressed R-value
-    args_hash["ins_fills_cavity"] = true
+    args_hash["solar_abs"] = 0.75
+    args_hash["conductivity"] = 0.71
+    args_hash["density"] = 34.0
+    args_hash["specific_heat"] = 0.28
+    args_hash["thick_in"] = 1.0
+    args_hash["emissivity"] = 0.92
     expected_num_del_objects = {"Material"=>1, "Construction"=>1}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.184, "LayerConductivity"=>0.042, "LayerDensity"=>78.346, "LayerSpecificHeat"=>1123.461, "LayerIndex"=>2}
+    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
-  def test_argument_error_cavity_r_negative
+  def test_unfinished_attic_add_vinyl_light_to_layers_and_replace_with_wood_medium_dark
     args_hash = {}
-    args_hash["cavity_r"] = -1
+    args_hash["solar_abs"] = 0.3
+    args_hash["conductivity"] = 0.62
+    args_hash["density"] = 11.1
+    args_hash["specific_heat"] = 0.25
+    args_hash["thick_in"] = 0.375
+    args_hash["emissivity"] = 0.9
+    expected_num_del_objects = {"Construction"=>2}
+    expected_num_new_objects = {"Material"=>1, "Construction"=>2}
+    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0}
+    model = _test_measure(osm_geo_unfinished_attic_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    args_hash["solar_abs"] = 0.75
+    args_hash["conductivity"] = 0.71
+    args_hash["density"] = 34.0
+    args_hash["specific_heat"] = 0.28
+    args_hash["thick_in"] = 1.0
+    args_hash["emissivity"] = 0.92
+    expected_num_del_objects = {"Material"=>1, "Construction"=>2}
+    expected_num_new_objects = {"Material"=>1, "Construction"=>2}
+    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+
+  def test_argument_error_solar_abs_lt_0
+    args_hash = {}
+    args_hash["solar_abs"] = -1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Cavity Insulation Installed R-value must be greater than or equal to 0.")
+    assert_equal(result_errors(result)[0], "Solar Absorptivity must be greater than or equal to 0 and less than or equal to 1.")
   end
     
-  def test_argument_error_cavity_depth_negative
+  def test_argument_error_solar_abs_gt_1
     args_hash = {}
-    args_hash["cavity_depth"] = -1
+    args_hash["solar_abs"] = 1.1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Cavity Depth must be greater than 0.")
+    assert_equal(result_errors(result)[0], "Solar Absorptivity must be greater than or equal to 0 and less than or equal to 1.")
   end
 
-  def test_argument_error_cavity_depth_zero
+  def test_argument_error_emissivity_lt_0
     args_hash = {}
-    args_hash["cavity_depth"] = 0
+    args_hash["emissivity"] = -1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Cavity Depth must be greater than 0.")
+    assert_equal(result_errors(result)[0], "Emissivity must be greater than or equal to 0 and less than or equal to 1.")
   end
 
-  def test_argument_error_framing_factor_negative
+  def test_argument_error_emissivity_gt_1
     args_hash = {}
-    args_hash["framing_factor"] = -1
+    args_hash["emissivity"] = 1.1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
+    assert_equal(result_errors(result)[0], "Emissivity must be greater than or equal to 0 and less than or equal to 1.")
   end
 
-  def test_argument_error_framing_factor_eq_1
+  def test_argument_error_conductivity_eq_0
     args_hash = {}
-    args_hash["framing_factor"] = 1.0
+    args_hash["conductivity"] = 0
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
+    assert_equal(result_errors(result)[0], "Conductivity must be greater than 0.")
+  end
+  
+  def test_argument_error_density_eq_0
+    args_hash = {}
+    args_hash["density"] = 0
+    result = _test_error(osm_geo_finished_attic, args_hash)
+    assert_equal(result_errors(result)[0], "Density must be greater than 0.")
   end
 
-  def test_not_applicable_attic
+  def test_argument_error_specific_heat_eq_0
     args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_na(osm_geo_unfinished_attic, args_hash)
+    args_hash["specific_heat"] = 0
+    result = _test_error(osm_geo_finished_attic, args_hash)
+    assert_equal(result_errors(result)[0], "Specific Heat must be greater than 0.")
+  end
+
+  def test_argument_error_thick_in_eq_0
+    args_hash = {}
+    args_hash["thick_in"] = 0
+    result = _test_error(osm_geo_finished_attic, args_hash)
+    assert_equal(result_errors(result)[0], "Thickness must be greater than 0.")
   end
 
   def test_not_applicable_no_geometry
@@ -145,7 +167,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsFinishedRoof.new
+    measure = ProcessConstructionsWallsExteriorFinish.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -181,7 +203,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
   
   def _test_na(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsFinishedRoof.new
+    measure = ProcessConstructionsWallsExteriorFinish.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -217,7 +239,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
 
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsFinishedRoof.new
+    measure = ProcessConstructionsWallsExteriorFinish.new
 
     # check for standard methods
     assert(!measure.name.empty?)
@@ -267,7 +289,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
     
-    actual_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerIndex"=>0}
+    actual_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerThermalAbs"=>0, "LayerSolarAbs"=>0, "LayerVisibleAbs"=>0, "LayerIndex"=>0}
     all_new_objects.each do |obj_type, new_objects|
         new_objects.each do |new_object|
             next if not new_object.respond_to?("to_#{obj_type}")
@@ -278,6 +300,9 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
                 actual_values["LayerConductivity"] += new_object.conductivity
                 actual_values["LayerDensity"] += new_object.density
                 actual_values["LayerSpecificHeat"] += new_object.specificHeat
+                actual_values["LayerThermalAbs"] += new_object.	thermalAbsorptance
+                actual_values["LayerSolarAbs"] += new_object.solarAbsorptance
+                actual_values["LayerVisibleAbs"] += new_object.visibleAbsorptance
             elsif obj_type == "Construction"
                 next if !all_new_objects.keys.include?("Material")
                 all_new_objects["Material"].each do |new_material|
@@ -292,6 +317,9 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
     assert_in_epsilon(expected_values["LayerDensity"], actual_values["LayerDensity"], 0.01)
     assert_in_epsilon(expected_values["LayerSpecificHeat"], actual_values["LayerSpecificHeat"], 0.01)
     assert_in_epsilon(expected_values["LayerIndex"], actual_values["LayerIndex"], 0.01)
+    assert_in_epsilon(expected_values["LayerThermalAbs"], actual_values["LayerThermalAbs"], 0.01)
+    assert_in_epsilon(expected_values["LayerSolarAbs"], actual_values["LayerSolarAbs"], 0.01)
+    assert_in_epsilon(expected_values["LayerVisibleAbs"], actual_values["LayerVisibleAbs"], 0.01)
     
     return model
   end

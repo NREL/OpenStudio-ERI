@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_finish</name>
   <uid>d7e5d5a3-38bf-40ea-abc9-2d50024a7090</uid>
-  <version_id>61cfc2f5-b63b-4496-b684-414f3b3fd4c6</version_id>
-  <version_modified>20161003T181649Z</version_modified>
+  <version_id>82c020a7-0922-4f00-9bd6-f779d08cbb79</version_id>
+  <version_modified>20161011T222240Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorFinish</class_name>
   <display_name>Set Residential Walls - Exterior Finish</display_name>
@@ -20,7 +20,7 @@
       <default_value>0.3</default_value>
     </argument>
     <argument>
-      <name>cond</name>
+      <name>conductivity</name>
       <display_name>Conductivity</display_name>
       <description>Conductivity of the exterior finish assembly.</description>
       <type>Double</type>
@@ -30,7 +30,7 @@
       <default_value>0.62</default_value>
     </argument>
     <argument>
-      <name>dens</name>
+      <name>density</name>
       <display_name>Density</display_name>
       <description>Density of the exterior finish assembly.</description>
       <type>Double</type>
@@ -40,7 +40,7 @@
       <default_value>11.1</default_value>
     </argument>
     <argument>
-      <name>specheat</name>
+      <name>specific_heat</name>
       <display_name>Specific Heat</display_name>
       <description>Specific heat of the exterior finish assembly.</description>
       <type>Double</type>
@@ -60,9 +60,9 @@
       <default_value>0.375</default_value>
     </argument>
     <argument>
-      <name>emiss</name>
+      <name>emissivity</name>
       <display_name>Emissivity</display_name>
-      <description>Measure of the exterior finish's ability to emit infrared energy.</description>
+      <description>Measure of the material's ability to emit infrared energy.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -97,23 +97,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.0</identifier>
-        <min_compatible>1.10.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>01F1EEE0</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F4A45188</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -124,6 +107,53 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>4F1113E0</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E35CC0A6</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.0</identifier>
+        <min_compatible>1.10.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>BEF2D235</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CDD25A07</checksum>
+    </file>
+    <file>
+      <filename>ExteriorFinish_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0EE4E93B</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6E4F37E1</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9B28333E</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA_layers.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C8465C2E</checksum>
     </file>
   </files>
 </measure>

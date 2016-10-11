@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>bf443dd3-8630-4ecf-9624-cff1160ecba8</version_id>
-  <version_modified>20161006T135235Z</version_modified>
+  <version_id>04eaf575-c46b-49c5-9ea9-d788cc9adc5c</version_id>
+  <version_modified>20161011T214548Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -618,12 +618,6 @@
       <checksum>078F0169</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F4A45188</checksum>
-    </file>
-    <file>
       <filename>singlefamily_slab_location_beds_mshp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -669,6 +663,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>BA9E5DD9</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E35CC0A6</checksum>
     </file>
   </files>
 </measure>
