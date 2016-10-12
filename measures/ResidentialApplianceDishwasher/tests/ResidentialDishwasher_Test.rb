@@ -271,7 +271,7 @@ class ResidentialDishwasherTest < MiniTest::Test
   
   def test_error_missing_location
     args_hash = {}
-    args_hash["cold_inlet"] = true
+    args_hash["cold_inlet"] = "true"
     result = _test_error(osm_geo_beds, args_hash)
     assert_equal(result_errors(result)[0], "Mains water temperature has not been set.")
   end

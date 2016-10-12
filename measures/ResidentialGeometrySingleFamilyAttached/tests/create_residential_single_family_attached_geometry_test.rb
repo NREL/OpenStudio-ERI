@@ -48,7 +48,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["building_num_floors"] = 2
     args_hash["num_units"] = 4
-    args_hash["has_rear_units"] = true
+    args_hash["has_rear_units"] = "true"
     args_hash["foundation_type"] = Constants.FinishedBasementFoundationType    
     result = _test_error(nil, args_hash)
     assert(result_errors(result).size == 0)

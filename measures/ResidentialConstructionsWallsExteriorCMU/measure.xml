@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>a8d97376-fe2e-4e58-afaa-e6f4de0d8994</version_id>
-  <version_modified>20161011T214550Z</version_modified>
+  <version_id>46cf8b78-fed6-451a-9742-d4d11f663c3d</version_id>
+  <version_modified>20161012T214635Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Calculates and assigns material layer properties of CMU constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
-      <name>userdefinedcmuthickness</name>
+      <name>thickness</name>
       <display_name>CMU Block Thickness</display_name>
       <description>Thickness of the CMU portion of the wall.</description>
       <type>Double</type>
@@ -21,7 +21,7 @@
       <default_value>6</default_value>
     </argument>
     <argument>
-      <name>userdefinedcmuconductivity</name>
+      <name>conductivity</name>
       <display_name>CMU Conductivity</display_name>
       <description>Overall conductivity of the finished CMU block.</description>
       <type>Double</type>
@@ -31,7 +31,7 @@
       <default_value>5.33</default_value>
     </argument>
     <argument>
-      <name>userdefinedcmudensity</name>
+      <name>density</name>
       <display_name>CMU Density</display_name>
       <description>The density of the finished CMU block.</description>
       <type>Double</type>
@@ -41,7 +41,7 @@
       <default_value>119</default_value>
     </argument>
     <argument>
-      <name>userdefinedframingfrac</name>
+      <name>framing_factor</name>
       <display_name>Framing Factor</display_name>
       <description>Total fraction of the wall that is framing for windows or doors.</description>
       <type>Double</type>
@@ -51,7 +51,7 @@
       <default_value>0.076</default_value>
     </argument>
     <argument>
-      <name>userdefinedfurringr</name>
+      <name>furring_rvalue</name>
       <display_name>Furring Insulation R-value</display_name>
       <description>R-value of the insulation filling the furring cavity.</description>
       <type>Double</type>
@@ -61,9 +61,9 @@
       <default_value>0</default_value>
     </argument>
     <argument>
-      <name>userdefinedfurringcavdepth</name>
+      <name>furring_cavity_depth</name>
       <display_name>Furring Cavity Depth</display_name>
-      <description>The depth of the interior furring cavity. User zero for no furring strips.</description>
+      <description>The depth of the interior furring cavity. Use zero for no furring strips.</description>
       <type>Double</type>
       <units>in</units>
       <required>true</required>
@@ -71,7 +71,7 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>userdefinedfurringstudspacing</name>
+      <name>furring_spacing</name>
       <display_name>Furring Stud Spacing</display_name>
       <description>Spacing of studs in the furring.</description>
       <type>Double</type>
@@ -109,17 +109,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.9.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>82359309</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -136,6 +125,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E35CC0A6</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.9.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A1017DBE</checksum>
     </file>
   </files>
 </measure>
