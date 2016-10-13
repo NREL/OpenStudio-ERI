@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>a86de298-cbce-4bec-a749-0e96a7aea49e</version_id>
-  <version_modified>20161012T192352Z</version_modified>
+  <version_id>4f9fc080-76a6-4d41-97e2-36d0d92fd080</version_id>
+  <version_modified>20161013T202807Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>
@@ -69,12 +69,6 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B4C82069</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -110,10 +104,16 @@
       <checksum>8FF8AD43</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>838E9F01</checksum>
+    </file>
+    <file>
       <filename>WallSheathing_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>3E5BE667</checksum>
+      <checksum>C3AB679D</checksum>
     </file>
   </files>
 </measure>

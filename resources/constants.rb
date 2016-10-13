@@ -141,13 +141,13 @@ class Constants
     return "crawl zone#{s_unit}"
   end
   def self.DDYHtgDrybulb
-    return 'Htg 99.6. Condns DB'
+    return 'Htg 99. Condns DB'
   end
   def self.DDYClgDrybulb
-    return 'Clg .4. Condns WB=>MDB'
+    return 'Clg 1. Condns WB=>MDB'
   end
   def self.DDYClgWetbulb
-    return 'Clg .4. Condns DB=>MWB'
+    return 'Clg 1. Condns DB=>MWB'
   end
   def self.FacadeFront
     return 'Front'

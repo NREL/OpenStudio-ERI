@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>da6053f8-6c11-419b-a384-e1084c59abde</version_id>
-  <version_modified>20161011T214554Z</version_modified>
+  <version_id>c15aa1c4-ecae-4c27-b9c0-a6983aca56c4</version_id>
+  <version_modified>20161013T202811Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankGas</class_name>
   <display_name>Set Residential Gas Tank Water Heater</display_name>
@@ -251,12 +251,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B4C82069</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -280,16 +274,22 @@
       <checksum>4F1113E0</checksum>
     </file>
     <file>
-      <filename>ResidentialWaterHeaterTankGas_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>65B8BC5D</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E35CC0A6</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>838E9F01</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTankGas_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2B4A7BF4</checksum>
     </file>
   </files>
 </measure>
