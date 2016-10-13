@@ -68,21 +68,21 @@ class ProcessConstructionsCeilingsRoofsSheathingTest < MiniTest::Test
     args_hash = {}
     args_hash["osb_thick_in"] = -1
     result = _test_error(osm_geo_unfinished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "OSB/Plywood Thickness must be greater than or equal to 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "OSB/Plywood Thickness must be greater than or equal to 0.")
   end
     
   def test_argument_error_rigid_rvalue_negative
     args_hash = {}
     args_hash["rigid_rvalue"] = -1
     result = _test_error(osm_geo_unfinished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Continuous Insulation Nominal R-value must be greater than or equal to 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Continuous Insulation Nominal R-value must be greater than or equal to 0.")
   end
 
   def test_argument_error_rigid_thick_in_negative
     args_hash = {}
     args_hash["rigid_thick_in"] = -1
     result = _test_error(osm_geo_unfinished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Continuous Insulation Thickness must be greater than or equal to 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Continuous Insulation Thickness must be greater than or equal to 0.")
   end
 
   def test_not_applicable_no_geometry
@@ -125,8 +125,8 @@ class ProcessConstructionsCeilingsRoofsSheathingTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end
@@ -161,8 +161,8 @@ class ProcessConstructionsCeilingsRoofsSheathingTest < MiniTest::Test
     #show_output(result)
 
     # assert that it returned NA
-    assert_equal("NA", result_value(result))
-    assert(result_infos(result).size == 1)
+    assert_equal("NA", result.value.valueName)
+    assert(result.info.size == 1)
     
     return result
   end
@@ -205,7 +205,7 @@ class ProcessConstructionsCeilingsRoofsSheathingTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
+    assert_equal("Success", result.value.valueName)
     
     # get the final objects in the model
     final_objects = get_objects(model)

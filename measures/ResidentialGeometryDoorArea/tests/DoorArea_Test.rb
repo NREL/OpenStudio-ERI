@@ -90,7 +90,7 @@ class DoorAreaTest < MiniTest::Test
     args_hash = {}
     args_hash["door_area"] = -20
     result = _test_error(osm_geo, args_hash)
-    assert_equal(result_errors(result)[0], "Invalid door area.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid door area.")
   end
   
   private
@@ -122,8 +122,8 @@ class DoorAreaTest < MiniTest::Test
     result = runner.result
       
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
 
     return result
     
@@ -171,8 +171,8 @@ class DoorAreaTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_has_final_condition(result))
+    assert_equal("Success", result.value.valueName)
+    assert(result.finalCondition.is_initialized)
 
     # get new/deleted door objects
     new_objects = []

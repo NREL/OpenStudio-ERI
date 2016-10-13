@@ -107,75 +107,75 @@ class AddResidentialOccupantsTest < MiniTest::Test
     args_hash = {}
     args_hash["num_occ"] = "hello"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "Number of Occupants must be either '#{Constants.Auto}' or a number greater than or equal to 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of Occupants must be either '#{Constants.Auto}' or a number greater than or equal to 0.")
   end
   
   def test_argument_error_num_occ_negative
     args_hash = {}
     args_hash["num_occ"] = "-1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "Number of Occupants must be either '#{Constants.Auto}' or a number greater than or equal to 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of Occupants must be either '#{Constants.Auto}' or a number greater than or equal to 0.")
   end
 
   def test_argument_error_num_occ_incorrect_num_elements
     args_hash = {}
     args_hash["num_occ"] = "2, 3, 4"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "Number of occupant elements specified inconsistent with number of multifamily units defined in the model.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of occupant elements specified inconsistent with number of multifamily units defined in the model.")
   end
 
   def test_argument_error_weekday_sch_wrong_number_of_values
     args_hash = {}
     args_hash["weekday_sch"] = "1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
   end  
 
   def test_argument_error_weekday_sch_not_number
     args_hash = {}
     args_hash["weekday_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")
   end
     
   def test_argument_error_weekend_sch_wrong_number_of_values
     args_hash = {}
     args_hash["weekend_sch"] = "1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
   end
     
   def test_argument_error_weekend_sch_not_number
     args_hash = {}
     args_hash["weekend_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 24 numbers must be entered for the weekend schedule.")
   end
   
   def test_argument_error_monthly_sch_wrong_number_of_values  
     args_hash = {}
     args_hash["monthly_sch"] = "1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
   end
   
   def test_argument_error_monthly_sch_not_number
     args_hash = {}
     args_hash["monthly_sch"] = "str,1,1,1,1,1,1,1,1,1,1,1"
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
   end
   
   def test_error_missing_beds
     args_hash = {}
     result = _test_error(osm_geo, args_hash)
-    assert_equal(result_errors(result)[0], "Could not determine number of bedrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not determine number of bedrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
     
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
 
   private
@@ -210,8 +210,8 @@ class AddResidentialOccupantsTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end
@@ -254,10 +254,10 @@ class AddResidentialOccupantsTest < MiniTest::Test
     # show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_infos(result).size == num_infos)
-    assert(result_warnings(result).size == num_warnings)
-    assert(result_has_final_condition(result))
+    assert_equal("Success", result.value.valueName)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get the final objects in the model
     final_objects = get_objects(model)

@@ -11,17 +11,17 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     args_hash = {}
     args_hash["left_neighbor_offset"] = -10
     result = _test_error_or_NA("default_geometry_location.osm", args_hash)
-    assert(result_errors(result).size == 1)
-    assert_equal("Fail", result_value(result))
-    assert_equal(result_errors(result)[0], "Neighbor offsets must be greater than or equal to 0.")
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Neighbor offsets must be greater than or equal to 0.")
   end
   
   def test_not_applicable_no_surfaces
     args_hash = {}
     result = _test_error_or_NA(nil, args_hash)
-    assert(result_errors(result).size == 0)
-    assert_equal(result_NA_string, result_value(result))
-    assert_equal(result_infos(result)[0], "No surfaces found to copy for neighboring buildings.")
+    assert(result.errors.size == 0)
+    assert_equal("NA", result.value.valueName)
+    assert_equal(result.info.map{ |x| x.logMessage }[0], "No surfaces found to copy for neighboring buildings.")
   end  
     
   def test_retrofit_replace
@@ -100,10 +100,10 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
+    assert_equal("Success", result.value.valueName)
     existing_neighbors = false
     new_neighbors = false
-    result_infos(result).each do |info|
+    result.info.map{ |x| x.logMessage }.each do |info|
         if info.include? "Removed existing neighbors."
             existing_neighbors = true
         elsif info.include? "Created shading surface"

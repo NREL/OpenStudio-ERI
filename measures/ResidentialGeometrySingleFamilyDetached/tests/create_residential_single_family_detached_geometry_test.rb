@@ -10,14 +10,14 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_error_existing_geometry
     args_hash = {}
     result = _test_error("singlefamily_detached.osm", args_hash)  
-    assert_equal(result_errors(result)[0], "Starting model is not empty.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Starting model is not empty.")
   end
   
   def test_argument_error_aspect_ratio_invalid
     args_hash = {}
     args_hash["aspect_ratio"] = -1.0
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Invalid aspect ratio entered.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid aspect ratio entered.")
   end
   
   def test_argument_error_crawl_height_invalid
@@ -25,7 +25,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["foundation_type"] = Constants.CrawlFoundationType
     args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "The crawlspace height can be set between 1.5 and 5 ft.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "The crawlspace height can be set between 1.5 and 5 ft.")
   end  
   
   def test_argument_error_pierbeam_height_invalid
@@ -33,21 +33,21 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["foundation_type"] = Constants.PierBeamFoundationType
     args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "The pier & beam height can be set between 0.5 and 8 ft.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "The pier & beam height can be set between 0.5 and 8 ft.")
   end  
   
   def test_argument_error_num_floors_invalid
     args_hash = {}
     args_hash["num_floors"] = 7
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Too many floors.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Too many floors.")
   end
   
   def test_argument_error_garage_protrusion_invalid
     args_hash = {}
     args_hash["garage_protrusion"] = 2
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Invalid garage protrusion value entered.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid garage protrusion value entered.")
   end
   
   def test_argument_error_hip_roof_and_garage_protrudes
@@ -55,7 +55,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["garage_protrusion"] = 0.5
     args_hash["roof_type"] = Constants.RoofTypeHip
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Cannot handle protruding garage and hip roof.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot handle protruding garage and hip roof.")
   end
   
   def test_argument_error_living_and_garage_ridges_are_parallel
@@ -63,14 +63,14 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["garage_protrusion"] = 0.5
     args_hash["aspect_ratio"] = 0.75
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Cannot handle protruding garage and attic ridge running from front to back.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot handle protruding garage and attic ridge running from front to back.")
   end
   
   def test_argument_error_garage_width_exceeds_living_width
     args_hash = {}
     args_hash["garage_width"] = 10000
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Invalid living space and garage dimensions.")  
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid living space and garage dimensions.")  
   end
   
   def test_argument_error_garage_depth_exceeds_living_depth
@@ -78,7 +78,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["garage_width"] = 12
     args_hash["garage_depth"] = 10000
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Invalid living space and garage dimensions.")  
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid living space and garage dimensions.")  
   end
   
   def test_change_garage_pitch_when_garage_ridge_higher_than_house_ridge
@@ -369,8 +369,8 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     result = runner.result
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end
@@ -410,9 +410,9 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_infos(result).size == num_infos)
-    assert(result_warnings(result).size == num_warnings)
+    assert_equal("Success", result.value.valueName)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model
     final_objects = get_objects(model)

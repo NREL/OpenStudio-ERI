@@ -205,9 +205,9 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_infos(result).size == num_infos)
-    assert(result_warnings(result).size == num_warnings)
+    assert_equal("Success", result.value.valueName)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model
     final_objects = get_objects(model)

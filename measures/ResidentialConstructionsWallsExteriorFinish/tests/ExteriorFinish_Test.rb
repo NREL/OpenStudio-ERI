@@ -103,56 +103,56 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     args_hash = {}
     args_hash["solar_abs"] = -1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Solar Absorptivity must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Solar Absorptivity must be greater than or equal to 0 and less than or equal to 1.")
   end
     
   def test_argument_error_solar_abs_gt_1
     args_hash = {}
     args_hash["solar_abs"] = 1.1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Solar Absorptivity must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Solar Absorptivity must be greater than or equal to 0 and less than or equal to 1.")
   end
 
   def test_argument_error_emissivity_lt_0
     args_hash = {}
     args_hash["emissivity"] = -1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Emissivity must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Emissivity must be greater than or equal to 0 and less than or equal to 1.")
   end
 
   def test_argument_error_emissivity_gt_1
     args_hash = {}
     args_hash["emissivity"] = 1.1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Emissivity must be greater than or equal to 0 and less than or equal to 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Emissivity must be greater than or equal to 0 and less than or equal to 1.")
   end
 
   def test_argument_error_conductivity_eq_0
     args_hash = {}
     args_hash["conductivity"] = 0
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Conductivity must be greater than 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Conductivity must be greater than 0.")
   end
   
   def test_argument_error_density_eq_0
     args_hash = {}
     args_hash["density"] = 0
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Density must be greater than 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Density must be greater than 0.")
   end
 
   def test_argument_error_specific_heat_eq_0
     args_hash = {}
     args_hash["specific_heat"] = 0
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Specific Heat must be greater than 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Specific Heat must be greater than 0.")
   end
 
   def test_argument_error_thick_in_eq_0
     args_hash = {}
     args_hash["thick_in"] = 0
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Thickness must be greater than 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Thickness must be greater than 0.")
   end
 
   def test_not_applicable_no_geometry
@@ -195,8 +195,8 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end
@@ -231,8 +231,8 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     #show_output(result)
 
     # assert that it returned NA
-    assert_equal("NA", result_value(result))
-    assert(result_infos(result).size == 1)
+    assert_equal("NA", result.value.valueName)
+    assert(result.info.size == 1)
     
     return result
   end
@@ -275,7 +275,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
+    assert_equal("Success", result.value.valueName)
     
     # get the final objects in the model
     final_objects = get_objects(model)

@@ -262,108 +262,108 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash = {}
     args_hash["cw_mef"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Modified energy factor must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Modified energy factor must be greater than 0.0.")
   end
   
   def test_argument_error_cw_mef_zero
     args_hash = {}
     args_hash["cw_mef"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Modified energy factor must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Modified energy factor must be greater than 0.0.")
   end
 
   def test_argument_error_cw_rated_annual_energy_negative
     args_hash = {}
     args_hash["cw_rated_annual_energy"] = -1.0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Rated annual consumption must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated annual consumption must be greater than 0.0.")
   end
   
   def test_argument_error_cw_rated_annual_energy_zero
     args_hash = {}
     args_hash["cw_rated_annual_energy"] = 0.0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Rated annual consumption must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated annual consumption must be greater than 0.0.")
   end
 
   def test_argument_error_cw_test_date_negative
     args_hash = {}
     args_hash["cw_test_date"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Test date must be greater than or equal to 1900.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Test date must be greater than or equal to 1900.")
   end
 
   def test_argument_error_cw_test_date_zero
     args_hash = {}
     args_hash["cw_test_date"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Test date must be greater than or equal to 1900.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Test date must be greater than or equal to 1900.")
   end
 
   def test_argument_error_cw_annual_cost_negative
     args_hash = {}
     args_hash["cw_annual_cost"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Annual cost with gas DHW must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Annual cost with gas DHW must be greater than 0.0.")
   end
 
   def test_argument_error_cw_annual_cost_zero
     args_hash = {}
     args_hash["cw_annual_cost"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Annual cost with gas DHW must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Annual cost with gas DHW must be greater than 0.0.")
   end
   
   def test_argument_error_cw_drum_volume_negative
     args_hash = {}
     args_hash["cw_drum_volume"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Drum volume must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Drum volume must be greater than 0.0.")
   end
 
   def test_argument_error_cw_drum_volume_zero
     args_hash = {}
     args_hash["cw_drum_volume"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Drum volume must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Drum volume must be greater than 0.0.")
   end
 
   def test_argument_error_cw_mult_e_negative
     args_hash = {}
     args_hash["cw_mult_e"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Occupancy energy multiplier must be greater than or equal to 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Occupancy energy multiplier must be greater than or equal to 0.0.")
   end
 
   def test_argument_error_cw_mult_hw_negative
     args_hash = {}
     args_hash["cw_mult_hw"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result_errors(result)[0], "Occupancy hot water multiplier must be greater than or equal to 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Occupancy hot water multiplier must be greater than or equal to 0.0.")
   end
 
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
   
   def test_error_missing_beds
     args_hash = {}
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
   
   def test_error_missing_location
     args_hash = {}
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "Mains water temperature has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Mains water temperature has not been set.")
   end
 
   def test_error_missing_water_heater
     args_hash = {}
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Could not find plant loop.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not find plant loop.")
   end
 
   private
@@ -398,8 +398,8 @@ class ResidentialClothesWasherTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end
@@ -442,10 +442,10 @@ class ResidentialClothesWasherTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_infos(result).size == num_infos)
-    assert(result_warnings(result).size == num_warnings)
-    assert(result_has_final_condition(result))
+    assert_equal("Success", result.value.valueName)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # get the final objects in the model
     final_objects = get_objects(model)

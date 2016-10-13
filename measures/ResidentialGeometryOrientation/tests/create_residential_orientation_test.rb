@@ -11,7 +11,7 @@ class CreateResidentialOrientationTest < MiniTest::Test
     args_hash = {}
     args_hash["orientation"] = -180
     result = _test_error("default_geometry_location.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Invalid orientation entered.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid orientation entered.")
   end
     
   def test_retrofit_replace
@@ -52,8 +52,8 @@ class CreateResidentialOrientationTest < MiniTest::Test
     result = runner.result
       
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
 
     return result
     
@@ -91,9 +91,9 @@ class CreateResidentialOrientationTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
+    assert_equal("Success", result.value.valueName)
     orientation_changed = false
-    result_infos(result).each do |info|
+    result.info.map{ |x| x.logMessage }.each do |info|
         if info.include? "The orientation of the building has changed."
             orientation_changed = true
         end

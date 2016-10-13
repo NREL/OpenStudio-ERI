@@ -12,67 +12,67 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash["Num_Br"] = "3.0, 3.0, 3.0"
     args_hash["Num_Ba"] = "2.0, 2.0"
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Number of bedroom elements specified inconsistent with number of bathroom elements specified.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedroom elements specified inconsistent with number of bathroom elements specified.")
   end
   
   def test_argument_error_beds_not_equal_to_units
     args_hash = {}
     args_hash["Num_Br"] = "3.0, 3.0"
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Number of bedroom elements specified inconsistent with number of multifamily units defined in the model.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedroom elements specified inconsistent with number of multifamily units defined in the model.")
   end
   
   def test_argument_error_baths_not_equal_to_units
     args_hash = {}
     args_hash["Num_Ba"] = "2.0, 2.0"
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Number of bathroom elements specified inconsistent with number of multifamily units defined in the model.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathroom elements specified inconsistent with number of multifamily units defined in the model.")
   end
   
   def test_argument_error_beds_not_numerical
     args_hash = {}
     args_hash["Num_Br"] = "3.0, 3.0, typo"
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Number of bedrooms must be a numerical value.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedrooms must be a numerical value.")
   end
   
   def test_argument_error_baths_not_numerical
     args_hash = {}
     args_hash["Num_Ba"] = "2.0, 2.0, typo"
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Number of bathrooms must be a numerical value.")  
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathrooms must be a numerical value.")  
   end
   
   def test_argument_error_beds_not_positive_integer
     args_hash = {}
     args_hash["Num_Br"] = "3.0, 3.0, 3.5"
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Number of bedrooms must be a positive integer.")    
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedrooms must be a positive integer.")    
   end
   
   def test_argument_error_baths_not_positive_multiple_of_0pt25
     args_hash = {}
     args_hash["Num_Ba"] = "2.0, 2.0, 2.8"
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Number of bathrooms must be a positive multiple of 0.25.")    
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathrooms must be a positive multiple of 0.25.")    
   end
   
   def test_error_no_units_defined_in_model
     args_hash = {}
     result = _test_error("EmptySeedModel.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")   
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")   
   end
   
   def test_error_inconsistent_units_defined_in_model
     args_hash = {}
     result = _test_error("multifamily_8_units_6_listed.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Cannot determine number of building units; inconsistent number of units defined in the model.")   
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; inconsistent number of units defined in the model.")   
    end
   
   def test_error_unit_has_no_spaces
     args_hash = {}
     result = _test_error("multifamily_8_units_missing_space.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Could not find the space '{381d5b54-fa3f-4245-9812-ebdc33acae12}' associated with unit 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not find the space '{381d5b54-fa3f-4245-9812-ebdc33acae12}' associated with unit 1.")
   end
   
   def test_retrofit_replace
@@ -141,8 +141,8 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     result = runner.result
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end  
@@ -182,9 +182,9 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     result = runner.result
     
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_infos(result).size == num_infos)
-    assert(result_warnings(result).size == num_warnings)
+    assert_equal("Success", result.value.valueName)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model  
     final_objects = get_objects(model)

@@ -94,35 +94,35 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
     args_hash = {}
     args_hash["cavity_r"] = -1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Cavity Insulation Installed R-value must be greater than or equal to 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Insulation Installed R-value must be greater than or equal to 0.")
   end
     
   def test_argument_error_cavity_depth_negative
     args_hash = {}
     args_hash["cavity_depth"] = -1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Cavity Depth must be greater than 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Depth must be greater than 0.")
   end
 
   def test_argument_error_cavity_depth_zero
     args_hash = {}
     args_hash["cavity_depth"] = 0
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Cavity Depth must be greater than 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Depth must be greater than 0.")
   end
 
   def test_argument_error_framing_factor_negative
     args_hash = {}
     args_hash["framing_factor"] = -1
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
   end
 
   def test_argument_error_framing_factor_eq_1
     args_hash = {}
     args_hash["framing_factor"] = 1.0
     result = _test_error(osm_geo_finished_attic, args_hash)
-    assert_equal(result_errors(result)[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
   end
 
   def test_not_applicable_unfinished_attic
@@ -173,8 +173,8 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end
@@ -209,8 +209,8 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
     #show_output(result)
 
     # assert that it returned NA
-    assert_equal("NA", result_value(result))
-    assert(result_infos(result).size == 1)
+    assert_equal("NA", result.value.valueName)
+    assert(result.info.size == 1)
     
     return result
   end
@@ -253,7 +253,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
+    assert_equal("Success", result.value.valueName)
     
     # get the final objects in the model
     final_objects = get_objects(model)

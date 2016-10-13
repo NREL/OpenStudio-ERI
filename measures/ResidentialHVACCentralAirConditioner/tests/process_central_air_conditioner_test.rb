@@ -11,7 +11,7 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     args_hash["acNumberSpeeds"] = 3
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Invalid number of compressor speeds entered.")  
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid number of compressor speeds entered.")  
   end
   
   def test_argument_error_wrong_length
@@ -19,7 +19,7 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
     args_hash["acNumberSpeeds"] = 2
     args_hash["acCoolingEER"] = "11.1"
     result = _test_error("singlefamily_detached.osm", args_hash)
-    assert_equal(result_errors(result)[0], "Entered wrong length for EER, Rated SHR, Capacity Ratio, or Fan Speed Ratio given the Number of Speeds.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Entered wrong length for EER, Rated SHR, Capacity Ratio, or Fan Speed Ratio given the Number of Speeds.")
   end  
   
   def test_new_construction_seer_13
@@ -208,8 +208,8 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
     result = runner.result
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end  
@@ -249,9 +249,9 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_infos(result).size == num_infos)
-    assert(result_warnings(result).size == num_warnings)
+    assert_equal("Success", result.value.valueName)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model
     final_objects = get_objects(model)

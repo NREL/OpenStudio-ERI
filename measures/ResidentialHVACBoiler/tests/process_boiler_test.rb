@@ -11,9 +11,9 @@ class ProcessBoilerTest < MiniTest::Test
     args_hash = {}
     args_hash["boilerType"] = Constants.BoilerTypeSteam
     result = _test_error("singlefamily_detached_fbsmt.osm", args_hash)
-    assert(result_errors(result).size == 1)
-    assert_equal("Fail", result_value(result))
-    assert_equal(result_errors(result)[0], "Cannot currently model steam boilers.")    
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot currently model steam boilers.")    
   end  
   
   def test_oat_reset_enabled_nil_oat
@@ -230,9 +230,9 @@ class ProcessBoilerTest < MiniTest::Test
     result = runner.result
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_infos(result).size == num_infos)
-    assert(result_warnings(result).size == num_warnings)
+    assert_equal("Success", result.value.valueName)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model
     final_objects = get_objects(model)

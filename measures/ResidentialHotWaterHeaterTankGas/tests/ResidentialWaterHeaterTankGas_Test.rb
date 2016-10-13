@@ -212,130 +212,130 @@ class ResidentialHotWaterHeaterTankGasTest < MiniTest::Test
     args_hash = {}
     args_hash["storage_tank_volume"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
   
   def test_argument_error_tank_volume_lt_0
     args_hash = {}
     args_hash["storage_tank_volume"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_tank_volume_eq_0
     args_hash = {}
     args_hash["storage_tank_volume"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_setpoint_lt_0
     args_hash = {}
     args_hash["dhw_setpoint_temperature"] = -10
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Hot water temperature must be greater than 0 and less than 212.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Hot water temperature must be greater than 0 and less than 212.")
   end
 
   def test_argument_error_setpoint_lg_300
     args_hash = {}
     args_hash["dhw_setpoint_temperature"] = 300
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Hot water temperature must be greater than 0 and less than 212.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Hot water temperature must be greater than 0 and less than 212.")
   end
 
   def test_argument_error_capacity_invalid_str
     args_hash = {}
     args_hash["water_heater_capacity"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_capacity_lt_0
     args_hash = {}
     args_hash["water_heater_capacity"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_capacity_eq_0
     args_hash = {}
     args_hash["water_heater_capacity"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
   
   def test_argument_error_re_lt_0
     args_hash = {}
     args_hash["water_heater_recovery_efficiency"] = -1
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Recovery efficiency must be at least 0 and at most 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Recovery efficiency must be at least 0 and at most 1.")
   end
 
   def test_argument_error_re_gt_1
     args_hash = {}
     args_hash["water_heater_recovery_efficiency"] = 1.1
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Recovery efficiency must be at least 0 and at most 1.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Recovery efficiency must be at least 0 and at most 1.")
   end
 
   def test_argument_error_ef_invalid_str
     args_hash = {}
     args_hash["rated_energy_factor"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_lt_0
     args_hash = {}
     args_hash["rated_energy_factor"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_eq_0
     args_hash = {}
     args_hash["rated_energy_factor"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_gt_1
     args_hash = {}
     args_hash["rated_energy_factor"] = "1.1"
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
   
   def test_argument_error_oncycle_lt_0
     args_hash = {}
     args_hash["oncyc_power"] = -1
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Forced draft fan power must be greater than 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Forced draft fan power must be greater than 0.")
   end
 
   def test_argument_error_offcycle_lt_0
     args_hash = {}
     args_hash["offcyc_power"] = -1
     result = _test_error(osm_geo_beds_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Parasitic electricity power must be greater than 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Parasitic electricity power must be greater than 0.")
   end
 
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result_errors(result)[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
   end
   
   def test_error_missing_beds
     args_hash = {}
     result = _test_error(osm_geo_loc, args_hash)
-    assert_equal(result_errors(result)[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
   
   def test_error_missing_mains_temp
     args_hash = {}
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result_errors(result)[0], "Mains water temperature has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Mains water temperature has not been set.")
   end
 
   private
@@ -370,8 +370,8 @@ class ResidentialHotWaterHeaterTankGasTest < MiniTest::Test
     #show_output(result)
 
     # assert that it didn't run
-    assert_equal("Fail", result_value(result))
-    assert(result_errors(result).size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert(result.errors.size == 1)
     
     return result
   end
@@ -425,10 +425,10 @@ class ResidentialHotWaterHeaterTankGasTest < MiniTest::Test
     #show_output(result)
 
     # assert that it ran correctly
-    assert_equal("Success", result_value(result))
-    assert(result_infos(result).size == num_infos)
-    assert(result_warnings(result).size == num_warnings)
-    assert(result_has_final_condition(result))
+    assert_equal("Success", result.value.valueName)
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    assert(result.finalCondition.is_initialized)
     
     # Get the final WHs in the model
     final_whs = []
