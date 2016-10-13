@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>1f23f334-be1f-4d82-a994-e6cc2a910ef5</version_id>
-  <version_modified>20161013T202813Z</version_modified>
+  <version_id>d5ef9588-a4b0-497d-a42a-550d321bb633</version_id>
+  <version_modified>20161013T215321Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -91,34 +91,10 @@
       <checksum>4F1113E0</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>965B7677</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_furnace.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>42923C97</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached_no_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>88A9AEC3</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_ashp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7F0FEECF</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7350EDE3</checksum>
     </file>
     <file>
       <version>
@@ -130,24 +106,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>5E84EEE9</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_boiler.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FA8B9E7E</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_electric_baseboard.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>066E85FB</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_furnace_central_air_conditioner_cooling_setpoints.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EA236FAC</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
@@ -172,6 +130,48 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>BD771227</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E81ABAC7</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_furnace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>08FB125B</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_ashp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C73E9811</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>539538EF</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_boiler.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E56110C9</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_electric_baseboard.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9D17E31C</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_furnace_central_air_conditioner_cooling_setpoints.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AB812445</checksum>
     </file>
   </files>
 </measure>

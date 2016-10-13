@@ -658,10 +658,10 @@ OS:Site,
 
 OS:SizingPeriod:DesignDay,
   {7e988767-533e-4487-90a8-4509dee30f77}, !- Handle
-  Denver Intl Ap Ann Clg .4% Condns WB=>MDB, !- Name
-  27.3,                                   !- Maximum Dry-Bulb Temperature {C}
+  Denver Intl Ap Ann Clg 1% Condns WB=>MDB, !- Name
+  27,                                     !- Maximum Dry-Bulb Temperature {C}
   15.2,                                   !- Daily Dry-Bulb Temperature Range {deltaC}
-  18.3,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  17.6,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
   83011,                                  !- Barometric Pressure {Pa}
   4.2,                                    !- Wind Speed {m/s}
   80,                                     !- Wind Direction {deg}
@@ -684,10 +684,10 @@ OS:SizingPeriod:DesignDay,
 
 OS:SizingPeriod:DesignDay,
   {33a9bac8-d5f2-4390-b00a-d74ba20dcb96}, !- Handle
-  Denver Intl Ap Ann Clg .4% Condns DB=>MWB, !- Name
-  34.6,                                   !- Maximum Dry-Bulb Temperature {C}
+  Denver Intl Ap Ann Clg 1% Condns DB=>MWB, !- Name
+  33.2,                                   !- Maximum Dry-Bulb Temperature {C}
   15.2,                                   !- Daily Dry-Bulb Temperature Range {deltaC}
-  15.7,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  15.6,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
   83011,                                  !- Barometric Pressure {Pa}
   4.2,                                    !- Wind Speed {m/s}
   80,                                     !- Wind Direction {deg}
@@ -710,10 +710,10 @@ OS:SizingPeriod:DesignDay,
 
 OS:SizingPeriod:DesignDay,
   {5ca11006-4a9d-4f22-b221-4dd720e34f7b}, !- Handle
-  Denver Intl Ap Ann Htg 99.6% Condns DB, !- Name
-  -17.4,                                  !- Maximum Dry-Bulb Temperature {C}
+  Denver Intl Ap Ann Htg 99% Condns DB,   !- Name
+  -14,                                    !- Maximum Dry-Bulb Temperature {C}
   0,                                      !- Daily Dry-Bulb Temperature Range {deltaC}
-  -17.4,                                  !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  -14,                                    !- Humidity Indicating Conditions at Maximum Dry-Bulb
   83011,                                  !- Barometric Pressure {Pa}
   3.3,                                    !- Wind Speed {m/s}
   160,                                    !- Wind Direction {deg}

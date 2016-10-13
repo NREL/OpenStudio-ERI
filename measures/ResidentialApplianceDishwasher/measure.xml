@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>be6f2b12-2183-4fc2-9919-9a60dcc6ebef</version_id>
-  <version_modified>20161013T202804Z</version_modified>
+  <version_id>623610c1-eaf2-43c4-8654-c333f4cb83c8</version_id>
+  <version_modified>20161013T215317Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -182,40 +182,10 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>31AF2ED5</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtankless.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A587CFFD</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>22260550</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>56DA757F</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>37BC4668</checksum>
-    </file>
-    <file>
-      <filename>multifamily_3_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F72167EA</checksum>
     </file>
     <file>
       <filename>unit_conversions.rb</filename>
@@ -536,12 +506,6 @@
       <checksum>91C6AF57</checksum>
     </file>
     <file>
-      <filename>multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>47F67BEC</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -587,6 +551,42 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>064C5410</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EEA922AE</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtankless.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2443F188</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5DB255C0</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FC1CB54A</checksum>
+    </file>
+    <file>
+      <filename>multifamily_3_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1FC728F1</checksum>
+    </file>
+    <file>
+      <filename>multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A9BB0FDE</checksum>
     </file>
   </files>
 </measure>

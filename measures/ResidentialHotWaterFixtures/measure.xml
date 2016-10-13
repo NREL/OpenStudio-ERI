@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>03641b28-d5b5-4a64-a49d-521aa6ab48f2</version_id>
-  <version_modified>20161013T202810Z</version_modified>
+  <version_id>ee885d91-5483-4ea1-9026-83f5429b1af3</version_id>
+  <version_modified>20161013T215319Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -114,18 +114,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>22260550</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>31AF2ED5</checksum>
-    </file>
-    <file>
-      <filename>multifamily_3_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F72167EA</checksum>
     </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
@@ -1046,12 +1034,6 @@
       <checksum>75FAFE79</checksum>
     </file>
     <file>
-      <filename>multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>47F67BEC</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -1097,6 +1079,24 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>CC801F40</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EEA922AE</checksum>
+    </file>
+    <file>
+      <filename>multifamily_3_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1FC728F1</checksum>
+    </file>
+    <file>
+      <filename>multifamily_12_units_Beds_Baths_Denver_ElecWHtank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A9BB0FDE</checksum>
     </file>
   </files>
 </measure>

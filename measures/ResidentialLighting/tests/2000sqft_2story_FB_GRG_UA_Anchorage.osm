@@ -1230,10 +1230,10 @@ OS:Site:GroundTemperature:Deep,
 
 OS:SizingPeriod:DesignDay,
   {44bab32a-f07d-42e1-aa9d-e1134be3b27f}, !- Handle
-  Anchorage Intl Ap Ann Clg .4% Condns WB=>MDB, !- Name
-  20.5,                                   !- Maximum Dry-Bulb Temperature {C}
+  Anchorage Intl Ap Ann Clg 1% Condns WB=>MDB, !- Name
+  19,                                     !- Maximum Dry-Bulb Temperature {C}
   6.6,                                    !- Daily Dry-Bulb Temperature Range {deltaC}
-  15.7,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  14.9,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
   100905,                                 !- Barometric Pressure {Pa}
   3.6,                                    !- Wind Speed {m/s}
   300,                                    !- Wind Direction {deg}
@@ -1256,10 +1256,10 @@ OS:SizingPeriod:DesignDay,
 
 OS:SizingPeriod:DesignDay,
   {8a79d1ec-cd8b-4cd5-980a-afb7ee141db2}, !- Handle
-  Anchorage Intl Ap Ann Htg 99.6% Condns DB, !- Name
-  -22.7,                                  !- Maximum Dry-Bulb Temperature {C}
+  Anchorage Intl Ap Ann Htg 99% Condns DB, !- Name
+  -20.2,                                  !- Maximum Dry-Bulb Temperature {C}
   0,                                      !- Daily Dry-Bulb Temperature Range {deltaC}
-  -22.7,                                  !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  -20.2,                                  !- Humidity Indicating Conditions at Maximum Dry-Bulb
   100905,                                 !- Barometric Pressure {Pa}
   1.8,                                    !- Wind Speed {m/s}
   350,                                    !- Wind Direction {deg}
@@ -1278,10 +1278,10 @@ OS:SizingPeriod:DesignDay,
 
 OS:SizingPeriod:DesignDay,
   {1f23326e-f8d7-4839-8efa-8e46540771c8}, !- Handle
-  Anchorage Intl Ap Ann Clg .4% Condns DB=>MWB, !- Name
-  21.9,                                   !- Maximum Dry-Bulb Temperature {C}
+  Anchorage Intl Ap Ann Clg 1% Condns DB=>MWB, !- Name
+  20.2,                                   !- Maximum Dry-Bulb Temperature {C}
   6.6,                                    !- Daily Dry-Bulb Temperature Range {deltaC}
-  14.9,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  14,                                     !- Humidity Indicating Conditions at Maximum Dry-Bulb
   100905,                                 !- Barometric Pressure {Pa}
   3.6,                                    !- Wind Speed {m/s}
   300,                                    !- Wind Direction {deg}

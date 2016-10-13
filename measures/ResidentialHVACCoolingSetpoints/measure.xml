@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>597a5963-60f3-41a7-801f-f00d62032a2e</version_id>
-  <version_modified>20161013T202813Z</version_modified>
+  <version_id>730cad16-ace2-4afc-849e-cac0bfc97383</version_id>
+  <version_modified>20161013T215320Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -112,46 +112,10 @@
       <checksum>4F1113E0</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>965B7677</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_ashp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7F0FEECF</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7350EDE3</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached_no_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>88A9AEC3</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E66C5699</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_central_air_conditioner_furnace_heating_setpoints.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>633003E5</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_room_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>00AD5584</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
@@ -176,6 +140,42 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>BCA1F8AD</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E81ABAC7</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_ashp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C73E9811</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>539538EF</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>892C0888</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_central_air_conditioner_furnace_heating_setpoints.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FB279697</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E92BC456</checksum>
     </file>
   </files>
 </measure>

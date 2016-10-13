@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_minisplit</name>
   <uid>257a8095-0b3d-4ac7-acf5-c537ecbaa945</uid>
-  <version_id>fe95c4a8-b842-4dfb-b2c2-22f6e7e31135</version_id>
-  <version_modified>20161013T202814Z</version_modified>
+  <version_id>7efb9907-3507-44c6-a9f5-5fa2ced6bc90</version_id>
+  <version_modified>20161013T215321Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump - Original Model</display_name>
@@ -294,24 +294,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>multifamily_3_units_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C441B0F6</checksum>
-    </file>
-    <file>
-      <filename>multifamily_urbanopt_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DDBF85D7</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbsmt_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2E5C600C</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -363,6 +345,24 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>8A1D8B78</checksum>
+    </file>
+    <file>
+      <filename>multifamily_3_units_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>654FAD24</checksum>
+    </file>
+    <file>
+      <filename>multifamily_urbanopt_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A3034D78</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E2726E18</checksum>
     </file>
   </files>
 </measure>

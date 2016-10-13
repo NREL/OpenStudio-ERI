@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>10b7e301-1f64-48a4-ad46-8c5249991a9d</version_id>
-  <version_modified>20161013T202807Z</version_modified>
+  <version_id>7a1bfa73-9f0a-41f3-9b5d-92567b136123</version_id>
+  <version_modified>20161013T215317Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -84,18 +84,6 @@
       <checksum>67702CA5</checksum>
     </file>
     <file>
-      <filename>default_geometry_location_windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D586166E</checksum>
-    </file>
-    <file>
-      <filename>default_geometry_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>55BD6CF0</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -159,6 +147,18 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>107B1BF8</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location_windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E0999B0B</checksum>
+    </file>
+    <file>
+      <filename>default_geometry_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>74673C04</checksum>
     </file>
   </files>
 </measure>
