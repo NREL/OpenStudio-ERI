@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>257e1a4a-4c47-49fe-a090-d817902d4297</version_id>
-  <version_modified>20161014T165526Z</version_modified>
+  <version_id>b29259ee-a2db-49e0-aa87-7bf86c0aa7d2</version_id>
+  <version_modified>20161014T184722Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -91,16 +91,21 @@
       <checksum>88A9AEC3</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.4.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <usage_type>script</usage_type>
+      <checksum>BBA2A1E4</checksum>
     </file>
     <file>
-      <filename>process_heating_setpoints_test.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BD771227</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>3BCBA48E</checksum>
     </file>
     <file>
       <filename>singlefamily_detached.osm</filename>
@@ -145,27 +150,22 @@
       <checksum>AB812445</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>process_heating_setpoints_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>BBA2A1E4</checksum>
+      <usage_type>test</usage_type>
+      <checksum>BD771227</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ABE8423E</checksum>
+      <checksum>5E54715B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>838E9F01</checksum>
     </file>
     <file>
       <filename>util.rb</filename>

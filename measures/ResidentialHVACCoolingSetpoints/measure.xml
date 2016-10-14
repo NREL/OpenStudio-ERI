@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>5a5bb712-3c57-49e0-9513-a311adef21ec</version_id>
-  <version_modified>20161014T165525Z</version_modified>
+  <version_id>5d9f7636-3ff0-4cb4-bda1-7c3bb298ed76</version_id>
+  <version_modified>20161014T184724Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -101,16 +101,21 @@
       <checksum>88A9AEC3</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.11.5</identifier>
+        <min_compatible>1.11.5</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <usage_type>script</usage_type>
+      <checksum>27766684</checksum>
     </file>
     <file>
-      <filename>process_cooling_setpoints_test.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BCA1F8AD</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>3BCBA48E</checksum>
     </file>
     <file>
       <filename>singlefamily_detached.osm</filename>
@@ -149,27 +154,22 @@
       <checksum>E92BC456</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.11.5</identifier>
-        <min_compatible>1.11.5</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
+      <filename>process_cooling_setpoints_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>27766684</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
+      <usage_type>test</usage_type>
+      <checksum>BCA1F8AD</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ABE8423E</checksum>
+      <checksum>5E54715B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>838E9F01</checksum>
     </file>
     <file>
       <filename>util.rb</filename>

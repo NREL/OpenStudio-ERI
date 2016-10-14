@@ -637,6 +637,10 @@ class HVAC
             next unless air_loop_unitary.coolingCoil.is_initialized
             clg_coil = air_loop_unitary.coolingCoil.get
             next unless clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized or clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
+            if air_loop_unitary.heatingCoil.is_initialized
+              htg_coil = air_loop_unitary.heatingCoil.get
+              next if htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized or htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized
+            end
             runner.registerInfo("Found a central air conditioner.")
             if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
               clg_coil = clg_coil.to_CoilCoolingDXSingleSpeed.get
