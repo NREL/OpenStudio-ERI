@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>381d2dee-51ae-431d-a887-eb3b29c1af3b</version_id>
-  <version_modified>20161014T165518Z</version_modified>
+  <version_id>c4c35349-8d19-476f-9c55-185203c7684f</version_id>
+  <version_modified>20161014T180024Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
@@ -594,12 +594,6 @@
       <checksum>C3D08AA7</checksum>
     </file>
     <file>
-      <filename>singlefamily_slab_location_beds_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>59B6EBD7</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -622,12 +616,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>97B219DD</checksum>
-    </file>
-    <file>
-      <filename>airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B8B00059</checksum>
     </file>
     <file>
       <version>
@@ -663,6 +651,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B9256575</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_slab_location_beds_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>66D6136A</checksum>
+    </file>
+    <file>
+      <filename>airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D072A5F2</checksum>
     </file>
   </files>
 </measure>

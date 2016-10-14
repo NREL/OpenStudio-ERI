@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>3243c160-f440-4fb4-8017-11749e0cbf4c</version_id>
-  <version_modified>20161014T165517Z</version_modified>
+  <version_id>3bc5c9ca-8fec-4473-abde-7c67764d0428</version_id>
+  <version_modified>20161014T180024Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -617,12 +617,6 @@
       <checksum>6D7F66A1</checksum>
     </file>
     <file>
-      <filename>residential_airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DEA48756</checksum>
-    </file>
-    <file>
       <filename>singlefamily_attached_fbsmt_4_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -693,6 +687,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C3399417</checksum>
+    </file>
+    <file>
+      <filename>residential_airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0CA0BA07</checksum>
     </file>
   </files>
 </measure>
