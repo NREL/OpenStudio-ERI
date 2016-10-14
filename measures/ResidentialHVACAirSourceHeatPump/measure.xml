@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>27eddb0f-3992-44ce-aec6-a111a0711278</version_id>
-  <version_modified>20161014T162245Z</version_modified>
+  <version_id>975c4dbf-7798-4325-b765-0dcd186c683a</version_id>
+  <version_modified>20161014T165525Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessAirSourceHeatPump</class_name>
   <display_name>Set Residential Air Source Heat Pump</display_name>
@@ -257,7 +257,7 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>selectedhpcap</name>
+      <name>hpcap</name>
       <display_name>Cooling/Heating Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
@@ -351,7 +351,7 @@
       </choices>
     </argument>
     <argument>
-      <name>selectedsupcap</name>
+      <name>supcap</name>
       <display_name>Supplemental Heating Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
@@ -599,16 +599,22 @@
       <checksum>1975D10A</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C4250AF8</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached_fbsmt_room_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>F191465A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>838E9F01</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>313E10AB</checksum>
     </file>
     <file>
       <version>
@@ -619,37 +625,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>70A5ACD0</checksum>
+      <checksum>CE5C6650</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4F1113E0</checksum>
+      <checksum>3BCBA48E</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3B7DA3B8</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <checksum>ABE8423E</checksum>
     </file>
     <file>
       <filename>process_air_source_heat_pump_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>436973EB</checksum>
+      <checksum>A5DB5335</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>520A6207</checksum>
+      <checksum>B9256575</checksum>
     </file>
   </files>
 </measure>

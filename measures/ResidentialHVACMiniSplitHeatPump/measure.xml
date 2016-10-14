@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_vrf_minisplit</name>
   <uid>402b168f-ed99-46bb-b367-103937011e91</uid>
-  <version_id>2ff0c548-16c9-4b5c-93bd-5d911100ac94</version_id>
-  <version_modified>20161014T162247Z</version_modified>
+  <version_id>5af50017-7a43-49c4-878a-fa0509ef8ae8</version_id>
+  <version_modified>20161014T165526Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVRFMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
@@ -253,6 +253,154 @@
         </choice>
       </choices>
     </argument>
+    <argument>
+      <name>baseboardeff</name>
+      <display_name>Supplemental Efficiency</display_name>
+      <description>The efficiency of the supplemental electric baseboard.</description>
+      <type>Double</type>
+      <units>Btu/Btu</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+    <argument>
+      <name>baseboardcap</name>
+      <display_name>Supplemental Heating Output Capacity</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>autosize</default_value>
+      <choices>
+        <choice>
+          <value>NO SUPP HEAT</value>
+          <display_name>NO SUPP HEAT</display_name>
+        </choice>
+        <choice>
+          <value>autosize</value>
+          <display_name>autosize</display_name>
+        </choice>
+        <choice>
+          <value>5 kBtu/hr</value>
+          <display_name>5 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>10 kBtu/hr</value>
+          <display_name>10 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>15 kBtu/hr</value>
+          <display_name>15 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>20 kBtu/hr</value>
+          <display_name>20 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>25 kBtu/hr</value>
+          <display_name>25 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>30 kBtu/hr</value>
+          <display_name>30 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>35 kBtu/hr</value>
+          <display_name>35 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>40 kBtu/hr</value>
+          <display_name>40 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>45 kBtu/hr</value>
+          <display_name>45 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>50 kBtu/hr</value>
+          <display_name>50 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>55 kBtu/hr</value>
+          <display_name>55 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>60 kBtu/hr</value>
+          <display_name>60 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>65 kBtu/hr</value>
+          <display_name>65 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>70 kBtu/hr</value>
+          <display_name>70 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>75 kBtu/hr</value>
+          <display_name>75 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>80 kBtu/hr</value>
+          <display_name>80 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>85 kBtu/hr</value>
+          <display_name>85 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>90 kBtu/hr</value>
+          <display_name>90 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>95 kBtu/hr</value>
+          <display_name>95 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>100 kBtu/hr</value>
+          <display_name>100 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>105 kBtu/hr</value>
+          <display_name>105 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>110 kBtu/hr</value>
+          <display_name>110 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>115 kBtu/hr</value>
+          <display_name>115 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>120 kBtu/hr</value>
+          <display_name>120 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>125 kBtu/hr</value>
+          <display_name>125 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>130 kBtu/hr</value>
+          <display_name>130 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>135 kBtu/hr</value>
+          <display_name>135 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>140 kBtu/hr</value>
+          <display_name>140 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>145 kBtu/hr</value>
+          <display_name>145 kBtu/hr</display_name>
+        </choice>
+        <choice>
+          <value>150 kBtu/hr</value>
+          <display_name>150 kBtu/hr</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -384,28 +532,34 @@
       <checksum>1975D10A</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C4250AF8</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached_fbsmt_room_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>F191465A</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>838E9F01</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>313E10AB</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4F1113E0</checksum>
+      <checksum>3BCBA48E</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3B7DA3B8</checksum>
+      <checksum>ABE8423E</checksum>
     </file>
     <file>
       <version>
@@ -416,25 +570,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>152529AF</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <checksum>A41DF19B</checksum>
     </file>
     <file>
       <filename>process_mini_split_heat_pump_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>1F04D89F</checksum>
+      <checksum>88BE4FE1</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>520A6207</checksum>
+      <checksum>B9256575</checksum>
     </file>
   </files>
 </measure>

@@ -174,6 +174,14 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     miniSplitCoolingOutputCapacity.setDefaultValue(Constants.SizingAuto)
     args << miniSplitCoolingOutputCapacity
 
+    #make an argument for entering baseboard efficiency
+    baseboardeff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("baseboardeff",true)
+    baseboardeff.setDisplayName("Supplemental Efficiency")
+    baseboardeff.setUnits("Btu/Btu")
+    baseboardeff.setDescription("The efficiency of the supplemental electric baseboard.")
+    baseboardeff.setDefaultValue(1.0)
+    args << baseboardeff
+
     #make a choice argument for supplemental heating output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << "NO SUPP HEAT"
@@ -181,6 +189,12 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     (5..150).step(5) do |kbtu|
       cap_display_names << "#{kbtu} kBtu/hr"
     end  
+
+    #make a string argument for furnace heating output capacity
+    baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("baseboardcap", cap_display_names, true)
+    baseboardcap.setDisplayName("Supplemental Heating Output Capacity")
+    baseboardcap.setDefaultValue(Constants.SizingAuto)
+    args << baseboardcap  
     
     return args
   end
@@ -217,6 +231,11 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
       miniSplitCoolingOutputCapacity = OpenStudio::convert(miniSplitCoolingOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
       miniSplitHeatingOutputCapacity = miniSplitCoolingOutputCapacity + miniSplitHPHeatingCapacityOffset
     end
+    baseboardEfficiency = runner.getDoubleArgumentValue("baseboardeff",user_arguments)
+    baseboardOutputCapacity = runner.getStringArgumentValue("baseboardcap",user_arguments)
+    if not baseboardOutputCapacity == Constants.SizingAuto and not baseboardOutputCapacity == "NO SUPP HEAT"
+      baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
+    end    
         
     # _processAirSystem
     
@@ -269,6 +288,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         htg_coil.setName("DX Heating Coil_#{unit_num}")
         if miniSplitCoolingOutputCapacity != Constants.SizingAuto
           htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]])
+          htg_coil.setRatedAirFlowRate(supply.HeatingCFMs[curves.mshp_indices[-1]]* miniSplitHeatingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end        
         htg_coil.setHeatingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
         htg_coil.setHeatingCapacityModifierFunctionofFlowFractionCurve(constant_cubic)        
@@ -279,6 +299,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setName("DX Cooling Coil_#{unit_num}")
         if miniSplitCoolingOutputCapacity != Constants.SizingAuto
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]])
+          clg_coil.setRatedAirFlowRate(supply.CoolingCFMs[curves.mshp_indices[-1]]* miniSplitCoolingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end        
         clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[-1])
         clg_coil.setCoolingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
@@ -465,12 +486,35 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         vrf.addTerminal(tu_vrf)
         runner.registerInfo("Added variable refrigerant flow terminal unit '#{tu_vrf.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num}")        
         
+        # Supplemental heat
+        unless baseboardOutputCapacity == "NO SUPP HEAT"
+          htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
+          htg_coil.setName("Living Zone Electric Baseboards")
+          if baseboardOutputCapacity != Constants.SizingAuto
+            htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
+          end
+          htg_coil.setEfficiency(baseboardEfficiency)
+          htg_coil.addToThermalZone(control_zone)
+          runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num}")
+        end              
+        
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
           HVAC.has_boiler(model, runner, slave_zone, true)
           HVAC.has_electric_baseboard(model, runner, slave_zone, true)
 
+          unless baseboardOutputCapacity == "NO SUPP HEAT"
+            htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
+            htg_coil.setName("FBsmt Zone Electric Baseboards")
+            if baseboardOutputCapacity != Constants.SizingAuto
+              htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
+            end
+            htg_coil.setEfficiency(baseboardEfficiency)
+            htg_coil.addToThermalZone(slave_zone)
+            runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{slave_zone.name}' of unit #{unit_num}")
+          end
+          
         end    
       
       end

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>68cbd8d9-0a8c-46d8-ae03-7294836c46b3</version_id>
-  <version_modified>20161013T202803Z</version_modified>
+  <version_id>9810205b-8f4c-4113-8f85-5cdde05ede6d</version_id>
+  <version_modified>20161014T165518Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>
@@ -150,12 +150,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4F1113E0</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -177,6 +171,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>31ABA545</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3BCBA48E</checksum>
     </file>
   </files>
 </measure>

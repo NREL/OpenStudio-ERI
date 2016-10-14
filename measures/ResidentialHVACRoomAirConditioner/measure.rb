@@ -180,6 +180,10 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         next unless Geometry.zone_is_above_grade(control_zone)
 
         # Remove existing equipment
+        existing_has_mshp = false
+        if HVAC.has_mini_split_heat_pump(model, runner, control_zone)
+          existing_has_mshp = true
+        end        
         HVAC.remove_existing_hvac_equipment(model, runner, "Room Air Conditioner", control_zone)    
       
         # _processSystemRoomAC
@@ -220,6 +224,15 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         ptac.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
         ptac.addToThermalZone(control_zone)
         runner.registerInfo("Added packaged terminal air conditioner '#{ptac.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num}")
+      
+        slave_zones.each do |slave_zone|
+
+            # Remove existing equipment
+            if existing_has_mshp
+              HVAC.has_electric_baseboard(model, runner, slave_zone, true)
+            end
+
+        end
       
       end
       

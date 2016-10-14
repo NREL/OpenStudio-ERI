@@ -242,10 +242,10 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     end
 
     #make a string argument for ashp cooling/heating output capacity
-    selected_hpcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedhpcap", cap_display_names, true)
-    selected_hpcap.setDisplayName("Cooling/Heating Output Capacity")
-    selected_hpcap.setDefaultValue(Constants.SizingAuto)
-    args << selected_hpcap
+    hpcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("hpcap", cap_display_names, true)
+    hpcap.setDisplayName("Cooling/Heating Output Capacity")
+    hpcap.setDefaultValue(Constants.SizingAuto)
+    args << hpcap
 
     #make a choice argument for supplemental heating output capacity
     cap_display_names = OpenStudio::StringVector.new
@@ -255,10 +255,10 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     end
 
     #make a string argument for supplemental heating output capacity
-    selected_supcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedsupcap", cap_display_names, true)
-    selected_supcap.setDisplayName("Supplemental Heating Output Capacity")
-    selected_supcap.setDefaultValue(Constants.SizingAuto)
-    args << selected_supcap 
+    supcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("supcap", cap_display_names, true)
+    supcap.setDisplayName("Supplemental Heating Output Capacity")
+    supcap.setDefaultValue(Constants.SizingAuto)
+    args << supcap 
     
     return args
   end #end the arguments method
@@ -300,11 +300,11 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     hpCOPCapacityDerateFactor4ton = runner.getDoubleArgumentValue("ashpCOPCapacityDerateFactor4ton",user_arguments)
     hpCOPCapacityDerateFactor5ton = runner.getDoubleArgumentValue("ashpCOPCapacityDerateFactor5ton",user_arguments)
     hpCOPCapacityDerateFactor = [hpCOPCapacityDerateFactor1ton, hpCOPCapacityDerateFactor2ton, hpCOPCapacityDerateFactor3ton, hpCOPCapacityDerateFactor4ton, hpCOPCapacityDerateFactor5ton]
-    hpOutputCapacity = runner.getStringArgumentValue("selectedhpcap",user_arguments)
+    hpOutputCapacity = runner.getStringArgumentValue("hpcap",user_arguments)
     unless hpOutputCapacity == Constants.SizingAuto
       hpOutputCapacity = OpenStudio::convert(hpOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
     end
-    supplementalOutputCapacity = runner.getStringArgumentValue("selectedsupcap",user_arguments)
+    supplementalOutputCapacity = runner.getStringArgumentValue("supcap",user_arguments)
     unless supplementalOutputCapacity == Constants.SizingAuto
       supplementalOutputCapacity = OpenStudio::convert(supplementalOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end   

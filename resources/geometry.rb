@@ -271,7 +271,7 @@ class Geometry
         if apply_multipliers
             mult = space.multiplier.to_f
         end
-        volume += OpenStudio.convert(space.floorArea * Geometry.space_height(space) * mult,"m^2","ft^2").get
+        volume += OpenStudio.convert(space.floorArea * self.space_height(space) * mult,"m^2","ft^2").get
       end
       if volume == 0 and not runner.nil?
           runner.registerError("Could not find any above-grade finished volume.")
@@ -510,6 +510,14 @@ class Geometry
         return zValueArray
     end
 
+    def self.get_z_origin_for_zone(zone)
+      z_origins = []
+      zone.spaces.each do |space|
+        z_origins << space.zOrigin
+      end
+      return z_origins.min
+    end
+    
     # Takes in a list of spaces and returns the average space height
     def self.spaces_avg_height(spaces)
         sum_height = 0
@@ -845,5 +853,32 @@ class Geometry
         end
         return true
    end
+   
+  def self.get_closest_neighbor_distance(model)
+    house_points = []
+    neighbor_points = []
+    model.getSurfaces.each do |surface|
+      next unless surface.surfaceType.downcase == "wall"
+      surface.vertices.each do |vertex|
+        house_points << OpenStudio::Point3d.new(vertex)
+      end
+    end
+    model.getShadingSurfaces.each do |shading_surface|
+      next unless shading_surface.name.to_s.downcase.include? "neighbor"
+      shading_surface.vertices.each do |vertex|
+        neighbor_points << OpenStudio::Point3d.new(vertex)
+      end
+    end
+    neighbor_offsets = []
+    house_points.each do |house_point|
+      neighbor_points.each do |neighbor_point|
+        neighbor_offsets << OpenStudio::getDistance(house_point, neighbor_point)
+      end
+    end
+    if neighbor_offsets.empty?
+      return 0
+    end    
+    return OpenStudio::convert(neighbor_offsets.min,"m","ft").get
+  end
     
 end

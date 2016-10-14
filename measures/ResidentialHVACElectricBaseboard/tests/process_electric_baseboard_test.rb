@@ -9,7 +9,7 @@ class ProcessElectricBaseboardTest < MiniTest::Test
   
   def test_branch_to_slave_zone_hardsized_electric_baseboard
     args_hash = {}
-    args_hash["selectedbaseboardcap"] = "20 kBtu/hr"
+    args_hash["baseboardcap"] = "20 kBtu/hr"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"Efficiency"=>1, "NominalCapacity"=>5861.42}
@@ -66,10 +66,10 @@ class ProcessElectricBaseboardTest < MiniTest::Test
   
   def test_retrofit_replace_mshp
     args_hash = {}
-    expected_num_del_objects = {"FanOnOff"=>1, "AirConditionerVariableRefrigerantFlow"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1}
+    expected_num_del_objects = {"FanOnOff"=>1, "AirConditionerVariableRefrigerantFlow"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"Efficiency"=>1, "NominalCapacity"=>5861.42}
-    _test_measure("singlefamily_detached_fbsmt_mshp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    _test_measure("singlefamily_detached_fbsmt_mshp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
   def test_retrofit_replace_furnace_central_air_conditioner

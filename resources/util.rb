@@ -8,7 +8,7 @@ class HelperMethods
         !!Float(str) rescue false
     end
     
-    def self.remove_object_from_idf_based_on_name(workspace, name_s, object_s, runner=nil)
+    def self.remove_object_from_idf_based_on_name(workspace, name_s, object_s, runner=nil) # TODO: remove after testing new airflow measure
       workspace.getObjectsByType(object_s.to_IddObjectType).each do |str|
         n = str.getString(0).to_s
         name_s.each do |name|
@@ -22,6 +22,15 @@ class HelperMethods
         end
       end
       return workspace
+    end    
+    
+    def self.remove_object_from_osm_based_on_name(model, object_type, names)
+      model.send("get#{object_type}s").each do |object|
+        names.each do |name|
+          next unless object.name.to_s.downcase.include? name.downcase
+          object.remove
+        end
+      end
     end
     
     def self.eplus_fuel_map(fuel)

@@ -252,6 +252,10 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # Remove existing equipment
+        existing_has_mshp = false
+        if HVAC.has_mini_split_heat_pump(model, runner, control_zone)
+          existing_has_mshp = true
+        end
         htg_coil = HVAC.remove_existing_hvac_equipment(model, runner, "Central Air Conditioner", control_zone)
       
         # _processCurvesDXCooling
@@ -375,6 +379,11 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
         slave_zones.each do |slave_zone|
 
+            # Remove existing equipment
+            if existing_has_mshp
+              HVAC.has_electric_baseboard(model, runner, slave_zone, true)
+            end
+        
             diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
             diffuser_fbsmt.setName("FBsmt Zone Direct Air")
             # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
