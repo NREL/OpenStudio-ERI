@@ -62,7 +62,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     furring_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_rvalue", true)
     furring_rvalue.setDisplayName("Furring Insulation R-value")
     furring_rvalue.setUnits("hr-ft^2-R/Btu")
-    furring_rvalue.setDescription("R-value of the insulation filling the furring cavity.")
+    furring_rvalue.setDescription("R-value of the insulation filling the furring cavity. Enter zero for no furring strips.")
     furring_rvalue.setDefaultValue(0.0)
     args << furring_rvalue
     
@@ -70,7 +70,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     furring_cavity_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_cavity_depth", true)
     furring_cavity_depth.setDisplayName("Furring Cavity Depth")
     furring_cavity_depth.setUnits("in")
-    furring_cavity_depth.setDescription("The depth of the interior furring cavity. Use zero for no furring strips.")
+    furring_cavity_depth.setDescription("The depth of the interior furring cavity. Enter zero for no furring strips.")
     furring_cavity_depth.setDefaultValue(1.0)
     args << furring_cavity_depth 
     
@@ -78,7 +78,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     furring_spacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_spacing", true)
     furring_spacing.setDisplayName("Furring Stud Spacing")
     furring_spacing.setUnits("in")
-    furring_spacing.setDescription("Spacing of studs in the furring.")
+    furring_spacing.setDescription("Spacing of studs in the furring. Enter zero for no furring strips.")
     furring_spacing.setDefaultValue(24.0)
     args << furring_spacing  
         
@@ -146,8 +146,8 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
         runner.registerError("Furring Cavity Depth must be greater than or equal to 0.")
         return false
     end
-    if cmuFurringStudSpacing <= 0.0
-        runner.registerError("Furring Stud Spacing must be greater than 0.")
+    if cmuFurringStudSpacing < 0.0
+        runner.registerError("Furring Stud Spacing must be greater than or equal to 0.")
         return false
     end
 

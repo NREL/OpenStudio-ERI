@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>3674993c-9449-4ba0-b777-0f0d76625c61</version_id>
-  <version_modified>20161013T202806Z</version_modified>
+  <version_id>a6cee7b0-e788-44d0-b4b6-80c46eed2679</version_id>
+  <version_modified>20161014T162240Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
@@ -53,7 +53,7 @@
     <argument>
       <name>furring_rvalue</name>
       <display_name>Furring Insulation R-value</display_name>
-      <description>R-value of the insulation filling the furring cavity.</description>
+      <description>R-value of the insulation filling the furring cavity. Enter zero for no furring strips.</description>
       <type>Double</type>
       <units>hr-ft^2-R/Btu</units>
       <required>true</required>
@@ -63,7 +63,7 @@
     <argument>
       <name>furring_cavity_depth</name>
       <display_name>Furring Cavity Depth</display_name>
-      <description>The depth of the interior furring cavity. Use zero for no furring strips.</description>
+      <description>The depth of the interior furring cavity. Enter zero for no furring strips.</description>
       <type>Double</type>
       <units>in</units>
       <required>true</required>
@@ -73,7 +73,7 @@
     <argument>
       <name>furring_spacing</name>
       <display_name>Furring Stud Spacing</display_name>
-      <description>Spacing of studs in the furring.</description>
+      <description>Spacing of studs in the furring. Enter zero for no furring strips.</description>
       <type>Double</type>
       <units>in</units>
       <required>true</required>
@@ -115,10 +115,16 @@
       <checksum>4F1113E0</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>838E9F01</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E35CC0A6</checksum>
+      <checksum>520A6207</checksum>
     </file>
     <file>
       <version>
@@ -129,13 +135,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A1017DBE</checksum>
+      <checksum>214CB83D</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CDD25A07</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7486DA3F</checksum>
+    </file>
+    <file>
+      <filename>CMU_Test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <usage_type>test</usage_type>
+      <checksum>326E3F09</checksum>
     </file>
   </files>
 </measure>

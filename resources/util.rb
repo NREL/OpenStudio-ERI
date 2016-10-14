@@ -449,7 +449,7 @@ class Material
     
     def self.DefaultExteriorFinish
         thick_in = 0.375
-        return self.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, k_in=thick_in/0.6, rho=11.1, cp=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
+        return self.new(name=Constants.MaterialWallExtFinish, thick_in=thick_in, mat_base=nil, k_in=thick_in/0.605, rho=11.1, cp=0.25, tAbs=0.9, sAbs=0.3, vAbs=0.3)
     end
     
     def self.DefaultFloorCovering
@@ -578,17 +578,30 @@ class Construction
         @remove_materials << name
     end
     
-    def print_layers(runner)
+    def print_layers(runner=nil)
+        infos = []
         @path_fracs.each do |path_frac|
-            runner.registerInfo("path_frac: #{path_frac.round(5).to_s}")
+            infos << "path_frac: #{path_frac.round(5).to_s}"
         end
-        runner.registerInfo("======")
-        @layers_materials.each do |layer_materials|
-            runner.registerInfo("layer thick: #{OpenStudio::convert(layer_materials[0].thick_in,"in","ft").get.round(5).to_s}")
-            layer_materials.each do |mat|
-                runner.registerInfo("layer cond:  #{OpenStudio::convert(mat.k_in,"in","ft").get.round(5).to_s}")
+        infos << "======"
+        @layers_materials.each_with_index do |layer_materials, idx|
+            if @layers_names[idx].nil?
+                infos << "layer name: #{layer_materials[0].name.to_s}"
+            else
+                infos << "layer name: #{@layers_names[idx]}"
             end
-            runner.registerInfo("------")
+            infos << "layer thick: #{OpenStudio::convert(layer_materials[0].thick_in,"in","ft").get.round(5).to_s}"
+            layer_materials.each do |mat|
+                infos << "layer cond:  #{OpenStudio::convert(mat.k_in,"in","ft").get.round(5).to_s}"
+            end
+            infos << "------"
+        end
+        infos.each do |i|
+            if !runner.nil?
+                runner.registerInfo(i)
+            else
+                puts i
+            end
         end
     end
     
@@ -780,32 +793,29 @@ class Construction
             r_overall = assembly_rvalue(runner)
             
             # Calculate individual R-values for each layer
-            # Also calculate sum of R-values for individual parallel path layers
-            sum_r_parallels = 0
+            sum_r_all_layers = 0
+            sum_r_parallel_layers = 0
             layer_rvalues = []
             @layers_materials.each do |layer_materials|
-                r_path = 0
-                layer_materials.each do |layer_material|
-                    r_path += layer_material.thick / layer_material.k
+                u_path = 0
+                layer_materials.each_with_index do |layer_material, idx|
+                    if layer_materials.size > 1
+                        u_path += @path_fracs[idx] / (layer_material.thick / layer_material.k)
+                    else
+                        u_path += 1.0 / (layer_material.thick / layer_material.k)
+                    end
                 end
+                r_path = 1.0 / u_path
                 layer_rvalues << r_path
+                sum_r_all_layers += r_path
                 if layer_materials.size > 1
-                    sum_r_parallels += r_path
-                end
-            end
-            
-            # Subtract out series layers to calculate R-value across all parallel 
-            # path layers
-            r_parallel = r_overall
-            @layers_materials.each_with_index do |layer_materials,layer_num|
-                if layer_materials.size == 1
-                    r_parallel -= layer_rvalues[layer_num]
+                    sum_r_parallel_layers += r_path
                 end
             end
             
             # Material R-value
             # Apportion R-value to the current parallel path layer
-            mat.rvalue = layer_rvalues[curr_layer_num] / sum_r_parallels * r_parallel
+            mat.rvalue = layer_rvalues[curr_layer_num] + (r_overall - sum_r_all_layers) * layer_rvalues[curr_layer_num] / sum_r_parallel_layers
             
             # Material thickness and conductivity
             mat.thick_in = curr_layer_materials[0].thick_in # All paths have equal thickness
