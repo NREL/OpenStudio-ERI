@@ -271,8 +271,6 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
           clg_coil.setName("DX Cooling Coil")
           if acOutputCapacity != Constants.SizingAuto
             clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(acOutputCapacity,"Btu/h","W").get)
-          end
-          if acOutputCapacity != Constants.SizingAuto
             clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
             clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * acOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
           end
