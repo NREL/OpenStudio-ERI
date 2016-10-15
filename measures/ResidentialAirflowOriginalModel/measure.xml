@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>d643be2f-9731-404d-8dcf-f12898437532</version_id>
-  <version_modified>20161014T184652Z</version_modified>
+  <version_id>6451ee93-8e32-4228-a466-3ac8dfcf3882</version_id>
+  <version_modified>20161015T150544Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
@@ -552,48 +552,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>singlefamily_slab_location_neighbors_beds_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B2DEB4B1</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_slab_location_beds_electric_baseboard.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8B7D787A</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_slab_location_beds_furnace_clothes_dryer.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A3CDCEF8</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_garage_location_beds_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>70BF22DE</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_ufbasement_location_beds_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>66D9CFCB</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_crawl_location_beds_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BCC6011F</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbasement_location_beds_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C3D08AA7</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -604,12 +562,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>078F0169</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_slab_location_beds_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4AE5893D</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
@@ -647,12 +599,6 @@
       <checksum>B9256575</checksum>
     </file>
     <file>
-      <filename>singlefamily_slab_location_beds_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>66D6136A</checksum>
-    </file>
-    <file>
       <filename>airflow_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -663,6 +609,60 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5E54715B</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_slab_location_neighbors_beds_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2EEBAEFE</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_slab_location_beds_electric_baseboard.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A77A4AF7</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_slab_location_beds_furnace_clothes_dryer.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>700F9C6F</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_garage_location_beds_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>13357FC6</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_ufbasement_location_beds_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>786DDAD4</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_crawl_location_beds_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7FB154D3</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbasement_location_beds_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C00D9885</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_slab_location_beds_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4A53C616</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_slab_location_beds_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9F6356E9</checksum>
     </file>
   </files>
 </measure>

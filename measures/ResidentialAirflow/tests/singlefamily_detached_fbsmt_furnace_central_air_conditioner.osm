@@ -110,10 +110,10 @@ OS:ClimateZones,
 
 OS:SizingPeriod:DesignDay,
   {47212e70-32c6-49c7-b0b6-c56e46eebe89}, !- Handle
-  Denver Intl Ap Ann Clg .4% Condns DB=>MWB, !- Name
-  34.6,                                   !- Maximum Dry-Bulb Temperature {C}
+  Denver Intl Ap Ann Clg 1% Condns DB=>MWB, !- Name
+  33.2,                                   !- Maximum Dry-Bulb Temperature {C}
   15.2,                                   !- Daily Dry-Bulb Temperature Range {deltaC}
-  15.7,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  15.6,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
   83011,                                  !- Barometric Pressure {Pa}
   4.2,                                    !- Wind Speed {m/s}
   80,                                     !- Wind Direction {deg}
@@ -136,10 +136,10 @@ OS:SizingPeriod:DesignDay,
 
 OS:SizingPeriod:DesignDay,
   {bfc9e44e-fcec-4d13-b5e6-e130c74dc5c6}, !- Handle
-  Denver Intl Ap Ann Clg .4% Condns WB=>MDB, !- Name
-  27.3,                                   !- Maximum Dry-Bulb Temperature {C}
+  Denver Intl Ap Ann Clg 1% Condns WB=>MDB, !- Name
+  27,                                     !- Maximum Dry-Bulb Temperature {C}
   15.2,                                   !- Daily Dry-Bulb Temperature Range {deltaC}
-  18.3,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  17.6,                                   !- Humidity Indicating Conditions at Maximum Dry-Bulb
   83011,                                  !- Barometric Pressure {Pa}
   4.2,                                    !- Wind Speed {m/s}
   80,                                     !- Wind Direction {deg}
@@ -162,10 +162,10 @@ OS:SizingPeriod:DesignDay,
 
 OS:SizingPeriod:DesignDay,
   {51faf1b4-b0b3-4504-a9f4-6f00122a54a3}, !- Handle
-  Denver Intl Ap Ann Htg 99.6% Condns DB, !- Name
-  -17.4,                                  !- Maximum Dry-Bulb Temperature {C}
+  Denver Intl Ap Ann Htg 99% Condns DB,   !- Name
+  -14,                                    !- Maximum Dry-Bulb Temperature {C}
   0,                                      !- Daily Dry-Bulb Temperature Range {deltaC}
-  -17.4,                                  !- Humidity Indicating Conditions at Maximum Dry-Bulb
+  -14,                                    !- Humidity Indicating Conditions at Maximum Dry-Bulb
   83011,                                  !- Barometric Pressure {Pa}
   3.3,                                    !- Wind Speed {m/s}
   160,                                    !- Wind Direction {deg}
@@ -181,7 +181,6 @@ OS:SizingPeriod:DesignDay,
   DefaultMultipliers,                     !- Dry-Bulb Temperature Range Modifier Type
   ,                                       !- Dry-Bulb Temperature Range Modifier Schedule Name
   ASHRAEClearSky;                         !- Solar Model Indicator
-
 OS:Site:WaterMainsTemperature,
   {6634ce79-e64f-487e-b3c7-096656e34b67}, !- Handle
   Correlation,                            !- Calculation Method
