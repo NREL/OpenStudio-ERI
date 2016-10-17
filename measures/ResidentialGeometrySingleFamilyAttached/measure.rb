@@ -109,7 +109,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     use_zone_mult.setDisplayName("Use Zone Multipliers?")
     use_zone_mult.setDescription("Model only one interior unit with its thermal zone multiplier equal to the number of interior units.")
     use_zone_mult.setDefaultValue(false)
-    args << use_zone_mult    
+    args << use_zone_mult
     
     return args
   end
@@ -557,7 +557,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     
     unit_spaces.each do |unit_num, spaces|
       Geometry.set_unit_beds_baths_spaces(model, unit_num, spaces)
-    end    
+    end
     
     # put all of the spaces in the model into a vector
     spaces = OpenStudio::Model::SpaceVector.new
@@ -569,7 +569,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     OpenStudio::Model.intersectSurfaces(spaces)
     OpenStudio::Model.matchSurfaces(spaces)
     
-    if use_zone_mult
+    if use_zone_mult and ((num_units > 3 and not has_rear_units) or (num_units > 7 and has_rear_units))
       (2..num_units).to_a.each do |unit_num|
 
         if not has_rear_units
@@ -651,10 +651,10 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
         
         end
         
-      end      
+      end
     end
-    
-    if use_zone_mult
+      
+    if use_zone_mult and ((num_units > 3 and not has_rear_units) or (num_units > 7 and has_rear_units))  
       if not has_rear_units
         adjacent_surfaces = {}
         nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 2, runner)        
@@ -683,7 +683,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
         # front
         if num_units % 2 == 0
           adjacent_surfaces = {}
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)        
+          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)
           unit_spaces.each do |space|
             space.surfaces.each do |surface|
               next unless surface.surfaceType.downcase == "wall"
@@ -772,7 +772,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
                 break
               end
             end
-          end        
+          end
         end
       end
     end
@@ -781,7 +781,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       next unless surface.outsideBoundaryCondition.downcase == "surface"
       next if surface.adjacentSurface.is_initialized
       surface.setOutsideBoundaryCondition("Adiabatic")
-    end    
+    end
     
     if use_zone_mult
       if num_units >= 3 and not has_rear_units
@@ -789,7 +789,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       elsif num_units >= 6 and has_rear_units
         num_units = 6
       end
-    end    
+    end
     
     # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)
