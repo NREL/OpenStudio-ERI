@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>5a7ae205-bdc2-4daf-b29e-b6f0a59366a6</uid>
-  <version_id>13c57488-80bf-4801-bb6c-f22593480a98</version_id>
-  <version_modified>20161018T190134Z</version_modified>
+  <version_id>43449d76-cc11-49ee-9fcb-7d0962c424cf</version_id>
+  <version_modified>20161018T224930Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
@@ -662,7 +662,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4D0A9290</checksum>
+      <checksum>7980FE45</checksum>
     </file>
   </files>
 </measure>

@@ -5,98 +5,122 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
+class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
 
-  def osm_geo
+  def osm_geo_slab
     return "2000sqft_2story_SL_UA.osm"
   end
-  
-  def osm_geo_layers
-    return "2000sqft_2story_SL_UA_layers.osm"
+
+  def osm_geo_slab_garage
+    return "2000sqft_2story_SL_UA_Grg.osm"
   end
 
-  def test_add_uninsulated_2x4
+  def osm_geo_crawl
+    return "2000sqft_2story_CS_UA.osm"
+  end
+
+  def osm_geo_crawl_garage
+    return "2000sqft_2story_CS_UA_Grg.osm"
+  end
+
+  def osm_geo_finished_basement
+    return "2000sqft_2story_FB_UA.osm"
+  end
+
+  def osm_geo_finished_basement_garage
+    return "2000sqft_2story_FB_UA_Grg.osm"
+  end
+
+  def osm_geo_unfinished_basement
+    return "2000sqft_2story_UB_UA.osm"
+  end
+
+  def osm_geo_unfinished_basement_garage
+    return "2000sqft_2story_UB_UA_Grg.osm"
+  end
+
+  def test_add_uninsulated
     args_hash = {}
-    args_hash["cavity_rvalue"] = 0
-    args_hash["install_grade"] = "III" # no insulation, shouldn't apply
-    args_hash["cavity_depth"] = 3.5
-    args_hash["ins_fills_cavity"] = "false"
-    args_hash["framing_factor"] = 0.25
-    args_hash["correction_factor"] = 0.5 # no insulation, shouldn't apply
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0889, "LayerConductivity"=>0.5049, "LayerDensity"=>1.1476, "LayerSpecificHeat"=>1004.88, "LayerIndex"=>0}
-    _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    expected_num_new_objects = {"Material"=>3, "Construction"=>1}
+    expected_values = {"LayerRValue"=>0.0254/0.02949+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2}
+    _test_measure(osm_geo_slab, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
-  def test_add_r13_2x4_gr2
+  def test_add_2ft_r5_perimeter_r5_gap
     args_hash = {}
-    args_hash["cavity_rvalue"] = 13
-    args_hash["install_grade"] = "II"
-    args_hash["cavity_depth"] = 3.5
-    args_hash["ins_fills_cavity"] = "true"
-    args_hash["framing_factor"] = 0.25
-    args_hash["correction_factor"] = 0.46
+    args_hash["perim_r"] = 5
+    args_hash["perim_width"] = 2
+    args_hash["gap_r"] = 5
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0889, "LayerConductivity"=>0.087, "LayerDensity"=>44.989, "LayerSpecificHeat"=>1046.734, "LayerIndex"=>0}
-    _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    expected_num_new_objects = {"Material"=>3, "Construction"=>1}
+    expected_values = {"LayerRValue"=>0.0254/0.01838+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2}
+    _test_measure(osm_geo_slab, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
-  def test_add_r13_2x4_gr2_to_layers
+  def test_add_4ft_r15_exterior
     args_hash = {}
-    args_hash["cavity_rvalue"] = 13
-    args_hash["install_grade"] = "II"
-    args_hash["cavity_depth"] = 3.5
-    args_hash["ins_fills_cavity"] = "true"
-    args_hash["framing_factor"] = 0.25
-    args_hash["correction_factor"] = 0.46
-    expected_num_del_objects = {"Construction"=>1}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0889, "LayerConductivity"=>0.087, "LayerDensity"=>44.989, "LayerSpecificHeat"=>1046.734, "LayerIndex"=>2}
-    _test_measure(osm_geo_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    args_hash["ext_depth"] = 4
+    args_hash["ext_r"] = 15
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>3, "Construction"=>1}
+    expected_values = {"LayerRValue"=>0.0254/0.00845+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2}
+    _test_measure(osm_geo_slab, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
-  def test_argument_error_cavity_rvalue_negative
+  def test_add_whole_slab_r20_r10_gap
     args_hash = {}
-    args_hash["cavity_rvalue"] = -1
+    args_hash["whole_r"] = 20
+    args_hash["gap_r"] = 10
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>3, "Construction"=>1}
+    expected_values = {"LayerRValue"=>0.0254/0.00571+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2}
+    _test_measure(osm_geo_slab, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+
+  def test_add_whole_slab_r20_r10_gap_garage
+    args_hash = {}
+    args_hash["whole_r"] = 20
+    args_hash["gap_r"] = 10
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>3, "Construction"=>1}
+    expected_values = {"LayerRValue"=>0.0254/0.00743+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2}
+    _test_measure(osm_geo_slab_garage, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+
+  def ___test_argument_error_cavity_r_negative
+    args_hash = {}
+    args_hash["cavity_r"] = -1
     result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Insulation Nominal R-value must be greater than or equal to 0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Insulation Installed R-value must be greater than or equal to 0.")
   end
     
-  def test_argument_error_cavity_depth_zero
+  def ___test_argument_error_cavity_depth_negative
+    args_hash = {}
+    args_hash["cavity_depth"] = -1
+    result = _test_error(osm_geo, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Depth must be greater than 0.")
+  end
+
+  def ___test_argument_error_cavity_depth_zero
     args_hash = {}
     args_hash["cavity_depth"] = 0
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Depth must be greater than 0.")
   end
 
-  def test_argument_error_framing_factor_negative
+  def ___test_argument_error_framing_factor_negative
     args_hash = {}
     args_hash["framing_factor"] = -1
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
   end
 
-  def test_argument_error_framing_factor_eq_1
+  def ___test_argument_error_framing_factor_eq_1
     args_hash = {}
     args_hash["framing_factor"] = 1.0
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
-  end
-
-  def test_argument_error_correction_factor_negative
-    args_hash = {}
-    args_hash["correction_factor"] = -1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Correction Factor must be greater than or equal to 0 and less than or equal to 1.")
-  end
-  
-  def test_argument_error_correction_factor_gt_1
-    args_hash = {}
-    args_hash["correction_factor"] = 1.1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Correction Factor must be greater than or equal to 0 and less than or equal to 1.")
   end
 
   def test_not_applicable_no_geometry
@@ -104,11 +128,41 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
     _test_na(nil, args_hash)
   end
 
+  def test_not_applicable_crawl
+    args_hash = {}
+    _test_na(osm_geo_crawl, args_hash)
+  end
+
+  def test_not_applicable_crawl_garage
+    args_hash = {}
+    _test_na(osm_geo_crawl_garage, args_hash)
+  end
+
+  def test_not_applicable_finished_basement
+    args_hash = {}
+    _test_na(osm_geo_finished_basement, args_hash)
+  end
+
+  def test_not_applicable_finished_basement_garage
+    args_hash = {}
+    _test_na(osm_geo_finished_basement_garage, args_hash)
+  end
+  
+  def test_not_applicable_unfinished_basement
+    args_hash = {}
+    _test_na(osm_geo_unfinished_basement, args_hash)
+  end
+
+  def test_not_applicable_unfinished_basement_garage
+    args_hash = {}
+    _test_na(osm_geo_unfinished_basement_garage, args_hash)
+  end
+
   private
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessConstructionsWallsExteriorSteelStud.new
+    measure = ProcessConstructionsFoundationsFloorsSlab.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -144,7 +198,7 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
   
   def _test_na(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessConstructionsWallsExteriorSteelStud.new
+    measure = ProcessConstructionsFoundationsFloorsSlab.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -180,7 +234,7 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
 
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     # create an instance of the measure
-    measure = ProcessConstructionsWallsExteriorSteelStud.new
+    measure = ProcessConstructionsFoundationsFloorsSlab.new
 
     # check for standard methods
     assert(!measure.name.empty?)
@@ -230,15 +284,14 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
     
-    actual_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerIndex"=>0}
+    actual_values = {"LayerRValue"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerIndex"=>0}
     all_new_objects.each do |obj_type, new_objects|
         new_objects.each do |new_object|
             next if not new_object.respond_to?("to_#{obj_type}")
             new_object = new_object.public_send("to_#{obj_type}").get
             if obj_type == "Material"
                 new_object = new_object.to_StandardOpaqueMaterial.get
-                actual_values["LayerThickness"] += new_object.thickness
-                actual_values["LayerConductivity"] += new_object.conductivity
+                actual_values["LayerRValue"] += new_object.thickness/new_object.conductivity
                 actual_values["LayerDensity"] += new_object.density
                 actual_values["LayerSpecificHeat"] += new_object.specificHeat
             elsif obj_type == "Construction"
@@ -250,9 +303,8 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
             end
         end
     end
-    assert_in_epsilon(expected_values["LayerThickness"], actual_values["LayerThickness"], 0.01)
-    assert_in_epsilon(expected_values["LayerConductivity"], actual_values["LayerConductivity"], 0.01)
-    assert_in_epsilon(expected_values["LayerDensity"], actual_values["LayerDensity"], 0.05)
+    assert_in_epsilon(expected_values["LayerRValue"], actual_values["LayerRValue"], 0.01)
+    assert_in_epsilon(expected_values["LayerDensity"], actual_values["LayerDensity"], 0.01)
     assert_in_epsilon(expected_values["LayerSpecificHeat"], actual_values["LayerSpecificHeat"], 0.01)
     assert_in_epsilon(expected_values["LayerIndex"], actual_values["LayerIndex"], 0.01)
     

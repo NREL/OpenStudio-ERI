@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_propane</name>
   <uid>202bfb71-76e0-4615-867b-5d51e8e25223</uid>
-  <version_id>32fcded9-08ae-4305-a453-5adcc6205d9f</version_id>
-  <version_modified>20161018T190143Z</version_modified>
+  <version_id>99ef7e3c-1f54-41a7-9565-993cfea29a17</version_id>
+  <version_modified>20161018T224936Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankPropane</class_name>
   <display_name>Set Residential Propane Tank Water Heater</display_name>
@@ -289,7 +289,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4D0A9290</checksum>
+      <checksum>7980FE45</checksum>
     </file>
   </files>
 </measure>

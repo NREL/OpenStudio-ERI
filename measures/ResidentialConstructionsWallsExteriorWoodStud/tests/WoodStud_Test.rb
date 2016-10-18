@@ -124,9 +124,6 @@ class ProcessConstructionsWallsExteriorWoodStudTest < MiniTest::Test
 
   def test_not_applicable_no_geometry
     args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
     _test_na(nil, args_hash)
   end
 

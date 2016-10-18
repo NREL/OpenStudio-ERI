@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_minisplit</name>
   <uid>257a8095-0b3d-4ac7-acf5-c537ecbaa945</uid>
-  <version_id>a1953207-33d1-4cf5-b9bc-81ad28dbbf29</version_id>
-  <version_modified>20161018T194028Z</version_modified>
+  <version_id>3fb38f9b-9f7d-47fd-99a1-8af279612bc4</version_id>
+  <version_modified>20161018T224937Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump - Original Model</display_name>
@@ -347,16 +347,16 @@
       <checksum>E4899227</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4D0A9290</checksum>
-    </file>
-    <file>
       <filename>process_minisplit_heat_pump_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>ACEF4A10</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7980FE45</checksum>
     </file>
   </files>
 </measure>

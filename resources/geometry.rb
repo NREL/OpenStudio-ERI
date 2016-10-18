@@ -621,6 +621,7 @@ class Geometry
                 point_two = OpenStudio::Point3d.new(v1[1][0],v1[1][1],v1[1][2])
                 length = OpenStudio::Vector3d.new(point_one - point_two).length
                 perimeter += length
+                break
             end
         end
     
