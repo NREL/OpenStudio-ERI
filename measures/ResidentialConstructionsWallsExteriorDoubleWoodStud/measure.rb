@@ -26,64 +26,62 @@ class ProcessConstructionsWallsExteriorDoubleWoodStud < OpenStudio::Ruleset::Mod
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
 	#make a double argument for nominal R-value of installed cavity insulation
-	userdefined_instcavr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedinstcavr", true)
-	userdefined_instcavr.setDisplayName("Cavity Insulation Nominal R-value")
-	userdefined_instcavr.setUnits("hr-ft^2-R/Btu")
-	userdefined_instcavr.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
-	userdefined_instcavr.setDefaultValue(33.0)
-	args << userdefined_instcavr
+	cavity_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_rvalue", true)
+	cavity_rvalue.setDisplayName("Cavity Insulation Nominal R-value")
+	cavity_rvalue.setUnits("hr-ft^2-R/Btu")
+	cavity_rvalue.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
+	cavity_rvalue.setDefaultValue(33.0)
+	args << cavity_rvalue
     
-	#make a choice argument for model objects
+	#make a choice argument for wall cavity insulation installation grade
 	installgrade_display_names = OpenStudio::StringVector.new
 	installgrade_display_names << "I"
 	installgrade_display_names << "II"
 	installgrade_display_names << "III"
-	
-	#make a choice argument for wall cavity insulation installation grade
-	selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedinstallgrade", installgrade_display_names, true)
-	selected_installgrade.setDisplayName("Cavity Install Grade")
-	selected_installgrade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
-    selected_installgrade.setDefaultValue("I")
-	args << selected_installgrade	
+	install_grade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("install_grade", installgrade_display_names, true)
+	install_grade.setDisplayName("Cavity Install Grade")
+	install_grade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    install_grade.setDefaultValue("I")
+	args << install_grade	
 
     #make a double argument for stud depth
-    selected_studdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedstuddepth", true)
-    selected_studdepth.setDisplayName("Stud Depth")
-	selected_studdepth.setUnits("in")
-	selected_studdepth.setDescription("Depth of the studs. 3.5\" for 2x4s, 5.5\" for 2x6s, etc. The total cavity depth of the double stud wall = (2 x stud depth) + gap depth.")
-	selected_studdepth.setDefaultValue("3.5")
-    args << selected_studdepth
+    stud_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("stud_depth", true)
+    stud_depth.setDisplayName("Stud Depth")
+	stud_depth.setUnits("in")
+	stud_depth.setDescription("Depth of the studs. 3.5\" for 2x4s, 5.5\" for 2x6s, etc. The total cavity depth of the double stud wall = (2 x stud depth) + gap depth.")
+	stud_depth.setDefaultValue("3.5")
+    args << stud_depth
     
     #make a double argument for gap depth
-    userdefined_gapdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedgapdepth", true)
-    userdefined_gapdepth.setDisplayName("Gap Depth")
-	userdefined_gapdepth.setUnits("in")
-	userdefined_gapdepth.setDescription("Depth of the gap between walls.")
-	userdefined_gapdepth.setDefaultValue(3.5)
-    args << userdefined_gapdepth	
+    gap_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gap_depth", true)
+    gap_depth.setDisplayName("Gap Depth")
+	gap_depth.setUnits("in")
+	gap_depth.setDescription("Depth of the gap between walls.")
+	gap_depth.setDefaultValue(3.5)
+    args << gap_depth	
 	
 	#make a double argument for framing factor
-	selected_ffactor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedffactor", true)
-	selected_ffactor.setDisplayName("Framing Factor")
-	selected_ffactor.setUnits("frac")
-	selected_ffactor.setDescription("The fraction of a wall assembly that is comprised of structural framing for the individual (inner and outer) stud walls.")
-	selected_ffactor.setDefaultValue("0.22")
-	args << selected_ffactor
+	framing_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", true)
+	framing_factor.setDisplayName("Framing Factor")
+	framing_factor.setUnits("frac")
+	framing_factor.setDescription("The fraction of a wall assembly that is comprised of structural framing for the individual (inner and outer) stud walls.")
+	framing_factor.setDefaultValue("0.22")
+	args << framing_factor
 
 	#make a double argument for framing spacing
-	selected_spacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("selectedspacing", true)
-	selected_spacing.setDisplayName("Framing Spacing")
-	selected_spacing.setUnits("in")
-	selected_spacing.setDescription("The on-center spacing between framing in a wall assembly.")
-	selected_spacing.setDefaultValue("24")
-	args << selected_spacing
+	framing_spacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_spacing", true)
+	framing_spacing.setDisplayName("Framing Spacing")
+	framing_spacing.setUnits("in")
+	framing_spacing.setDescription("The on-center spacing between framing in a wall assembly.")
+	framing_spacing.setDefaultValue("24")
+	args << framing_spacing
 
     #make a bool argument for staggering of studs
-    userdefined_wallstaggered = OpenStudio::Ruleset::OSArgument::makeBoolArgument("userdefinedwallstaggered", true)
-    userdefined_wallstaggered.setDisplayName("Staggered Studs")
-	userdefined_wallstaggered.setDescription("Indicates that the double studs are aligned in a staggered fashion (as opposed to being center).") 
-    userdefined_wallstaggered.setDefaultValue(false)
-    args << userdefined_wallstaggered
+    is_staggered = OpenStudio::Ruleset::OSArgument::makeBoolArgument("is_staggered", true)
+    is_staggered.setDisplayName("Staggered Studs")
+	is_staggered.setDescription("Indicates that the double studs are aligned in a staggered fashion (as opposed to being center).") 
+    is_staggered.setDefaultValue(false)
+    args << is_staggered
 
     return args
   end #end the arguments method
@@ -116,13 +114,13 @@ class ProcessConstructionsWallsExteriorDoubleWoodStud < OpenStudio::Ruleset::Mod
     end 
     
     # Get inputs
-    dsWallCavityInsRvalue = runner.getDoubleArgumentValue("userdefinedinstcavr",user_arguments)
-	dsWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("selectedinstallgrade",user_arguments)]
-    dsWallStudDepth = runner.getDoubleArgumentValue("selectedstuddepth",user_arguments)
-	dsWallGapDepth = runner.getDoubleArgumentValue("userdefinedgapdepth",user_arguments)
-    dsWallFramingFactor = runner.getDoubleArgumentValue("selectedffactor",user_arguments)
-    dsWallStudSpacing = runner.getDoubleArgumentValue("selectedspacing",user_arguments)
-    dsWallIsStaggered = runner.getBoolArgumentValue("userdefinedwallstaggered",user_arguments)
+    dsWallCavityInsRvalue = runner.getDoubleArgumentValue("cavity_rvalue",user_arguments)
+	dsWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("install_grade",user_arguments)]
+    dsWallStudDepth = runner.getDoubleArgumentValue("stud_depth",user_arguments)
+	dsWallGapDepth = runner.getDoubleArgumentValue("gap_depth",user_arguments)
+    dsWallFramingFactor = runner.getDoubleArgumentValue("framing_factor",user_arguments)
+    dsWallStudSpacing = runner.getDoubleArgumentValue("framing_spacing",user_arguments)
+    dsWallIsStaggered = runner.getBoolArgumentValue("is_staggered",user_arguments)
     
     # Validate inputs
     if dsWallCavityInsRvalue <= 0.0

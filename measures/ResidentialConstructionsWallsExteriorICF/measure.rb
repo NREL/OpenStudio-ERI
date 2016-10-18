@@ -27,36 +27,36 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make a double argument for nominal R-value of the icf insulation
-    userdefined_icfinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedicfinsr", true)
-    userdefined_icfinsr.setDisplayName("Nominal Insulation R-value")
-    userdefined_icfinsr.setUnits("hr-ft^2-R/Btu")
-    userdefined_icfinsr.setDescription("R-value of each insulating layer of the form.")
-    userdefined_icfinsr.setDefaultValue(10.0)
-    args << userdefined_icfinsr
+    icf_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("icf_rvalue", true)
+    icf_rvalue.setDisplayName("Nominal Insulation R-value")
+    icf_rvalue.setUnits("hr-ft^2-R/Btu")
+    icf_rvalue.setDescription("R-value of each insulating layer of the form.")
+    icf_rvalue.setDefaultValue(10.0)
+    args << icf_rvalue
 
     #make a double argument for thickness of the icf insulation
-    userdefined_icfinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedicfinsthickness", true)
-    userdefined_icfinsthickness.setDisplayName("Insulation Thickness")
-    userdefined_icfinsthickness.setUnits("in")
-    userdefined_icfinsthickness.setDescription("Thickness of each insulating layer of the form.")
-    userdefined_icfinsthickness.setDefaultValue(2.0)
-    args << userdefined_icfinsthickness 
+    ins_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ins_thick_in", true)
+    ins_thick_in.setDisplayName("Insulation Thickness")
+    ins_thick_in.setUnits("in")
+    ins_thick_in.setDescription("Thickness of each insulating layer of the form.")
+    ins_thick_in.setDefaultValue(2.0)
+    args << ins_thick_in 
 
     #make a double argument for thickness of the concrete
-    userdefined_sipintsheathingthick = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedicfconcth", true)
-    userdefined_sipintsheathingthick.setDisplayName("Concrete Thickness")
-    userdefined_sipintsheathingthick.setUnits("in")
-    userdefined_sipintsheathingthick.setDescription("The thickness of the concrete core of the ICF.")
-    userdefined_sipintsheathingthick.setDefaultValue(4.0)
-    args << userdefined_sipintsheathingthick
+    concrete_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("concrete_thick_in", true)
+    concrete_thick_in.setDisplayName("Concrete Thickness")
+    concrete_thick_in.setUnits("in")
+    concrete_thick_in.setDescription("The thickness of the concrete core of the ICF.")
+    concrete_thick_in.setDefaultValue(4.0)
+    args << concrete_thick_in
 
     #make a double argument for framing factor
-    userdefined_framingfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedframingfrac", true)
-    userdefined_framingfrac.setDisplayName("Framing Factor")
-    userdefined_framingfrac.setUnits("frac")
-    userdefined_framingfrac.setDescription("Total fraction of the wall that is framing for windows or doors.")
-    userdefined_framingfrac.setDefaultValue(0.076)
-    args << userdefined_framingfrac 
+    framing_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", true)
+    framing_factor.setDisplayName("Framing Factor")
+    framing_factor.setUnits("frac")
+    framing_factor.setDescription("Total fraction of the wall that is framing for windows or doors.")
+    framing_factor.setDefaultValue(0.076)
+    args << framing_factor 
         
     return args
   end
@@ -89,10 +89,10 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     end     
     
     # Get inputs
-    icfInsRvalue = runner.getDoubleArgumentValue("userdefinedicfinsr",user_arguments)
-    icfInsThickness = runner.getDoubleArgumentValue("userdefinedicfinsthickness",user_arguments)
-    icfConcreteThickness = runner.getDoubleArgumentValue("userdefinedicfconcth",user_arguments)
-    icfFramingFactor = runner.getDoubleArgumentValue("userdefinedframingfrac",user_arguments)
+    icfInsRvalue = runner.getDoubleArgumentValue("icf_rvalue",user_arguments)
+    icfInsThickness = runner.getDoubleArgumentValue("ins_thick_in",user_arguments)
+    icfConcreteThickness = runner.getDoubleArgumentValue("concrete_thick_in",user_arguments)
+    icfFramingFactor = runner.getDoubleArgumentValue("framing_factor",user_arguments)
 
     # Validate inputs
     if icfInsRvalue <= 0.0

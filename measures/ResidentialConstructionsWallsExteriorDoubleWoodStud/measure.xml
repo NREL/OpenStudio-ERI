@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_double_wood_stud</name>
   <uid>d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651</uid>
-  <version_id>9cb5a6e4-efca-4962-800f-1562b0c38f97</version_id>
-  <version_modified>20161017T233839Z</version_modified>
+  <version_id>61ab4cf7-16f4-4a94-987d-d082415eb7ce</version_id>
+  <version_modified>20161018T164943Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorDoubleWoodStud</class_name>
   <display_name>Set Residential Walls - Double Wood Stud Construction</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Calculates and assigns material layer properties of double wood stud constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
-      <name>userdefinedinstcavr</name>
+      <name>cavity_rvalue</name>
       <display_name>Cavity Insulation Nominal R-value</display_name>
       <description>Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.</description>
       <type>Double</type>
@@ -21,7 +21,7 @@
       <default_value>33</default_value>
     </argument>
     <argument>
-      <name>selectedinstallgrade</name>
+      <name>install_grade</name>
       <display_name>Cavity Install Grade</display_name>
       <description>Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.</description>
       <type>Choice</type>
@@ -44,7 +44,7 @@
       </choices>
     </argument>
     <argument>
-      <name>selectedstuddepth</name>
+      <name>stud_depth</name>
       <display_name>Stud Depth</display_name>
       <description>Depth of the studs. 3.5" for 2x4s, 5.5" for 2x6s, etc. The total cavity depth of the double stud wall = (2 x stud depth) + gap depth.</description>
       <type>Double</type>
@@ -54,7 +54,7 @@
       <default_value>3.5</default_value>
     </argument>
     <argument>
-      <name>userdefinedgapdepth</name>
+      <name>gap_depth</name>
       <display_name>Gap Depth</display_name>
       <description>Depth of the gap between walls.</description>
       <type>Double</type>
@@ -64,7 +64,7 @@
       <default_value>3.5</default_value>
     </argument>
     <argument>
-      <name>selectedffactor</name>
+      <name>framing_factor</name>
       <display_name>Framing Factor</display_name>
       <description>The fraction of a wall assembly that is comprised of structural framing for the individual (inner and outer) stud walls.</description>
       <type>Double</type>
@@ -74,7 +74,7 @@
       <default_value>0.22</default_value>
     </argument>
     <argument>
-      <name>selectedspacing</name>
+      <name>framing_spacing</name>
       <display_name>Framing Spacing</display_name>
       <description>The on-center spacing between framing in a wall assembly.</description>
       <type>Double</type>
@@ -84,7 +84,7 @@
       <default_value>24</default_value>
     </argument>
     <argument>
-      <name>userdefinedwallstaggered</name>
+      <name>is_staggered</name>
       <display_name>Staggered Studs</display_name>
       <description>Indicates that the double studs are aligned in a staggered fashion (as opposed to being center).</description>
       <type>Boolean</type>
@@ -121,17 +121,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.3.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>882E865B</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -148,6 +137,35 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7326234C</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>71D17A86</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CDD25A07</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7486DA3F</checksum>
+    </file>
+    <file>
+      <filename>DoubleWoodStud_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6BA26218</checksum>
     </file>
   </files>
 </measure>

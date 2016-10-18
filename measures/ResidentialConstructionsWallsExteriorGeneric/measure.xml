@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>05706f1a-c6b4-4861-a4bc-e39875d2020e</version_id>
-  <version_modified>20161017T233839Z</version_modified>
+  <version_id>015d48e0-834f-4629-828b-ccdcfe3b29d5</version_id>
+  <version_modified>20161018T164943Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Calculates and assigns material layer properties of generic constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
-      <name>thick_in1</name>
+      <name>thick_in_1</name>
       <display_name>Thickness 1</display_name>
       <description>Thickness of the outside layer.</description>
       <type>Double</type>
@@ -21,7 +21,7 @@
       <default_value>2.5</default_value>
     </argument>
     <argument>
-      <name>thick_in2</name>
+      <name>thick_in_2</name>
       <display_name>Thickness 2</display_name>
       <description>Thickness of the second layer. Leave blank if no second layer.</description>
       <type>Double</type>
@@ -30,7 +30,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>thick_in3</name>
+      <name>thick_in_3</name>
       <display_name>Thickness 3</display_name>
       <description>Thickness of the third layer. Leave blank if no third layer.</description>
       <type>Double</type>
@@ -39,7 +39,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>thick_in4</name>
+      <name>thick_in_4</name>
       <display_name>Thickness 4</display_name>
       <description>Thickness of the fourth layer. Leave blank if no fourth layer.</description>
       <type>Double</type>
@@ -48,7 +48,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>thick_in5</name>
+      <name>thick_in_5</name>
       <display_name>Thickness 5</display_name>
       <description>Thickness of the fifth layer. Leave blank if no fifth layer.</description>
       <type>Double</type>
@@ -57,7 +57,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>cond1</name>
+      <name>conductivity_1</name>
       <display_name>Conductivity 1</display_name>
       <description>Conductivity of the outside layer.</description>
       <type>Double</type>
@@ -67,7 +67,7 @@
       <default_value>9.211</default_value>
     </argument>
     <argument>
-      <name>cond2</name>
+      <name>conductivity_2</name>
       <display_name>Conductivity 2</display_name>
       <description>Conductivity of the second layer. Leave blank if no second layer.</description>
       <type>Double</type>
@@ -76,7 +76,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>cond3</name>
+      <name>conductivity_3</name>
       <display_name>Conductivity 3</display_name>
       <description>Conductivity of the third layer. Leave blank if no third layer.</description>
       <type>Double</type>
@@ -85,7 +85,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>cond4</name>
+      <name>conductivity_4</name>
       <display_name>Conductivity 4</display_name>
       <description>Conductivity of the fourth layer. Leave blank if no fourth layer.</description>
       <type>Double</type>
@@ -94,7 +94,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>cond5</name>
+      <name>conductivity_5</name>
       <display_name>Conductivity 5</display_name>
       <description>Conductivity of the fifth layer. Leave blank if no fifth layer.</description>
       <type>Double</type>
@@ -103,7 +103,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>dens1</name>
+      <name>density_1</name>
       <display_name>Density 1</display_name>
       <description>Density of the outside layer.</description>
       <type>Double</type>
@@ -113,7 +113,7 @@
       <default_value>138.33</default_value>
     </argument>
     <argument>
-      <name>dens2</name>
+      <name>density_2</name>
       <display_name>Density 2</display_name>
       <description>Density of the second layer. Leave blank if no second layer.</description>
       <type>Double</type>
@@ -122,7 +122,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>dens3</name>
+      <name>density_3</name>
       <display_name>Density 3</display_name>
       <description>Density of the third layer. Leave blank if no third layer.</description>
       <type>Double</type>
@@ -131,7 +131,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>dens4</name>
+      <name>density_4</name>
       <display_name>Density 4</display_name>
       <description>Density of the fourth layer. Leave blank if no fourth layer.</description>
       <type>Double</type>
@@ -140,7 +140,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>dens5</name>
+      <name>density_5</name>
       <display_name>Density 5</display_name>
       <description>Density of the fifth layer. Leave blank if no fifth layer.</description>
       <type>Double</type>
@@ -149,7 +149,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>specheat1</name>
+      <name>specific_heat_1</name>
       <display_name>Specific Heat 1</display_name>
       <description>Specific heat of the outside layer.</description>
       <type>Double</type>
@@ -159,7 +159,7 @@
       <default_value>0.23</default_value>
     </argument>
     <argument>
-      <name>specheat2</name>
+      <name>specific_heat_2</name>
       <display_name>Specific Heat 2</display_name>
       <description>Specific heat of the second layer. Leave blank if no second layer.</description>
       <type>Double</type>
@@ -168,7 +168,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>specheat3</name>
+      <name>specific_heat_3</name>
       <display_name>Specific Heat 3</display_name>
       <description>Specific heat of the third layer. Leave blank if no third layer.</description>
       <type>Double</type>
@@ -177,7 +177,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>specheat4</name>
+      <name>specific_heat_4</name>
       <display_name>Specific Heat 4</display_name>
       <description>Specific heat of the fourth layer. Leave blank if no fourth layer.</description>
       <type>Double</type>
@@ -186,7 +186,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>specheat5</name>
+      <name>specific_heat_5</name>
       <display_name>Specific Heat 5</display_name>
       <description>Specific heat of the fifth layer. Leave blank if no fifth layer.</description>
       <type>Double</type>
@@ -213,17 +213,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.3.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>70E0A28D</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -240,6 +229,35 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7326234C</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>3C1F1150</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CDD25A07</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7486DA3F</checksum>
+    </file>
+    <file>
+      <filename>Generic_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8A853F12</checksum>
     </file>
   </files>
 </measure>

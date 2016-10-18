@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>b6ff80cf-eee7-4d42-a99e-2c79f9ca5557</version_id>
-  <version_modified>20161017T233839Z</version_modified>
+  <version_id>1f799508-fbb1-46ca-91a4-b5c57f1f5675</version_id>
+  <version_modified>20161018T164943Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Calculates and assigns material layer properties of SIP constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
-      <name>userdefinedsipinsr</name>
+      <name>sip_rvalue</name>
       <display_name>Nominal Insulation R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
@@ -21,7 +21,7 @@
       <default_value>17.5</default_value>
     </argument>
     <argument>
-      <name>userdefinedsipinsthickness</name>
+      <name>thick_in</name>
       <display_name>Insulation Thickness</display_name>
       <description>Thickness of the insulating core of the SIP.</description>
       <type>Double</type>
@@ -31,7 +31,7 @@
       <default_value>3.625</default_value>
     </argument>
     <argument>
-      <name>userdefinedframingfrac</name>
+      <name>framing_factor</name>
       <display_name>Framing Factor</display_name>
       <description>Total fraction of the wall that is framing for windows or doors.</description>
       <type>Double</type>
@@ -41,7 +41,7 @@
       <default_value>0.156</default_value>
     </argument>
     <argument>
-      <name>selectedintsheathingtype</name>
+      <name>sheathing_type</name>
       <display_name>Interior Sheathing Type</display_name>
       <description>The interior sheathing type of the SIP wall.</description>
       <type>Choice</type>
@@ -64,7 +64,7 @@
       </choices>
     </argument>
     <argument>
-      <name>userdefinedsipintsheathingthick</name>
+      <name>sheathing_thick_in</name>
       <display_name>Interior Sheathing Thickness</display_name>
       <description>The thickness of the interior sheathing.</description>
       <type>Double</type>
@@ -102,17 +102,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>02BAF89A</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -129,6 +118,35 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7326234C</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B66334D2</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CDD25A07</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7486DA3F</checksum>
+    </file>
+    <file>
+      <filename>SIP_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8B1C7723</checksum>
     </file>
   </files>
 </measure>

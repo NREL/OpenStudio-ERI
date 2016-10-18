@@ -28,49 +28,47 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make a double argument for nominal R-value of the sip insulation
-    userdefined_sipinsr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedsipinsr", true)
-    userdefined_sipinsr.setDisplayName("Nominal Insulation R-value")
-    userdefined_sipinsr.setUnits("hr-ft^2-R/Btu")
-    userdefined_sipinsr.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-    userdefined_sipinsr.setDefaultValue(17.5)
-    args << userdefined_sipinsr
+    sip_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("sip_rvalue", true)
+    sip_rvalue.setDisplayName("Nominal Insulation R-value")
+    sip_rvalue.setUnits("hr-ft^2-R/Btu")
+    sip_rvalue.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    sip_rvalue.setDefaultValue(17.5)
+    args << sip_rvalue
 
     #make a double argument for thickness of the sip insulation
-    userdefined_sipinsthickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedsipinsthickness", true)
-    userdefined_sipinsthickness.setDisplayName("Insulation Thickness")
-    userdefined_sipinsthickness.setUnits("in")
-    userdefined_sipinsthickness.setDescription("Thickness of the insulating core of the SIP.")
-    userdefined_sipinsthickness.setDefaultValue(3.625)
-    args << userdefined_sipinsthickness 
+    thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("thick_in", true)
+    thick_in.setDisplayName("Insulation Thickness")
+    thick_in.setUnits("in")
+    thick_in.setDescription("Thickness of the insulating core of the SIP.")
+    thick_in.setDefaultValue(3.625)
+    args << thick_in 
 
     #make a double argument for framing factor
-    userdefined_framingfrac = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedframingfrac", true)
-    userdefined_framingfrac.setDisplayName("Framing Factor")
-    userdefined_framingfrac.setUnits("frac")
-    userdefined_framingfrac.setDescription("Total fraction of the wall that is framing for windows or doors.")
-    userdefined_framingfrac.setDefaultValue(0.156)
-    args << userdefined_framingfrac 
+    framing_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", true)
+    framing_factor.setDisplayName("Framing Factor")
+    framing_factor.setUnits("frac")
+    framing_factor.setDescription("Total fraction of the wall that is framing for windows or doors.")
+    framing_factor.setDefaultValue(0.156)
+    args << framing_factor 
     
-    #make a choice argument for model objects
+    #make a string argument for interior sheathing type
     intsheathing_display_names = OpenStudio::StringVector.new
     intsheathing_display_names << Constants.MaterialOSB
     intsheathing_display_names << Constants.MaterialGypsum
     intsheathing_display_names << Constants.MaterialGypcrete
-    
-    #make a string argument for interior sheathing type
-    selected_intsheathingtype = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("selectedintsheathingtype", intsheathing_display_names, true)
-    selected_intsheathingtype.setDisplayName("Interior Sheathing Type")
-    selected_intsheathingtype.setDescription("The interior sheathing type of the SIP wall.")
-    selected_intsheathingtype.setDefaultValue(Constants.MaterialOSB)
-    args << selected_intsheathingtype   
+    sheathing_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("sheathing_type", intsheathing_display_names, true)
+    sheathing_type.setDisplayName("Interior Sheathing Type")
+    sheathing_type.setDescription("The interior sheathing type of the SIP wall.")
+    sheathing_type.setDefaultValue(Constants.MaterialOSB)
+    args << sheathing_type   
     
     #make a double argument for thickness of the interior sheathing
-    userdefined_sipintsheathingthick = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("userdefinedsipintsheathingthick", true)
-    userdefined_sipintsheathingthick.setDisplayName("Interior Sheathing Thickness")
-    userdefined_sipintsheathingthick.setUnits("in")
-    userdefined_sipintsheathingthick.setDescription("The thickness of the interior sheathing.")
-    userdefined_sipintsheathingthick.setDefaultValue(0.44)
-    args << userdefined_sipintsheathingthick
+    sheathing_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("sheathing_thick_in", true)
+    sheathing_thick_in.setDisplayName("Interior Sheathing Thickness")
+    sheathing_thick_in.setUnits("in")
+    sheathing_thick_in.setDescription("The thickness of the interior sheathing.")
+    sheathing_thick_in.setDefaultValue(0.44)
+    args << sheathing_thick_in
 
     return args
   end
@@ -103,11 +101,11 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
     end     
     
     # Get inputs
-    sipInsRvalue = runner.getDoubleArgumentValue("userdefinedsipinsr",user_arguments)
-    sipInsThickness = runner.getDoubleArgumentValue("userdefinedsipinsthickness",user_arguments)
-    sipFramingFactor = runner.getDoubleArgumentValue("userdefinedframingfrac",user_arguments)
-    sipIntSheathingType = runner.getStringArgumentValue("selectedintsheathingtype",user_arguments)
-    sipIntSheathingThick = runner.getDoubleArgumentValue("userdefinedsipintsheathingthick",user_arguments)
+    sipInsRvalue = runner.getDoubleArgumentValue("sip_rvalue",user_arguments)
+    sipInsThickness = runner.getDoubleArgumentValue("thick_in",user_arguments)
+    sipFramingFactor = runner.getDoubleArgumentValue("framing_factor",user_arguments)
+    sipIntSheathingType = runner.getStringArgumentValue("sheathing_type",user_arguments)
+    sipIntSheathingThick = runner.getDoubleArgumentValue("sheathing_thick_in",user_arguments)
     
     # Validate inputs
     if sipInsRvalue <= 0.0
