@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>b1bb0952-84a7-4400-98ee-63e11e005d66</version_id>
-  <version_modified>20161014T165524Z</version_modified>
+  <version_id>4b81a55a-7f3d-4945-8a51-e656872d12b0</version_id>
+  <version_modified>20161017T233843Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessElectric</class_name>
   <display_name>Set Residential Electric Tankless Water Heater</display_name>
@@ -83,18 +83,6 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BD2CE49B</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>22260550</checksum>
-    </file>
-    <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
       <usage_type>test</usage_type>
@@ -137,105 +125,117 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>1.4.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>2CA94ED6</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>97B219DD</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B9256575</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>850FE64F</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7FCAB593</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>F769BA43</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <checksum>9195CA47</checksum>
     </file>
     <file>
       <filename>ResidentialWaterHeaterTanklessElectric_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>9F3747F5</checksum>
+      <checksum>B23D602C</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>05C555F6</checksum>
+      <checksum>A910973A</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankElectric.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>64A71425</checksum>
+      <checksum>53300603</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankGas.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>68503F8C</checksum>
+      <checksum>5FC72DAA</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessGas.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>DFCD65B2</checksum>
+      <checksum>E85A7794</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessPropane.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0A713C4D</checksum>
+      <checksum>3DE62E6B</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankOil.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>94181F9D</checksum>
+      <checksum>A38F0DBB</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankPropane.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>08DBFA28</checksum>
+      <checksum>3F4CE80E</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A46BB57C</checksum>
+      <checksum>3AE34E51</checksum>
     </file>
     <file>
       <filename>multifamily_3_units_Beds_Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E4958A19</checksum>
+      <checksum>EFE6DE93</checksum>
     </file>
     <file>
       <filename>multifamily_12_units_Beds_Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A6ED78AC</checksum>
+      <checksum>8E13C9DA</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9256575</checksum>
+      <checksum>7326234C</checksum>
     </file>
   </files>
 </measure>

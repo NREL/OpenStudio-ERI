@@ -345,7 +345,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "No building geometry has been defined.")
   end
   
   def test_error_missing_beds
@@ -451,7 +451,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     final_objects = get_objects(model)
     
     # get new and deleted objects
-    obj_type_exclusions = ["WaterUseConnections", "Node"]
+    obj_type_exclusions = ["WaterUseConnections", "Node", "ScheduleTypeLimits"]
     all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
     all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
     

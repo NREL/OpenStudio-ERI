@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>e380665b-c5a9-4238-8e7d-05fe67af9ead</version_id>
-  <version_modified>20161014T165519Z</version_modified>
+  <version_id>3adf5119-27bd-4451-81ad-c00f422ee05b</version_id>
+  <version_modified>20161017T233838Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
@@ -105,7 +105,7 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
-        <min_compatible>1.3.0</min_compatible>
+        <min_compatible>1.13.1</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
@@ -113,22 +113,22 @@
       <checksum>48648158</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B9256575</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <checksum>9195CA47</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9256575</checksum>
+      <checksum>7326234C</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_sheathing</name>
   <uid>b59d63a5-8d7b-41e2-b290-6d22cdfc0c0c</uid>
-  <version_id>a0ea882f-1b71-4bf0-bc67-8342ddb2a019</version_id>
-  <version_modified>20161014T165520Z</version_modified>
+  <version_id>8c7fe105-fbec-454f-9011-7cf74012a570</version_id>
+  <version_modified>20161017T233838Z</version_modified>
   <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSheathing</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Sheathing</display_name>
@@ -102,7 +102,7 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.0</identifier>
-        <min_compatible>1.10.0</min_compatible>
+        <min_compatible>1.13.1</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
@@ -110,22 +110,22 @@
       <checksum>DBF494D4</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B9256575</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <checksum>9195CA47</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9256575</checksum>
+      <checksum>7326234C</checksum>
     </file>
   </files>
 </measure>

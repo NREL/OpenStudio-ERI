@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_minisplit</name>
   <uid>257a8095-0b3d-4ac7-acf5-c537ecbaa945</uid>
-  <version_id>9ac8ba8b-0ee5-4d55-ae34-b61736158337</version_id>
-  <version_modified>20161014T184656Z</version_modified>
+  <version_id>2eca5df4-65c5-43e8-a146-6d499398c3b1</version_id>
+  <version_modified>20161017T233845Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump - Original Model</display_name>
@@ -306,53 +306,6 @@
       <checksum>9A23E14E</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.0</identifier>
-        <min_compatible>1.10.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>6436602D</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
-    </file>
-    <file>
-      <filename>process_minisplit_heat_pump_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8A1D8B78</checksum>
-    </file>
-    <file>
-      <filename>multifamily_3_units_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>654FAD24</checksum>
-    </file>
-    <file>
-      <filename>multifamily_urbanopt_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A3034D78</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_fbsmt_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E2726E18</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -363,6 +316,47 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5E54715B</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>090CD4E3</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9195CA47</checksum>
+    </file>
+    <file>
+      <filename>process_minisplit_heat_pump_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D0EE1C0</checksum>
+    </file>
+    <file>
+      <filename>multifamily_3_units_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>697A9B20</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_fbsmt_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EAD8634E</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7326234C</checksum>
     </file>
   </files>
 </measure>

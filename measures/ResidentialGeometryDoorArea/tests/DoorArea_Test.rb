@@ -19,10 +19,6 @@ class DoorAreaTest < MiniTest::Test
     return "multifamily_3_units.osm"
   end
   
-  def osm_geo_multifamily_urbanopt
-    return "multifamily_urbanopt.osm"
-  end
-  
   def osm_geo_multifamily_interior_corridor
     return "multifamily_interior_corridor.osm"
   end
@@ -57,15 +53,6 @@ class DoorAreaTest < MiniTest::Test
     args_hash = {}
     args_hash["door_area"] = 30
     _test_measure(model, args_hash, 20*num_units, 30*num_units, 0)
-  end
-  
-  def test_mf_urbanopt_retrofit_replace
-    num_units = 8
-    args_hash = {}
-    model = _test_measure(osm_geo_multifamily_urbanopt, args_hash, 0, 20*(num_units-1), 0)
-    args_hash = {}
-    args_hash["door_area"] = 30
-    _test_measure(model, args_hash, 20*(num_units-1), 30*(num_units-1), 0)
   end
   
   def test_mf_interior_corridor

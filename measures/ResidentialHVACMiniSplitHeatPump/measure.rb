@@ -265,16 +265,16 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     constant_cubic.setMinimumValueofx(-100)
     constant_cubic.setMaximumValueofx(100)
     
-    num_units = Geometry.get_num_units(model, runner)
-    if num_units.nil?
+    # Get building units
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
         return false
     end
-
-    (1..num_units).to_a.each do |unit_num|
-      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
-      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)
+    
+    units.each do |unit|
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
       if thermal_zones.length > 1
-        runner.registerInfo("Unit #{unit_num} spans more than one thermal zone.")
+        runner.registerInfo("#{unit.name.to_s} spans more than one thermal zone.")
       end
       control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
@@ -285,7 +285,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemHeatingCoil
         
         htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
-        htg_coil.setName("DX Heating Coil_#{unit_num}")
+        htg_coil.setName("DX Heating Coil_#{unit.name.to_s}")
         if miniSplitCoolingOutputCapacity != Constants.SizingAuto
           htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]])
           htg_coil.setRatedAirFlowRate(supply.HeatingCFMs[curves.mshp_indices[-1]]* miniSplitHeatingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
@@ -296,7 +296,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemCoolingCoil
         
         clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
-        clg_coil.setName("DX Cooling Coil_#{unit_num}")
+        clg_coil.setName("DX Cooling Coil_#{unit.name.to_s}")
         if miniSplitCoolingOutputCapacity != Constants.SizingAuto
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]])
           clg_coil.setRatedAirFlowRate(supply.CoolingCFMs[curves.mshp_indices[-1]]* miniSplitCoolingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
@@ -308,7 +308,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemAir
       
         vrf = OpenStudio::Model::AirConditionerVariableRefrigerantFlow.new(model)
-        vrf.setName("Multi Split Heat Pump_#{unit_num}")
+        vrf.setName("Multi Split Heat Pump_#{unit.name.to_s}")
         vrf.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         
         min_plr_heat = supply.Capacity_Ratio_Heating[curves.mshp_indices.min] / supply.Capacity_Ratio_Heating[curves.mshp_indices.max]
@@ -461,7 +461,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         supply_fan_availability.setValue(1)
 
         fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
-        fan.setName("Supply Fan_#{unit_num}")
+        fan.setName("Supply Fan_#{unit.name.to_s}")
         fan.setEndUseSubcategory("HVACFan")
         fan.setFanEfficiency(supply.eff)
         fan.setPressureRise(supply.static)
@@ -475,7 +475,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemDemandSideAir
         
         tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
-        tu_vrf.setName("Indoor Unit_#{unit_num}")
+        tu_vrf.setName("Indoor Unit_#{unit.name.to_s}")
         tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
         tu_vrf.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
         # tu_vrf.setSupplyAirFanPlacement("BlowThrough") # TODO: wrapped?
@@ -484,7 +484,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
         tu_vrf.addToThermalZone(control_zone)
         vrf.addTerminal(tu_vrf)
-        runner.registerInfo("Added variable refrigerant flow terminal unit '#{tu_vrf.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num}")        
+        runner.registerInfo("Added variable refrigerant flow terminal unit '#{tu_vrf.name}' to thermal zone '#{control_zone.name}' of #{unit.name.to_s}")        
         
         # Supplemental heat
         unless baseboardOutputCapacity == "NO SUPP HEAT"
@@ -495,7 +495,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
           end
           htg_coil.setEfficiency(baseboardEfficiency)
           htg_coil.addToThermalZone(control_zone)
-          runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{control_zone.name}' of unit #{unit_num}")
+          runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{control_zone.name}' of #{unit.name.to_s}")
         end              
         
         slave_zones.each do |slave_zone|
@@ -512,7 +512,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
             end
             htg_coil.setEfficiency(baseboardEfficiency)
             htg_coil.addToThermalZone(slave_zone)
-            runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{slave_zone.name}' of unit #{unit_num}")
+            runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{slave_zone.name}' of #{unit.name.to_s}")
           end
           
         end    

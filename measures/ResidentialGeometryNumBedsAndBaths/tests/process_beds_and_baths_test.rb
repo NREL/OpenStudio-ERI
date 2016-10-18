@@ -59,20 +59,8 @@ class BedroomsAndBathroomsTest < MiniTest::Test
   
   def test_error_no_units_defined_in_model
     args_hash = {}
-    result = _test_error("EmptySeedModel.osm", args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")   
-  end
-  
-  def test_error_inconsistent_units_defined_in_model
-    args_hash = {}
-    result = _test_error("multifamily_8_units_6_listed.osm", args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; inconsistent number of units defined in the model.")   
-   end
-  
-  def test_error_unit_has_no_spaces
-    args_hash = {}
-    result = _test_error("multifamily_8_units_missing_space.osm", args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not find the space '{381d5b54-fa3f-4245-9812-ebdc33acae12}' associated with unit 1.")
+    result = _test_error(nil, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "No building geometry has been defined.")   
   end
   
   def test_retrofit_replace
@@ -198,26 +186,11 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
 
-    actual_values = {"ElectricEquipment"=>0, "ElectricEquipmentDefinition"=>0}
-    final_objects.each do |obj_type, final_object|
-        next if not final_object.respond_to?("to_#{obj_type}")
-        final_object = final_object.public_send("to_#{obj_type}").get
-        if obj_type == "ElectricEquipment"
-            if final_object.name.to_s.start_with?("unit=")
-                actual_values["ElectricEquipment"] += 1
-            end
-        elsif obj_type == "ElectricEquipmentDefinition"
-            if final_object.name.to_s.start_with?("unit=")
-                actual_values["ElectricEquipmentDefinition"] += 1
-            end            
-        end
+    model.getBuildingUnits.each do |unit|
+        nbeds, nbaths = Geometry.get_unit_beds_baths(model, unit, runner)
+        assert_equal(expected_values["Beds"], nbeds)
+        assert_equal(expected_values["Baths"], nbaths)
     end
-    assert_equal(expected_values["Num_Units"], actual_values["ElectricEquipment"])
-    assert_equal(expected_values["Num_Units"], actual_values["ElectricEquipmentDefinition"])
-    
-    nbeds, nbaths, spaces_list = Geometry.get_unit_beds_baths_spaces(model, 1)
-    assert_in_epsilon(expected_values["Beds"], nbeds, 0.01)
-    assert_in_epsilon(expected_values["Baths"], nbaths, 0.01)
     
     return model
   end 

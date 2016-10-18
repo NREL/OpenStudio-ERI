@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>092e0472-2908-4b03-a073-fa417797b8c9</version_id>
-  <version_modified>20161014T165519Z</version_modified>
+  <version_id>bb1f4950-880e-4c0d-9a18-9e317ba9971a</version_id>
+  <version_modified>20161017T233838Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>Set Residential Door Construction</display_name>
@@ -42,7 +42,7 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
+        <min_compatible>1.13.1</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
@@ -50,22 +50,22 @@
       <checksum>863CAF52</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B9256575</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <checksum>9195CA47</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9256575</checksum>
+      <checksum>7326234C</checksum>
     </file>
   </files>
 </measure>

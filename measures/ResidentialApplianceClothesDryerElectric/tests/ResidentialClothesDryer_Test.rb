@@ -130,13 +130,12 @@ class ResidentialClothesDryerTest < MiniTest::Test
   end
     
   def test_retrofit_replace_gas_clothes_dryer
-    model = get_model(File.dirname(__FILE__), osm_geo_beds_gasdryer)
     args_hash = {}
     args_hash["cd_ef"] = 3.93
     expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>809.6, "Annual_therm"=>0}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+    _test_measure(osm_geo_beds_gasdryer, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_remove
@@ -321,7 +320,7 @@ class ResidentialClothesDryerTest < MiniTest::Test
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "No building geometry has been defined.")
   end
 
   private

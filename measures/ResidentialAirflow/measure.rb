@@ -723,8 +723,9 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         return false
     end    
     
-    num_units = Geometry.get_num_units(model, runner)
-    if num_units.nil?
+    # Get building units
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
         return false
     end
     
@@ -760,7 +761,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     end
     building.building_height = Geometry.get_building_height(model.getSpaces)
     building.stories = Geometry.get_building_stories(model.getSpaces)
-    building.num_units = num_units
+    building.num_units = units.size
     building.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
     building.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(model.getSpaces, false)    
     
@@ -783,23 +784,20 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     
     wind_speed = _processWindSpeedCorrection(wind_speed, terrainType)
         
-    (1..num_units).each do |unit_num|
+    units.each_with_index do |building_unit, unit_index|
       unit = Unit.new
-      unit.num_bedrooms, unit.num_bathrooms, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
-      if unit_spaces.nil?
-        runner.registerError("Could not determine the spaces associated with unit #{unit_num}.")
-        return false
-      end
+      unit.num_bedrooms, unit.num_bathrooms = Geometry.get_unit_beds_baths(model, building_unit, runner)
+      unit_spaces = building_unit.spaces
       if unit.num_bedrooms.nil? or unit.num_bathrooms.nil?
         runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
         return false
       end
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)
       if thermal_zones.length > 1
-        runner.registerInfo("Unit #{unit_num} spans more than one thermal zone.")
+        runner.registerInfo("#{building_unit.name.to_s} spans more than one thermal zone.")
       end      
       
-      unit.unit_num = unit_num
+      unit.unit_num = unit_index+1
       unit.age_of_home = ageOfHome
       unit.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(unit_spaces, false)
       unit.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(unit_spaces, false, runner)
@@ -831,7 +829,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       if has_cd
         unit.dryer_exhaust = dryerExhaust
       else
-        runner.registerWarning("No clothes dryer object was found in unit #{unit.unit_num} but the clothes dryer exhaust specified is non-zero. Overriding clothes dryer exhaust to be zero.")
+        runner.registerWarning("No clothes dryer object was found in #{building_unit.name.to_s} but the clothes dryer exhaust specified is non-zero. Overriding clothes dryer exhaust to be zero.")
         unit.dryer_exhaust = 0
       end
       

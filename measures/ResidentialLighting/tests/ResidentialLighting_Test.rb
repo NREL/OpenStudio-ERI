@@ -128,19 +128,19 @@ class ResidentialLightingTest < MiniTest::Test
   end
   
   def test_multifamily_new_construction
-    num_ltg_spaces = 5
+    num_ltg_spaces = 6
     args_hash = {}
     _test_measure(osm_geo_multifamily_3_units_loc, args_hash, 0, num_ltg_spaces, 3684, num_ltg_spaces, 0)
   end
   
   def test_multifamily_new_construction_zone_mult
-    num_ltg_spaces = 5
+    num_ltg_spaces = 6
     args_hash = {}
     _test_measure(osm_geo_multifamily_3_units_loc_zone_mult, args_hash, 0, num_ltg_spaces, 4636, num_ltg_spaces, 0)
   end
 
   def test_multifamily_retrofit_replace
-    num_ltg_spaces = 5
+    num_ltg_spaces = 6
     args_hash = {}
     model = _test_measure(osm_geo_multifamily_3_units_loc, args_hash, 0, num_ltg_spaces, 3684, num_ltg_spaces, 0)
     args_hash = {}
@@ -281,7 +281,7 @@ class ResidentialLightingTest < MiniTest::Test
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "No building geometry has been defined.")
   end
   
   def test_error_missing_location

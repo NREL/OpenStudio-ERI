@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>c4dde5f8-45aa-4381-93dc-e598f7c31155</uid>
-  <version_id>46b21da4-72b2-46fa-9c3d-8fa6cebfc3ad</version_id>
-  <version_modified>20161015T150544Z</version_modified>
+  <version_id>9a1899a2-1099-48f0-8bf9-6b0ff45ab4e3</version_id>
+  <version_modified>20161017T233835Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -576,29 +576,6 @@
       <checksum>97B219DD</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.12.5</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DB8544B3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -623,76 +600,99 @@
       <checksum>5E54715B</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9195CA47</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>DDFBCC37</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7326234C</checksum>
+    </file>
+    <file>
       <filename>multifamily_8_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C7961C25</checksum>
+      <checksum>D72709C7</checksum>
     </file>
     <file>
       <filename>singlefamily_attached_fbsmt_4_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0BCA1E2E</checksum>
+      <checksum>899A3387</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_crawl_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5C8F4DF0</checksum>
+      <checksum>6FDE7D30</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_fbsmt_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1F7C5AB2</checksum>
+      <checksum>1158D235</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_slab_clothes_dryer_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BC31A4F8</checksum>
+      <checksum>FC7DE905</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_slab_electric_baseboard.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EAC0495F</checksum>
+      <checksum>8447C772</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_slab_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>73B68991</checksum>
+      <checksum>87CC66B3</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_slab_garage_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>22B1C784</checksum>
+      <checksum>F9041D4D</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_slab_mshp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BC9A1CBC</checksum>
+      <checksum>611D42DC</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_slab_neighbors_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EBC97B8F</checksum>
+      <checksum>D9D84EE4</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_slab_no_attic_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8FF5FB28</checksum>
+      <checksum>3F6EE539</checksum>
     </file>
     <file>
       <filename>singlefamily_detached_ufbsmt_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>DEC1E64E</checksum>
+      <checksum>62D25C40</checksum>
     </file>
   </files>
 </measure>

@@ -925,8 +925,9 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
       hasForcedAirEquipment = true
     end
 
-    num_units = Geometry.get_num_units(model, runner)
-    if num_units.nil?
+    # Get building units
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
         return false
     end
 
@@ -940,7 +941,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
     end
     geometry.building_height = Geometry.get_building_height(model.getSpaces)
     geometry.stories = Geometry.get_building_stories(model.getSpaces)
-    geometry.num_units = num_units
+    geometry.num_units = units.size
     geometry.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
     geometry.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(model.getSpaces, false)
     
@@ -1000,16 +1001,13 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
     
     duct_locations = {}
     
-    (1..num_units).to_a.each do |unit_num|
-      nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
-      if unit_spaces.nil?
-        runner.registerError("Could not determine the spaces associated with unit #{unit_num}.")
-        return false
-      end
+    units.each_with_index do |building_unit, unit_index|
+      nbeds, nbaths = Geometry.get_unit_beds_baths(model, building_unit, runner)
       if nbeds.nil? or nbaths.nil?
-        runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
         return false
       end
+      unit_spaces = building_unit.spaces
+      unit_num = unit_index+1
 
       unit = Unit.new
       unit.num_bedrooms = nbeds
@@ -1019,7 +1017,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
       unit.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(unit_spaces, false, runner)
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)
       if thermal_zones.length > 1
-        runner.registerInfo("Unit #{unit_num} spans more than one thermal zone.")
+        runner.registerInfo("#{building_unit.name.to_s} spans more than one thermal zone.")
       end
       
       living_space = LivingSpace.new
@@ -1072,7 +1070,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
       end
       unit_dryer_exhaust = dryerExhaust
       if not has_cd and dryerExhaust > 0
-        runner.registerWarning("No clothes dryer object was found in unit #{unit_num} but the clothes dryer exhaust specified is non-zero. Overriding clothes dryer exhaust to be zero.")
+        runner.registerWarning("No clothes dryer object was found in #{building_unit.name.to_s} but the clothes dryer exhaust specified is non-zero. Overriding clothes dryer exhaust to be zero.")
         unit_dryer_exhaust = 0
       end
       
@@ -2579,8 +2577,9 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
       runner.registerInfo("Set object '#{str.split("\n")[1].gsub(",","")} - #{str.split("\n")[2].split(",")[0]}'")
     end    
         
-    (1..num_units).to_a.each do |unit_num|
-      _nbeds, _nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
+    units.each_with_index do |building_unit, unit_index|
+      unit_num = unit_index+1
+      unit_spaces = building_unit.spaces
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)      
       living_thermal_zone_name = nil
       thermal_zones.each do |thermal_zone|

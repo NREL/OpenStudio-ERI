@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>2caa62e4-53e4-4769-97e3-2ee52720d150</version_id>
-  <version_modified>20161014T165526Z</version_modified>
+  <version_id>9a711b74-0285-4d25-abfc-963c488d72b7</version_id>
+  <version_modified>20161017T233845Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -135,12 +135,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BD2CE49B</checksum>
-    </file>
-    <file>
       <filename>USA_AK_Anchorage.Intl.AP.702730_TMY3.ddy</filename>
       <filetype>ddy</filetype>
       <usage_type>test</usage_type>
@@ -177,69 +171,75 @@
       <checksum>97B219DD</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B9256575</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>850FE64F</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
+        <min_compatible>1.13.1</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>766756F8</checksum>
+      <checksum>71799A96</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
+      <checksum>9195CA47</checksum>
     </file>
     <file>
       <filename>ResidentialLighting_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>EF706C09</checksum>
+      <checksum>366894E8</checksum>
     </file>
     <file>
       <filename>multifamily_3_units_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8475ECCD</checksum>
+      <checksum>697A9B20</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A46BB57C</checksum>
+      <checksum>62944E67</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_CommonGRG_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6B7D7353</checksum>
+      <checksum>4A6884CD</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_Anchorage.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CED3D480</checksum>
+      <checksum>7656A979</checksum>
     </file>
     <file>
       <filename>multifamily_3_units_Denver_zone_multiplier.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6A5104CA</checksum>
+      <checksum>E74F5BAA</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9256575</checksum>
+      <checksum>7326234C</checksum>
     </file>
   </files>
 </measure>

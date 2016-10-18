@@ -34,7 +34,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.FinishedBasementFoundationType
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Surface"=>72, "ThermalZone"=>2*4, "Space"=>(2+1)*4, "ElectricEquipment"=>4, "ElectricEquipmentDefinition"=>4}
+    expected_num_new_objects = {"BuildingUnit"=>4, "Surface"=>72, "ThermalZone"=>2*4, "Space"=>(2+1)*4}
     expected_values = {"FinishedBasementHeight"=>8}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)        
   end  
@@ -46,7 +46,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["has_rear_units"] = "true"
     args_hash["foundation_type"] = Constants.FinishedBasementFoundationType    
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Surface"=>72, "ThermalZone"=>2*4, "Space"=>(2+1)*4, "ElectricEquipment"=>4, "ElectricEquipmentDefinition"=>4}
+    expected_num_new_objects = {"BuildingUnit"=>4, "Surface"=>72, "ThermalZone"=>2*4, "Space"=>(2+1)*4}
     expected_values = {"FinishedBasementHeight"=>8}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
   end  
@@ -56,7 +56,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.UnfinishedBasementFoundationType
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Surface"=>42, "ThermalZone"=>4+1, "Space"=>4+1, "ElectricEquipment"=>4, "ElectricEquipmentDefinition"=>4}
+    expected_num_new_objects = {"BuildingUnit"=>4, "Surface"=>42, "ThermalZone"=>4+1, "Space"=>4+1}
     expected_values = {"UnfinishedBasementHeight"=>8}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values) 
   end  
@@ -66,7 +66,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["num_units"] = 4
     args_hash["foundation_type"] = Constants.CrawlFoundationType
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Surface"=>42, "ThermalZone"=>4+1, "Space"=>4+1, "ElectricEquipment"=>4, "ElectricEquipmentDefinition"=>4}
+    expected_num_new_objects = {"BuildingUnit"=>4, "Surface"=>42, "ThermalZone"=>4+1, "Space"=>4+1}
     expected_values = {"CrawlspaceHeight"=>3}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values) 
   end  
@@ -76,7 +76,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["num_units"] = 8
     args_hash["use_zone_mult"] = "true"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Surface"=>18, "ThermalZone"=>3, "Space"=>3, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"BuildingUnit"=>3, "Surface"=>18, "ThermalZone"=>3, "Space"=>3}
     expected_values = {}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
   end  
@@ -87,7 +87,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["has_rear_units"] = "true"
     args_hash["use_zone_mult"] = "true"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Surface"=>36, "ThermalZone"=>6, "Space"=>6, "ElectricEquipment"=>6, "ElectricEquipmentDefinition"=>6}
+    expected_num_new_objects = {"BuildingUnit"=>6, "Surface"=>36, "ThermalZone"=>6, "Space"=>6}
     expected_values = {}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
   end
@@ -98,7 +98,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["has_rear_units"] = "true"
     args_hash["use_zone_mult"] = "true"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Surface"=>36, "ThermalZone"=>6, "Space"=>6, "ElectricEquipment"=>6, "ElectricEquipmentDefinition"=>6}
+    expected_num_new_objects = {"BuildingUnit"=>6, "Surface"=>36, "ThermalZone"=>6, "Space"=>6}
     expected_values = {}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
   end

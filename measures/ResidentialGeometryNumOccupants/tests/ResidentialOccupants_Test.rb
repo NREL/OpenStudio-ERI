@@ -169,13 +169,13 @@ class AddResidentialOccupantsTest < MiniTest::Test
   def test_error_missing_beds
     args_hash = {}
     result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not determine number of bedrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
   end
     
   def test_error_missing_geometry
     args_hash = {}
     result = _test_error(nil, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "No building geometry has been defined.")
   end
 
   private
@@ -251,7 +251,7 @@ class AddResidentialOccupantsTest < MiniTest::Test
     result = runner.result
 
     # show the output
-    # show_output(result)
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)

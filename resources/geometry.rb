@@ -26,137 +26,126 @@ class Geometry
         return p
     end
     
-    def self.get_num_units(model, runner=nil)
-        if not model.getBuilding.standardsNumberOfLivingUnits.is_initialized
+    def self.get_building_units(model, runner=nil)
+        if model.getSpaces.size == 0
             if !runner.nil?
-                runner.registerError("Cannot determine number of building units; Building::standardsNumberOfLivingUnits has not been set.")
+                runner.registerError("No building geometry has been defined.")
             end
             return nil
         end
-        # FIXME: Update standardsNumberOfLivingUnits in SFA/MF geometry measures;
-        # factor in zone multipliers when checking for consistency.
-        num_units = model.getBuilding.standardsNumberOfLivingUnits.get
-        # Check that this matches the number of unit specifications
-        units_found = []
-        model.getElectricEquipments.each do |ee|
-            next if !ee.name.to_s.start_with?("unit=")
-            ee.name.to_s.split("|").each do |data|
-                next if !data.start_with?("unit=")
-                vals = data.split("=")
-                units_found << vals[1].to_i
-            end
+        
+        units = model.getBuildingUnits
+        
+        # Remove any units from list that have no associated spaces or are not residential
+        to_remove = []
+        units.each do |unit|
+            next if unit.spaces.size > 0 and unit.buildingUnitType == Constants.BuildingUnitTypeResidential
+            to_remove << unit
         end
-        if num_units != units_found.size
+        to_remove.each do |unit|
+            units.delete(unit)
+        end
+        
+        if units.size == 0
+            # Assume SFD; create single building unit for entire model
             if !runner.nil?
-                runner.registerError("Cannot determine number of building units; inconsistent number of units defined in the model.")
+                runner.registerWarning("No building units defined; assuming single-family detached building.")
             end
-            return nil
+            unit = OpenStudio::Model::BuildingUnit.new(model)
+            unit.setBuildingUnitType("Residential")
+            unit.setName(Constants.ObjectNameBuildingUnit)
+            model.getSpaces.each do |space|
+                space.setBuildingUnit(unit)
+            end
+            units = model.getBuildingUnits
         end
-        return num_units
+        
+        return units
     end
     
-    def self.set_unit_beds_baths_spaces(model, unit_num, spaces_list, nbeds=nil, nbaths=nil)
-        # Information temporarily stored in the name of a dummy ElectricEquipment object.
-        # This method sets or updates the dummy object.
-        if nbeds.nil?
-          nbeds = "nil"
+    def self.get_unit_beds_baths(model, unit, runner=nil)
+        # Returns a list with #beds, #baths, a list of spaces, and the unit name
+        nbeds = unit.getFeatureAsInteger(Constants.BuildingUnitFeatureNumBedrooms)
+        nbaths = unit.getFeatureAsDouble(Constants.BuildingUnitFeatureNumBathrooms)
+        if not (nbeds.is_initialized or nbaths.is_initialized)
+            if !runner.nil?
+                runner.registerError("Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+            end
+            return [nil, nil]
+        else
+            nbeds = nbeds.get.to_f
+            nbaths = nbaths.get
         end
-        if nbaths.nil?
-          nbaths = "nil"
-        end
-        
-        str = "unit=#{unit_num}|bed=#{nbeds}|bath=#{nbaths}"
-        spaces_list.each do |space|
-            str += "|space=#{space.handle.to_s}"
-        end
-        
-        # Update existing object?
-        model.getElectricEquipments.each do |ee|
-            next if !ee.name.to_s.start_with?("unit=#{unit_num}|")
-            ee.setName(str)
-            ee.electricEquipmentDefinition.setName(str)
-            return
-        end
-        
-        # No existing object, create a new one
-        eed = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-        eed.setName(str)
-        sch = OpenStudio::Model::ScheduleRuleset.new(model, 0)
-        sch.setName('empty_schedule')
-        ee = OpenStudio::Model::ElectricEquipment.new(eed)
-        ee.setName(str)
-        ee.setSchedule(sch)
+        return [nbeds, nbaths]
     end
     
-    def self.get_unit_beds_baths_spaces(model, unit_num, runner=nil)
-        # Retrieves information temporarily stored in the name of a dummy ElectricEquipment object.
-        # Returns a vector with #beds, #baths, and a list of spaces
-        nbeds = nil
-        nbaths = nil
-        spaces_list = nil
-        
-        model.getElectricEquipments.each do |ee|
-            next if !ee.name.to_s.start_with?("unit=#{unit_num}|")
-            ee.name.to_s.split("|").each do |data|
-                if data.start_with?("bed=") and !data.end_with?("nil")
-                    vals = data.split("=")
-                    nbeds = vals[1].to_f
-                elsif data.start_with?("bath=") and !data.end_with?("nil")
-                    vals = data.split("=")
-                    nbaths = vals[1].to_f
-                elsif data.start_with?("space=")
-                    vals = data.split("=")
-                    space_handle_s = vals[1].to_s
-                    space_found = false
-                    model.getSpaces.each do |space|
-                        next if space.handle.to_s != space_handle_s
-                        if spaces_list.nil?
-                            spaces_list = []
-                        end
-                        spaces_list << space
-                        space_found = true
-                        break # found space
-                    end
-                    if !runner.nil? and !space_found
-                        runner.registerError("Could not find the space '#{space_handle_s}' associated with unit #{unit_num}.")
-                        return [nil, nil, nil]
-                    end
+    def self.get_unit_dhw_sched_index(model, unit, runner=nil)
+        dhw_sched_index = unit.getFeatureAsInteger(Constants.BuildingUnitFeatureDHWSchedIndex)
+        if not dhw_sched_index.is_initialized
+            # Assign DHW schedule index values for every building unit.
+            # Hot water schedules vary by number of bedrooms. For a given number 
+            # of bedroom, there are 10 different schedules available for different 
+            # units in a multifamily building.
+            dhw_sched_index_hash = {}
+            num_bed_options = (1..5)
+            num_bed_options.each do |num_bed_option|
+                dhw_sched_index_hash[num_bed_option.to_f] = -1 # initialize
+            end
+            units = self.get_building_units(model, runner)
+            units.each do |unit|
+                nbeds, nbaths = Geometry.get_unit_beds_baths(model, unit, runner)
+                if nbeds.nil?
+                    return nil
                 end
+                dhw_sched_index_hash[nbeds] = (dhw_sched_index_hash[nbeds] + 1) % 10
+                unit.setFeature(Constants.BuildingUnitFeatureDHWSchedIndex, dhw_sched_index_hash[nbeds])
             end
-            break # found unit
+            dhw_sched_index = unit.getFeatureAsInteger(Constants.BuildingUnitFeatureDHWSchedIndex).get
+        else
+            # Value already assigned.
+            dhw_sched_index = dhw_sched_index.get
         end
-        return [nbeds, nbaths, spaces_list]
+        return dhw_sched_index
+    end
+
+    # Returns all spaces in the model associated with a unit
+    def self.get_all_unit_spaces(model, runner=nil)
+        all_unit_spaces = []
+        units = self.get_building_units(model, runner)
+        if units.nil?
+            return all_unit_spaces
+        end
+        units.each do |unit|
+            unit.spaces.each do |unit_space|
+                next if all_unit_spaces.include?(unit_space)
+                all_unit_spaces << unit_space
+            end
+        end
+        return all_unit_spaces
     end
     
+    # Returns all spaces in the model not associated with a unit
+    def self.get_all_common_spaces(model, runner=nil)
+        return (model.getSpaces - self.get_all_unit_spaces(model, runner))
+    end
+
     def self.rename_unit_spaces_zones(model, old_unit_num, new_unit_num)
         space_names_list = []
-        model.getElectricEquipments.each do |ee|
-            next if !ee.name.to_s.start_with?("unit=#{old_unit_num}|")
-            new_name = ee.name.to_s.gsub("unit=#{old_unit_num}|", "unit=#{new_unit_num}|")
-            ee.setName(new_name)
-            ee.electricEquipmentDefinition.setName(new_name)
-            ee.name.to_s.split("|").each do |data|
-                if data.start_with?("space=")            
-                    vals = data.split("=")
-                    space_names_list << vals[1]
-                end
+        model.getBuildingUnits.each do |unit|
+            next if unit.name.to_s != Constants.ObjectNameBuildingUnit(old_unit_num)
+            unit.setName(Constants.ObjectNameBuildingUnit(new_unit_num))
+            unit.spaces.each do |space|
+                space_names_list << space
             end
         end
         model.getSpaces.each do |space|
           space_names_list.each do |s|
             next if !space.name.to_s == s
-            space.setName(space.name.to_s.gsub("unit #{old_unit_num}", "unit #{new_unit_num}"))
+            space.setName(space.name.to_s.gsub(Constants.ObjectNameBuildingUnit(old_unit_num), Constants.ObjectNameBuildingUnit(new_unit_num)))
             thermal_zone = space.thermalZone.get
-            thermal_zone.setName(thermal_zone.name.to_s.gsub("unit #{old_unit_num}", "unit #{new_unit_num}"))
+            thermal_zone.setName(thermal_zone.name.to_s.gsub(Constants.ObjectNameBuildingUnit(old_unit_num), Constants.ObjectNameBuildingUnit(new_unit_num)))
           end
         end
-    end
-    
-    def self.remove_unit(model, unit_num)
-      model.getElectricEquipments.each do |ee|
-        next if !ee.name.to_s.start_with?("unit=#{unit_num}|")
-        ee.electricEquipmentDefinition.remove
-      end
     end
     
     def self.get_unit_default_finished_space(unit_spaces, runner)
@@ -186,31 +175,6 @@ class Geometry
             runner.registerError("Could not find a finished space for unit #{unit_num}.")
         end
         return space
-    end
-    
-    # Returns all spaces in the model associated with a unit
-    def self.get_all_unit_spaces(model, runner=nil)
-        num_units = self.get_num_units(model, runner)
-        if num_units.nil?
-            return nil
-        end
-        all_unit_spaces = []
-        (1..num_units).to_a.each do |unit_num|
-            _nbeds, _nbaths, unit_spaces = self.get_unit_beds_baths_spaces(model, unit_num, runner)
-            if unit_spaces.nil?
-                return nil
-            end
-            unit_spaces.each do |unit_space|
-                next if all_unit_spaces.include?(unit_space)
-                all_unit_spaces << unit_space
-            end
-        end
-        return all_unit_spaces
-    end
-    
-    # Returns all spaces in the model not associated with a unit
-    def self.get_all_common_spaces(model, runner=nil)
-        return (model.getSpaces - self.get_all_unit_spaces(model, runner))
     end
     
     def self.get_floor_area_from_spaces(spaces, apply_multipliers=false, runner=nil)

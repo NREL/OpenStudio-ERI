@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>e5b113f5-a4eb-4012-92d1-a24c87c9e4b0</version_id>
-  <version_modified>20161017T220621Z</version_modified>
+  <version_id>42c4ac68-249b-4500-bbbe-f1ca3b351d8f</version_id>
+  <version_modified>20161018T002639Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -231,39 +231,39 @@
   </attributes>
   <files>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
-    </file>
-    <file>
       <filename>multifamily.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>B2C066DF</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7326234C</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9195CA47</checksum>
+    </file>
+    <file>
       <filename>create_residential_multifamily_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>52A2317C</checksum>
+      <checksum>C3442CD1</checksum>
     </file>
     <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.2</identifier>
-        <min_compatible>1.12.2</min_compatible>
+        <min_compatible>1.13.1</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A20AC420</checksum>
+      <checksum>C76DD99C</checksum>
     </file>
   </files>
 </measure>

@@ -1,7 +1,7 @@
 
 OS:Version,
   {fc003c06-618b-4051-9b37-6b6f71b12672}, !- Handle
-  1.12.2;                                 !- Version Identifier
+  1.13.1;                                 !- Version Identifier
 
 OS:ClimateZones,
   {135edfab-17e7-40db-a436-27d385a8cd6d}, !- Handle
@@ -240,7 +240,10 @@ OS:Space,
   0,                                      !- Y Origin {m}
   0,                                      !- Z Origin {m}
   ,                                       !- Building Story Name
-  {0c307647-5451-4e0c-b682-6913e4ddd9d9}; !- Thermal Zone Name
+  {0c307647-5451-4e0c-b682-6913e4ddd9d9}, !- Thermal Zone Name
+  ,                                       !- Part of Total Floor Area
+  ,                                       !- Design Specification Outdoor Air Object Name
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}; !- Building Unit Name
 
 OS:Surface,
   {dedb4f26-a0f2-4140-8139-3b4e3a25b5b3}, !- Handle
@@ -355,7 +358,10 @@ OS:Space,
   0,                                      !- Y Origin {m}
   2.4384,                                 !- Z Origin {m}
   ,                                       !- Building Story Name
-  {0c307647-5451-4e0c-b682-6913e4ddd9d9}; !- Thermal Zone Name
+  {0c307647-5451-4e0c-b682-6913e4ddd9d9}, !- Thermal Zone Name
+  ,                                       !- Part of Total Floor Area
+  ,                                       !- Design Specification Outdoor Air Object Name
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}; !- Building Unit Name
 
 OS:Surface,
   {66898e14-59ae-47fb-b194-2be3a92732b3}, !- Handle
@@ -553,7 +559,10 @@ OS:Space,
   0,                                      !- Y Origin {m}
   4.8768,                                 !- Z Origin {m}
   ,                                       !- Building Story Name
-  {26653f21-411b-4df5-a559-7b52ee2012a0}; !- Thermal Zone Name
+  {26653f21-411b-4df5-a559-7b52ee2012a0}, !- Thermal Zone Name
+  ,                                       !- Part of Total Floor Area
+  ,                                       !- Design Specification Outdoor Air Object Name
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}; !- Building Unit Name
 
 OS:ThermalZone,
   {26653f21-411b-4df5-a559-7b52ee2012a0}, !- Handle
@@ -730,7 +739,10 @@ OS:Space,
   0,                                      !- Y Origin {m}
   -2.4384,                                !- Z Origin {m}
   ,                                       !- Building Story Name
-  {ef582b50-c8e2-478e-a9e3-ca8b2df2fd56}; !- Thermal Zone Name
+  {ef582b50-c8e2-478e-a9e3-ca8b2df2fd56}, !- Thermal Zone Name
+  ,                                       !- Part of Total Floor Area
+  ,                                       !- Design Specification Outdoor Air Object Name
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}; !- Building Unit Name
 
 OS:Surface,
   {b97930f6-281c-4f69-b08f-ad62f1720edd}, !- Handle
@@ -834,42 +846,11 @@ OS:Surface,
   0, 5.56486118425249, 2.4384,            !- X,Y,Z Vertex 3 {m}
   0, 0, 2.4384;                           !- X,Y,Z Vertex 4 {m}
 
-OS:ElectricEquipment:Definition,
-  {9d545136-cbee-479b-ade6-833cf45705e9}, !- Handle
-  unit=1|bed=nil|bath=nil|space={15ecbae9-fc2f-4e5f-8f76-f6064c1786a6}|space={bfb54c7d-d283-472b-814a-93f9ee06bba6}|space={6b01a74e-cbe8-4d32-ab3c-b3457962c139}, !- Name
-  EquipmentLevel,                         !- Design Level Calculation Method
-  0,                                      !- Design Level {W}
-  ,                                       !- Watts per Space Floor Area {W/m2}
-  ;                                       !- Watts per Person {W/person}
-
-OS:Schedule:Ruleset,
-  {a5d38722-9d4c-4d80-80c6-8670e7ce136c}, !- Handle
-  empty_schedule,                         !- Name
-  {6b0a5697-08f2-4b17-b451-a09f04d2a0a1}, !- Schedule Type Limits Name
-  {df75f40f-609f-45ae-bd87-017a98b48c1e}; !- Default Day Schedule Name
-
-OS:Schedule:Day,
-  {df75f40f-609f-45ae-bd87-017a98b48c1e}, !- Handle
-  Schedule Day 1,                         !- Name
-  {6b0a5697-08f2-4b17-b451-a09f04d2a0a1}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  24,                                     !- Hour 1
-  0,                                      !- Minute 1
-  0;                                      !- Value Until Time 1
-
-OS:ElectricEquipment,
-  {3d1429a4-2e2d-4115-bed1-f1b2dee7dc34}, !- Handle
-  unit=1|bed=nil|bath=nil|space={15ecbae9-fc2f-4e5f-8f76-f6064c1786a6}|space={bfb54c7d-d283-472b-814a-93f9ee06bba6}|space={6b01a74e-cbe8-4d32-ab3c-b3457962c139}, !- Name
-  {9d545136-cbee-479b-ade6-833cf45705e9}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
-  {a5d38722-9d4c-4d80-80c6-8670e7ce136c}; !- Schedule Name
-
-OS:ScheduleTypeLimits,
-  {6b0a5697-08f2-4b17-b451-a09f04d2a0a1}, !- Handle
-  Fractional,                             !- Name
-  0,                                      !- Lower Limit Value
-  1,                                      !- Upper Limit Value
-  Continuous;                             !- Numeric Type
+OS:BuildingUnit,
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}, !- Handle
+  unit 1,                                 !- Name
+  ,                                       !- Rendering Color
+  Residential;                            !- Building Unit Type
 
 OS:Site,
   {f6ac8038-6a07-4803-8742-f41e025d7539}, !- Handle

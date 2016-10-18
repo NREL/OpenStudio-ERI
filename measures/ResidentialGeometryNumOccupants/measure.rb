@@ -73,25 +73,24 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
     weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
     monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
     
-    num_units = Geometry.get_num_units(model, runner)
-    if num_units.nil?
-      return false
+    # Get building units
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
+        return false
     end
+
     num_occ = num_occ.split(",").map(&:strip)
     
     #error checking
-    if num_occ.length > 1 and num_occ.length != num_units
+    if num_occ.length > 1 and num_occ.length != units.size
       runner.registerError("Number of occupant elements specified inconsistent with number of multifamily units defined in the model.")
       return false
     end
     
-    if num_units > 1 and num_occ.length == 1
-      num_occ = Array.new(num_units, num_occ[0])
+    if units.size > 1 and num_occ.length == 1
+      num_occ = Array.new(units.size, num_occ[0])
     end 
     
-    # Change to 1-based arrays for simplification
-    num_occ.unshift(nil)
-
     activity_per_person = 112.5504
 
     #hard coded convective, radiative, latent, and lost fractions
@@ -105,9 +104,9 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
     total_num_occ = 0
     people_sch = nil
     activity_sch = nil
-    (1..num_units).to_a.each do |unit_num|
+    units.each_with_index do |unit, unit_index|
     
-      unit_occ = num_occ[unit_num]
+      unit_occ = num_occ[unit_index]
 
       if unit_occ != Constants.Auto 
           if not HelperMethods.valid_float?(unit_occ)
@@ -119,18 +118,15 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
           end
       end
 
-      # Get number of beds and unit spaces
-      nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
-      if unit_spaces.nil?
-          return false
-      elsif nbeds.nil?
-          runner.registerError("Could not determine number of bedrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+      # Get number of beds
+      nbeds, nbaths = Geometry.get_unit_beds_baths(model, unit, runner)
+      if nbeds.nil?
           return false
       end
 
       # Calculate number of occupants for this unit
       if unit_occ == Constants.Auto
-          if num_units > 1 # multifamily equation
+          if units.size > 1 # multifamily equation
               unit_occ = 0.63 + 0.92 * nbeds
           else # single-family equation
               unit_occ = 0.87 + 0.59 * nbeds
@@ -140,16 +136,16 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
       end
 
       # Get FFA
-      ffa = Geometry.get_finished_floor_area_from_spaces(unit_spaces, false, runner)
+      ffa = Geometry.get_finished_floor_area_from_spaces(unit.spaces, false, runner)
       if ffa.nil?
           return false
       end
       
       # Assign occupants to each space of the unit
-      spaces = Geometry.get_finished_spaces(unit_spaces)      
+      spaces = Geometry.get_finished_spaces(unit.spaces)      
       spaces.each do |space|
       
-          space_obj_name = "#{Constants.ObjectNameOccupants(unit_num)}|#{space.name.to_s}"
+          space_obj_name = "#{Constants.ObjectNameOccupants(unit.name.to_s)}|#{space.name.to_s}"
           
           # Remove any existing people
           objects_to_remove = []
@@ -212,16 +208,16 @@ class AddResidentialOccupants < OpenStudio::Ruleset::ModelUserScript
           
       end
 
-      if num_units > 1
-        runner.registerInfo("Unit #{unit_num} has been assigned #{unit_occ.round(2)} occupant(s).")
+      if units.size > 1
+        runner.registerInfo("#{unit.name.to_s} has been assigned #{unit_occ.round(2)} occupant(s).")
       end
 
     end
     
     #reporting final condition of model
     units_str = ""
-    if num_units > 1
-      units_str = " across #{num_units} units"
+    if units.size > 1
+      units_str = " across #{units.size} units"
     end
     runner.registerFinalCondition("The building has been assigned #{total_num_occ.round(2)} occupant(s)#{units_str}.")
 

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>7291c135-9d5e-429a-bbc0-2902ffc52078</version_id>
-  <version_modified>20161014T184653Z</version_modified>
+  <version_id>b290daac-1c7a-4740-8757-19f7b4778e4e</version_id>
+  <version_modified>20161017T233840Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -99,7 +99,7 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
-        <min_compatible>1.4.0</min_compatible>
+        <min_compatible>1.13.1</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
@@ -117,12 +117,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>97B219DD</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>838E9F01</checksum>
     </file>
     <file>
       <filename>process_constructions_windows_test.rb</filename>
@@ -143,12 +137,6 @@
       <checksum>74673C04</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3BCBA48E</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -159,6 +147,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5E54715B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9195CA47</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7326234C</checksum>
     </file>
   </files>
 </measure>

@@ -213,8 +213,8 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     end
     
     # create the unit
-    unit_spaces = {}
-    unit_spaces[1] = living_spaces_front
+    unit_spaces_hash = {}
+    unit_spaces_hash[1] = living_spaces_front
         
     if has_rear_units # units in front and back
              
@@ -263,7 +263,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       end
       
       # create the back unit
-      unit_spaces[2] = living_spaces_back
+      unit_spaces_hash[2] = living_spaces_back
 
       pos = 0
       (3..num_units).to_a.each do |unit_num|
@@ -304,7 +304,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
         
         end        
       
-        unit_spaces[unit_num] = new_living_spaces
+        unit_spaces_hash[unit_num] = new_living_spaces
         
       end
     
@@ -344,7 +344,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
         
         end        
       
-        unit_spaces[unit_num] = new_living_spaces
+        unit_spaces_hash[unit_num] = new_living_spaces
       
       end     
     
@@ -382,7 +382,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       
       # create the unit
       if foundation_type == Constants.FinishedBasementFoundationType
-        unit_spaces[1] << foundation_space
+        unit_spaces_hash[1] << foundation_space
       end
 
       if has_rear_units # units in front and back
@@ -414,7 +414,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
         
         # create the unit
         if foundation_type == Constants.FinishedBasementFoundationType
-          unit_spaces[2] << foundation_space
+          unit_spaces_hash[2] << foundation_space
         end
     
         pos = 0
@@ -460,7 +460,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
             foundation_spaces << new_living_space
             
             if foundation_type == Constants.FinishedBasementFoundationType
-              unit_spaces[unit_num] << new_living_space
+              unit_spaces_hash[unit_num] << new_living_space
             end            
           
           end
@@ -507,7 +507,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
             foundation_spaces << new_living_space
           
             if foundation_type == Constants.FinishedBasementFoundationType
-              unit_spaces[unit_num] << new_living_space
+              unit_spaces_hash[unit_num] << new_living_space
             end
             
           end
@@ -555,8 +555,16 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
 
     end     
     
-    unit_spaces.each do |unit_num, spaces|
-      Geometry.set_unit_beds_baths_spaces(model, unit_num, spaces)
+    unit_hash = {}
+    unit_spaces_hash.each do |unit_num, spaces|
+      # Store building unit information
+      unit = OpenStudio::Model::BuildingUnit.new(model)
+      unit.setBuildingUnitType(Constants.BuildingUnitTypeResidential)
+      unit.setName(Constants.ObjectNameBuildingUnit(unit_num))
+      spaces.each do |space|
+        space.setBuildingUnit(unit)
+      end
+      unit_hash[unit_num] = unit
     end
     
     # put all of the spaces in the model into a vector
@@ -576,7 +584,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
           
           zone_names_for_multiplier_adjustment = []        
           space_names_to_remove = []
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
+          unit_spaces = unit_spaces_hash[unit_num]
           if unit_num == 2 # leftmost interior unit
             unit_spaces.each do |space|
               thermal_zone = space.thermalZone.get
@@ -593,7 +601,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
             unit_spaces.each do |space|
               space_names_to_remove << space.name.to_s
             end
-            Geometry.remove_unit(model, unit_num)
+            unit_hash[unit_num].remove
             model.getSpaces.each do |space|
               space_names_to_remove.each do |s|
                 if space.name.to_s == s
@@ -614,7 +622,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
 
           zone_names_for_multiplier_adjustment = []        
           space_names_to_remove = []
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, unit_num, runner)
+          unit_spaces = unit_spaces_hash[unit_num]
           if unit_num == 3 or unit_num == 4 # leftmost interior units
             unit_spaces.each do |space|
               thermal_zone = space.thermalZone.get
@@ -631,7 +639,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
             unit_spaces.each do |space|
               space_names_to_remove << space.name.to_s
             end
-            Geometry.remove_unit(model, unit_num)
+            unit_hash[unit_num].remove
             model.getSpaces.each do |space|
               space_names_to_remove.each do |s|
                 if space.name.to_s == s
@@ -657,7 +665,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     if use_zone_mult and ((num_units > 3 and not has_rear_units) or (num_units > 7 and has_rear_units))  
       if not has_rear_units
         adjacent_surfaces = {}
-        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 2, runner)        
+        unit_spaces = unit_spaces_hash[2]
         unit_spaces.each do |space|
           space.surfaces.each do |surface|
             next unless surface.surfaceType.downcase == "wall"
@@ -666,7 +674,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
             adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
           end
         end
-        nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)
+        unit_spaces = unit_spaces_hash[3]
         adjacent_surfaces.each do |adjacent_surface, max_z|
           unit_spaces.each do |space|
             space.surfaces.each do |surface|
@@ -683,7 +691,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
         # front
         if num_units % 2 == 0
           adjacent_surfaces = {}
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)
+          unit_spaces = unit_spaces_hash[3]
           unit_spaces.each do |space|
             space.surfaces.each do |surface|
               next unless surface.surfaceType.downcase == "wall"
@@ -692,7 +700,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
               adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
             end
           end
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 5, runner)
+          unit_spaces = unit_spaces_hash[5]
           adjacent_surfaces.each do |adjacent_surface, max_z|
             unit_spaces.each do |space|
               space.surfaces.each do |surface|
@@ -706,7 +714,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
           end
           # rear
           adjacent_surfaces = {}
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 4, runner)
+          unit_spaces = unit_spaces_hash[4]
           unit_spaces.each do |space|
             space.surfaces.each do |surface|
               next unless surface.surfaceType.downcase == "wall"
@@ -715,7 +723,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
               adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
             end
           end
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 6, runner)
+          unit_spaces = unit_spaces_hash[6]
           adjacent_surfaces.each do |adjacent_surface, max_z|
             unit_spaces.each do |space|
               space.surfaces.each do |surface|
@@ -729,7 +737,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
           end
         else # odd number of units
           adjacent_surfaces = {}
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 3, runner)        
+          unit_spaces = unit_spaces_hash[3]
           unit_spaces.each do |space|
             space.surfaces.each do |surface|
               next unless surface.surfaceType.downcase == "wall"
@@ -738,7 +746,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
               adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
             end
           end
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 6, runner)
+          unit_spaces = unit_spaces_hash[6]
           adjacent_surfaces.each do |adjacent_surface, max_z|
             unit_spaces.each do |space|
               space.surfaces.each do |surface|
@@ -752,7 +760,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
           end
           # rear
           adjacent_surfaces = {}
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 4, runner)
+          unit_spaces = unit_spaces_hash[4]
           unit_spaces.each do |space|
             space.surfaces.each do |surface|
               next unless surface.surfaceType.downcase == "wall"
@@ -761,7 +769,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
               adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
             end
           end
-          nbeds, nbaths, unit_spaces = Geometry.get_unit_beds_baths_spaces(model, 5, runner)
+          unit_spaces = unit_spaces_hash[5]
           adjacent_surfaces.each do |adjacent_surface, max_z|
             unit_spaces.each do |space|
               space.surfaces.each do |surface|

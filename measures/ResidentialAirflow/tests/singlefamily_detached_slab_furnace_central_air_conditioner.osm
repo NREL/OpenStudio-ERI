@@ -323,7 +323,10 @@ OS:Space,
   0,                                      !- Y Origin {m}
   0,                                      !- Z Origin {m}
   ,                                       !- Building Story Name
-  {eabf069f-d635-4aec-a728-4186f1509aba}; !- Thermal Zone Name
+  {eabf069f-d635-4aec-a728-4186f1509aba}, !- Thermal Zone Name
+  ,                                       !- Part of Total Floor Area
+  ,                                       !- Design Specification Outdoor Air Object Name
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}; !- Building Unit Name
 
 OS:Surface,
   {822a9865-ae36-4c77-9235-89834d55baea}, !- Handle
@@ -438,7 +441,10 @@ OS:Space,
   0,                                      !- Y Origin {m}
   2.4384,                                 !- Z Origin {m}
   ,                                       !- Building Story Name
-  {eabf069f-d635-4aec-a728-4186f1509aba}; !- Thermal Zone Name
+  {eabf069f-d635-4aec-a728-4186f1509aba}, !- Thermal Zone Name
+  ,                                       !- Part of Total Floor Area
+  ,                                       !- Design Specification Outdoor Air Object Name
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}; !- Building Unit Name
 
 OS:Surface,
   {28335a66-7014-4098-b623-40a97d7b5f95}, !- Handle
@@ -636,7 +642,10 @@ OS:Space,
   0,                                      !- Y Origin {m}
   4.8768,                                 !- Z Origin {m}
   ,                                       !- Building Story Name
-  {e005d1e9-35c4-4eab-9042-cf672aa4591f}; !- Thermal Zone Name
+  {e005d1e9-35c4-4eab-9042-cf672aa4591f}, !- Thermal Zone Name
+  ,                                       !- Part of Total Floor Area
+  ,                                       !- Design Specification Outdoor Air Object Name
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}; !- Building Unit Name
 
 OS:ThermalZone,
   {e005d1e9-35c4-4eab-9042-cf672aa4591f}, !- Handle
@@ -720,42 +729,11 @@ OS:ZoneHVAC:EquipmentList,
   Zone HVAC Equipment List 2,             !- Name
   {e005d1e9-35c4-4eab-9042-cf672aa4591f}; !- Thermal Zone
 
-OS:ElectricEquipment:Definition,
-  {18f6202d-0e3a-4bea-9565-ed58a27dbde8}, !- Handle
-  unit=1|bed=3.0|bath=2.0|space={6b2bb579-d850-4e02-bff8-e51f1513181a}|space={8ff3afbf-2366-40e2-b16b-856273a0ff06}|space={e0ea1975-903f-44f6-b4fe-868896fc04c1}, !- Name
-  EquipmentLevel,                         !- Design Level Calculation Method
-  0,                                      !- Design Level {W}
-  ,                                       !- Watts per Space Floor Area {W/m2}
-  ;                                       !- Watts per Person {W/person}
-
-OS:Schedule:Ruleset,
-  {e0cdbceb-a19a-4a99-803a-a9f0f9ed1727}, !- Handle
-  empty_schedule,                         !- Name
-  {6509b94a-d6d5-4269-9171-0fe8ddd0907d}, !- Schedule Type Limits Name
-  {d7c100f8-b38c-4ec4-b0ef-097778973c2c}; !- Default Day Schedule Name
-
-OS:Schedule:Day,
-  {d7c100f8-b38c-4ec4-b0ef-097778973c2c}, !- Handle
-  Schedule Day 1,                         !- Name
-  {6509b94a-d6d5-4269-9171-0fe8ddd0907d}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  24,                                     !- Hour 1
-  0,                                      !- Minute 1
-  0;                                      !- Value Until Time 1
-
-OS:ElectricEquipment,
-  {fa0dc314-5aff-4cbc-bac9-cd3596df2300}, !- Handle
-  unit=1|bed=3.0|bath=2.0|space={6b2bb579-d850-4e02-bff8-e51f1513181a}|space={8ff3afbf-2366-40e2-b16b-856273a0ff06}|space={e0ea1975-903f-44f6-b4fe-868896fc04c1}, !- Name
-  {18f6202d-0e3a-4bea-9565-ed58a27dbde8}, !- Electric Equipment Definition Name
-  ,                                       !- Space or SpaceType Name
-  {e0cdbceb-a19a-4a99-803a-a9f0f9ed1727}; !- Schedule Name
-
-OS:ScheduleTypeLimits,
-  {6509b94a-d6d5-4269-9171-0fe8ddd0907d}, !- Handle
-  Fractional,                             !- Name
-  0,                                      !- Lower Limit Value
-  1,                                      !- Upper Limit Value
-  Continuous;                             !- Numeric Type
+OS:BuildingUnit,
+  {df84fcbe-d74d-4ba5-bf3a-2cbee656491d}, !- Handle
+  unit 1,                                 !- Name
+  ,                                       !- Rendering Color
+  Residential;                            !- Building Unit Type
 
 OS:Schedule:Constant,
   {ab53ca62-1705-4f69-93fc-5198e72677d8}, !- Handle
