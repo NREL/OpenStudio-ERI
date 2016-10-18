@@ -94,9 +94,6 @@ class Geometry
             units = self.get_building_units(model, runner)
             units.each do |unit|
                 nbeds, nbaths = Geometry.get_unit_beds_baths(model, unit, runner)
-                if nbeds.nil?
-                    return nil
-                end
                 dhw_sched_index_hash[nbeds] = (dhw_sched_index_hash[nbeds] + 1) % 10
                 unit.setFeature(Constants.BuildingUnitFeatureDHWSchedIndex, dhw_sched_index_hash[nbeds])
             end
@@ -106,6 +103,21 @@ class Geometry
             dhw_sched_index = dhw_sched_index.get
         end
         return dhw_sched_index
+    end
+    
+    def self.get_unit_number(model, unit, runner=nil)
+        unit_number = unit.getFeatureAsInteger(Constants.BuildingUnitFeatureUnitNumber)
+        if not unit_number.is_initialized
+            # Assign unit number for every building unit
+            units = self.get_building_units(model, runner)
+            units.each_with_index do |unit, index|
+                unit.setFeature(Constants.BuildingUnitFeatureUnitNumber, index+1)
+            end
+            unit_number = unit.getFeatureAsInteger(Constants.BuildingUnitFeatureUnitNumber).get
+        else
+            unit_number = unit_number.get
+        end
+        return unit_number
     end
 
     # Returns all spaces in the model associated with a unit

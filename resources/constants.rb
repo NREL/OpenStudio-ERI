@@ -110,6 +110,9 @@ class Constants
   def self.BuildingUnitFeatureDHWSchedIndex
     return 'DHWSchedIndex'
   end
+  def self.BuildingUnitFeatureUnitNumber
+    return 'UnitNumber'
+  end
   def self.BuildingUnitFeatureNumBathrooms
     return 'NumberOfBathrooms'
   end

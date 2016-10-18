@@ -412,6 +412,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
     end
     
     units.each do |unit|
+      unit_num = Geometry.get_unit_number(model, unit, runner)
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
       if thermal_zones.length > 1
         runner.registerInfo("#{unit.name.to_s} spans more than one thermal zone.")
@@ -467,7 +468,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         supply_fan_availability.setValue(1)
 
         fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
-        fan.setName("Supply Fan_#{unit.name.to_s}")
+        fan.setName("Supply Fan_#{unit_num}")
         fan.setEndUseSubcategory("HVACFan")
         fan.setFanEfficiency(supply.eff)
         fan.setPressureRise(supply.static)
@@ -494,7 +495,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)      
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName("Central Air System_#{unit.name.to_s}")
+        air_loop.setName("Central Air System_#{unit_num}")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -517,7 +518,7 @@ class ProcessMinisplit < OpenStudio::Ruleset::ModelUserScript
         zone_splitter.setName("Zone Splitter")
         
         zone_mixer = air_loop.zoneMixer
-        zone_mixer.setName("Zone Mixer_#{unit.name.to_s}")
+        zone_mixer.setName("Zone Mixer_#{unit_num}")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
         diffuser_living.setName("Living Zone Direct Air")

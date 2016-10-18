@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>0ddf84d3-f894-4b74-924d-7ffda0be49be</version_id>
-  <version_modified>20161017T233837Z</version_modified>
+  <version_id>11750ccf-00de-4a09-adc3-47bce424bd7e</version_id>
+  <version_modified>20161018T190135Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -535,12 +535,6 @@
       <checksum>3DDFE5D2</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9195CA47</checksum>
-    </file>
-    <file>
       <filename>ResidentialDishwasher_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -583,10 +577,16 @@
       <checksum>B177E265</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E4899227</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7326234C</checksum>
+      <checksum>4D0A9290</checksum>
     </file>
   </files>
 </measure>

@@ -875,7 +875,7 @@ OS:ScheduleTypeLimits,
 
 OS:AirLoopHVAC,
   {4db52d77-7b14-48d8-b8c9-8e40160b71bd}, !- Handle
-  Central Air System_unit 1,              !- Name
+  Central Air System_1,                   !- Name
   ,                                       !- Controller List Name
   {8ff48d8e-75df-4d73-b906-5e8657ca2cf3}, !- Availability Schedule
   ,                                       !- Availability Manager

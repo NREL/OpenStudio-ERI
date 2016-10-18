@@ -28,10 +28,10 @@ class ProcessMinisplitTest < MiniTest::Test
     result = _test_error("multifamily_3_units_location.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_unit 1' to thermal zone 'living zone 1' of unit 1")
-    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_unit 1' to thermal zone 'finished basement zone 1' of unit 1")    
+    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_1' to thermal zone 'living zone 1' of unit 1")
+    assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_1' to thermal zone 'finished basement zone 1' of unit 1")    
     (2..num_units).to_a.each do |unit_num|
-      assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_unit #{unit_num}' to thermal zone 'living zone #{unit_num}' of unit #{unit_num}")
+      assert_includes(result.info.map{ |x| x.logMessage }, "Added air loop 'Central Air System_#{unit_num}' to thermal zone 'living zone #{unit_num}' of unit #{unit_num}")
     end
   end
   

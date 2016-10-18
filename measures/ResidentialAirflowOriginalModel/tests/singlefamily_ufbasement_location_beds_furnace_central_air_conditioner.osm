@@ -4313,7 +4313,7 @@ OS:AirLoopHVAC:UnitarySystem,
 
 OS:AirLoopHVAC,
   {f7526c36-14d3-4dc3-85c5-ff3b8cbf26fa}, !- Handle
-  Central Air System_unit 1,              !- Name
+  Central Air System_1,                   !- Name
   ,                                       !- Controller List Name
   {ee5cd2c3-e5d6-40a8-9410-5951e0e65e3c}, !- Availability Schedule
   ,                                       !- Availability Manager

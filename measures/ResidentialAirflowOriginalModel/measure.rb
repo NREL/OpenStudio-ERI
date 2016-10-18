@@ -1001,13 +1001,13 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
     
     duct_locations = {}
     
-    units.each_with_index do |building_unit, unit_index|
+    units.each do |building_unit|
       nbeds, nbaths = Geometry.get_unit_beds_baths(model, building_unit, runner)
       if nbeds.nil? or nbaths.nil?
         return false
       end
       unit_spaces = building_unit.spaces
-      unit_num = unit_index+1
+      unit_num = Geometry.get_unit_number(model, building_unit, runner)
 
       unit = Unit.new
       unit.num_bedrooms = nbeds
@@ -2013,7 +2013,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
         demand_side_outlet_node_name = nil
         demand_side_inlet_node_names = nil
         workspace.getObjectsByType("AirLoopHVAC".to_IddObjectType).each do |airloop|
-          if airloop.getString(0).to_s.include? "Central Air System_unit #{unit_num}"
+          if airloop.getString(0).to_s.include? "Central Air System_#{unit_num}"
             demand_side_outlet_node_name = airloop.getString(7).to_s
             demand_side_inlet_node_names = airloop.getString(8).to_s
           end
@@ -2585,8 +2585,8 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
       runner.registerInfo("Set object '#{str.split("\n")[1].gsub(",","")} - #{str.split("\n")[2].split(",")[0]}'")
     end    
         
-    units.each_with_index do |building_unit, unit_index|
-      unit_num = unit_index+1
+    units.each do |building_unit|
+      unit_num = Geometry.get_unit_number(model, building_unit, runner)
       unit_spaces = building_unit.spaces
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)      
       living_thermal_zone_name = nil
