@@ -4635,7 +4635,7 @@ OS:AirLoopHVAC:UnitarySystem,
 
 OS:AirLoopHVAC,
   {71252e3c-6e2a-4549-9bbc-7d8daaa7279b}, !- Handle
-  Central Air System_1,                   !- Name
+  Central Air System_unit 1,              !- Name
   ,                                       !- Controller List Name
   {233866f6-c77b-4523-a28c-46810ca1d021}, !- Availability Schedule
   ,                                       !- Availability Manager

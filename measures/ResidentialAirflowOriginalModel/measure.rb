@@ -2013,10 +2013,14 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
         demand_side_outlet_node_name = nil
         demand_side_inlet_node_names = nil
         workspace.getObjectsByType("AirLoopHVAC".to_IddObjectType).each do |airloop|
-          if airloop.getString(0).to_s.include? "Central Air System_#{unit_num}"
+          if airloop.getString(0).to_s.include? "Central Air System_unit #{unit_num}"
             demand_side_outlet_node_name = airloop.getString(7).to_s
             demand_side_inlet_node_names = airloop.getString(8).to_s
           end
+        end
+        if demand_side_outlet_node_name.nil?
+          runner.registerError("Could not find AirLoopHVAC demand side outlet node name.")
+          return false
         end
         
         demand_side_inlet_node_name = nil
@@ -2024,6 +2028,10 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
           if nodelist.getString(0).to_s == demand_side_inlet_node_names
             demand_side_inlet_node_name = nodelist.getString(1).to_s
           end
+        end
+        if demand_side_inlet_node_name.nil?
+          runner.registerError("Could not find AirLoopHVAC demand side inlet node name.")
+          return false
         end
               
         # Return Air
