@@ -290,10 +290,9 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     end
     
     units.each do |unit|
+      unit_num = Geometry.get_unit_number(model, unit, runner)
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
-      if thermal_zones.length > 1
-        runner.registerInfo("#{unit.name.to_s} spans more than one thermal zone.")
-      end
+
       control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
 
@@ -311,7 +310,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
         baseboard_coil.setConvergenceTolerance(0.001)
         
         living_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, model.alwaysOnDiscreteSchedule, baseboard_coil)
-        living_baseboard_heater.setName("Living Zone Baseboards")
+        living_baseboard_heater.setName("Living Zone Baseboards_#{unit_num}")
         living_baseboard_heater.addToThermalZone(control_zone)
         runner.registerInfo("Added baseboard convective water '#{living_baseboard_heater.name}' to thermal zone '#{control_zone.name}' of #{unit.name.to_s}")
         
@@ -333,7 +332,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
           baseboard_coil.setConvergenceTolerance(0.001)
         
           fbasement_baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, model.alwaysOnDiscreteSchedule, baseboard_coil)
-          fbasement_baseboard_heater.setName("FBsmt Zone Baseboards")
+          fbasement_baseboard_heater.setName("FBsmt Zone Baseboards_#{unit_num}")
           fbasement_baseboard_heater.addToThermalZone(slave_zone)
           runner.registerInfo("Added baseboard convective water '#{fbasement_baseboard_heater.name}' to thermal zone '#{slave_zone.name}' of #{unit.name.to_s}")
           

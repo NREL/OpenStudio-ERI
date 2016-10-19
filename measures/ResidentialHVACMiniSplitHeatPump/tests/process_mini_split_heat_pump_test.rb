@@ -14,7 +14,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>12660.67, "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>13469.54}
-    _test_measure("singlefamily_detached_fbsmt.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)    
+    _test_measure("singlefamily_detached_fbsmt.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 3)    
   end  
   
   def test_retrofit_replace_furnace
@@ -22,7 +22,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_furnace.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
+    _test_measure("singlefamily_detached_fbsmt_furnace.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_retrofit_replace_ashp
@@ -30,7 +30,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingDXSingleSpeed"=>1, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_ashp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
+    _test_measure("singlefamily_detached_fbsmt_ashp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end  
   
   def test_retrofit_replace_central_air_conditioner
@@ -38,7 +38,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
+    _test_measure("singlefamily_detached_fbsmt_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end  
   
   def test_retrofit_replace_room_air_conditioner
@@ -46,7 +46,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
+    _test_measure("singlefamily_detached_fbsmt_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end  
   
   def test_retrofit_replace_electric_baseboard
@@ -54,7 +54,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_electric_baseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_retrofit_replace_boiler
@@ -62,7 +62,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_boiler.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
+    _test_measure("singlefamily_detached_fbsmt_boiler.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
 
   def test_retrofit_replace_mshp
@@ -70,7 +70,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"FanOnOff"=>1, "AirConditionerVariableRefrigerantFlow"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_mshp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
+    _test_measure("singlefamily_detached_fbsmt_mshp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
   def test_retrofit_replace_furnace_central_air_conditioner
@@ -78,7 +78,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
+    _test_measure("singlefamily_detached_fbsmt_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
   
   def test_retrofit_replace_furnace_room_air_conditioner
@@ -86,7 +86,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>2, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "CoilHeatingElectric"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_furnace_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
+    _test_measure("singlefamily_detached_fbsmt_furnace_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
   
   def test_retrofit_replace_electric_baseboard_central_air_conditioner
@@ -94,7 +94,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_electric_baseboard_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end  
   
   def test_retrofit_replace_boiler_central_air_conditioner
@@ -102,7 +102,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_boiler_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)
+    _test_measure("singlefamily_detached_fbsmt_boiler_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end  
 
   def test_retrofit_replace_electric_baseboard_room_air_conditioner
@@ -110,7 +110,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "FanOnOff"=>1, "CoilHeatingElectric"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_electric_baseboard_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
+    _test_measure("singlefamily_detached_fbsmt_electric_baseboard_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end   
   
   def test_retrofit_replace_boiler_room_air_conditioner
@@ -118,7 +118,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "FanOnOff"=>1, "CoilHeatingElectric"=>1, "BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>1, "FanOnOff"=>1, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>1, "CoilHeatingDXVariableRefrigerantFlow"=>1, "CoilCoolingDXVariableRefrigerantFlow"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_detached_fbsmt_boiler_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
+    _test_measure("singlefamily_detached_fbsmt_boiler_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end
 
   def test_multifamily_new_construction_1
@@ -127,7 +127,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>num_units, "FanOnOff"=>num_units, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>num_units, "CoilHeatingDXVariableRefrigerantFlow"=>num_units, "CoilCoolingDXVariableRefrigerantFlow"=>num_units, "ZoneHVACBaseboardConvectiveElectric"=>2*num_units}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.49, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_attached_fbsmt_4_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*4)
+    _test_measure("singlefamily_attached_fbsmt_4_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*3)
   end
 
   def test_multifamily_new_construction_2
@@ -140,36 +140,6 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
   end  
   
   private
-  
-  def _test_error(osm_file_or_model, args_hash)
-    # create an instance of the measure
-    measure = ProcessVRFMinisplit.new
-
-    # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
-
-    model = get_model(File.dirname(__FILE__), osm_file_or_model)
-
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash[arg.name]
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
-    end
-
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-      
-    return result
-    
-  end  
   
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure

@@ -246,9 +246,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     units.each do |unit|
       unit_num = Geometry.get_unit_number(model, unit, runner)
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
-      if thermal_zones.length > 1
-        runner.registerInfo("#{unit.name.to_s} spans more than one thermal zone.")
-      end
+
       control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
     

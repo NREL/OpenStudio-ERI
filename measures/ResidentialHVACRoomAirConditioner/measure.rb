@@ -170,10 +170,9 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     end
     
     units.each do |unit|
+      unit_num = Geometry.get_unit_number(model, unit, runner)
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
-      if thermal_zones.length > 1
-        runner.registerInfo("#{unit.name.to_s} spans more than one thermal zone.")
-      end
+
       control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
@@ -220,7 +219,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         htg_coil.setName("Always Off Heating Coil for PTAC")
         
         ptac = OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner.new(model, model.alwaysOnDiscreteSchedule, fan_onoff, htg_coil, clg_coil)
-        ptac.setName("Window AC")
+        ptac.setName("Window AC_#{unit_num}")
         ptac.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
         ptac.addToThermalZone(control_zone)
         runner.registerInfo("Added packaged terminal air conditioner '#{ptac.name}' to thermal zone '#{control_zone.name}' of #{unit.name.to_s}")

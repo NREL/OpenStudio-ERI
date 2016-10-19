@@ -784,7 +784,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     
     wind_speed = _processWindSpeedCorrection(wind_speed, terrainType)
         
-    units.each_with_index do |building_unit, unit_index|
+    units.each do |building_unit|
       unit = Unit.new
       unit.num_bedrooms, unit.num_bathrooms = Geometry.get_unit_beds_baths(model, building_unit, runner)
       unit_spaces = building_unit.spaces
@@ -793,11 +793,8 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         return false
       end
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)
-      if thermal_zones.length > 1
-        runner.registerInfo("#{building_unit.name.to_s} spans more than one thermal zone.")
-      end      
       
-      unit.unit_num = unit_index+1
+      unit.unit_num = Geometry.get_unit_number(model, building_unit, runner)
       unit.age_of_home = ageOfHome
       unit.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(unit_spaces, false)
       unit.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(unit_spaces, false, runner)
