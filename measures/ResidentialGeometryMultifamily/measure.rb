@@ -149,7 +149,14 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     use_zone_mult.setDisplayName("Use Zone Multipliers?")
     use_zone_mult.setDescription("Model only one interior unit per floor with its thermal zone multiplier equal to the number of interior units per floor.")
     use_zone_mult.setDefaultValue(false)
-    args << use_zone_mult   
+    args << use_zone_mult
+    
+    #make an argument for using floor multipliers
+    use_floor_mult = OpenStudio::Ruleset::OSArgument::makeBoolArgument("use_floor_mult", true)
+    use_floor_mult.setDisplayName("Use Floor Multipliers?")
+    use_floor_mult.setDescription("Model only one interior floor with thermal zone multipliers equal to the number of interior floors.")
+    use_floor_mult.setDefaultValue(false)
+    args << use_floor_mult    
     
     return args
   end
@@ -177,6 +184,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     foundation_type = runner.getStringArgumentValue("foundation_type",user_arguments)
     foundation_height = runner.getDoubleArgumentValue("foundation_height",user_arguments)
     use_zone_mult = runner.getBoolArgumentValue("use_zone_mult",user_arguments)
+    use_floor_mult = runner.getBoolArgumentValue("use_floor_mult",user_arguments)
     
     if foundation_type == Constants.SlabFoundationType
       foundation_height = 0.0
@@ -193,7 +201,11 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     if foundation_type == Constants.CrawlFoundationType and ( foundation_height < 1.5 or foundation_height > 5.0 )
       runner.registerError("The crawlspace height can be set between 1.5 and 5 ft.")
       return false
-    end    
+    end
+    if num_units_per_floor == 1 and (corr_pos == "Double-Loaded Interior" or corr_pos == "Double Exterior")
+      runner.registerError("Specified building as having rear units, but didn't specify enough units.")
+      return false
+    end
     if unit_aspect_ratio < 0
       runner.registerError("Invalid aspect ratio entered.")
       return false
@@ -386,6 +398,11 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       pos = 0
       front_unit = true
       (3..num_units).to_a.each do |unit_num|
+      
+        if not num_units_per_floor > 2 and unit_num == 3
+          pos = -1
+          floor = living_height
+        end
 
         # front or back unit
         if front_unit
@@ -526,6 +543,11 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       pos = 0
       (2..num_units).to_a.each do |unit_num|
 
+        if not num_units_per_floor > 1 and unit_num == 2
+          pos = -1
+          floor = living_height
+        end      
+      
         living_spaces = living_spaces_front
         pos += 1
         
@@ -649,7 +671,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         foundation_spaces << foundation_space
 
         pos = 0
-        (3..num_units/building_num_floors).to_a.each do |unit_num|
+        (3..num_units_per_floor).to_a.each do |unit_num|
 
           # front or back unit
           if unit_num % 2 != 0 # odd unit number
@@ -683,7 +705,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       else # units only in front
       
         pos = 0
-        (2..num_units/building_num_floors).to_a.each do |unit_num|
+        (2..num_units_per_floor).to_a.each do |unit_num|
 
           living_spaces = foundation_space_front
           pos += 1
@@ -772,8 +794,8 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     OpenStudio::Model.intersectSurfaces(spaces)
     OpenStudio::Model.matchSurfaces(spaces)
     
-    rename_units = {}
     if use_zone_mult and ((num_units_per_floor > 3 and not has_rear_units) or (num_units_per_floor > 7 and has_rear_units))
+    
       (1..num_units_per_floor).to_a.each do |unit_num_per_floor|
         (1..building_num_floors).to_a.each do |building_floor|
 
@@ -783,9 +805,8 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
             
             zone_names_for_multiplier_adjustment = []        
             space_names_to_remove = []
-            unit_spaces = unit_spaces_hash[unit_num]
+            unit_spaces = unit_hash[unit_num].spaces
             if unit_num == 1 + (num_units_per_floor * (building_floor - 1)) # leftmost unit
-              rename_units[unit_num] = 1 + (3 * (building_floor - 1))
             elsif unit_num == 2 + (num_units_per_floor * (building_floor - 1)) # leftmost interior unit
               unit_spaces.each do |space|
                 thermal_zone = space.thermalZone.get
@@ -798,7 +819,6 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
                   end
                 end
               end
-              rename_units[unit_num] = 2 + (3 * (building_floor - 1))
             elsif unit_num < building_floor * num_units_per_floor # interior units that get removed
               unit_spaces.each do |space|
                 space_names_to_remove << space.name.to_s
@@ -808,28 +828,20 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
                 space_names_to_remove.each do |s|
                   if space.name.to_s == s
                     if space.thermalZone.is_initialized
-                      thermal_zone = space.thermalZone.get
-                      thermal_zone.remove
+                      space.thermalZone.get.remove
                     end
                     space.remove
                   end
                 end
               end
-            else # rename the rightmost unit
-              rename_units[unit_num] = 3 + (3 * (building_floor - 1))
             end       
             
           else # has rear units
 
             zone_names_for_multiplier_adjustment = []
             space_names_to_remove = []
-            unit_spaces = unit_spaces_hash[unit_num]
+            unit_spaces = unit_hash[unit_num].spaces
             if unit_num == 1 + (num_units_per_floor * (building_floor - 1)) or unit_num == 2 + (num_units_per_floor * (building_floor - 1)) # leftmost units
-              if unit_num == 1 + (num_units_per_floor * (building_floor - 1))
-                rename_units[unit_num] = 1 + (6 * (building_floor - 1))
-              elsif unit_num == 2 + (num_units_per_floor * (building_floor - 1))
-                rename_units[unit_num] = 2 + (6 * (building_floor - 1))
-              end
             elsif unit_num == 3 + (num_units_per_floor * (building_floor - 1)) or unit_num == 4 + (num_units_per_floor * (building_floor - 1)) # leftmost interior units
               unit_spaces.each do |space|
                 thermal_zone = space.thermalZone.get
@@ -842,11 +854,6 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
                   end
                 end
               end
-              if unit_num == 3 + (num_units_per_floor * (building_floor - 1))
-                rename_units[unit_num] = 3 + (6 * (building_floor - 1))
-              elsif unit_num == 4 + (num_units_per_floor * (building_floor - 1))
-                rename_units[unit_num] = 4 + (6 * (building_floor - 1))
-              end
             elsif unit_num != (building_floor * num_units_per_floor) - 1 and unit_num != building_floor * num_units_per_floor # interior units that get removed
               unit_spaces.each do |space|
                 space_names_to_remove << space.name.to_s
@@ -856,177 +863,74 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
                 space_names_to_remove.each do |s|
                   if space.name.to_s == s
                     if space.thermalZone.is_initialized
-                      thermal_zone = space.thermalZone.get
-                      thermal_zone.remove
+                      space.thermalZone.get.remove
                     end
                     space.remove
                   end
                 end
               end
-            elsif unit_num == (building_floor * num_units_per_floor) - 1
-              rename_units[unit_num] = 5 + (6 * (building_floor - 1))
-            else
-              rename_units[unit_num] = 6 + (6 * (building_floor - 1))
             end
           
           end
         end # end building floor
       end # end unit per floor
     end # end zone mult
-     
-    Hash[rename_units.sort_by { |k, v| v }].each do |k, v|
-      Geometry.rename_unit_spaces_zones(model, k, v)
-    end
     
-    if use_zone_mult and ((num_units_per_floor > 3 and not has_rear_units) or (num_units_per_floor > 7 and has_rear_units))
-      (1..building_num_floors).to_a.each do |building_floor|
-        if not has_rear_units
-          adjacent_surfaces = {}
-          unit_spaces = unit_spaces_hash[2 + (3 * (building_floor - 1))]
-          unit_spaces.each do |space|
-            space.surfaces.each do |surface|
-              next unless surface.surfaceType.downcase == "wall"
-              next unless surface.outsideBoundaryCondition.downcase == "surface"
-              next if surface.adjacentSurface.is_initialized
-              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-            end
-          end
-          unit_spaces = unit_spaces_hash[3 + (3 * (building_floor - 1))]
-          adjacent_surfaces.each do |adjacent_surface, max_z|
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next if surface.adjacentSurface.is_initialized
-                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                surface.setAdjacentSurface(adjacent_surface)            
-                break
-              end
-            end
-          end
-        else # has rear units
-          # front
-          if (building_floor * num_units_per_floor) % 2 == 0
-            adjacent_surfaces = {}
-            unit_spaces = unit_spaces_hash[3 + (6 * (building_floor - 1))]
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next if surface.adjacentSurface.is_initialized
-                adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-              end
-            end
-            unit_spaces = unit_spaces_hash[5 + (6 * (building_floor - 1))]
-            adjacent_surfaces.each do |adjacent_surface, max_z|
-              unit_spaces.each do |space|
-                space.surfaces.each do |surface|
-                  next unless surface.surfaceType.downcase == "wall"
-                  next unless surface.outsideBoundaryCondition.downcase == "surface"
-                  next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                  surface.setAdjacentSurface(adjacent_surface)
-                  break
-                end
-              end
-            end
-            # rear
-            adjacent_surfaces = {}
-            unit_spaces = unit_spaces_hash[4 + (6 * (building_floor - 1))]
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next if surface.adjacentSurface.is_initialized
-                adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-              end
-            end
-            unit_spaces = unit_spaces_hash[6 + (6 * (building_floor - 1))]
-            adjacent_surfaces.each do |adjacent_surface, max_z|
-              unit_spaces.each do |space|
-                space.surfaces.each do |surface|
-                  next unless surface.surfaceType.downcase == "wall"
-                  next unless surface.outsideBoundaryCondition.downcase == "surface"
-                  next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                  surface.setAdjacentSurface(adjacent_surface)           
-                  break
-                end
-              end
-            end
-          else # odd number of units
-            adjacent_surfaces = {}
-            unit_spaces = unit_spaces_hash[3 + (6 * (building_floor - 1))]
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next if surface.adjacentSurface.is_initialized
-                adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-              end
-            end
-            unit_spaces = unit_spaces_hash[6 + (6 * (building_floor - 1))]
-            adjacent_surfaces.each do |adjacent_surface, max_z|
-              unit_spaces.each do |space|
-                space.surfaces.each do |surface|
-                  next unless surface.surfaceType.downcase == "wall"
-                  next unless surface.outsideBoundaryCondition.downcase == "surface"
-                  next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                  surface.setAdjacentSurface(adjacent_surface)
-                  break
-                end
-              end
-            end
-            # rear
-            adjacent_surfaces = {}
-            unit_spaces = unit_spaces_hash[4 + (6 * (building_floor - 1))]
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next if surface.adjacentSurface.is_initialized
-                adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-              end
-            end
-            unit_spaces = unit_spaces_hash[5 + (6 * (building_floor - 1))]
-            adjacent_surfaces.each do |adjacent_surface, max_z|
-              unit_spaces.each do |space|
-                space.surfaces.each do |surface|
-                  next unless surface.surfaceType.downcase == "wall"
-                  next unless surface.outsideBoundaryCondition.downcase == "surface"
-                  next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                  surface.setAdjacentSurface(adjacent_surface)           
-                  break
-                end
-              end
-            end        
+    if use_floor_mult and building_num_floors > 3
+    
+      floor_zs = []
+      model.getSurfaces.each do |surface|
+        next unless surface.surfaceType.downcase == "floor"
+        floor_zs << Geometry.getSurfaceZValues([surface])[0]
+      end
+      floor_zs = floor_zs.uniq.sort.select{|x| x >= 0}
+      
+      floor_zs[2..-2].each do |floor_z|
+        units_to_remove = []
+        model.getBuildingUnits.each do |unit|
+          unit.spaces.each do |space|
+            next unless floor_z == Geometry.get_space_floor_z(space)
+            next if units_to_remove.include? unit
+            units_to_remove << unit
           end
         end
-      end # end building floor
-    end # end zone mult
+        units_to_remove.each do |unit|
+          unit.spaces.each do |space|
+            if space.thermalZone.is_initialized
+              space.thermalZone.get.remove
+            end
+            space.remove
+          end
+          unit.remove
+        end      
+      end
+      
+      model.getBuildingUnits.each do |unit|
+        unit.spaces.each do |space|
+          next unless floor_zs[1] == Geometry.get_space_floor_z(space)
+          thermal_zone = space.thermalZone.get
+          thermal_zone.setMultiplier(thermal_zone.multiplier * (building_num_floors - 2))
+        end
+      end
+      
+    end # end floor mult
     
     # make all surfaces adjacent to corridor spaces into adiabatic surfaces
     model.getSpaces.each do |space|
-        next unless space.name.to_s.include? Constants.CorridorSpace
-        space.surfaces.each do |surface|
-            if surface.adjacentSurface.is_initialized
-                surface.adjacentSurface.get.setOutsideBoundaryCondition("Adiabatic")
-            end
-            surface.setOutsideBoundaryCondition("Adiabatic")
+      next unless space.name.to_s.include? Constants.CorridorSpace
+      space.surfaces.each do |surface|
+        if surface.adjacentSurface.is_initialized
+          surface.adjacentSurface.get.setOutsideBoundaryCondition("Adiabatic")
         end
+        surface.setOutsideBoundaryCondition("Adiabatic")
+      end
     end
     
     model.getSurfaces.each do |surface|
       next unless surface.outsideBoundaryCondition.downcase == "surface"
       next if surface.adjacentSurface.is_initialized
       surface.setOutsideBoundaryCondition("Adiabatic")
-    end    
-    
-    if use_zone_mult
-      if num_units_per_floor >= 3 and not has_rear_units
-        num_units = 3 * building_num_floors
-      elsif num_units_per_floor >= 6 and has_rear_units
-        num_units = 6 * building_num_floors
-      end
-    end    
+    end
     
     # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)

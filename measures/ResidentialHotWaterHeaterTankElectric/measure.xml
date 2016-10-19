@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>2a7e2eb4-a185-4f27-a071-a62ee3239c7a</version_id>
-  <version_modified>20161018T224935Z</version_modified>
+  <version_id>12b494e1-a674-4aed-bec4-6a21277eecbf</version_id>
+  <version_modified>20161019T171141Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankElectric</class_name>
   <display_name>Set Residential Electric Tank Water Heater</display_name>
@@ -259,7 +259,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7980FE45</checksum>
+      <checksum>FF4C21F2</checksum>
     </file>
   </files>
 </measure>

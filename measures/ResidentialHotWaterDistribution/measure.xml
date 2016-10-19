@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>6bef2123-6a0f-4390-90ab-de1619afa113</version_id>
-  <version_modified>20161018T224935Z</version_modified>
+  <version_id>96591d70-eab7-4c55-bea7-551082d9579f</version_id>
+  <version_modified>20161019T171140Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>
@@ -1141,7 +1141,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7980FE45</checksum>
+      <checksum>FF4C21F2</checksum>
     </file>
   </files>
 </measure>

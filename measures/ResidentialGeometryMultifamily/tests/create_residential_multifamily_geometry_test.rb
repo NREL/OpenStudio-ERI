@@ -163,7 +163,46 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     expected_num_new_objects = {"BuildingUnit"=>6, "Surface"=>36, "ThermalZone"=>6, "Space"=>6, "ShadingSurface"=>2, "ShadingSurfaceGroup"=>2}
     expected_values = {}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
-  end     
+  end
+  
+  def test_floor_mult
+    args_hash = {}
+    args_hash["building_num_floors"] = 12
+    args_hash["num_units_per_floor"] = 8
+    args_hash["use_floor_mult"] = "true"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"BuildingUnit"=>24, "Surface"=>288, "ThermalZone"=>25, "Space"=>36}
+    expected_values = {}
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
+  end
+  
+  def test_one_unit_per_floor_with_rear_units
+    args_hash = {}
+    args_hash["num_units_per_floor"] = 1
+    result = _test_error(nil, args_hash) 
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Specified building as having rear units, but didn't specify enough units.")    
+  end
+  
+  def test_two_units_per_floor_with_rear_units
+    args_hash = {}
+    args_hash["building_num_floors"] = 4
+    args_hash["num_units_per_floor"] = 2
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"BuildingUnit"=>8, "Surface"=>72, "ThermalZone"=>8+1, "Space"=>12}
+    expected_values = {}
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
+  end  
+  
+  def test_one_unit_per_floor_with_no_rear_units
+    args_hash = {}
+    args_hash["building_num_floors"] = 4
+    args_hash["num_units_per_floor"] = 1
+    args_hash["corr_pos"] = "None"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"BuildingUnit"=>4, "Surface"=>24, "ThermalZone"=>4, "Space"=>4}
+    expected_values = {}
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end    
   
   private
   

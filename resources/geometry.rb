@@ -140,25 +140,6 @@ class Geometry
     def self.get_all_common_spaces(model, runner=nil)
         return (model.getSpaces - self.get_all_unit_spaces(model, runner))
     end
-
-    def self.rename_unit_spaces_zones(model, old_unit_num, new_unit_num)
-        space_names_list = []
-        model.getBuildingUnits.each do |unit|
-            next if unit.name.to_s != Constants.ObjectNameBuildingUnit(old_unit_num)
-            unit.setName(Constants.ObjectNameBuildingUnit(new_unit_num))
-            unit.spaces.each do |space|
-                space_names_list << space
-            end
-        end
-        model.getSpaces.each do |space|
-          space_names_list.each do |s|
-            next if !space.name.to_s == s
-            space.setName(space.name.to_s.gsub(Constants.ObjectNameBuildingUnit(old_unit_num), Constants.ObjectNameBuildingUnit(new_unit_num)))
-            thermal_zone = space.thermalZone.get
-            thermal_zone.setName(thermal_zone.name.to_s.gsub(Constants.ObjectNameBuildingUnit(old_unit_num), Constants.ObjectNameBuildingUnit(new_unit_num)))
-          end
-        end
-    end
     
     def self.get_unit_default_finished_space(unit_spaces, runner)
         # For the specified unit, chooses an arbitrary finished space on the lowest above-grade story.
@@ -486,6 +467,13 @@ class Geometry
         return zValueArray
     end
 
+    def self.get_space_floor_z(space)
+      space.surfaces.each do |surface|
+        next unless surface.surfaceType.downcase == "floor"
+        return self.getSurfaceZValues([surface])[0]
+      end
+    end
+    
     def self.get_z_origin_for_zone(zone)
       z_origins = []
       zone.spaces.each do |space|

@@ -584,7 +584,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
           
           zone_names_for_multiplier_adjustment = []        
           space_names_to_remove = []
-          unit_spaces = unit_spaces_hash[unit_num]
+          unit_spaces = unit_hash[unit_num].spaces
           if unit_num == 2 # leftmost interior unit
             unit_spaces.each do |space|
               thermal_zone = space.thermalZone.get
@@ -613,8 +613,6 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
                 end
               end
             end
-          else # rename the rightmost unit
-            Geometry.rename_unit_spaces_zones(model, unit_num, 3)
           end       
           
         else # has rear units
@@ -622,7 +620,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
 
           zone_names_for_multiplier_adjustment = []        
           space_names_to_remove = []
-          unit_spaces = unit_spaces_hash[unit_num]
+          unit_spaces = unit_hash[unit_num].spaces
           if unit_num == 3 or unit_num == 4 # leftmost interior units
             unit_spaces.each do |space|
               thermal_zone = space.thermalZone.get
@@ -651,137 +649,10 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
                 end
               end
             end
-          elsif unit_num == num_units - 1
-            Geometry.rename_unit_spaces_zones(model, unit_num, 5)
-          else
-            Geometry.rename_unit_spaces_zones(model, unit_num, 6)
           end
         
         end
         
-      end
-    end
-      
-    if use_zone_mult and ((num_units > 3 and not has_rear_units) or (num_units > 7 and has_rear_units))  
-      if not has_rear_units
-        adjacent_surfaces = {}
-        unit_spaces = unit_spaces_hash[2]
-        unit_spaces.each do |space|
-          space.surfaces.each do |surface|
-            next unless surface.surfaceType.downcase == "wall"
-            next unless surface.outsideBoundaryCondition.downcase == "surface"
-            next if surface.adjacentSurface.is_initialized
-            adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-          end
-        end
-        unit_spaces = unit_spaces_hash[3]
-        adjacent_surfaces.each do |adjacent_surface, max_z|
-          unit_spaces.each do |space|
-            space.surfaces.each do |surface|
-              next unless surface.surfaceType.downcase == "wall"
-              next unless surface.outsideBoundaryCondition.downcase == "surface"
-              next if surface.adjacentSurface.is_initialized
-              next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-              surface.setAdjacentSurface(adjacent_surface)            
-              break
-            end
-          end
-        end
-      else # has rear units
-        # front
-        if num_units % 2 == 0
-          adjacent_surfaces = {}
-          unit_spaces = unit_spaces_hash[3]
-          unit_spaces.each do |space|
-            space.surfaces.each do |surface|
-              next unless surface.surfaceType.downcase == "wall"
-              next unless surface.outsideBoundaryCondition.downcase == "surface"
-              next if surface.adjacentSurface.is_initialized
-              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-            end
-          end
-          unit_spaces = unit_spaces_hash[5]
-          adjacent_surfaces.each do |adjacent_surface, max_z|
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                surface.setAdjacentSurface(adjacent_surface)
-                break
-              end
-            end
-          end
-          # rear
-          adjacent_surfaces = {}
-          unit_spaces = unit_spaces_hash[4]
-          unit_spaces.each do |space|
-            space.surfaces.each do |surface|
-              next unless surface.surfaceType.downcase == "wall"
-              next unless surface.outsideBoundaryCondition.downcase == "surface"
-              next if surface.adjacentSurface.is_initialized
-              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-            end
-          end
-          unit_spaces = unit_spaces_hash[6]
-          adjacent_surfaces.each do |adjacent_surface, max_z|
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                surface.setAdjacentSurface(adjacent_surface)           
-                break
-              end
-            end
-          end
-        else # odd number of units
-          adjacent_surfaces = {}
-          unit_spaces = unit_spaces_hash[3]
-          unit_spaces.each do |space|
-            space.surfaces.each do |surface|
-              next unless surface.surfaceType.downcase == "wall"
-              next unless surface.outsideBoundaryCondition.downcase == "surface"
-              next if surface.adjacentSurface.is_initialized
-              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-            end
-          end
-          unit_spaces = unit_spaces_hash[6]
-          adjacent_surfaces.each do |adjacent_surface, max_z|
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                surface.setAdjacentSurface(adjacent_surface)
-                break
-              end
-            end
-          end
-          # rear
-          adjacent_surfaces = {}
-          unit_spaces = unit_spaces_hash[4]
-          unit_spaces.each do |space|
-            space.surfaces.each do |surface|
-              next unless surface.surfaceType.downcase == "wall"
-              next unless surface.outsideBoundaryCondition.downcase == "surface"
-              next if surface.adjacentSurface.is_initialized
-              adjacent_surfaces[surface] = Geometry.getSurfaceZValues([surface]).max
-            end
-          end
-          unit_spaces = unit_spaces_hash[5]
-          adjacent_surfaces.each do |adjacent_surface, max_z|
-            unit_spaces.each do |space|
-              space.surfaces.each do |surface|
-                next unless surface.surfaceType.downcase == "wall"
-                next unless surface.outsideBoundaryCondition.downcase == "surface"
-                next unless (Geometry.getSurfaceZValues([surface]).max - max_z).abs < 0.01
-                surface.setAdjacentSurface(adjacent_surface)           
-                break
-              end
-            end
-          end
-        end
       end
     end
     
@@ -789,14 +660,6 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       next unless surface.outsideBoundaryCondition.downcase == "surface"
       next if surface.adjacentSurface.is_initialized
       surface.setOutsideBoundaryCondition("Adiabatic")
-    end
-    
-    if use_zone_mult
-      if num_units >= 3 and not has_rear_units
-        num_units = 3
-      elsif num_units >= 6 and has_rear_units
-        num_units = 6
-      end
     end
     
     # Store number of units

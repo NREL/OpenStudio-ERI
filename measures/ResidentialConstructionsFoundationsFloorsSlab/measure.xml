@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>524bd04a-84d4-4065-8928-d6024976ed83</version_id>
-  <version_modified>20161018T224932Z</version_modified>
+  <version_id>a0306106-497e-474f-b217-93a814d0aa23</version_id>
+  <version_modified>20161019T171137Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
@@ -152,12 +152,6 @@
       <checksum>E4899227</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7980FE45</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_CS_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -210,6 +204,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>E2835505</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FF4C21F2</checksum>
     </file>
   </files>
 </measure>
