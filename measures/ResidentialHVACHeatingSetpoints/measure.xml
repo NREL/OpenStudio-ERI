@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>4f3f890b-5fca-4653-9a42-9f9e1786d638</version_id>
-  <version_modified>20161019T171143Z</version_modified>
+  <version_id>f1974f5b-729c-457c-9121-22873f4e6df8</version_id>
+  <version_modified>20161019T201629Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -85,17 +85,6 @@
       <checksum>97B219DD</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>BBA2A1E4</checksum>
-    </file>
-    <file>
       <filename>process_heating_setpoints_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -172,6 +161,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>FF4C21F2</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8037F391</checksum>
     </file>
   </files>
 </measure>

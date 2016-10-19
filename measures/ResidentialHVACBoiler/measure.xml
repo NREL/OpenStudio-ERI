@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>8333e1f5-2119-4997-9ca0-65261e07f8f9</version_id>
-  <version_modified>20161019T171142Z</version_modified>
+  <version_id>f482ffe9-fa17-4e00-b125-69a3229eec03</version_id>
+  <version_modified>20161019T213404Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -410,12 +410,6 @@
       <checksum>38A2C794</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8783D859</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -428,6 +422,18 @@
       <checksum>57E0A358</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FF4C21F2</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2350A601</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.6</identifier>
@@ -436,13 +442,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>66179DEF</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FF4C21F2</checksum>
+      <checksum>4C36516B</checksum>
     </file>
   </files>
 </measure>

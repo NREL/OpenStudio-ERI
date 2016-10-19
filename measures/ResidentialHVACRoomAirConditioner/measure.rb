@@ -179,10 +179,6 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         next unless Geometry.zone_is_above_grade(control_zone)
 
         # Remove existing equipment
-        existing_has_mshp = false
-        if HVAC.has_mini_split_heat_pump(model, runner, control_zone)
-          existing_has_mshp = true
-        end        
         HVAC.remove_existing_hvac_equipment(model, runner, "Room Air Conditioner", control_zone)    
       
         # _processSystemRoomAC
@@ -226,10 +222,8 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
       
         slave_zones.each do |slave_zone|
 
-            # Remove existing equipment
-            if existing_has_mshp
-              HVAC.has_electric_baseboard(model, runner, slave_zone, true)
-            end
+          # Remove existing equipment
+          HVAC.remove_existing_hvac_equipment(model, runner, "Room Air Conditioner", slave_zone)
 
         end
       

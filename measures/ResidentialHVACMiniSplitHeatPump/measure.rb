@@ -474,7 +474,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # _processSystemDemandSideAir
         
         tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
-        tu_vrf.setName("Indoor Unit_#{unit_num}")
+        tu_vrf.setName("#{control_zone.name} indoor unit_#{unit_num}")
         tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
         tu_vrf.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
         # tu_vrf.setSupplyAirFanPlacement("BlowThrough") # TODO: wrapped?
@@ -487,31 +487,128 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         
         # Supplemental heat
         unless baseboardOutputCapacity == "NO SUPP HEAT"
-          htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
-          htg_coil.setName("Living Zone Electric Baseboards")
+          supp_htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
+          supp_htg_coil.setName("#{control_zone.name} electric baseboards")
           if baseboardOutputCapacity != Constants.SizingAuto
-            htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
+            supp_htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
           end
-          htg_coil.setEfficiency(baseboardEfficiency)
-          htg_coil.addToThermalZone(control_zone)
-          runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{control_zone.name}' of #{unit.name.to_s}")
+          supp_htg_coil.setEfficiency(baseboardEfficiency)
+          supp_htg_coil.addToThermalZone(control_zone)
+          runner.registerInfo("Added baseboard convective electric '#{supp_htg_coil.name}' to thermal zone '#{control_zone.name}' of #{unit.name.to_s}")
         end              
         
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
-          HVAC.has_boiler(model, runner, slave_zone, true)
-          HVAC.has_electric_baseboard(model, runner, slave_zone, true)
+          HVAC.remove_existing_hvac_equipment(model, runner, "Mini-Split Heat Pump", slave_zone)
+          
+          htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
+          htg_coil.setName("DX Heating Coil_#{unit_num}")
+          if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+            htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]])
+            htg_coil.setRatedAirFlowRate(supply.HeatingCFMs[curves.mshp_indices[-1]]* miniSplitHeatingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
+          end        
+          htg_coil.setHeatingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
+          htg_coil.setHeatingCapacityModifierFunctionofFlowFractionCurve(constant_cubic)        
+                  
+          clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
+          clg_coil.setName("DX Cooling Coil_#{unit_num}")
+          if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+            clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]])
+            clg_coil.setRatedAirFlowRate(supply.CoolingCFMs[curves.mshp_indices[-1]]* miniSplitCoolingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
+          end        
+          clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[-1])
+          clg_coil.setCoolingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
+          clg_coil.setCoolingCapacityModifierCurveFunctionofFlowFraction(constant_cubic)
+                
+          vrf = OpenStudio::Model::AirConditionerVariableRefrigerantFlow.new(model)
+          vrf.setName("Multi Split Heat Pump_#{unit_num}")
+          vrf.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+          
+          min_plr_heat = supply.Capacity_Ratio_Heating[curves.mshp_indices.min] / supply.Capacity_Ratio_Heating[curves.mshp_indices.max]
+          min_plr_cool = supply.Capacity_Ratio_Cooling[curves.mshp_indices.min] / supply.Capacity_Ratio_Cooling[curves.mshp_indices.max]
+          
+          if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+            vrf.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]])
+          end
+          vrf.setRatedCoolingCOP(1.0 / supply.CoolingEIR[-1])
+          vrf.setMinimumOutdoorTemperatureinCoolingMode(-6)
+          vrf.setMaximumOutdoorTemperatureinCoolingMode(60)
+          
+          vrf.setCoolingCapacityRatioModifierFunctionofLowTemperatureCurve(cool_cap_ft)   
+          vrf.setCoolingEnergyInputRatioModifierFunctionofLowTemperatureCurve(cool_eir_ft)
+          vrf.setCoolingEnergyInputRatioModifierFunctionofLowPartLoadRatioCurve(cool_eir_fplr)
+          vrf.setCoolingPartLoadFractionCorrelationCurve(cool_plf_fplr)
+          
+          if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+            vrf.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]])
+          end
+          vrf.setRatedTotalHeatingCapacitySizingRatio(1)
+          vrf.setRatedHeatingCOP(1.0 / supply.HeatingEIR[-1])
+          vrf.setMinimumOutdoorTemperatureinHeatingMode(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
+          vrf.setMaximumOutdoorTemperatureinHeatingMode(25)
+          vrf.setHeatingCapacityRatioModifierFunctionofLowTemperatureCurve(heat_cap_ft)
+          vrf.setHeatingEnergyInputRatioModifierFunctionofLowTemperatureCurve(heat_eir_ft)
+          vrf.setHeatingPerformanceCurveOutdoorTemperatureType("DryBulbTemperature")       
+          vrf.setHeatingEnergyInputRatioModifierFunctionofLowPartLoadRatioCurve(heat_eir_fplr)
+          vrf.setHeatingPartLoadFractionCorrelationCurve(heat_plf_fplr)
+          
+          vrf.setMinimumHeatPumpPartLoadRatio([min_plr_heat, min_plr_cool].min)
+          vrf.setZoneforMasterThermostatLocation(control_zone)
+          vrf.setMasterThermostatPriorityControlType("LoadPriority")
+          vrf.setHeatPumpWasteHeatRecovery(false)
+          vrf.setCrankcaseHeaterPowerperCompressor(0)
+          vrf.setNumberofCompressors(1)
+          vrf.setRatioofCompressorSizetoTotalCompressorCapacity(1)
+          vrf.setDefrostStrategy("ReverseCycle")
+          vrf.setDefrostControl("OnDemand")
+           
+          vrf.setDefrostEnergyInputRatioModifierFunctionofTemperatureCurve(defrosteir)
+          
+          vrf.setMaximumOutdoorDrybulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
+          vrf.setFuelType("Electricity")
+          vrf.setEquivalentPipingLengthusedforPipingCorrectionFactorinCoolingMode(0)
+          vrf.setVerticalHeightusedforPipingCorrectionFactor(0)
+          vrf.setPipingCorrectionFactorforHeightinCoolingModeCoefficient(0)
+          vrf.setEquivalentPipingLengthusedforPipingCorrectionFactorinHeatingMode(0)
+          
+          supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
+          supply_fan_availability.setName("SupplyFanAvailability")
+          supply_fan_availability.setValue(1)
 
+          fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
+          fan.setName("Supply Fan_#{unit_num}")
+          fan.setEndUseSubcategory("HVACFan")
+          fan.setFanEfficiency(supply.eff)
+          fan.setPressureRise(supply.static)
+          fan.setMotorEfficiency(1)
+          fan.setMotorInAirstreamFraction(1)
+
+          supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
+          supply_fan_operation.setName("SupplyFanOperation")
+          supply_fan_operation.setValue(0)          
+                    
+          tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
+          tu_vrf.setName("#{slave_zone.name} indoor unit_#{unit_num}")
+          tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
+          tu_vrf.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+          # tu_vrf.setSupplyAirFanPlacement("BlowThrough") # TODO: wrapped?
+          tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
+          tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
+          tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
+          tu_vrf.addToThermalZone(slave_zone)
+          vrf.addTerminal(tu_vrf)
+          runner.registerInfo("Added variable refrigerant flow terminal unit '#{tu_vrf.name}' to thermal zone '#{slave_zone.name}' of #{unit.name.to_s}") 
+          
           unless baseboardOutputCapacity == "NO SUPP HEAT"
-            htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
-            htg_coil.setName("FBsmt Zone Electric Baseboards")
+            supp_htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
+            supp_htg_coil.setName("#{slave_zone.name} electric baseboards")
             if baseboardOutputCapacity != Constants.SizingAuto
-              htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
+              supp_htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
             end
-            htg_coil.setEfficiency(baseboardEfficiency)
-            htg_coil.addToThermalZone(slave_zone)
-            runner.registerInfo("Added baseboard convective electric '#{htg_coil.name}' to thermal zone '#{slave_zone.name}' of #{unit.name.to_s}")
+            supp_htg_coil.setEfficiency(baseboardEfficiency)
+            supp_htg_coil.addToThermalZone(slave_zone)
+            runner.registerInfo("Added baseboard convective electric '#{supp_htg_coil.name}' to thermal zone '#{slave_zone.name}' of #{unit.name.to_s}")
           end
           
         end    

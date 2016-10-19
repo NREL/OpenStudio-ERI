@@ -533,7 +533,7 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         zone_mixer.setName("Zone Mixer_#{unit_num}")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_living.setName("Living Zone Direct Air")
+        diffuser_living.setName("#{control_zone.name} direct air")
         # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
         air_loop.addBranchForZone(control_zone, diffuser_living.to_StraightComponent)
 
@@ -542,11 +542,11 @@ class ProcessAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
 
         slave_zones.each do |slave_zone|
 
-          HVAC.has_boiler(model, runner, slave_zone, true)
-          HVAC.has_electric_baseboard(model, runner, slave_zone, true)
+          # Remove existing equipment
+          HVAC.remove_existing_hvac_equipment(model, runner, "Air Source Heat Pump", slave_zone)
       
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-          diffuser_fbsmt.setName("FBsmt Zone Direct Air")
+          diffuser_fbsmt.setName("#{slave_zone.name} direct air")
           # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
 
