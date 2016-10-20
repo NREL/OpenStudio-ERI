@@ -148,6 +148,10 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     if foundation_type == Constants.CrawlFoundationType and ( foundation_height < 1.5 or foundation_height > 5.0 )
       runner.registerError("The crawlspace height can be set between 1.5 and 5 ft.")
       return false
+    end
+    if num_units == 1 and has_rear_units
+      runner.registerError("Specified building as having rear units, but didn't specify enough units.")
+      return false
     end    
     if unit_aspect_ratio < 0
       runner.registerError("Invalid aspect ratio entered.")

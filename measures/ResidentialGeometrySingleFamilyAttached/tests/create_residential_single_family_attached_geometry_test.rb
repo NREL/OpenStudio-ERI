@@ -100,7 +100,15 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"BuildingUnit"=>6, "Surface"=>36, "ThermalZone"=>6, "Space"=>6}
     expected_values = {}
-    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_one_unit_per_floor_with_rear_units
+    args_hash = {}
+    args_hash["num_units"] = 1
+    args_hash["has_rear_units"] = "true"
+    result = _test_error(nil, args_hash) 
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Specified building as having rear units, but didn't specify enough units.")    
   end
   
   private

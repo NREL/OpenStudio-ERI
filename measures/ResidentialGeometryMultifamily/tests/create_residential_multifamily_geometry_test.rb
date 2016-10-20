@@ -180,7 +180,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["num_units_per_floor"] = 1
     result = _test_error(nil, args_hash) 
-    assert_includes(result.errors.map{ |x| x.logMessage }, "Specified building as having rear units, but didn't specify enough units.")    
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Specified building as having rear units, but didn't specify enough units.")
   end
   
   def test_two_units_per_floor_with_rear_units
