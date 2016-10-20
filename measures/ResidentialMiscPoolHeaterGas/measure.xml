@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater_gas</name>
   <uid>bbb7dbaa-5517-438e-bb14-5b92e9d09284</uid>
-  <version_id>fd334606-6201-45d0-b4f5-2a08aa87b3b5</version_id>
-  <version_modified>20161020T181504Z</version_modified>
+  <version_id>b03a3868-da77-4c58-bed3-e5c98578e091</version_id>
+  <version_modified>20161020T185625Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialPoolHeaterGas</class_name>
   <display_name>Set Residential Pool Gas Heater</display_name>
@@ -150,7 +150,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ECE712AA</checksum>
+      <checksum>9A86F3EB</checksum>
     </file>
   </files>
 </measure>

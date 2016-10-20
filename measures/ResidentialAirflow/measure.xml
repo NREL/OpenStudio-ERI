@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>6cb8795c-2eba-4568-aa69-9063c63ee433</version_id>
-  <version_modified>20161020T183725Z</version_modified>
+  <version_id>70938179-56b5-45aa-921f-14c305851e60</version_id>
+  <version_modified>20161020T185614Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -688,12 +688,6 @@
       <checksum>97B219DD</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ECE712AA</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.1</identifier>
@@ -703,6 +697,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>0B9AC287</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9A86F3EB</checksum>
     </file>
   </files>
 </measure>

@@ -2,6 +2,20 @@ require "#{File.dirname(__FILE__)}/constants"
 
 class Geometry
 
+    def self.get_building_stories(spaces) # TODO: remove after testing new airflow measure
+      space_min_zs = []
+      spaces.each do |space|
+        next if not self.space_is_finished(space)
+        surfaces_min_zs = []
+        space.surfaces.each do |surface|
+          zvalues = self.getSurfaceZValues([surface])
+          surfaces_min_zs << zvalues.min + OpenStudio::convert(space.zOrigin,"m","ft").get
+        end
+        space_min_zs << surfaces_min_zs.min
+      end
+      return space_min_zs.uniq.length
+    end
+
     def self.make_one_space_from_multiple_spaces(model, spaces)
       new_space = OpenStudio::Model::Space.new(model)
       spaces.each do |space|
