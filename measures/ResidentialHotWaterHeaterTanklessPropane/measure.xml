@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_propane</name>
   <uid>0278a4e0-d473-46a4-bfe4-33e92ca0a147</uid>
-  <version_id>7c3d133f-f0ba-4065-805a-9fb1fb3587a7</version_id>
-  <version_modified>20161019T171142Z</version_modified>
+  <version_id>ab651017-15c8-42e7-bdde-7e9ea337f268</version_id>
+  <version_modified>20161020T181501Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessPropane</class_name>
   <display_name>Set Residential Propane Tankless Water Heater</display_name>
@@ -255,7 +255,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FF4C21F2</checksum>
+      <checksum>ECE712AA</checksum>
     </file>
   </files>
 </measure>

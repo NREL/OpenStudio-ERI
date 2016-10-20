@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer_gas</name>
   <uid>b31f5cef-63ff-4d0e-986c-2a2344ac6bab</uid>
-  <version_id>621ee584-7826-4753-b9c9-3607af6da475</version_id>
-  <version_modified>20161019T171135Z</version_modified>
+  <version_id>00b9823d-d8b3-4bc3-b7c1-e9486a968085</version_id>
+  <version_modified>20161020T181453Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialClothesDryerGas</class_name>
   <display_name>Set Residential Gas Clothes Dryer</display_name>
@@ -186,7 +186,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FF4C21F2</checksum>
+      <checksum>ECE712AA</checksum>
     </file>
   </files>
 </measure>

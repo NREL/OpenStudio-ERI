@@ -749,23 +749,13 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     HelperMethods.remove_object_from_osm_based_on_name(model, "AirLoopHVACReturnPlenum", ["Return Plenum"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "OtherEquipmentDefinition", ["Other Equipment"])
     # HelperMethods.remove_object_from_osm_based_on_name(model, "ScheduleRuleset", ["MechanicalVentilationEnergy", "MechanicalVentilation", "BathExhaust", "ClothesDryerExhaust", "RangeHood", "NatVent", "NatVentTemp"]) # TODO: summer/winter design day schedules don't get removed, leading to disconnected workspace (?)            
-
-    # Determine geometry for whole building
-    building.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(model.getSpaces, true, runner)
-    if building.finished_floor_area.nil?
-      return false
-    end
-    building.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(model.getSpaces, true, runner)
-    if building.above_grade_finished_floor_area.nil?
-      return false
-    end
+    
+    # Determine geometry for spaces and zones that aren't unit specific 
     building.building_height = Geometry.get_building_height(model.getSpaces)
-    building.stories = Geometry.get_building_stories(model.getSpaces)
+    building.stories = model.getBuilding.standardsNumberOfAboveGroundStories.to_f
     building.num_units = units.size
     building.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
     building.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(model.getSpaces, false)    
-    
-    # Determine geometry for spaces and zones that aren't unit specific   
     model.getThermalZones.each do |thermal_zone|
       if thermal_zone.name.to_s.start_with? Constants.GarageZone
         building.garage_zone = Geometry.get_thermal_zone_from_string(model.getThermalZones, thermal_zone.name.to_s, runner)
@@ -780,6 +770,14 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         building.unfinished_attic_zone = Geometry.get_thermal_zone_from_string(model.getThermalZones, thermal_zone.name.to_s, runner)
         building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_building_height(building.unfinished_attic_zone.spaces), OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_building_height(building.unfinished_attic_zone.spaces) * OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
       end
+    end
+    building.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(model.getSpaces, true, runner)
+    if building.finished_floor_area.nil?
+      return false
+    end
+    building.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(model.getSpaces, true, runner)
+    if building.above_grade_finished_floor_area.nil?
+      return false
     end    
     
     wind_speed = _processWindSpeedCorrection(wind_speed, terrainType)
@@ -805,7 +803,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       thermal_zones.each do |thermal_zone|
         if thermal_zone.name.to_s.start_with? Constants.LivingZone
           unit.living_zone = Geometry.get_thermal_zone_from_string(thermal_zones, thermal_zone.name.to_s, runner)
-          unit.living = LivingSpace.new(Geometry.get_building_height(unit.living_zone.spaces), OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_building_height(unit.living_zone.spaces) / building.stories.to_f * OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
+          unit.living = LivingSpace.new(Geometry.get_building_height(unit.living_zone.spaces), OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_building_height(unit.living_zone.spaces) / building.stories * OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
         elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone
           unit.finished_basement_zone = Geometry.get_thermal_zone_from_string(thermal_zones, thermal_zone.name.to_s, runner)
           unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_building_height(unit.finished_basement_zone.spaces), OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_building_height(unit.finished_basement_zone.spaces) * OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
@@ -1227,7 +1225,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         ducts.num_stories_for_ducts += 1
       end
       
-      ducts.num_stories = ducts.num_stories_for_ducts      
+      ducts.num_stories = ducts.num_stories_for_ducts
       
       if ducts.DuctNormLeakageToOutside.nil?
         # Normalize values in case user inadvertently entered values that add up to the total duct leakage, 

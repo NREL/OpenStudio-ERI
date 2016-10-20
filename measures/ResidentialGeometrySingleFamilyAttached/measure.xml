@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>6b908d4a-ba0f-4b8b-a829-dfe6e4c86459</version_id>
-  <version_modified>20161020T171433Z</version_modified>
+  <version_id>df6c01c6-a3a6-48ff-8e84-3b4de626d0a7</version_id>
+  <version_modified>20161020T181458Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
@@ -190,16 +190,10 @@
       <checksum>E4899227</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FF4C21F2</checksum>
-    </file>
-    <file>
       <filename>create_residential_single_family_attached_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>A5CBA7AC</checksum>
+      <checksum>02B03F04</checksum>
     </file>
     <file>
       <version>
@@ -210,7 +204,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5129C256</checksum>
+      <checksum>8B9F9336</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>ECE712AA</checksum>
     </file>
   </files>
 </measure>

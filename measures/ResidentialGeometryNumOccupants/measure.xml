@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>9305f365-73ad-452d-934c-7018eea2e54c</version_id>
-  <version_modified>20161019T171139Z</version_modified>
+  <version_id>962da21e-5e5f-4a57-8ca1-60f798b522d4</version_id>
+  <version_modified>20161020T181458Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -131,7 +131,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FF4C21F2</checksum>
+      <checksum>ECE712AA</checksum>
     </file>
   </files>
 </measure>

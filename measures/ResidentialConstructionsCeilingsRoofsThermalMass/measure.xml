@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_thermal_mass</name>
   <uid>efe35222-f47d-43e9-b096-6bd18bfe1100</uid>
-  <version_id>769036ba-75d7-4090-8d2c-94ce5fe5435c</version_id>
-  <version_modified>20161019T171136Z</version_modified>
+  <version_id>dae9d09c-8089-442b-9e07-7c3eb0f346eb</version_id>
+  <version_modified>20161020T181455Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsThermalMass</class_name>
   <display_name>Set Residential Ceilings/Roofs - Ceiling Thermal Mass</display_name>
@@ -131,7 +131,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FF4C21F2</checksum>
+      <checksum>ECE712AA</checksum>
     </file>
   </files>
 </measure>

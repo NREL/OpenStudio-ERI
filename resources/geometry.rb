@@ -273,21 +273,6 @@ class Geometry
       return maxzs.max - minzs.min
     end
     
-    # FIXME: Switch to using StandardsNumberOfStories and StandardsNumberOfAboveGroundStories instead
-    def self.get_building_stories(spaces)
-      space_min_zs = []
-      spaces.each do |space|
-        next if not self.space_is_finished(space)
-        surfaces_min_zs = []
-        space.surfaces.each do |surface|
-          zvalues = self.getSurfaceZValues([surface])
-          surfaces_min_zs << zvalues.min + OpenStudio::convert(space.zOrigin,"m","ft").get
-        end
-        space_min_zs << surfaces_min_zs.min
-      end
-      return space_min_zs.uniq.length
-    end
-    
     # Calculates the surface height as the max z coordinate minus the min z coordinate
     def self.surface_height(surface)
         zvalues = self.getSurfaceZValues([surface])
