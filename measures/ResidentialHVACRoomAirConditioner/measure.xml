@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>79362394-9631-4814-8286-ba58b72c807c</version_id>
-  <version_modified>20161019T171143Z</version_modified>
+  <version_id>01eb6042-2b9c-40e7-a27d-88e1c2309a33</version_id>
+  <version_modified>20161020T145512Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -269,22 +269,28 @@
       <checksum>38A2C794</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8783D859</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E4899227</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FF4C21F2</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2350A601</checksum>
+    </file>
+    <file>
       <filename>process_room_air_conditioner_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>1D995AA3</checksum>
+      <checksum>60582D08</checksum>
     </file>
     <file>
       <version>
@@ -295,13 +301,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D75AD14F</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FF4C21F2</checksum>
+      <checksum>508C27C2</checksum>
     </file>
   </files>
 </measure>

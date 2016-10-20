@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>b3ad00ed-4dcb-45e8-adaa-0c9a0be37e1e</version_id>
-  <version_modified>20161019T171143Z</version_modified>
+  <version_id>210b3565-e961-4dea-b26e-b2a7f8812f26</version_id>
+  <version_modified>20161020T145512Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -326,22 +326,28 @@
       <checksum>AD4C79BA</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8783D859</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E4899227</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FF4C21F2</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2350A601</checksum>
+    </file>
+    <file>
       <filename>process_furnace_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D596D1CE</checksum>
+      <checksum>517A9B87</checksum>
     </file>
     <file>
       <version>
@@ -352,13 +358,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>03BB7060</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FF4C21F2</checksum>
+      <checksum>D51167F8</checksum>
     </file>
   </files>
 </measure>
