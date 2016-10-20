@@ -752,7 +752,11 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     
     # Determine geometry for spaces and zones that aren't unit specific 
     building.building_height = Geometry.get_building_height(model.getSpaces)
-    building.stories = model.getBuilding.standardsNumberOfAboveGroundStories.to_f
+    unless model.getBuilding.standardsNumberOfAboveGroundStories.is_initialized
+      runner.registerError("Cannot determine the number of above grade stories.")
+      return false
+    end
+    building.stories = model.getBuilding.standardsNumberOfAboveGroundStories.get
     building.num_units = units.size
     building.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
     building.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(model.getSpaces, false)    
