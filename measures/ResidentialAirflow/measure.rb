@@ -732,15 +732,14 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     # Remove any existing airflow objects
     HelperMethods.remove_object_from_osm_based_on_name(model, "SpaceInfiltrationDesignFlowRate", ["Living Infiltration", "Natural Ventilation"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "SpaceInfiltrationEffectiveLeakageArea", ["UAtcInfiltration"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "OutputVariable", ["Output Variable"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSensor", ["_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemActuator", ["_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgram", ["_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSensor", ["_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "OutputVariable", ["Schedule Value", "System Node Temperature", "Zone Outdoor Air Drybulb Temperature", "Site Outdoor Air Enthalpy", "Zone Air Temperature", "System Node Humidity Ratio", "System Node Current Density Volume Flow Rate", "Fan Runtime Fraction", "System Node Mass Flow Rate", "Site Wind Speed", "Site Outdoor Air Humidity Ratio", "Zone Mean Air Humidity Ratio", "Zone Air Relative Humidity", "Zone Mean Air Temperature", "Site Outdoor Air Barometric Pressure"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSensor", ["Tout_", "Hout_", "Tin_", "Pbar_", "Phiin_", "Win_", "Wout_", "Vwind_", "WH_sch_", "Range_sch_", "Bath_sch_", "Clothes_dryer_sch_", "NVAvail_", "NVSP_", "AH_MFR_Sensor_", "Fan_RTF_Sensor_", "AH_VFR_Sensor_", "AH_Tout_Sensor_", "RA_T_Sensor_", "AH_Wout_Sensor_", "AHZone_T_Sensor_", "RA_W_Sensor_", "AHZone_W_Sensor_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemActuator", ["InfilFlow_", "NatVentFlow_", "AHZoneToLivingFlowRateActuator_", "LivingToAHZoneFlowRateActuator_", "SupplyLeakSensibleActuator_", "SupplyLeakLatentActuator_", "SupplyDuctLoadToLivingActuator_", "ConductionToAHZoneActuator_", "ReturnDuctLoadToPlenumActuator_", "ReturnConductionToAHZoneActuator_", "SensibleLeakageToAHZoneActuator_", "LatentLeakageToAHZoneActuator_", "ReturnSensibleLeakageActuator_", "ReturnLatentLeakageActuator_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgram", ["DuctLeakageProgram_", "NaturalVentilationProgram_", "InfiltrationProgram_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemOutputVariable", ["_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgramCallingManager", ["_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgramCallingManager", ["AirflowCalculator_", "DuctLeakageCallingManager_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemGlobalVariable", ["_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSubroutine", ["_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSubroutine", ["CalculateDuctLeakage_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "MasslessOpaqueMaterial", ["Adiabatic"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "Construction", ["AdiabaticConst"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "ThermalZone", ["RA Duct Zone"])
@@ -851,65 +850,75 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       
       # Sensors
       
-      output_var = OpenStudio::Model::OutputVariable.new("Zone Outdoor Air Drybulb Temperature", model)
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+      zone_outdoor_air_drybulb_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Outdoor Air Drybulb Temperature", model)
+      zone_outdoor_air_drybulb_temp_output_var.setName("Zone Outdoor Air Drybulb Temperature")
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_outdoor_air_drybulb_temp_output_var)
       sensor.setName("Tout_#{unit.unit_num}")
-      sensor.setKeyName(unit.living_zone.name.to_s)
-      
-      output_var = OpenStudio::Model::OutputVariable.new("Site Outdoor Air Enthalpy", model)      
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-      sensor.setName("Hout_#{unit.unit_num}")
-      
-      output_var = OpenStudio::Model::OutputVariable.new("Site Outdoor Air Barometric Pressure", model)      
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-      sensor.setName("Pbar_#{unit.unit_num}")      
-      
-      output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Temperature", model)      
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-      sensor.setName("Tin_#{unit.unit_num}")
       sensor.setKeyName(unit.living_zone.name.to_s)      
+      
+      outdoor_air_enthalpy_output_var = OpenStudio::Model::OutputVariable.new("Site Outdoor Air Enthalpy", model)
+      outdoor_air_enthalpy_output_var.setName("Site Outdoor Air Enthalpy")
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, outdoor_air_enthalpy_output_var)
+      sensor.setName("Hout_#{unit.unit_num}")      
+      
+      outdoor_air_barometric_pressure_output_var = OpenStudio::Model::OutputVariable.new("Site Outdoor Air Barometric Pressure", model)
+      outdoor_air_barometric_pressure_output_var.setName("Site Outdoor Air Barometric Pressure")
+      
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, outdoor_air_barometric_pressure_output_var)
+      sensor.setName("Pbar_#{unit.unit_num}")      
 
-      output_var = OpenStudio::Model::OutputVariable.new("Zone Air Relative Humidity", model)      
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-      sensor.setName("Phiin_#{unit.unit_num}")
+      zone_mean_air_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Temperature", model)
+      zone_mean_air_temp_output_var.setName("Zone Mean Air Temperature")
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_mean_air_temp_output_var)
+      sensor.setName("Tin_#{unit.unit_num}")
       sensor.setKeyName(unit.living_zone.name.to_s)
       
-      output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Humidity Ratio", model)      
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+      zone_air_relative_humidity_output_var = OpenStudio::Model::OutputVariable.new("Zone Air Relative Humidity", model)
+      zone_air_relative_humidity_output_var.setName("Zone Air Relative Humidity")      
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_air_relative_humidity_output_var)
+      sensor.setName("Phiin_#{unit.unit_num}")
+      sensor.setKeyName(unit.living_zone.name.to_s)      
+      
+      zone_mean_air_humidity_ratio_output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Humidity Ratio", model)
+      zone_mean_air_humidity_ratio_output_var.setName("Zone Mean Air Humidity Ratio")      
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_mean_air_humidity_ratio_output_var)
       sensor.setName("Win_#{unit.unit_num}")
       sensor.setKeyName(unit.living_zone.name.to_s)
-
-      output_var = OpenStudio::Model::OutputVariable.new("Site Outdoor Air Humidity Ratio", model)      
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+      
+      outdoor_air_humidity_ratio_output_var = OpenStudio::Model::OutputVariable.new("Site Outdoor Air Humidity Ratio", model)
+      outdoor_air_humidity_ratio_output_var.setName("Site Outdoor Air Humidity Ratio")      
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, outdoor_air_humidity_ratio_output_var)
       sensor.setName("Wout_#{unit.unit_num}")
-
-      output_var = OpenStudio::Model::OutputVariable.new("Site Wind Speed", model)      
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-      sensor.setName("Vwind_#{unit.unit_num}")      
+     
+      wind_speed_output_var = OpenStudio::Model::OutputVariable.new("Site Wind Speed", model)
+      wind_speed_output_var.setName("Site Wind Speed")      
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, wind_speed_output_var)
+      sensor.setName("Vwind_#{unit.unit_num}")
       
-      output_var = OpenStudio::Model::OutputVariable.new("Schedule Value", model)
+      schedule_value_output_var = OpenStudio::Model::OutputVariable.new("Schedule Value", model)
+      schedule_value_output_var.setName("Schedule Value")      
       
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
       sensor.setName("WH_sch_#{unit.unit_num}")
-      sensor.setKeyName("Always On Discrete")
+      sensor.setKeyName("Always On Discrete")      
       
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
       sensor.setName("Range_sch_#{unit.unit_num}")
       sensor.setKeyName("RangeHood_#{unit.unit_num}")
-
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-      sensor.setName("Bath_sch_#{unit.unit_num}")
-      sensor.setKeyName("BathExhaust_#{unit.unit_num}")
       
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
+      sensor.setName("Bath_sch_#{unit.unit_num}")
+      sensor.setKeyName("BathExhaust_#{unit.unit_num}")      
+      
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
       sensor.setName("Clothes_dryer_sch_#{unit.unit_num}")
       sensor.setKeyName("ClothesDryerExhaust_#{unit.unit_num}")
-
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+      
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
       sensor.setName("NVAvail_#{unit.unit_num}")
       sensor.setKeyName("NatVent_#{unit.unit_num}")
-
-      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+      
+      sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
       sensor.setName("NVSP_#{unit.unit_num}")
       sensor.setKeyName("NatVentTemp_#{unit.unit_num}")
       
@@ -1046,7 +1055,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       ems_output_var.setUnits("m3/s")
       
       # Program
-      
+
       nat_vent_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
       nat_vent_program.setName("NaturalVentilationProgram_#{unit.unit_num}")
       nat_vent_program.addLine("Set Tdiff = Tin_#{unit.unit_num} - Tout_#{unit.unit_num}")
@@ -1390,7 +1399,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         zone_mixing_ah_to_living.setName("AHZoneToLivingZoneMixing_#{unit.unit_num}")
         zone_mixing_ah_to_living.setSourceZone(ducts.duct_location_zone)
         actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(zone_mixing_ah_to_living, "ZoneMixing", "Air Exchange Flow Rate")
-        actuator.setName("AHZoneToLivingFlowRateActuator_#{unit.unit_num}")        
+        actuator.setName("AHZoneToLivingFlowRateActuator_#{unit.unit_num}")
         
         zone_mixing_living_to_ah = OpenStudio::Model::ZoneMixing.new(ducts.duct_location_zone)
         zone_mixing_living_to_ah.setName("LivingZoneToAHZoneMixing_#{unit.unit_num}")
@@ -1499,50 +1508,55 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
         actuator.setName("ReturnLatentLeakageActuator_#{unit.unit_num}")
 
-        # Sensors
-        
-        output_var = OpenStudio::Model::OutputVariable.new("System Node Mass Flow Rate", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+        # Sensors        
+      
+        system_node_mass_flow_rate_output_var = OpenStudio::Model::OutputVariable.new("System Node Mass Flow Rate", model)
+        system_node_mass_flow_rate_output_var.setName("System Node Mass Flow Rate")        
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_mass_flow_rate_output_var)
         sensor.setName("AH_MFR_Sensor_#{unit.unit_num}")
         sensor.setKeyName(air_demand_inlet_node.name.to_s)        
         
-        output_var = OpenStudio::Model::OutputVariable.new("Fan Runtime Fraction", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+        fan_runtime_fraction_output_var = OpenStudio::Model::OutputVariable.new("Fan Runtime Fraction", model)
+        fan_runtime_fraction_output_var.setName("Fan Runtime Fraction")        
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, fan_runtime_fraction_output_var)
         sensor.setName("Fan_RTF_Sensor_#{unit.unit_num}")
         sensor.setKeyName("Supply Fan_#{unit.unit_num}")
-
-        output_var = OpenStudio::Model::OutputVariable.new("System Node Current Density Volume Flow Rate", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+        
+        system_node_current_density_volume_flow_rate_output_var = OpenStudio::Model::OutputVariable.new("System Node Current Density Volume Flow Rate", model)
+        system_node_current_density_volume_flow_rate_output_var.setName("System Node Current Density Volume Flow Rate")        
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_current_density_volume_flow_rate_output_var)
         sensor.setName("AH_VFR_Sensor_#{unit.unit_num}")
         sensor.setKeyName(air_demand_inlet_node.name.to_s)
         
-        output_var = OpenStudio::Model::OutputVariable.new("System Node Temperature", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+        system_node_temp_output_var = OpenStudio::Model::OutputVariable.new("System Node Temperature", model)
+        system_node_temp_output_var.setName("System Node Temperature Air")
+        
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_temp_output_var)
         sensor.setName("AH_Tout_Sensor_#{unit.unit_num}")
         sensor.setKeyName(air_demand_inlet_node.name.to_s)        
         
-        output_var = OpenStudio::Model::OutputVariable.new("System Node Humidity Ratio", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-        sensor.setName("AH_Wout_Sensor_#{unit.unit_num}")
-        sensor.setKeyName(air_demand_inlet_node.name.to_s)
-        
-        output_var = OpenStudio::Model::OutputVariable.new("System Node Temperature", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_temp_output_var)
         sensor.setName("RA_T_Sensor_#{unit.unit_num}")
-        sensor.setKeyName(living_zone_return_air_node.name.to_s)        
-      
-        output_var = OpenStudio::Model::OutputVariable.new("System Node Humidity Ratio", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-        sensor.setName("RA_W_Sensor_#{unit.unit_num}")
-        sensor.setKeyName(living_zone_return_air_node.name.to_s)      
-      
-        output_var = OpenStudio::Model::OutputVariable.new("Zone Air Temperature", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
-        sensor.setName("AHZone_T_Sensor_#{unit.unit_num}")
-        sensor.setKeyName(ducts.duct_location_name)
+        sensor.setKeyName(living_zone_return_air_node.name.to_s)
         
-        output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Humidity Ratio", model)
-        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_var)
+        system_node_humidity_ratio_output_var = OpenStudio::Model::OutputVariable.new("System Node Humidity Ratio", model)
+        system_node_humidity_ratio_output_var.setName("System Node Humidity Ratio")
+        
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_humidity_ratio_output_var)
+        sensor.setName("AH_Wout_Sensor_#{unit.unit_num}")
+        sensor.setKeyName(air_demand_inlet_node.name.to_s)        
+        
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_humidity_ratio_output_var)
+        sensor.setName("RA_W_Sensor_#{unit.unit_num}")
+        sensor.setKeyName(living_zone_return_air_node.name.to_s)
+        
+        zone_air_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Air Temperature", model)
+        zone_air_temp_output_var.setName("Zone Air Temperature")        
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_air_temp_output_var)
+        sensor.setName("AHZone_T_Sensor_#{unit.unit_num}")
+        sensor.setKeyName(ducts.duct_location_name)        
+        
+        sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_mean_air_humidity_ratio_output_var)
         sensor.setName("AHZone_W_Sensor_#{unit.unit_num}")
         sensor.setKeyName(ducts.duct_location_name)
         
@@ -1646,7 +1660,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         end      
       
         # Program
-        
+
         duct_leakage_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
         duct_leakage_program.setName("DuctLeakageProgram_#{unit.unit_num}")
         duct_leakage_program.addLine("Set AH_MFR_#{unit.unit_num} = AH_MFR_Sensor_#{unit.unit_num}")

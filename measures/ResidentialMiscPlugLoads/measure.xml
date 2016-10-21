@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_electric_loads</name>
   <uid>3ac41688-ef52-4679-b79c-8cbdf7cbd0e7</uid>
-  <version_id>2f4c14e7-24bf-4285-a947-fb8b83410261</version_id>
-  <version_modified>20161021T122458Z</version_modified>
+  <version_id>19689aab-ad96-47e1-880b-3821bd81ddc1</version_id>
+  <version_modified>20161021T221916Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialMiscellaneousElectricLoads</class_name>
   <display_name>Set Residential Plug Loads</display_name>
@@ -114,7 +114,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>AC0A0996</checksum>
+      <checksum>50E98717</checksum>
     </file>
   </files>
 </measure>
