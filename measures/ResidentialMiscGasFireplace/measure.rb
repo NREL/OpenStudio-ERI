@@ -179,6 +179,7 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
             gf_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
             gf = OpenStudio::Model::GasEquipment.new(gf_def)
             gf.setName(unit_obj_name)
+            gf.setEndUseSubcategory(unit_obj_name)
             gf.setSpace(space)
             gf_def.setName(unit_obj_name)
             gf_def.setDesignLevel(design_level)

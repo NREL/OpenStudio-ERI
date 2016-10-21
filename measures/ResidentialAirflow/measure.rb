@@ -1096,7 +1096,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         supply_fan.setMaximumFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
         supply_fan.setMotorEfficiency(1)
         supply_fan.setMotorInAirstreamFraction(1)
-        supply_fan.setEndUseSubcategory("VentFans_#{unit.unit_num}")
+        supply_fan.setEndUseSubcategory(Constants.EndUseMechVentFan)
 
         exhaust_fan = OpenStudio::Model::FanOnOff.new(model)
         exhaust_fan.setName("ERV Exhaust Fan_#{unit.unit_num}")
@@ -1105,7 +1105,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         exhaust_fan.setMaximumFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
         exhaust_fan.setMotorEfficiency(1)
         exhaust_fan.setMotorInAirstreamFraction(0)
-        exhaust_fan.setEndUseSubcategory("VentFans_#{unit.unit_num}")
+        exhaust_fan.setEndUseSubcategory(Constants.EndUseMechVentFan)
 
         erv_controller = OpenStudio::Model::ZoneHVACEnergyRecoveryVentilatorController.new(model)
         erv_controller.setName("ERV Controller_#{unit.unit_num}")

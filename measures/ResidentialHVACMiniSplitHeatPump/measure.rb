@@ -461,7 +461,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
 
         fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
         fan.setName("Supply Fan_#{unit_num}")
-        fan.setEndUseSubcategory("HVACFan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
         fan.setFanEfficiency(supply.eff)
         fan.setPressureRise(supply.static)
         fan.setMotorEfficiency(1)
@@ -578,7 +578,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
 
           fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
           fan.setName("Supply Fan_#{unit_num}")
-          fan.setEndUseSubcategory("HVACFan")
+          fan.setEndUseSubcategory(Constants.EndUseHVACFan)
           fan.setFanEfficiency(supply.eff)
           fan.setPressureRise(supply.static)
           fan.setMotorEfficiency(1)

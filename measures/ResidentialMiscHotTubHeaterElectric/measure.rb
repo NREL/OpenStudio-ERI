@@ -170,6 +170,7 @@ class ResidentialHotTubHeaterElec < OpenStudio::Ruleset::ModelUserScript
             hth_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             hth = OpenStudio::Model::ElectricEquipment.new(hth_def)
             hth.setName(unit_obj_name_e)
+            hth.setEndUseSubcategory(unit_obj_name_e)
             hth.setSpace(space)
             hth_def.setName(unit_obj_name_e)
             hth_def.setDesignLevel(design_level)

@@ -162,6 +162,7 @@ class ResidentialExtraRefrigerator < OpenStudio::Ruleset::ModelUserScript
             frg_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             frg = OpenStudio::Model::ElectricEquipment.new(frg_def)
             frg.setName(unit_obj_name)
+            frg.setEndUseSubcategory(unit_obj_name)
             frg.setSpace(space)
             frg_def.setName(unit_obj_name)
             frg_def.setDesignLevel(design_level)

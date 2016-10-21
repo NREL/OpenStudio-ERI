@@ -162,6 +162,7 @@ class ResidentialFreezer < OpenStudio::Ruleset::ModelUserScript
             frz_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             frz = OpenStudio::Model::ElectricEquipment.new(frz_def)
             frz.setName(unit_obj_name)
+            frz.setEndUseSubcategory(unit_obj_name)
             frz.setSpace(space)
             frz_def.setName(unit_obj_name)
             frz_def.setDesignLevel(design_level)

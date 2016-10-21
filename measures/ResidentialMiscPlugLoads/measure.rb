@@ -113,7 +113,8 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
         unit.spaces.each do |space|
             next if Geometry.space_is_unfinished(space)
             
-            space_obj_name = "#{Constants.ObjectNameMiscPlugLoads(unit.name.to_s)}|#{space.name.to_s}"
+            obj_name = "#{Constants.ObjectNameMiscPlugLoads(unit.name.to_s)}"
+            space_obj_name = "#{obj_name}|#{space.name.to_s}"
             
             # Remove any existing mels
             mels_removed = false
@@ -143,6 +144,7 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Ruleset::ModelUserScri
                 mel_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
                 mel = OpenStudio::Model::ElectricEquipment.new(mel_def)
                 mel.setName(space_obj_name)
+                mel.setEndUseSubcategory(obj_name)
                 mel.setSpace(space)
                 mel_def.setName(space_obj_name)
                 mel_def.setDesignLevel(space_design_level)

@@ -164,6 +164,7 @@ class ResidentialHotTubPump < OpenStudio::Ruleset::ModelUserScript
             htp_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             htp = OpenStudio::Model::ElectricEquipment.new(htp_def)
             htp.setName(unit_obj_name)
+            htp.setEndUseSubcategory(unit_obj_name)
             htp.setSpace(space)
             htp_def.setName(unit_obj_name)
             htp_def.setDesignLevel(design_level)

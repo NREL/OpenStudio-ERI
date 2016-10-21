@@ -202,6 +202,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         
         fan_onoff = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
         fan_onoff.setName("WindowAC Fan")
+        fan_onoff.setEndUseSubcategory(Constants.EndUseHVACFan)
         fan_onoff.setFanEfficiency(1)
         fan_onoff.setPressureRise(0)
         fan_onoff.setMotorEfficiency(1)

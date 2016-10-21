@@ -168,6 +168,7 @@ class ResidentialHotTubHeaterGas < OpenStudio::Ruleset::ModelUserScript
             hth_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
             hth = OpenStudio::Model::GasEquipment.new(hth_def)
             hth.setName(unit_obj_name_g)
+            hth.setEndUseSubcategory(unit_obj_name_g)
             hth.setSpace(space)
             hth_def.setName(unit_obj_name_g)
             hth_def.setDesignLevel(design_level)

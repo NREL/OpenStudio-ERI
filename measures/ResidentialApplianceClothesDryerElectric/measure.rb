@@ -272,6 +272,7 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
             cd_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             cd = OpenStudio::Model::ElectricEquipment.new(cd_def)
             cd.setName(unit_obj_name_e)
+            cd.setEndUseSubcategory(unit_obj_name_e)
             cd.setSpace(space)
             cd_def.setName(unit_obj_name_e)
             cd_def.setDesignLevel(design_level_e)

@@ -162,6 +162,7 @@ class ResidentialGasLighting < OpenStudio::Ruleset::ModelUserScript
             gl_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
             gl = OpenStudio::Model::GasEquipment.new(gl_def)
             gl.setName(unit_obj_name)
+            gl.setEndUseSubcategory(unit_obj_name)
             gl.setSpace(space)
             gl_def.setName(unit_obj_name)
             gl_def.setDesignLevel(design_level)

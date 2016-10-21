@@ -164,6 +164,7 @@ class ResidentialWellPump < OpenStudio::Ruleset::ModelUserScript
             wp_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             wp = OpenStudio::Model::ElectricEquipment.new(wp_def)
             wp.setName(unit_obj_name)
+            wp.setEndUseSubcategory(unit_obj_name)
             wp.setSpace(space)
             wp_def.setName(unit_obj_name)
             wp_def.setDesignLevel(design_level)

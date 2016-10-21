@@ -170,6 +170,7 @@ class ResidentialPoolHeaterElec < OpenStudio::Ruleset::ModelUserScript
             ph_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             ph = OpenStudio::Model::ElectricEquipment.new(ph_def)
             ph.setName(unit_obj_name_e)
+            ph.setEndUseSubcategory(unit_obj_name_e)
             ph.setSpace(space)
             ph_def.setName(unit_obj_name_e)
             ph_def.setDesignLevel(design_level)

@@ -175,6 +175,7 @@ class ResidentialCookingRange < OpenStudio::Ruleset::ModelUserScript
             rng_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             rng = OpenStudio::Model::ElectricEquipment.new(rng_def)
             rng.setName(unit_obj_name_e)
+            rng.setEndUseSubcategory(unit_obj_name_e)
             rng.setSpace(space)
             rng_def.setName(unit_obj_name_e)
             rng_def.setDesignLevel(design_level_e)

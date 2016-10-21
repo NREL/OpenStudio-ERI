@@ -162,6 +162,7 @@ class ResidentialGasGrill < OpenStudio::Ruleset::ModelUserScript
             gg_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
             gg = OpenStudio::Model::GasEquipment.new(gg_def)
             gg.setName(unit_obj_name)
+            gg.setEndUseSubcategory(unit_obj_name)
             gg.setSpace(space)
             gg_def.setName(unit_obj_name)
             gg_def.setDesignLevel(design_level)

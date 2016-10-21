@@ -164,6 +164,7 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
             pp_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
             pp = OpenStudio::Model::ElectricEquipment.new(pp_def)
             pp.setName(unit_obj_name)
+            pp.setEndUseSubcategory(unit_obj_name)
             pp.setSpace(space)
             pp_def.setName(unit_obj_name)
             pp_def.setDesignLevel(design_level)

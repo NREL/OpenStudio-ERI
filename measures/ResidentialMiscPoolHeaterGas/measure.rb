@@ -168,6 +168,7 @@ class ResidentialPoolHeaterGas < OpenStudio::Ruleset::ModelUserScript
             ph_def = OpenStudio::Model::GasEquipmentDefinition.new(model)
             ph = OpenStudio::Model::GasEquipment.new(ph_def)
             ph.setName(unit_obj_name_g)
+            ph.setEndUseSubcategory(unit_obj_name_g)
             ph.setSpace(space)
             ph_def.setName(unit_obj_name_g)
             ph_def.setDesignLevel(design_level)
