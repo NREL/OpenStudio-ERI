@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>febb424e-462c-420e-a093-0a87764a6efe</version_id>
-  <version_modified>20161021T115346Z</version_modified>
+  <version_id>a03fc82e-4572-4717-b782-5b58dbad95b6</version_id>
+  <version_modified>20161023T164107Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
@@ -81,7 +81,7 @@
       <default_value>4</default_value>
     </argument>
     <argument>
-      <name>mass_cond</name>
+      <name>mass_conductivity</name>
       <display_name>Mass Conductivity</display_name>
       <description>Conductivity of the slab foundation mass.</description>
       <type>Double</type>
@@ -91,7 +91,7 @@
       <default_value>9.1</default_value>
     </argument>
     <argument>
-      <name>mass_dens</name>
+      <name>mass_density</name>
       <display_name>Mass Density</display_name>
       <description>Density of the slab foundation mass.</description>
       <type>Double</type>
@@ -101,7 +101,7 @@
       <default_value>140</default_value>
     </argument>
     <argument>
-      <name>mass_specheat</name>
+      <name>mass_specific_heat</name>
       <display_name>Mass Specific Heat</display_name>
       <description>Specific heat of the slab foundation mass.</description>
       <type>Double</type>
@@ -128,17 +128,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.3.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>F2D70D2F</checksum>
-    </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
@@ -194,12 +183,6 @@
       <checksum>9FE95663</checksum>
     </file>
     <file>
-      <filename>Slab_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E2835505</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -210,6 +193,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>671E3F3C</checksum>
+    </file>
+    <file>
+      <filename>Slab_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1468B1AC</checksum>
     </file>
   </files>
 </measure>

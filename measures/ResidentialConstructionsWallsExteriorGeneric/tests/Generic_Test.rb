@@ -75,73 +75,88 @@ class ProcessConstructionsWallsExteriorGenericTest < MiniTest::Test
     _test_measure(osm_geo_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
-  def test_argument_error_thick_in_1_negative
-    args_hash = {}
-    args_hash["thick_in_1"] = -1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Thickness 1 must be greater than 0.")
+  def test_argument_error_thick_in_zero
+    (1..5).each do |layer_num|
+        args_hash = {}
+        args_hash["thick_in_#{layer_num}"] = 0
+        args_hash["conductivity_#{layer_num}"] = 0.5
+        args_hash["density_#{layer_num}"] = 0.5
+        args_hash["specific_heat_#{layer_num}"] = 0.5
+        result = _test_error(osm_geo, args_hash)
+        assert_equal(result.errors.map{ |x| x.logMessage }[0], "Thickness #{layer_num} must be greater than 0.")
+    end
   end
     
-  def test_argument_error_thick_in_1_zero
-    args_hash = {}
-    args_hash["thick_in_1"] = 0
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Thickness 1 must be greater than 0.")
+  def test_argument_error_conductivity_zero
+    (1..5).each do |layer_num|
+        args_hash = {}
+        args_hash["thick_in_#{layer_num}"] = 0.5
+        args_hash["conductivity_#{layer_num}"] = 0
+        args_hash["density_#{layer_num}"] = 0.5
+        args_hash["specific_heat_#{layer_num}"] = 0.5
+        result = _test_error(osm_geo, args_hash)
+        assert_equal(result.errors.map{ |x| x.logMessage }[0], "Conductivity #{layer_num} must be greater than 0.")
+    end
   end
 
-  def test_argument_error_conductivity_1_negative
-    args_hash = {}
-    args_hash["conductivity_1"] = -1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Conductivity 1 must be greater than 0.")
+  def test_argument_error_density_zero
+    (1..5).each do |layer_num|
+        args_hash = {}
+        args_hash["thick_in_#{layer_num}"] = 0.5
+        args_hash["conductivity_#{layer_num}"] = 0.5
+        args_hash["density_#{layer_num}"] = 0
+        args_hash["specific_heat_#{layer_num}"] = 0.5
+        result = _test_error(osm_geo, args_hash)
+        assert_equal(result.errors.map{ |x| x.logMessage }[0], "Density #{layer_num} must be greater than 0.")
+    end
   end
 
-  def test_argument_error_conductivity_1_zero
-    args_hash = {}
-    args_hash["conductivity_1"] = 0
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Conductivity 1 must be greater than 0.")
-  end
-
-  def test_argument_error_density_1_negative
-    args_hash = {}
-    args_hash["density_1"] = -1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Density 1 must be greater than 0.")
-  end
-
-  def test_argument_error_density_1_zero
-    args_hash = {}
-    args_hash["density_1"] = 0
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Density 1 must be greater than 0.")
-  end
-
-  def test_argument_error_specific_heat_1_negative
-    args_hash = {}
-    args_hash["specific_heat_1"] = -1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Specific Heat 1 must be greater than 0.")
-  end
-
-  def test_argument_error_specific_heat_1_zero
-    args_hash = {}
-    args_hash["specific_heat_1"] = 0
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Specific Heat 1 must be greater than 0.")
+  def test_argument_error_specific_heat_zero
+    (1..5).each do |layer_num|
+        args_hash = {}
+        args_hash["thick_in_#{layer_num}"] = 0.5
+        args_hash["conductivity_#{layer_num}"] = 0.5
+        args_hash["density_#{layer_num}"] = 0.5
+        args_hash["specific_heat_#{layer_num}"] = 0
+        result = _test_error(osm_geo, args_hash)
+        assert_equal(result.errors.map{ |x| x.logMessage }[0], "Specific Heat #{layer_num} must be greater than 0.")
+    end
   end
   
-  def test_argument_error_layer_2_missing_properties
-    args_hash = {}
-    args_hash["thick_in_1"] = 0.5
-    args_hash["thick_in_2"] = 0.5
-    args_hash["conductivity_1"] = 0.5
-    args_hash["conductivity_2"] = 0.5
-    args_hash["density_1"] = 0.5
-    args_hash["density_2"] = 0.5
-    args_hash["specific_heat_1"] = 0.5
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Layer 2 does not have all four properties (thickness, conductivity, density, specific heat) entered.")
+  def test_argument_error_layer_missing_properties
+    (2..5).each do |layer_num|
+        args_hash = {}
+        args_hash["thick_in_1"] = 0.5
+        if layer_num != 2
+            args_hash["thick_in_2"] = 0.5
+        end
+        args_hash["thick_in_3"] = 0.5
+        args_hash["thick_in_4"] = 0.5
+        args_hash["thick_in_5"] = 0.5
+        args_hash["conductivity_1"] = 0.5
+        args_hash["conductivity_2"] = 0.5
+        if layer_num != 3
+            args_hash["conductivity_3"] = 0.5
+        end
+        args_hash["conductivity_4"] = 0.5
+        args_hash["conductivity_5"] = 0.5
+        args_hash["density_1"] = 0.5
+        args_hash["density_2"] = 0.5
+        args_hash["density_3"] = 0.5
+        if layer_num != 4
+            args_hash["density_4"] = 0.5
+        end
+        args_hash["density_5"] = 0.5
+        args_hash["specific_heat_1"] = 0.5
+        args_hash["specific_heat_2"] = 0.5
+        args_hash["specific_heat_3"] = 0.5
+        args_hash["specific_heat_4"] = 0.5
+        if layer_num != 5
+            args_hash["specific_heat_5"] = 0.5
+        end
+        result = _test_error(osm_geo, args_hash)
+        assert_equal(result.errors.map{ |x| x.logMessage }[0], "Layer #{layer_num} does not have all four properties (thickness, conductivity, density, specific heat) entered.")
+    end
   end
 
   def test_not_applicable_no_geometry

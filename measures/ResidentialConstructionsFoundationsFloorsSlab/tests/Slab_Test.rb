@@ -88,39 +88,99 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
     _test_measure(osm_geo_slab_garage, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
-  def ___test_argument_error_cavity_r_negative
+  def test_argument_error_perim_r_negative
     args_hash = {}
-    args_hash["cavity_r"] = -1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Insulation Installed R-value must be greater than or equal to 0.")
+    args_hash["perim_r"] = -1
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Perimeter Insulation Nominal R-value must be greater than or equal to 0.")
   end
     
-  def ___test_argument_error_cavity_depth_negative
+  def test_argument_error_perim_width_negative
     args_hash = {}
-    args_hash["cavity_depth"] = -1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Depth must be greater than 0.")
+    args_hash["perim_width"] = -1
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Perimeter Insulation Width must be greater than or equal to 0.")
   end
 
-  def ___test_argument_error_cavity_depth_zero
+  def test_argument_error_whole_r_negative
     args_hash = {}
-    args_hash["cavity_depth"] = 0
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Depth must be greater than 0.")
+    args_hash["whole_r"] = -1
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Whole Slab Insulation Nominal R-value must be greater than or equal to 0.")
   end
 
-  def ___test_argument_error_framing_factor_negative
+  def test_argument_error_gap_r_negative
     args_hash = {}
-    args_hash["framing_factor"] = -1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
+    args_hash["gap_r"] = -1
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Gap Insulation Nominal R-value must be greater than or equal to 0.")
   end
 
-  def ___test_argument_error_framing_factor_eq_1
+  def test_argument_error_ext_r_negative
     args_hash = {}
-    args_hash["framing_factor"] = 1.0
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Framing Factor must be greater than or equal to 0 and less than 1.")
+    args_hash["ext_r"] = -1
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exterior Insulation Nominal R-value must be greater than or equal to 0.")
+  end
+
+  def test_argument_error_ext_depth_negative
+    args_hash = {}
+    args_hash["ext_depth"] = -1
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exterior Insulation Depth must be greater than or equal to 0.")
+  end
+
+  def test_argument_error_mass_thick_in_zero
+    args_hash = {}
+    args_hash["mass_thick_in"] = 0
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Mass Thickness must be greater than 0.")
+  end
+
+  def test_argument_error_mass_conductivity_zero
+    args_hash = {}
+    args_hash["mass_conductivity"] = 0
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Mass Conductivity must be greater than 0.")
+  end
+
+  def test_argument_error_mass_density_zero
+    args_hash = {}
+    args_hash["mass_density"] = 0
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Mass Density must be greater than 0.")
+  end
+
+  def test_argument_error_mass_specific_heat_zero
+    args_hash = {}
+    args_hash["mass_specific_heat"] = 0
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Mass Specific Heat must be greater than 0.")
+  end
+  
+  def test_argument_error_perimeter_insulation
+    args_hash = {}
+    args_hash["perim_r"] = 5
+    args_hash["perim_width"] = 0
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Perimeter insulation does not have both properties (R-value and Width) entered.")
+  end
+
+  def test_argument_error_exterior_insulation
+    args_hash = {}
+    args_hash["ext_r"] = 0
+    args_hash["ext_depth"] = 5
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exterior insulation does not have both properties (R-value and Depth) entered.")
+  end
+
+  def test_argument_error_invalid_configuration
+    args_hash = {}
+    args_hash["whole_r"] = 10
+    args_hash["ext_r"] = 10
+    args_hash["ext_depth"] = 10
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid insulation configuration. The only valid configurations are: Exterior, Perimeter+Gap, Whole+Gap, Perimeter, or Whole.")
   end
 
   def test_not_applicable_no_geometry
