@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>45aad0a2-ff11-413c-81cf-5564e3b568f2</version_id>
-  <version_modified>20161021T115352Z</version_modified>
+  <version_id>c0476b6c-8857-497c-a01b-43898bc5ff28</version_id>
+  <version_modified>20161023T155844Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -224,12 +224,6 @@
       <checksum>B9256575</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5E54715B</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -359,6 +353,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>918761CF</checksum>
     </file>
   </files>
 </measure>

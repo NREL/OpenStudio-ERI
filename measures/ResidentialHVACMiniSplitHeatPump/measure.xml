@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_vrf_minisplit</name>
   <uid>402b168f-ed99-46bb-b367-103937011e91</uid>
-  <version_id>23069fb3-0199-4a67-bf80-0887a9fc9fe7</version_id>
-  <version_modified>20161021T115353Z</version_modified>
+  <version_id>11270087-872a-433d-af21-ee802ee1f9c1</version_id>
+  <version_modified>20161023T155845Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVRFMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
@@ -19,16 +19,6 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>14.5</default_value>
-    </argument>
-    <argument>
-      <name>miniSplitHPCoolingOversizeFactor</name>
-      <display_name>Oversize Factor</display_name>
-      <description>Used to scale the auto-sized cooling capacity.</description>
-      <type>Double</type>
-      <units>frac</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>1</default_value>
     </argument>
     <argument>
       <name>miniSplitHPCoolingMinCapacity</name>
@@ -158,6 +148,16 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>5</default_value>
+    </argument>
+    <argument>
+      <name>miniSplitHPPanHeaterPowerPerUnit</name>
+      <display_name>Pan Heater Power Per Unit</display_name>
+      <description>Prevents ice build up from damaging the coil.</description>
+      <type>Double</type>
+      <units>W/unit</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0</default_value>
     </argument>
     <argument>
       <name>miniSplitCoolingOutputCapacity</name>
@@ -448,12 +448,6 @@
       <checksum>B9256575</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>5E54715B</checksum>
-    </file>
-    <file>
       <filename>multifamily_8_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -556,16 +550,28 @@
       <checksum>2350A601</checksum>
     </file>
     <file>
-      <filename>process_mini_split_heat_pump_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C998382F</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>9A86F3EB</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>918761CF</checksum>
+    </file>
+    <file>
+      <filename>process_mini_split_heat_pump_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1068F4AE</checksum>
     </file>
     <file>
       <version>
@@ -576,13 +582,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9AF7D01C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6D48E2DD</checksum>
+      <checksum>CF2021C8</checksum>
     </file>
   </files>
 </measure>
