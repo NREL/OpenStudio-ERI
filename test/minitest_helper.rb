@@ -66,7 +66,11 @@ end
   
 def get_model_object_type(model_object)
     # Hacky; is there a better way to get this?
-    return model_object.to_s.split(',')[0].gsub('OS:','').gsub(':','')
+    obj_type = model_object.to_s.split(',')[0].gsub('OS:','').gsub(':','')
+    if obj_type == "MaterialNoMass"
+        obj_type = "Material"
+    end
+    return obj_type
 end
   
 def check_num_objects(objects, expected_num_objects, mode)
