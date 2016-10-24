@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>c6090d6d-bda3-41ba-8bf2-227614cf7c98</version_id>
-  <version_modified>20161024T201042Z</version_modified>
+  <version_id>637f4060-460b-42b3-a5b7-84bc8c4675f5</version_id>
+  <version_modified>20161024T213203Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
@@ -297,6 +297,12 @@
       <checksum>6D48E2DD</checksum>
     </file>
     <file>
+      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>333D8FAA</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.2</identifier>
@@ -305,13 +311,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B4622CAF</checksum>
-    </file>
-    <file>
-      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D3E1669A</checksum>
+      <checksum>917D963A</checksum>
     </file>
   </files>
 </measure>

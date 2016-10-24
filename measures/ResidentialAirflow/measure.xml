@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>2c18135c-483b-4e2b-8551-50a250a44b74</version_id>
-  <version_modified>20161023T155833Z</version_modified>
+  <version_id>d8c4dbcd-8d77-4dcd-932b-3da0a9327bf4</version_id>
+  <version_modified>20161024T211211Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>

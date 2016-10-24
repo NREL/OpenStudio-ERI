@@ -87,7 +87,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["has_rear_units"] = "true"
     args_hash["use_zone_mult"] = "true"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"BuildingUnit"=>6, "Surface"=>76, "ThermalZone"=>6+1, "Space"=>6+1}
+    expected_num_new_objects = {"BuildingUnit"=>6, "Surface"=>68, "ThermalZone"=>6+1, "Space"=>6+1}
     expected_values = {"UnfinishedAtticHeight"=>5.30}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
   end
@@ -98,7 +98,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash["has_rear_units"] = "true"
     args_hash["use_zone_mult"] = "true"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"BuildingUnit"=>6, "Surface"=>81, "ThermalZone"=>6+1, "Space"=>6+1}
+    expected_num_new_objects = {"BuildingUnit"=>6, "Surface"=>73, "ThermalZone"=>6+1, "Space"=>6+1}
     expected_values = {"UnfinishedAtticHeight"=>5.30}
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end

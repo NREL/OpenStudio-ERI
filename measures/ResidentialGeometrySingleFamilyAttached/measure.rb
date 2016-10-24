@@ -704,6 +704,16 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       end
 
     end     
+
+    # put all of the spaces in the model into a vector
+    spaces = OpenStudio::Model::SpaceVector.new
+    model.getSpaces.each do |space|
+      spaces << space
+    end    
+    
+    # intersect and match surfaces for each space in the vector
+    OpenStudio::Model.intersectSurfaces(spaces)
+    OpenStudio::Model.matchSurfaces(spaces)    
     
     if attic_type == Constants.UnfinishedAtticSpaceType and roof_type != Constants.RoofTypeFlat
       attic_space = Geometry.make_one_space_from_multiple_spaces(model, attic_spaces)
@@ -711,7 +721,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       attic_zone = OpenStudio::Model::ThermalZone.new(model)
       attic_zone.setName(Constants.UnfinishedAtticZone)
       attic_space.setThermalZone(attic_zone)
-    end    
+    end
     
     unit_hash = {}
     unit_spaces_hash.each do |unit_num, spaces|
