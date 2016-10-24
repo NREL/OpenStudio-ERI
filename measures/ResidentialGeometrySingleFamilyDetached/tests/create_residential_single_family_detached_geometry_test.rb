@@ -465,7 +465,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     end
     if actual_values["FinishedAtticHeight"] > 0
         assert_in_epsilon(expected_values["FinishedAtticHeight"], actual_values["FinishedAtticHeight"], 0.01)
-    end    
+    end
     
     return model
   end

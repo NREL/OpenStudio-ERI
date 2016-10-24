@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>40b19cdf-846a-48f8-91f8-375fbf65ef33</version_id>
-  <version_modified>20161021T115349Z</version_modified>
+  <version_id>c6090d6d-bda3-41ba-8bf2-227614cf7c98</version_id>
+  <version_modified>20161024T201042Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
@@ -63,7 +63,7 @@
     <argument>
       <name>offset</name>
       <display_name>Offset Depth</display_name>
-      <description>DOES NOT CURRENTLY WORK WITH ZONE MULTIPLIERS The depth of the offset.</description>
+      <description>The depth of the offset.</description>
       <type>Double</type>
       <units>ft</units>
       <required>true</required>
@@ -131,6 +131,107 @@
       <default_value>3</default_value>
     </argument>
     <argument>
+      <name>attic_type</name>
+      <display_name>Attic Type</display_name>
+      <description>The attic type of the building.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>unfinished attic</default_value>
+      <choices>
+        <choice>
+          <value>unfinished attic</value>
+          <display_name>unfinished attic</display_name>
+        </choice>
+        <choice>
+          <value>finished attic</value>
+          <display_name>finished attic</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>roof_type</name>
+      <display_name>Roof Type</display_name>
+      <description>The roof type of the building.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>gable</default_value>
+      <choices>
+        <choice>
+          <value>gable</value>
+          <display_name>gable</display_name>
+        </choice>
+        <choice>
+          <value>hip</value>
+          <display_name>hip</display_name>
+        </choice>
+        <choice>
+          <value>flat</value>
+          <display_name>flat</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>roof_pitch</name>
+      <display_name>Roof Pitch</display_name>
+      <description>The roof pitch of the attic.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>6:12</default_value>
+      <choices>
+        <choice>
+          <value>1:12</value>
+          <display_name>1:12</display_name>
+        </choice>
+        <choice>
+          <value>2:12</value>
+          <display_name>2:12</display_name>
+        </choice>
+        <choice>
+          <value>3:12</value>
+          <display_name>3:12</display_name>
+        </choice>
+        <choice>
+          <value>4:12</value>
+          <display_name>4:12</display_name>
+        </choice>
+        <choice>
+          <value>5:12</value>
+          <display_name>5:12</display_name>
+        </choice>
+        <choice>
+          <value>6:12</value>
+          <display_name>6:12</display_name>
+        </choice>
+        <choice>
+          <value>7:12</value>
+          <display_name>7:12</display_name>
+        </choice>
+        <choice>
+          <value>8:12</value>
+          <display_name>8:12</display_name>
+        </choice>
+        <choice>
+          <value>9:12</value>
+          <display_name>9:12</display_name>
+        </choice>
+        <choice>
+          <value>10:12</value>
+          <display_name>10:12</display_name>
+        </choice>
+        <choice>
+          <value>11:12</value>
+          <display_name>11:12</display_name>
+        </choice>
+        <choice>
+          <value>12:12</value>
+          <display_name>12:12</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
       <name>use_zone_mult</name>
       <display_name>Use Zone Multipliers?</display_name>
       <description>Model only one interior unit with its thermal zone multiplier equal to the number of interior units.</description>
@@ -184,23 +285,6 @@
       <checksum>E6EEAE5F</checksum>
     </file>
     <file>
-      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>02B03F04</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.12.2</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>8B9F9336</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -211,6 +295,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.12.2</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B4622CAF</checksum>
+    </file>
+    <file>
+      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D3E1669A</checksum>
     </file>
   </files>
 </measure>

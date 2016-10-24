@@ -156,7 +156,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     use_floor_mult.setDisplayName("Use Floor Multipliers?")
     use_floor_mult.setDescription("Model only one interior floor with thermal zone multipliers equal to the number of interior floors.")
     use_floor_mult.setDefaultValue(false)
-    args << use_floor_mult    
+    args << use_floor_mult
     
     return args
   end
@@ -292,13 +292,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
            
     # create living zone
     living_zone = OpenStudio::Model::ThermalZone.new(model)
-    living_zone.setName(Constants.LivingZone(1))
+    living_zone.setName(Constants.LivingZone(Constants.ObjectNameBuildingUnit(1)))
     
     # first floor front
     living_spaces_front = []
     living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
     living_space = living_space.get
-    living_space.setName(Constants.LivingSpace(1, 1))
+    living_space.setName(Constants.LivingSpace(1, Constants.ObjectNameBuildingUnit(1)))
     living_space.setThermalZone(living_zone)   
     
     # add the balcony
@@ -373,13 +373,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
       
       # create living zone
       living_zone = OpenStudio::Model::ThermalZone.new(model)
-      living_zone.setName(Constants.LivingZone(2))
+      living_zone.setName(Constants.LivingZone(Constants.ObjectNameBuildingUnit(2)))
       
       # first floor back
       living_spaces_back = []
       living_space = OpenStudio::Model::Space::fromFloorPrint(living_polygon, living_height, model)
       living_space = living_space.get
-      living_space.setName(Constants.LivingSpace(1, 2))
+      living_space.setName(Constants.LivingSpace(1, Constants.ObjectNameBuildingUnit(2)))
       living_space.setThermalZone(living_zone)
       
       # add the balcony
@@ -415,13 +415,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         end
         
         living_zone = OpenStudio::Model::ThermalZone.new(model)
-        living_zone.setName(Constants.LivingZone(unit_num))        
+        living_zone.setName(Constants.LivingZone(Constants.ObjectNameBuildingUnit(unit_num))        )
       
         new_living_spaces = []
         living_spaces.each_with_index do |living_space, story|
       
           new_living_space = living_space.clone.to_Space.get
-          new_living_space.setName(Constants.LivingSpace(story + 1, unit_num))
+          new_living_space.setName(Constants.LivingSpace(story + 1, Constants.ObjectNameBuildingUnit(unit_num)))
         
           m = OpenStudio::Matrix.new(4,4,0)
           m[0,0] = 1
@@ -552,13 +552,13 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
         pos += 1
         
         living_zone = OpenStudio::Model::ThermalZone.new(model)
-        living_zone.setName(Constants.LivingZone(unit_num))
+        living_zone.setName(Constants.LivingZone(Constants.ObjectNameBuildingUnit(unit_num)))
       
         new_living_spaces = []
         living_spaces.each_with_index do |living_space, story|
       
           new_living_space = living_space.clone.to_Space.get
-          new_living_space.setName(Constants.LivingSpace(story + 1, unit_num))
+          new_living_space.setName(Constants.LivingSpace(story + 1, Constants.ObjectNameBuildingUnit(unit_num)))
         
           m = OpenStudio::Matrix.new(4,4,0)
           m[0,0] = 1
