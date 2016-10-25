@@ -125,14 +125,24 @@ class ResidentialPoolPump < OpenStudio::Ruleset::ModelUserScript
         unit_obj_name = Constants.ObjectNamePoolPump(unit.name.to_s)
     
         # Remove any existing pool pump
-        pp_removed = false
+        objects_to_remove = []
         space.electricEquipment.each do |space_equipment|
             next if space_equipment.name.to_s != unit_obj_name
-            space_equipment.remove
-            pp_removed = true
+            objects_to_remove << space_equipment
+            objects_to_remove << space_equipment.electricEquipmentDefinition
+            if space_equipment.schedule.is_initialized
+                objects_to_remove << space_equipment.schedule.get
+            end
         end
-        if pp_removed
+        if objects_to_remove.size > 0
             runner.registerInfo("Removed existing pool pump from outside.")
+        end
+        objects_to_remove.uniq.each do |object|
+            begin
+                object.remove
+            rescue
+                # no op
+            end
         end
     
         #Calculate annual energy use

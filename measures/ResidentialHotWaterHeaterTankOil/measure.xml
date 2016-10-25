@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_oil</name>
   <uid>d3840fe2-6894-410c-8caa-24aabd614fe2</uid>
-  <version_id>a9043561-094c-48a3-a5c5-ffbf706ba817</version_id>
-  <version_modified>20161021T115351Z</version_modified>
+  <version_id>e9637e07-d1bd-4ace-abe2-5082d52059d4</version_id>
+  <version_modified>20161025T224601Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankOil</class_name>
   <display_name>Set Residential Oil Tank Water Heater</display_name>
@@ -143,12 +143,6 @@
       <checksum>9A23E14E</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>50777146</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -177,23 +171,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>7FCAB593</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>32C82317</checksum>
-    </file>
-    <file>
-      <filename>ResidentialWaterHeaterTankOil_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>210677CE</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_1Beds_1Baths_Denver.osm</filename>
@@ -290,6 +267,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>951BE986</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>5D03DB97</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTankOil_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AA382B0A</checksum>
     </file>
   </files>
 </measure>

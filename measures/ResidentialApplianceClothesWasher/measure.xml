@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>2a8ef03e-7e00-4d2c-a524-0965ca8a80a9</version_id>
-  <version_modified>20161021T121059Z</version_modified>
+  <version_id>25ba971e-e143-4a52-b94d-b684f402dff6</version_id>
+  <version_modified>20161025T224558Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -260,12 +260,6 @@
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
       <checksum>20A70B8B</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>50777146</checksum>
     </file>
     <file>
       <filename>ClothesWasherSchedule_1bed_unit1.csv</filename>
@@ -562,12 +556,6 @@
       <checksum>AFD25860</checksum>
     </file>
     <file>
-      <filename>ResidentialClothesWasher_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F749E066</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -624,7 +612,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2B80AFD5</checksum>
+      <checksum>1E2ADDB7</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>951BE986</checksum>
+    </file>
+    <file>
+      <filename>ResidentialClothesWasher_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>56AF1B49</checksum>
     </file>
   </files>
 </measure>

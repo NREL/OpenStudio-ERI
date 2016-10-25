@@ -186,7 +186,7 @@ class ResidentialClothesDryer < OpenStudio::Ruleset::ModelUserScript
             objects_to_remove << space_equipment.gasEquipmentDefinition
             if space_equipment.schedule.is_initialized
                 objects_to_remove << space_equipment.schedule.get
-        end
+            end
         end
         if objects_to_remove.size > 0
             runner.registerInfo("Removed existing clothes dryer from space #{space.name.to_s}.")

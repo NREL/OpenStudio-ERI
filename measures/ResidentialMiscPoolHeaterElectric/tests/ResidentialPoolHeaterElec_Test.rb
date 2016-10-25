@@ -23,27 +23,39 @@ class ResidentialPoolHeaterElecTest < MiniTest::Test
     # Using annual energy
     args_hash = {}
     args_hash["base_energy"] = 0.0
-    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {"Annual_kwh"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_new_construction_none2
     # Using energy multiplier
     args_hash = {}
     args_hash["mult"] = 0.0
-    _test_measure(osm_geo_beds, args_hash, 0, 0, 0.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {"Annual_kwh"=>0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_new_construction_electric
     args_hash = {}
     args_hash["base_energy"] = 2300.0
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 2324.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2324.0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_new_construction_mult_0_004
     args_hash = {}
     args_hash["base_energy"] = 2300.0
     args_hash["mult"] = 0.004
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 9.3)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>9.3}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_new_construction_modified_schedule
@@ -52,66 +64,102 @@ class ResidentialPoolHeaterElecTest < MiniTest::Test
     args_hash["weekday_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["weekend_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["monthly_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12"
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 2324.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2324.0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_new_construction_no_scale_energy
     args_hash = {}
     args_hash["base_energy"] = 2300.0
     args_hash["scale_energy"] = "false"
-    _test_measure(osm_geo_beds, args_hash, 0, 1, 2300.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2300.0}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_retrofit_replace
     args_hash = {}
     args_hash["base_energy"] = 2300.0
-    model = _test_measure(osm_geo_beds, args_hash, 0, 1, 2324.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2324.0}
+    model = _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
     args_hash["base_energy"] = 1150.0
-    _test_measure(model, args_hash, 1, 1, 1162.0, 1)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1162.0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_retrofit_replace_gas_pool_heater
     model = get_model(File.dirname(__FILE__), "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasPoolHeater.osm")
     args_hash = {}
     args_hash["base_energy"] = 1150.0
-    _test_measure(model, args_hash, 1, 1, 1162.0, 1)
+    expected_num_del_objects = {"GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1162.0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
     
   def test_retrofit_remove
     args_hash = {}
     args_hash["base_energy"] = 2300.0
-    model = _test_measure(osm_geo_beds, args_hash, 0, 1, 2324.0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2324.0}
+    model = _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
     args_hash["base_energy"] = 0.0
-    _test_measure(model, args_hash, 1, 0, 0.0, 1)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {}
+    expected_values = {"Annual_kwh"=>0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_multifamily_new_construction
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 2300.0
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 6151.3, num_units)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>6151.3}
+    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 2300.0
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 6151.3, num_units)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>6151.3}
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
     args_hash = {}
     args_hash["base_energy"] = 1150.0
-    _test_measure(model, args_hash, num_units, num_units, 3075.7, 2*num_units)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>3075.7}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2*num_units)
   end
   
   def test_multifamily_retrofit_remove
     num_units = 3
     args_hash = {}
     args_hash["base_energy"] = 2300.0
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, 0, num_units, 6151.3, num_units)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>6151.3}
+    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
     args_hash = {}
     args_hash["base_energy"] = 0.0
-    _test_measure(model, args_hash, num_units, 0, 0.0, num_units)
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {}
+    expected_values = {"Annual_kwh"=>0.0}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
 
   def test_argument_error_base_energy_negative
@@ -220,7 +268,7 @@ class ResidentialPoolHeaterElecTest < MiniTest::Test
     return result
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, num_infos=0, num_warnings=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialPoolHeaterElec.new
 
@@ -234,8 +282,8 @@ class ResidentialPoolHeaterElecTest < MiniTest::Test
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
-    # store the original equipment in the seed model
-    orig_equip = model.getElectricEquipments + model.getGasEquipments
+    # get the initial objects in the model
+    initial_objects = get_objects(model)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -263,35 +311,30 @@ class ResidentialPoolHeaterElecTest < MiniTest::Test
     assert(result.warnings.size == num_warnings)
     assert(result.finalCondition.is_initialized)
     
-    # get new/deleted equipment objects
-    new_objects = []
-    (model.getElectricEquipments + model.getGasEquipments).each do |equip|
-        next if orig_equip.include?(equip)
-        new_objects << equip
-    end
-    del_objects = []
-    orig_equip.each do |equip|
-        next if model.getElectricEquipments.include?(equip) or model.getGasEquipments.include?(equip)
-        del_objects << equip
-    end
+    # get the final objects in the model
+    final_objects = get_objects(model)
+
+    # get new and deleted objects
+    obj_type_exclusions = ["ScheduleRule", "ScheduleDay", "ScheduleTypeLimits"]
+    all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
+    all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
     
-    # check for num new/del objects
-    assert_equal(expected_num_del_objects, del_objects.size)
-    assert_equal(expected_num_new_objects, new_objects.size)
+    # check we have the expected number of new/deleted objects
+    check_num_objects(all_new_objects, expected_num_new_objects, "added")
+    check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
     
-    actual_annual_kwh = 0.0
-    new_objects.each do |new_object|
-        # check that the new object has the correct name
-        assert(new_object.name.to_s.start_with?(Constants.ObjectNamePoolHeater(Constants.FuelTypeElectric)))
-        
-        # check new object has no internal gains
-        assert_equal(new_object.electricEquipmentDefinition.fractionLost, 1.0)
-        
-        # check for the correct annual energy consumption
-        full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
-        actual_annual_kwh += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "kWh").get
+    actual_values = {"Annual_kwh"=>0}
+    all_new_objects.each do |obj_type, new_objects|
+        new_objects.each do |new_object|
+            next if not new_object.respond_to?("to_#{obj_type}")
+            new_object = new_object.public_send("to_#{obj_type}").get
+            if obj_type == "ElectricEquipment"
+                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
+                actual_values["Annual_kwh"] += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "kWh").get
+            end
+        end
     end
-    assert_in_epsilon(expected_annual_kwh, actual_annual_kwh, 0.01)
+    assert_in_epsilon(expected_values["Annual_kwh"], actual_values["Annual_kwh"], 0.01)
 
     return model
   end

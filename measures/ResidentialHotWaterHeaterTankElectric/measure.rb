@@ -157,14 +157,30 @@ class ResidentialHotWaterHeaterTankElectric < OpenStudio::Ruleset::ModelUserScri
                 next if pl.name.to_s != Constants.PlantLoopDomesticWater(unit.name.to_s)
                 loop = pl
                 #Remove any existing water heater
-                wh_removed = false
+                objects_to_remove = []
                 pl.supplyComponents.each do |wh|
                     next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized and !wh.to_WaterHeaterHeatPump.is_initialized
-                    wh.remove
-                    wh_removed = true
+                    objects_to_remove << wh
+                    if wh.to_WaterHeaterMixed.is_initialized
+                        wh = wh.to_WaterHeaterMixed.get
+                    elsif wh.to_WaterHeaterStratified.is_initialized
+                        wh = wh.to_WaterHeaterStratified.get
+                    elsif wh.to_WaterHeaterHeatPump.is_initialized
+                        wh = wh.to_WaterHeaterHeatPump.get
+                    end
+                    if wh.setpointTemperatureSchedule.is_initialized
+                        objects_to_remove << wh.setpointTemperatureSchedule.get
+                    end
                 end
-                if wh_removed
+                if objects_to_remove.size > 0
                     runner.registerInfo("Removed existing water heater from plant loop #{pl.name.to_s}.")
+                end
+                objects_to_remove.uniq.each do |object|
+                    begin
+                        object.remove
+                    rescue
+                        # no op
+                    end
                 end
             end
 
@@ -174,7 +190,7 @@ class ResidentialHotWaterHeaterTankElectric < OpenStudio::Ruleset::ModelUserScri
                 loop = Waterheater.create_new_loop(model, Constants.PlantLoopDomesticWater(unit.name.to_s), t_set)
             end
 
-            if loop.components(OpenStudio::Model::PumpConstantSpeed::iddObjectType).empty?
+            if loop.components(OpenStudio::Model::PumpVariableSpeed::iddObjectType).empty?
                 new_pump = Waterheater.create_new_pump(model)
                 new_pump.addToNode(loop.supplyInletNode)
             end

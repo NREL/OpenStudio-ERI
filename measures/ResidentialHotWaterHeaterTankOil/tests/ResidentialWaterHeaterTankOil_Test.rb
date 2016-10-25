@@ -69,7 +69,10 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
 
   def test_new_construction_standard
     args_hash = {}
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
     
   def test_new_construction_premium
@@ -79,133 +82,200 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
     args_hash["water_heater_capacity"] = "104"
     args_hash["oncyc_power"] = 165
     args_hash["offcyc_power"] = 1
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 40, Constants.FinishedBasementZone, 30.48, 0.905, 8.410, 125, 165, 1, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>30.48, "ThermalEfficiency"=>0.905, "TankUA"=>8.410, "Setpoint"=>125, "OnCycle"=>165, "OffCycle"=>1}
+    _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_new_construction_standard_auto_ef_and_capacity
     args_hash = {}
     args_hash["rated_energy_factor"] = Constants.Auto
     args_hash["water_heater_capacity"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 40, Constants.FinishedBasementZone, 10.55, 0.807, 14.465, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>10.55, "ThermalEfficiency"=>0.807, "TankUA"=>14.465, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_new_construction_standard_living
     args_hash = {}
     args_hash["water_heater_location"] = Constants.LivingZone
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 40, Constants.LivingZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_new_construction_standard_setpoint_130
     args_hash = {}
     args_hash["dhw_setpoint_temperature"] = 130
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 130, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>130, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_new_construction_standard_volume_30
     args_hash = {}
     args_hash["storage_tank_volume"] = "30"
-    _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 30, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>30, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_new_construction_beds_baths_1_1
     args_hash = {}
     args_hash["water_heater_capacity"] = Constants.Auto
     args_hash["rated_energy_factor"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc_1_1, args_hash, 0, 1, 30, Constants.FinishedBasementZone, 10.55, 0.804, 12.906, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>30, "InputCapacity"=>10.55, "ThermalEfficiency"=>0.804, "TankUA"=>12.906, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_1_1, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_new_construction_beds_baths_2_1
     args_hash = {}
     args_hash["water_heater_capacity"] = Constants.Auto
     args_hash["rated_energy_factor"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc_2_1, args_hash, 0, 1, 30, Constants.FinishedBasementZone, 10.55, 0.804, 12.906, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>30, "InputCapacity"=>10.55, "ThermalEfficiency"=>0.804, "TankUA"=>12.906, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_2_1, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_new_construction_beds_baths_2_2
     args_hash = {}
     args_hash["water_heater_capacity"] = Constants.Auto
     args_hash["rated_energy_factor"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc_2_2, args_hash, 0, 1, 30, Constants.FinishedBasementZone, 10.55, 0.804, 12.906, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>30, "InputCapacity"=>10.55, "ThermalEfficiency"=>0.804, "TankUA"=>12.906, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_2_2, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_new_construction_beds_baths_5_3
     args_hash = {}
     args_hash["water_heater_capacity"] = Constants.Auto
     args_hash["rated_energy_factor"] = Constants.Auto
-    _test_measure(osm_geo_beds_loc_5_3, args_hash, 0, 1, 50, Constants.FinishedBasementZone, 13.78, 0.803, 15.765, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>50, "InputCapacity"=>13.78, "ThermalEfficiency"=>0.803, "TankUA"=>15.765, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_5_3, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace
     args_hash = {}
-    model = _test_measure(osm_geo_beds_loc, args_hash, 0, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    model = _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
     args_hash = {}
     args_hash["rated_energy_factor"] = "0.68"
     args_hash["water_heater_recovery_efficiency"] = 0.9
     args_hash["water_heater_capacity"] = "104"
     args_hash["oncyc_power"] = 165
     args_hash["offcyc_power"] = 1
-    _test_measure(model, args_hash, 1, 1, 40, Constants.FinishedBasementZone, 30.48, 0.905, 8.410, 125, 165, 1, 1, 0)
+    args_hash["dhw_setpoint_temperature"] = 130
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>30.48, "ThermalEfficiency"=>0.905, "TankUA"=>8.410, "Setpoint"=>130, "OnCycle"=>165, "OffCycle"=>1}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_retrofit_replace_tank_electric
     args_hash = {}
-    _test_measure(osm_geo_beds_loc_tank_electric, args_hash, 1, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_tank_electric, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tank_propane
     args_hash = {}
-    _test_measure(osm_geo_beds_loc_tank_propane, args_hash, 1, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_tank_propane, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tank_gas
     args_hash = {}
-    _test_measure(osm_geo_beds_loc_tank_gas, args_hash, 1, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_tank_gas, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tankless_electric
     args_hash = {}
-    _test_measure(osm_geo_beds_loc_tankless_electric, args_hash, 1, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_tankless_electric, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tankless_gas
     args_hash = {}
-    _test_measure(osm_geo_beds_loc_tankless_gas, args_hash, 1, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_tankless_gas, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tankless_propane
     args_hash = {}
-    _test_measure(osm_geo_beds_loc_tankless_propane, args_hash, 1, 1, 40, Constants.FinishedBasementZone, 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_beds_loc_tankless_propane, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_multifamily_new_construction
     num_units = 3
     args_hash = {}
-    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, num_units, 120, nil, 79.14, 2.355, 20.259, 375, 0, 0, num_units, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_values = {"TankVolume"=>120, "InputCapacity"=>79.14, "ThermalEfficiency"=>2.355, "TankUA"=>20.259, "Setpoint"=>375, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   
   def test_multifamily_new_construction_living_zone
     args_hash = {}
     args_hash["water_heater_location"] = "living zone 1"
-    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, 1, 40, "living zone 1", 26.38, 0.785, 6.753, 125, 0, 0, 1, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>40, "InputCapacity"=>26.38, "ThermalEfficiency"=>0.785, "TankUA"=>6.753, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_multifamily_new_construction_mult_draw_profiles
     num_units = 12
     args_hash = {}
-    _test_measure(osm_geo_multifamily_12_units_beds_loc, args_hash, 0, num_units, 480, nil, 316.5, 9.42, 81, 1500, 0, 0, num_units, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_values = {"TankVolume"=>480, "InputCapacity"=>316.5, "ThermalEfficiency"=>9.42, "TankUA"=>81, "Setpoint"=>1500, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure(osm_geo_multifamily_12_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   
   def test_multifamily_retrofit_replace
     num_units = 3
     args_hash = {}
-    model = _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, 0, num_units, 120, nil, 79.14, 2.355, 20.259, 375, 0, 0, num_units, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_values = {"TankVolume"=>120, "InputCapacity"=>79.14, "ThermalEfficiency"=>2.355, "TankUA"=>20.259, "Setpoint"=>375, "OnCycle"=>0, "OffCycle"=>0}
+    model = _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
     args_hash = {}
     args_hash["rated_energy_factor"] = "0.68"
     args_hash["water_heater_recovery_efficiency"] = 0.9
     args_hash["water_heater_capacity"] = "104"
     args_hash["oncyc_power"] = 165
     args_hash["offcyc_power"] = 1
-    _test_measure(model, args_hash, num_units, num_units, 120, nil, 91.45, 2.715, 25.230, 375, 495, 3, num_units, 0)
+    expected_num_del_objects = {"WaterHeaterMixed"=>num_units, "ScheduleRuleset"=>num_units}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "ScheduleRuleset"=>num_units}
+    expected_values = {"TankVolume"=>120, "InputCapacity"=>91.45, "ThermalEfficiency"=>2.715, "TankUA"=>25.230, "Setpoint"=>375, "OnCycle"=>495, "OffCycle"=>3}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
 
   def test_argument_error_tank_volume_invalid_str
@@ -376,7 +446,7 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
     return result
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_tank_vol, expected_location, expected_input_cap, expected_thermal_eff, expected_ua, expected_setpoint, expected_oncycle_power, expected_offcycle_power, num_infos=0, num_warnings=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialHotWaterHeaterTankOil.new
 
@@ -390,19 +460,8 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
-    # store the original WHs in the seed model
-    orig_whs = []
-    model.getPlantLoops.each do |pl|
-        pl.supplyComponents.each do |wh|
-            if wh.to_WaterHeaterMixed.is_initialized
-                orig_whs << wh.to_WaterHeaterMixed.get
-            elsif wh.to_WaterHeaterStratified.is_initialized
-                orig_whs << wh.to_WaterHeaterStratified.get
-            elsif wh.to_WaterHeaterHeatPump.is_initialized
-                orig_whs << wh.to_WaterHeaterHeatPump.get
-            end
-        end
-    end
+    # get the initial objects in the model
+    initial_objects = get_objects(model)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -430,89 +489,43 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
     assert(result.warnings.size == num_warnings)
     assert(result.finalCondition.is_initialized)
     
-    # Get the final WHs in the model
-    final_whs = []
-    model.getPlantLoops.each do |pl|
-        pl.supplyComponents.each do |wh|
-            if wh.to_WaterHeaterMixed.is_initialized
-                final_whs << wh.to_WaterHeaterMixed.get
-            elsif wh.to_WaterHeaterStratified.is_initialized
-                final_whs << wh.to_WaterHeaterStratified.get
-            elsif wh.to_WaterHeaterHeatPump.is_initialized
-                final_whs << wh.to_WaterHeaterStratified.get
+    # get the final objects in the model
+    final_objects = get_objects(model)
+    
+    # get new and deleted objects
+    obj_type_exclusions = ["ConnectorMixer", "ConnectorSplitter", "Node", "SetpointManagerScheduled", "ScheduleDay", "PipeAdiabatic", "ScheduleTypeLimits", "SizingPlant"]
+    all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
+    all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
+    
+    # check we have the expected number of new/deleted objects
+    check_num_objects(all_new_objects, expected_num_new_objects, "added")
+    check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
+
+    actual_values = {"TankVolume"=>0, "InputCapacity"=>0, "ThermalEfficiency"=>0, "TankUA1"=>0, "TankUA2"=>0, "Setpoint"=>0, "OnCycle"=>0, "OffCycle"=>0}
+    all_new_objects.each do |obj_type, new_objects|
+        new_objects.each do |new_object|
+            next if not new_object.respond_to?("to_#{obj_type}")
+            new_object = new_object.public_send("to_#{obj_type}").get
+            if obj_type == "WaterHeaterMixed" or obj_type == "WaterHeaterStratified" or obj_type == "WaterHeaterHeatPump"
+                actual_values["TankVolume"] += OpenStudio.convert(new_object.tankVolume.get, "m^3", "gal").get
+                actual_values["InputCapacity"] += OpenStudio.convert(new_object.heaterMaximumCapacity.get, "W", "kW").get
+                actual_values["ThermalEfficiency"] += new_object.heaterThermalEfficiency.get
+                actual_values["TankUA1"] += OpenStudio::convert(new_object.onCycleLossCoefficienttoAmbientTemperature.get, "W/K", "Btu/hr*R").get
+                actual_values["TankUA2"] += OpenStudio::convert(new_object.offCycleLossCoefficienttoAmbientTemperature.get, "W/K", "Btu/hr*R").get
+                actual_values["Setpoint"] += Waterheater.get_water_heater_setpoint(model, new_object.plantLoop.get, nil)
+                actual_values["OnCycle"] += new_object.onCycleParasiticFuelConsumptionRate
+                actual_values["OffCycle"] += new_object.offCycleParasiticFuelConsumptionRate
             end
         end
     end
-    
-    # get new/deleted WH objects
-    new_objects = []
-    final_whs.each do |wh|
-        next if orig_whs.include?(wh)
-        new_objects << wh
-    end
-    del_objects = []
-    orig_whs.each do |wh|
-        next if final_whs.include?(wh)
-        del_objects << wh
-    end
-    
-    # check for num new/del objects
-    assert_equal(expected_num_del_objects, del_objects.size)
-    assert_equal(expected_num_new_objects, new_objects.size)
-    
-    tot_vol = 0
-    tot_cap = 0
-    tot_te = 0
-    tot_ua1 = 0
-    tot_ua2 = 0
-    tot_setpoint = 0
-    tot_oncycle_power = 0
-    tot_offcycle_power = 0
-    new_objects.each do |new_object|
-        # check that the new object has the correct name
-        assert(new_object.name.to_s.start_with?(Constants.ObjectNameWaterHeater))
-        
-        # check tank volume
-        tot_vol += OpenStudio.convert(new_object.tankVolume.get, "m^3", "gal").get
-        
-        # check input capacity
-        tot_cap += OpenStudio.convert(new_object.heaterMaximumCapacity.get, "W", "kW").get
-        
-        # check thermal efficiency
-        tot_te += new_object.heaterThermalEfficiency.get
-        
-        # check UA
-        tot_ua1 += OpenStudio::convert(new_object.onCycleLossCoefficienttoAmbientTemperature.get, "W/K", "Btu/hr*R").get
-        tot_ua2 += OpenStudio::convert(new_object.offCycleLossCoefficienttoAmbientTemperature.get, "W/K", "Btu/hr*R").get
-
-        # check location
-        if !expected_location.nil?
-            loc = new_object.ambientTemperatureThermalZone.get.name.to_s
-            assert(loc.start_with?(expected_location))
-        end
-        
-        # check setpoint
-        tot_setpoint += Waterheater.get_water_heater_setpoint(model, new_object.plantLoop.get, nil)
-        
-        # check on-cycle consumption
-        tot_oncycle_power += new_object.onCycleParasiticFuelConsumptionRate
-        
-        # check off-cycle consumption
-        tot_offcycle_power += new_object.offCycleParasiticFuelConsumptionRate
-    end
-    assert_in_epsilon(tot_vol, Waterheater.calc_actual_tankvol(expected_tank_vol, Constants.FuelTypeOil, Constants.WaterHeaterTypeTank), 0.01)
-    assert_in_epsilon(tot_cap, expected_input_cap, 0.01)
-    assert_in_epsilon(tot_te, expected_thermal_eff, 0.01)
-    assert_in_epsilon(tot_ua1, expected_ua, 0.01)
-    assert_in_epsilon(tot_ua2, expected_ua, 0.01)
-    assert_in_epsilon(tot_setpoint, expected_setpoint, 0.01)
-    assert_in_epsilon(tot_oncycle_power, expected_oncycle_power, 0.01)
-    assert_in_epsilon(tot_offcycle_power, expected_offcycle_power, 0.01)
-    
-    del_objects.each do |del_object|
-        # check that the del object had the correct name
-        assert(del_object.name.to_s.start_with?(Constants.ObjectNameWaterHeater))
-    end
+    assert_in_epsilon(Waterheater.calc_actual_tankvol(expected_values["TankVolume"], Constants.FuelTypeOil, Constants.WaterHeaterTypeTank), actual_values["TankVolume"], 0.01)
+    assert_in_epsilon(expected_values["InputCapacity"], actual_values["InputCapacity"], 0.01)
+    assert_in_epsilon(expected_values["ThermalEfficiency"], actual_values["ThermalEfficiency"], 0.01)
+    assert_in_epsilon(expected_values["TankUA"], actual_values["TankUA1"], 0.01)
+    assert_in_epsilon(expected_values["TankUA"], actual_values["TankUA2"], 0.01)
+    assert_in_epsilon(expected_values["Setpoint"], actual_values["Setpoint"], 0.01)
+    assert_in_epsilon(expected_values["OnCycle"], actual_values["OnCycle"], 0.01)
+    assert_in_epsilon(expected_values["OffCycle"], actual_values["OffCycle"], 0.01)
 
     return model
   end

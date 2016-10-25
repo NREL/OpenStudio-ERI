@@ -140,14 +140,24 @@ class ResidentialGasFireplace < OpenStudio::Ruleset::ModelUserScript
         unit_obj_name = Constants.ObjectNameGasFireplace(unit.name.to_s)
 
         # Remove any existing gas fireplace
-        gf_removed = false
+        objects_to_remove = []
         space.gasEquipment.each do |space_equipment|
             next if space_equipment.name.to_s != unit_obj_name
-            space_equipment.remove
-            gf_removed = true
+            objects_to_remove << space_equipment
+            objects_to_remove << space_equipment.gasEquipmentDefinition
+            if space_equipment.schedule.is_initialized
+                objects_to_remove << space_equipment.schedule.get
+            end
         end
-        if gf_removed
+        if objects_to_remove.size > 0
             runner.registerInfo("Removed existing gas fireplace from space #{space.name.to_s}.")
+        end
+        objects_to_remove.uniq.each do |object|
+            begin
+                object.remove
+            rescue
+                # no op
+            end
         end
 
         #Calculate annual energy use

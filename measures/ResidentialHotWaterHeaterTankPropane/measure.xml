@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_propane</name>
   <uid>202bfb71-76e0-4615-867b-5d51e8e25223</uid>
-  <version_id>61327513-018c-4fff-b84e-3de4ea3f88f8</version_id>
-  <version_modified>20161021T115352Z</version_modified>
+  <version_id>3479f220-fec5-46c8-8792-e8dc200f30c3</version_id>
+  <version_modified>20161025T224602Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankPropane</class_name>
   <display_name>Set Residential Propane Tank Water Heater</display_name>
@@ -143,12 +143,6 @@
       <checksum>9A23E14E</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>50777146</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -177,23 +171,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>7FCAB593</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>F81178E5</checksum>
-    </file>
-    <file>
-      <filename>ResidentialWaterHeaterTankPropane_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8DE03337</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_1Beds_1Baths_Denver.osm</filename>
@@ -290,6 +267,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>951BE986</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>EB0BBCFC</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTankPropane_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>195C50DC</checksum>
     </file>
   </files>
 </measure>

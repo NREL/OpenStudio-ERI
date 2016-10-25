@@ -150,19 +150,35 @@ class ResidentialHotWaterFixtures < OpenStudio::Ruleset::ModelUserScript
             obj_name_b = Constants.ObjectNameBath(unit.name.to_s)
         
             # Remove any existing ssb
-            ssb_removed = false
+            objects_to_remove = []
             space.otherEquipment.each do |space_equipment|
                 next if space_equipment.name.to_s != obj_name_sh and space_equipment.name.to_s != obj_name_s and space_equipment.name.to_s != obj_name_b
-                space_equipment.remove
-                ssb_removed = true
+                objects_to_remove << space_equipment
+                objects_to_remove << space_equipment.otherEquipmentDefinition
+                if space_equipment.schedule.is_initialized
+                    objects_to_remove << space_equipment.schedule.get
+                end
             end
             space.waterUseEquipment.each do |space_equipment|
                 next if space_equipment.name.to_s != obj_name_sh and space_equipment.name.to_s != obj_name_s and space_equipment.name.to_s != obj_name_b
-                space_equipment.remove
-                ssb_removed = true
+                objects_to_remove << space_equipment
+                objects_to_remove << space_equipment.waterUseEquipmentDefinition
+                if space_equipment.flowRateFractionSchedule.is_initialized
+                    objects_to_remove << space_equipment.flowRateFractionSchedule.get
+                end
+                if space_equipment.waterUseEquipmentDefinition.targetTemperatureSchedule.is_initialized
+                    objects_to_remove << space_equipment.waterUseEquipmentDefinition.targetTemperatureSchedule.get
+                end
             end
-            if ssb_removed
+            if objects_to_remove.size > 0
                 runner.registerInfo("Removed existing showers, sinks, and baths from space #{space.name.to_s}.")
+            end
+            objects_to_remove.uniq.each do |object|
+                begin
+                    object.remove
+                rescue
+                    # no op
+                end
             end
         
             mixed_use_t = Constants.MixedUseT #F

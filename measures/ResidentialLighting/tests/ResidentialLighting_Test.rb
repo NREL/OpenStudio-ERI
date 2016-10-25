@@ -39,7 +39,10 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.0
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_loc, args_hash, 0, 5, 2085, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2085}
+    _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_20_cfl_hw_34_cfl_pg
@@ -50,7 +53,10 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_loc, args_hash, 0, 5, 1848, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1848}
+    _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_34_cfl_hw_34_cfl_pg
@@ -61,7 +67,10 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_loc, args_hash, 0, 5, 1733, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1733}
+    _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_60_led_hw_34_cfl_pg
@@ -72,7 +81,10 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.34
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_loc, args_hash, 0, 5, 1461, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1461}
+    _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_100_cfl
@@ -83,7 +95,10 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 1.0
     args_hash["pg_led"] = 0.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_loc, args_hash, 0, 5, 1110, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1110}
+    _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_100_led
@@ -94,7 +109,10 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_cfl"] = 0.0
     args_hash["pg_led"] = 1.0
     args_hash["pg_lfl"] = 0.0
-    _test_measure(osm_geo_loc, args_hash, 0, 5, 957, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>957}
+    _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_100_led_low_efficacy
@@ -106,46 +124,73 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash["pg_led"] = 1.0
     args_hash["pg_lfl"] = 0.0
     args_hash["led_eff"] = 50
-    _test_measure(osm_geo_loc, args_hash, 0, 5, 1159, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1159}
+    _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_common_garage
     args_hash = {}
-    _test_measure(osm_geo_common_garage_loc, args_hash, 0, 5, 1733, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1733}
+    _test_measure(osm_geo_common_garage_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_high_latitude
     args_hash = {}
-    _test_measure(osm_geo_loc_high_latitude, args_hash, 0, 5, 1733, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1733}
+    _test_measure(osm_geo_loc_high_latitude, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_retrofit_replace
     args_hash = {}
-    model = _test_measure(osm_geo_loc, args_hash, 0, 5, 1733, 5, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1733}
+    model = _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
     args_hash = {}
     args_hash["hw_cfl"] = 1.0
-    _test_measure(model, args_hash, 5, 5, 1252, 6, 0)
+    expected_num_del_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1252}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
   def test_multifamily_new_construction
     num_ltg_spaces = 6
     args_hash = {}
-    _test_measure(osm_geo_multifamily_3_units_loc, args_hash, 0, num_ltg_spaces, 3684, num_ltg_spaces, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>3684}
+    _test_measure(osm_geo_multifamily_3_units_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces)
   end
   
   def test_multifamily_new_construction_zone_mult
     num_ltg_spaces = 6
     args_hash = {}
-    _test_measure(osm_geo_multifamily_3_units_loc_zone_mult, args_hash, 0, num_ltg_spaces, 4636, num_ltg_spaces, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>4636}
+    _test_measure(osm_geo_multifamily_3_units_loc_zone_mult, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces)
   end
 
   def test_multifamily_retrofit_replace
     num_ltg_spaces = 6
     args_hash = {}
-    model = _test_measure(osm_geo_multifamily_3_units_loc, args_hash, 0, num_ltg_spaces, 3684, num_ltg_spaces, 0)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>3684}
+    model = _test_measure(osm_geo_multifamily_3_units_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces)
     args_hash = {}
     args_hash["hw_cfl"] = 1.0
-    _test_measure(model, args_hash, num_ltg_spaces, num_ltg_spaces, 2670, num_ltg_spaces+1, 0)
+    expected_num_del_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2670}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces+1)
   end
 
   def test_argument_error_hw_cfl_lt_0
@@ -328,7 +373,7 @@ class ResidentialLightingTest < MiniTest::Test
     return result
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_annual_kwh, num_infos=0, num_warnings=0)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0)
     # create an instance of the measure
     measure = ResidentialLighting.new
 
@@ -342,8 +387,8 @@ class ResidentialLightingTest < MiniTest::Test
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
-    # store the original lights in the seed model
-    orig_lights = model.getLightss + model.getExteriorLightss
+    # get the initial objects in the model
+    initial_objects = get_objects(model)
 
     # get arguments
     arguments = measure.arguments(model)
@@ -371,41 +416,33 @@ class ResidentialLightingTest < MiniTest::Test
     assert(result.warnings.size == num_warnings)
     assert(result.finalCondition.is_initialized)
     
-    # get new/deleted light objects
-    new_objects = []
-    (model.getLightss + model.getExteriorLightss).each do |li|
-        next if orig_lights.include?(li)
-        new_objects << li
-    end
-    del_objects = []
-    orig_lights.each do |li|
-        next if model.getLightss.include?(li) or model.getExteriorLightss.include?(li)
-        del_objects << li
-    end
+    # get the final objects in the model
+    final_objects = get_objects(model)
+
+    # get new and deleted objects
+    obj_type_exclusions = ["ScheduleRule", "ScheduleDay", "ScheduleTypeLimits", "ScheduleConstant"]
+    all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
+    all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
     
-    # check for num new/del objects
-    assert_equal(expected_num_del_objects, del_objects.size)
-    assert_equal(expected_num_new_objects, new_objects.size)
+    # check we have the expected number of new/deleted objects
+    check_num_objects(all_new_objects, expected_num_new_objects, "added")
+    check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
     
-    actual_annual_kwh = 0.0
-    new_objects.each do |new_object|
-        # check that the new object has the correct name
-        assert(new_object.name.to_s.start_with?(Constants.ObjectNameLighting))
-        
-        # check for the correct annual energy consumption
-        full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
-        if new_object.is_a?(OpenStudio::Model::Lights)
-            actual_annual_kwh += OpenStudio.convert(full_load_hrs * new_object.lightingLevel.get * new_object.multiplier * new_object.space.get.multiplier, "Wh", "kWh").get
-        elsif new_object.is_a?(OpenStudio::Model::ExteriorLights)
-            actual_annual_kwh += OpenStudio.convert(full_load_hrs * new_object.exteriorLightsDefinition.designLevel * new_object.multiplier, "Wh", "kWh").get
+    actual_values = {"Annual_kwh"=>0}
+    all_new_objects.each do |obj_type, new_objects|
+        new_objects.each do |new_object|
+            next if not new_object.respond_to?("to_#{obj_type}")
+            new_object = new_object.public_send("to_#{obj_type}").get
+            if obj_type == "Lights"
+                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
+                actual_values["Annual_kwh"] += OpenStudio.convert(full_load_hrs * new_object.lightingLevel.get * new_object.multiplier * new_object.space.get.multiplier, "Wh", "kWh").get
+            elsif obj_type == "ExteriorLights"
+                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
+                actual_values["Annual_kwh"] += OpenStudio.convert(full_load_hrs * new_object.exteriorLightsDefinition.designLevel * new_object.multiplier, "Wh", "kWh").get
+            end
         end
     end
-    assert_in_epsilon(expected_annual_kwh, actual_annual_kwh, 0.01)
-    
-    del_objects.each do |del_object|
-        # check that the del object had the correct name
-        assert(del_object.name.to_s.start_with?(Constants.ObjectNameLighting))
-    end
+    assert_in_epsilon(expected_values["Annual_kwh"], actual_values["Annual_kwh"], 0.01)
 
     return model
   end
