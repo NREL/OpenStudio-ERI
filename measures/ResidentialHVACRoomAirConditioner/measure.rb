@@ -56,7 +56,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     args << shr
 
     #make a double argument for room air airflow
-    airflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("airflow", true)
+    airflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("airflow_rate", true)
     airflow.setDisplayName("Airflow")
     airflow.setUnits("cfm/ton")
     airflow.setDefaultValue(350.0)
@@ -92,7 +92,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     
     roomaceer = runner.getDoubleArgumentValue("eer",user_arguments)
     supply.shr_Rated = runner.getDoubleArgumentValue("shr",user_arguments)
-    supply.coolingCFMs = runner.getDoubleArgumentValue("airflow",user_arguments)
+    supply.coolingCFMs = runner.getDoubleArgumentValue("airflow_rate",user_arguments)
     acOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     unless acOutputCapacity == Constants.SizingAuto
       acOutputCapacity = OpenStudio::convert(acOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get

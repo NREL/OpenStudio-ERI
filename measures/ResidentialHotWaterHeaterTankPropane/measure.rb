@@ -74,7 +74,7 @@ class ResidentialHotWaterHeaterTankPropane < OpenStudio::Ruleset::ModelUserScrip
         args << rated_energy_factor
 
         # make an argument for water_heater_recovery_efficiency
-        water_heater_recovery_efficiency = osargument::makeDoubleArgument("water_heater_recovery_efficiency", true)
+        water_heater_recovery_efficiency = osargument::makeDoubleArgument("recovery_efficiency", true)
         water_heater_recovery_efficiency.setDisplayName("Recovery Efficiency")
         water_heater_recovery_efficiency.setDescription("For water heaters, the recovery efficiency is the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the Department of Energy in 10 Code of Federal Regulations Part 430, Appendix E to Subpart B. This information can often be found in the AHRI Certification Directory or on the EnergyStar website.")
         water_heater_recovery_efficiency.setUnits("Frac")
@@ -109,7 +109,7 @@ class ResidentialHotWaterHeaterTankPropane < OpenStudio::Ruleset::ModelUserScrip
         cap = runner.getStringArgumentValue("capacity",user_arguments)
         vol = runner.getStringArgumentValue("tank_volume",user_arguments)
         ef = runner.getStringArgumentValue("energy_factor",user_arguments)
-        re = runner.getDoubleArgumentValue("water_heater_recovery_efficiency",user_arguments)
+        re = runner.getDoubleArgumentValue("recovery_efficiency",user_arguments)
         water_heater_loc = runner.getStringArgumentValue("location",user_arguments)
         t_set = runner.getDoubleArgumentValue("setpoint_temp",user_arguments).to_f
         oncycle_p = runner.getDoubleArgumentValue("oncyc_power",user_arguments)

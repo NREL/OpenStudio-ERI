@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_gas</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>a55899c3-adbc-4120-9069-679051309c5e</version_id>
-  <version_modified>20161026T203041Z</version_modified>
+  <version_id>b1383ba6-fce7-4406-9bbc-8456c0fc83e2</version_id>
+  <version_modified>20161026T210528Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankGas</class_name>
   <display_name>Set Residential Gas Tank Water Heater</display_name>
@@ -65,7 +65,7 @@
       <default_value>0.59</default_value>
     </argument>
     <argument>
-      <name>water_heater_recovery_efficiency</name>
+      <name>recovery_efficiency</name>
       <display_name>Recovery Efficiency</display_name>
       <description>For water heaters, the recovery efficiency is the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the Department of Energy in 10 Code of Federal Regulations Part 430, Appendix E to Subpart B. This information can often be found in the AHRI Certification Directory or on the EnergyStar website.</description>
       <type>Double</type>
@@ -283,13 +283,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>88E9E882</checksum>
+      <checksum>5B73F5D5</checksum>
     </file>
     <file>
       <filename>ResidentialWaterHeaterTankGas_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>4004B406</checksum>
+      <checksum>CAAD8BAB</checksum>
     </file>
   </files>
 </measure>

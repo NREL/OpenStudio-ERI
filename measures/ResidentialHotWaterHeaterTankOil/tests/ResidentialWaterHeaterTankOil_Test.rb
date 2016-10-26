@@ -78,7 +78,7 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
   def test_new_construction_premium
     args_hash = {}
     args_hash["energy_factor"] = "0.68"
-    args_hash["water_heater_recovery_efficiency"] = 0.9
+    args_hash["recovery_efficiency"] = 0.9
     args_hash["capacity"] = "104"
     args_hash["oncyc_power"] = 165
     args_hash["offcyc_power"] = 1
@@ -173,7 +173,7 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
     model = _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
     args_hash = {}
     args_hash["energy_factor"] = "0.68"
-    args_hash["water_heater_recovery_efficiency"] = 0.9
+    args_hash["recovery_efficiency"] = 0.9
     args_hash["capacity"] = "104"
     args_hash["oncyc_power"] = 165
     args_hash["offcyc_power"] = 1
@@ -268,7 +268,7 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
     model = _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
     args_hash = {}
     args_hash["energy_factor"] = "0.68"
-    args_hash["water_heater_recovery_efficiency"] = 0.9
+    args_hash["recovery_efficiency"] = 0.9
     args_hash["capacity"] = "104"
     args_hash["oncyc_power"] = 165
     args_hash["offcyc_power"] = 1
@@ -336,14 +336,14 @@ class ResidentialHotWaterHeaterTankOilTest < MiniTest::Test
 
   def test_argument_error_re_lt_0
     args_hash = {}
-    args_hash["water_heater_recovery_efficiency"] = -1
+    args_hash["recovery_efficiency"] = -1
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Recovery efficiency must be at least 0 and at most 1.")
   end
 
   def test_argument_error_re_gt_1
     args_hash = {}
-    args_hash["water_heater_recovery_efficiency"] = 1.1
+    args_hash["recovery_efficiency"] = 1.1
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Recovery efficiency must be at least 0 and at most 1.")
   end

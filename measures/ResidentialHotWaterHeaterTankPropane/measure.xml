@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_propane</name>
   <uid>202bfb71-76e0-4615-867b-5d51e8e25223</uid>
-  <version_id>3cbea81b-ac96-434d-8886-dc51625e3fd7</version_id>
-  <version_modified>20161026T203041Z</version_modified>
+  <version_id>e4dfac51-5011-4046-989f-43472e91aece</version_id>
+  <version_modified>20161026T210528Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankPropane</class_name>
   <display_name>Set Residential Propane Tank Water Heater</display_name>
@@ -65,7 +65,7 @@
       <default_value>0.59</default_value>
     </argument>
     <argument>
-      <name>water_heater_recovery_efficiency</name>
+      <name>recovery_efficiency</name>
       <display_name>Recovery Efficiency</display_name>
       <description>For water heaters, the recovery efficiency is the ratio of energy delivered to the water to the energy content of the fuel consumed by the water heater. Test procedures to test recovery efficiency are defined by the Department of Energy in 10 Code of Federal Regulations Part 430, Appendix E to Subpart B. This information can often be found in the AHRI Certification Directory or on the EnergyStar website.</description>
       <type>Double</type>
@@ -283,13 +283,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EEA1A103</checksum>
+      <checksum>3F8AEC19</checksum>
     </file>
     <file>
       <filename>ResidentialWaterHeaterTankPropane_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>C8404E54</checksum>
+      <checksum>D6CE0FBB</checksum>
     </file>
   </files>
 </measure>

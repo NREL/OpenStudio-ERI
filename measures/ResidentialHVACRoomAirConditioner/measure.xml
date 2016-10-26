@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>3d73f840-58d5-4313-aa03-33a00a0faeee</version_id>
-  <version_modified>20161026T203042Z</version_modified>
+  <version_id>f7fd3e9e-bd7c-4790-9a81-0e16bc30369e</version_id>
+  <version_modified>20161026T212318Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -30,7 +30,7 @@
       <default_value>0.65</default_value>
     </argument>
     <argument>
-      <name>airflow</name>
+      <name>airflow_rate</name>
       <display_name>Airflow</display_name>
       <type>Double</type>
       <units>cfm/ton</units>
@@ -301,7 +301,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>414F7C1E</checksum>
+      <checksum>BA01480F</checksum>
     </file>
   </files>
 </measure>
