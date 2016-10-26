@@ -9,50 +9,50 @@ class BedroomsAndBathroomsTest < MiniTest::Test
   
   def test_argument_error_beds_not_equal_to_baths
     args_hash = {}
-    args_hash["Num_Br"] = "3.0, 3.0, 3.0"
-    args_hash["Num_Ba"] = "2.0, 2.0"
+    args_hash["num_bedrooms"] = "3.0, 3.0, 3.0"
+    args_hash["num_bathrooms"] = "2.0, 2.0"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedroom elements specified inconsistent with number of bathroom elements specified.")
   end
   
   def test_argument_error_beds_not_equal_to_units
     args_hash = {}
-    args_hash["Num_Br"] = "3.0, 3.0"
+    args_hash["num_bedrooms"] = "3.0, 3.0"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedroom elements specified inconsistent with number of multifamily units defined in the model.")
   end
   
   def test_argument_error_baths_not_equal_to_units
     args_hash = {}
-    args_hash["Num_Ba"] = "2.0, 2.0"
+    args_hash["num_bathrooms"] = "2.0, 2.0"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathroom elements specified inconsistent with number of multifamily units defined in the model.")
   end
   
   def test_argument_error_beds_not_numerical
     args_hash = {}
-    args_hash["Num_Br"] = "3.0, 3.0, typo"
+    args_hash["num_bedrooms"] = "3.0, 3.0, typo"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedrooms must be a numerical value.")
   end
   
   def test_argument_error_baths_not_numerical
     args_hash = {}
-    args_hash["Num_Ba"] = "2.0, 2.0, typo"
+    args_hash["num_bathrooms"] = "2.0, 2.0, typo"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathrooms must be a numerical value.")  
   end
   
   def test_argument_error_beds_not_positive_integer
     args_hash = {}
-    args_hash["Num_Br"] = "3.0, 3.0, 3.5"
+    args_hash["num_bedrooms"] = "3.0, 3.0, 3.5"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedrooms must be a positive integer.")    
   end
   
   def test_argument_error_baths_not_positive_multiple_of_0pt25
     args_hash = {}
-    args_hash["Num_Ba"] = "2.0, 2.0, 2.8"
+    args_hash["num_bathrooms"] = "2.0, 2.0, 2.8"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathrooms must be a positive multiple of 0.25.")    
   end
@@ -70,8 +70,8 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {"Beds"=>3.0, "Baths"=>2.0, "Num_Units"=>num_units}
     model = _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash["Num_Br"] = "4"
-    args_hash["Num_Ba"] = "3"
+    args_hash["num_bedrooms"] = "4"
+    args_hash["num_bathrooms"] = "3"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {"Beds"=>4.0, "Baths"=>3.0, "Num_Units"=>num_units}
@@ -81,8 +81,8 @@ class BedroomsAndBathroomsTest < MiniTest::Test
   def test_multifamily_new_construction_1
     num_units = 4
     args_hash = {}
-    args_hash["Num_Br"] = "2"
-    args_hash["Num_Ba"] = "1"
+    args_hash["num_bedrooms"] = "2"
+    args_hash["num_bathrooms"] = "1"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {"Beds"=>2.0, "Baths"=>1.0, "Num_Units"=>num_units}
@@ -92,8 +92,8 @@ class BedroomsAndBathroomsTest < MiniTest::Test
   def test_multifamily_new_construction_2
     num_units = 8
     args_hash = {}
-    args_hash["Num_Br"] = "2"
-    args_hash["Num_Ba"] = "1.5"
+    args_hash["num_bedrooms"] = "2"
+    args_hash["num_bathrooms"] = "1.5"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {"Beds"=>2.0, "Baths"=>1.5, "Num_Units"=>num_units}

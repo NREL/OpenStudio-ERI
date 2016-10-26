@@ -35,8 +35,8 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
   
   def test_no_solar_gain_reduction
     args_hash = {}
-    args_hash["userdefinedintshadeheatingmult"] = 1
-    args_hash["userdefinedintshadecoolingmult"] = 1
+    args_hash["heating_shade_mult"] = 1
+    args_hash["cooling_shade_mult"] = 1
     result = _test_error("default_geometry_location_windows.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)

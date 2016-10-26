@@ -21,7 +21,7 @@ class ProcessConstructionsWallsExteriorCMUTest < MiniTest::Test
     args_hash["conductivity"] = 4.29
     args_hash["density"] = 65
     args_hash["framing_factor"] = 0.076
-    args_hash["furring_rvalue"] = 0
+    args_hash["furring_r"] = 0
     args_hash["furring_cavity_depth"] = 1
     args_hash["furring_spacing"] = 24
     expected_num_del_objects = {}
@@ -36,7 +36,7 @@ class ProcessConstructionsWallsExteriorCMUTest < MiniTest::Test
     args_hash["conductivity"] = 4.29
     args_hash["density"] = 65
     args_hash["framing_factor"] = 0.076
-    args_hash["furring_rvalue"] = 0
+    args_hash["furring_r"] = 0
     args_hash["furring_cavity_depth"] = 0
     args_hash["furring_spacing"] = 0
     expected_num_del_objects = {}
@@ -51,7 +51,7 @@ class ProcessConstructionsWallsExteriorCMUTest < MiniTest::Test
     args_hash["conductivity"] = 4
     args_hash["density"] = 45
     args_hash["framing_factor"] = 0.076
-    args_hash["furring_rvalue"] = 10
+    args_hash["furring_r"] = 10
     args_hash["furring_cavity_depth"] = 2
     args_hash["furring_spacing"] = 24
     expected_num_del_objects = {}
@@ -66,7 +66,7 @@ class ProcessConstructionsWallsExteriorCMUTest < MiniTest::Test
     args_hash["conductivity"] = 5.33
     args_hash["density"] = 119
     args_hash["framing_factor"] = 0.076
-    args_hash["furring_rvalue"] = 0
+    args_hash["furring_r"] = 0
     args_hash["furring_cavity_depth"] = 1
     args_hash["furring_spacing"] = 24
     expected_num_del_objects = {}
@@ -81,7 +81,7 @@ class ProcessConstructionsWallsExteriorCMUTest < MiniTest::Test
     args_hash["conductivity"] = 5.33
     args_hash["density"] = 119
     args_hash["framing_factor"] = 0.076
-    args_hash["furring_rvalue"] = 0
+    args_hash["furring_r"] = 0
     args_hash["furring_cavity_depth"] = 1
     args_hash["furring_spacing"] = 24
     expected_num_del_objects = {"Construction"=>1}
@@ -127,7 +127,7 @@ class ProcessConstructionsWallsExteriorCMUTest < MiniTest::Test
 
   def test_argument_error_furring_rvalue_negative
     args_hash = {}
-    args_hash["furring_rvalue"] = -1
+    args_hash["furring_r"] = -1
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Furring Insulation R-value must be greater than or equal to 0.")
   end

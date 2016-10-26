@@ -9,7 +9,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   
   def test_error_invalid_neighbor_offset
     args_hash = {}
-    args_hash["left_neighbor_offset"] = -10
+    args_hash["left_offset"] = -10
     result = _test_error_or_NA("default_geometry_location.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
@@ -26,13 +26,13 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     
   def test_retrofit_replace
     args_hash = {}
-    args_hash["left_neighbor_offset"] = 10
-    args_hash["right_neighbor_offset"] = 10
-    args_hash["back_neighbor_offset"] = 10
-    args_hash["front_neighbor_offset"] = 10
+    args_hash["left_offset"] = 10
+    args_hash["right_offset"] = 10
+    args_hash["back_offset"] = 10
+    args_hash["front_offset"] = 10
     model = _test_measure("default_geometry_location.osm", args_hash, false, true)
     args_hash = {}
-    args_hash["left_neighbor_offset"] = 20
+    args_hash["left_offset"] = 20
     _test_measure(model, args_hash, true, true)
   end  
   

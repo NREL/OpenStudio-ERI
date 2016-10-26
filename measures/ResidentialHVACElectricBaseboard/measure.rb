@@ -34,22 +34,20 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make an argument for entering baseboard efficiency
-    baseboardeff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("baseboardeff",true)
+    baseboardeff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("efficiency",true)
     baseboardeff.setDisplayName("Efficiency")
     baseboardeff.setUnits("Btu/Btu")
     baseboardeff.setDescription("The efficiency of the electric baseboard.")
     baseboardeff.setDefaultValue(1.0)
     args << baseboardeff
 
-    #make a choice argument for baseboard heating output capacity
+    #make a string argument for baseboard heating output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
       cap_display_names << "#{kbtu} kBtu/hr"
     end
-
-    #make a string argument for furnace heating output capacity
-    baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("baseboardcap", cap_display_names, true)
+    baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
     baseboardcap.setDisplayName("Heating Output Capacity")
     baseboardcap.setDefaultValue(Constants.SizingAuto)
     args << baseboardcap
@@ -66,8 +64,8 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
-    baseboardEfficiency = runner.getDoubleArgumentValue("baseboardeff",user_arguments)
-    baseboardOutputCapacity = runner.getStringArgumentValue("baseboardcap",user_arguments)
+    baseboardEfficiency = runner.getDoubleArgumentValue("efficiency",user_arguments)
+    baseboardOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     if not baseboardOutputCapacity == Constants.SizingAuto
       baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end

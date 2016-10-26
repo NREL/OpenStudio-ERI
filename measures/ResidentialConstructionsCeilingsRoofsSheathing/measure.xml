@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_sheathing</name>
   <uid>f9125155-4fe6-4dae-b5a6-e1249eb2da3c</uid>
-  <version_id>5b7036f3-e453-4632-91d7-86b2f76aef62</version_id>
-  <version_modified>20161021T115345Z</version_modified>
+  <version_id>40dc4f59-9dba-4ba9-8619-bce7958ebf0f</version_id>
+  <version_modified>20161026T203037Z</version_modified>
   <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsSheathing</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roof Sheathing</display_name>
@@ -21,7 +21,7 @@
       <default_value>0.75</default_value>
     </argument>
     <argument>
-      <name>rigid_rvalue</name>
+      <name>rigid_r</name>
       <display_name>Continuous Insulation Nominal R-value</display_name>
       <description>The R-value of the continuous insulation.</description>
       <type>Double</type>
@@ -84,17 +84,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>EC6AA9CE</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -113,12 +102,6 @@
       <checksum>B9256575</checksum>
     </file>
     <file>
-      <filename>RoofSheathing_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A68DE8AF</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -129,6 +112,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>57187932</checksum>
+    </file>
+    <file>
+      <filename>RoofSheathing_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F6C3A631</checksum>
     </file>
   </files>
 </measure>

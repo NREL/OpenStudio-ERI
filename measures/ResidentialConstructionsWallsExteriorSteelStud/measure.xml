@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>673e22d7-3e49-45cd-93bc-5641e1564b20</version_id>
-  <version_modified>20161021T115347Z</version_modified>
+  <version_id>3743b90e-d87a-453e-9e8e-993d62e9a3e5</version_id>
+  <version_modified>20161026T203038Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSteelStud</class_name>
   <display_name>Set Residential Walls - Steel Stud Construction</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Calculates and assigns material layer properties of steel stud constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
-      <name>cavity_rvalue</name>
+      <name>cavity_r</name>
       <display_name>Cavity Insulation Nominal R-value</display_name>
       <description>Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.</description>
       <type>Double</type>
@@ -126,17 +126,6 @@
       <checksum>B9256575</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9CAF3422</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -149,12 +138,6 @@
       <checksum>7486DA3F</checksum>
     </file>
     <file>
-      <filename>SteelStud_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4B8BF175</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -165,6 +148,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>720B948C</checksum>
+    </file>
+    <file>
+      <filename>SteelStud_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DD4C7ADE</checksum>
     </file>
   </files>
 </measure>

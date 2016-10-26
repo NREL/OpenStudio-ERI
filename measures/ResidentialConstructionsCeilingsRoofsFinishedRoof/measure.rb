@@ -40,34 +40,34 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Ruleset::Model
     installgrade_display_names << "III"
     
     #make a choice argument for wall cavity insulation installation grade
-    selected_installgrade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("install_grade", installgrade_display_names, true)
-    selected_installgrade.setDisplayName("Cavity Install Grade")
-    selected_installgrade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
-    selected_installgrade.setDefaultValue("I")
-    args << selected_installgrade
+    install_grade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("install_grade", installgrade_display_names, true)
+    install_grade.setDisplayName("Cavity Install Grade")
+    install_grade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    install_grade.setDefaultValue("I")
+    args << install_grade
 
     #make a double argument for wall cavity depth
-    selected_cavdepth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_depth", true)
-    selected_cavdepth.setDisplayName("Cavity Depth")
-    selected_cavdepth.setUnits("in")
-    selected_cavdepth.setDescription("Depth of the roof cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
-    selected_cavdepth.setDefaultValue("9.25")
-    args << selected_cavdepth
+    cavity_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_depth", true)
+    cavity_depth.setDisplayName("Cavity Depth")
+    cavity_depth.setUnits("in")
+    cavity_depth.setDescription("Depth of the roof cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
+    cavity_depth.setDefaultValue("9.25")
+    args << cavity_depth
     
 	#make a bool argument for whether the cavity insulation fills the cavity
-	selected_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("ins_fills_cavity", true)
-	selected_insfills.setDisplayName("Insulation Fills Cavity")
-	selected_insfills.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
-    selected_insfills.setDefaultValue(false)
-	args << selected_insfills
+	ins_fills_cavity = OpenStudio::Ruleset::OSArgument::makeBoolArgument("ins_fills_cavity", true)
+	ins_fills_cavity.setDisplayName("Insulation Fills Cavity")
+	ins_fills_cavity.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
+    ins_fills_cavity.setDefaultValue(false)
+	args << ins_fills_cavity
     
     #make a choice argument for finished roof framing factor
-    userdefined_frroofff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", false)
-    userdefined_frroofff.setDisplayName("Framing Factor")
-	userdefined_frroofff.setUnits("frac")
-	userdefined_frroofff.setDescription("The framing factor of the finished roof.")
-    userdefined_frroofff.setDefaultValue(0.07)
-    args << userdefined_frroofff
+    framing_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", false)
+    framing_factor.setDisplayName("Framing Factor")
+	framing_factor.setUnits("frac")
+	framing_factor.setDescription("The framing factor of the finished roof.")
+    framing_factor.setDefaultValue(0.07)
+    args << framing_factor
     
     return args
   end #end the arguments method

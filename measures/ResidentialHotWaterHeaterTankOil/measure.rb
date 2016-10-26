@@ -32,7 +32,7 @@ class ResidentialHotWaterHeaterTankOil < OpenStudio::Ruleset::ModelUserScript
         args = ruleset::OSArgumentVector.new
 
         # make an argument for the storage tank volume
-        storage_tank_volume = osargument::makeStringArgument("storage_tank_volume", true)
+        storage_tank_volume = osargument::makeStringArgument("tank_volume", true)
         storage_tank_volume.setDisplayName("Tank Volume")
         storage_tank_volume.setDescription("Nominal volume of the of the water heater tank. Set to #{Constants.Auto} to have volume autosized.")
         storage_tank_volume.setUnits("gal")
@@ -40,7 +40,7 @@ class ResidentialHotWaterHeaterTankOil < OpenStudio::Ruleset::ModelUserScript
         args << storage_tank_volume
 
         # make an argument for hot water setpoint temperature
-        dhw_setpoint = osargument::makeDoubleArgument("dhw_setpoint_temperature", true)
+        dhw_setpoint = osargument::makeDoubleArgument("setpoint_temp", true)
         dhw_setpoint.setDisplayName("Setpoint")
         dhw_setpoint.setDescription("Water heater setpoint temperature.")
         dhw_setpoint.setUnits("F")
@@ -51,7 +51,7 @@ class ResidentialHotWaterHeaterTankOil < OpenStudio::Ruleset::ModelUserScript
         thermal_zones = model.getThermalZones
         thermal_zone_names = thermal_zones.select { |tz| not tz.name.empty?}.collect{|tz| tz.name.get }
         thermal_zone_names << Constants.Auto
-        water_heater_location = osargument::makeChoiceArgument("water_heater_location",thermal_zone_names, true)
+        water_heater_location = osargument::makeChoiceArgument("location",thermal_zone_names, true)
         water_heater_location.setDefaultValue(Constants.Auto)
         water_heater_location.setDisplayName("Location")
         water_heater_location.setDescription("Thermal zone where the water heater is located. #{Constants.Auto} will locate the water heater according the BA House Simulation Protocols: A garage (if available) or the living space in hot-dry and hot-humid climates, a basement (finished or unfinished, if available) or living space in all other climates.")
@@ -59,7 +59,7 @@ class ResidentialHotWaterHeaterTankOil < OpenStudio::Ruleset::ModelUserScript
         args << water_heater_location
 
         # make an argument for water_heater_capacity
-        water_heater_capacity = osargument::makeStringArgument("water_heater_capacity", true)
+        water_heater_capacity = osargument::makeStringArgument("capacity", true)
         water_heater_capacity.setDisplayName("Input Capacity")
         water_heater_capacity.setDescription("The maximum energy input rating of the water heater. Set to #{Constants.Auto} to have this field autosized.")
         water_heater_capacity.setUnits("kBtu/hr")
@@ -67,7 +67,7 @@ class ResidentialHotWaterHeaterTankOil < OpenStudio::Ruleset::ModelUserScript
         args << water_heater_capacity
 
         # make an argument for the rated energy factor
-        rated_energy_factor = osargument::makeStringArgument("rated_energy_factor", true)
+        rated_energy_factor = osargument::makeStringArgument("energy_factor", true)
         rated_energy_factor.setDisplayName("Rated Energy Factor")
         rated_energy_factor.setDescription("For water heaters, Energy Factor is the ratio of useful energy output from the water heater to the total amount of energy delivered from the water heater. The higher the EF is, the more efficient the water heater. Procedures to test the EF of water heaters are defined by the Department of Energy in 10 Code of Federal Regulation Part 430, Appendix E to Subpart B. Enter #{Constants.Auto} for a water heater that meets the minimum federal efficiency requirements.")
         rated_energy_factor.setDefaultValue("0.62")
@@ -106,12 +106,12 @@ class ResidentialHotWaterHeaterTankOil < OpenStudio::Ruleset::ModelUserScript
 
 	
         #Assign user inputs to variables
-        cap = runner.getStringArgumentValue("water_heater_capacity",user_arguments)
-        vol = runner.getStringArgumentValue("storage_tank_volume",user_arguments)
-        ef = runner.getStringArgumentValue("rated_energy_factor",user_arguments)
+        cap = runner.getStringArgumentValue("capacity",user_arguments)
+        vol = runner.getStringArgumentValue("tank_volume",user_arguments)
+        ef = runner.getStringArgumentValue("energy_factor",user_arguments)
         re = runner.getDoubleArgumentValue("water_heater_recovery_efficiency",user_arguments)
-        water_heater_loc = runner.getStringArgumentValue("water_heater_location",user_arguments)
-        t_set = runner.getDoubleArgumentValue("dhw_setpoint_temperature",user_arguments).to_f
+        water_heater_loc = runner.getStringArgumentValue("location",user_arguments)
+        t_set = runner.getDoubleArgumentValue("setpoint_temp",user_arguments).to_f
         oncycle_p = runner.getDoubleArgumentValue("oncyc_power",user_arguments)
         offcycle_p = runner.getDoubleArgumentValue("offcyc_power",user_arguments)
 	

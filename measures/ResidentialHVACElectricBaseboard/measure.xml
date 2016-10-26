@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>9057f454-3e99-4360-b9db-26f1e15d4f0c</version_id>
-  <version_modified>20161026T190110Z</version_modified>
+  <version_id>cca396f5-1772-4037-a706-1b7c46c13fe7</version_id>
+  <version_modified>20161026T203042Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. An HVAC baseboard convective electric is added to the living zone, as well as to the finished basement if it exists.</modeler_description>
   <arguments>
     <argument>
-      <name>baseboardeff</name>
+      <name>efficiency</name>
       <display_name>Efficiency</display_name>
       <description>The efficiency of the electric baseboard.</description>
       <type>Double</type>
@@ -21,7 +21,7 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>baseboardcap</name>
+      <name>capacity</name>
       <display_name>Heating Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
@@ -281,23 +281,6 @@
       <checksum>2350A601</checksum>
     </file>
     <file>
-      <filename>process_electric_baseboard_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DADB2655</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>04F70493</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -314,6 +297,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>536297F8</checksum>
+    </file>
+    <file>
+      <filename>process_electric_baseboard_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>49C4960C</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A4491F7E</checksum>
     </file>
   </files>
 </measure>

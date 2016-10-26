@@ -59,12 +59,12 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     args << framing_factor
     
     #make a double argument for furring insulation R-value
-    furring_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_rvalue", true)
-    furring_rvalue.setDisplayName("Furring Insulation R-value")
-    furring_rvalue.setUnits("hr-ft^2-R/Btu")
-    furring_rvalue.setDescription("R-value of the insulation filling the furring cavity. Enter zero for no furring strips.")
-    furring_rvalue.setDefaultValue(0.0)
-    args << furring_rvalue
+    furring_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_r", true)
+    furring_r.setDisplayName("Furring Insulation R-value")
+    furring_r.setUnits("hr-ft^2-R/Btu")
+    furring_r.setDescription("R-value of the insulation filling the furring cavity. Enter zero for no furring strips.")
+    furring_r.setDefaultValue(0.0)
+    args << furring_r
     
     #make a double argument for furring cavity depth
     furring_cavity_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_cavity_depth", true)
@@ -117,7 +117,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     cmuConductivity = runner.getDoubleArgumentValue("conductivity",user_arguments)
     cmuDensity = runner.getDoubleArgumentValue("density",user_arguments)
     cmuFramingFactor = runner.getDoubleArgumentValue("framing_factor",user_arguments)
-    cmuFurringInsRvalue = runner.getDoubleArgumentValue("furring_rvalue",user_arguments)
+    cmuFurringInsRvalue = runner.getDoubleArgumentValue("furring_r",user_arguments)
     cmuFurringCavityDepth = runner.getDoubleArgumentValue("furring_cavity_depth",user_arguments)
     cmuFurringStudSpacing = runner.getDoubleArgumentValue("furring_spacing",user_arguments)
 

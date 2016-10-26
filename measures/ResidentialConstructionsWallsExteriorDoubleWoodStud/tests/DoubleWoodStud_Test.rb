@@ -17,7 +17,7 @@ class ProcessConstructionsWallsExteriorDoubleWoodStudTest < MiniTest::Test
 
   def test_add_r33
     args_hash = {}
-    args_hash["cavity_rvalue"] = 33
+    args_hash["cavity_r"] = 33
     args_hash["install_grade"] = "I"
     args_hash["stud_depth"] = 3.5
     args_hash["gap_depth"] = 3.5
@@ -32,7 +32,7 @@ class ProcessConstructionsWallsExteriorDoubleWoodStudTest < MiniTest::Test
 
   def test_add_r45_gr2_staggered
     args_hash = {}
-    args_hash["cavity_rvalue"] = 45
+    args_hash["cavity_r"] = 45
     args_hash["install_grade"] = "III"
     args_hash["stud_depth"] = 3.5
     args_hash["gap_depth"] = 3.5
@@ -47,7 +47,7 @@ class ProcessConstructionsWallsExteriorDoubleWoodStudTest < MiniTest::Test
 
   def test_add_r45_gr2_staggered_zero_gap
     args_hash = {}
-    args_hash["cavity_rvalue"] = 45
+    args_hash["cavity_r"] = 45
     args_hash["install_grade"] = "III"
     args_hash["stud_depth"] = 3.5
     args_hash["gap_depth"] = 0
@@ -62,7 +62,7 @@ class ProcessConstructionsWallsExteriorDoubleWoodStudTest < MiniTest::Test
 
   def test_add_r33_to_layers
     args_hash = {}
-    args_hash["cavity_rvalue"] = 33
+    args_hash["cavity_r"] = 33
     args_hash["install_grade"] = "I"
     args_hash["stud_depth"] = 3.5
     args_hash["gap_depth"] = 3.5
@@ -77,7 +77,7 @@ class ProcessConstructionsWallsExteriorDoubleWoodStudTest < MiniTest::Test
 
   def test_argument_error_cavity_rvalue_negative
     args_hash = {}
-    args_hash["cavity_rvalue"] = -1
+    args_hash["cavity_r"] = -1
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Insulation Nominal R-value must be greater than 0.")
   end

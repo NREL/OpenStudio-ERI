@@ -17,7 +17,7 @@ class ProcessConstructionsWallsExteriorSIPTest < MiniTest::Test
 
   def test_add_3_6in_eps_osb_interior
     args_hash = {}
-    args_hash["sip_rvalue"] = 17.5
+    args_hash["sip_r"] = 17.5
     args_hash["thick_in"] = 3.625
     args_hash["framing_factor"] = 0.156
     args_hash["sheathing_type"] = Constants.MaterialOSB
@@ -30,7 +30,7 @@ class ProcessConstructionsWallsExteriorSIPTest < MiniTest::Test
 
   def test_add_9_4in_eps_osb_interior
     args_hash = {}
-    args_hash["sip_rvalue"] = 47.5
+    args_hash["sip_r"] = 47.5
     args_hash["thick_in"] = 9.375
     args_hash["framing_factor"] = 0.156
     args_hash["sheathing_type"] = Constants.MaterialGypsum
@@ -43,7 +43,7 @@ class ProcessConstructionsWallsExteriorSIPTest < MiniTest::Test
 
   def test_add_9_4in_eps_osb_interior_to_layers
     args_hash = {}
-    args_hash["sip_rvalue"] = 47.5
+    args_hash["sip_r"] = 47.5
     args_hash["thick_in"] = 9.375
     args_hash["framing_factor"] = 0.156
     args_hash["sheathing_type"] = Constants.MaterialGypsum
@@ -56,7 +56,7 @@ class ProcessConstructionsWallsExteriorSIPTest < MiniTest::Test
 
   def test_argument_error_sip_rvalue_negative
     args_hash = {}
-    args_hash["sip_rvalue"] = -1
+    args_hash["sip_r"] = -1
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal Insulation R-value must be greater than 0.")
   end

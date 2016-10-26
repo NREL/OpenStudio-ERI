@@ -17,7 +17,7 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
 
   def test_add_uninsulated_2x4
     args_hash = {}
-    args_hash["cavity_rvalue"] = 0
+    args_hash["cavity_r"] = 0
     args_hash["install_grade"] = "III" # no insulation, shouldn't apply
     args_hash["cavity_depth"] = 3.5
     args_hash["ins_fills_cavity"] = "false"
@@ -31,7 +31,7 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
 
   def test_add_r13_2x4_gr2
     args_hash = {}
-    args_hash["cavity_rvalue"] = 13
+    args_hash["cavity_r"] = 13
     args_hash["install_grade"] = "II"
     args_hash["cavity_depth"] = 3.5
     args_hash["ins_fills_cavity"] = "true"
@@ -45,7 +45,7 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
 
   def test_add_r13_2x4_gr2_to_layers
     args_hash = {}
-    args_hash["cavity_rvalue"] = 13
+    args_hash["cavity_r"] = 13
     args_hash["install_grade"] = "II"
     args_hash["cavity_depth"] = 3.5
     args_hash["ins_fills_cavity"] = "true"
@@ -59,7 +59,7 @@ class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
 
   def test_argument_error_cavity_rvalue_negative
     args_hash = {}
-    args_hash["cavity_rvalue"] = -1
+    args_hash["cavity_r"] = -1
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cavity Insulation Nominal R-value must be greater than or equal to 0.")
   end

@@ -17,7 +17,7 @@ class ProcessConstructionsWallsExteriorICFTest < MiniTest::Test
 
   def test_add_2in_eps_4in_concrete
     args_hash = {}
-    args_hash["icf_rvalue"] = 10
+    args_hash["icf_r"] = 10
     args_hash["ins_thick_in"] = 2
     args_hash["concrete_thick_in"] = 4
     args_hash["framing_factor"] = 0.076
@@ -29,7 +29,7 @@ class ProcessConstructionsWallsExteriorICFTest < MiniTest::Test
 
   def test_add_2in_eps_12in_concrete
     args_hash = {}
-    args_hash["icf_rvalue"] = 10
+    args_hash["icf_r"] = 10
     args_hash["ins_thick_in"] = 2
     args_hash["concrete_thick_in"] = 12
     args_hash["framing_factor"] = 0.076
@@ -41,7 +41,7 @@ class ProcessConstructionsWallsExteriorICFTest < MiniTest::Test
 
   def test_add_2in_eps_12in_concrete_to_layers
     args_hash = {}
-    args_hash["icf_rvalue"] = 10
+    args_hash["icf_r"] = 10
     args_hash["ins_thick_in"] = 2
     args_hash["concrete_thick_in"] = 12
     args_hash["framing_factor"] = 0.076
@@ -53,14 +53,14 @@ class ProcessConstructionsWallsExteriorICFTest < MiniTest::Test
 
   def test_argument_error_icf_rvalue_negative
     args_hash = {}
-    args_hash["icf_rvalue"] = -1
+    args_hash["icf_r"] = -1
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal Insulation R-value must be greater than 0.")
   end
     
   def test_argument_error_icf_rvalue_zero
     args_hash = {}
-    args_hash["icf_rvalue"] = 0
+    args_hash["icf_r"] = 0
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal Insulation R-value must be greater than 0.")
   end

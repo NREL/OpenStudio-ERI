@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>c3be7fe6-5c7e-4b55-835a-964bab678532</version_id>
-  <version_modified>20161021T115347Z</version_modified>
+  <version_id>15e642e3-e61b-495a-9fd4-5e3ad06d0ee2</version_id>
+  <version_modified>20161026T203038Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Calculates and assigns material layer properties of SIP constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
-      <name>sip_rvalue</name>
+      <name>sip_r</name>
       <display_name>Nominal Insulation R-value</display_name>
       <description>R-value is a measure of insulation's ability to resist heat traveling through it.</description>
       <type>Double</type>
@@ -108,17 +108,6 @@
       <checksum>B9256575</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>B66334D2</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -131,12 +120,6 @@
       <checksum>7486DA3F</checksum>
     </file>
     <file>
-      <filename>SIP_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AB0C4198</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -147,6 +130,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>481CD808</checksum>
+    </file>
+    <file>
+      <filename>SIP_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0038CC2E</checksum>
     </file>
   </files>
 </measure>

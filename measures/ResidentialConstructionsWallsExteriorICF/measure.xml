@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>530dd779-be9c-4588-a34a-bff0a538a1c3</version_id>
-  <version_modified>20161021T115347Z</version_modified>
+  <version_id>ee231a4e-f06d-48b1-a17a-d6fef3e7596c</version_id>
+  <version_modified>20161026T203038Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorICF</class_name>
   <display_name>Set Residential Walls - ICF Construction</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Calculates and assigns material layer properties of ICF constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.</modeler_description>
   <arguments>
     <argument>
-      <name>icf_rvalue</name>
+      <name>icf_r</name>
       <display_name>Nominal Insulation R-value</display_name>
       <description>R-value of each insulating layer of the form.</description>
       <type>Double</type>
@@ -85,17 +85,6 @@
       <checksum>B9256575</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>E1A63E4E</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -108,12 +97,6 @@
       <checksum>7486DA3F</checksum>
     </file>
     <file>
-      <filename>ICF_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1188D3CF</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -124,6 +107,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>67130286</checksum>
+    </file>
+    <file>
+      <filename>ICF_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D1AE2405</checksum>
     </file>
   </files>
 </measure>

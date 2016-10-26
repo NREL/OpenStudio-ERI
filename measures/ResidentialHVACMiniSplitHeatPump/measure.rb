@@ -43,7 +43,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args = OpenStudio::Ruleset::OSArgumentVector.new
     
     #make a double argument for minisplit cooling rated seer
-    miniSplitHPCoolingRatedSEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPCoolingRatedSEER", true)
+    miniSplitHPCoolingRatedSEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("seer", true)
     miniSplitHPCoolingRatedSEER.setDisplayName("Rated SEER")
     miniSplitHPCoolingRatedSEER.setUnits("Btu/W-h")
     miniSplitHPCoolingRatedSEER.setDescription("Seasonal Energy Efficiency Ratio (SEER) is a measure of equipment energy efficiency over the cooling season.")
@@ -51,7 +51,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingRatedSEER 
     
     #make a double argument for minisplit cooling min capacity
-    miniSplitHPCoolingMinCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPCoolingMinCapacity", true)
+    miniSplitHPCoolingMinCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_cooling_capacity", true)
     miniSplitHPCoolingMinCapacity.setDisplayName("Minimum Cooling Capacity")
     miniSplitHPCoolingMinCapacity.setUnits("frac")
     miniSplitHPCoolingMinCapacity.setDescription("Minimum cooling capacity as a fraction of the nominal cooling capacity at rated conditions.")
@@ -59,7 +59,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingMinCapacity     
     
     #make a double argument for minisplit cooling max capacity
-    miniSplitHPCoolingMaxCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPCoolingMaxCapacity", true)
+    miniSplitHPCoolingMaxCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_cooling_capacity", true)
     miniSplitHPCoolingMaxCapacity.setDisplayName("Maximum Cooling Capacity")
     miniSplitHPCoolingMaxCapacity.setUnits("frac")
     miniSplitHPCoolingMaxCapacity.setDescription("Maximum cooling capacity as a fraction of the nominal cooling capacity at rated conditions.")
@@ -67,14 +67,14 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingMaxCapacity    
     
     #make a double argument for minisplit rated shr
-    miniSplitHPRatedSHR = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPRatedSHR", true)
+    miniSplitHPRatedSHR = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shr", true)
     miniSplitHPRatedSHR.setDisplayName("Rated SHR")
     miniSplitHPRatedSHR.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.")
     miniSplitHPRatedSHR.setDefaultValue(0.73)
     args << miniSplitHPRatedSHR        
     
     #make a double argument for minisplit cooling min airflow
-    miniSplitHPCoolingMinAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPCoolingMinAirflow", true)
+    miniSplitHPCoolingMinAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_cooling_airflow_rate", true)
     miniSplitHPCoolingMinAirflow.setDisplayName("Minimum Cooling Airflow")
     miniSplitHPCoolingMinAirflow.setUnits("cfm/ton")
     miniSplitHPCoolingMinAirflow.setDescription("Minimum cooling cfm divided by the nominal rated cooling capacity.")
@@ -82,7 +82,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingMinAirflow      
     
     #make a double argument for minisplit cooling max airflow
-    miniSplitHPCoolingMaxAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPCoolingMaxAirflow", true)
+    miniSplitHPCoolingMaxAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_cooling_airflow_rate", true)
     miniSplitHPCoolingMaxAirflow.setDisplayName("Maximum Cooling Airflow")
     miniSplitHPCoolingMaxAirflow.setUnits("cfm/ton")
     miniSplitHPCoolingMaxAirflow.setDescription("Maximum cooling cfm divided by the nominal rated cooling capacity.")
@@ -90,7 +90,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingMaxAirflow     
     
     #make a double argument for minisplit rated hspf
-    miniSplitHPHeatingRatedHSPF = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPHeatingRatedHSPF", true)
+    miniSplitHPHeatingRatedHSPF = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("hspf", true)
     miniSplitHPHeatingRatedHSPF.setDisplayName("Rated HSPF")
     miniSplitHPHeatingRatedHSPF.setUnits("Btu/W-h")
     miniSplitHPHeatingRatedHSPF.setDescription("The Heating Seasonal Performance Factor (HSPF) is a measure of a heat pump's energy efficiency over one heating season.")
@@ -98,7 +98,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingRatedHSPF
     
     #make a double argument for minisplit heating capacity offset
-    miniSplitHPHeatingCapacityOffset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPHeatingCapacityOffset", true)
+    miniSplitHPHeatingCapacityOffset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("heating_capacity_offset", true)
     miniSplitHPHeatingCapacityOffset.setDisplayName("Heating Capacity Offset")
     miniSplitHPHeatingCapacityOffset.setUnits("Btu/h")
     miniSplitHPHeatingCapacityOffset.setDescription("The difference between the nominal rated heating capacity and the nominal rated cooling capacity.")
@@ -106,7 +106,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingCapacityOffset    
     
     #make a double argument for minisplit heating min capacity
-    miniSplitHPHeatingMinCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPHeatingMinCapacity", true)
+    miniSplitHPHeatingMinCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_heating_capacity", true)
     miniSplitHPHeatingMinCapacity.setDisplayName("Minimum Heating Capacity")
     miniSplitHPHeatingMinCapacity.setUnits("frac")
     miniSplitHPHeatingMinCapacity.setDescription("Minimum heating capacity as a fraction of nominal heating capacity at rated conditions.")
@@ -114,7 +114,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingMinCapacity     
     
     #make a double argument for minisplit heating max capacity
-    miniSplitHPHeatingMaxCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPHeatingMaxCapacity", true)
+    miniSplitHPHeatingMaxCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_heating_capacity", true)
     miniSplitHPHeatingMaxCapacity.setDisplayName("Maximum Heating Capacity")
     miniSplitHPHeatingMaxCapacity.setUnits("frac")
     miniSplitHPHeatingMaxCapacity.setDescription("Maximum heating capacity as a fraction of nominal heating capacity at rated conditions.")
@@ -122,7 +122,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingMaxCapacity        
     
     #make a double argument for minisplit heating min airflow
-    miniSplitHPHeatingMinAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPHeatingMinAirflow", true)
+    miniSplitHPHeatingMinAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_heating_airflow_rate", true)
     miniSplitHPHeatingMinAirflow.setDisplayName("Minimum Heating Airflow")
     miniSplitHPHeatingMinAirflow.setUnits("cfm/ton")
     miniSplitHPHeatingMinAirflow.setDescription("Minimum heating cfm divided by the nominal rated heating capacity.")
@@ -130,7 +130,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingMinAirflow     
     
     #make a double argument for minisplit heating min airflow
-    miniSplitHPHeatingMaxAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPHeatingMaxAirflow", true)
+    miniSplitHPHeatingMaxAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_heating_airflow_rate", true)
     miniSplitHPHeatingMaxAirflow.setDisplayName("Maximum Heating Airflow")
     miniSplitHPHeatingMaxAirflow.setUnits("cfm/ton")
     miniSplitHPHeatingMaxAirflow.setDescription("Maximum heating cfm divided by the nominal rated heating capacity.")
@@ -138,7 +138,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingMaxAirflow         
     
     #make a double argument for minisplit supply fan power
-    miniSplitHPSupplyFanPower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPSupplyFanPower", true)
+    miniSplitHPSupplyFanPower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_power", true)
     miniSplitHPSupplyFanPower.setDisplayName("Supply Fan Power")
     miniSplitHPSupplyFanPower.setUnits("W/cfm")
     miniSplitHPSupplyFanPower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the fan.")
@@ -146,7 +146,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPSupplyFanPower     
     
     #make a double argument for minisplit min temp
-    miniSplitHPMinT = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPMinT", true)
+    miniSplitHPMinT = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_temp", true)
     miniSplitHPMinT.setDisplayName("Min Temp")
     miniSplitHPMinT.setUnits("degrees F")
     miniSplitHPMinT.setDescription("Outdoor dry-bulb temperature below which compressor turns off.")
@@ -154,44 +154,40 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPMinT
     
     #make a double argument for minisplit pan heater power
-    miniSplitHPPanHeaterPowerPerUnit = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("miniSplitHPPanHeaterPowerPerUnit", true)
+    miniSplitHPPanHeaterPowerPerUnit = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("pan_heater_power", true)
     miniSplitHPPanHeaterPowerPerUnit.setDisplayName("Pan Heater Power Per Unit")
     miniSplitHPPanHeaterPowerPerUnit.setUnits("W/unit")
     miniSplitHPPanHeaterPowerPerUnit.setDescription("Prevents ice build up from damaging the coil.")
     miniSplitHPPanHeaterPowerPerUnit.setDefaultValue(0.0)
     args << miniSplitHPPanHeaterPowerPerUnit    
     
-    #make a choice argument for minisplit cooling output capacity
+    #make a string argument for minisplit cooling output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (0.5..10.0).step(0.5) do |tons|
       cap_display_names << "#{tons} tons"
     end
-
-    #make a string argument for minisplit cooling output capacity
-    miniSplitCoolingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("miniSplitCoolingOutputCapacity", cap_display_names, true)
+    miniSplitCoolingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
     miniSplitCoolingOutputCapacity.setDisplayName("Cooling Output Capacity")
     miniSplitCoolingOutputCapacity.setDefaultValue(Constants.SizingAuto)
     args << miniSplitCoolingOutputCapacity
 
-    #make an argument for entering baseboard efficiency
-    baseboardeff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("baseboardeff",true)
+    #make an argument for entering supplemental efficiency
+    baseboardeff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("supplemental_efficiency",true)
     baseboardeff.setDisplayName("Supplemental Efficiency")
     baseboardeff.setUnits("Btu/Btu")
     baseboardeff.setDescription("The efficiency of the supplemental electric baseboard.")
     baseboardeff.setDefaultValue(1.0)
     args << baseboardeff
 
-    #make a choice argument for supplemental heating output capacity
+    #make a string argument for supplemental heating output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << "NO SUPP HEAT"
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
       cap_display_names << "#{kbtu} kBtu/hr"
     end  
-
-    #make a string argument for furnace heating output capacity
-    baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("baseboardcap", cap_display_names, true)
+    baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("supplemental_capacity", cap_display_names, true)
     baseboardcap.setDisplayName("Supplemental Heating Output Capacity")
     baseboardcap.setDefaultValue(Constants.SizingAuto)
     args << baseboardcap  
@@ -211,28 +207,28 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     curves = Curves.new
     supply = Supply.new
     
-    miniSplitHPCoolingRatedSEER = runner.getDoubleArgumentValue("miniSplitHPCoolingRatedSEER",user_arguments) 
-    miniSplitHPCoolingMinCapacity = runner.getDoubleArgumentValue("miniSplitHPCoolingMinCapacity",user_arguments) 
-    miniSplitHPCoolingMaxCapacity = runner.getDoubleArgumentValue("miniSplitHPCoolingMaxCapacity",user_arguments) 
-    miniSplitHPCoolingMinAirflow = runner.getDoubleArgumentValue("miniSplitHPCoolingMinAirflow",user_arguments) 
-    miniSplitHPCoolingMaxAirflow = runner.getDoubleArgumentValue("miniSplitHPCoolingMaxAirflow",user_arguments) 
-    miniSplitHPRatedSHR = runner.getDoubleArgumentValue("miniSplitHPRatedSHR",user_arguments) 
-    miniSplitHPSupplyFanPower = runner.getDoubleArgumentValue("miniSplitHPSupplyFanPower",user_arguments) 
-    miniSplitHPHeatingCapacityOffset = runner.getDoubleArgumentValue("miniSplitHPHeatingCapacityOffset",user_arguments) 
-    miniSplitHPHeatingRatedHSPF = runner.getDoubleArgumentValue("miniSplitHPHeatingRatedHSPF",user_arguments) 
-    miniSplitHPHeatingMinCapacity = runner.getDoubleArgumentValue("miniSplitHPHeatingMinCapacity",user_arguments) 
-    miniSplitHPHeatingMaxCapacity = runner.getDoubleArgumentValue("miniSplitHPHeatingMaxCapacity",user_arguments) 
-    miniSplitHPHeatingMinAirflow = runner.getDoubleArgumentValue("miniSplitHPHeatingMinAirflow",user_arguments) 
-    miniSplitHPHeatingMaxAirflow = runner.getDoubleArgumentValue("miniSplitHPHeatingMaxAirflow",user_arguments) 
-    miniSplitHPMinT = runner.getDoubleArgumentValue("miniSplitHPMinT",user_arguments) 
-    miniSplitHPPanHeaterPowerPerUnit = runner.getDoubleArgumentValue("miniSplitHPPanHeaterPowerPerUnit",user_arguments) 
-    miniSplitCoolingOutputCapacity = runner.getStringArgumentValue("miniSplitCoolingOutputCapacity",user_arguments)
+    miniSplitHPCoolingRatedSEER = runner.getDoubleArgumentValue("seer",user_arguments) 
+    miniSplitHPCoolingMinCapacity = runner.getDoubleArgumentValue("min_cooling_capacity",user_arguments) 
+    miniSplitHPCoolingMaxCapacity = runner.getDoubleArgumentValue("max_cooling_capacity",user_arguments) 
+    miniSplitHPCoolingMinAirflow = runner.getDoubleArgumentValue("min_cooling_airflow_rate",user_arguments) 
+    miniSplitHPCoolingMaxAirflow = runner.getDoubleArgumentValue("max_cooling_airflow_rate",user_arguments) 
+    miniSplitHPRatedSHR = runner.getDoubleArgumentValue("shr",user_arguments) 
+    miniSplitHPSupplyFanPower = runner.getDoubleArgumentValue("fan_power",user_arguments) 
+    miniSplitHPHeatingCapacityOffset = runner.getDoubleArgumentValue("heating_capacity_offset",user_arguments) 
+    miniSplitHPHeatingRatedHSPF = runner.getDoubleArgumentValue("hspf",user_arguments) 
+    miniSplitHPHeatingMinCapacity = runner.getDoubleArgumentValue("min_heating_capacity",user_arguments) 
+    miniSplitHPHeatingMaxCapacity = runner.getDoubleArgumentValue("max_heating_capacity",user_arguments) 
+    miniSplitHPHeatingMinAirflow = runner.getDoubleArgumentValue("min_heating_airflow_rate",user_arguments) 
+    miniSplitHPHeatingMaxAirflow = runner.getDoubleArgumentValue("max_heating_airflow_rate",user_arguments) 
+    miniSplitHPMinT = runner.getDoubleArgumentValue("min_temp",user_arguments) 
+    miniSplitHPPanHeaterPowerPerUnit = runner.getDoubleArgumentValue("pan_heater_power",user_arguments) 
+    miniSplitCoolingOutputCapacity = runner.getStringArgumentValue("heat_pump_capacity",user_arguments)
     unless miniSplitCoolingOutputCapacity == Constants.SizingAuto
       miniSplitCoolingOutputCapacity = OpenStudio::convert(miniSplitCoolingOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
       miniSplitHeatingOutputCapacity = miniSplitCoolingOutputCapacity + miniSplitHPHeatingCapacityOffset
     end
-    baseboardEfficiency = runner.getDoubleArgumentValue("baseboardeff",user_arguments)
-    baseboardOutputCapacity = runner.getStringArgumentValue("baseboardcap",user_arguments)
+    baseboardEfficiency = runner.getDoubleArgumentValue("supplemental_efficiency",user_arguments)
+    baseboardOutputCapacity = runner.getStringArgumentValue("supplemental_capacity",user_arguments)
     if not baseboardOutputCapacity == Constants.SizingAuto and not baseboardOutputCapacity == "NO SUPP HEAT"
       baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end    

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_sheathing</name>
   <uid>b59d63a5-8d7b-41e2-b290-6d22cdfc0c0c</uid>
-  <version_id>00f5811d-8c10-451d-90dc-b62f74ebe871</version_id>
-  <version_modified>20161021T115346Z</version_modified>
+  <version_id>6e8d73a5-6475-4305-8a2b-dd236930285b</version_id>
+  <version_modified>20161026T203037Z</version_modified>
   <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSheathing</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Sheathing</display_name>
@@ -21,7 +21,7 @@
       <default_value>0.75</default_value>
     </argument>
     <argument>
-      <name>rigid_rvalue</name>
+      <name>rigid_r</name>
       <display_name>Continuous Insulation Nominal R-value</display_name>
       <description>The R-value of the continuous insulation.</description>
       <type>Double</type>
@@ -99,17 +99,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DBF494D4</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -126,6 +115,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>78BB6ABF</checksum>
     </file>
   </files>
 </measure>

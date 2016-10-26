@@ -9,9 +9,9 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
   
   # def test_new_construction_fbsmt_seer_14_5_8_2_hspf
     # args_hash = {}
-    # args_hash["miniSplitHPPanHeaterPowerPerUnit"] = 150.0
-    # args_hash["miniSplitCoolingOutputCapacity"] = "3.0 tons"
-    # args_hash["baseboardcap"] = "20 kBtu/hr"
+    # args_hash["pan_heater_power"] = 150.0
+    # args_hash["heat_pump_capacity"] = "3.0 tons"
+    # args_hash["supplemental_capacity"] = "20 kBtu/hr"
     # expected_num_del_objects = {}
     # expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>1}
     # expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>12660.67, "HeatingCOP"=>2.63, "HeatingNominalCapacity"=>13469.54}

@@ -9,15 +9,15 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
   
   def test_argument_error_comp_speeds
     args_hash = {}
-    args_hash["acNumberSpeeds"] = 3
+    args_hash["num_speeds"] = 3
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Invalid number of compressor speeds entered.")  
   end
   
   def test_argument_error_wrong_length
     args_hash = {}
-    args_hash["acNumberSpeeds"] = 2
-    args_hash["acCoolingEER"] = "11.1"
+    args_hash["num_speeds"] = 2
+    args_hash["eer"] = "11.1"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Entered wrong length for EER, Rated SHR, Capacity Ratio, or Fan Speed Ratio given the Number of Speeds.")
   end  
@@ -32,7 +32,7 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
   
   def test_new_construction_fbsmt_seer_13
     args_hash = {}
-    args_hash["acCoolingOutputCapacity"] = "3.0 tons"
+    args_hash["capacity"] = "3.0 tons"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_values = {"COP"=>3.95, "NominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>48.88}
@@ -41,16 +41,16 @@ class ProcessCentralAirConditionerTest < MiniTest::Test
   
   def test_new_construction_seer_16
     args_hash = {}
-    args_hash["acCoolingInstalledSEER"] = 16.0
-    args_hash["acNumberSpeeds"] = 2
-    args_hash["acCoolingEER"] = "13.5, 12.4"
-    args_hash["acSHRRated"] = "0.71, 0.73"
-    args_hash["acCapacityRatio"] = "0.72, 1.0"
-    args_hash["acRatedAirFlowRate"] = 355.2
-    args_hash["acFanspeedRatio"] = "0.86, 1.0"
-    args_hash["acSupplyFanPowerRated"] = 0.14
-    args_hash["acSupplyFanPowerInstalled"] = 0.3
-    args_hash["acCoolingOutputCapacity"] = "6.0 tons"
+    args_hash["seer"] = 16.0
+    args_hash["num_speeds"] = 2
+    args_hash["eer"] = "13.5, 12.4"
+    args_hash["shr"] = "0.71, 0.73"
+    args_hash["capacity_ratio"] = "0.72, 1.0"
+    args_hash["airflow_rate"] = 355.2
+    args_hash["fan_speed_ratio"] = "0.86, 1.0"
+    args_hash["fan_power_rated"] = 0.14
+    args_hash["fan_power_installed"] = 0.3
+    args_hash["capacity"] = "6.0 tons"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXMultiSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "CoilCoolingDXMultiSpeedStageData"=>2}
     expected_values = {"MaximumSupplyAirTemperature"=>48.88}

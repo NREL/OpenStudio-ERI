@@ -28,12 +28,12 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make a double argument for nominal R-value of the sip insulation
-    sip_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("sip_rvalue", true)
-    sip_rvalue.setDisplayName("Nominal Insulation R-value")
-    sip_rvalue.setUnits("hr-ft^2-R/Btu")
-    sip_rvalue.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
-    sip_rvalue.setDefaultValue(17.5)
-    args << sip_rvalue
+    sip_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("sip_r", true)
+    sip_r.setDisplayName("Nominal Insulation R-value")
+    sip_r.setUnits("hr-ft^2-R/Btu")
+    sip_r.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
+    sip_r.setDefaultValue(17.5)
+    args << sip_r
 
     #make a double argument for thickness of the sip insulation
     thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("thick_in", true)
@@ -101,7 +101,7 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
     end     
     
     # Get inputs
-    sipInsRvalue = runner.getDoubleArgumentValue("sip_rvalue",user_arguments)
+    sipInsRvalue = runner.getDoubleArgumentValue("sip_r",user_arguments)
     sipInsThickness = runner.getDoubleArgumentValue("thick_in",user_arguments)
     sipFramingFactor = runner.getDoubleArgumentValue("framing_factor",user_arguments)
     sipIntSheathingType = runner.getStringArgumentValue("sheathing_type",user_arguments)

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>b58fe66a-1a2e-4ddc-8bde-658a634ab197</version_id>
-  <version_modified>20161021T115347Z</version_modified>
+  <version_id>5be001f8-6949-4773-af3d-ac85b51e0cd5</version_id>
+  <version_modified>20161026T203038Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
@@ -51,7 +51,7 @@
       <default_value>0.076</default_value>
     </argument>
     <argument>
-      <name>furring_rvalue</name>
+      <name>furring_r</name>
       <display_name>Furring Insulation R-value</display_name>
       <description>R-value of the insulation filling the furring cavity. Enter zero for no furring strips.</description>
       <type>Double</type>
@@ -109,17 +109,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>214CB83D</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -138,12 +127,6 @@
       <checksum>B9256575</checksum>
     </file>
     <file>
-      <filename>CMU_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E8D1C6D6</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -154,6 +137,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6D48E2DD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>28F6DD71</checksum>
+    </file>
+    <file>
+      <filename>CMU_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F6A63647</checksum>
     </file>
   </files>
 </measure>

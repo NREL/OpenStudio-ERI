@@ -41,7 +41,7 @@ class AddResidentialDehumidifier < OpenStudio::Ruleset::ModelUserScript
         args << @rated_water_removal_rate_Arg
         
         # rated_energy_factor
-        @rated_energy_factor_Arg = osArg::makeDoubleArgument("rated_energy_factor", true) # true means required
+        @rated_energy_factor_Arg = osArg::makeDoubleArgument("energy_factor", true) # true means required
         @rated_energy_factor_Arg.setDisplayName("Energy factor (Litres/kWh) at rated conditions (air entering the dehumidifier at 80F dry-bulb and 60% relative humidity, and air flow rate. Enter -1 to use EnergyStar criteria for Energy Factor.")
         args << @rated_energy_factor_Arg
         
@@ -80,7 +80,7 @@ class AddResidentialDehumidifier < OpenStudio::Ruleset::ModelUserScript
         @benchmark_use_case = runner.getBoolArgumentValue("benchmark_use_case",args)
         @selected_existing_thermal_zone = model.getThermalZoneByName(runner.getStringArgumentValue("selected_existing_thermal_zone", args)).get # assume each has unique name
         @rated_water_removal_rate = runner.getDoubleArgumentValue("rated_water_removal_rate", args)
-        @rated_energy_factor = runner.getDoubleArgumentValue("rated_energy_factor", args)
+        @rated_energy_factor = runner.getDoubleArgumentValue("energy_factor", args)
         @rated_airflow_rate = runner.getDoubleArgumentValue("rated_airflow_rate", args)
         @relative_humidity_setpoint = runner.getDoubleArgumentValue("relative_humidity_setpoint", args)
         

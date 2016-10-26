@@ -28,36 +28,32 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
-    #make a choice argument for boiler fuel type
+    #make a string argument for boiler fuel type
     fuel_display_names = OpenStudio::StringVector.new
     fuel_display_names << Constants.FuelTypeGas
     fuel_display_names << Constants.FuelTypeElectric
     fuel_display_names << Constants.FuelTypeOil
     fuel_display_names << Constants.FuelTypePropane
-
-    #make a string argument for boiler fuel type
-    boilerFuelType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("boilerFuelType", fuel_display_names, true)
+    boilerFuelType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fuel_type", fuel_display_names, true)
     boilerFuelType.setDisplayName("Fuel Type")
     boilerFuelType.setDescription("Type of fuel used for heating.")
     boilerFuelType.setDefaultValue(Constants.FuelTypeGas)
     args << boilerFuelType
     
-    #make a choice argument for boiler system type
+    #make a string argument for boiler system type
     boiler_display_names = OpenStudio::StringVector.new
     boiler_display_names << Constants.BoilerTypeForcedDraft
     boiler_display_names << Constants.BoilerTypeCondensing
     boiler_display_names << Constants.BoilerTypeNaturalDraft
     boiler_display_names << Constants.BoilerTypeSteam
-
-    #make a string argument for boiler system type
-    boilerType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("boilerType", boiler_display_names, true)
+    boilerType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("system_type", boiler_display_names, true)
     boilerType.setDisplayName("System Type")
     boilerType.setDescription("The system type of the boiler.")
     boilerType.setDefaultValue(Constants.BoilerTypeForcedDraft)
     args << boilerType
     
     #make an argument for entering boiler installed afue
-    boilerInstalledAFUE = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("boilerInstalledAFUE",true)
+    boilerInstalledAFUE = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("afue",true)
     boilerInstalledAFUE.setDisplayName("Installed AFUE")
     boilerInstalledAFUE.setUnits("Btu/Btu")
     boilerInstalledAFUE.setDescription("The installed Annual Fuel Utilization Efficiency (AFUE) of the boiler, which can be used to account for performance derating or degradation relative to the rated value.")
@@ -65,57 +61,55 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     args << boilerInstalledAFUE
     
     #make a bool argument for whether the boiler OAT enabled
-    boilerOATResetEnabled = OpenStudio::Ruleset::OSArgument::makeBoolArgument("boilerOATResetEnabled", true)
+    boilerOATResetEnabled = OpenStudio::Ruleset::OSArgument::makeBoolArgument("oat_reset_enabled", true)
     boilerOATResetEnabled.setDisplayName("Outside Air Reset Enabled")
     boilerOATResetEnabled.setDescription("Outside Air Reset Enabled on Hot Water Supply Temperature.")
     boilerOATResetEnabled.setDefaultValue(false)
     args << boilerOATResetEnabled    
     
     #make an argument for entering boiler OAT high
-    boilerOATHigh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("boilerOATHigh",false)
+    boilerOATHigh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("oat_high",false)
     boilerOATHigh.setDisplayName("High Outside Air Temp")
     boilerOATHigh.setUnits("degrees F")
     boilerOATHigh.setDescription("High Outside Air Temperature.")
     args << boilerOATHigh    
     
     #make an argument for entering boiler OAT low
-    boilerOATLow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("boilerOATLow",false)
+    boilerOATLow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("oat_low",false)
     boilerOATLow.setDisplayName("Low Outside Air Temp")
     boilerOATLow.setUnits("degrees F")
     boilerOATLow.setDescription("Low Outside Air Temperature.")
     args << boilerOATLow
     
     #make an argument for entering boiler OAT high HWST
-    boilerOATHighHWST = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("boilerOATHighHWST",false)
+    boilerOATHighHWST = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("oat_hwst_high",false)
     boilerOATHighHWST.setDisplayName("Hot Water Supply Temp High Outside Air")
     boilerOATHighHWST.setUnits("degrees F")
     boilerOATHighHWST.setDescription("Hot Water Supply Temperature corresponding to High Outside Air Temperature.")
     args << boilerOATHighHWST
     
     #make an argument for entering boiler OAT low HWST
-    boilerOATLowHWST = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("boilerOATLowHWST",false)
+    boilerOATLowHWST = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("oat_hwst_low",false)
     boilerOATLowHWST.setDisplayName("Hot Water Supply Temp Low Outside Air")
     boilerOATLowHWST.setUnits("degrees F")
     boilerOATLowHWST.setDescription("Hot Water Supply Temperature corresponding to Low Outside Air Temperature.")
     args << boilerOATLowHWST        
     
     #make an argument for entering boiler design temp
-    boilerDesignTemp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("boilerDesignTemp",false)
+    boilerDesignTemp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_temp",false)
     boilerDesignTemp.setDisplayName("Design Temperature")
     boilerDesignTemp.setUnits("degrees F")
     boilerDesignTemp.setDescription("Temperature of the outlet water.")
     boilerDesignTemp.setDefaultValue(180.0)
     args << boilerDesignTemp     
     
-    #make a choice argument for furnace heating output capacity
+    #make a string argument for furnace heating output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
       cap_display_names << "#{kbtu} kBtu/hr"
     end
-
-    #make a string argument for furnace heating output capacity
-    boilerOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("boilerOutputCapacity", cap_display_names, true)
+    boilerOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
     boilerOutputCapacity.setDisplayName("Heating Output Capacity")
     boilerOutputCapacity.setDefaultValue(Constants.SizingAuto)
     args << boilerOutputCapacity  
@@ -132,23 +126,23 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
       return false
     end
     
-    boilerFuelType = runner.getStringArgumentValue("boilerFuelType",user_arguments)
-    boilerType = runner.getStringArgumentValue("boilerType",user_arguments)
-    boilerInstalledAFUE = runner.getDoubleArgumentValue("boilerInstalledAFUE",user_arguments)
-    boilerOATResetEnabled = runner.getBoolArgumentValue("boilerOATResetEnabled",user_arguments)    
-    boilerOATHigh = runner.getOptionalDoubleArgumentValue("boilerOATHigh", user_arguments)
+    boilerFuelType = runner.getStringArgumentValue("fuel_type",user_arguments)
+    boilerType = runner.getStringArgumentValue("system_type",user_arguments)
+    boilerInstalledAFUE = runner.getDoubleArgumentValue("afue",user_arguments)
+    boilerOATResetEnabled = runner.getBoolArgumentValue("oat_reset_enabled",user_arguments)    
+    boilerOATHigh = runner.getOptionalDoubleArgumentValue("oat_high", user_arguments)
     boilerOATHigh.is_initialized ? boilerOATHigh = boilerOATHigh.get : boilerOATHigh = nil    
-    boilerOATLow = runner.getOptionalDoubleArgumentValue("boilerOATLow", user_arguments)
+    boilerOATLow = runner.getOptionalDoubleArgumentValue("oat_low", user_arguments)
     boilerOATLow.is_initialized ? boilerOATLow = boilerOATLow.get : boilerOATLow = nil     
-    boilerOATHighHWST = runner.getOptionalDoubleArgumentValue("boilerOATHighHWST", user_arguments)
+    boilerOATHighHWST = runner.getOptionalDoubleArgumentValue("oat_hwst_high", user_arguments)
     boilerOATHighHWST.is_initialized ? boilerOATHighHWST = boilerOATHighHWST.get : boilerOATHighHWST = nil
-    boilerOATLowHWST = runner.getOptionalDoubleArgumentValue("boilerOATLowHWST", user_arguments)
+    boilerOATLowHWST = runner.getOptionalDoubleArgumentValue("oat_hwst_low", user_arguments)
     boilerOATLowHWST.is_initialized ? boilerOATLowHWST = boilerOATLowHWST.get : boilerOATLowHWST = nil      
-    boilerOutputCapacity = runner.getStringArgumentValue("boilerOutputCapacity",user_arguments)
+    boilerOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     if not boilerOutputCapacity == Constants.SizingAuto
       boilerOutputCapacity = OpenStudio::convert(boilerOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
     end
-    boilerDesignTemp = runner.getDoubleArgumentValue("boilerDesignTemp",user_arguments)
+    boilerDesignTemp = runner.getDoubleArgumentValue("design_temp",user_arguments)
     
     hasBoilerCondensing = false
     if boilerType == Constants.BoilerTypeCondensing

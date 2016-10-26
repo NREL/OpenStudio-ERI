@@ -28,7 +28,7 @@ class ProcessConstructionsWallsSheathingTest < MiniTest::Test
   def test_add_r10
     args_hash = {}
     args_hash["osb_thick_in"] = 0
-    args_hash["rigid_rvalue"] = 10
+    args_hash["rigid_r"] = 10
     args_hash["rigid_thick_in"] = 2
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
@@ -39,7 +39,7 @@ class ProcessConstructionsWallsSheathingTest < MiniTest::Test
   def test_add_plywood_and_r10
     args_hash = {}
     args_hash["osb_thick_in"] = 0.5
-    args_hash["rigid_rvalue"] = 10
+    args_hash["rigid_r"] = 10
     args_hash["rigid_thick_in"] = 2
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>2, "Construction"=>1}
@@ -50,7 +50,7 @@ class ProcessConstructionsWallsSheathingTest < MiniTest::Test
   def test_add_plywood_and_r10_to_layers_and_remove
     args_hash = {}
     args_hash["osb_thick_in"] = 0.5
-    args_hash["rigid_rvalue"] = 10
+    args_hash["rigid_r"] = 10
     args_hash["rigid_thick_in"] = 2
     expected_num_del_objects = {"Construction"=>1}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
@@ -73,7 +73,7 @@ class ProcessConstructionsWallsSheathingTest < MiniTest::Test
     
   def test_argument_error_rigid_rvalue_negative
     args_hash = {}
-    args_hash["rigid_rvalue"] = -1
+    args_hash["rigid_r"] = -1
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Continuous Insulation Nominal R-value must be greater than or equal to 0.")
   end

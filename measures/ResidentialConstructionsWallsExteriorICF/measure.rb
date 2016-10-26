@@ -27,12 +27,12 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make a double argument for nominal R-value of the icf insulation
-    icf_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("icf_rvalue", true)
-    icf_rvalue.setDisplayName("Nominal Insulation R-value")
-    icf_rvalue.setUnits("hr-ft^2-R/Btu")
-    icf_rvalue.setDescription("R-value of each insulating layer of the form.")
-    icf_rvalue.setDefaultValue(10.0)
-    args << icf_rvalue
+    icf_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("icf_r", true)
+    icf_r.setDisplayName("Nominal Insulation R-value")
+    icf_r.setUnits("hr-ft^2-R/Btu")
+    icf_r.setDescription("R-value of each insulating layer of the form.")
+    icf_r.setDefaultValue(10.0)
+    args << icf_r
 
     #make a double argument for thickness of the icf insulation
     ins_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ins_thick_in", true)
@@ -89,7 +89,7 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     end     
     
     # Get inputs
-    icfInsRvalue = runner.getDoubleArgumentValue("icf_rvalue",user_arguments)
+    icfInsRvalue = runner.getDoubleArgumentValue("icf_r",user_arguments)
     icfInsThickness = runner.getDoubleArgumentValue("ins_thick_in",user_arguments)
     icfConcreteThickness = runner.getDoubleArgumentValue("concrete_thick_in",user_arguments)
     icfFramingFactor = runner.getDoubleArgumentValue("framing_factor",user_arguments)

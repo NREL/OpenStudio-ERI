@@ -26,12 +26,12 @@ class ProcessConstructionsWallsExteriorDoubleWoodStud < OpenStudio::Ruleset::Mod
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
 	#make a double argument for nominal R-value of installed cavity insulation
-	cavity_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_rvalue", true)
-	cavity_rvalue.setDisplayName("Cavity Insulation Nominal R-value")
-	cavity_rvalue.setUnits("hr-ft^2-R/Btu")
-	cavity_rvalue.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
-	cavity_rvalue.setDefaultValue(33.0)
-	args << cavity_rvalue
+	cavity_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_r", true)
+	cavity_r.setDisplayName("Cavity Insulation Nominal R-value")
+	cavity_r.setUnits("hr-ft^2-R/Btu")
+	cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
+	cavity_r.setDefaultValue(33.0)
+	args << cavity_r
     
 	#make a choice argument for wall cavity insulation installation grade
 	installgrade_display_names = OpenStudio::StringVector.new
@@ -114,7 +114,7 @@ class ProcessConstructionsWallsExteriorDoubleWoodStud < OpenStudio::Ruleset::Mod
     end 
     
     # Get inputs
-    dsWallCavityInsRvalue = runner.getDoubleArgumentValue("cavity_rvalue",user_arguments)
+    dsWallCavityInsRvalue = runner.getDoubleArgumentValue("cavity_r",user_arguments)
 	dsWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("install_grade",user_arguments)]
     dsWallStudDepth = runner.getDoubleArgumentValue("stud_depth",user_arguments)
 	dsWallGapDepth = runner.getDoubleArgumentValue("gap_depth",user_arguments)

@@ -27,12 +27,12 @@ class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUse
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make a double argument for nominal R-value of nominal cavity insulation
-    cavity_rvalue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_rvalue", true)
-    cavity_rvalue.setDisplayName("Cavity Insulation Nominal R-value")
-    cavity_rvalue.setUnits("hr-ft^2-R/Btu")
-    cavity_rvalue.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
-    cavity_rvalue.setDefaultValue(13.0)
-    args << cavity_rvalue
+    cavity_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_r", true)
+    cavity_r.setDisplayName("Cavity Insulation Nominal R-value")
+    cavity_r.setUnits("hr-ft^2-R/Btu")
+    cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
+    cavity_r.setDefaultValue(13.0)
+    args << cavity_r
     
     #make a choice argument for wall cavity insulation installation grade
     installgrade_display_names = OpenStudio::StringVector.new
@@ -106,7 +106,7 @@ class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUse
     end 
     
     # Get inputs
-    ssWallCavityInsRvalueNominal = runner.getDoubleArgumentValue("cavity_rvalue",user_arguments)
+    ssWallCavityInsRvalueNominal = runner.getDoubleArgumentValue("cavity_r",user_arguments)
     ssWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("install_grade",user_arguments)]
     ssWallCavityDepth = runner.getDoubleArgumentValue("cavity_depth",user_arguments)
     ssWallCavityInsFillsCavity = runner.getBoolArgumentValue("ins_fills_cavity",user_arguments)  

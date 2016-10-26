@@ -9,15 +9,15 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
   
   def test_argument_error_comp_speeds
     args_hash = {}
-    args_hash["ashpNumberSpeeds"] = 3
+    args_hash["num_speeds"] = 3
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Invalid number of compressor speeds entered.")
   end
   
   def test_argument_error_wrong_length
     args_hash = {}
-    args_hash["ashpNumberSpeeds"] = 2
-    args_hash["ashpEER"] = "11.1"
+    args_hash["num_speeds"] = 2
+    args_hash["eer"] = "11.1"
     result = _test_error("singlefamily_detached.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Entered wrong length for EER, COP, Rated SHR, Capacity Ratio, or Fan Speed Ratio given the Number of Speeds.")
   end   
@@ -32,8 +32,8 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
   
   def test_new_construction_fbsmt_seer_13_7_7_hspf
     args_hash = {}
-    args_hash["hpcap"] = "3.0 tons"
-    args_hash["supcap"] = "20 kBtu/hr"
+    args_hash["heat_pump_capacity"] = "3.0 tons"
+    args_hash["supplemental_capacity"] = "20 kBtu/hr"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
     expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66}
@@ -42,15 +42,15 @@ class ProcessAirSourceHeatPumpTest < MiniTest::Test
   
   def test_new_construction_seer_16_8_6_hspf
     args_hash = {}
-    args_hash["ashpInstalledSEER"] = 16
-    args_hash["ashpInstalledHSPF"] = 8.6
-    args_hash["ashpNumberSpeeds"] = 2
-    args_hash["ashpEER"] = "13.1, 11.7"
-    args_hash["ashpCOP"] = "3.8, 3.3"
-    args_hash["ashpSHRRated"] = "0.71, 0.723"
-    args_hash["ashpCapacityRatio"] = "0.72, 1.0"
-    args_hash["ashpFanspeedRatioCooling"] = "0.86, 1.0"
-    args_hash["ashpFanspeedRatioHeating"] = "0.8, 1.0"
+    args_hash["seer"] = 16
+    args_hash["hspf"] = 8.6
+    args_hash["num_speeds"] = 2
+    args_hash["eer"] = "13.1, 11.7"
+    args_hash["cop"] = "3.8, 3.3"
+    args_hash["shr"] = "0.71, 0.723"
+    args_hash["capacity_ratio"] = "0.72, 1.0"
+    args_hash["fan_speed_ratio_cooling"] = "0.86, 1.0"
+    args_hash["fan_speed_ratio_heating"] = "0.8, 1.0"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXMultiSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "CoilHeatingElectric"=>1, "CoilHeatingDXMultiSpeed"=>1, "CoilCoolingDXMultiSpeedStageData"=>2, "CoilHeatingDXMultiSpeedStageData"=>2}
     expected_values = {"MaximumSupplyAirTemperature"=>76.66}

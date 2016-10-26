@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>33de8356-e905-466f-9ebd-b31817d3bff6</version_id>
-  <version_modified>20161026T190111Z</version_modified>
+  <version_id>3d73f840-58d5-4313-aa03-33a00a0faeee</version_id>
+  <version_modified>20161026T203042Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Any cooling components are removed from any existing air loops or zones. Any existing air loops are also removed. An HVAC packaged terminal air conditioner is added to the living zone.</modeler_description>
   <arguments>
     <argument>
-      <name>roomaceer</name>
+      <name>eer</name>
       <display_name>EER</display_name>
       <description>This is a measure of the instantaneous energy efficiency of the cooling equipment.</description>
       <type>Double</type>
@@ -21,7 +21,7 @@
       <default_value>8.5</default_value>
     </argument>
     <argument>
-      <name>roomacshr</name>
+      <name>shr</name>
       <display_name>Rated SHR</display_name>
       <description>The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.</description>
       <type>Double</type>
@@ -30,7 +30,7 @@
       <default_value>0.65</default_value>
     </argument>
     <argument>
-      <name>roomacairflow</name>
+      <name>airflow</name>
       <display_name>Airflow</display_name>
       <type>Double</type>
       <units>cfm/ton</units>
@@ -39,7 +39,7 @@
       <default_value>350</default_value>
     </argument>
     <argument>
-      <name>selectedaccap</name>
+      <name>capacity</name>
       <display_name>Cooling Output Capacity</display_name>
       <type>Choice</type>
       <required>true</required>
@@ -269,12 +269,6 @@
       <checksum>2350A601</checksum>
     </file>
     <file>
-      <filename>process_room_air_conditioner_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>60582D08</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -287,6 +281,18 @@
       <checksum>6D48E2DD</checksum>
     </file>
     <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>536297F8</checksum>
+    </file>
+    <file>
+      <filename>process_room_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>40C6F7BC</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -295,13 +301,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>73E5838C</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>536297F8</checksum>
+      <checksum>414F7C1E</checksum>
     </file>
   </files>
 </measure>

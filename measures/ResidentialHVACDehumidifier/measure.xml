@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_dehumidifier</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38d</uid>
-  <version_id>959ab4df-3790-4fde-80e0-ab21f81ebd1f</version_id>
-  <version_modified>20160705T140641Z</version_modified>
+  <version_id>8728e1d1-c74a-4fdb-8db0-00e1cab3c625</version_id>
+  <version_modified>20161026T203042Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>AddResidentialDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
@@ -43,7 +43,7 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>rated_energy_factor</name>
+      <name>energy_factor</name>
       <display_name>Energy factor (Litres/kWh) at rated conditions (air entering the dehumidifier at 80F dry-bulb and 60% relative humidity, and air flow rate. Enter -1 to use EnergyStar criteria for Energy Factor.</display_name>
       <type>Double</type>
       <required>true</required>
@@ -90,7 +90,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4F61111A</checksum>
+      <checksum>670DB5DC</checksum>
     </file>
   </files>
 </measure>

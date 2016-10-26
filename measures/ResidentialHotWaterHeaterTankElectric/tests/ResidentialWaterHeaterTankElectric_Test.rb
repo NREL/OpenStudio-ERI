@@ -77,8 +77,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     
   def test_new_construction_premium
     args_hash = {}
-    args_hash["rated_energy_factor"] = "0.95"
-    args_hash["water_heater_capacity"] = "5.5"
+    args_hash["energy_factor"] = "0.95"
+    args_hash["capacity"] = "5.5"
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>50, "InputCapacity"=>5.5, "ThermalEfficiency"=>1.0, "TankUA"=>1.34, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -87,8 +87,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_new_construction_standard_auto_ef_and_capacity
     args_hash = {}
-    args_hash["rated_energy_factor"] = Constants.Auto
-    args_hash["water_heater_capacity"] = Constants.Auto
+    args_hash["energy_factor"] = Constants.Auto
+    args_hash["capacity"] = Constants.Auto
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>50, "InputCapacity"=>5.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.69, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -97,7 +97,7 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
   
   def test_new_construction_standard_living
     args_hash = {}
-    args_hash["water_heater_location"] = Constants.LivingZone
+    args_hash["location"] = Constants.LivingZone
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>50, "InputCapacity"=>4.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.21, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -106,7 +106,7 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_new_construction_standard_setpoint_130
     args_hash = {}
-    args_hash["dhw_setpoint_temperature"] = 130
+    args_hash["setpoint_temp"] = 130
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>50, "InputCapacity"=>4.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.21, "Setpoint"=>130, "OnCycle"=>0, "OffCycle"=>0}
@@ -115,7 +115,7 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_new_construction_standard_volume_30
     args_hash = {}
-    args_hash["storage_tank_volume"] = "30"
+    args_hash["tank_volume"] = "30"
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>30, "InputCapacity"=>4.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.21, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -124,8 +124,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_new_construction_beds_baths_1_1
     args_hash = {}
-    args_hash["water_heater_capacity"] = Constants.Auto
-    args_hash["rated_energy_factor"] = Constants.Auto
+    args_hash["capacity"] = Constants.Auto
+    args_hash["energy_factor"] = Constants.Auto
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>20, "InputCapacity"=>2.5, "ThermalEfficiency"=>1.0, "TankUA"=>1.52, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -134,8 +134,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_new_construction_beds_baths_2_1
     args_hash = {}
-    args_hash["water_heater_capacity"] = Constants.Auto
-    args_hash["rated_energy_factor"] = Constants.Auto
+    args_hash["capacity"] = Constants.Auto
+    args_hash["energy_factor"] = Constants.Auto
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>30, "InputCapacity"=>3.5, "ThermalEfficiency"=>1.0, "TankUA"=>1.90, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -144,8 +144,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_new_construction_beds_baths_2_2
     args_hash = {}
-    args_hash["water_heater_capacity"] = Constants.Auto
-    args_hash["rated_energy_factor"] = Constants.Auto
+    args_hash["capacity"] = Constants.Auto
+    args_hash["energy_factor"] = Constants.Auto
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>40, "InputCapacity"=>4.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.29, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -154,8 +154,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_new_construction_beds_baths_5_3
     args_hash = {}
-    args_hash["water_heater_capacity"] = Constants.Auto
-    args_hash["rated_energy_factor"] = Constants.Auto
+    args_hash["capacity"] = Constants.Auto
+    args_hash["energy_factor"] = Constants.Auto
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>66, "InputCapacity"=>5.5, "ThermalEfficiency"=>1.0, "TankUA"=>3.36, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -169,9 +169,9 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     expected_values = {"TankVolume"=>50, "InputCapacity"=>4.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.21, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
     model = _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
     args_hash = {}
-    args_hash["rated_energy_factor"] = "0.95"
-    args_hash["water_heater_capacity"] = "5.5"
-    args_hash["dhw_setpoint_temperature"] = 130
+    args_hash["energy_factor"] = "0.95"
+    args_hash["capacity"] = "5.5"
+    args_hash["setpoint_temp"] = 130
     expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
     expected_values = {"TankVolume"=>50, "InputCapacity"=>5.5, "ThermalEfficiency"=>1.0, "TankUA"=>1.34, "Setpoint"=>130, "OnCycle"=>0, "OffCycle"=>0}
@@ -237,7 +237,7 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
   
   def test_multifamily_new_construction_living_zone
     args_hash = {}
-    args_hash["water_heater_location"] = "living zone 1"
+    args_hash["location"] = "living zone 1"
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"TankVolume"=>50, "InputCapacity"=>4.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.21, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
@@ -261,8 +261,8 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     expected_values = {"TankVolume"=>136, "InputCapacity"=>13.5, "ThermalEfficiency"=>3.0, "TankUA"=>6.62, "Setpoint"=>375, "OnCycle"=>0, "OffCycle"=>0}
     model = _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
     args_hash = {}
-    args_hash["rated_energy_factor"] = "0.95"
-    args_hash["water_heater_capacity"] = "5.5"
+    args_hash["energy_factor"] = "0.95"
+    args_hash["capacity"] = "5.5"
     expected_num_del_objects = {"WaterHeaterMixed"=>num_units, "ScheduleRuleset"=>num_units}
     expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "ScheduleRuleset"=>num_units}
     expected_values = {"TankVolume"=>136, "InputCapacity"=>16.5, "ThermalEfficiency"=>3.0, "TankUA"=>4.01, "Setpoint"=>375, "OnCycle"=>0, "OffCycle"=>0}
@@ -271,84 +271,84 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
 
   def test_argument_error_tank_volume_invalid_str
     args_hash = {}
-    args_hash["storage_tank_volume"] = "test"
+    args_hash["tank_volume"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
   
   def test_argument_error_tank_volume_lt_0
     args_hash = {}
-    args_hash["storage_tank_volume"] = "-10"
+    args_hash["tank_volume"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_tank_volume_eq_0
     args_hash = {}
-    args_hash["storage_tank_volume"] = "0"
+    args_hash["tank_volume"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Storage tank volume must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_setpoint_lt_0
     args_hash = {}
-    args_hash["dhw_setpoint_temperature"] = -10
+    args_hash["setpoint_temp"] = -10
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Hot water temperature must be greater than 0 and less than 212.")
   end
 
   def test_argument_error_setpoint_lg_300
     args_hash = {}
-    args_hash["dhw_setpoint_temperature"] = 300
+    args_hash["setpoint_temp"] = 300
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Hot water temperature must be greater than 0 and less than 212.")
   end
 
   def test_argument_error_capacity_invalid_str
     args_hash = {}
-    args_hash["water_heater_capacity"] = "test"
+    args_hash["capacity"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_capacity_lt_0
     args_hash = {}
-    args_hash["water_heater_capacity"] = "-10"
+    args_hash["capacity"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_capacity_eq_0
     args_hash = {}
-    args_hash["water_heater_capacity"] = "0"
+    args_hash["capacity"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Nominal capacity must be greater than 0 or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_invalid_str
     args_hash = {}
-    args_hash["rated_energy_factor"] = "test"
+    args_hash["energy_factor"] = "test"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_lt_0
     args_hash = {}
-    args_hash["rated_energy_factor"] = "-10"
+    args_hash["energy_factor"] = "-10"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_eq_0
     args_hash = {}
-    args_hash["rated_energy_factor"] = "0"
+    args_hash["energy_factor"] = "0"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
 
   def test_argument_error_ef_gt_1
     args_hash = {}
-    args_hash["rated_energy_factor"] = "1.1"
+    args_hash["energy_factor"] = "1.1"
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated energy factor must be greater than 0 and less than 1, or #{Constants.Auto}.")
   end
