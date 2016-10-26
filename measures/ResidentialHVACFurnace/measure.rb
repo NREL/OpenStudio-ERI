@@ -170,7 +170,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         if furnaceFuelType == Constants.FuelTypeElectric
 
           htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model)
-          htg_coil.setName("Furnace Heating Coil")
+          htg_coil.setName("Furnace Heating Coil_#{unit_num}")
           htg_coil.setEfficiency(1.0 / hir)
           if furnaceOutputCapacity != Constants.SizingAuto
             htg_coil.setNominalCapacity(OpenStudio::convert(furnaceOutputCapacity,"Btu/h","W").get)
@@ -179,7 +179,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         elsif furnaceFuelType != Constants.FuelTypeElectric
 
           htg_coil = OpenStudio::Model::CoilHeatingGas.new(model)
-          htg_coil.setName("Furnace Heating Coil")
+          htg_coil.setName("Furnace Heating Coil_#{unit_num}")
           htg_coil.setGasBurnerEfficiency(1.0 / hir)
           if furnaceOutputCapacity != Constants.SizingAuto
             htg_coil.setNominalCapacity(OpenStudio::convert(furnaceOutputCapacity,"Btu/h","W").get)
@@ -193,7 +193,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         # _processSystemFan
         
         supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
-        supply_fan_availability.setName("SupplyFanAvailability")
+        supply_fan_availability.setName("SupplyFanAvailability_#{unit_num}")
         supply_fan_availability.setValue(1)
 
         fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
@@ -205,13 +205,13 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         fan.setMotorInAirstreamFraction(1)
 
         supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
-        supply_fan_operation.setName("SupplyFanOperation")
+        supply_fan_operation.setName("SupplyFanOperation_#{unit_num}")
         supply_fan_operation.setValue(0)    
       
         # _processSystemAir
         
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName("Forced Air System")
+        air_loop_unitary.setName("Forced Air System_#{unit_num}")
         air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         air_loop_unitary.setHeatingCoil(htg_coil)
         if not clg_coil.nil?
@@ -224,7 +224,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
         air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(supply.htg_supply_air_temp,"F","C").get)      
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)      
+        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
 
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName("Central Air System_#{unit_num}")
@@ -248,13 +248,13 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
 
         # Supply Air
         zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName("Zone Splitter")
+        zone_splitter.setName("Zone Splitter_#{unit_num}")
         
         zone_mixer = air_loop.zoneMixer
         zone_mixer.setName("Zone Mixer_#{unit_num}")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_living.setName("#{control_zone.name} direct air")
+        diffuser_living.setName("#{control_zone.name} direct air_#{unit_num}")
         # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
         air_loop.addBranchForZone(control_zone, diffuser_living.to_StraightComponent)
 
@@ -267,7 +267,7 @@ class ProcessFurnace < OpenStudio::Ruleset::ModelUserScript
           HVAC.remove_existing_hvac_equipment(model, runner, "Furnace", slave_zone)        
         
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-          diffuser_fbsmt.setName("#{slave_zone.name} direct air")
+          diffuser_fbsmt.setName("#{slave_zone.name} direct air_#{unit_num}")
           # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
 

@@ -761,10 +761,6 @@ class HVAC
               runner.registerInfo("Removed '#{clg_coil.name}' from air loop '#{air_loop.name}'")
               air_loop_unitary.resetCoolingCoil
               clg_coil.remove
-              model.getScheduleConstants.each do |s|
-                next if !s.name.to_s.start_with?("SupplyFanAvailability")
-                s.remove
-              end
               air_loop_unitary.supplyFan.get.remove
               if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
                 air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
@@ -775,10 +771,6 @@ class HVAC
                 cloned_clg_coil = clg_coil.clone
                 air_loop_unitary.resetCoolingCoil
                 clg_coil.remove
-                model.getScheduleConstants.each do |s|
-                  next if !s.name.to_s.start_with?("SupplyFanAvailability")
-                  s.remove
-                end
                 air_loop_unitary.supplyFan.get.remove
                 if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
                   air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
@@ -787,7 +779,8 @@ class HVAC
                   cloned_clg_coil = cloned_clg_coil.to_CoilCoolingDXSingleSpeed.get
                 elsif cloned_clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
                   cloned_clg_coil = cloned_clg_coil.to_CoilCoolingDXMultiSpeed.get
-                end        
+                end
+                cloned_clg_coil.setName(clg_coil.name.to_s)
                 return cloned_clg_coil
               else
                 return true
@@ -825,10 +818,6 @@ class HVAC
               runner.registerInfo("Removed '#{htg_coil.name}' from air loop '#{air_loop.name}'")
               air_loop_unitary.resetHeatingCoil
               htg_coil.remove
-              model.getScheduleConstants.each do |s|
-                next if !s.name.to_s.start_with?("SupplyFanAvailability")
-                s.remove
-              end
               air_loop_unitary.supplyFan.get.remove
               if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
                 air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
@@ -839,10 +828,6 @@ class HVAC
                 cloned_htg_coil = htg_coil.clone
                 air_loop_unitary.resetHeatingCoil
                 htg_coil.remove
-                model.getScheduleConstants.each do |s|
-                  next if !s.name.to_s.start_with?("SupplyFanAvailability")
-                  s.remove
-                end
                 air_loop_unitary.supplyFan.get.remove
                 if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
                   air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
@@ -852,6 +837,7 @@ class HVAC
                 elsif cloned_htg_coil.to_CoilHeatingElectric.is_initialized
                   cloned_htg_coil = cloned_htg_coil.to_CoilHeatingElectric.get
                 end
+                cloned_htg_coil.setName(htg_coil.name.to_s)
                 return cloned_htg_coil
               else
                 return true
@@ -949,6 +935,10 @@ class HVAC
             if remove
               runner.registerInfo("Removed air loop '#{air_loop.name}'")
               air_loop.remove
+              model.getScheduleConstants.each do |s|
+                next if !s.name.to_s.start_with?("SupplyFanAvailability")
+                s.remove
+              end  
               return true
             end
           end

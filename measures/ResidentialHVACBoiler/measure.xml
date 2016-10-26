@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>90f8ffac-cbbc-4a58-b995-7b6d5fd7dff6</version_id>
-  <version_modified>20161023T155843Z</version_modified>
+  <version_id>6e2d4dae-0b69-42e6-a93a-34b21e9f6efe</version_id>
+  <version_modified>20161026T190110Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoiler</class_name>
   <display_name>Set Residential Boiler</display_name>
@@ -410,17 +410,6 @@
       <checksum>2350A601</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.6</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>4C36516B</checksum>
-    </file>
-    <file>
       <filename>process_boiler_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -439,10 +428,21 @@
       <checksum>6D48E2DD</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.6</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>55DFAD62</checksum>
+    </file>
+    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>918761CF</checksum>
+      <checksum>536297F8</checksum>
     </file>
   </files>
 </measure>

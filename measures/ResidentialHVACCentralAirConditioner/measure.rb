@@ -252,7 +252,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
     
         # Remove existing equipment
         htg_coil = HVAC.remove_existing_hvac_equipment(model, runner, "Central Air Conditioner", control_zone)
-      
+
         # _processCurvesDXCooling
         
         clg_coil_stage_data = HVAC._processCurvesDXCooling(model, supply, acOutputCapacity)
@@ -263,7 +263,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
           clg_coil = OpenStudio::Model::CoilCoolingDXSingleSpeed.new(model, model.alwaysOnDiscreteSchedule, clg_coil_stage_data[0].totalCoolingCapacityFunctionofTemperatureCurve, clg_coil_stage_data[0].totalCoolingCapacityFunctionofFlowFractionCurve, clg_coil_stage_data[0].energyInputRatioFunctionofTemperatureCurve, clg_coil_stage_data[0].energyInputRatioFunctionofFlowFractionCurve, clg_coil_stage_data[0].partLoadFractionCorrelationCurve)
           clg_coil_stage_data[0].remove
-          clg_coil.setName("DX Cooling Coil")
+          clg_coil.setName("DX Cooling Coil_#{unit_num}")
           if acOutputCapacity != Constants.SizingAuto
             clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(acOutputCapacity,"Btu/h","W").get)
             clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
@@ -284,7 +284,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         else
 
           clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
-          clg_coil.setName("DX Cooling Coil")
+          clg_coil.setName("DX Cooling Coil_#{unit_num}")
           clg_coil.setCondenserType("AirCooled")
           clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
           clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
@@ -302,7 +302,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         # _processSystemFan
         
         supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
-        supply_fan_availability.setName("SupplyFanAvailability")
+        supply_fan_availability.setName("SupplyFanAvailability_#{unit_num}")
         supply_fan_availability.setValue(1)
 
         fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
@@ -314,13 +314,13 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         fan.setMotorInAirstreamFraction(1)
 
         supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
-        supply_fan_operation.setName("SupplyFanOperation")
+        supply_fan_operation.setName("SupplyFanOperation_#{unit_num}")
         supply_fan_operation.setValue(0)    
       
         # _processSystemAir
               
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName("Forced Air System")
+        air_loop_unitary.setName("Forced Air System_#{unit_num}")
         air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         air_loop_unitary.setCoolingCoil(clg_coil)      
         if not htg_coil.nil?
@@ -333,7 +333,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
         air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(120.0,"F","C").get)
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)      
+        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)    
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName("Central Air System_#{unit_num}")
@@ -357,13 +357,13 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
         # Supply Air
         zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName("Zone Splitter")
+        zone_splitter.setName("Zone Splitter_#{unit_num}")
         
         zone_mixer = air_loop.zoneMixer
         zone_mixer.setName("Zone Mixer_#{unit_num}")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_living.setName("#{control_zone.name} direct air")
+        diffuser_living.setName("#{control_zone.name} direct air_#{unit_num}")
         # diffuser_living.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
         air_loop.addBranchForZone(control_zone, diffuser_living.to_StraightComponent)
 
@@ -376,7 +376,7 @@ class ProcessCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
             HVAC.remove_existing_hvac_equipment(model, runner, "Central Air Conditioner", slave_zone)
         
             diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-            diffuser_fbsmt.setName("#{slave_zone.name} direct air")
+            diffuser_fbsmt.setName("#{slave_zone.name} direct air_#{unit_num}")
             # diffuser_fbsmt.setMaximumAirFlowRate(OpenStudio::convert(supply.Living_AirFlowRate,"cfm","m^3/s").get)
             air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
 

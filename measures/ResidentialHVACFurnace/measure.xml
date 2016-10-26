@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>c0476b6c-8857-497c-a01b-43898bc5ff28</version_id>
-  <version_modified>20161023T155844Z</version_modified>
+  <version_id>84d79202-8088-41d4-bc4e-2b431b8e36c6</version_id>
+  <version_modified>20161026T193323Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -338,17 +338,6 @@
       <checksum>9A86F3EB</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DFE6E1A2</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -358,7 +347,18 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>918761CF</checksum>
+      <checksum>536297F8</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>0E98A983</checksum>
     </file>
   </files>
 </measure>

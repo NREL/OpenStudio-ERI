@@ -381,7 +381,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         # Supplemental heat
         unless baseboardOutputCapacity == "NO SUPP HEAT"
           supp_htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
-          supp_htg_coil.setName("#{control_zone.name} electric baseboards")
+          supp_htg_coil.setName("#{control_zone.name} electric baseboards_#{unit_num}")
           if baseboardOutputCapacity != Constants.SizingAuto
             supp_htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
           end
@@ -393,7 +393,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         if miniSplitHPPanHeaterPowerPerUnit > 0
           
           vrf_heating_output_var = OpenStudio::Model::OutputVariable.new("VRF Heat Pump Heating Electric Energy", model)
-          vrf_heating_output_var.setName("VRF Heat Pump Heating Electric Energy")
+          vrf_heating_output_var.setName("VRF Heat Pump Heating Electric Energy_#{unit_num}")
           
           sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, vrf_heating_output_var)
           sensor.setName("E_mshp_#{unit_num}")
@@ -486,7 +486,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
           
           unless baseboardOutputCapacity == "NO SUPP HEAT"
             supp_htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
-            supp_htg_coil.setName("#{slave_zone.name} electric baseboards")
+            supp_htg_coil.setName("#{slave_zone.name} electric baseboards_#{unit_num}")
             if baseboardOutputCapacity != Constants.SizingAuto
               supp_htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
             end
@@ -509,9 +509,9 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         
           equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
           equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
-          equip.setName("PanHeater")
+          equip.setName("PanHeater_#{unit_num}")
           equip.setSpace(control_zone.spaces[0])
-          equip_def.setName("PanHeater")
+          equip_def.setName("PanHeater_#{unit_num}")
           equip_def.setFractionRadiant(0)
           equip_def.setFractionLatent(0)
           equip_def.setFractionLost(1)

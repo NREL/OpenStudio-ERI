@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>5a7ae205-bdc2-4daf-b29e-b6f0a59366a6</uid>
-  <version_id>f0380922-3eb2-4141-bb8e-f45478d39e03</version_id>
-  <version_modified>20161023T155833Z</version_modified>
+  <version_id>5bfb65df-631c-4595-93f6-bb00bf2f0521</version_id>
+  <version_modified>20161026T190102Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
@@ -662,7 +662,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>918761CF</checksum>
+      <checksum>536297F8</checksum>
     </file>
   </files>
 </measure>

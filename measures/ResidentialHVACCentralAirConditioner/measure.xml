@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>985a2eba-409b-4151-ba00-f18242577e9e</version_id>
-  <version_modified>20161023T155843Z</version_modified>
+  <version_id>de3de897-af20-4fca-bf7a-89b6752ac4ce</version_id>
+  <version_modified>20161026T193323Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessCentralAirConditioner</class_name>
   <display_name>Set Residential Central Air Conditioner</display_name>
@@ -400,17 +400,6 @@
       <checksum>9A86F3EB</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>EC8FECAE</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -420,7 +409,18 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>918761CF</checksum>
+      <checksum>536297F8</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4EEDA670</checksum>
     </file>
   </files>
 </measure>

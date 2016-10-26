@@ -184,7 +184,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         # _processSystemRoomAC
       
         clg_coil = OpenStudio::Model::CoilCoolingDXSingleSpeed.new(model, model.alwaysOnDiscreteSchedule, roomac_cap_ft, roomac_cap_fff, roomac_eir_ft, roomcac_eir_fff, roomac_plf_fplr)
-        clg_coil.setName("WindowAC Coil")
+        clg_coil.setName("WindowAC Coil_#{unit_num}")
         if acOutputCapacity != Constants.SizingAuto
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(acOutputCapacity,"Btu/h","W").get)
           clg_coil.setRatedAirFlowRate(supply.cfm_TON_Rated[0] * acOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
@@ -197,11 +197,11 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setBasinHeaterSetpointTemperature(OpenStudio::OptionalDouble.new(2))
         
         supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
-        supply_fan_availability.setName("SupplyFanAvailability")
+        supply_fan_availability.setName("SupplyFanAvailability_#{unit_num}")
         supply_fan_availability.setValue(1)    
         
         fan_onoff = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
-        fan_onoff.setName("WindowAC Fan")
+        fan_onoff.setName("WindowAC Fan_#{unit_num}")
         fan_onoff.setEndUseSubcategory(Constants.EndUseHVACFan)
         fan_onoff.setFanEfficiency(1)
         fan_onoff.setPressureRise(0)
@@ -209,11 +209,11 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         fan_onoff.setMotorInAirstreamFraction(0)
         
         supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
-        supply_fan_operation.setName("SupplyFanOperation")
+        supply_fan_operation.setName("SupplyFanOperation_#{unit_num}")
         supply_fan_operation.setValue(0)
         
         htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, model.alwaysOffDiscreteSchedule())
-        htg_coil.setName("Always Off Heating Coil for PTAC")
+        htg_coil.setName("Always Off Heating Coil for PTAC_#{unit_num}")
         
         ptac = OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner.new(model, model.alwaysOnDiscreteSchedule, fan_onoff, htg_coil, clg_coil)
         ptac.setName("Window AC_#{unit_num}")

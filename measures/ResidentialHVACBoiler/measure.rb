@@ -206,7 +206,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
     loop_sizing.setLoopDesignTemperatureDifference(OpenStudio::convert(20.0,"R","K").get)
     
     pump = OpenStudio::Model::PumpConstantSpeed.new(model)
-    pump.setName("HydronicPump")
+    pump.setName("Hydronic Pump")
     if boilerOutputCapacity != Constants.SizingAuto
       pump.setRatedFlowRate(OpenStudio::convert(boilerOutputCapacity/20.0/500.0,"gal/min","m^3/s").get)
     end
@@ -251,7 +251,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
        
     if boilerType == Constants.BoilerTypeCondensing and boilerOATResetEnabled
       setpoint_manager_oar = OpenStudio::Model::SetpointManagerOutdoorAirReset.new(model)
-      setpoint_manager_oar.setName("OutdoorReset")
+      setpoint_manager_oar.setName("Outdoor Reset")
       setpoint_manager_oar.setControlVariable("Temperature")
       setpoint_manager_oar.setSetpointatOutdoorLowTemperature(OpenStudio::convert(boilerOATLowHWST,"F","C").get)
       setpoint_manager_oar.setOutdoorLowTemperature(OpenStudio::convert(boilerOATLow,"F","C").get)
@@ -300,7 +300,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
         HVAC.remove_existing_hvac_equipment(model, runner, "Boiler", control_zone)
       
         baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
-        baseboard_coil.setName("#{control_zone.name} water baseboard coil")
+        baseboard_coil.setName("#{control_zone.name} water baseboard coil_#{unit_num}")
         if boilerOutputCapacity != Constants.SizingAuto
           bb_UA = OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get / (OpenStudio::convert(boilerDesignTemp - 10.0 - 95.0,"R","K").get) * 3
           bb_max_flow = OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get / OpenStudio::convert(20.0,"R","K").get / 4.186 / 998.2 / 1000 * 2.0    
@@ -322,7 +322,7 @@ class ProcessBoiler < OpenStudio::Ruleset::ModelUserScript
           HVAC.remove_existing_hvac_equipment(model, runner, "Boiler", slave_zone)       
         
           baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
-          baseboard_coil.setName("#{slave_zone.name} water baseboard coil")
+          baseboard_coil.setName("#{slave_zone.name} water baseboard coil_#{unit_num}")
           if boilerOutputCapacity != Constants.SizingAuto
             bb_UA = OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get / (OpenStudio::convert(boilerDesignTemp - 10.0 - 95.0,"R","K").get) * 3
             bb_max_flow = OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get / OpenStudio::convert(20.0,"R","K").get / 4.186 / 998.2 / 1000 * 2.0    
