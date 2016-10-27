@@ -736,9 +736,9 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSensor", ["Tout_", "Hout_", "Tin_", "Pbar_", "Phiin_", "Win_", "Wout_", "Vwind_", "WH_sch_", "Range_sch_", "Bath_sch_", "Clothes_dryer_sch_", "NVAvail_", "NVSP_", "AH_MFR_Sensor_", "Fan_RTF_Sensor_", "AH_VFR_Sensor_", "AH_Tout_Sensor_", "RA_T_Sensor_", "AH_Wout_Sensor_", "AHZone_T_Sensor_", "RA_W_Sensor_", "AHZone_W_Sensor_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemActuator", ["InfilFlow_", "NatVentFlow_", "AHZoneToLivingFlowRateActuator_", "LivingToAHZoneFlowRateActuator_", "SupplyLeakSensibleActuator_", "SupplyLeakLatentActuator_", "SupplyDuctLoadToLivingActuator_", "ConductionToAHZoneActuator_", "ReturnDuctLoadToPlenumActuator_", "ReturnConductionToAHZoneActuator_", "SensibleLeakageToAHZoneActuator_", "LatentLeakageToAHZoneActuator_", "ReturnSensibleLeakageActuator_", "ReturnLatentLeakageActuator_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgram", ["DuctLeakageProgram_", "NaturalVentilationProgram_", "InfiltrationProgram_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemOutputVariable", ["Bath Exhaust Fan Vent Flow Rate_", "Clothes Dryer Exhaust Fan Vent Flow Rate_", "Local Wind Speed_", "Range Hood Fan Vent Flow Rate_", "Whole House Fan Vent Flow Rate_", "Zone Infil/MechVent Flow Rate_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemOutputVariable", ["Bath Exhaust Fan Vent Flow Rate_", "Clothes Dryer Exhaust Fan Vent Flow Rate_", "Local Wind Speed_", "Range Hood Fan Vent Flow Rate_", "Whole House Fan Vent Flow Rate_", "Zone Infil/MechVent Flow Rate_", "Zone Natural Ventilation Flow Rate_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgramCallingManager", ["AirflowCalculator_", "DuctLeakageCallingManager_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemGlobalVariable", ["_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemGlobalVariable", ["AH_MFR_", "Fan_RTF_", "AH_VFR_", "AH_Tout_", "AH_Wout_", "RA_T_", "RA_W_", "AHZone_T_", "AHZone_W_", "SupplyLeakSensibleLoad_", "SupplyLeakLatentLoad_", "SupplyDuctLoadToLiving_", "ConductionToAHZone_", "ReturnConductionToAHZone_", "ReturnDuctLoadToPlenum_", "SensibleLeakageToAHZone_", "LatentLeakageToAHZone_", "AHZoneToLivingFlowRate_", "LivingToAHZoneFlowRate_", "ReturnSensibleLeakage_", "ReturnLatentLeakage_", "DuctLeakSupplyFanEquivalent_", "DuctLeakExhaustFanEquivalent_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSubroutine", ["CalculateDuctLeakage_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "MasslessOpaqueMaterial", ["Adiabatic"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "Construction", ["AdiabaticConst"])
@@ -803,7 +803,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       if building.unfinished_basement.inf_method == Constants.InfMethodRes
         if building.unfinished_basement.ACH > 0
           space_infil_design_flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
-          space_infil_design_flow_rate.setName("UBsmtInfiltration_#{unit.unit_num}")
+          space_infil_design_flow_rate.setName("UBsmtInfiltration")
           space_infil_design_flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
           space_infil_design_flow_rate.setAirChangesperHour(building.unfinished_basement.ACH)
           space_infil_design_flow_rate.setSpace(building.unfinished_basement_zone.spaces[0])
@@ -813,7 +813,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     
     unless building.crawlspace_zone.nil?
       space_infil_design_flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
-      space_infil_design_flow_rate.setName("CSInfiltration_#{unit.unit_num}")
+      space_infil_design_flow_rate.setName("CSInfiltration")
       space_infil_design_flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
       space_infil_design_flow_rate.setAirChangesperHour(building.crawlspace.ACH)
       space_infil_design_flow_rate.setSpace(building.crawlspace_zone.spaces[0])

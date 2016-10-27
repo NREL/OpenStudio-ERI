@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>ee231a4e-f06d-48b1-a17a-d6fef3e7596c</version_id>
-  <version_modified>20161026T203038Z</version_modified>
+  <version_id>831f6d0c-e9e8-44f9-b83e-59a754f8e8dc</version_id>
+  <version_modified>20161027T220435Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorICF</class_name>
   <display_name>Set Residential Walls - ICF Construction</display_name>
@@ -79,12 +79,6 @@
   </attributes>
   <files>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9256575</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -124,6 +118,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>D1AE2405</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07CC9F86</checksum>
     </file>
   </files>
 </measure>
