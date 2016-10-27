@@ -834,6 +834,9 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)
     
     # Store number of stories
+    if attic_type == Constants.FinishedAtticSpaceType
+      building_num_floors += 1
+    end        
     model.getBuilding.setStandardsNumberOfAboveGroundStories(building_num_floors)
     if foundation_type == Constants.UnfinishedBasementFoundationType or foundation_type == Constants.FinishedBasementFoundationType
       building_num_floors += 1
