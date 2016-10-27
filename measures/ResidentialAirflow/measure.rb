@@ -782,8 +782,51 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     if building.above_grade_finished_floor_area.nil?
       return false
     end    
+
+    wind_speed = _processWindSpeedCorrection(infil, wind_speed, terrainType, Geometry.get_closest_neighbor_distance(model), building)
+    infil, building = _processInfiltration(infil, wind_speed, building)
+        
+    unless building.garage_zone.nil?
+      if building.garage.SLA > 0
+        space_infil_effective_leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
+        space_infil_effective_leakage_area.setName("GarageInfiltration")
+        space_infil_effective_leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
+        space_infil_effective_leakage_area.setEffectiveAirLeakageArea(OpenStudio::convert(building.garage.ELA,"ft^2","cm^2").get)
+        space_infil_effective_leakage_area.setStackCoefficient(0.001672 * building.garage.C_s_SG)
+        space_infil_effective_leakage_area.setWindCoefficient(0.01 * building.garage.C_w_SG)
+        space_infil_effective_leakage_area.setSpace(building.garage_zone.spaces[0])
+      end
+    end
+        
+    unless building.unfinished_basement_zone.nil?
+      if building.unfinished_basement.inf_method == Constants.InfMethodRes
+        if building.unfinished_basement.ACH > 0
+          space_infil_design_flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
+          space_infil_design_flow_rate.setName("UBsmtInfiltration_#{unit.unit_num}")
+          space_infil_design_flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
+          space_infil_design_flow_rate.setAirChangesperHour(building.unfinished_basement.ACH)
+          space_infil_design_flow_rate.setSpace(building.unfinished_basement_zone.spaces[0])
+        end
+      end
+    end
     
-    wind_speed = _processWindSpeedCorrection(wind_speed, terrainType)
+    unless building.crawlspace_zone.nil?
+      space_infil_design_flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
+      space_infil_design_flow_rate.setName("CSInfiltration_#{unit.unit_num}")
+      space_infil_design_flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
+      space_infil_design_flow_rate.setAirChangesperHour(building.crawlspace.ACH)
+      space_infil_design_flow_rate.setSpace(building.crawlspace_zone.spaces[0])
+    end
+    
+    unless building.unfinished_attic_zone.nil?
+      space_infil_effective_leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
+      space_infil_effective_leakage_area.setName("UAtcInfiltration")
+      space_infil_effective_leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
+      space_infil_effective_leakage_area.setEffectiveAirLeakageArea(OpenStudio::convert(building.unfinished_attic.ELA,"ft^2","cm^2").get)
+      space_infil_effective_leakage_area.setStackCoefficient(0.001672 * building.unfinished_attic.C_s_SG)
+      space_infil_effective_leakage_area.setWindCoefficient(0.01 * building.unfinished_attic.C_w_SG)
+      space_infil_effective_leakage_area.setSpace(building.unfinished_attic_zone.spaces[0])
+    end
         
     units.each do |building_unit|
       unit = Unit.new
@@ -831,10 +874,21 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         unit.dryer_exhaust = 0
       end
       
-      wind_speed = _processWindSpeedCorrectionForUnit(wind_speed, infil, Geometry.get_closest_neighbor_distance(model), building)
       infil, building, unit = _processInfiltrationForUnit(infil, wind_speed, building, unit)
       mech_vent, schedules = _processMechanicalVentilation(model, runner, infil, mech_vent, building, unit, schedules)
       nat_vent, schedules = _processNaturalVentilation(model, runner, nat_vent, wind_speed, infil, building, unit, schedules)
+      
+      unless unit.finished_basement_zone.nil?
+        if unit.finished_basement.inf_method == Constants.InfMethodRes
+          if unit.finished_basement.ACH > 0            
+            space_infil_design_flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
+            space_infil_design_flow_rate.setName("FBsmtInfiltration_#{unit.unit_num}")
+            space_infil_design_flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
+            space_infil_design_flow_rate.setAirChangesperHour(unit.finished_basement.ACH)
+            space_infil_design_flow_rate.setSpace(unit.finished_basement_zone.spaces[0])
+          end
+        end
+      end      
       
       # Overridden by EMS
       
@@ -1142,60 +1196,6 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         zone_hvac.setExhaustAirFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
 
       end
-      
-      unless building.garage_zone.nil?
-        if building.garage.SLA > 0
-          space_infil_effective_leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
-          space_infil_effective_leakage_area.setName("GarageInfiltration")
-          space_infil_effective_leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
-          space_infil_effective_leakage_area.setEffectiveAirLeakageArea(OpenStudio::convert(building.garage.ELA,"ft^2","cm^2").get)
-          space_infil_effective_leakage_area.setStackCoefficient(0.001672 * building.garage.C_s_SG)
-          space_infil_effective_leakage_area.setWindCoefficient(0.01 * building.garage.C_w_SG)
-          space_infil_effective_leakage_area.setSpace(building.garage_zone.spaces[0])
-        end
-      end      
-      
-      unless unit.finished_basement_zone.nil?
-        if unit.finished_basement.inf_method == Constants.InfMethodRes
-          if unit.finished_basement.ACH > 0            
-            space_infil_design_flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
-            space_infil_design_flow_rate.setName("FBsmtInfiltration_#{unit.unit_num}")
-            space_infil_design_flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
-            space_infil_design_flow_rate.setAirChangesperHour(unit.finished_basement.ACH)
-            space_infil_design_flow_rate.setSpace(unit.finished_basement_zone.spaces[0])
-          end
-        end
-      end
-      
-      unless building.unfinished_basement_zone.nil?
-        if building.unfinished_basement.inf_method == Constants.InfMethodRes
-          if building.unfinished_basement.ACH > 0
-            space_infil_design_flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
-            space_infil_design_flow_rate.setName("UBsmtInfiltration_#{unit.unit_num}")
-            space_infil_design_flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
-            space_infil_design_flow_rate.setAirChangesperHour(building.unfinished_basement.ACH)
-            space_infil_design_flow_rate.setSpace(building.unfinished_basement_zone.spaces[0])
-          end
-        end
-      end      
-      
-      unless building.crawlspace_zone.nil?
-        space_infil_design_flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
-        space_infil_design_flow_rate.setName("CSInfiltration_#{unit.unit_num}")
-        space_infil_design_flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
-        space_infil_design_flow_rate.setAirChangesperHour(building.crawlspace.ACH)
-        space_infil_design_flow_rate.setSpace(building.crawlspace_zone.spaces[0])
-      end      
-      
-      unless building.unfinished_attic_zone.nil?
-        space_infil_effective_leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
-        space_infil_effective_leakage_area.setName("UAtcInfiltration")
-        space_infil_effective_leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
-        space_infil_effective_leakage_area.setEffectiveAirLeakageArea(OpenStudio::convert(building.unfinished_attic.ELA,"ft^2","cm^2").get)
-        space_infil_effective_leakage_area.setStackCoefficient(0.001672 * building.unfinished_attic.C_s_SG)
-        space_infil_effective_leakage_area.setWindCoefficient(0.01 * building.unfinished_attic.C_w_SG)
-        space_infil_effective_leakage_area.setSpace(building.unfinished_attic_zone.spaces[0])
-      end      
       
       # Ducts    
       
@@ -1739,7 +1739,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
 
   end
   
-  def _processWindSpeedCorrection(wind_speed, terrainType)
+  def _processWindSpeedCorrection(infil, wind_speed, terrain_type, neighbors_min_nonzero_offset, building)
     # Wind speed correction
     wind_speed.height = 32.8 # ft (Standard weather station height)
     
@@ -1749,41 +1749,35 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     wind_speed.ashrae_terrain_thickness = 270
     wind_speed.ashrae_terrain_exponent = 0.14
     
-    if terrainType == Constants.TerrainOcean
+    if terrain_type == Constants.TerrainOcean
       wind_speed.site_terrain_multiplier = 1.30 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.10 # Used for DOE-2's correlation
       wind_speed.ashrae_site_terrain_thickness = 210 # Ocean, Bayou flat country
       wind_speed.ashrae_site_terrain_exponent = 0.10 # Ocean, Bayou flat country
-    elsif terrainType == Constants.TerrainPlains
+    elsif terrain_type == Constants.TerrainPlains
       wind_speed.site_terrain_multiplier = 1.00 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.15 # Used for DOE-2's correlation
       wind_speed.ashrae_site_terrain_thickness = 270 # Flat, open country
       wind_speed.ashrae_site_terrain_exponent = 0.14 # Flat, open country
-    elsif terrainType == Constants.TerrainRural
+    elsif terrain_type == Constants.TerrainRural
       wind_speed.site_terrain_multiplier = 0.85 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.20 # Used for DOE-2's correlation
       wind_speed.ashrae_site_terrain_thickness = 270 # Flat, open country
       wind_speed.ashrae_site_terrain_exponent = 0.14 # Flat, open country
-    elsif terrainType == Constants.TerrainSuburban
+    elsif terrain_type == Constants.TerrainSuburban
       wind_speed.site_terrain_multiplier = 0.67 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.25 # Used for DOE-2's correlation
       wind_speed.ashrae_site_terrain_thickness = 370 # Rough, wooded country, suburbs
       wind_speed.ashrae_site_terrain_exponent = 0.22 # Rough, wooded country, suburbs
-    elsif terrainType == Constants.TerrainCity
+    elsif terrain_type == Constants.TerrainCity
       wind_speed.site_terrain_multiplier = 0.47 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.35 # Used for DOE-2's correlation
       wind_speed.ashrae_site_terrain_thickness = 460 # Towns, city outskirs, center of large cities
       wind_speed.ashrae_site_terrain_exponent = 0.33 # Towns, city outskirs, center of large cities 
     end
     
-    return wind_speed
-    
-  end
-    
-  def _processWindSpeedCorrectionForUnit(wind_speed, infiltration, neighbors_min_nonzero_offset, building)
-    
     # Local Shielding
-    if infiltration.InfiltrationShelterCoefficient == Constants.Auto
+    if infil.InfiltrationShelterCoefficient == Constants.Auto
       if neighbors_min_nonzero_offset == 0
         # Typical shelter for isolated rural house
         wind_speed.S_wo = 0.90
@@ -1797,24 +1791,19 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         wind_speed.S_wo = 0.50
       end
     else
-      wind_speed.S_wo = infiltration.InfiltrationShelterCoefficient.to_f
+      wind_speed.S_wo = infil.InfiltrationShelterCoefficient.to_f
     end
 
     # S-G Shielding Coefficients are roughly 1/3 of AIM2 Shelter Coefficients
     wind_speed.shielding_coef = wind_speed.S_wo / 3.0
-    
+        
     return wind_speed
-
+    
   end
   
-  def _processInfiltrationForUnit(infil, wind_speed, building, unit)
-    # Infiltration calculations.
-    
+  def _processInfiltration(infil, wind_speed, building)
+  
     spaces = []
-    spaces << unit.living
-    unless unit.finished_basement_zone.nil?
-      spaces << unit.finished_basement
-    end    
     unless building.garage_zone.nil?
       spaces << building.garage
     end
@@ -1826,8 +1815,8 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     end
     unless building.unfinished_attic_zone.nil?
       spaces << building.unfinished_attic
-    end
-
+    end 
+  
     unless building.garage_zone.nil?
       building.garage.inf_method = Constants.InfMethodSG
       building.garage.hor_leak_frac = 0.4 # DOE-2 Default
@@ -1853,6 +1842,37 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       building.unfinished_attic.neutral_level = 0.5 # DOE-2 Default
       building.unfinished_attic.ACH = get_infiltration_ACH_from_SLA(building.unfinished_attic.SLA, 1.0, @weather)
       building.unfinished_attic.inf_flow = building.unfinished_attic.ACH / OpenStudio::convert(1.0,"hr","min").get * building.unfinished_attic.volume
+    end
+  
+    spaces.each do |space|
+    
+      if space.volume == 0
+        next
+      end
+      
+      space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
+
+      if space.inf_method == Constants.InfMethodSG
+        space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_leak_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
+        space.f_w_SG = wind_speed.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
+        space.C_s_SG = space.f_s_SG ** 2.0 * Constants.g * space.height / (Constants.AssumedInsideTemp + 460.0)
+        space.C_w_SG = space.f_w_SG ** 2.0
+        space.ELA = space.SLA * space.area # ft^2
+      end
+
+    end
+    
+    return infil, building  
+  
+  end
+  
+  def _processInfiltrationForUnit(infil, wind_speed, building, unit)
+    # Infiltration calculations.
+    
+    spaces = []
+    spaces << unit.living
+    unless unit.finished_basement_zone.nil?
+      spaces << unit.finished_basement
     end
   
     outside_air_density = UnitConversion.atm2Btu_ft3(@weather.header.LocalPressure) / (Gas.Air.r * (@weather.data.AnnualAvgDrybulb + 460.0))
@@ -2009,11 +2029,6 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         space.C_s_SG = space.f_s_SG ** 2.0 * Constants.g * space.height / (infil.assumed_inside_temp + 460.0)
         space.C_w_SG = space.f_w_SG ** 2.0
         space.ELA = space.SLA * space.area # ft^2
-      elsif space.inf_method == Constants.InfMethodASHRAE
-        space.ELA = space.SLA * space.area # ft^2
-      else
-        space.ELA = 0 # ft^2
-        space.hor_leak_frac = 0
       end
 
     end

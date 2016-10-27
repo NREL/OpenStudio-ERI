@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>0549f8d9-8fc7-43f7-9828-b8024206d4fa</version_id>
-  <version_modified>20161026T223756Z</version_modified>
+  <version_id>65f082f4-34dd-49c8-9629-6d89af03225a</version_id>
+  <version_modified>20161027T175722Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -702,7 +702,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BA797885</checksum>
+      <checksum>308050C6</checksum>
     </file>
   </files>
 </measure>
