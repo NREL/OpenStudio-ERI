@@ -774,6 +774,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_building_height(building.unfinished_attic_zone.spaces), OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_building_height(building.unfinished_attic_zone.spaces) * OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
       end
     end
+
     building.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(model.getSpaces, true, runner)
     if building.finished_floor_area.nil?
       return false
@@ -1271,9 +1272,9 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       
       ducts.DuctLocationFracLeakage = ducts.DuctLocationFrac
       ducts.DuctLocationFracConduction = ducts.DuctLocationFrac      
-      ducts.supply_duct_surface_area = get_duct_supply_surface_area(ducts.DuctSupplySurfaceAreaMultiplier, building, ducts.num_stories)
       ducts.DuctNumReturns = get_duct_num_returns(duct_num_returns, ducts.num_stories)
-      ducts.return_duct_surface_area = get_duct_return_surface_area(ducts.DuctReturnSurfaceAreaMultiplier, building, ducts.num_stories, ducts.DuctNumReturns)
+      ducts.supply_duct_surface_area = get_duct_supply_surface_area(ducts.DuctSupplySurfaceAreaMultiplier, unit, ducts.num_stories)
+      ducts.return_duct_surface_area = get_duct_return_surface_area(ducts.DuctReturnSurfaceAreaMultiplier, unit, ducts.num_stories, ducts.DuctNumReturns)
       ducts_total_duct_surface_area = ducts.supply_duct_surface_area + ducts.return_duct_surface_area
       
       # Calculate Duct UA value
@@ -1913,8 +1914,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
 
           if has_flue
             # for future use
-            flue_diameter = 0.5 # after() do
-            infil.Y_i = flue_diameter ** 2.0 / 4.0 / infil.A_o # Fraction of leakage through the flu
+            infil.Y_i = 0.2
             infil.flue_height = building.building_height + 2.0 # ft
             infil.S_wflue = 1.0 # Flue Shelter Coefficient
           else
@@ -2050,7 +2050,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
             # ASHRAE Standard 62.2 2010
             # Only applies to existing buildings
             # 2 cfm per 100ft^2 of occupiable floor area
-            infil.default_rate = 2.0 * building.finished_floor_area / 100.0 # cfm
+            infil.default_rate = 2.0 * unit.finished_floor_area / 100.0 # cfm
             # Half the excess infiltration rate above the default rate is credited toward mech vent:
             infil.rate_credit = [(unit.living.inf_flow - infil.default_rate) / 2.0, 0].max          
         elsif mech_vent.MechVentASHRAEStandard == '2013' and building.num_units == 1
@@ -2505,16 +2505,6 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     return duct_location_zone, duct_location_name
   end  
   
-  def get_duct_supply_surface_area(mult, building, num_stories)
-    # Duct Surface Areas per 2010 BA Benchmark
-    ffa = building.finished_floor_area
-    if num_stories == 1
-      return 0.27 * ffa * mult # ft^2
-    else
-      return 0.2 * ffa * mult
-    end
-  end
-  
   def get_duct_num_returns(duct_num_returns, num_stories)
     if duct_num_returns.nil?
       return 0
@@ -2525,9 +2515,19 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     return duct_num_returns
   end  
   
-  def get_duct_return_surface_area(mult, building, num_stories, duct_num_returns)
+  def get_duct_supply_surface_area(mult, unit, num_stories)
     # Duct Surface Areas per 2010 BA Benchmark
-    ffa = building.finished_floor_area
+    ffa = unit.finished_floor_area
+    if num_stories == 1
+      return 0.27 * ffa * mult # ft^2
+    else
+      return 0.2 * ffa * mult
+    end
+  end
+  
+  def get_duct_return_surface_area(mult, unit, num_stories, duct_num_returns)
+    # Duct Surface Areas per 2010 BA Benchmark
+    ffa = unit.finished_floor_area
     if num_stories == 1
       return [0.05 * duct_num_returns * ffa, 0.25 * ffa].min * mult
     else
