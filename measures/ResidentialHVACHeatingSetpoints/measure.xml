@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>beb88e94-b88d-4800-a282-58dc8002cc22</version_id>
-  <version_modified>20161026T223342Z</version_modified>
+  <version_id>eda32339-cb41-4bfb-b1b8-9898ae6625a5</version_id>
+  <version_modified>20161028T172604Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -59,12 +59,6 @@
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
       <checksum>E23378AA</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9A23E14E</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
@@ -172,6 +166,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>07CC9F86</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4977607F</checksum>
     </file>
   </files>
 </measure>

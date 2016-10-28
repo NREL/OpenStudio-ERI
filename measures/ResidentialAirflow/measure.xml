@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>750ad9a7-bedc-4f99-a07d-9efbb6c54d55</version_id>
-  <version_modified>20161028T164637Z</version_modified>
+  <version_id>09a5c6a5-5e2d-4a76-9b7d-5312f4da906d</version_id>
+  <version_modified>20161028T172559Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -574,12 +574,6 @@
       <checksum>078F0169</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9A23E14E</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -703,6 +697,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>3C0D0C98</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4977607F</checksum>
     </file>
   </files>
 </measure>
