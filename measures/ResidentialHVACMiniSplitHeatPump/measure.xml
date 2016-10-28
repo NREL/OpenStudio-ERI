@@ -565,7 +565,7 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.4</identifier>
-        <min_compatible>1.13.1</min_compatible>
+        <min_compatible>1.13.2</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
