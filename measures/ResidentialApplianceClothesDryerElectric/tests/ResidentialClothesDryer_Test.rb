@@ -136,7 +136,7 @@ class ResidentialClothesDryerTest < MiniTest::Test
   def test_retrofit_replace_gas_clothes_dryer
     args_hash = {}
     args_hash["cd_ef"] = 3.93
-    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>809.6, "Annual_therm"=>0, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_gasdryer, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
@@ -438,7 +438,7 @@ class ResidentialClothesDryerTest < MiniTest::Test
                 full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
                 actual_values["Annual_kwh"] += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "kWh").get
                 actual_values["Space"] << new_object.space.get.name.to_s
-            elsif obj_type == "GasEquipment"
+            elsif obj_type == "OtherEquipment"
                 full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
                 actual_values["Annual_therm"] += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "therm").get
                 actual_values["Space"] << new_object.space.get.name.to_s

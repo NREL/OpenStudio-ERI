@@ -1,7 +1,7 @@
 
 OS:Version,
-  {fc003c06-618b-4051-9b37-6b6f71b12672}, !- Handle
-  1.13.1;                                 !- Version Identifier
+  {83e5ca49-cfe1-49a7-8025-a344493a3ebb}, !- Handle
+  1.13.2;                                 !- Version Identifier
 
 OS:ClimateZones,
   {135edfab-17e7-40db-a436-27d385a8cd6d}, !- Handle
@@ -1149,1316 +1149,623 @@ OS:BuildingUnit,
   Double,                                 !- Building Unit Feature Data Type 2
   2;                                      !- Building Unit Feature Value 2
 
-OS:ScheduleTypeLimits,
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Handle
-  Fractional,                             !- Name
-  0,                                      !- Lower Limit Value
-  1,                                      !- Upper Limit Value
-  Continuous;                             !- Numeric Type
-
 OS:Schedule:Ruleset,
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Handle
-  residential range gas schedule,         !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  {aaedf617-0734-4fc1-b211-0b273d1b3dd6}, !- Default Day Schedule Name
-  {c8c5a7ef-625d-4fe6-b7cd-dd56bb05144a}, !- Summer Design Day Schedule Name
-  {fa90331d-75fc-4657-8aa3-7fdd7e05f61d}; !- Winter Design Day Schedule Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Handle
+  residential range gas schedule,     !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
+  {c5c5dd27-8f44-433d-b909-07487e68c3e1}, !- Default Day Schedule Name
+  {3b4f7359-aa7b-419c-8c72-67f9e315c5cd}, !- Summer Design Day Schedule Name
+  {a5a9979c-a5c1-4e33-a050-7045602733a7}; !- Winter Design Day Schedule Name
 
 OS:Schedule:Day,
-  {aaedf617-0734-4fc1-b211-0b273d1b3dd6}, !- Handle
-  Schedule Day 2,                         !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {c5c5dd27-8f44-433d-b909-07487e68c3e1}, !- Handle
+  Schedule Day 1,                         !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
   0;                                      !- Value Until Time 1
 
 OS:Schedule:Rule,
-  {400b6e9b-8bb9-42f1-98d6-5f60fdb67eab}, !- Handle
-  residential range gas schedule weekday ruleset1, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  23,                                     !- Rule Order
-  {c0038a50-e1b1-4593-90f4-4ff90af9fff1}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  1,                                      !- Start Month
-  1,                                      !- Start Day
-  1,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {c0038a50-e1b1-4593-90f4-4ff90af9fff1}, !- Handle
-  residential range gas schedule weekday1, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0466666666666667,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0466666666666667,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0266666666666667,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0266666666666667,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0466666666666667,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0733333333333333,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.166666666666667,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.28,                                   !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.306666666666667,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.32,                                   !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.28,                                   !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.333333333333333,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.38,                                   !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.306666666666667,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.38,                                   !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.293333333333333,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.613333333333333,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  1,                                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.78,                                   !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.4,                                    !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.233333333333333,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.166666666666667,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.106666666666667,                      !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0733333333333333;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {3b006bc0-0d2d-4396-b901-cd03e940954d}, !- Handle
-  residential range gas schedule weekend ruleset1, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  22,                                     !- Rule Order
-  {76dd72c5-5d6b-478d-bf61-413c7aa3fbe6}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  1,                                      !- Start Month
-  1,                                      !- Start Day
-  1,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {76dd72c5-5d6b-478d-bf61-413c7aa3fbe6}, !- Handle
-  residential range gas schedule weekend1, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0466666666666667,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0466666666666667,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0266666666666667,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0266666666666667,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0466666666666667,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0733333333333333,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.166666666666667,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.28,                                   !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.306666666666667,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.32,                                   !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.28,                                   !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.333333333333333,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.38,                                   !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.306666666666667,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.38,                                   !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.293333333333333,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.613333333333333,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  1,                                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.78,                                   !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.4,                                    !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.233333333333333,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.166666666666667,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.106666666666667,                      !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0733333333333333;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {6ae3b595-3189-49dc-84c4-492eff47e255}, !- Handle
-  residential range gas schedule weekday ruleset2, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  21,                                     !- Rule Order
-  {73f41e20-d620-4a0f-a28c-cf972d4af31a}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  2,                                      !- Start Month
-  1,                                      !- Start Day
-  2,                                      !- End Month
-  28;                                     !- End Day
-
-OS:Schedule:Day,
-  {73f41e20-d620-4a0f-a28c-cf972d4af31a}, !- Handle
-  residential range gas schedule weekday2, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0466666666666667,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0466666666666667,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0266666666666667,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0266666666666667,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0466666666666667,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0733333333333333,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.166666666666667,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.28,                                   !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.306666666666667,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.32,                                   !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.28,                                   !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.333333333333333,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.38,                                   !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.306666666666667,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.38,                                   !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.293333333333333,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.613333333333333,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  1,                                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.78,                                   !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.4,                                    !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.233333333333333,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.166666666666667,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.106666666666667,                      !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0733333333333333;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {b90f1914-de54-44e0-af5a-c8ac182d6c2a}, !- Handle
-  residential range gas schedule weekend ruleset2, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  20,                                     !- Rule Order
-  {cb05e3b5-acac-4dc9-a0d5-cef812f38a76}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  2,                                      !- Start Month
-  1,                                      !- Start Day
-  2,                                      !- End Month
-  28;                                     !- End Day
-
-OS:Schedule:Day,
-  {cb05e3b5-acac-4dc9-a0d5-cef812f38a76}, !- Handle
-  residential range gas schedule weekend2, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0466666666666667,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0466666666666667,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0266666666666667,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0266666666666667,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0466666666666667,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0733333333333333,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.166666666666667,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.28,                                   !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.306666666666667,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.32,                                   !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.28,                                   !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.333333333333333,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.38,                                   !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.306666666666667,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.38,                                   !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.293333333333333,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.613333333333333,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  1,                                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.78,                                   !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.4,                                    !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.233333333333333,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.166666666666667,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.106666666666667,                      !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0733333333333333;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {0eb65101-a028-402b-b690-b57ef2da6f3f}, !- Handle
-  residential range gas schedule weekday ruleset3, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  19,                                     !- Rule Order
-  {2f945753-92d4-4cdf-bb49-c7c80ce7940f}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  3,                                      !- Start Month
-  1,                                      !- Start Day
-  3,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {2f945753-92d4-4cdf-bb49-c7c80ce7940f}, !- Handle
-  residential range gas schedule weekday3, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0421573989668794,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0421573989668794,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0240899422667882,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0240899422667882,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0421573989668794,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0662473412336676,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.150562139167426,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.252944393801276,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.277034336068064,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.289079307201459,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.252944393801276,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.301124278334853,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.343281677301732,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.277034336068064,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.343281677301732,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.26498936493467,                       !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.554068672136129,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.903372835004558,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.704630811303555,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.361349134001823,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.210786994834397,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.150562139167426,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0963597690671529,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0662473412336676;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {c6387b9b-29d3-4bc0-9fa8-c618f534b76c}, !- Handle
-  residential range gas schedule weekend ruleset3, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  18,                                     !- Rule Order
-  {39ad32c9-1532-49ad-9224-66e17e591899}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  3,                                      !- Start Month
-  1,                                      !- Start Day
-  3,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {39ad32c9-1532-49ad-9224-66e17e591899}, !- Handle
-  residential range gas schedule weekend3, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0421573989668794,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0421573989668794,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0240899422667882,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0240899422667882,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0421573989668794,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0662473412336676,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.150562139167426,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.252944393801276,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.277034336068064,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.289079307201459,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.252944393801276,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.301124278334853,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.343281677301732,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.277034336068064,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.343281677301732,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.26498936493467,                       !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.554068672136129,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.903372835004558,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.704630811303555,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.361349134001823,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.210786994834397,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.150562139167426,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0963597690671529,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0662473412336676;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {7cbcdfba-b3c5-4c8c-9864-d41f94cdad1c}, !- Handle
-  residential range gas schedule weekday ruleset4, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  17,                                     !- Rule Order
-  {9c345fc6-2bd8-4d17-bbb2-f011fb3abcea}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  4,                                      !- Start Month
-  1,                                      !- Start Day
-  4,                                      !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {9c345fc6-2bd8-4d17-bbb2-f011fb3abcea}, !- Handle
-  residential range gas schedule weekday4, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0419872379216044,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0419872379216044,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0239927073837739,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0239927073837739,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0419872379216044,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0659799453053783,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.149954421148587,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.251923427529626,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.2759161349134,                        !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.287912488605287,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.251923427529626,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.299908842297174,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.341896080218778,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.2759161349134,                        !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.341896080218778,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.263919781221513,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.5518322698268,                        !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.899726526891522,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.701786690975387,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.359890610756609,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.209936189608022,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.149954421148587,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0959708295350957,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0659799453053783;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {b9add0f7-a252-4c18-8eea-2b0fe3ed5e9c}, !- Handle
-  residential range gas schedule weekend ruleset4, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  16,                                     !- Rule Order
-  {aff38f3b-fd71-4d53-a6e4-c5a2c6b3655b}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  4,                                      !- Start Month
-  1,                                      !- Start Day
-  4,                                      !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {aff38f3b-fd71-4d53-a6e4-c5a2c6b3655b}, !- Handle
-  residential range gas schedule weekend4, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0419872379216044,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0419872379216044,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0239927073837739,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0239927073837739,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0419872379216044,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0659799453053783,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.149954421148587,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.251923427529626,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.2759161349134,                        !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.287912488605287,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.251923427529626,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.299908842297174,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.341896080218778,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.2759161349134,                        !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.341896080218778,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.263919781221513,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.5518322698268,                        !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.899726526891522,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.701786690975387,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.359890610756609,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.209936189608022,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.149954421148587,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0959708295350957,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0659799453053783;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {e7a109a3-7cd2-4906-ad51-18c1b39a128a}, !- Handle
-  residential range gas schedule weekday ruleset5, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  15,                                     !- Rule Order
-  {92a63c99-866a-48b4-aecf-de7a77106dda}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  5,                                      !- Start Month
-  1,                                      !- Start Day
-  5,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {92a63c99-866a-48b4-aecf-de7a77106dda}, !- Handle
-  residential range gas schedule weekday5, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0421573989668794,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0421573989668794,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0240899422667882,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0240899422667882,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0421573989668794,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0662473412336676,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.150562139167426,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.252944393801276,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.277034336068064,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.289079307201459,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.252944393801276,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.301124278334853,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.343281677301732,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.277034336068064,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.343281677301732,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.26498936493467,                       !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.554068672136129,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.903372835004558,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.704630811303555,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.361349134001823,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.210786994834397,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.150562139167426,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0963597690671529,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0662473412336676;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {de351e10-e5f0-43b7-bea1-2df4c2f2bcd8}, !- Handle
-  residential range gas schedule weekend ruleset5, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  14,                                     !- Rule Order
-  {08898d1e-bcc2-4060-bc75-739283e8fefc}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  5,                                      !- Start Month
-  1,                                      !- Start Day
-  5,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {08898d1e-bcc2-4060-bc75-739283e8fefc}, !- Handle
-  residential range gas schedule weekend5, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0421573989668794,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0421573989668794,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0240899422667882,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0240899422667882,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0421573989668794,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0662473412336676,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.150562139167426,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.252944393801276,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.277034336068064,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.289079307201459,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.252944393801276,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.301124278334853,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.343281677301732,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.277034336068064,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.343281677301732,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.26498936493467,                       !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.554068672136129,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.903372835004558,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.704630811303555,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.361349134001823,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.210786994834397,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.150562139167426,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0963597690671529,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0662473412336676;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {abbe1c1b-38c9-4d91-9377-2ae6161dbe32}, !- Handle
-  residential range gas schedule weekday ruleset6, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  13,                                     !- Rule Order
-  {83e22672-aaed-4fbc-98cf-99f035d479de}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  6,                                      !- Start Month
-  1,                                      !- Start Day
-  6,                                      !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {83e22672-aaed-4fbc-98cf-99f035d479de}, !- Handle
-  residential range gas schedule weekday6, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0378608325736858,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0378608325736858,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0216347614706776,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0216347614706776,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0378608325736858,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0594955940443634,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.135217259191735,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.227164995442115,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.248799756912792,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.259617137648131,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.227164995442115,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.27043451838347,                       !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.308295350957156,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.248799756912792,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.308295350957156,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.237982376177454,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.497599513825585,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.81130355515041,                       !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.63281677301732,                       !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.324521422060164,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.189304162868429,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.135217259191735,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0865390458827104,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0594955940443634;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {9896d4a8-a789-4e83-a1f6-463875ccad03}, !- Handle
-  residential range gas schedule weekend ruleset6, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  12,                                     !- Rule Order
-  {59bd4298-24c6-47b0-a703-7f7e75c3df77}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  6,                                      !- Start Month
-  1,                                      !- Start Day
-  6,                                      !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {59bd4298-24c6-47b0-a703-7f7e75c3df77}, !- Handle
-  residential range gas schedule weekend6, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0378608325736858,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0378608325736858,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0216347614706776,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0216347614706776,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0378608325736858,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0594955940443634,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.135217259191735,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.227164995442115,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.248799756912792,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.259617137648131,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.227164995442115,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.27043451838347,                       !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.308295350957156,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.248799756912792,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.308295350957156,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.237982376177454,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.497599513825585,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.81130355515041,                       !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.63281677301732,                       !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.324521422060164,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.189304162868429,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.135217259191735,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0865390458827104,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0594955940443634;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {8053be02-ce4b-49d8-ba09-fe11de373f70}, !- Handle
-  residential range gas schedule weekday ruleset7, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
+  {61f25b5e-7ae4-4fdf-bf68-9d115185e9da}, !- Handle
+  residential range gas schedule allday ruleset1, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
   11,                                     !- Rule Order
-  {c2eea5c3-1bc6-41b4-855d-ed4eec127892}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
+  {ce44795b-2cd8-45c0-bba5-d1a95b699773}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
   Yes,                                    !- Apply Wednesday
   Yes,                                    !- Apply Thursday
   Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
+  Yes,                                    !- Apply Saturday
   ,                                       !- Apply Holiday
   DateRange,                              !- Date Specification Type
-  7,                                      !- Start Month
+  1,                                      !- Start Month
   1,                                      !- Start Day
-  7,                                      !- End Month
+  1,                                      !- End Month
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {c2eea5c3-1bc6-41b4-855d-ed4eec127892}, !- Handle
-  residential range gas schedule weekday7, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {ce44795b-2cd8-45c0-bba5-d1a95b699773}, !- Handle
+  residential range gas schedule allday1, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
-  0.0381160741415983,                     !- Value Until Time 1
+  0.0466666666666667,                     !- Value Until Time 1
   2,                                      !- Hour 2
   0,                                      !- Minute 2
-  0.0381160741415983,                     !- Value Until Time 2
+  0.0466666666666667,                     !- Value Until Time 2
   3,                                      !- Hour 3
   0,                                      !- Minute 3
-  0.021780613795199,                      !- Value Until Time 3
+  0.0266666666666667,                     !- Value Until Time 3
   4,                                      !- Hour 4
   0,                                      !- Minute 4
-  0.021780613795199,                      !- Value Until Time 4
+  0.0266666666666667,                     !- Value Until Time 4
   5,                                      !- Hour 5
   0,                                      !- Minute 5
-  0.0381160741415983,                     !- Value Until Time 5
+  0.0466666666666667,                     !- Value Until Time 5
   6,                                      !- Hour 6
   0,                                      !- Minute 6
-  0.0598966879367973,                     !- Value Until Time 6
+  0.0733333333333333,                     !- Value Until Time 6
   7,                                      !- Hour 7
   0,                                      !- Minute 7
-  0.136128836219994,                      !- Value Until Time 7
+  0.166666666666667,                      !- Value Until Time 7
   8,                                      !- Hour 8
   0,                                      !- Minute 8
-  0.22869644484959,                       !- Value Until Time 8
+  0.28,                                   !- Value Until Time 8
   9,                                      !- Hour 9
   0,                                      !- Minute 9
-  0.250477058644789,                      !- Value Until Time 9
+  0.306666666666667,                      !- Value Until Time 9
   10,                                     !- Hour 10
   0,                                      !- Minute 10
-  0.261367365542388,                      !- Value Until Time 10
+  0.32,                                   !- Value Until Time 10
   11,                                     !- Hour 11
   0,                                      !- Minute 11
-  0.22869644484959,                       !- Value Until Time 11
+  0.28,                                   !- Value Until Time 11
   12,                                     !- Hour 12
   0,                                      !- Minute 12
-  0.272257672439988,                      !- Value Until Time 12
+  0.333333333333333,                      !- Value Until Time 12
   13,                                     !- Hour 13
   0,                                      !- Minute 13
-  0.310373746581586,                      !- Value Until Time 13
+  0.38,                                   !- Value Until Time 13
   14,                                     !- Hour 14
   0,                                      !- Minute 14
-  0.250477058644789,                      !- Value Until Time 14
+  0.306666666666667,                      !- Value Until Time 14
   15,                                     !- Hour 15
   0,                                      !- Minute 15
-  0.310373746581586,                      !- Value Until Time 15
+  0.38,                                   !- Value Until Time 15
   16,                                     !- Hour 16
   0,                                      !- Minute 16
-  0.239586751747189,                      !- Value Until Time 16
+  0.293333333333333,                      !- Value Until Time 16
   17,                                     !- Hour 17
   0,                                      !- Minute 17
-  0.500954117289578,                      !- Value Until Time 17
+  0.613333333333333,                      !- Value Until Time 17
   18,                                     !- Hour 18
   0,                                      !- Minute 18
-  0.816773017319964,                      !- Value Until Time 18
+  1,                                      !- Value Until Time 18
   19,                                     !- Hour 19
   0,                                      !- Minute 19
-  0.637082953509572,                      !- Value Until Time 19
+  0.78,                                   !- Value Until Time 19
   20,                                     !- Hour 20
   0,                                      !- Minute 20
-  0.326709206927985,                      !- Value Until Time 20
+  0.4,                                    !- Value Until Time 20
   21,                                     !- Hour 21
   0,                                      !- Minute 21
-  0.190580370707992,                      !- Value Until Time 21
+  0.233333333333333,                      !- Value Until Time 21
   22,                                     !- Hour 22
   0,                                      !- Minute 22
-  0.136128836219994,                      !- Value Until Time 22
+  0.166666666666667,                      !- Value Until Time 22
   23,                                     !- Hour 23
   0,                                      !- Minute 23
-  0.0871224551807961,                     !- Value Until Time 23
+  0.106666666666667,                      !- Value Until Time 23
   24,                                     !- Hour 24
   0,                                      !- Minute 24
-  0.0598966879367973;                     !- Value Until Time 24
+  0.0733333333333333;                     !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {8849d70c-d2e6-43b5-b9ec-c4e940062cbb}, !- Handle
-  residential range gas schedule weekend ruleset7, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
+  {e26fe2b7-ddf4-414f-8e68-afe61154faed}, !- Handle
+  residential range gas schedule allday ruleset2, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
   10,                                     !- Rule Order
-  {a5209749-a2c6-4a68-8099-6574b7858227}, !- Day Schedule Name
+  {07abcd7f-df3e-48af-927d-a57edfb02aef}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  2,                                      !- Start Month
+  1,                                      !- Start Day
+  2,                                      !- End Month
+  28;                                     !- End Day
+
+OS:Schedule:Day,
+  {07abcd7f-df3e-48af-927d-a57edfb02aef}, !- Handle
+  residential range gas schedule allday2, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  1,                                      !- Hour 1
+  0,                                      !- Minute 1
+  0.0466666666666667,                     !- Value Until Time 1
+  2,                                      !- Hour 2
+  0,                                      !- Minute 2
+  0.0466666666666667,                     !- Value Until Time 2
+  3,                                      !- Hour 3
+  0,                                      !- Minute 3
+  0.0266666666666667,                     !- Value Until Time 3
+  4,                                      !- Hour 4
+  0,                                      !- Minute 4
+  0.0266666666666667,                     !- Value Until Time 4
+  5,                                      !- Hour 5
+  0,                                      !- Minute 5
+  0.0466666666666667,                     !- Value Until Time 5
+  6,                                      !- Hour 6
+  0,                                      !- Minute 6
+  0.0733333333333333,                     !- Value Until Time 6
+  7,                                      !- Hour 7
+  0,                                      !- Minute 7
+  0.166666666666667,                      !- Value Until Time 7
+  8,                                      !- Hour 8
+  0,                                      !- Minute 8
+  0.28,                                   !- Value Until Time 8
+  9,                                      !- Hour 9
+  0,                                      !- Minute 9
+  0.306666666666667,                      !- Value Until Time 9
+  10,                                     !- Hour 10
+  0,                                      !- Minute 10
+  0.32,                                   !- Value Until Time 10
+  11,                                     !- Hour 11
+  0,                                      !- Minute 11
+  0.28,                                   !- Value Until Time 11
+  12,                                     !- Hour 12
+  0,                                      !- Minute 12
+  0.333333333333333,                      !- Value Until Time 12
+  13,                                     !- Hour 13
+  0,                                      !- Minute 13
+  0.38,                                   !- Value Until Time 13
+  14,                                     !- Hour 14
+  0,                                      !- Minute 14
+  0.306666666666667,                      !- Value Until Time 14
+  15,                                     !- Hour 15
+  0,                                      !- Minute 15
+  0.38,                                   !- Value Until Time 15
+  16,                                     !- Hour 16
+  0,                                      !- Minute 16
+  0.293333333333333,                      !- Value Until Time 16
+  17,                                     !- Hour 17
+  0,                                      !- Minute 17
+  0.613333333333333,                      !- Value Until Time 17
+  18,                                     !- Hour 18
+  0,                                      !- Minute 18
+  1,                                      !- Value Until Time 18
+  19,                                     !- Hour 19
+  0,                                      !- Minute 19
+  0.78,                                   !- Value Until Time 19
+  20,                                     !- Hour 20
+  0,                                      !- Minute 20
+  0.4,                                    !- Value Until Time 20
+  21,                                     !- Hour 21
+  0,                                      !- Minute 21
+  0.233333333333333,                      !- Value Until Time 21
+  22,                                     !- Hour 22
+  0,                                      !- Minute 22
+  0.166666666666667,                      !- Value Until Time 22
+  23,                                     !- Hour 23
+  0,                                      !- Minute 23
+  0.106666666666667,                      !- Value Until Time 23
+  24,                                     !- Hour 24
+  0,                                      !- Minute 24
+  0.0733333333333333;                     !- Value Until Time 24
+
+OS:Schedule:Rule,
+  {57e99281-3ad3-448e-ada1-d29c27bdfa6b}, !- Handle
+  residential range gas schedule allday ruleset3, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
+  9,                                      !- Rule Order
+  {096aed90-fa4d-4a34-ac4c-bb142961ed3f}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  3,                                      !- Start Month
+  1,                                      !- Start Day
+  3,                                      !- End Month
+  31;                                     !- End Day
+
+OS:Schedule:Day,
+  {096aed90-fa4d-4a34-ac4c-bb142961ed3f}, !- Handle
+  residential range gas schedule allday3, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  1,                                      !- Hour 1
+  0,                                      !- Minute 1
+  0.0421573989668794,                     !- Value Until Time 1
+  2,                                      !- Hour 2
+  0,                                      !- Minute 2
+  0.0421573989668794,                     !- Value Until Time 2
+  3,                                      !- Hour 3
+  0,                                      !- Minute 3
+  0.0240899422667882,                     !- Value Until Time 3
+  4,                                      !- Hour 4
+  0,                                      !- Minute 4
+  0.0240899422667882,                     !- Value Until Time 4
+  5,                                      !- Hour 5
+  0,                                      !- Minute 5
+  0.0421573989668794,                     !- Value Until Time 5
+  6,                                      !- Hour 6
+  0,                                      !- Minute 6
+  0.0662473412336676,                     !- Value Until Time 6
+  7,                                      !- Hour 7
+  0,                                      !- Minute 7
+  0.150562139167426,                      !- Value Until Time 7
+  8,                                      !- Hour 8
+  0,                                      !- Minute 8
+  0.252944393801276,                      !- Value Until Time 8
+  9,                                      !- Hour 9
+  0,                                      !- Minute 9
+  0.277034336068064,                      !- Value Until Time 9
+  10,                                     !- Hour 10
+  0,                                      !- Minute 10
+  0.289079307201459,                      !- Value Until Time 10
+  11,                                     !- Hour 11
+  0,                                      !- Minute 11
+  0.252944393801276,                      !- Value Until Time 11
+  12,                                     !- Hour 12
+  0,                                      !- Minute 12
+  0.301124278334853,                      !- Value Until Time 12
+  13,                                     !- Hour 13
+  0,                                      !- Minute 13
+  0.343281677301732,                      !- Value Until Time 13
+  14,                                     !- Hour 14
+  0,                                      !- Minute 14
+  0.277034336068064,                      !- Value Until Time 14
+  15,                                     !- Hour 15
+  0,                                      !- Minute 15
+  0.343281677301732,                      !- Value Until Time 15
+  16,                                     !- Hour 16
+  0,                                      !- Minute 16
+  0.26498936493467,                       !- Value Until Time 16
+  17,                                     !- Hour 17
+  0,                                      !- Minute 17
+  0.554068672136129,                      !- Value Until Time 17
+  18,                                     !- Hour 18
+  0,                                      !- Minute 18
+  0.903372835004558,                      !- Value Until Time 18
+  19,                                     !- Hour 19
+  0,                                      !- Minute 19
+  0.704630811303555,                      !- Value Until Time 19
+  20,                                     !- Hour 20
+  0,                                      !- Minute 20
+  0.361349134001823,                      !- Value Until Time 20
+  21,                                     !- Hour 21
+  0,                                      !- Minute 21
+  0.210786994834397,                      !- Value Until Time 21
+  22,                                     !- Hour 22
+  0,                                      !- Minute 22
+  0.150562139167426,                      !- Value Until Time 22
+  23,                                     !- Hour 23
+  0,                                      !- Minute 23
+  0.0963597690671529,                     !- Value Until Time 23
+  24,                                     !- Hour 24
+  0,                                      !- Minute 24
+  0.0662473412336676;                     !- Value Until Time 24
+
+OS:Schedule:Rule,
+  {9d86797b-66f8-4c7b-aa6d-430020313351}, !- Handle
+  residential range gas schedule allday ruleset4, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
+  8,                                      !- Rule Order
+  {74a3f28a-ca7a-4c83-b3b0-a34daefcae23}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  4,                                      !- Start Month
+  1,                                      !- Start Day
+  4,                                      !- End Month
+  30;                                     !- End Day
+
+OS:Schedule:Day,
+  {74a3f28a-ca7a-4c83-b3b0-a34daefcae23}, !- Handle
+  residential range gas schedule allday4, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  1,                                      !- Hour 1
+  0,                                      !- Minute 1
+  0.0419872379216044,                     !- Value Until Time 1
+  2,                                      !- Hour 2
+  0,                                      !- Minute 2
+  0.0419872379216044,                     !- Value Until Time 2
+  3,                                      !- Hour 3
+  0,                                      !- Minute 3
+  0.0239927073837739,                     !- Value Until Time 3
+  4,                                      !- Hour 4
+  0,                                      !- Minute 4
+  0.0239927073837739,                     !- Value Until Time 4
+  5,                                      !- Hour 5
+  0,                                      !- Minute 5
+  0.0419872379216044,                     !- Value Until Time 5
+  6,                                      !- Hour 6
+  0,                                      !- Minute 6
+  0.0659799453053783,                     !- Value Until Time 6
+  7,                                      !- Hour 7
+  0,                                      !- Minute 7
+  0.149954421148587,                      !- Value Until Time 7
+  8,                                      !- Hour 8
+  0,                                      !- Minute 8
+  0.251923427529626,                      !- Value Until Time 8
+  9,                                      !- Hour 9
+  0,                                      !- Minute 9
+  0.2759161349134,                        !- Value Until Time 9
+  10,                                     !- Hour 10
+  0,                                      !- Minute 10
+  0.287912488605287,                      !- Value Until Time 10
+  11,                                     !- Hour 11
+  0,                                      !- Minute 11
+  0.251923427529626,                      !- Value Until Time 11
+  12,                                     !- Hour 12
+  0,                                      !- Minute 12
+  0.299908842297174,                      !- Value Until Time 12
+  13,                                     !- Hour 13
+  0,                                      !- Minute 13
+  0.341896080218778,                      !- Value Until Time 13
+  14,                                     !- Hour 14
+  0,                                      !- Minute 14
+  0.2759161349134,                        !- Value Until Time 14
+  15,                                     !- Hour 15
+  0,                                      !- Minute 15
+  0.341896080218778,                      !- Value Until Time 15
+  16,                                     !- Hour 16
+  0,                                      !- Minute 16
+  0.263919781221513,                      !- Value Until Time 16
+  17,                                     !- Hour 17
+  0,                                      !- Minute 17
+  0.5518322698268,                        !- Value Until Time 17
+  18,                                     !- Hour 18
+  0,                                      !- Minute 18
+  0.899726526891522,                      !- Value Until Time 18
+  19,                                     !- Hour 19
+  0,                                      !- Minute 19
+  0.701786690975387,                      !- Value Until Time 19
+  20,                                     !- Hour 20
+  0,                                      !- Minute 20
+  0.359890610756609,                      !- Value Until Time 20
+  21,                                     !- Hour 21
+  0,                                      !- Minute 21
+  0.209936189608022,                      !- Value Until Time 21
+  22,                                     !- Hour 22
+  0,                                      !- Minute 22
+  0.149954421148587,                      !- Value Until Time 22
+  23,                                     !- Hour 23
+  0,                                      !- Minute 23
+  0.0959708295350957,                     !- Value Until Time 23
+  24,                                     !- Hour 24
+  0,                                      !- Minute 24
+  0.0659799453053783;                     !- Value Until Time 24
+
+OS:Schedule:Rule,
+  {1f7f9f57-121c-4573-a5d0-4aee6b1792b3}, !- Handle
+  residential range gas schedule allday ruleset5, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
+  7,                                      !- Rule Order
+  {acd47306-7d1b-4d00-892e-6679a93ca858}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  5,                                      !- Start Month
+  1,                                      !- Start Day
+  5,                                      !- End Month
+  31;                                     !- End Day
+
+OS:Schedule:Day,
+  {acd47306-7d1b-4d00-892e-6679a93ca858}, !- Handle
+  residential range gas schedule allday5, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  1,                                      !- Hour 1
+  0,                                      !- Minute 1
+  0.0421573989668794,                     !- Value Until Time 1
+  2,                                      !- Hour 2
+  0,                                      !- Minute 2
+  0.0421573989668794,                     !- Value Until Time 2
+  3,                                      !- Hour 3
+  0,                                      !- Minute 3
+  0.0240899422667882,                     !- Value Until Time 3
+  4,                                      !- Hour 4
+  0,                                      !- Minute 4
+  0.0240899422667882,                     !- Value Until Time 4
+  5,                                      !- Hour 5
+  0,                                      !- Minute 5
+  0.0421573989668794,                     !- Value Until Time 5
+  6,                                      !- Hour 6
+  0,                                      !- Minute 6
+  0.0662473412336676,                     !- Value Until Time 6
+  7,                                      !- Hour 7
+  0,                                      !- Minute 7
+  0.150562139167426,                      !- Value Until Time 7
+  8,                                      !- Hour 8
+  0,                                      !- Minute 8
+  0.252944393801276,                      !- Value Until Time 8
+  9,                                      !- Hour 9
+  0,                                      !- Minute 9
+  0.277034336068064,                      !- Value Until Time 9
+  10,                                     !- Hour 10
+  0,                                      !- Minute 10
+  0.289079307201459,                      !- Value Until Time 10
+  11,                                     !- Hour 11
+  0,                                      !- Minute 11
+  0.252944393801276,                      !- Value Until Time 11
+  12,                                     !- Hour 12
+  0,                                      !- Minute 12
+  0.301124278334853,                      !- Value Until Time 12
+  13,                                     !- Hour 13
+  0,                                      !- Minute 13
+  0.343281677301732,                      !- Value Until Time 13
+  14,                                     !- Hour 14
+  0,                                      !- Minute 14
+  0.277034336068064,                      !- Value Until Time 14
+  15,                                     !- Hour 15
+  0,                                      !- Minute 15
+  0.343281677301732,                      !- Value Until Time 15
+  16,                                     !- Hour 16
+  0,                                      !- Minute 16
+  0.26498936493467,                       !- Value Until Time 16
+  17,                                     !- Hour 17
+  0,                                      !- Minute 17
+  0.554068672136129,                      !- Value Until Time 17
+  18,                                     !- Hour 18
+  0,                                      !- Minute 18
+  0.903372835004558,                      !- Value Until Time 18
+  19,                                     !- Hour 19
+  0,                                      !- Minute 19
+  0.704630811303555,                      !- Value Until Time 19
+  20,                                     !- Hour 20
+  0,                                      !- Minute 20
+  0.361349134001823,                      !- Value Until Time 20
+  21,                                     !- Hour 21
+  0,                                      !- Minute 21
+  0.210786994834397,                      !- Value Until Time 21
+  22,                                     !- Hour 22
+  0,                                      !- Minute 22
+  0.150562139167426,                      !- Value Until Time 22
+  23,                                     !- Hour 23
+  0,                                      !- Minute 23
+  0.0963597690671529,                     !- Value Until Time 23
+  24,                                     !- Hour 24
+  0,                                      !- Minute 24
+  0.0662473412336676;                     !- Value Until Time 24
+
+OS:Schedule:Rule,
+  {020cce98-8e56-4ddb-a3f6-57103953bfbe}, !- Handle
+  residential range gas schedule allday ruleset6, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
+  6,                                      !- Rule Order
+  {785f9df7-369f-46d0-9e49-19423546f6d2}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  6,                                      !- Start Month
+  1,                                      !- Start Day
+  6,                                      !- End Month
+  30;                                     !- End Day
+
+OS:Schedule:Day,
+  {785f9df7-369f-46d0-9e49-19423546f6d2}, !- Handle
+  residential range gas schedule allday6, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  1,                                      !- Hour 1
+  0,                                      !- Minute 1
+  0.0378608325736858,                     !- Value Until Time 1
+  2,                                      !- Hour 2
+  0,                                      !- Minute 2
+  0.0378608325736858,                     !- Value Until Time 2
+  3,                                      !- Hour 3
+  0,                                      !- Minute 3
+  0.0216347614706776,                     !- Value Until Time 3
+  4,                                      !- Hour 4
+  0,                                      !- Minute 4
+  0.0216347614706776,                     !- Value Until Time 4
+  5,                                      !- Hour 5
+  0,                                      !- Minute 5
+  0.0378608325736858,                     !- Value Until Time 5
+  6,                                      !- Hour 6
+  0,                                      !- Minute 6
+  0.0594955940443634,                     !- Value Until Time 6
+  7,                                      !- Hour 7
+  0,                                      !- Minute 7
+  0.135217259191735,                      !- Value Until Time 7
+  8,                                      !- Hour 8
+  0,                                      !- Minute 8
+  0.227164995442115,                      !- Value Until Time 8
+  9,                                      !- Hour 9
+  0,                                      !- Minute 9
+  0.248799756912792,                      !- Value Until Time 9
+  10,                                     !- Hour 10
+  0,                                      !- Minute 10
+  0.259617137648131,                      !- Value Until Time 10
+  11,                                     !- Hour 11
+  0,                                      !- Minute 11
+  0.227164995442115,                      !- Value Until Time 11
+  12,                                     !- Hour 12
+  0,                                      !- Minute 12
+  0.27043451838347,                       !- Value Until Time 12
+  13,                                     !- Hour 13
+  0,                                      !- Minute 13
+  0.308295350957156,                      !- Value Until Time 13
+  14,                                     !- Hour 14
+  0,                                      !- Minute 14
+  0.248799756912792,                      !- Value Until Time 14
+  15,                                     !- Hour 15
+  0,                                      !- Minute 15
+  0.308295350957156,                      !- Value Until Time 15
+  16,                                     !- Hour 16
+  0,                                      !- Minute 16
+  0.237982376177454,                      !- Value Until Time 16
+  17,                                     !- Hour 17
+  0,                                      !- Minute 17
+  0.497599513825585,                      !- Value Until Time 17
+  18,                                     !- Hour 18
+  0,                                      !- Minute 18
+  0.81130355515041,                       !- Value Until Time 18
+  19,                                     !- Hour 19
+  0,                                      !- Minute 19
+  0.63281677301732,                       !- Value Until Time 19
+  20,                                     !- Hour 20
+  0,                                      !- Minute 20
+  0.324521422060164,                      !- Value Until Time 20
+  21,                                     !- Hour 21
+  0,                                      !- Minute 21
+  0.189304162868429,                      !- Value Until Time 21
+  22,                                     !- Hour 22
+  0,                                      !- Minute 22
+  0.135217259191735,                      !- Value Until Time 22
+  23,                                     !- Hour 23
+  0,                                      !- Minute 23
+  0.0865390458827104,                     !- Value Until Time 23
+  24,                                     !- Hour 24
+  0,                                      !- Minute 24
+  0.0594955940443634;                     !- Value Until Time 24
+
+OS:Schedule:Rule,
+  {e4e7fd4e-e421-4eb8-852f-d28dcbf9501a}, !- Handle
+  residential range gas schedule allday ruleset7, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
+  5,                                      !- Rule Order
+  {a957130f-1968-4237-9cb0-b5e7f40d24a1}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
   Yes,                                    !- Apply Saturday
   ,                                       !- Apply Holiday
   DateRange,                              !- Date Specification Type
@@ -2468,9 +1775,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {a5209749-a2c6-4a68-8099-6574b7858227}, !- Handle
-  residential range gas schedule weekend7, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {a957130f-1968-4237-9cb0-b5e7f40d24a1}, !- Handle
+  residential range gas schedule allday7, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2546,507 +1853,213 @@ OS:Schedule:Day,
   0.0598966879367973;                     !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {69b20e8d-ca4f-41d5-b629-ee95c2fce6c1}, !- Handle
-  residential range gas schedule weekday ruleset8, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  9,                                      !- Rule Order
-  {6438b43d-462a-4e7b-9a1d-b1480f57ed86}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  8,                                      !- Start Month
-  1,                                      !- Start Day
-  8,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {6438b43d-462a-4e7b-9a1d-b1480f57ed86}, !- Handle
-  residential range gas schedule weekday8, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0381160741415983,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0381160741415983,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.021780613795199,                      !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.021780613795199,                      !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0381160741415983,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0598966879367973,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.136128836219994,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.22869644484959,                       !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.250477058644789,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.261367365542388,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.22869644484959,                       !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.272257672439988,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.310373746581586,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.250477058644789,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.310373746581586,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.239586751747189,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.500954117289578,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.816773017319964,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.637082953509572,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.326709206927985,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.190580370707992,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.136128836219994,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0871224551807961,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0598966879367973;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {43a74758-e742-450d-9220-ec1b1612800b}, !- Handle
-  residential range gas schedule weekend ruleset8, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  8,                                      !- Rule Order
-  {2ffbaaaf-6b2f-4f5a-9a7e-00e8294902a6}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  8,                                      !- Start Month
-  1,                                      !- Start Day
-  8,                                      !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {2ffbaaaf-6b2f-4f5a-9a7e-00e8294902a6}, !- Handle
-  residential range gas schedule weekend8, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0381160741415983,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0381160741415983,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.021780613795199,                      !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.021780613795199,                      !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0381160741415983,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0598966879367973,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.136128836219994,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.22869644484959,                       !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.250477058644789,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.261367365542388,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.22869644484959,                       !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.272257672439988,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.310373746581586,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.250477058644789,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.310373746581586,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.239586751747189,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.500954117289578,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.816773017319964,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.637082953509572,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.326709206927985,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.190580370707992,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.136128836219994,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0871224551807961,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0598966879367973;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {8b3872c5-9e69-416d-bcba-5ba082a064c8}, !- Handle
-  residential range gas schedule weekday ruleset9, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  7,                                      !- Rule Order
-  {ee867388-311c-4d64-a27c-347f5e60d635}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  9,                                      !- Start Month
-  1,                                      !- Start Day
-  9,                                      !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {ee867388-311c-4d64-a27c-347f5e60d635}, !- Handle
-  residential range gas schedule weekday9, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0378608325736858,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0378608325736858,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0216347614706776,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0216347614706776,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0378608325736858,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0594955940443634,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.135217259191735,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.227164995442115,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.248799756912792,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.259617137648131,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.227164995442115,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.27043451838347,                       !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.308295350957156,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.248799756912792,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.308295350957156,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.237982376177454,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.497599513825585,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.81130355515041,                       !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.63281677301732,                       !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.324521422060164,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.189304162868429,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.135217259191735,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0865390458827104,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0594955940443634;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {a668fd1a-502b-4b73-ba4c-8f36cbf90018}, !- Handle
-  residential range gas schedule weekend ruleset9, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  6,                                      !- Rule Order
-  {3d4cd291-1eb9-4cf3-8f42-aedcc4a81035}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  9,                                      !- Start Month
-  1,                                      !- Start Day
-  9,                                      !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {3d4cd291-1eb9-4cf3-8f42-aedcc4a81035}, !- Handle
-  residential range gas schedule weekend9, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0378608325736858,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0378608325736858,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0216347614706776,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0216347614706776,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0378608325736858,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0594955940443634,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.135217259191735,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.227164995442115,                      !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.248799756912792,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.259617137648131,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.227164995442115,                      !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.27043451838347,                       !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.308295350957156,                      !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.248799756912792,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.308295350957156,                      !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.237982376177454,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.497599513825585,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.81130355515041,                       !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.63281677301732,                       !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.324521422060164,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.189304162868429,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.135217259191735,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.0865390458827104,                     !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0594955940443634;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {e26b55ea-6003-4dd5-9fd0-3ff90a1b838e}, !- Handle
-  residential range gas schedule weekday ruleset10, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  5,                                      !- Rule Order
-  {f5c419eb-73da-4e17-9849-affeac4ddb14}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  10,                                     !- Start Month
-  1,                                      !- Start Day
-  10,                                     !- End Month
-  31;                                     !- End Day
-
-OS:Schedule:Day,
-  {f5c419eb-73da-4e17-9849-affeac4ddb14}, !- Handle
-  residential range gas schedule weekday10, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0461561835308417,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0461561835308417,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0263749620176238,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0263749620176238,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0461561835308417,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0725311455484655,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.164843512610149,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.27693710118505,                       !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.303312063202674,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.316499544211486,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.27693710118505,                       !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.329687025220298,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.37584320875114,                       !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.303312063202674,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.37584320875114,                       !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.290124582193862,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.606624126405348,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.989061075660893,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.771467639015497,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.395624430264357,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.230780917654208,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.164843512610149,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.105499848070495,                      !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0725311455484655;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {22c6d701-ca88-4441-9e78-ca0d18d584d8}, !- Handle
-  residential range gas schedule weekend ruleset10, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
+  {5bf40b2b-b6df-4007-a6ba-abf52d4ee6d2}, !- Handle
+  residential range gas schedule allday ruleset8, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
   4,                                      !- Rule Order
-  {439410cb-fa71-4a32-8b09-515b1274014a}, !- Day Schedule Name
+  {caa5adc9-abde-4016-970b-02c735b24573}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  8,                                      !- Start Month
+  1,                                      !- Start Day
+  8,                                      !- End Month
+  31;                                     !- End Day
+
+OS:Schedule:Day,
+  {caa5adc9-abde-4016-970b-02c735b24573}, !- Handle
+  residential range gas schedule allday8, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  1,                                      !- Hour 1
+  0,                                      !- Minute 1
+  0.0381160741415983,                     !- Value Until Time 1
+  2,                                      !- Hour 2
+  0,                                      !- Minute 2
+  0.0381160741415983,                     !- Value Until Time 2
+  3,                                      !- Hour 3
+  0,                                      !- Minute 3
+  0.021780613795199,                      !- Value Until Time 3
+  4,                                      !- Hour 4
+  0,                                      !- Minute 4
+  0.021780613795199,                      !- Value Until Time 4
+  5,                                      !- Hour 5
+  0,                                      !- Minute 5
+  0.0381160741415983,                     !- Value Until Time 5
+  6,                                      !- Hour 6
+  0,                                      !- Minute 6
+  0.0598966879367973,                     !- Value Until Time 6
+  7,                                      !- Hour 7
+  0,                                      !- Minute 7
+  0.136128836219994,                      !- Value Until Time 7
+  8,                                      !- Hour 8
+  0,                                      !- Minute 8
+  0.22869644484959,                       !- Value Until Time 8
+  9,                                      !- Hour 9
+  0,                                      !- Minute 9
+  0.250477058644789,                      !- Value Until Time 9
+  10,                                     !- Hour 10
+  0,                                      !- Minute 10
+  0.261367365542388,                      !- Value Until Time 10
+  11,                                     !- Hour 11
+  0,                                      !- Minute 11
+  0.22869644484959,                       !- Value Until Time 11
+  12,                                     !- Hour 12
+  0,                                      !- Minute 12
+  0.272257672439988,                      !- Value Until Time 12
+  13,                                     !- Hour 13
+  0,                                      !- Minute 13
+  0.310373746581586,                      !- Value Until Time 13
+  14,                                     !- Hour 14
+  0,                                      !- Minute 14
+  0.250477058644789,                      !- Value Until Time 14
+  15,                                     !- Hour 15
+  0,                                      !- Minute 15
+  0.310373746581586,                      !- Value Until Time 15
+  16,                                     !- Hour 16
+  0,                                      !- Minute 16
+  0.239586751747189,                      !- Value Until Time 16
+  17,                                     !- Hour 17
+  0,                                      !- Minute 17
+  0.500954117289578,                      !- Value Until Time 17
+  18,                                     !- Hour 18
+  0,                                      !- Minute 18
+  0.816773017319964,                      !- Value Until Time 18
+  19,                                     !- Hour 19
+  0,                                      !- Minute 19
+  0.637082953509572,                      !- Value Until Time 19
+  20,                                     !- Hour 20
+  0,                                      !- Minute 20
+  0.326709206927985,                      !- Value Until Time 20
+  21,                                     !- Hour 21
+  0,                                      !- Minute 21
+  0.190580370707992,                      !- Value Until Time 21
+  22,                                     !- Hour 22
+  0,                                      !- Minute 22
+  0.136128836219994,                      !- Value Until Time 22
+  23,                                     !- Hour 23
+  0,                                      !- Minute 23
+  0.0871224551807961,                     !- Value Until Time 23
+  24,                                     !- Hour 24
+  0,                                      !- Minute 24
+  0.0598966879367973;                     !- Value Until Time 24
+
+OS:Schedule:Rule,
+  {3460ad87-e452-46d6-b381-506d3a7e6298}, !- Handle
+  residential range gas schedule allday ruleset9, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
+  3,                                      !- Rule Order
+  {d1bd5cb3-86d8-4a6a-9078-bd14c4c60c4d}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
+  Yes,                                    !- Apply Saturday
+  ,                                       !- Apply Holiday
+  DateRange,                              !- Date Specification Type
+  9,                                      !- Start Month
+  1,                                      !- Start Day
+  9,                                      !- End Month
+  30;                                     !- End Day
+
+OS:Schedule:Day,
+  {d1bd5cb3-86d8-4a6a-9078-bd14c4c60c4d}, !- Handle
+  residential range gas schedule allday9, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
+  ,                                       !- Interpolate to Timestep
+  1,                                      !- Hour 1
+  0,                                      !- Minute 1
+  0.0378608325736858,                     !- Value Until Time 1
+  2,                                      !- Hour 2
+  0,                                      !- Minute 2
+  0.0378608325736858,                     !- Value Until Time 2
+  3,                                      !- Hour 3
+  0,                                      !- Minute 3
+  0.0216347614706776,                     !- Value Until Time 3
+  4,                                      !- Hour 4
+  0,                                      !- Minute 4
+  0.0216347614706776,                     !- Value Until Time 4
+  5,                                      !- Hour 5
+  0,                                      !- Minute 5
+  0.0378608325736858,                     !- Value Until Time 5
+  6,                                      !- Hour 6
+  0,                                      !- Minute 6
+  0.0594955940443634,                     !- Value Until Time 6
+  7,                                      !- Hour 7
+  0,                                      !- Minute 7
+  0.135217259191735,                      !- Value Until Time 7
+  8,                                      !- Hour 8
+  0,                                      !- Minute 8
+  0.227164995442115,                      !- Value Until Time 8
+  9,                                      !- Hour 9
+  0,                                      !- Minute 9
+  0.248799756912792,                      !- Value Until Time 9
+  10,                                     !- Hour 10
+  0,                                      !- Minute 10
+  0.259617137648131,                      !- Value Until Time 10
+  11,                                     !- Hour 11
+  0,                                      !- Minute 11
+  0.227164995442115,                      !- Value Until Time 11
+  12,                                     !- Hour 12
+  0,                                      !- Minute 12
+  0.27043451838347,                       !- Value Until Time 12
+  13,                                     !- Hour 13
+  0,                                      !- Minute 13
+  0.308295350957156,                      !- Value Until Time 13
+  14,                                     !- Hour 14
+  0,                                      !- Minute 14
+  0.248799756912792,                      !- Value Until Time 14
+  15,                                     !- Hour 15
+  0,                                      !- Minute 15
+  0.308295350957156,                      !- Value Until Time 15
+  16,                                     !- Hour 16
+  0,                                      !- Minute 16
+  0.237982376177454,                      !- Value Until Time 16
+  17,                                     !- Hour 17
+  0,                                      !- Minute 17
+  0.497599513825585,                      !- Value Until Time 17
+  18,                                     !- Hour 18
+  0,                                      !- Minute 18
+  0.81130355515041,                       !- Value Until Time 18
+  19,                                     !- Hour 19
+  0,                                      !- Minute 19
+  0.63281677301732,                       !- Value Until Time 19
+  20,                                     !- Hour 20
+  0,                                      !- Minute 20
+  0.324521422060164,                      !- Value Until Time 20
+  21,                                     !- Hour 21
+  0,                                      !- Minute 21
+  0.189304162868429,                      !- Value Until Time 21
+  22,                                     !- Hour 22
+  0,                                      !- Minute 22
+  0.135217259191735,                      !- Value Until Time 22
+  23,                                     !- Hour 23
+  0,                                      !- Minute 23
+  0.0865390458827104,                     !- Value Until Time 23
+  24,                                     !- Hour 24
+  0,                                      !- Minute 24
+  0.0594955940443634;                     !- Value Until Time 24
+
+OS:Schedule:Rule,
+  {dcd36d47-8b10-4de3-8c94-d17d4a1477ad}, !- Handle
+  residential range gas schedule allday ruleset10, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
+  2,                                      !- Rule Order
+  {f3fc899b-279c-46d5-b49b-a9963f9c6a8b}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
   Yes,                                    !- Apply Saturday
   ,                                       !- Apply Holiday
   DateRange,                              !- Date Specification Type
@@ -3056,9 +2069,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {439410cb-fa71-4a32-8b09-515b1274014a}, !- Handle
-  residential range gas schedule weekend10, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {f3fc899b-279c-46d5-b49b-a9963f9c6a8b}, !- Handle
+  residential range gas schedule allday10, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3134,311 +2147,115 @@ OS:Schedule:Day,
   0.0725311455484655;                     !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {b12182be-b4cb-4163-ab5d-ff1327788d73}, !- Handle
-  residential range gas schedule weekday ruleset11, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  3,                                      !- Rule Order
-  {74f415c8-fdfb-4ed1-a1f1-ff878e779f30}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
-  Yes,                                    !- Apply Monday
-  Yes,                                    !- Apply Tuesday
-  Yes,                                    !- Apply Wednesday
-  Yes,                                    !- Apply Thursday
-  Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  11,                                     !- Start Month
-  1,                                      !- Start Day
-  11,                                     !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {74f415c8-fdfb-4ed1-a1f1-ff878e779f30}, !- Handle
-  residential range gas schedule weekday11, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0461561835308417,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0461561835308417,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0263749620176238,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0263749620176238,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0461561835308417,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0725311455484655,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.164843512610149,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.27693710118505,                       !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.303312063202674,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.316499544211486,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.27693710118505,                       !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.329687025220298,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.37584320875114,                       !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.303312063202674,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.37584320875114,                       !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.290124582193862,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.606624126405348,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.989061075660893,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.771467639015497,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.395624430264357,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.230780917654208,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.164843512610149,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.105499848070495,                      !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0725311455484655;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {8cff435d-eca7-41f0-bc07-c6e8bc1aa194}, !- Handle
-  residential range gas schedule weekend ruleset11, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
-  2,                                      !- Rule Order
-  {d26b6331-0361-4edc-882d-1c15e71c2fc0}, !- Day Schedule Name
-  Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
-  Yes,                                    !- Apply Saturday
-  ,                                       !- Apply Holiday
-  DateRange,                              !- Date Specification Type
-  11,                                     !- Start Month
-  1,                                      !- Start Day
-  11,                                     !- End Month
-  30;                                     !- End Day
-
-OS:Schedule:Day,
-  {d26b6331-0361-4edc-882d-1c15e71c2fc0}, !- Handle
-  residential range gas schedule weekend11, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  ,                                       !- Interpolate to Timestep
-  1,                                      !- Hour 1
-  0,                                      !- Minute 1
-  0.0461561835308417,                     !- Value Until Time 1
-  2,                                      !- Hour 2
-  0,                                      !- Minute 2
-  0.0461561835308417,                     !- Value Until Time 2
-  3,                                      !- Hour 3
-  0,                                      !- Minute 3
-  0.0263749620176238,                     !- Value Until Time 3
-  4,                                      !- Hour 4
-  0,                                      !- Minute 4
-  0.0263749620176238,                     !- Value Until Time 4
-  5,                                      !- Hour 5
-  0,                                      !- Minute 5
-  0.0461561835308417,                     !- Value Until Time 5
-  6,                                      !- Hour 6
-  0,                                      !- Minute 6
-  0.0725311455484655,                     !- Value Until Time 6
-  7,                                      !- Hour 7
-  0,                                      !- Minute 7
-  0.164843512610149,                      !- Value Until Time 7
-  8,                                      !- Hour 8
-  0,                                      !- Minute 8
-  0.27693710118505,                       !- Value Until Time 8
-  9,                                      !- Hour 9
-  0,                                      !- Minute 9
-  0.303312063202674,                      !- Value Until Time 9
-  10,                                     !- Hour 10
-  0,                                      !- Minute 10
-  0.316499544211486,                      !- Value Until Time 10
-  11,                                     !- Hour 11
-  0,                                      !- Minute 11
-  0.27693710118505,                       !- Value Until Time 11
-  12,                                     !- Hour 12
-  0,                                      !- Minute 12
-  0.329687025220298,                      !- Value Until Time 12
-  13,                                     !- Hour 13
-  0,                                      !- Minute 13
-  0.37584320875114,                       !- Value Until Time 13
-  14,                                     !- Hour 14
-  0,                                      !- Minute 14
-  0.303312063202674,                      !- Value Until Time 14
-  15,                                     !- Hour 15
-  0,                                      !- Minute 15
-  0.37584320875114,                       !- Value Until Time 15
-  16,                                     !- Hour 16
-  0,                                      !- Minute 16
-  0.290124582193862,                      !- Value Until Time 16
-  17,                                     !- Hour 17
-  0,                                      !- Minute 17
-  0.606624126405348,                      !- Value Until Time 17
-  18,                                     !- Hour 18
-  0,                                      !- Minute 18
-  0.989061075660893,                      !- Value Until Time 18
-  19,                                     !- Hour 19
-  0,                                      !- Minute 19
-  0.771467639015497,                      !- Value Until Time 19
-  20,                                     !- Hour 20
-  0,                                      !- Minute 20
-  0.395624430264357,                      !- Value Until Time 20
-  21,                                     !- Hour 21
-  0,                                      !- Minute 21
-  0.230780917654208,                      !- Value Until Time 21
-  22,                                     !- Hour 22
-  0,                                      !- Minute 22
-  0.164843512610149,                      !- Value Until Time 22
-  23,                                     !- Hour 23
-  0,                                      !- Minute 23
-  0.105499848070495,                      !- Value Until Time 23
-  24,                                     !- Hour 24
-  0,                                      !- Minute 24
-  0.0725311455484655;                     !- Value Until Time 24
-
-OS:Schedule:Rule,
-  {8499e240-7111-44f5-8466-e2ca76923979}, !- Handle
-  residential range gas schedule weekday ruleset12, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
+  {02de3b92-addb-4772-895f-1696533b3231}, !- Handle
+  residential range gas schedule allday ruleset11, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
   1,                                      !- Rule Order
-  {430711c2-d299-441d-8120-038ff66f82ef}, !- Day Schedule Name
-  No,                                     !- Apply Sunday
+  {7ecb0c3a-811d-4c5c-8686-10b417032f02}, !- Day Schedule Name
+  Yes,                                    !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
   Yes,                                    !- Apply Wednesday
   Yes,                                    !- Apply Thursday
   Yes,                                    !- Apply Friday
-  No,                                     !- Apply Saturday
+  Yes,                                    !- Apply Saturday
   ,                                       !- Apply Holiday
   DateRange,                              !- Date Specification Type
-  12,                                     !- Start Month
+  11,                                     !- Start Month
   1,                                      !- Start Day
-  12,                                     !- End Month
-  31;                                     !- End Day
+  11,                                     !- End Month
+  30;                                     !- End Day
 
 OS:Schedule:Day,
-  {430711c2-d299-441d-8120-038ff66f82ef}, !- Handle
-  residential range gas schedule weekday12, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {7ecb0c3a-811d-4c5c-8686-10b417032f02}, !- Handle
+  residential range gas schedule allday11, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
-  0.0466666666666667,                     !- Value Until Time 1
+  0.0461561835308417,                     !- Value Until Time 1
   2,                                      !- Hour 2
   0,                                      !- Minute 2
-  0.0466666666666667,                     !- Value Until Time 2
+  0.0461561835308417,                     !- Value Until Time 2
   3,                                      !- Hour 3
   0,                                      !- Minute 3
-  0.0266666666666667,                     !- Value Until Time 3
+  0.0263749620176238,                     !- Value Until Time 3
   4,                                      !- Hour 4
   0,                                      !- Minute 4
-  0.0266666666666667,                     !- Value Until Time 4
+  0.0263749620176238,                     !- Value Until Time 4
   5,                                      !- Hour 5
   0,                                      !- Minute 5
-  0.0466666666666667,                     !- Value Until Time 5
+  0.0461561835308417,                     !- Value Until Time 5
   6,                                      !- Hour 6
   0,                                      !- Minute 6
-  0.0733333333333333,                     !- Value Until Time 6
+  0.0725311455484655,                     !- Value Until Time 6
   7,                                      !- Hour 7
   0,                                      !- Minute 7
-  0.166666666666667,                      !- Value Until Time 7
+  0.164843512610149,                      !- Value Until Time 7
   8,                                      !- Hour 8
   0,                                      !- Minute 8
-  0.28,                                   !- Value Until Time 8
+  0.27693710118505,                       !- Value Until Time 8
   9,                                      !- Hour 9
   0,                                      !- Minute 9
-  0.306666666666667,                      !- Value Until Time 9
+  0.303312063202674,                      !- Value Until Time 9
   10,                                     !- Hour 10
   0,                                      !- Minute 10
-  0.32,                                   !- Value Until Time 10
+  0.316499544211486,                      !- Value Until Time 10
   11,                                     !- Hour 11
   0,                                      !- Minute 11
-  0.28,                                   !- Value Until Time 11
+  0.27693710118505,                       !- Value Until Time 11
   12,                                     !- Hour 12
   0,                                      !- Minute 12
-  0.333333333333333,                      !- Value Until Time 12
+  0.329687025220298,                      !- Value Until Time 12
   13,                                     !- Hour 13
   0,                                      !- Minute 13
-  0.38,                                   !- Value Until Time 13
+  0.37584320875114,                       !- Value Until Time 13
   14,                                     !- Hour 14
   0,                                      !- Minute 14
-  0.306666666666667,                      !- Value Until Time 14
+  0.303312063202674,                      !- Value Until Time 14
   15,                                     !- Hour 15
   0,                                      !- Minute 15
-  0.38,                                   !- Value Until Time 15
+  0.37584320875114,                       !- Value Until Time 15
   16,                                     !- Hour 16
   0,                                      !- Minute 16
-  0.293333333333333,                      !- Value Until Time 16
+  0.290124582193862,                      !- Value Until Time 16
   17,                                     !- Hour 17
   0,                                      !- Minute 17
-  0.613333333333333,                      !- Value Until Time 17
+  0.606624126405348,                      !- Value Until Time 17
   18,                                     !- Hour 18
   0,                                      !- Minute 18
-  1,                                      !- Value Until Time 18
+  0.989061075660893,                      !- Value Until Time 18
   19,                                     !- Hour 19
   0,                                      !- Minute 19
-  0.78,                                   !- Value Until Time 19
+  0.771467639015497,                      !- Value Until Time 19
   20,                                     !- Hour 20
   0,                                      !- Minute 20
-  0.4,                                    !- Value Until Time 20
+  0.395624430264357,                      !- Value Until Time 20
   21,                                     !- Hour 21
   0,                                      !- Minute 21
-  0.233333333333333,                      !- Value Until Time 21
+  0.230780917654208,                      !- Value Until Time 21
   22,                                     !- Hour 22
   0,                                      !- Minute 22
-  0.166666666666667,                      !- Value Until Time 22
+  0.164843512610149,                      !- Value Until Time 22
   23,                                     !- Hour 23
   0,                                      !- Minute 23
-  0.106666666666667,                      !- Value Until Time 23
+  0.105499848070495,                      !- Value Until Time 23
   24,                                     !- Hour 24
   0,                                      !- Minute 24
-  0.0733333333333333;                     !- Value Until Time 24
+  0.0725311455484655;                     !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {9bfb7717-2bde-408e-b9e0-7b4d4912a1a2}, !- Handle
-  residential range gas schedule weekend ruleset12, !- Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}, !- Schedule Ruleset Name
+  {eaa0a182-1b8d-4574-85b7-2c3fdf6babb3}, !- Handle
+  residential range gas schedule allday ruleset12, !- Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Ruleset Name
   0,                                      !- Rule Order
-  {0b34cda4-9fd9-428f-a782-a14cdebdec68}, !- Day Schedule Name
+  {dda98c96-86a8-4409-bf0d-112f6e8df9a8}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
-  No,                                     !- Apply Monday
-  No,                                     !- Apply Tuesday
-  No,                                     !- Apply Wednesday
-  No,                                     !- Apply Thursday
-  No,                                     !- Apply Friday
+  Yes,                                    !- Apply Monday
+  Yes,                                    !- Apply Tuesday
+  Yes,                                    !- Apply Wednesday
+  Yes,                                    !- Apply Thursday
+  Yes,                                    !- Apply Friday
   Yes,                                    !- Apply Saturday
   ,                                       !- Apply Holiday
   DateRange,                              !- Date Specification Type
@@ -3448,9 +2265,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {0b34cda4-9fd9-428f-a782-a14cdebdec68}, !- Handle
-  residential range gas schedule weekend12, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {dda98c96-86a8-4409-bf0d-112f6e8df9a8}, !- Handle
+  residential range gas schedule allday12, !- Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3526,8 +2343,8 @@ OS:Schedule:Day,
   0.0733333333333333;                     !- Value Until Time 24
 
 OS:Schedule:Day,
-  {724194e7-7661-4a8a-9635-82a09c44d795}, !- Handle
-  residential range gas schedule summer,  !- Name
+  {5355458e-b9ce-4b47-83ce-745e3af68a53}, !- Handle
+  residential range gas schedule summer, !- Name
   ,                                       !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
@@ -3604,8 +2421,8 @@ OS:Schedule:Day,
   0.0594955940443634;                     !- Value Until Time 24
 
 OS:Schedule:Day,
-  {1de9a4ce-a378-4daf-8143-d35e17ac2a65}, !- Handle
-  residential range gas schedule winter,  !- Name
+  {430be043-1a13-42eb-9008-40c55c9639c6}, !- Handle
+  residential range gas schedule winter, !- Name
   ,                                       !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
@@ -3682,9 +2499,9 @@ OS:Schedule:Day,
   0.0733333333333333;                     !- Value Until Time 24
 
 OS:Schedule:Day,
-  {c8c5a7ef-625d-4fe6-b7cd-dd56bb05144a}, !- Handle
+  {3b4f7359-aa7b-419c-8c72-67f9e315c5cd}, !- Handle
   residential range gas schedule summer 1, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3760,9 +2577,9 @@ OS:Schedule:Day,
   0.0594955940443634;                     !- Value Until Time 24
 
 OS:Schedule:Day,
-  {fa90331d-75fc-4657-8aa3-7fdd7e05f61d}, !- Handle
+  {a5a9979c-a5c1-4e33-a050-7045602733a7}, !- Handle
   residential range gas schedule winter 1, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3837,9 +2654,9 @@ OS:Schedule:Day,
   0,                                      !- Minute 24
   0.0733333333333333;                     !- Value Until Time 24
 
-OS:GasEquipment:Definition,
-  {b107b995-56bf-45c9-a306-43d6e25798ca}, !- Handle
-  residential range gas,                  !- Name
+OS:OtherEquipment:Definition,
+  {20907b34-6b10-4f0a-8ce0-44c982b36142}, !- Handle
+  residential range gas,              !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   375.95172955317,                        !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -3848,10 +2665,19 @@ OS:GasEquipment:Definition,
   0.18,                                   !- Fraction Radiant
   0.5;                                    !- Fraction Lost
 
-OS:GasEquipment,
-  {6bd8f8a7-a295-48e6-9f3a-9daf55bef161}, !- Handle
-  residential range gas,                  !- Name
-  {b107b995-56bf-45c9-a306-43d6e25798ca}, !- Gas Equipment Definition Name
+OS:OtherEquipment,
+  {4eea5588-f45a-4f0d-8da8-6b2db9cd1427}, !- Handle
+  residential range gas,              !- Name
+  {20907b34-6b10-4f0a-8ce0-44c982b36142}, !- Other Equipment Definition Name
   {59fc425b-e98e-42bf-a6d7-37f9c2809156}, !- Space or SpaceType Name
-  {374c9530-42a0-405b-b319-deb4c1b6e511}; !- Schedule Name
+  {b5009e3b-917b-4410-b354-f064caa2e157}, !- Schedule Name
+  ,                                       !- Multiplier
+  NaturalGas;                             !- Fuel Type
+
+OS:ScheduleTypeLimits,
+  {532a0bce-fc71-431a-a412-f007d46519af}, !- Handle
+  Dimensionless,                          !- Name
+  ,                                       !- Lower Limit Value
+  ,                                       !- Upper Limit Value
+  Continuous;                             !- Numeric Type
 

@@ -132,7 +132,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     args_hash = {}
     args_hash["c_ef"] = 0.74
     args_hash["o_ef"] = 0.11
-    expected_num_del_objects = {"GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>500, "Space"=>args_hash["space"]}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
@@ -143,7 +143,7 @@ class ResidentialCookingRangeTest < MiniTest::Test
     args_hash = {}
     args_hash["c_ef"] = 0.74
     args_hash["o_ef"] = 0.11
-    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>500, "Space"=>args_hash["space"]}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)

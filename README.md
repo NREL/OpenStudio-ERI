@@ -77,9 +77,9 @@ The New Construction workflow illustrates how to build up a complete residential
 ||3. Cooling Setpoints and Schedules|HVAC Equipment, Location|
 |6. Major Appliances|1. Refrigerator||
 ||2. Clothes Washer|Water Heater, Location|
-||3. Clothes Dryer (Electric or Gas)|Beds/Baths, Clothes Washer|
+||3. Clothes Dryer (Electric or Fuel)|Beds/Baths, Clothes Washer|
 ||4. Dishwasher|Water Heater, Location|
-||5. Cooking Range (Electric or Gas)|Beds/Baths|
+||5. Cooking Range (Electric or Fuel)|Beds/Baths|
 |7. Lighting|1. Lighting|Location|
 |8. Misc Loads|1. Plug Loads|Beds/Baths|
 ||2. Extra Refrigerator||

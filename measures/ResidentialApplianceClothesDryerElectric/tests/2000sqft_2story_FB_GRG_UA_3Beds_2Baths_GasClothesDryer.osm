@@ -1,7 +1,7 @@
 
 OS:Version,
-  {fc003c06-618b-4051-9b37-6b6f71b12672}, !- Handle
-  1.13.1;                                 !- Version Identifier
+  {8be37255-ac5c-46ab-922b-6319744681d4}, !- Handle
+  1.13.2;                                 !- Version Identifier
 
 OS:ClimateZones,
   {135edfab-17e7-40db-a436-27d385a8cd6d}, !- Handle
@@ -1149,36 +1149,29 @@ OS:BuildingUnit,
   Double,                                 !- Building Unit Feature Data Type 2
   2;                                      !- Building Unit Feature Value 2
 
-OS:ScheduleTypeLimits,
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Handle
-  Fractional,                             !- Name
-  0,                                      !- Lower Limit Value
-  1,                                      !- Upper Limit Value
-  Continuous;                             !- Numeric Type
-
 OS:Schedule:Ruleset,
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Handle
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Handle
   residential clothes dryer gas schedule, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
-  {56c611fa-3aa1-4af6-8cf4-159a3e6cc845}, !- Default Day Schedule Name
-  {8dae908d-2202-43c6-b898-8d10589239a5}, !- Summer Design Day Schedule Name
-  {ff0dd9ab-6135-485a-a5f2-87a5d085c707}; !- Winter Design Day Schedule Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
+  {065a0fb7-e35f-44da-979e-d049f5a6502a}, !- Default Day Schedule Name
+  {05c65b4d-eb63-4932-b292-70e3b6ffb09a}, !- Summer Design Day Schedule Name
+  {aeca6bad-e20f-4ff1-9eb0-7135cd560220}; !- Winter Design Day Schedule Name
 
 OS:Schedule:Day,
-  {56c611fa-3aa1-4af6-8cf4-159a3e6cc845}, !- Handle
-  Schedule Day 2,                         !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {065a0fb7-e35f-44da-979e-d049f5a6502a}, !- Handle
+  Schedule Day 1,                         !- Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   24,                                     !- Hour 1
   0,                                      !- Minute 1
   0;                                      !- Value Until Time 1
 
 OS:Schedule:Rule,
-  {c9c0f9f1-4a56-4991-b586-ad0d33028d88}, !- Handle
+  {4767980c-eee3-4f98-8f44-b7ca1b4844d3}, !- Handle
   residential clothes dryer gas schedule weekday ruleset1, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   23,                                     !- Rule Order
-  {a4de6ccf-2063-4194-b924-a65561928df4}, !- Day Schedule Name
+  {334e80af-aa2a-4b8d-9429-e3955da3a39f}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -1194,9 +1187,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {a4de6ccf-2063-4194-b924-a65561928df4}, !- Handle
+  {334e80af-aa2a-4b8d-9429-e3955da3a39f}, !- Handle
   residential clothes dryer gas schedule weekday1, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -1272,11 +1265,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {9f389639-5811-4214-b2ba-a1d8f80d4a83}, !- Handle
+  {0fb597cc-15b7-4eba-941b-c468e4ec0d5d}, !- Handle
   residential clothes dryer gas schedule weekend ruleset1, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   22,                                     !- Rule Order
-  {e0066192-0328-40a8-9fef-70e2201db46f}, !- Day Schedule Name
+  {fcf3514d-ff42-4d07-add8-20d65e972616}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -1292,9 +1285,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {e0066192-0328-40a8-9fef-70e2201db46f}, !- Handle
+  {fcf3514d-ff42-4d07-add8-20d65e972616}, !- Handle
   residential clothes dryer gas schedule weekend1, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -1370,11 +1363,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {4a59f1b5-270f-4fd4-b9f7-7a02af8a98a9}, !- Handle
+  {9a5cace7-becd-4728-b09c-c534321739a4}, !- Handle
   residential clothes dryer gas schedule weekday ruleset2, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   21,                                     !- Rule Order
-  {6e06bd78-e210-4551-8091-74e221751bfd}, !- Day Schedule Name
+  {ef6e43a2-4d4e-4712-9b4c-b046766b7808}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -1390,9 +1383,9 @@ OS:Schedule:Rule,
   28;                                     !- End Day
 
 OS:Schedule:Day,
-  {6e06bd78-e210-4551-8091-74e221751bfd}, !- Handle
+  {ef6e43a2-4d4e-4712-9b4c-b046766b7808}, !- Handle
   residential clothes dryer gas schedule weekday2, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -1468,11 +1461,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {3849bbd1-2137-4128-b661-7c37c7177cbb}, !- Handle
+  {8ddf5b84-5c8f-40f6-ad06-6ee43e424c58}, !- Handle
   residential clothes dryer gas schedule weekend ruleset2, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   20,                                     !- Rule Order
-  {98b876c2-e328-45a0-991f-916d69302cc7}, !- Day Schedule Name
+  {f994da98-a247-4dde-b329-e3396863d8ec}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -1488,9 +1481,9 @@ OS:Schedule:Rule,
   28;                                     !- End Day
 
 OS:Schedule:Day,
-  {98b876c2-e328-45a0-991f-916d69302cc7}, !- Handle
+  {f994da98-a247-4dde-b329-e3396863d8ec}, !- Handle
   residential clothes dryer gas schedule weekend2, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -1566,11 +1559,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {c3eb789e-ae26-4f71-92f5-b02031fba8c4}, !- Handle
+  {d1bfeafc-28ee-4ea7-bf5c-c8d81533fa7b}, !- Handle
   residential clothes dryer gas schedule weekday ruleset3, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   19,                                     !- Rule Order
-  {71074c58-4567-4057-abbc-2d29e9fff654}, !- Day Schedule Name
+  {4a4864d1-ce37-4ebc-9b75-986f5250bb77}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -1586,9 +1579,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {71074c58-4567-4057-abbc-2d29e9fff654}, !- Handle
+  {4a4864d1-ce37-4ebc-9b75-986f5250bb77}, !- Handle
   residential clothes dryer gas schedule weekday3, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -1664,11 +1657,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {97f0918a-0f04-41ef-83fc-5b835dc60e5b}, !- Handle
+  {7cdf2242-fdb6-48bc-8bad-14cce7fbf1c9}, !- Handle
   residential clothes dryer gas schedule weekend ruleset3, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   18,                                     !- Rule Order
-  {29de8141-a958-4a17-a6c6-cf51d614233d}, !- Day Schedule Name
+  {396e503f-068f-49c0-8923-242053b4a2ff}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -1684,9 +1677,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {29de8141-a958-4a17-a6c6-cf51d614233d}, !- Handle
+  {396e503f-068f-49c0-8923-242053b4a2ff}, !- Handle
   residential clothes dryer gas schedule weekend3, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -1762,11 +1755,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {7759005f-c5f6-41ec-abf4-8f025243e306}, !- Handle
+  {1da6899e-5c54-49f2-9f02-42876928412a}, !- Handle
   residential clothes dryer gas schedule weekday ruleset4, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   17,                                     !- Rule Order
-  {a4a21461-d76a-4121-8d77-fd22c98e4d15}, !- Day Schedule Name
+  {1ccc1154-8eb5-45bc-bde6-ca6fee44b879}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -1782,9 +1775,9 @@ OS:Schedule:Rule,
   30;                                     !- End Day
 
 OS:Schedule:Day,
-  {a4a21461-d76a-4121-8d77-fd22c98e4d15}, !- Handle
+  {1ccc1154-8eb5-45bc-bde6-ca6fee44b879}, !- Handle
   residential clothes dryer gas schedule weekday4, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -1860,11 +1853,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {fa463b74-569c-4b6e-89fd-a8b52f43ec2c}, !- Handle
+  {92b9cfce-989c-4ce0-8fb7-4beedcd8d64f}, !- Handle
   residential clothes dryer gas schedule weekend ruleset4, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   16,                                     !- Rule Order
-  {82ad7ad7-b4d9-4295-96f7-6d6bdb351c27}, !- Day Schedule Name
+  {66d11951-daa6-4aba-9610-ae5539b3866c}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -1880,9 +1873,9 @@ OS:Schedule:Rule,
   30;                                     !- End Day
 
 OS:Schedule:Day,
-  {82ad7ad7-b4d9-4295-96f7-6d6bdb351c27}, !- Handle
+  {66d11951-daa6-4aba-9610-ae5539b3866c}, !- Handle
   residential clothes dryer gas schedule weekend4, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -1958,11 +1951,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {afb7a4b7-7b3d-41fd-993e-0baf5694d692}, !- Handle
+  {b467f7f4-6729-4f61-a185-b3ed96e3717e}, !- Handle
   residential clothes dryer gas schedule weekday ruleset5, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   15,                                     !- Rule Order
-  {b3e173c1-87a1-46ec-bc81-842154781cab}, !- Day Schedule Name
+  {959d2442-0654-41e0-9444-90b52bc3d6b0}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -1978,9 +1971,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {b3e173c1-87a1-46ec-bc81-842154781cab}, !- Handle
+  {959d2442-0654-41e0-9444-90b52bc3d6b0}, !- Handle
   residential clothes dryer gas schedule weekday5, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2056,11 +2049,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {7c297cf5-6d49-481f-9ef1-916af00e1b30}, !- Handle
+  {4e8b011a-5416-4ce6-9eef-ca50eff14522}, !- Handle
   residential clothes dryer gas schedule weekend ruleset5, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   14,                                     !- Rule Order
-  {5b623e28-e65f-45b5-a3d3-3f95c7be15db}, !- Day Schedule Name
+  {c5f1269f-8359-4d03-9322-a984a5ed1d80}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -2076,9 +2069,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {5b623e28-e65f-45b5-a3d3-3f95c7be15db}, !- Handle
+  {c5f1269f-8359-4d03-9322-a984a5ed1d80}, !- Handle
   residential clothes dryer gas schedule weekend5, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2154,11 +2147,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {c92da88f-7ce4-4c9d-9d8b-897687195603}, !- Handle
+  {8404cea1-a76a-4b08-8441-d76ce25acb49}, !- Handle
   residential clothes dryer gas schedule weekday ruleset6, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   13,                                     !- Rule Order
-  {2f5c7538-2503-453b-818d-f3b5ffb19db8}, !- Day Schedule Name
+  {b407522c-a2ea-4d3f-a929-1246c142d458}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -2174,9 +2167,9 @@ OS:Schedule:Rule,
   30;                                     !- End Day
 
 OS:Schedule:Day,
-  {2f5c7538-2503-453b-818d-f3b5ffb19db8}, !- Handle
+  {b407522c-a2ea-4d3f-a929-1246c142d458}, !- Handle
   residential clothes dryer gas schedule weekday6, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2252,11 +2245,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {72eb57f3-c17b-43b7-ba7f-a24b379e7562}, !- Handle
+  {b2c344cd-0e6c-4a20-b896-24462f5036ef}, !- Handle
   residential clothes dryer gas schedule weekend ruleset6, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   12,                                     !- Rule Order
-  {ced88f0f-8f83-4621-a9fd-c7eb11fced2e}, !- Day Schedule Name
+  {3a0ebac3-0403-4d6a-a87d-489533780c9a}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -2272,9 +2265,9 @@ OS:Schedule:Rule,
   30;                                     !- End Day
 
 OS:Schedule:Day,
-  {ced88f0f-8f83-4621-a9fd-c7eb11fced2e}, !- Handle
+  {3a0ebac3-0403-4d6a-a87d-489533780c9a}, !- Handle
   residential clothes dryer gas schedule weekend6, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2350,11 +2343,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {375d5033-6d6e-4f91-906d-3eed07ec4045}, !- Handle
+  {3f83806c-6367-4f42-9e91-00a91b8c0df9}, !- Handle
   residential clothes dryer gas schedule weekday ruleset7, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   11,                                     !- Rule Order
-  {4df70f4d-34de-4316-b577-9deae3df1f46}, !- Day Schedule Name
+  {11567b88-fad3-4596-a6fb-39130af4d4de}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -2370,9 +2363,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {4df70f4d-34de-4316-b577-9deae3df1f46}, !- Handle
+  {11567b88-fad3-4596-a6fb-39130af4d4de}, !- Handle
   residential clothes dryer gas schedule weekday7, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2448,11 +2441,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {d3c6c549-b6a4-4248-938d-e01ff746253a}, !- Handle
+  {0491db4c-5e32-43a0-a826-3d22576a22a6}, !- Handle
   residential clothes dryer gas schedule weekend ruleset7, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   10,                                     !- Rule Order
-  {1a6f85da-c452-47c9-92ee-62aad1cbea0c}, !- Day Schedule Name
+  {a100d46a-8ce8-4beb-ae24-44db6de1823e}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -2468,9 +2461,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {1a6f85da-c452-47c9-92ee-62aad1cbea0c}, !- Handle
+  {a100d46a-8ce8-4beb-ae24-44db6de1823e}, !- Handle
   residential clothes dryer gas schedule weekend7, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2546,11 +2539,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {500ef77d-ae42-4abb-940c-80a9cb8ef9b8}, !- Handle
+  {757156e8-3208-42d0-98e8-17c273aab545}, !- Handle
   residential clothes dryer gas schedule weekday ruleset8, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   9,                                      !- Rule Order
-  {8591bd28-be90-4671-9a7c-2d675e5bf7ca}, !- Day Schedule Name
+  {0461e8d9-6bb2-4403-875a-5e238f333fad}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -2566,9 +2559,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {8591bd28-be90-4671-9a7c-2d675e5bf7ca}, !- Handle
+  {0461e8d9-6bb2-4403-875a-5e238f333fad}, !- Handle
   residential clothes dryer gas schedule weekday8, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2644,11 +2637,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {1746dd6a-a5e0-4ef0-9377-1922d6dc465a}, !- Handle
+  {e1d4aea6-b458-440f-afd7-afcc3f084fe5}, !- Handle
   residential clothes dryer gas schedule weekend ruleset8, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   8,                                      !- Rule Order
-  {27d3d424-e9e7-40e2-9a93-f3df6c7dafe0}, !- Day Schedule Name
+  {8166c190-5d1b-46a8-8501-8b16e2fbbe83}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -2664,9 +2657,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {27d3d424-e9e7-40e2-9a93-f3df6c7dafe0}, !- Handle
+  {8166c190-5d1b-46a8-8501-8b16e2fbbe83}, !- Handle
   residential clothes dryer gas schedule weekend8, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2742,11 +2735,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {a1ab4dd1-f4d5-4bf0-9c1d-bad458209e72}, !- Handle
+  {9d957aeb-3814-46e2-99f0-f02291fe5c49}, !- Handle
   residential clothes dryer gas schedule weekday ruleset9, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   7,                                      !- Rule Order
-  {fd7d15a1-8861-4792-b623-d1af6bb0db00}, !- Day Schedule Name
+  {ea23d2b9-c6d7-4548-aeeb-d3acc043ddac}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -2762,9 +2755,9 @@ OS:Schedule:Rule,
   30;                                     !- End Day
 
 OS:Schedule:Day,
-  {fd7d15a1-8861-4792-b623-d1af6bb0db00}, !- Handle
+  {ea23d2b9-c6d7-4548-aeeb-d3acc043ddac}, !- Handle
   residential clothes dryer gas schedule weekday9, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2840,11 +2833,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {24c1d854-72cd-43e1-96ed-709f6f252a4c}, !- Handle
+  {2ea08e3c-0e64-4b27-a318-803ee6413645}, !- Handle
   residential clothes dryer gas schedule weekend ruleset9, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   6,                                      !- Rule Order
-  {7602b5e1-2531-4f17-8be4-c8c8ba611900}, !- Day Schedule Name
+  {7a8949e7-b81e-49fa-b249-defeecef9192}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -2860,9 +2853,9 @@ OS:Schedule:Rule,
   30;                                     !- End Day
 
 OS:Schedule:Day,
-  {7602b5e1-2531-4f17-8be4-c8c8ba611900}, !- Handle
+  {7a8949e7-b81e-49fa-b249-defeecef9192}, !- Handle
   residential clothes dryer gas schedule weekend9, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -2938,11 +2931,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {07151964-488e-47ff-884a-90245958a9e3}, !- Handle
+  {e678b720-7439-4945-8f44-656b10a8b869}, !- Handle
   residential clothes dryer gas schedule weekday ruleset10, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   5,                                      !- Rule Order
-  {6bb85e75-7a2f-4f6f-bdeb-b23af5594211}, !- Day Schedule Name
+  {e3834063-5ada-4f48-8ef6-ad61ae430a6f}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -2958,9 +2951,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {6bb85e75-7a2f-4f6f-bdeb-b23af5594211}, !- Handle
+  {e3834063-5ada-4f48-8ef6-ad61ae430a6f}, !- Handle
   residential clothes dryer gas schedule weekday10, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3036,11 +3029,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {8f78f3b2-ac98-457c-be78-5534df1e9f3e}, !- Handle
+  {489c6151-d058-4f30-99f7-00a34dae3e2b}, !- Handle
   residential clothes dryer gas schedule weekend ruleset10, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   4,                                      !- Rule Order
-  {3c2f3830-3abf-4502-a2f2-96c9860b6794}, !- Day Schedule Name
+  {5788042d-c31e-43d2-a90b-68d6a1dc0a86}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -3056,9 +3049,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {3c2f3830-3abf-4502-a2f2-96c9860b6794}, !- Handle
+  {5788042d-c31e-43d2-a90b-68d6a1dc0a86}, !- Handle
   residential clothes dryer gas schedule weekend10, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3134,11 +3127,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {dc04b390-7610-4c8f-8380-29a9751956f1}, !- Handle
+  {21192ea1-d053-4178-9936-ad1e25ac9f36}, !- Handle
   residential clothes dryer gas schedule weekday ruleset11, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   3,                                      !- Rule Order
-  {e2ee7f87-2925-44fb-8b9f-943c95882c83}, !- Day Schedule Name
+  {2384d35e-bdc8-4a9f-b8b1-47b5f5050a40}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -3154,9 +3147,9 @@ OS:Schedule:Rule,
   30;                                     !- End Day
 
 OS:Schedule:Day,
-  {e2ee7f87-2925-44fb-8b9f-943c95882c83}, !- Handle
+  {2384d35e-bdc8-4a9f-b8b1-47b5f5050a40}, !- Handle
   residential clothes dryer gas schedule weekday11, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3232,11 +3225,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {97959e13-0fb3-4f75-b7cb-acae02af12f5}, !- Handle
+  {bcfe36a4-287c-448b-a193-e9743b04b835}, !- Handle
   residential clothes dryer gas schedule weekend ruleset11, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   2,                                      !- Rule Order
-  {988435cf-c3cc-4f04-bbb3-484c3f7f45bb}, !- Day Schedule Name
+  {a4d788b3-03c3-4402-b345-c7986c362293}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -3252,9 +3245,9 @@ OS:Schedule:Rule,
   30;                                     !- End Day
 
 OS:Schedule:Day,
-  {988435cf-c3cc-4f04-bbb3-484c3f7f45bb}, !- Handle
+  {a4d788b3-03c3-4402-b345-c7986c362293}, !- Handle
   residential clothes dryer gas schedule weekend11, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3330,11 +3323,11 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {20fe265c-7995-4cb1-aae1-30d8c08992b6}, !- Handle
+  {016d3991-2476-4091-9058-6da4b3807297}, !- Handle
   residential clothes dryer gas schedule weekday ruleset12, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   1,                                      !- Rule Order
-  {3c695055-8175-4c66-a727-269b3bd2c530}, !- Day Schedule Name
+  {137b6b2c-0646-4a40-9b19-7116cf4c291d}, !- Day Schedule Name
   No,                                     !- Apply Sunday
   Yes,                                    !- Apply Monday
   Yes,                                    !- Apply Tuesday
@@ -3350,9 +3343,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {3c695055-8175-4c66-a727-269b3bd2c530}, !- Handle
+  {137b6b2c-0646-4a40-9b19-7116cf4c291d}, !- Handle
   residential clothes dryer gas schedule weekday12, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3428,11 +3421,11 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Rule,
-  {22c991eb-c32d-47b5-a794-1bcb3dee733e}, !- Handle
+  {9f318594-6be2-439e-8178-ed962cd09a48}, !- Handle
   residential clothes dryer gas schedule weekend ruleset12, !- Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}, !- Schedule Ruleset Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Ruleset Name
   0,                                      !- Rule Order
-  {030061ff-fa2b-4f53-9092-ace32afcf5cf}, !- Day Schedule Name
+  {b5c58451-dd33-4ef0-95f1-951f4a8dfb3f}, !- Day Schedule Name
   Yes,                                    !- Apply Sunday
   No,                                     !- Apply Monday
   No,                                     !- Apply Tuesday
@@ -3448,9 +3441,9 @@ OS:Schedule:Rule,
   31;                                     !- End Day
 
 OS:Schedule:Day,
-  {030061ff-fa2b-4f53-9092-ace32afcf5cf}, !- Handle
+  {b5c58451-dd33-4ef0-95f1-951f4a8dfb3f}, !- Handle
   residential clothes dryer gas schedule weekend12, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3526,7 +3519,7 @@ OS:Schedule:Day,
   0.296296296296296;                      !- Value Until Time 24
 
 OS:Schedule:Day,
-  {ec2c7e5e-5686-4cae-884c-0b721e21f35a}, !- Handle
+  {d8f866e4-8eea-49a2-866e-bfdbf6012657}, !- Handle
   residential clothes dryer gas schedule summer, !- Name
   ,                                       !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
@@ -3604,7 +3597,7 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Day,
-  {05027875-dd9e-41bb-ba4d-ed2c4257e192}, !- Handle
+  {5c4de072-d543-4e4a-9dee-d297dc2f6f69}, !- Handle
   residential clothes dryer gas schedule winter, !- Name
   ,                                       !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
@@ -3682,9 +3675,9 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Day,
-  {8dae908d-2202-43c6-b898-8d10589239a5}, !- Handle
+  {05c65b4d-eb63-4932-b292-70e3b6ffb09a}, !- Handle
   residential clothes dryer gas schedule summer 1, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3760,9 +3753,9 @@ OS:Schedule:Day,
   0.24219001610306;                       !- Value Until Time 24
 
 OS:Schedule:Day,
-  {ff0dd9ab-6135-485a-a5f2-87a5d085c707}, !- Handle
+  {aeca6bad-e20f-4ff1-9eb0-7135cd560220}, !- Handle
   residential clothes dryer gas schedule winter 1, !- Name
-  {b7ce471a-473a-4ed8-835e-0eeeb7b88c85}, !- Schedule Type Limits Name
+  {3438677c-5828-411d-afbe-431347018c00}, !- Schedule Type Limits Name
   ,                                       !- Interpolate to Timestep
   1,                                      !- Hour 1
   0,                                      !- Minute 1
@@ -3837,9 +3830,9 @@ OS:Schedule:Day,
   0,                                      !- Minute 24
   0.24219001610306;                       !- Value Until Time 24
 
-OS:GasEquipment:Definition,
-  {dff36914-10d3-4bec-9893-b8f50e3bccd4}, !- Handle
-  residential clothes dryer gas,          !- Name
+OS:OtherEquipment:Definition,
+  {c695284e-caee-4224-821a-a204185f23c3}, !- Handle
+  residential clothes dryer gas,      !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   274.875724806429,                       !- Design Level {W}
   ,                                       !- Watts per Space Floor Area {W/m2}
@@ -3848,15 +3841,24 @@ OS:GasEquipment:Definition,
   0.06,                                   !- Fraction Radiant
   0.85;                                   !- Fraction Lost
 
-OS:GasEquipment,
-  {6f66d6f8-f227-4e23-b3e1-479cd7730b20}, !- Handle
-  residential clothes dryer gas,          !- Name
-  {dff36914-10d3-4bec-9893-b8f50e3bccd4}, !- Gas Equipment Definition Name
+OS:OtherEquipment,
+  {04791323-27b3-4c88-8d91-7c76b9073295}, !- Handle
+  residential clothes dryer gas,      !- Name
+  {c695284e-caee-4224-821a-a204185f23c3}, !- Other Equipment Definition Name
   {59fc425b-e98e-42bf-a6d7-37f9c2809156}, !- Space or SpaceType Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}; !- Schedule Name
+  {96f78c2a-c021-4e67-b3c3-306e935c227c}, !- Schedule Name
+  ,                                       !- Multiplier
+  NaturalGas;                             !- Fuel Type
+
+OS:ScheduleTypeLimits,
+  {3438677c-5828-411d-afbe-431347018c00}, !- Handle
+  Dimensionless,                          !- Name
+  ,                                       !- Lower Limit Value
+  ,                                       !- Upper Limit Value
+  Continuous;                             !- Numeric Type
 
 OS:ElectricEquipment:Definition,
-  {d63f0bb8-9be0-4dd6-9539-b3bb6a0a1ad7}, !- Handle
+  {56b64cf5-3e14-4ed4-9e19-03b547ab2af4}, !- Handle
   residential clothes dryer electric,     !- Name
   EquipmentLevel,                         !- Design Level Calculation Method
   20.6895706843549,                       !- Design Level {W}
@@ -3867,9 +3869,11 @@ OS:ElectricEquipment:Definition,
   0;                                      !- Fraction Lost
 
 OS:ElectricEquipment,
-  {28622890-62d4-4107-960b-cb1e4557e619}, !- Handle
+  {8d9c1eca-d343-41c8-a77d-2676e5914fde}, !- Handle
   residential clothes dryer electric,     !- Name
-  {d63f0bb8-9be0-4dd6-9539-b3bb6a0a1ad7}, !- Electric Equipment Definition Name
+  {56b64cf5-3e14-4ed4-9e19-03b547ab2af4}, !- Electric Equipment Definition Name
   {59fc425b-e98e-42bf-a6d7-37f9c2809156}, !- Space or SpaceType Name
-  {c715d1f6-43ae-453e-9cc9-a08ff5e7a725}; !- Schedule Name
+  ,                                       !- Schedule Name
+  ,                                       !- Multiplier
+  residential clothes dryer electric;     !- End-Use Subcategory
 
