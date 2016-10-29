@@ -69,7 +69,7 @@ The New Construction workflow illustrates how to build up a complete residential
 ||22. Window Construction|Window Areas, Location|
 ||23. Door Construction|Door Area|
 ||24. Furniture Thermal Mass||
-|4. Domestic Hot Water|1. Water Heater (Electric Tank, Gas Tankless, etc.)|Beds/Baths|
+|4. Domestic Hot Water|1. Water Heater (Electric Tank, Fuel Tankless, etc.)|Beds/Baths|
 ||2. Hot Water Fixtures|Water Heater|
 ||3. Hot Water Distribution|Hot Water Fixtures, Location|
 |5. HVAC|1. Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)||
