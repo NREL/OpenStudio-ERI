@@ -19,6 +19,14 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm"
   end
 
+  def osm_geo_beds_propanerange
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_PropaneCookingRange.osm"
+  end
+
+  def osm_geo_beds_propanerange_elecignition
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_PropaneCookingRangeWithElecIgnition.osm"
+  end
+
   def osm_geo_multifamily_3_units_beds
     return "multifamily_3_units_Beds_Baths.osm"
   end
@@ -166,6 +174,28 @@ class ResidentialCookingRangeGasTest < MiniTest::Test
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
     
+  def test_retrofit_replace_propane_cooking_range
+    model = get_model(File.dirname(__FILE__), osm_geo_beds_propanerange)
+    args_hash = {}
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    expected_num_del_objects = {"OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>80, "Annual_therm"=>28.5, "Space"=>args_hash["space"]}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+
+  def test_retrofit_replace_propane_cooking_range_ignition
+    model = get_model(File.dirname(__FILE__), osm_geo_beds_propanerange_elecignition)
+    args_hash = {}
+    args_hash["c_ef"] = 0.4
+    args_hash["o_ef"] = 0.058
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_num_new_objects = {"GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>80, "Annual_therm"=>28.5, "Space"=>args_hash["space"]}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+
   def test_retrofit_remove
     args_hash = {}
     args_hash["c_ef"] = 0.4
