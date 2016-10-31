@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>573246a4-d6a4-4b13-a1d8-f74377917687</version_id>
-  <version_modified>20161024T193659Z</version_modified>
+  <version_id>7b6af234-f8fe-4025-8586-bff2d5c5f8c3</version_id>
+  <version_modified>20161031T190354Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -268,12 +268,6 @@
       <checksum>9A86F3EB</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6D48E2DD</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.2</identifier>
@@ -283,6 +277,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>A600E433</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D6592C9C</checksum>
     </file>
   </files>
 </measure>
