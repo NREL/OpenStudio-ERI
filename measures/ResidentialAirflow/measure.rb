@@ -734,7 +734,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     HelperMethods.remove_object_from_osm_based_on_name(model, "SpaceInfiltrationEffectiveLeakageArea", ["UAtcInfiltration"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "OutputVariable", ["Schedule Value", "System Node Temperature", "Zone Outdoor Air Drybulb Temperature", "Site Outdoor Air Enthalpy", "Zone Air Temperature", "System Node Humidity Ratio", "System Node Current Density Volume Flow Rate", "Fan Runtime Fraction", "System Node Mass Flow Rate", "Site Wind Speed", "Site Outdoor Air Humidity Ratio", "Zone Mean Air Humidity Ratio", "Zone Air Relative Humidity", "Zone Mean Air Temperature", "Site Outdoor Air Barometric Pressure"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSensor", ["Tout_", "Hout_", "Tin_", "Pbar_", "Phiin_", "Win_", "Wout_", "Vwind_", "WH_sch_", "Range_sch_", "Bath_sch_", "Clothes_dryer_sch_", "NVAvail_", "NVSP_", "AH_MFR_Sensor_", "Fan_RTF_Sensor_", "AH_VFR_Sensor_", "AH_Tout_Sensor_", "RA_T_Sensor_", "AH_Wout_Sensor_", "AHZone_T_Sensor_", "RA_W_Sensor_", "AHZone_W_Sensor_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemActuator", ["InfilFlow_", "NatVentFlow_", "AHZoneToLivingFlowRateActuator_", "LivingToAHZoneFlowRateActuator_", "SupplyLeakSensibleActuator_", "SupplyLeakLatentActuator_", "SupplyDuctLoadToLivingActuator_", "ConductionToAHZoneActuator_", "ReturnDuctLoadToPlenumActuator_", "ReturnConductionToAHZoneActuator_", "SensibleLeakageToAHZoneActuator_", "LatentLeakageToAHZoneActuator_", "ReturnSensibleLeakageActuator_", "ReturnLatentLeakageActuator_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemActuator", ["InfilFlow_", "NatVentFlow_", "AHZoneToLivingFlowRateActuator_", "LivingToAHZoneFlowRateActuator_", "SupplyLeakSensibleActuator_", "SupplyLeakLatentActuator_", "SupplyDuctLoadToLivingActuator_", "ConductionToAHZoneActuator_", "ReturnDuctLoadToPlenumActuator_", "ReturnConductionToAHZoneActuator_", "SensibleLeakageToAHZoneActuator_", "LatentLeakageToAHZoneActuator_", "ReturnSensibleLeakageActuator_", "ReturnLatentLeakageActuator_", "WholeHouseFanPowerOverride_", "RangeHoodFanPowerOverride_", "BathExhaustFanPowerOverride_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgram", ["DuctLeakageProgram_", "NaturalVentilationProgram_", "InfiltrationProgram_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemOutputVariable", ["Bath Exhaust Fan Vent Flow Rate_", "Clothes Dryer Exhaust Fan Vent Flow Rate_", "Local Wind Speed_", "Range Hood Fan Vent Flow Rate_", "Whole House Fan Vent Flow Rate_", "Zone Infil/MechVent Flow Rate_", "Zone Natural Ventilation Flow Rate_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgramCallingManager", ["AirflowCalculator_", "DuctLeakageCallingManager_"])
@@ -746,6 +746,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     HelperMethods.remove_object_from_osm_based_on_name(model, "Space", ["RA Duct Space"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "ZoneMixing", ["AHZoneToLivingZoneMixing", "LivingZoneToAHZoneMixing"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "AirLoopHVACReturnPlenum", ["Return Plenum"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "ElectricEquipmentDefinition", ["House Exhaust Fan Load_", "Range Hood Fan Load_", "Bath Exhaust Fan Load_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "OtherEquipmentDefinition", ["Other Equipment"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "ScheduleRuleset", ["MechanicalVentilationEnergy", "MechanicalVentilation", "BathExhaust", "ClothesDryerExhaust", "RangeHood", "NatVent", "NatVentTemp"])
     
@@ -984,7 +985,49 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
 
       actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(space_nat_vent_design_flow_rate, "Zone Infiltration", "Air Exchange Flow Rate")
       actuator.setName("NatVentFlow_#{unit.unit_num}")
+
+      equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+      equip_def.setName("House Exhaust Fan Load_#{unit.unit_num}")
+      equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
+      equip.setName("House Exhaust Fan Load_#{unit.unit_num}")
+      equip.setSpace(unit.living_zone.spaces[0])
+      equip_def.setFractionRadiant(0)
+      equip_def.setFractionLatent(0)
+      equip_def.setFractionLost(1.0 - mech_vent.percent_fan_heat_to_space)
+      equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      equip.setEndUseSubcategory("VentFans")
       
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(equip, "ElectricEquipment", "Electric Power Level")
+      actuator.setName("WholeHouseFanPowerOverride_#{unit.unit_num}")      
+      
+      equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+      equip_def.setName("Range Hood Fan Load_#{unit.unit_num}")
+      equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
+      equip.setName("Range Hood Fan Load_#{unit.unit_num}")
+      equip.setSpace(unit.living_zone.spaces[0])
+      equip_def.setFractionRadiant(0)
+      equip_def.setFractionLatent(0)
+      equip_def.setFractionLost(1)
+      equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      equip.setEndUseSubcategory("VentFans")
+
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(equip, "ElectricEquipment", "Electric Power Level")
+      actuator.setName("RangeHoodFanPowerOverride_#{unit.unit_num}")      
+      
+      equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+      equip_def.setName("Bath Exhaust Fan Load_#{unit.unit_num}")
+      equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
+      equip.setName("Bath Exhaust Fan Load_#{unit.unit_num}")
+      equip.setSpace(unit.living_zone.spaces[0])
+      equip_def.setFractionRadiant(0)
+      equip_def.setFractionLatent(0)
+      equip_def.setFractionLost(1)
+      equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      equip.setEndUseSubcategory("VentFans")
+
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(equip, "ElectricEquipment", "Electric Power Level")
+      actuator.setName("BathExhaustFanPowerOverride_#{unit.unit_num}")      
+
       # Program
             
       infil_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
@@ -1031,6 +1074,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         infil_program.addLine("Set Qin = QhpwhIn+QductsIn")
         infil_program.addLine("Set Qu = (@Abs (Qout - Qin))")
         infil_program.addLine("Set Qb = QWHV_#{unit.unit_num} + (@Min Qout Qin)")
+        infil_program.addLine("Set WholeHouseFanPowerOverride = 0")
       else
         if mech_vent.MechVentType == Constants.VentTypeExhaust
           infil_program.addLine("Set Qout = QWHV_#{unit.unit_num}+Qrange_#{unit.unit_num}+Qbath_#{unit.unit_num}+Qdryer_#{unit.unit_num}+QhpwhOut+QductsOut")
@@ -1057,8 +1101,6 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         infil_program.addLine("Set faneff_sp = 1")
       end
       
-      # EMS Output Variables
-      
       infil_program.addLine("Set RangeHoodFanPowerOverride_#{unit.unit_num} = (Qrange_#{unit.unit_num}*300)/faneff_sp")
       infil_program.addLine("Set BathExhaustFanPowerOverride_#{unit.unit_num} = (Qbath_#{unit.unit_num}*300)/faneff_sp")
       infil_program.addLine("Set Q_acctd_for_elsewhere = QhpwhOut + QhpwhIn + QductsOut + QductsIn")
@@ -1067,6 +1109,8 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       infil_program.addLine("Set InfilFlow_display_#{unit.unit_num} = (((Qu^2) + (Qn^2))^0.5) - Qu")
       infil_program.addLine("Set InfMechVent_#{unit.unit_num} = Qb + InfilFlow_#{unit.unit_num}")
 
+      # EMS Output Variables
+      
       ems_output_var = OpenStudio::Model::EnergyManagementSystemOutputVariable.new(model, "InfMechVent_#{unit.unit_num}")
       ems_output_var.setName("Zone Infil/MechVent Flow Rate_#{unit.unit_num}")
       ems_output_var.setTypeOfDataInVariable("Averaged")
@@ -2554,7 +2598,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     else
       return 2.0388 + 0.7053*nominalR
     end
-  end  
+  end
   
 end
 

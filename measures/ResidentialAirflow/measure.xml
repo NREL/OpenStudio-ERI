@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>a965c2f8-1392-4437-862d-10311a84b7f3</version_id>
-  <version_modified>20161101T133202Z</version_modified>
+  <version_id>547848fb-c2c4-4e02-836e-801940e517d0</version_id>
+  <version_modified>20161101T203847Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -658,12 +658,6 @@
       <checksum>B01B84BC</checksum>
     </file>
     <file>
-      <filename>residential_airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4B32C363</checksum>
-    </file>
-    <file>
       <filename>multifamily_8_units_slab_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -694,6 +688,12 @@
       <checksum>C2C5EE94</checksum>
     </file>
     <file>
+      <filename>residential_airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2434880F</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.1</identifier>
@@ -702,7 +702,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F737EF27</checksum>
+      <checksum>5C8961BC</checksum>
     </file>
   </files>
 </measure>
