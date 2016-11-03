@@ -14,7 +14,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash["supplemental_capacity"] = "20 kBtu/hr"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>1}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>12660.67, "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>13469.54}
+    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>8440.45, "FBsmtZoneCoolingNominalCapacity"=>4220.22, "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>8979.70, "FBsmtZoneHeatingNominalCapacity"=>4489.85}
     _test_measure("singlefamily_detached_fbsmt.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)    
   end  
   
@@ -200,10 +200,18 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
             new_object = new_object.public_send("to_#{obj_type}").get
             if obj_type == "AirConditionerVariableRefrigerantFlow"
               unless new_object.isRatedTotalCoolingCapacityAutosized
-                assert_in_epsilon(expected_values["CoolingNominalCapacity"], new_object.ratedTotalCoolingCapacity.get, 0.01)
+                if new_object.name.to_s.start_with? Constants.LivingZone
+                  assert_in_epsilon(expected_values["CoolingNominalCapacity"], new_object.ratedTotalCoolingCapacity.get, 0.01)
+                elsif new_object.name.to_s.start_with? Constants.FinishedBasementZone
+                  assert_in_epsilon(expected_values["FBsmtZoneCoolingNominalCapacity"], new_object.ratedTotalCoolingCapacity.get, 0.01)
+                end
               end
               unless new_object.isRatedTotalHeatingCapacityAutosized
-                assert_in_epsilon(expected_values["HeatingNominalCapacity"], new_object.ratedTotalHeatingCapacity.get, 0.01)
+                if new_object.name.to_s.start_with? Constants.LivingZone
+                  assert_in_epsilon(expected_values["HeatingNominalCapacity"], new_object.ratedTotalHeatingCapacity.get, 0.01)
+                elsif new_object.name.to_s.start_with? Constants.FinishedBasementZone
+                  assert_in_epsilon(expected_values["FBsmtZoneHeatingNominalCapacity"], new_object.ratedTotalHeatingCapacity.get, 0.01)
+                end
               end
               assert_in_epsilon(expected_values["CoolingCOP"], new_object.ratedCoolingCOP, 0.01)
               assert_in_epsilon(expected_values["HeatingCOP"], new_object.ratedHeatingCOP, 0.01)
