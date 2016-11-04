@@ -79,7 +79,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
 
   def test_new_construction_standard_cd_0
     args_hash = {}
-    args_hash["water_heater_cycling_derate"] = 0
+    args_hash["cycling_derate"] = 0
     expected_num_del_objects = {}
     expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.99, "Setpoint"=>125}
@@ -242,14 +242,14 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
   
   def test_argument_error_cd_lt_0
     args_hash = {}
-    args_hash["water_heater_cycling_derate"] = -1
+    args_hash["cycling_derate"] = -1
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cycling derate must be at least 0 and at most 1.")
   end
 
   def test_argument_error_cd_gt_1
     args_hash = {}
-    args_hash["water_heater_cycling_derate"] = 1.1
+    args_hash["cycling_derate"] = 1.1
     result = _test_error(osm_geo_beds_loc, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Cycling derate must be at least 0 and at most 1.")
   end

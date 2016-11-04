@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_fuel</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>56e0aa72-f4f8-48ca-9665-971f8c41fe3d</version_id>
-  <version_modified>20161103T221217Z</version_modified>
+  <version_id>a6d3550b-eb34-4098-b363-46a5d7b0fe1d</version_id>
+  <version_modified>20161104T201236Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessFuel</class_name>
   <display_name>Set Residential Fuel Tankless Water Heater</display_name>
@@ -74,7 +74,7 @@
       <default_value>0.82</default_value>
     </argument>
     <argument>
-      <name>water_heater_cycling_derate</name>
+      <name>cycling_derate</name>
       <display_name>Cycling Derate</display_name>
       <description>Annual energy derate for cycling inefficiencies -- accounts for the impact of thermal cycling and small hot water draws on the heat exchanger. CEC's 2008 Title24 implemented an 8% derate for tankless water heaters. </description>
       <type>Double</type>
@@ -230,23 +230,6 @@
       <checksum>951BE986</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>5F7F5BFC</checksum>
-    </file>
-    <file>
-      <filename>ResidentialWaterHeaterTanklessFuel_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8EA445C4</checksum>
-    </file>
-    <file>
       <filename>MinuteDrawProfilesMaxFlows.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
@@ -269,6 +252,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>22C6561D</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>C8ACD497</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTanklessFuel_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9DD7AB0A</checksum>
     </file>
   </files>
 </measure>
