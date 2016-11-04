@@ -1151,7 +1151,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       ems_output_var.setTypeOfDataInVariable("Averaged")
       ems_output_var.setUpdateFrequency("ZoneTimestep")
       ems_output_var.setEMSProgramOrSubroutineName(infil_program)
-      ems_output_var.setUnits("m3/s")
+      ems_output_var.setUnits("m/s")
       
       # Program
 
@@ -1433,6 +1433,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         
         ra_duct_space.surfaces.each do |surface|
           surface.setConstruction(adiabatic_const)
+          surface.setOutsideBoundaryCondition("Adiabatic")
         end
       
         # Two objects are required to model the air exchange between the air handler zone and the living space since
