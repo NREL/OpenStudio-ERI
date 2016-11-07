@@ -137,7 +137,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   def test_hip_finished_attic
     num_units = 1
     args_hash = {}
-    args_hash["attic_type"] = Constants.FinishedAtticSpaceType
+    args_hash["attic_type"] = Constants.FinishedAtticType
     args_hash["roof_type"] = Constants.RoofTypeHip
     expected_num_del_objects = {}
     expected_num_new_objects = {"BuildingUnit"=>num_units, "Surface"=>17, "ThermalZone"=>1, "Space"=>3}
@@ -440,9 +440,9 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
                     actual_values["UnfinishedBasementHeight"] = Geometry.get_building_height([new_object])
                 elsif new_object.name.to_s.start_with?(Constants.CrawlFoundationType)
                     actual_values["CrawlspaceHeight"] = Geometry.get_building_height([new_object])
-                elsif new_object.name.to_s.start_with?(Constants.UnfinishedAtticSpaceType)
+                elsif new_object.name.to_s.start_with?(Constants.UnfinishedAtticType)
                     actual_values["UnfinishedAtticHeight"] = Geometry.get_building_height([new_object])
-                elsif new_object.name.to_s.start_with?(Constants.FinishedAtticSpaceType)
+                elsif new_object.name.to_s.start_with?(Constants.FinishedAtticType)
                     actual_values["FinishedAtticHeight"] = Geometry.get_building_height([new_object])                
                 end
             end

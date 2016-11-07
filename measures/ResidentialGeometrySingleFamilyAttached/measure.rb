@@ -106,14 +106,14 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     
     #make a choice argument for model objects
     attic_type_display_names = OpenStudio::StringVector.new
-    attic_type_display_names << Constants.UnfinishedAtticSpaceType
-    attic_type_display_names << Constants.FinishedAtticSpaceType
+    attic_type_display_names << Constants.UnfinishedAtticType
+    attic_type_display_names << Constants.FinishedAtticType
 	
     #make a choice argument for attic type
     attic_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("attic_type", attic_type_display_names, true)
     attic_type.setDisplayName("Attic Type")
     attic_type.setDescription("The attic type of the building.")
-    attic_type.setDefaultValue(Constants.UnfinishedAtticSpaceType)
+    attic_type.setDefaultValue(Constants.UnfinishedAtticType)
     args << attic_type
     
     #make a choice argument for model objects
@@ -273,7 +273,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     # attic
     if roof_type != Constants.RoofTypeFlat
       attic_space = get_attic_space(model, x, y, living_height, building_num_floors, roof_pitch, roof_type)
-      if attic_type == Constants.FinishedAtticSpaceType
+      if attic_type == Constants.FinishedAtticType
         attic_space.setName(Constants.FinishedAtticSpace(Constants.ObjectNameBuildingUnit(1)))
         attic_space.setThermalZone(living_zone)
         living_spaces_front << attic_space
@@ -336,7 +336,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       # attic
       if roof_type != Constants.RoofTypeFlat
         attic_space = get_attic_space(model, x, -y, living_height, building_num_floors, roof_pitch, roof_type)
-        if attic_type == Constants.FinishedAtticSpaceType
+        if attic_type == Constants.FinishedAtticType
           attic_space.setName(Constants.FinishedAtticSpace(Constants.ObjectNameBuildingUnit(2)))
           attic_space.setThermalZone(living_zone)        
           living_spaces_back << attic_space
@@ -394,7 +394,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       
         # attic
         if roof_type != Constants.RoofTypeFlat
-          if attic_type == Constants.UnfinishedAtticSpaceType
+          if attic_type == Constants.UnfinishedAtticType
             # front or back unit
             if unit_num % 2 != 0 # odd unit number
               attic_space = attic_space_front
@@ -470,7 +470,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
 
         # attic
         if roof_type != Constants.RoofTypeFlat
-          if attic_type == Constants.UnfinishedAtticSpaceType
+          if attic_type == Constants.UnfinishedAtticType
 
             attic_space = attic_space_front
           
@@ -715,7 +715,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     OpenStudio::Model.intersectSurfaces(spaces)
     OpenStudio::Model.matchSurfaces(spaces)    
     
-    if attic_type == Constants.UnfinishedAtticSpaceType and roof_type != Constants.RoofTypeFlat
+    if attic_type == Constants.UnfinishedAtticType and roof_type != Constants.RoofTypeFlat
       attic_space = Geometry.make_one_space_from_multiple_spaces(model, attic_spaces)
       attic_space.setName(Constants.UnfinishedAtticSpace)
       attic_zone = OpenStudio::Model::ThermalZone.new(model)
@@ -834,7 +834,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     model.getBuilding.setStandardsNumberOfLivingUnits(num_units)
     
     # Store number of stories
-    if attic_type == Constants.FinishedAtticSpaceType
+    if attic_type == Constants.FinishedAtticType
       building_num_floors += 1
     end        
     model.getBuilding.setStandardsNumberOfAboveGroundStories(building_num_floors)

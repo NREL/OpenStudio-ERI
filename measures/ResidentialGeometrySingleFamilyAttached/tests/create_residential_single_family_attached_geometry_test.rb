@@ -114,7 +114,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
   def test_fourplex_finished_hip_roof
     args_hash = {}
     args_hash["num_units"] = 4
-    args_hash["attic_type"] = Constants.FinishedAtticSpaceType
+    args_hash["attic_type"] = Constants.FinishedAtticType
     args_hash["roof_type"] = Constants.RoofTypeHip
     args_hash["roof_pitch"] = "12:12"
     expected_num_del_objects = {}
@@ -127,7 +127,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     args_hash = {}
     args_hash["num_units"] = 4
     args_hash["has_rear_units"] = "true"
-    args_hash["attic_type"] = Constants.FinishedAtticSpaceType
+    args_hash["attic_type"] = Constants.FinishedAtticType
     args_hash["roof_type"] = Constants.RoofTypeHip
     args_hash["roof_pitch"] = "12:12"
     expected_num_del_objects = {}
@@ -234,9 +234,9 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
                     actual_values["UnfinishedBasementHeight"] = Geometry.get_building_height([new_object])
                 elsif new_object.name.to_s.start_with?(Constants.CrawlFoundationType)
                     actual_values["CrawlspaceHeight"] = Geometry.get_building_height([new_object])
-                elsif new_object.name.to_s.start_with?(Constants.UnfinishedAtticSpaceType)
+                elsif new_object.name.to_s.start_with?(Constants.UnfinishedAtticType)
                     actual_values["UnfinishedAtticHeight"] = Geometry.get_building_height([new_object])
-                elsif new_object.name.to_s.start_with?(Constants.FinishedAtticSpaceType)
+                elsif new_object.name.to_s.start_with?(Constants.FinishedAtticType)
                     actual_values["FinishedAtticHeight"] = Geometry.get_building_height([new_object])
                 end
             end
