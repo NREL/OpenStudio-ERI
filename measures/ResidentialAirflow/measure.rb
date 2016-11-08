@@ -1964,7 +1964,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
           # Flow Coefficient (cfm/inH2O^n) (based on ASHRAE HoF)
           infil.C_i = infil.A_o * (2.0 / outside_air_density) ** 0.5 * delta_pref ** (0.5 - infil.n_i) * inf_conv_factor
 
-          if has_flue and (not HVAC.has_furnace(model, runner, unit.living_zone, false, false).nil? or not HVAC.has_boiler(model, runner, unit.living_zone, false, false).nil?)
+          if has_flue and (not HVAC.has_furnace(model, runner, unit.living_zone, false, false).nil? or not HVAC.has_boiler(model, runner, unit.living_zone, false).nil?)
             # for future use
             infil.Y_i = 0.2
             infil.flue_height = building.building_height + 2.0 # ft
