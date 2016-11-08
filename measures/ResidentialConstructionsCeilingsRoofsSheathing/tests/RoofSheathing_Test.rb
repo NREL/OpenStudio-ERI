@@ -12,7 +12,7 @@ class ProcessConstructionsCeilingsRoofsSheathingTest < MiniTest::Test
   end
   
   def osm_geo_unfinished_attic_layers
-    return "2000sqft_2story_SL_UA_layers.osm"
+    return "2000sqft_2story_SL_FA_AllLayersButRoofSheathing.osm"
   end
   
   def test_add_plywood

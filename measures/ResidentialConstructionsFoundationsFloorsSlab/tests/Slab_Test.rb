@@ -12,7 +12,7 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
   end
 
   def osm_geo_slab_garage
-    return "2000sqft_2story_SL_UA_Grg.osm"
+    return "2000sqft_2story_SL_GRG_UA.osm"
   end
 
   def osm_geo_crawl
@@ -20,7 +20,7 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
   end
 
   def osm_geo_crawl_garage
-    return "2000sqft_2story_CS_UA_Grg.osm"
+    return "2000sqft_2story_CS_GRG_UA.osm"
   end
 
   def osm_geo_finished_basement
@@ -28,7 +28,7 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
   end
 
   def osm_geo_finished_basement_garage
-    return "2000sqft_2story_FB_UA_Grg.osm"
+    return "2000sqft_2story_FB_GRG_UA.osm"
   end
 
   def osm_geo_unfinished_basement
@@ -36,7 +36,7 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
   end
 
   def osm_geo_unfinished_basement_garage
-    return "2000sqft_2story_UB_UA_Grg.osm"
+    return "2000sqft_2story_UB_GRG_UA.osm"
   end
 
   def test_add_uninsulated

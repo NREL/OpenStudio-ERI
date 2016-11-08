@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_fuel</name>
   <uid>68bdcee3-c301-4fe9-a99f-c7d8b5930c89</uid>
-  <version_id>7006d66f-f230-44af-bfc5-dbeac4571304</version_id>
-  <version_modified>20161107T165130Z</version_modified>
+  <version_id>6f82eb39-0886-4d5f-b3f3-f0a2f957cb2c</version_id>
+  <version_modified>20161108T144101Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeFuel</class_name>
   <display_name>Set Residential Fuel Cooking Range</display_name>
@@ -142,24 +142,6 @@
       <checksum>FB1F52FA</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>850FE64F</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AFD25860</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F522B43F</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -205,6 +187,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D1396860</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>850FE64F</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AFD25860</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F522B43F</checksum>
     </file>
   </files>
 </measure>

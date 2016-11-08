@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_sheathing</name>
   <uid>f9125155-4fe6-4dae-b5a6-e1249eb2da3c</uid>
-  <version_id>1774b7f4-2e6a-463c-95f8-5dddc54fcacb</version_id>
-  <version_modified>20161107T165132Z</version_modified>
+  <version_id>8ce024a0-88b6-43ef-8100-9fe2ee784031</version_id>
+  <version_modified>20161108T144101Z</version_modified>
   <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsSheathing</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roof Sheathing</display_name>
@@ -90,12 +90,6 @@
       <checksum>CDD25A07</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8AD58A6C</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -113,12 +107,6 @@
       <checksum>57187932</checksum>
     </file>
     <file>
-      <filename>RoofSheathing_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F6C3A631</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -129,6 +117,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D1396860</checksum>
+    </file>
+    <file>
+      <filename>RoofSheathing_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2DE87233</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA_AllLayersButRoofSheathing.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8AD58A6C</checksum>
     </file>
   </files>
 </measure>

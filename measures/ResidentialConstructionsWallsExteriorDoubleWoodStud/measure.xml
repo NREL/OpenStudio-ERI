@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_double_wood_stud</name>
   <uid>d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651</uid>
-  <version_id>eb5ff757-afad-4baa-a699-aba18f567252</version_id>
-  <version_modified>20161107T165134Z</version_modified>
+  <version_id>008625f6-7542-47cd-af6b-5beabe4f9f43</version_id>
+  <version_modified>20161108T144102Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorDoubleWoodStud</class_name>
   <display_name>Set Residential Walls - Double Wood Stud Construction</display_name>
@@ -127,12 +127,6 @@
       <checksum>CDD25A07</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7486DA3F</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -150,12 +144,6 @@
       <checksum>5C9B97F7</checksum>
     </file>
     <file>
-      <filename>DoubleWoodStud_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2D58A39C</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -166,6 +154,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D1396860</checksum>
+    </file>
+    <file>
+      <filename>DoubleWoodStud_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>88D928B3</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7486DA3F</checksum>
     </file>
   </files>
 </measure>

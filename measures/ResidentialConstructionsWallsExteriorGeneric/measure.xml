@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>478eab4c-2eb7-4c36-9813-7aca845688a8</version_id>
-  <version_modified>20161107T165134Z</version_modified>
+  <version_id>3cc84684-902b-414b-8c2a-ed8624d4ac3b</version_id>
+  <version_modified>20161108T144102Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
@@ -230,22 +230,10 @@
       <checksum>CDD25A07</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7486DA3F</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>9A86F3EB</checksum>
-    </file>
-    <file>
-      <filename>Generic_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E1614F0C</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -258,6 +246,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D1396860</checksum>
+    </file>
+    <file>
+      <filename>Generic_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0CFCD287</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7486DA3F</checksum>
     </file>
   </files>
 </measure>

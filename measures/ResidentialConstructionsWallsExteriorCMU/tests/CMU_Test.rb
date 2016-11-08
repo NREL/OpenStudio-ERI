@@ -12,7 +12,7 @@ class ProcessConstructionsWallsExteriorCMUTest < MiniTest::Test
   end
   
   def osm_geo_layers
-    return "2000sqft_2story_SL_UA_layers.osm"
+    return "2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm"
   end
 
   def test_add_6in_hollow

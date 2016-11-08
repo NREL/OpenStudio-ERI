@@ -20,11 +20,11 @@ class ResidentialDishwasherTest < MiniTest::Test
   end
 
   def osm_geo_beds_loc_tankwh
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtank.osm"
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm"
   end
 
   def osm_geo_beds_loc_tanklesswh
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHtankless.osm"
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTankless.osm"
   end
   
   def osm_geo_multifamily_3_units_beds_loc_tankwh

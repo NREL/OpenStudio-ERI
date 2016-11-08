@@ -129,9 +129,93 @@ namespace :test do
     t.warning = false
     t.verbose = true
   end
-end
+  
+  desc 'regenerate test osm files from osw files'
+  task :regenerate_osms do
 
-task default: 'test:all'
+    num_tot = 0
+    num_success = 0
+  
+    # Generate hash that maps osw's to measures
+    osw_map = {}
+    missing_measure_dirs = []
+    File.open(File.expand_path("../test/osw_to_measure_mapping.csv", __FILE__)) do |file|
+      file.each do |line|
+        line = line.chomp.split(',').reject { |l| l.empty? }
+        measure = line.delete_at(0)
+        line.each do |osw|
+          osw_full = File.expand_path("../test/osw_files/#{osw}", __FILE__)
+          if not File.exists?(osw_full)
+            puts "ERROR: OSW file #{osw_full} not found."
+          end
+          measure_dir = File.expand_path("../measures/#{measure}/", __FILE__)
+          if not Dir.exists?(measure_dir)
+            if not missing_measure_dirs.include?(measure_dir)
+              puts "ERROR: Measure dir #{measure_dir} not found."
+              missing_measure_dirs << measure_dir
+            end
+          else
+            if not osw_map.keys.include?(osw)
+              osw_map[osw] = []
+            end
+            osw_map[osw] << measure
+          end
+        end
+      end
+    end
+
+    os_cli = "C:\\Program Files (x86)\\openstudio2-1.13.2\\bin\\openstudio.exe" # FIXME
+    osw_files = Dir.entries(File.expand_path("../test/osw_files/", __FILE__)).select {|entry| entry.end_with?(".osw")}
+    osw_files.each do |osw|
+        # Generate osm from osw
+        osw_filename = osw
+        next if osw_map[osw_filename].nil? # No measures to copy osm to
+        num_tot += 1
+        puts "Regenerating osm from #{osw}..."
+        temp_osw = File.join(File.dirname(__FILE__), osw)
+        osw = File.expand_path("../test/osw_files/#{osw}", __FILE__)
+        FileUtils.cp(osw, temp_osw)
+        command = "\"#{os_cli}\" run -w #{temp_osw} -m > log"
+        system(command)
+        osm = File.expand_path("../run/in.osm", __FILE__)
+        if not File.exists?(osm)
+            puts "  ERROR: Could not generate osm."
+        else
+            # Copy to appropriate measure test dirs
+            osm_filename = osw_filename.gsub(".osw", ".osm")
+            num_copied = 0
+            osw_map[osw_filename].each do |measure|
+                measure_test_dir = File.expand_path("../measures/#{measure}/tests/", __FILE__)
+                if not Dir.exists?(measure_test_dir)
+                    puts "  ERROR: Could not copy osm to #{measure_test_dir}."
+                end
+                FileUtils.cp(osm, File.expand_path("#{measure_test_dir}/#{osm_filename}", __FILE__))
+                num_copied += 1
+            end
+            puts "  Copied to #{num_copied} measure(s)."
+            num_success += 1
+        end
+        # Clean up
+        run_dir = File.expand_path("../run", __FILE__)
+        if Dir.exists?(run_dir)
+            FileUtils.rmtree(run_dir)
+        end
+        if File.exists?(temp_osw)
+            FileUtils.rm(temp_osw)
+        end
+        if File.exists?(File.expand_path("../out.osw", __FILE__))
+            FileUtils.rm(File.expand_path("../out.osw", __FILE__))
+        end
+        if File.exists?(File.expand_path("../log", __FILE__))
+            FileUtils.rm(File.expand_path("../log", __FILE__))
+        end
+    end
+    
+    puts "Completed. #{num_success} of #{num_tot} osm files were regenerated successfully."
+    
+  end
+
+end
 
 desc 'update all resources'
 task :update_resources do
@@ -146,9 +230,9 @@ task :update_resources do
     # Get recursive list of resources required based on looking for 'require FOO' in rb files
     resources = get_requires_from_file(measurerb)
 
-    # Add any additional resources specified in resources.csv
+    # Add any additional resources specified in resource_to_measure_mapping.csv
     subdir_resources = {} # Handle resources in subdirs
-    File.open(File.expand_path("../resources/resources.csv", __FILE__)) do |file|
+    File.open(File.expand_path("../resources/resource_to_measure_mapping.csv", __FILE__)) do |file|
       file.each do |line|
         line = line.chomp.split(',').reject { |l| l.empty? }
         measure = line.delete_at(0)

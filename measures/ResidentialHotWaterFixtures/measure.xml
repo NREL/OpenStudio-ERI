@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>d621671a-a16f-4394-bf60-3d8d88104c88</version_id>
-  <version_modified>20161107T165140Z</version_modified>
+  <version_id>ce37cf2a-9aac-4ed3-99e6-573b64e2a3b6</version_id>
+  <version_modified>20161108T144105Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -1069,12 +1069,6 @@
       <checksum>951BE986</checksum>
     </file>
     <file>
-      <filename>ResidentialHotWaterFixtures_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2A09670D</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -1097,6 +1091,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D1396860</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterFixtures_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8345EFDC</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5BEA92FD</checksum>
     </file>
   </files>
 </measure>

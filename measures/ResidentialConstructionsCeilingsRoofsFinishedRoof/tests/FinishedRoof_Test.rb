@@ -12,7 +12,7 @@ class ProcessConstructionsCeilingsRoofsFinishedRoofTest < MiniTest::Test
   end
 
   def osm_geo_finished_attic_layers
-    return "2000sqft_2story_SL_FA_layers.osm"
+    return "2000sqft_2story_SL_FA_AllLayersButFinishedRoof.osm"
   end
 
   def osm_geo_unfinished_attic

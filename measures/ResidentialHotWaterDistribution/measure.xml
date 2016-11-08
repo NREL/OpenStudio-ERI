@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>0f71dc6d-a291-4d0f-949e-ea411295b2c8</version_id>
-  <version_modified>20161107T165139Z</version_modified>
+  <version_id>cd9500f1-155e-4aab-8b77-5ebdb2fbdf8f</version_id>
+  <version_modified>20161108T144104Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>
@@ -1055,12 +1055,6 @@
       <checksum>850FE64F</checksum>
     </file>
     <file>
-      <filename>ResidentialHotWaterDistribution_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E6A08618</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -1142,6 +1136,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D1396860</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterDistribution_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CDF01C6B</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5BEA92FD</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank_HWFixtures.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>01DAF1DB</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_finished_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>6c38bbbc-5f99-4857-b1f4-4898b9641e04</version_id>
-  <version_modified>20161107T165131Z</version_modified>
+  <version_id>89ba59ff-025e-4fa6-9003-b15f51c0c648</version_id>
+  <version_modified>20161108T144101Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsFinishedRoof</class_name>
   <display_name>Set Residential Ceilings/Roofs - Finished Roof Construction</display_name>
@@ -101,30 +101,6 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_SL_FA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9B28333E</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_SL_FA_layers.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>10945828</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CDD25A07</checksum>
-    </file>
-    <file>
-      <filename>FinishedRoof_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>932790AD</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -152,6 +128,30 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D1396860</checksum>
+    </file>
+    <file>
+      <filename>FinishedRoof_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>056AA9BF</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9B28333E</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CDD25A07</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_FA_AllLayersButFinishedRoof.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>10945828</checksum>
     </file>
   </files>
 </measure>

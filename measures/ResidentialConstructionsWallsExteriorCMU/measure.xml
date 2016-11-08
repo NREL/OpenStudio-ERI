@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>4575215e-ecaa-4f27-8e6a-83d0e6597739</version_id>
-  <version_modified>20161107T165134Z</version_modified>
+  <version_id>bb80db99-8190-4dbb-a4e6-ff7fdde10c21</version_id>
+  <version_modified>20161108T144102Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
@@ -115,12 +115,6 @@
       <checksum>CDD25A07</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_SL_UA_layers.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7486DA3F</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -138,12 +132,6 @@
       <checksum>28F6DD71</checksum>
     </file>
     <file>
-      <filename>CMU_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F6A63647</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -154,6 +142,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D1396860</checksum>
+    </file>
+    <file>
+      <filename>CMU_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>05CF13FD</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7486DA3F</checksum>
     </file>
   </files>
 </measure>

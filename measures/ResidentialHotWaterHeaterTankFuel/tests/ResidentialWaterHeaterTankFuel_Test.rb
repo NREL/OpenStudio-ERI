@@ -36,19 +36,19 @@ class ResidentialHotWaterHeaterTankFuelTest < MiniTest::Test
   end
 
   def osm_geo_beds_loc_tank_electric
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankElectric.osm"
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm"
   end
 
   def osm_geo_beds_loc_tankless_electric
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessElectric.osm"
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTankless.osm"
   end
 
   def osm_geo_beds_loc_tankless_gas
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessGas.osm"
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_GasWHTankless.osm"
   end
 
   def osm_geo_beds_loc_tankless_propane
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessPropane.osm"
+    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_PropaneWHTankless.osm"
   end
 
   def osm_geo_multifamily_3_units_beds_loc
