@@ -293,12 +293,12 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return "This measure processes infiltration for the living space, garage, finished basement, unfinished basement, crawlspace, and unfinished attic. It also processes mechanical ventilation and natural ventilation for the living space."
+    return "Sets (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "Using EMS code, this measure processes the building's airflow (infiltration, mechanical ventilation, and natural ventilation). Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
+    return "Uses EMS to model the building airflow."
   end
 
   # define the arguments that the user will input
@@ -884,7 +884,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         unit.dryer_exhaust = 0
       end
       
-      infil, building, unit = _processInfiltrationForUnit(infil, wind_speed, building, unit, model, has_flue, runner)
+      infil, building, unit = _processInfiltrationForUnit(infil, wind_speed, building, unit, has_flue, runner)
       mech_vent, schedules = _processMechanicalVentilation(model, runner, infil, mech_vent, building, unit, schedules)
       nat_vent, schedules = _processNaturalVentilation(model, runner, nat_vent, wind_speed, infil, building, unit, schedules)
       
@@ -1920,7 +1920,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
   
   end
   
-  def _processInfiltrationForUnit(infil, wind_speed, building, unit, model, has_flue, runner)
+  def _processInfiltrationForUnit(infil, wind_speed, building, unit, has_flue, runner)
     # Infiltration calculations.
     
     spaces = []
