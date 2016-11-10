@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>4add9b01-aaf6-4981-8c4d-3eab7eea5010</version_id>
-  <version_modified>20161107T165129Z</version_modified>
+  <version_id>f154b387-0eb0-4e9b-b126-99c0ac245002</version_id>
+  <version_modified>20161110T150254Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -77,6 +77,25 @@
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>auto</default_value>
+    </argument>
+    <argument>
+      <name>has_flue</name>
+      <display_name>Air Leakage: Has Open Flue</display_name>
+      <description>Specifies whether the building has an open flue or chimney (e.g., for a furnace, boiler, water heater, or fireplace).</description>
+      <type>Boolean</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>true</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
     </argument>
     <argument>
       <name>age_of_home</name>
@@ -700,6 +719,12 @@
       <checksum>22C6561D</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>394EB92E</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.1</identifier>
@@ -708,13 +733,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CD762E55</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D1396860</checksum>
+      <checksum>78FA333D</checksum>
     </file>
   </files>
 </measure>

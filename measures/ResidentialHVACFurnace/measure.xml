@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>cd2198f0-1015-4f29-bb2f-9d98af698ec5</version_id>
-  <version_modified>20161107T165142Z</version_modified>
+  <version_id>05376b49-765f-4d01-8345-a68091676b27</version_id>
+  <version_modified>20161110T145609Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnace</class_name>
   <display_name>Set Residential Furnace</display_name>
@@ -366,7 +366,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>D1396860</checksum>
+      <checksum>394EB92E</checksum>
     </file>
   </files>
 </measure>

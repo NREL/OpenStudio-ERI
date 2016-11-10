@@ -362,7 +362,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     #make a double argument for open flue
     has_flue = OpenStudio::Ruleset::OSArgument::makeBoolArgument("has_flue", false)
     has_flue.setDisplayName("Air Leakage: Has Open Flue")
-    has_flue.setDescription("Specifies whether the building has an associated flue that is not closed.")
+    has_flue.setDescription("Specifies whether the building has an open flue or chimney (e.g., for a furnace, boiler, water heater, or fireplace).")
     has_flue.setDefaultValue(true)
     args << has_flue    
 
@@ -1964,9 +1964,8 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
           # Flow Coefficient (cfm/inH2O^n) (based on ASHRAE HoF)
           infil.C_i = infil.A_o * (2.0 / outside_air_density) ** 0.5 * delta_pref ** (0.5 - infil.n_i) * inf_conv_factor
 
-          if has_flue and (not HVAC.has_furnace(model, runner, unit.living_zone, false, false).nil? or not HVAC.has_boiler(model, runner, unit.living_zone, false).nil?)
-            # for future use
-            infil.Y_i = 0.2
+          if has_flue
+            infil.Y_i = 0.2 # Fraction of leakage through the flue; 0.2 is a "typical" value according to THE ALBERTA AIR INFIL1RATION MODEL, Walker and Wilson, 1990
             infil.flue_height = building.building_height + 2.0 # ft
             infil.S_wflue = 1.0 # Flue Shelter Coefficient
           else

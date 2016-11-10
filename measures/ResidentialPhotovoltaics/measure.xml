@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>628b1324-93d5-4156-8c66-9fda912e6135</version_id>
-  <version_modified>20161107T215028Z</version_modified>
+  <version_id>5fa23bf8-cec0-4ad8-b89f-59c170e0aab3</version_id>
+  <version_modified>20161110T145611Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -13,7 +13,7 @@
     <argument>
       <name>size</name>
       <display_name>Size</display_name>
-      <description>Size (power) of the photovoltaic array in kW DC.</description>
+      <description>Size (power) per unit of the photovoltaic array in kW DC.</description>
       <type>Double</type>
       <units>kW</units>
       <required>false</required>
@@ -146,12 +146,6 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>81D61938</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -212,6 +206,18 @@
       <checksum>F7F10234</checksum>
     </file>
     <file>
+      <filename>singlefamily_attached_4_units.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>15B50BAD</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>394EB92E</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -220,19 +226,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>092449AB</checksum>
+      <checksum>FCAEBBC8</checksum>
     </file>
     <file>
       <filename>residential_photovoltaics_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D6FBCD75</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_attached_4_units.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>15B50BAD</checksum>
+      <checksum>78B0470E</checksum>
     </file>
   </files>
 </measure>
