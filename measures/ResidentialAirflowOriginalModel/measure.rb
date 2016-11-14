@@ -2690,7 +2690,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
       # Duct Number Returns per 2010 BA Benchmark Addendum
       return 1 + num_stories
     end
-    return duct_num_returns
+    return duct_num_returns.to_i
   end  
   
   def get_duct_return_surface_area(mult, geometry, num_stories, duct_num_returns)

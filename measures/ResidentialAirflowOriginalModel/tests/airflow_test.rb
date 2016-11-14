@@ -158,6 +158,14 @@ class AirflowTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)
   end
   
+  def test_duct_num_returns
+    args_hash = {}
+    args_hash["duct_num_returns"] = "1"
+    result = _test_measure("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)
+  end
+
   def test_duct_norm_leak_to_outside
     args_hash = {}
     args_hash["duct_norm_leakage_to_outside"] = "8.0"

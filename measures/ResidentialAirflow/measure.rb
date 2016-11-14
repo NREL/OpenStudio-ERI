@@ -2594,7 +2594,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       # Duct Number Returns per 2010 BA Benchmark Addendum
       return 1 + num_stories
     end
-    return duct_num_returns
+    return duct_num_returns.to_i
   end  
   
   def get_duct_supply_surface_area(mult, unit, num_stories)
