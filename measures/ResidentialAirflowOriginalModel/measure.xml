@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>5a7ae205-bdc2-4daf-b29e-b6f0a59366a6</uid>
-  <version_id>cab7225d-5991-4607-a07f-27e80ba43bff</version_id>
-  <version_modified>20161110T152055Z</version_modified>
+  <version_id>145827fa-c791-42e3-8d29-798061ea7ace</version_id>
+  <version_modified>20161114T200524Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
@@ -583,12 +583,6 @@
       <checksum>97B219DD</checksum>
     </file>
     <file>
-      <filename>airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D072A5F2</checksum>
-    </file>
-    <file>
       <filename>singlefamily_slab_location_beds_electric_baseboard.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -671,6 +665,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>394EB92E</checksum>
+    </file>
+    <file>
+      <filename>airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>83BC803A</checksum>
+    </file>
+    <file>
+      <filename>ASHRAE622WSF.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>308F75BA</checksum>
     </file>
     <file>
       <version>

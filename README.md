@@ -92,7 +92,7 @@ The New Construction workflow illustrates how to build up a complete residential
 ||9. Gas Fireplace|Beds/Baths|
 ||10. Gas Grill|Beds/Baths|
 ||11. Gas Lighting|Beds/Baths|
-|9. EnergyPlus Measures|1. Airflow|Location, Beds/Baths, HVAC Equipment, Clothes Dryer|
+|9. Airflow|1. Airflow|Location, Beds/Baths, HVAC Equipment, Clothes Dryer|
 
 ## Retrofit Workflow for Users
 
