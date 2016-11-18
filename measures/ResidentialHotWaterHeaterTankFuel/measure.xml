@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_fuel</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>a25ea730-0e84-45a7-be60-80507efb6818</version_id>
-  <version_modified>20161110T145607Z</version_modified>
+  <version_id>4824a588-d7c2-42e7-ba90-015be52022da</version_id>
+  <version_modified>20161118T210311Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankFuel</class_name>
   <display_name>Set Residential Fuel Tank Water Heater</display_name>

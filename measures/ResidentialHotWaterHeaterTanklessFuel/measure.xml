@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_fuel</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>54073c35-3b55-4480-8cee-08c8ecb655ae</version_id>
-  <version_modified>20161110T145608Z</version_modified>
+  <version_id>14ebbc89-bf81-4cf4-afba-7be5e934f613</version_id>
+  <version_modified>20161118T210312Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessFuel</class_name>
   <display_name>Set Residential Fuel Tankless Water Heater</display_name>

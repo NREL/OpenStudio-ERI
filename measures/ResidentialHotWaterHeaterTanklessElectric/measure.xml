@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>d2a5666e-777c-48c5-96f6-5cdba222010a</version_id>
-  <version_modified>20161110T145608Z</version_modified>
+  <version_id>5e935465-8ee8-4499-8502-b0a656d8fb6e</version_id>
+  <version_modified>20161118T210311Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessElectric</class_name>
   <display_name>Set Residential Electric Tankless Water Heater</display_name>
