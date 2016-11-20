@@ -365,7 +365,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
 
-    actual_values = {"TankVolume"=>0, "InputCapacity"=>0, "ThermalEfficiency"=>0, "TankUA1"=>0, "TankUA2"=>0, "Setpoint"=>0, "OnCycle"=>0, "OffCycle"=>0}
+    actual_values = {"TankVolume"=>0, "InputCapacity"=>0, "ThermalEfficiency"=>0, "TankUA1"=>0, "TankUA2"=>0, "Setpoint"=>0, "OnCycle"=>0, "OffCycle"=>0, "SkinLossFrac"=>0}
     num_new_whs = 0
     all_new_objects.each do |obj_type, new_objects|
         new_objects.each do |new_object|
@@ -380,6 +380,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
                 actual_values["Setpoint"] += Waterheater.get_water_heater_setpoint(model, new_object.plantLoop.get, nil)
                 actual_values["OnCycle"] += new_object.onCycleParasiticFuelConsumptionRate
                 actual_values["OffCycle"] += new_object.offCycleParasiticFuelConsumptionRate
+                actual_values["SkinLossFrac"] += new_object.offCycleLossFractiontoThermalZone
                 num_new_whs += 1
             end
         end
@@ -392,6 +393,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
     assert_in_epsilon(expected_values["Setpoint"], actual_values["Setpoint"], 0.01)
     assert_in_epsilon(0, actual_values["OnCycle"], 0.01)
     assert_in_epsilon(0, actual_values["OffCycle"], 0.01)
+    assert_in_epsilon(num_new_whs, actual_values["SkinLossFrac"], 0.01)
 
     return model
   end

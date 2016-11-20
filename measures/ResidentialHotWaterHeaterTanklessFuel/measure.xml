@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_fuel</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>14ebbc89-bf81-4cf4-afba-7be5e934f613</version_id>
-  <version_modified>20161118T210312Z</version_modified>
+  <version_id>a96d0293-bd4e-4ed1-a0f5-c4e9b9278289</version_id>
+  <version_modified>20161120T192558Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessFuel</class_name>
   <display_name>Set Residential Fuel Tankless Water Heater</display_name>
@@ -194,12 +194,6 @@
       <checksum>9A86F3EB</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>951BE986</checksum>
-    </file>
-    <file>
       <filename>MinuteDrawProfilesMaxFlows.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
@@ -227,12 +221,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>C8ACD497</checksum>
-    </file>
-    <file>
-      <filename>ResidentialWaterHeaterTanklessFuel_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C8385F5D</checksum>
     </file>
     <file>
       <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm</filename>
@@ -269,6 +257,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>394EB92E</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BFF023C0</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTanklessFuel_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4595B9E8</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTanklessFuel_Test.rb.bak</filename>
+      <filetype>bak</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C5DA2510</checksum>
     </file>
   </files>
 </measure>
