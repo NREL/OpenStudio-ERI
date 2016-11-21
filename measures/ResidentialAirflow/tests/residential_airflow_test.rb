@@ -82,9 +82,9 @@ class ResidentialAirflowTest < MiniTest::Test
     _test_measure("singlefamily_detached_slab_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)     
   end    
   
-  def test_new_construction
+  def test_existing_building
     args_hash = {}
-    args_hash["age_of_home"] = 1
+    args_hash["is_existing_home"] = true
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "Surface"=>6, "EnergyManagementSystemSubroutine"=>1, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>23, "EnergyManagementSystemActuator"=>17, "EnergyManagementSystemGlobalVariable"=>23, "AirLoopHVACReturnPlenum"=>1, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "ThermalZone"=>1, "ZoneMixing"=>2, "OutputVariable"=>15, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "Construction"=>1, "Space"=>1, "Material"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
     expected_values = {}

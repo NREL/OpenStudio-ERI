@@ -79,9 +79,9 @@ class AirflowTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end  
   
-  def test_new_construction
+  def test_existing_building
     args_hash = {}
-    args_hash["userdefinedhomeage"] = 1
+    args_hash["userdefinedexistinghome"] = true
     result = _test_measure("singlefamily_slab_location_beds_furnace_central_air_conditioner.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)    
