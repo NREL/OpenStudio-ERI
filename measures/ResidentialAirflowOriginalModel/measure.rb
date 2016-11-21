@@ -3071,7 +3071,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
             # ASHRAE Standard 62.2 2010
             # Only applies to existing buildings
             # 2 cfm per 100ft^2 of occupiable floor area
-            infil.default_rate = 2.0 * geometry.finished_floor_area / 100.0 # cfm
+            infil.default_rate = 2.0 * unit.finished_floor_area / 100.0 # cfm
             # Half the excess infiltration rate above the default rate is credited toward mech vent:
             infil.rate_credit = [(living_space.inf_flow - infil.default_rate) / 2.0, 0].max          
         elsif vent.MechVentASHRAEStandard == '2013' and geometry.num_units == 1
