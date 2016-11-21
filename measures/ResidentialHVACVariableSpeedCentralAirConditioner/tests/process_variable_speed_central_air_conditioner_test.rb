@@ -7,7 +7,7 @@ require 'fileutils'
 
 class ProcessVariableSpeedCentralAirConditionerTest < MiniTest::Test  
   
-  def test_new_construction_seer_25pt5
+  def test_new_construction_seer_24pt5
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXMultiSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "CoilCoolingDXMultiSpeedStageData"=>4}
