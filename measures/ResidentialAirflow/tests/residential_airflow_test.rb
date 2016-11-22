@@ -100,6 +100,15 @@ class ResidentialAirflowTest < MiniTest::Test
     _test_measure("singlefamily_detached_crawl_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1) 
   end  
   
+  def test_crawl
+    args_hash = {}
+    args_hash["pierbeam_ach"] = 100
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "Surface"=>6, "EnergyManagementSystemSubroutine"=>1, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>23, "EnergyManagementSystemActuator"=>17, "EnergyManagementSystemGlobalVariable"=>23, "AirLoopHVACReturnPlenum"=>1, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "ThermalZone"=>1, "ZoneMixing"=>2, "OutputVariable"=>15, "SpaceInfiltrationDesignFlowRate"=>3, "SpaceInfiltrationEffectiveLeakageArea"=>1, "Construction"=>1, "Space"=>1, "Material"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
+    expected_values = {"duct_location"=>"pier and beam zone"}
+    _test_measure("singlefamily_detached_pierbeam_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1) 
+  end  
+
   def test_ufbasement
     args_hash = {}  
     expected_num_del_objects = {}
@@ -451,6 +460,8 @@ class ResidentialAirflowTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
+    
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)

@@ -1,14 +1,14 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_constructions_foundations_floors_interzonal_floors</name>
+  <name>process_constructions_foundations_floors_pier_beam</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>8fe4b864-c7f3-4bee-9774-c9cdbb189852</version_id>
-  <version_modified>20161122T204424Z</version_modified>
+  <version_id>c5456694-5d89-4011-bb3c-28e27bfbc056</version_id>
+  <version_modified>20161122T201703Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
-  <class_name>ProcessConstructionsFoundationsFloorsInterzonalFloors</class_name>
-  <display_name>Set Residential Foundations/Floors - Interzonal Floor Construction</display_name>
-  <description>This measure assigns a wood stud construction to floors between finished space and unfinished space or floors below cantilevered finished space.</description>
-  <modeler_description>Calculates and assigns material layer properties of wood stud constructions for floors 1) between finished and unfinished spaces or 2) between finished spaces and outside. If the floors have an existing construction, the layers (other than floor covering and floor mass) are replaced. This measure is intended to be used in conjunction with Floor Covering and Floor Mass measures.</modeler_description>
+  <class_name>ProcessConstructionsFoundationsFloorsPierBeam</class_name>
+  <display_name>Set Residential Foundations/Floors - Pier &amp; Beam Construction</display_name>
+  <description>This measure assigns a wood stud construction to the ceiling of the pier &amp; beam space.</description>
+  <modeler_description>Calculates and assigns material layer properties of wood stud constructions for floors finished space and pier &amp; beam space. If the floors have an existing construction, the layers (other than floor covering and floor mass) are replaced. This measure is intended to be used in conjunction with Floor Covering and Floor Mass measures.</modeler_description>
   <arguments>
     <argument>
       <name>cavity_r</name>
@@ -98,7 +98,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>FF6788A5</checksum>
+      <checksum>3DB0B540</checksum>
     </file>
   </files>
 </measure>

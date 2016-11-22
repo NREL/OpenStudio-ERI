@@ -39,6 +39,10 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinishedTest < MiniTest::Te
     return "2000sqft_2story_UB_GRG_UA.osm"
   end
 
+  def osm_geo_pier_beam
+    return "2000sqft_2story_PB_UA.osm"
+  end
+  
   def test_add_uninsulated
     args_hash = {}
     args_hash["wall_ins_height"] = 0
@@ -269,6 +273,11 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinishedTest < MiniTest::Te
   def test_not_applicable_crawl_garage
     args_hash = {}
     _test_na(osm_geo_crawl_garage, args_hash)
+  end
+
+  def test_not_applicable_pier_beam
+    args_hash = {}
+    _test_na(osm_geo_pier_beam, args_hash)
   end
 
   private

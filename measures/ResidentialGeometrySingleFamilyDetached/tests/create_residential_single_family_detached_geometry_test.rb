@@ -33,7 +33,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
     args_hash["foundation_type"] = Constants.PierBeamFoundationType
     args_hash["foundation_height"] = 0
     result = _test_error(nil, args_hash)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "The pier & beam height can be set between 0.5 and 8 ft.")
+    assert_includes(result.errors.map{ |x| x.logMessage }, "The pier & beam height must be greater than 0 ft.")
   end  
   
   def test_argument_error_num_floors_invalid

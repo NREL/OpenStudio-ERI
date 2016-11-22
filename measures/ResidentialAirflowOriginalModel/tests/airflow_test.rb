@@ -102,6 +102,14 @@ class AirflowTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
   
+  def test_pierbeam
+    args_hash = {}
+    args_hash["userdefinedinfpierbeam"] = 100
+    result = _test_measure("singlefamily_pierbeam_location_beds_furnace_central_air_conditioner.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+
   def test_ufbasement
     args_hash = {}  
     result = _test_measure("singlefamily_ufbasement_location_beds_furnace_central_air_conditioner.osm", args_hash)
@@ -280,7 +288,7 @@ class AirflowTest < MiniTest::Test
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
-
+    
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
     translator = OpenStudio::EnergyPlus::ForwardTranslator.new
     workspace = translator.translateModel(model)
@@ -303,6 +311,8 @@ class AirflowTest < MiniTest::Test
     measure.run(workspace, runner, argument_map)
     result = runner.result
       
+    #show_output(result)
+
     return result
     
   end 

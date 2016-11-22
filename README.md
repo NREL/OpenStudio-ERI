@@ -36,7 +36,7 @@ The New Construction workflow illustrates how to build up a complete residential
 |Group|Measure|Dependencies*|
 |:---|:---|:---|
 |1. Location|1. Location||
-|2. Geometry|1. Geometry (Single-Family Detached, Single-Family Attached, or Multifamily)||
+|2. Geometry|1. Geometry Single-Family Detached (or Single-Family Attached or Multifamily)||
 ||2. Number of Beds and Baths||
 ||3. Number of Occupants|Beds/Baths|
 ||4. Orientation||
@@ -45,30 +45,26 @@ The New Construction workflow illustrates how to build up a complete residential
 ||7. Window Areas||
 ||8. Overhangs|Window Areas|
 ||9. Neighbors||
-|3. Envelope Constructions|1. Ceilings/Roofs - Unfinished Attic Constructions||
-||2. Ceilings/Roofs - Finished Roof Construction||
-||3. Ceilings/Roofs - Roof Sheathing||
-||4. Ceilings/Roofs - Roofing Material||
-||5. Ceilings/Roofs - Radiant Barrier||
-||6. Ceilings/Roofs - Ceiling Thermal Mass||
-||7. Foundations/Floors - Finished Basement Constructions||
-||8. Foundations/Floors - Unfinished Basement Constructions||
-||9. Foundations/Floors - Crawlspace Constructions||
-||10. Foundations/Floors - Slab Construction||
-||11. Foundations/Floors - Interzonal Floor Construction||
-||12. Foundations/Floors - Floor Covering||
-||13. Foundations/Floors - Floor Sheathing||
-||14. Foundations/Floors - Floor Thermal Mass||
-||15. Walls - Wood Stud Construction (or Double Stud, CMU, etc.)||
-||16. Walls - Interzonal Construction||
-||17. Walls - Wall Sheathing||
-||18. Walls - Exterior Finish||
-||19. Walls - Exterior Thermal Mass||
-||20. Walls - Partition Thermal Mass||
-||21. Uninsulated Surfaces||
-||22. Window Construction|Window Areas, Location|
-||23. Door Construction|Door Area|
-||24. Furniture Thermal Mass||
+|3. Envelope Constructions|1. Ceilings/Roofs - Unfinished Attic Constructions (or Finished Roof)||
+||2. Ceilings/Roofs - Roof Sheathing||
+||3. Ceilings/Roofs - Roofing Material||
+||4. Ceilings/Roofs - Radiant Barrier||
+||5. Ceilings/Roofs - Ceiling Thermal Mass||
+||6. Foundations/Floors - Unfinished Basement Construction (or Finished Basement, Crawlspace, Slab, or Pier & Beam)||
+||7. Foundations/Floors - Interzonal Floor Construction||
+||8. Foundations/Floors - Floor Covering||
+||9. Foundations/Floors - Floor Sheathing||
+||10. Foundations/Floors - Floor Thermal Mass||
+||11. Walls - Wood Stud Construction (or Double Stud, CMU, etc.)||
+||12. Walls - Interzonal Construction||
+||13. Walls - Wall Sheathing||
+||14. Walls - Exterior Finish||
+||15. Walls - Exterior Thermal Mass||
+||16. Walls - Partition Thermal Mass||
+||17. Uninsulated Surfaces||
+||18. Window Construction|Window Areas, Location|
+||19. Door Construction|Door Area|
+||20. Furniture Thermal Mass||
 |4. Domestic Hot Water|1. Water Heater (Electric Tank, Fuel Tankless, etc.)|Beds/Baths|
 ||2. Hot Water Fixtures|Water Heater|
 ||3. Hot Water Distribution|Hot Water Fixtures, Location|
