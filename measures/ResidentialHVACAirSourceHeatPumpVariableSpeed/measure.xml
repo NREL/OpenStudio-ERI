@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_air_source_heat_pump</name>
   <uid>8d15f4f7-8bbb-4b2e-b6d0-aa861f22b697</uid>
-  <version_id>49b5a6a2-f56d-4363-abbf-fe6110351334</version_id>
-  <version_modified>20161122T201708Z</version_modified>
+  <version_id>8900dd55-4101-4064-ad73-a188c0c951d1</version_id>
+  <version_modified>20161123T160306Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVariableSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Variable-Speed Air Source Heat Pump</display_name>
@@ -790,6 +790,18 @@
       <checksum>EFC7CBA3</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>394EB92E</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9A86F3EB</checksum>
+    </file>
+    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -805,19 +817,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E0FB4D46</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1036AA7A</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4E6EFE03</checksum>
+      <checksum>7953132D</checksum>
     </file>
   </files>
 </measure>

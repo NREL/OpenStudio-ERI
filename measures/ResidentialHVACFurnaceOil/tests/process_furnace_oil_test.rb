@@ -5,59 +5,30 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ProcessFurnaceTest < MiniTest::Test 
+class ProcessFurnaceOilTest < MiniTest::Test 
   
   def test_new_construction_afue_0_78
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
-    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 3)
-  end  
-  
-  def test_new_construction_afue_0_78_oil
-    args_hash = {}
-    args_hash["fuel_type"] = Constants.FuelTypeOil
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1}
     expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 3)
-  end  
-
-  def test_new_construction_afue_0_78_propane
-    args_hash = {}
-    args_hash["fuel_type"] = Constants.FuelTypePropane
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypePropane}
-    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 3)
-  end  
+  end
 
   def test_new_construction_fbsmt_afue_0_78
     args_hash = {}
     args_hash["capacity"] = "20 kBtu/hr"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>5861.42, "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>5861.42, "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
-  end
-  
-  def test_new_construction_afue_1
-    args_hash = {}
-    args_hash["fuel_type"] = Constants.FuelTypeElectric
-    args_hash["afue"] = 1
-    args_hash["capacity"] = "40 kBtu/hr"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1}
-    expected_values = {"Efficiency"=>1, "NominalCapacity"=>2*5861.42, "MaximumSupplyAirTemperature"=>48.88}
-    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 3)
   end
   
   def test_retrofit_replace_furnace
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_furnace.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -65,7 +36,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingDXSingleSpeed"=>1, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_ashp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
   
@@ -73,7 +44,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -81,7 +52,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end
   
@@ -89,7 +60,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_electric_baseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -97,7 +68,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"PlantLoop"=>1, "BoilerHotWater"=>1, "CoilHeatingWaterBaseboard"=>2, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_boiler.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end
   
@@ -105,7 +76,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"FanOnOff"=>2, "AirConditionerVariableRefrigerantFlow"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_mshp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end
   
@@ -113,7 +84,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end
   
@@ -121,7 +92,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_furnace_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
   
@@ -129,7 +100,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_electric_baseboard_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end  
   
@@ -137,7 +108,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "PlantLoop"=>1, "BoilerHotWater"=>1, "CoilHeatingWaterBaseboard"=>2, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_boiler_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)
   end  
 
@@ -145,7 +116,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_electric_baseboard_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -153,7 +124,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"PlantLoop"=>1, "BoilerHotWater"=>1, "CoilHeatingWaterBaseboard"=>2, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_detached_fbsmt_boiler_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end
 
@@ -162,7 +133,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilHeatingGas"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units*2}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("singlefamily_attached_fbsmt_4_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*4)
   end
 
@@ -171,7 +142,7 @@ class ProcessFurnaceTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilHeatingGas"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units}
-    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeGas}
+    expected_values = {"Efficiency"=>0.78, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88, "FuelType"=>Constants.FuelTypeOil}
     _test_measure("multifamily_8_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*3)
   end  
   
@@ -179,7 +150,7 @@ class ProcessFurnaceTest < MiniTest::Test
   
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
-    measure = ProcessFurnace.new
+    measure = ProcessFurnaceOil.new
 
     # check for standard methods
     assert(!measure.name.empty?)
@@ -237,11 +208,6 @@ class ProcessFurnaceTest < MiniTest::Test
             elsif obj_type == "CoilHeatingGas"
                 assert_in_epsilon(expected_values["Efficiency"], new_object.gasBurnerEfficiency, 0.01)
                 assert_equal(HelperMethods.eplus_fuel_map(expected_values["FuelType"]), new_object.fuelType)
-                if new_object.nominalCapacity.is_initialized
-                  assert_in_epsilon(expected_values["NominalCapacity"], new_object.nominalCapacity.get, 0.01)
-                end       
-            elsif obj_type == "CoilHeatingElectric"
-                assert_in_epsilon(expected_values["Efficiency"], new_object.efficiency, 0.01)
                 if new_object.nominalCapacity.is_initialized
                   assert_in_epsilon(expected_values["NominalCapacity"], new_object.nominalCapacity.get, 0.01)
                 end
