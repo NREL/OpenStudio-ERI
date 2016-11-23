@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>e55873e3-f3d1-4a05-989d-e3b3ac4a4313</version_id>
-  <version_modified>20161123T162420Z</version_modified>
+  <version_id>ac44c62c-dbaa-4de4-9518-84b286314b86</version_id>
+  <version_modified>20161123T165848Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
@@ -295,12 +295,6 @@
       <checksum>2350A601</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9A86F3EB</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -311,18 +305,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>22C6561D</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>394EB92E</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7953132D</checksum>
     </file>
     <file>
       <filename>process_furnace_electric_test.rb</filename>
@@ -340,6 +322,24 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>B9BE0894</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4E6EFE03</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1036AA7A</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B604F457</checksum>
     </file>
   </files>
 </measure>

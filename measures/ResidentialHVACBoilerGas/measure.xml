@@ -1,42 +1,15 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_boiler</name>
-  <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>177b14e2-d574-420a-ae08-b8d5b271d208</version_id>
-  <version_modified>20161123T160306Z</version_modified>
+  <name>process_boiler_gas</name>
+  <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
+  <version_id>ead843a0-ca5b-4012-8ac4-2e8e127fad6a</version_id>
+  <version_modified>20161123T170156Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
-  <class_name>ProcessBoiler</class_name>
-  <display_name>Set Residential Boiler</display_name>
+  <class_name>ProcessBoilerGas</class_name>
+  <display_name>Set Residential Boiler Gas</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a boiler along with constant speed pump and water baseboard coils to a hot water plant loop. For multifamily buildings, the boiler can be set for all units of the building.</description>
   <modeler_description>Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. A boiler along with constant speed pump and water baseboard coils are added to a hot water plant loop.</modeler_description>
   <arguments>
-    <argument>
-      <name>fuel_type</name>
-      <display_name>Fuel Type</display_name>
-      <description>Type of fuel used for heating.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>gas</default_value>
-      <choices>
-        <choice>
-          <value>gas</value>
-          <display_name>gas</display_name>
-        </choice>
-        <choice>
-          <value>electric</value>
-          <display_name>electric</display_name>
-        </choice>
-        <choice>
-          <value>oil</value>
-          <display_name>oil</display_name>
-        </choice>
-        <choice>
-          <value>propane</value>
-          <display_name>propane</display_name>
-        </choice>
-      </choices>
-    </argument>
     <argument>
       <name>system_type</name>
       <display_name>System Type</display_name>
@@ -302,6 +275,17 @@
   </attributes>
   <files>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>1.13.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>F70174BB</checksum>
+    </file>
+    <file>
       <filename>multifamily_8_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -392,39 +376,34 @@
       <checksum>5DFCEEF4</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_fbsmt_room_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>38A2C794</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>2350A601</checksum>
     </file>
     <file>
+      <filename>singlefamily_detached_fbsmt_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>38A2C794</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1036AA7A</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>9A86F3EB</checksum>
+      <checksum>4E6EFE03</checksum>
     </file>
     <file>
-      <filename>process_boiler_test.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>46D382F9</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.6</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>AB31DA91</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>B604F457</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -433,16 +412,10 @@
       <checksum>22C6561D</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>process_boiler_gas_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>394EB92E</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7953132D</checksum>
+      <usage_type>test</usage_type>
+      <checksum>2AC930F5</checksum>
     </file>
   </files>
 </measure>

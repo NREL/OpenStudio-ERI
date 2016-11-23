@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_gas</name>
   <uid>1a71ae9e-5485-4cca-a369-16c6b8a9c1d8</uid>
-  <version_id>80fe8e81-f4f5-4a02-a648-0d0bdf26def2</version_id>
-  <version_modified>20161123T162746Z</version_modified>
+  <version_id>a937494b-02d2-484e-99ae-470090acbed3</version_id>
+  <version_modified>20161123T165848Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessFurnaceGas</class_name>
   <display_name>Set Residential Furnace Gas</display_name>
@@ -316,24 +316,6 @@
       <checksum>38A2C794</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>394EB92E</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9A86F3EB</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7953132D</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -350,6 +332,24 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>7DD0E10B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1036AA7A</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4E6EFE03</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B604F457</checksum>
     </file>
   </files>
 </measure>

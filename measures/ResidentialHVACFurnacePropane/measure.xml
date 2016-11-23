@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_propane</name>
   <uid>5d4838d2-1714-4dd6-baa1-1dea9b43b910</uid>
-  <version_id>b18f4960-94a0-4e6b-80f9-bd22a69a338c</version_id>
-  <version_modified>20161123T163406Z</version_modified>
+  <version_id>3eddb809-63bf-4bd7-9a6f-79de31d3c923</version_id>
+  <version_modified>20161123T165848Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessFurnacePropane</class_name>
   <display_name>Set Residential Furnace Propane</display_name>
@@ -322,24 +322,6 @@
       <checksum>38A2C794</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>394EB92E</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9A86F3EB</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7953132D</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -350,6 +332,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>22C6561D</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1036AA7A</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4E6EFE03</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B604F457</checksum>
     </file>
   </files>
 </measure>

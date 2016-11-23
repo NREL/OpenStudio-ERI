@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_oil</name>
   <uid>f3039acb-6873-4a16-9ea1-7d0840188d5a</uid>
-  <version_id>658eed26-bff0-484d-9907-fc09d2064eea</version_id>
-  <version_modified>20161123T163025Z</version_modified>
+  <version_id>9d3cc3cb-9ab7-4eef-a57d-d5e3eb89c718</version_id>
+  <version_modified>20161123T165848Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessFurnaceOil</class_name>
   <display_name>Set Residential Furnace Oil</display_name>
@@ -322,24 +322,6 @@
       <checksum>38A2C794</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>394EB92E</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9A86F3EB</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7953132D</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -350,6 +332,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>22C6561D</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1036AA7A</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4E6EFE03</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B604F457</checksum>
     </file>
   </files>
 </measure>
