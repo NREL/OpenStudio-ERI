@@ -14,7 +14,7 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
 
   class Ducts
-    def initialize(ductTotalLeakage, ductNormLeakageToOutside, ductSupplySurfaceAreaMultiplier, ductReturnSurfaceAreaMultiplier, ductUnconditionedRvalue, ductSupplyLeakageFractionOfTotal, ductReturnLeakageFractionOfTotal, ductAHSupplyLeakageFractionOfTotal, ductAHReturnLeakageFractionOfTotal)
+    def initialize(ductTotalLeakage, ductNormLeakageToOutside, ductSupplySurfaceAreaMultiplier, ductReturnSurfaceAreaMultiplier, ductUnconditionedRvalue, ductSupplyLeakageFractionOfTotal, ductReturnLeakageFractionOfTotal, ductAHSupplyLeakageFractionOfTotal, ductAHReturnLeakageFractionOfTotal, ductSystemEfficiency)
       @ductTotalLeakage = ductTotalLeakage
       @ductNormLeakageToOutside = ductNormLeakageToOutside
       @ductSupplySurfaceAreaMultiplier = ductSupplySurfaceAreaMultiplier
@@ -24,6 +24,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       @ductReturnLeakageFractionOfTotal = ductReturnLeakageFractionOfTotal
       @ductAHSupplyLeakageFractionOfTotal = ductAHSupplyLeakageFractionOfTotal
       @ductAHReturnLeakageFractionOfTotal = ductAHReturnLeakageFractionOfTotal
+      @ductSystemEfficiency = ductSystemEfficiency
     end
     
     attr_accessor(:duct_location_zone, :duct_location_name, :has_ducts, :ducts_not_in_living, :num_stories, :num_stories_for_ducts, :DuctLocationFrac, :DuctLocationFracLeakage, :DuctLocationFracConduction, :DuctSupplyLeakageFractionOfTotal, :DuctReturnLeakageFractionOfTotal, :DuctAHSupplyLeakageFractionOfTotal, :DuctAHReturnLeakageFractionOfTotal, :DuctSupplyLeakage, :DuctReturnLeakage, :DuctAHSupplyLeakage, :DuctAHReturnLeakage, :DuctNumReturns, :supply_duct_surface_area, :return_duct_surface_area, :unconditioned_duct_area, :supply_duct_r, :return_duct_r, :unconditioned_duct_ua, :return_duct_ua, :supply_duct_volume, :return_duct_volume, :direct_oa_supply_duct_loss, :supply_duct_loss, :return_duct_loss, :supply_leak_oper, :return_leak_oper, :ah_supply_leak_oper, :ah_return_leak_oper, :total_duct_unbalance, :frac_oa, :oa_duct_makeup)
@@ -62,6 +63,10 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     
     def DuctAHReturnLeakageFractionOfTotal
       return @ductAHReturnLeakageFractionOfTotal
+    end
+    
+    def DuctSystemEfficiency
+      return @ductSystemEfficiency
     end
     
   end
@@ -635,7 +640,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     #make a string argument for norm leakage to outside
     duct_norm_leakage_25pa = OpenStudio::Ruleset::OSArgument::makeStringArgument("duct_norm_leakage_25pa", false)
     duct_norm_leakage_25pa.setDisplayName("Ducts: Leakage to Outside at 25Pa")
-    duct_norm_leakage_25pa.setUnits("cfm/100 ft^2")
+    duct_norm_leakage_25pa.setUnits("cfm/100 ft^2 Finished Floor")
     duct_norm_leakage_25pa.setDescription("Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
     duct_norm_leakage_25pa.setDefaultValue("NA")
     args << duct_norm_leakage_25pa
@@ -679,6 +684,13 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     duct_unconditioned_r.setDescription("The nominal R-value for duct insulation.")
     duct_unconditioned_r.setDefaultValue(0.0)
     args << duct_unconditioned_r
+    
+    #make a string argument for distribution system efficiency
+    dist_system_eff = OpenStudio::Ruleset::OSArgument::makeStringArgument("dist_system_eff", false)
+    dist_system_eff.setDisplayName("Ducts: Distribution System Efficiency")
+    dist_system_eff.setDescription("A system efficiency factor, not included in manufacturer's equipment performance ratings for heating and cooling equipment, that adjusts for the energy losses associated with the delivery of energy from the equipment to the source of the load.")
+    dist_system_eff.setDefaultValue("NA")
+    args << dist_system_eff    
 
     return args
   end
@@ -751,6 +763,12 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     ductSupplySurfaceAreaMultiplier = runner.getDoubleArgumentValue("duct_supply_area_mult",user_arguments)
     ductReturnSurfaceAreaMultiplier = runner.getDoubleArgumentValue("duct_return_area_mult",user_arguments)
     ductUnconditionedRvalue = runner.getDoubleArgumentValue("duct_unconditioned_r",user_arguments)
+    ductSystemEfficiency = runner.getStringArgumentValue("dist_system_eff",user_arguments)
+    unless ductSystemEfficiency == "NA"
+      ductSystemEfficiency = ductSystemEfficiency.to_f
+    else
+      ductSystemEfficiency = nil
+    end    
 
     # Create the class instances
     infil = Infiltration.new(infiltrationLivingSpaceACH50, infiltrationShelterCoefficient, infiltrationGarageACH50)
@@ -759,7 +777,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     building = Building.new
     nat_vent = NaturalVentilation.new(natVentHtgSsnSetpointOffset, natVentClgSsnSetpointOffset, natVentOvlpSsnSetpointOffset, natVentHeatingSeason, natVentCoolingSeason, natVentOverlapSeason, natVentNumberWeekdays, natVentNumberWeekendDays, natVentFractionWindowsOpen, natVentFractionWindowAreaOpen, natVentMaxOAHumidityRatio, natVentMaxOARelativeHumidity)
     schedules = Schedules.new
-    ducts = Ducts.new(ductTotalLeakage, ductNormLeakageToOutside, ductSupplySurfaceAreaMultiplier, ductReturnSurfaceAreaMultiplier, ductUnconditionedRvalue, ductSupplyLeakageFractionOfTotal, ductReturnLeakageFractionOfTotal, ductAHSupplyLeakageFractionOfTotal, ductAHReturnLeakageFractionOfTotal)
+    ducts = Ducts.new(ductTotalLeakage, ductNormLeakageToOutside, ductSupplySurfaceAreaMultiplier, ductReturnSurfaceAreaMultiplier, ductUnconditionedRvalue, ductSupplyLeakageFractionOfTotal, ductReturnLeakageFractionOfTotal, ductAHSupplyLeakageFractionOfTotal, ductAHReturnLeakageFractionOfTotal, ductSystemEfficiency)
     
     @weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
     if @weather.error?
@@ -1311,7 +1329,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       end
 
       ducts.has_ducts = true  
-      if ducts.duct_location_name == "none"
+      if ducts.duct_location_name == "none" or not ducts.DuctSystemEfficiency.nil?
         ducts.duct_location_zone = unit.living_zone
         ducts.duct_location_name = unit.living_zone.name.to_s
         ducts.has_ducts = false
@@ -1330,6 +1348,48 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       if ducts.duct_location_name == unit.living_zone.name.to_s
         ducts.ducts_not_in_living = false
       end      
+
+      hasForcedAirEquipment = false
+      model.getAirLoopHVACs.each do |air_loop|
+        next unless air_loop.thermalZones.include? unit.living_zone
+        hasForcedAirEquipment = true
+      end
+      
+      if not ducts.DuctSystemEfficiency.nil? and hasForcedAirEquipment
+      
+        ducts.ducts_not_in_living = true
+        ducts.has_ducts = true
+        
+        adiabatic_mat = OpenStudio::Model::MasslessOpaqueMaterial.new(model, "Rough", 176.1)
+        adiabatic_mat.setName("Adiabatic")
+
+        adiabatic_const = OpenStudio::Model::Construction.new(model)
+        adiabatic_const.setName("AdiabaticConst")
+        adiabatic_const.insertLayer(0, adiabatic_mat)
+      
+        dse_zone = OpenStudio::Model::ThermalZone.new(model)
+        dse_zone.setName("DSE Zone_#{unit.unit_num}")
+        dse_zone.setVolume(0)
+        
+        sw_point = OpenStudio::Point3d.new(30, 50, 0)
+        nw_point = OpenStudio::Point3d.new(30, 50.5, 0)
+        ne_point = OpenStudio::Point3d.new(30.5, 50.5, 0)
+        se_point = OpenStudio::Point3d.new(30.5, 50, 0)
+        dse_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)
+        
+        dse_space = OpenStudio::Model::Space::fromFloorPrint(dse_polygon, 0.5, model)
+        dse_space = dse_space.get
+        dse_space.setName("DSE Space_#{unit.unit_num}")
+        dse_space.setThermalZone(dse_zone)
+        
+        dse_space.surfaces.each do |surface|
+          surface.setConstruction(adiabatic_const)
+          surface.setOutsideBoundaryCondition("Adiabatic")
+          surface.setSunExposure("NoSun")
+          surface.setWindExposure("NoWind")
+        end
+        
+      end
       
       ducts.num_stories_for_ducts = building.stories
       unless unit.finished_basement_zone.nil?
@@ -1408,9 +1468,8 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       
       # _processDuctLeakage
       unless ducts.DuctNormLeakageToOutside.nil?
-        # runner.registerError("Duct leakage to outside was specified by we don't calculate fan air flow rate.")
-        # return false
-        ducts = calc_duct_leakage_from_test(ducts, unit.finished_floor_area, fan_AirFlowRate) # TODO: what should fan_AirFlowRate be?
+        fan_AirFlowRate = 1000.0 # TODO: what should fan_AirFlowRate be?
+        ducts = calc_duct_leakage_from_test(ducts, unit.finished_floor_area, fan_AirFlowRate)
       end
       
       ducts.total_duct_unbalance = (ducts.supply_duct_loss - ducts.return_duct_loss).abs
@@ -1458,13 +1517,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       else
         ducts.frac_oa = 0
         ducts.oa_duct_makeup = 0
-      end
-            
-      hasForcedAirEquipment = false
-      model.getAirLoopHVACs.each do |air_loop|
-        next unless air_loop.thermalZones.include? unit.living_zone
-        hasForcedAirEquipment = true
-      end        
+      end      
 
       if not ducts.duct_location_name == unit.living_zone.name.to_s and not ducts.duct_location_name == "none" and hasForcedAirEquipment
       
@@ -2727,16 +2780,16 @@ def calc_duct_leakage_from_test(ducts, ffa, fan_AirFlowRate)
 
     # Conversion
     cfm25 = ducts.DuctNormLeakageToOutside * ffa / 100.0 #denormalize leakage
-    ah_cfm25 = AH_leakage * fan_AirFlowRate # air handler leakage flow rate at 25 Pa
+    ah_cfm25 = ah_leakage * fan_AirFlowRate # air handler leakage flow rate at 25 Pa
     ah_supply_leak_cfm25 = [ah_cfm25 * ah_supply_frac, cfm25 * supply_duct_leakage_frac].min
     ah_return_leak_cfm25 = [ah_cfm25 * ah_return_frac, cfm25 * return_duct_leakage_frac].min
     supply_leak_cfm25 = [cfm25 * supply_duct_leakage_frac - ah_supply_leak_cfm25, 0].max
     return_leak_cfm25 = [cfm25 * return_duct_leakage_frac - ah_return_leak_cfm25, 0].max
     
-    ducts.supply_leak_oper = calc_duct_leakage_at_diff_pressure(supply_leak_cfm25, 25, p_supply) # cfm at operating pressure
-    ducts.return_leak_oper = calc_duct_leakage_at_diff_pressure(return_leak_cfm25, 25, p_return) # cfm at operating pressure
-    ducts.AH_supply_leak_oper = calc_duct_leakage_at_diff_pressure(ah_supply_leak_cfm25, 25, p_supply) # cfm at operating pressure
-    ducts.AH_return_leak_oper = calc_duct_leakage_at_diff_pressure(ah_return_leak_cfm25, 25, p_return) # cfm at operating pressure
+    ducts.supply_leak_oper = calc_duct_leakage_at_diff_pressure(supply_leak_cfm25, 25.0, p_supply) # cfm at operating pressure
+    ducts.return_leak_oper = calc_duct_leakage_at_diff_pressure(return_leak_cfm25, 25.0, p_return) # cfm at operating pressure
+    ducts.ah_supply_leak_oper = calc_duct_leakage_at_diff_pressure(ah_supply_leak_cfm25, 25.0, p_supply) # cfm at operating pressure
+    ducts.ah_return_leak_oper = calc_duct_leakage_at_diff_pressure(ah_return_leak_cfm25, 25.0, p_return) # cfm at operating pressure
     
     if fan_AirFlowRate == 0
         ducts.DuctSupplyLeakage = 0
@@ -2746,8 +2799,8 @@ def calc_duct_leakage_from_test(ducts, ffa, fan_AirFlowRate)
     else
         ducts.DuctSupplyLeakage   = ducts.supply_leak_oper / fan_AirFlowRate
         ducts.DuctReturnLeakage   = ducts.return_leak_oper / fan_AirFlowRate
-        ducts.DuctAHSupplyLeakage = ducts.AH_supply_leak_oper / fan_AirFlowRate
-        ducts.DuctAHReturnLeakage = ducts.AH_return_leak_oper / fan_AirFlowRate
+        ducts.DuctAHSupplyLeakage = ducts.ah_supply_leak_oper / fan_AirFlowRate
+        ducts.DuctAHReturnLeakage = ducts.ah_return_leak_oper / fan_AirFlowRate
     end
 
     ducts.supply_duct_loss = ducts.DuctSupplyLeakage + ducts.DuctAHSupplyLeakage

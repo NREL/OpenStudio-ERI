@@ -13,7 +13,7 @@ class ResidentialAirflowTest < MiniTest::Test
     expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
     expected_values = {}
     _test_measure("singlefamily_detached_slab.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 4)       
-  end  
+  end
   
   def test_non_ducted_hvac_equipment
     args_hash = {}
@@ -100,9 +100,8 @@ class ResidentialAirflowTest < MiniTest::Test
     _test_measure("singlefamily_detached_crawl_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1) 
   end  
   
-  def test_crawl
+  def test_pier_beam
     args_hash = {}
-    args_hash["pierbeam_ach"] = 100
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "Surface"=>6, "EnergyManagementSystemSubroutine"=>1, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>23, "EnergyManagementSystemActuator"=>17, "EnergyManagementSystemGlobalVariable"=>23, "AirLoopHVACReturnPlenum"=>1, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "ThermalZone"=>1, "ZoneMixing"=>2, "OutputVariable"=>15, "SpaceInfiltrationDesignFlowRate"=>3, "SpaceInfiltrationEffectiveLeakageArea"=>1, "Construction"=>1, "Space"=>1, "Material"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
     expected_values = {"duct_location"=>"pier and beam zone"}
@@ -167,21 +166,25 @@ class ResidentialAirflowTest < MiniTest::Test
     args_hash["duct_location"] = Constants.BasementZone
     result = _test_error("singlefamily_detached_slab_furnace_central_air_conditioner.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Duct location is basement, but the building does not have a basement.")
-  end      
+  end
  
   def test_duct_norm_leak_to_outside
     args_hash = {}
     args_hash["duct_norm_leakage_25pa"] = "8.0"
-    result = _test_error("singlefamily_detached_slab_furnace_central_air_conditioner.osm", args_hash)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "Duct leakage to outside was specified by we don't calculate fan air flow rate.")
-  end  
-
-  def test_duct_norm_leak_to_outside
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>23, "EnergyManagementSystemActuator"=>17, "EnergyManagementSystemGlobalVariable"=>23, "OutputVariable"=>15, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "Space"=>1, "Surface"=>6, "OtherEquipment"=>10, "OtherEquipmentDefinition"=>10, "Material"=>1, "AirLoopHVACReturnPlenum"=>1, "ThermalZone"=>1, "ZoneMixing"=>2, "Construction"=>1, "EnergyManagementSystemSubroutine"=>1}
+    expected_values = {}
+    _test_measure("singlefamily_detached_slab_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1) 
+  end
+  
+  def test_duct_system_eff
     args_hash = {}
-    args_hash["duct_norm_leakage_25pa"] = "8.0"
-    result = _test_error("singlefamily_detached_slab_furnace_central_air_conditioner.osm", args_hash)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "Duct leakage to outside was specified by we don't calculate fan air flow rate.")
-  end  
+    args_hash["dist_system_eff"] = "0.8"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "Space"=>1, "Surface"=>6, "Material"=>1, "ThermalZone"=>1, "Construction"=>1}
+    expected_values = {}
+    _test_measure("singlefamily_detached_slab_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)
+  end
   
   def test_terrain_ocean
     args_hash = {}
