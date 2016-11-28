@@ -7,11 +7,11 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 # start the measure
-class ProcessBoilerOil < OpenStudio::Ruleset::ModelUserScript
+class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
 
   # human readable name
   def name
-    return "Set Residential Boiler Oil"
+    return "Set Residential Boiler Fuel"
   end
 
   # human readable description
@@ -27,6 +27,17 @@ class ProcessBoilerOil < OpenStudio::Ruleset::ModelUserScript
   # define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
+    
+    #make a string argument for boiler fuel type
+    fuel_display_names = OpenStudio::StringVector.new
+    fuel_display_names << Constants.FuelTypeGas
+    fuel_display_names << Constants.FuelTypeOil
+    fuel_display_names << Constants.FuelTypePropane
+    boilerFuelType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fuel_type", fuel_display_names, true)
+    boilerFuelType.setDisplayName("Fuel Type")
+    boilerFuelType.setDescription("Type of fuel used for heating.")
+    boilerFuelType.setDefaultValue(Constants.FuelTypeGas)
+    args << boilerFuelType    
     
     #make a string argument for boiler system type
     boiler_display_names = OpenStudio::StringVector.new
@@ -114,6 +125,7 @@ class ProcessBoilerOil < OpenStudio::Ruleset::ModelUserScript
       return false
     end
     
+    boilerFuelType = runner.getStringArgumentValue("fuel_type",user_arguments)
     boilerType = runner.getStringArgumentValue("system_type",user_arguments)
     boilerInstalledAFUE = runner.getDoubleArgumentValue("afue",user_arguments)
     boilerOATResetEnabled = runner.getBoolArgumentValue("oat_reset_enabled",user_arguments)    
@@ -159,7 +171,10 @@ class ProcessBoilerOil < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Parasitic Electricity (Source: DOE. (2007). Technical Support Document: Energy Efficiency Program for Consumer Products: "Energy Conservation Standards for Residential Furnaces and Boilers". www.eere.energy.gov/buildings/appliance_standards/residential/furnaces_boilers.html)
-    boiler_aux = 220.0 # W during operation
+    boilerParasiticElecDict = {Constants.FuelTypeGas=>76.0, # W during operation
+                               Constants.FuelTypePropane=>76.0,
+                               Constants.FuelTypeOil=>220.0}
+    boiler_aux = boilerParasiticElecDict[boilerFuelType]
     
     # _processCurvesBoiler
     
@@ -194,7 +209,7 @@ class ProcessBoilerOil < OpenStudio::Ruleset::ModelUserScript
         
     boiler = OpenStudio::Model::BoilerHotWater.new(model)
     boiler.setName("Boiler")
-    boiler.setFuelType(HelperMethods.eplus_fuel_map(Constants.FuelTypeOil))
+    boiler.setFuelType(HelperMethods.eplus_fuel_map(boilerFuelType))
     if boilerOutputCapacity != Constants.SizingAuto
       boiler.setNominalCapacity(OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get)
     end
@@ -378,4 +393,4 @@ class ProcessBoilerOil < OpenStudio::Ruleset::ModelUserScript
 end
 
 # register the measure to be used by the application
-ProcessBoilerOil.new.registerWithApplication
+ProcessBoilerFuel.new.registerWithApplication

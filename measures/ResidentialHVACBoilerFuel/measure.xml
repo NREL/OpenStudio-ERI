@@ -1,24 +1,139 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_furnace_propane</name>
-  <uid>5d4838d2-1714-4dd6-baa1-1dea9b43b910</uid>
-  <version_id>3eddb809-63bf-4bd7-9a6f-79de31d3c923</version_id>
-  <version_modified>20161123T165848Z</version_modified>
+  <name>process_boiler_fuel</name>
+  <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
+  <version_id>86f2f9e6-e68d-4b36-b8d4-2a50f1cd409f</version_id>
+  <version_modified>20161128T141743Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
-  <class_name>ProcessFurnacePropane</class_name>
-  <display_name>Set Residential Furnace Propane</display_name>
-  <description>This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop. For multifamily buildings, the furnace can be set for all units of the building.</description>
-  <modeler_description>Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. Any existing air/plant loops are also removed. A fuel heating coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A diffuser is added to the branch for the living zone as well as for the finished basement if it exists.</modeler_description>
+  <class_name>ProcessBoilerFuel</class_name>
+  <display_name>Set Residential Boiler Fuel</display_name>
+  <description>This measure removes any existing HVAC heating components from the building and adds a boiler along with constant speed pump and water baseboard coils to a hot water plant loop. For multifamily buildings, the boiler can be set for all units of the building.</description>
+  <modeler_description>Any heating components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. A boiler along with constant speed pump and water baseboard coils are added to a hot water plant loop.</modeler_description>
   <arguments>
+    <argument>
+      <name>fuel_type</name>
+      <display_name>Fuel Type</display_name>
+      <description>Type of fuel used for heating.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>gas</default_value>
+      <choices>
+        <choice>
+          <value>gas</value>
+          <display_name>gas</display_name>
+        </choice>
+        <choice>
+          <value>oil</value>
+          <display_name>oil</display_name>
+        </choice>
+        <choice>
+          <value>propane</value>
+          <display_name>propane</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>system_type</name>
+      <display_name>System Type</display_name>
+      <description>The system type of the boiler.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>hot water, forced draft</default_value>
+      <choices>
+        <choice>
+          <value>hot water, forced draft</value>
+          <display_name>hot water, forced draft</display_name>
+        </choice>
+        <choice>
+          <value>hot water, condensing</value>
+          <display_name>hot water, condensing</display_name>
+        </choice>
+        <choice>
+          <value>hot water, natural draft</value>
+          <display_name>hot water, natural draft</display_name>
+        </choice>
+        <choice>
+          <value>steam</value>
+          <display_name>steam</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>afue</name>
       <display_name>Installed AFUE</display_name>
-      <description>The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value.</description>
+      <description>The installed Annual Fuel Utilization Efficiency (AFUE) of the boiler, which can be used to account for performance derating or degradation relative to the rated value.</description>
       <type>Double</type>
       <units>Btu/Btu</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.78</default_value>
+      <default_value>0.8</default_value>
+    </argument>
+    <argument>
+      <name>oat_reset_enabled</name>
+      <display_name>Outside Air Reset Enabled</display_name>
+      <description>Outside Air Reset Enabled on Hot Water Supply Temperature.</description>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>false</default_value>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>oat_high</name>
+      <display_name>High Outside Air Temp</display_name>
+      <description>High Outside Air Temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>oat_low</name>
+      <display_name>Low Outside Air Temp</display_name>
+      <description>Low Outside Air Temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>oat_hwst_high</name>
+      <display_name>Hot Water Supply Temp High Outside Air</display_name>
+      <description>Hot Water Supply Temperature corresponding to High Outside Air Temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>oat_hwst_low</name>
+      <display_name>Hot Water Supply Temp Low Outside Air</display_name>
+      <description>Hot Water Supply Temperature corresponding to Low Outside Air Temperature.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>design_temp</name>
+      <display_name>Design Temperature</display_name>
+      <description>Temperature of the outlet water.</description>
+      <type>Double</type>
+      <units>degrees F</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>180</default_value>
     </argument>
     <argument>
       <name>capacity</name>
@@ -154,26 +269,6 @@
         </choice>
       </choices>
     </argument>
-    <argument>
-      <name>max_temp</name>
-      <display_name>Max Supply Temp</display_name>
-      <description>Maximum supply air temperature.</description>
-      <type>Double</type>
-      <units>F</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>120</default_value>
-    </argument>
-    <argument>
-      <name>fan_power_installed</name>
-      <display_name>Installed Supply Fan Power</display_name>
-      <description>Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.</description>
-      <type>Double</type>
-      <units>W/cfm</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.5</default_value>
-    </argument>
   </arguments>
   <provenances/>
   <tags>
@@ -203,27 +298,10 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>1.13.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>79ED7E55</checksum>
-    </file>
-    <file>
       <filename>multifamily_8_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>AD4C79BA</checksum>
-    </file>
-    <file>
-      <filename>process_furnace_propane_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>97698241</checksum>
     </file>
     <file>
       <filename>singlefamily_attached_fbsmt_4_units.osm</filename>
@@ -322,18 +400,6 @@
       <checksum>38A2C794</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>92D6C640</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>22C6561D</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -350,6 +416,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B604F457</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>22C6561D</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>1.13.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>AE79F1ED</checksum>
+    </file>
+    <file>
+      <filename>process_boiler_fuel_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FF0DED03</checksum>
     </file>
   </files>
 </measure>

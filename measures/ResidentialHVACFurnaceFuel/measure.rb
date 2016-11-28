@@ -14,7 +14,7 @@ require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 #start the measure
-class ProcessFurnaceGas < OpenStudio::Ruleset::ModelUserScript
+class ProcessFurnaceFuel < OpenStudio::Ruleset::ModelUserScript
 
   class Supply
     def initialize
@@ -25,7 +25,7 @@ class ProcessFurnaceGas < OpenStudio::Ruleset::ModelUserScript
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
-    return "Set Residential Furnace Gas"
+    return "Set Residential Furnace Fuel"
   end
   
   def description
@@ -40,6 +40,17 @@ class ProcessFurnaceGas < OpenStudio::Ruleset::ModelUserScript
   def arguments(model)
     args = OpenStudio::Ruleset::OSArgumentVector.new
 	
+    #make a string argument for furnace fuel type
+    fuel_display_names = OpenStudio::StringVector.new
+    fuel_display_names << Constants.FuelTypeGas
+    fuel_display_names << Constants.FuelTypeOil
+    fuel_display_names << Constants.FuelTypePropane
+    fueltype = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fuel_type", fuel_display_names, true)
+    fueltype.setDisplayName("Fuel Type")
+    fueltype.setDescription("Type of fuel used for heating.")
+    fueltype.setDefaultValue(Constants.FuelTypeGas)
+    args << fueltype  
+  
     #make an argument for entering furnace installed afue
     afue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("afue",true)
     afue.setDisplayName("Installed AFUE")
@@ -87,6 +98,7 @@ class ProcessFurnaceGas < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 	
+    furnaceFuelType = runner.getStringArgumentValue("fuel_type",user_arguments)
     furnaceInstalledAFUE = runner.getDoubleArgumentValue("afue",user_arguments)
     furnaceOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     if not furnaceOutputCapacity == Constants.SizingAuto
@@ -161,7 +173,7 @@ class ProcessFurnaceGas < OpenStudio::Ruleset::ModelUserScript
 
         htg_coil.setParasiticElectricLoad(aux_elec) # set to zero until we figure out a way to distribute to the correct end uses (DOE-2 limitation?)
         htg_coil.setParasiticGasLoad(0)
-        htg_coil.setFuelType(HelperMethods.eplus_fuel_map(Constants.FuelTypeGas))
+        htg_coil.setFuelType(HelperMethods.eplus_fuel_map(furnaceFuelType))
         
         # _processSystemFan
         
@@ -260,4 +272,4 @@ class ProcessFurnaceGas < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 #this allows the measure to be use by the application
-ProcessFurnaceGas.new.registerWithApplication
+ProcessFurnaceFuel.new.registerWithApplication
