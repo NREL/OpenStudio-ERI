@@ -1389,6 +1389,13 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
           surface.setWindExposure("NoWind")
         end
         
+        model.getAirLoopHVACs.each do |air_loop|
+          next unless air_loop.thermalZones.include? unit.living_zone # get the correct air loop for this unit
+          dse_diffuser = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+          dse_diffuser.setName("DSEDummy Zone Direct Air_#{unit.unit_num}")
+          air_loop.addBranchForZone(dse_zone, dse_diffuser.to_StraightComponent)
+        end
+        
       end
       
       ducts.num_stories_for_ducts = building.stories
@@ -1519,36 +1526,36 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         ducts.oa_duct_makeup = 0
       end      
 
-      if not ducts.duct_location_name == unit.living_zone.name.to_s and not ducts.duct_location_name == "none" and hasForcedAirEquipment
-      
-        adiabatic_mat = OpenStudio::Model::MasslessOpaqueMaterial.new(model, "Rough", 176.1)
-        adiabatic_mat.setName("Adiabatic")
+      adiabatic_mat = OpenStudio::Model::MasslessOpaqueMaterial.new(model, "Rough", 176.1)
+      adiabatic_mat.setName("Adiabatic")
 
-        adiabatic_const = OpenStudio::Model::Construction.new(model)
-        adiabatic_const.setName("AdiabaticConst")
-        adiabatic_const.insertLayer(0, adiabatic_mat)
+      adiabatic_const = OpenStudio::Model::Construction.new(model)
+      adiabatic_const.setName("AdiabaticConst")
+      adiabatic_const.insertLayer(0, adiabatic_mat)
+    
+      ra_duct_zone = OpenStudio::Model::ThermalZone.new(model)
+      ra_duct_zone.setName("RA Duct Zone_#{unit.unit_num}")
+      ra_duct_zone.setVolume(OpenStudio::convert(ducts.return_duct_volume,"ft^3","m^3").get)
       
-        ra_duct_zone = OpenStudio::Model::ThermalZone.new(model)
-        ra_duct_zone.setName("RA Duct Zone_#{unit.unit_num}")
-        ra_duct_zone.setVolume(OpenStudio::convert(ducts.return_duct_volume,"ft^3","m^3").get)
-        
-        sw_point = OpenStudio::Point3d.new(0, 74, 0)
-        nw_point = OpenStudio::Point3d.new(0, 75, 0)
-        ne_point = OpenStudio::Point3d.new(1, 75, 0)
-        se_point = OpenStudio::Point3d.new(1, 74, 0)
-        ra_duct_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)
-        
-        ra_duct_space = OpenStudio::Model::Space::fromFloorPrint(ra_duct_polygon, 1, model)
-        ra_duct_space = ra_duct_space.get
-        ra_duct_space.setName("RA Duct Space_#{unit.unit_num}")
-        ra_duct_space.setThermalZone(ra_duct_zone)
-        
-        ra_duct_space.surfaces.each do |surface|
-          surface.setConstruction(adiabatic_const)
-          surface.setOutsideBoundaryCondition("Adiabatic")
-          surface.setSunExposure("NoSun")
-          surface.setWindExposure("NoWind")
-        end
+      sw_point = OpenStudio::Point3d.new(0, 74, 0)
+      nw_point = OpenStudio::Point3d.new(0, 75, 0)
+      ne_point = OpenStudio::Point3d.new(1, 75, 0)
+      se_point = OpenStudio::Point3d.new(1, 74, 0)
+      ra_duct_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)
+      
+      ra_duct_space = OpenStudio::Model::Space::fromFloorPrint(ra_duct_polygon, 1, model)
+      ra_duct_space = ra_duct_space.get
+      ra_duct_space.setName("RA Duct Space_#{unit.unit_num}")
+      ra_duct_space.setThermalZone(ra_duct_zone)
+      
+      ra_duct_space.surfaces.each do |surface|
+        surface.setConstruction(adiabatic_const)
+        surface.setOutsideBoundaryCondition("Adiabatic")
+        surface.setSunExposure("NoSun")
+        surface.setWindExposure("NoWind")
+      end
+      
+      if not ducts.duct_location_name == unit.living_zone.name.to_s and not ducts.duct_location_name == "none" and hasForcedAirEquipment
       
         # Two objects are required to model the air exchange between the air handler zone and the living space since
         # ZoneMixing objects can not account for direction of air flow (both are controlled by EMS)
@@ -1567,6 +1574,10 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(zone_mixing_living_to_ah, "ZoneMixing", "Air Exchange Flow Rate")
         actuator.setName("LivingToAHZoneFlowRateActuator_#{unit.unit_num}")
         
+      end  
+        
+      if hasForcedAirEquipment  
+        
         air_demand_inlet_node = nil
         model.getAirLoopHVACs.each do |air_loop|
           next unless air_loop.thermalZones.include? unit.living_zone # get the correct air loop for this unit
@@ -1579,96 +1590,110 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
           unit.finished_basement_zone.setReturnPlenum(ra_duct_zone)
         end
         
-        # Other equipment objects to cancel out the supply air leakage directly into the return plenum
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("SupplySensibleLeakageToLiving_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(unit.living_zone.spaces[0])
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("SupplyLeakSensibleActuator_#{unit.unit_num}")
-        
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("SupplyLatentLeakageToLiving_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(unit.living_zone.spaces[0])
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("SupplyLeakLatentActuator_#{unit.unit_num}")        
-        
-        # Supply duct conduction load added to the living space
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("SupplyDuctConductionToLiving_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(unit.living_zone.spaces[0])
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("SupplyDuctLoadToLivingActuator_#{unit.unit_num}")
-        
-        # Supply duct conduction impact on the air handler zone.
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("SupplyDuctConductionToAHZone_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(ducts.duct_location_zone.spaces[0])
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("ConductionToAHZoneActuator_#{unit.unit_num}")
-        
-        # Return duct conduction load added to the return plenum zone
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("ReturnDuctConductionToPlenum_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(ra_duct_space)
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("ReturnDuctLoadToPlenumActuator_#{unit.unit_num}")
+      end
       
-        # Return duct conduction impact on the air handler zone.
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("ReturnDuctConductionToAHZone_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(ducts.duct_location_zone.spaces[0])
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("ReturnConductionToAHZoneActuator_#{unit.unit_num}")
-        
-        # Supply duct sensible leakage impact on the air handler zone.
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("SupplySensibleLeakageToAHZone_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(ducts.duct_location_zone.spaces[0])
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("SensibleLeakageToAHZoneActuator_#{unit.unit_num}")
-        
-        # Supply duct latent leakage impact on the air handler zone.
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("SupplyLatentLeakageToAHZone_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(ducts.duct_location_zone.spaces[0])
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("LatentLeakageToAHZoneActuator_#{unit.unit_num}")
+      # Other equipment objects to cancel out the supply air leakage directly into the return plenum
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("SupplySensibleLeakageToLiving_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(unit.living_zone.spaces[0])
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("SupplyLeakSensibleActuator_#{unit.unit_num}")
       
-        # Return duct sensible leakage impact on the return plenum
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("ReturnSensibleLeakageEquip_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(ra_duct_space)
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("ReturnSensibleLeakageActuator_#{unit.unit_num}")
-        
-        # Return duct latent leakage impact on the return plenum
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName("ReturnLatentLeakageEquip_#{unit.unit_num}")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(ra_duct_space)
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("ReturnLatentLeakageActuator_#{unit.unit_num}")
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("SupplyLatentLeakageToLiving_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(unit.living_zone.spaces[0])
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("SupplyLeakLatentActuator_#{unit.unit_num}")        
+      
+      # Supply duct conduction load added to the living space
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("SupplyDuctConductionToLiving_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(unit.living_zone.spaces[0])
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("SupplyDuctLoadToLivingActuator_#{unit.unit_num}")
+      
+      # Supply duct conduction impact on the air handler zone.
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("SupplyDuctConductionToAHZone_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(ducts.duct_location_zone.spaces[0])
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("ConductionToAHZoneActuator_#{unit.unit_num}")
+      
+      # Return duct conduction load added to the return plenum zone
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("ReturnDuctConductionToPlenum_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(ra_duct_space)
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("ReturnDuctLoadToPlenumActuator_#{unit.unit_num}")
+    
+      # Return duct conduction impact on the air handler zone.
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("ReturnDuctConductionToAHZone_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(ducts.duct_location_zone.spaces[0])
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("ReturnConductionToAHZoneActuator_#{unit.unit_num}")
+      
+      # Supply duct sensible leakage impact on the air handler zone.
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("SupplySensibleLeakageToAHZone_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(ducts.duct_location_zone.spaces[0])
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("SensibleLeakageToAHZoneActuator_#{unit.unit_num}")
+      
+      # Supply duct latent leakage impact on the air handler zone.
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("SupplyLatentLeakageToAHZone_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(ducts.duct_location_zone.spaces[0])
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("LatentLeakageToAHZoneActuator_#{unit.unit_num}")
+    
+      # Return duct sensible leakage impact on the return plenum
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("ReturnSensibleLeakageEquip_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(ra_duct_space)
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("ReturnSensibleLeakageActuator_#{unit.unit_num}")
+      
+      # Return duct latent leakage impact on the return plenum
+      other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+      other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+      other_equip.setName("ReturnLatentLeakageEquip_#{unit.unit_num}")
+      other_equip.setFuelType("None")
+      other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+      other_equip.setSpace(ra_duct_space)
+      actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+      actuator.setName("ReturnLatentLeakageActuator_#{unit.unit_num}")
 
-        # Sensors        
+      if not ducts.duct_location_name == unit.living_zone.name.to_s and not ducts.duct_location_name == "none" and hasForcedAirEquipment
+      
+        # Sensors
       
         system_node_mass_flow_rate_output_var = OpenStudio::Model::OutputVariable.new("System Node Mass Flow Rate", model)
         system_node_mass_flow_rate_output_var.setName("System Node Mass Flow Rate")        
@@ -1853,9 +1878,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         duct_leakage_program.addLine("Set ReturnConductionToAHZoneActuator_#{unit.unit_num} = ReturnConductionToAHZone_#{unit.unit_num}")
         duct_leakage_program.addLine("Set AHZoneToLivingFlowRateActuator_#{unit.unit_num} = AHZoneToLivingFlowRate_#{unit.unit_num}")
         duct_leakage_program.addLine("Set LivingToAHZoneFlowRateActuator_#{unit.unit_num} = LivingToAHZoneFlowRate_#{unit.unit_num}")
-        
-        # Return Plenum
-        
+                
       else # no ducts
       
         # Program
@@ -1864,9 +1887,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         duct_leakage_program.setName("DuctLeakageProgram_#{unit.unit_num}")
         duct_leakage_program.addLine("Set DuctLeakSupplyFanEquivalent_#{unit.unit_num} = 0")
         duct_leakage_program.addLine("Set DuctLeakExhaustFanEquivalent_#{unit.unit_num} = 0")
-      
-        # Zone Mixer
-      
+            
       end # end has ducts loop
       
       # Global Variables

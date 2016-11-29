@@ -10,7 +10,7 @@ class ResidentialAirflowTest < MiniTest::Test
   def test_no_hvac_equip
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>15, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "Material"=>1, "Surface"=>6, "Space"=>1, "Construction"=>1, "ThermalZone"=>1}
     expected_values = {}
     _test_measure("singlefamily_detached_slab.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 4)       
   end
@@ -18,7 +18,7 @@ class ResidentialAirflowTest < MiniTest::Test
   def test_non_ducted_hvac_equipment
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>15, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "Material"=>1, "Surface"=>6, "Construction"=>1, "ThermalZone"=>1, "Space"=>1}
     expected_values = {}
     _test_measure("singlefamily_detached_slab_electric_baseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 3) 
   end  
@@ -156,7 +156,7 @@ class ResidentialAirflowTest < MiniTest::Test
     args_hash = {}
     args_hash["duct_location"] = Constants.LivingZone
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>15, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "Material"=>1, "Surface"=>6, "ThermalZone"=>1, "Construction"=>1, "AirLoopHVACReturnPlenum"=>1, "Space"=>1}
     expected_values = {"duct_location"=>"living zone"}
     _test_measure("singlefamily_detached_slab_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1) 
   end  
@@ -181,7 +181,7 @@ class ResidentialAirflowTest < MiniTest::Test
     args_hash = {}
     args_hash["dist_system_eff"] = "0.8"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "Space"=>1, "Surface"=>6, "Material"=>1, "ThermalZone"=>1, "Construction"=>1}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>15, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "Space"=>2, "Surface"=>12, "Material"=>2, "ThermalZone"=>2, "Construction"=>2, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "AirTerminalSingleDuctUncontrolled"=>1, "AirLoopHVACReturnPlenum"=>1}
     expected_values = {}
     _test_measure("singlefamily_detached_slab_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)
   end
@@ -294,7 +294,7 @@ class ResidentialAirflowTest < MiniTest::Test
   def test_mshp
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>15, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "Space"=>1, "ThermalZone"=>1, "Surface"=>6, "Construction"=>1, "Material"=>1}
     expected_values = {}
     _test_measure("singlefamily_detached_slab_mshp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 3)      
   end
@@ -332,7 +332,7 @@ class ResidentialAirflowTest < MiniTest::Test
     args_hash = {}
     args_hash["duct_location"] = Constants.AtticZone
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3}
+    expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemOutputVariable"=>7, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>14, "EnergyManagementSystemActuator"=>15, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>9, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "Surface"=>6, "Construction"=>1, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "AirLoopHVACReturnPlenum"=>1, "ThermalZone"=>1, "Space"=>1, "Material"=>1}
     expected_values = {"duct_location"=>"living zone"}
     _test_measure("singlefamily_detached_slab_garage_no_attic_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)      
   end
@@ -377,7 +377,7 @@ class ResidentialAirflowTest < MiniTest::Test
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ScheduleRuleset"=>num_units*7, "ScheduleRule"=>num_units*84, "EnergyManagementSystemProgramCallingManager"=>num_units*2, "EnergyManagementSystemOutputVariable"=>num_units*7, "EnergyManagementSystemProgram"=>num_units*3, "EnergyManagementSystemSensor"=>num_units*14, "EnergyManagementSystemActuator"=>num_units*5, "EnergyManagementSystemGlobalVariable"=>num_units*2, "OutputVariable"=>num_units*9, "SpaceInfiltrationDesignFlowRate"=>num_units*2, "ElectricEquipmentDefinition"=>num_units*3, "ElectricEquipment"=>num_units*3}
+    expected_num_new_objects = {"ScheduleRuleset"=>num_units*7, "ScheduleRule"=>num_units*84, "EnergyManagementSystemProgramCallingManager"=>num_units*2, "EnergyManagementSystemOutputVariable"=>num_units*7, "EnergyManagementSystemProgram"=>num_units*3, "EnergyManagementSystemSensor"=>num_units*14, "EnergyManagementSystemActuator"=>num_units*15, "EnergyManagementSystemGlobalVariable"=>num_units*2, "OutputVariable"=>num_units*9, "SpaceInfiltrationDesignFlowRate"=>num_units*2, "ElectricEquipmentDefinition"=>num_units*3, "ElectricEquipment"=>num_units*3, "OtherEquipmentDefinition"=>num_units*10, "OtherEquipment"=>num_units*10, "Surface"=>num_units*6, "Material"=>num_units*1, "Space"=>num_units*1, "AirLoopHVACReturnPlenum"=>num_units*1, "ThermalZone"=>num_units*1, "Construction"=>num_units*1}
     expected_values = {"duct_location"=>"living zone", "infiltration_c"=>0.015}
     _test_measure("multifamily_8_units_slab_furnace_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, num_units)
   end
