@@ -2,131 +2,10 @@
 # http://nrel.github.io/OpenStudio-user-documentation/measures/measure_writing_guide/
 
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
 class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
-
-  def initialize_transformation_matrix(m)
-    m[0,0] = 1
-    m[1,1] = 1
-    m[2,2] = 1
-    m[3,3] = 1
-    return m
-  end
-
-  def get_surface_dimensions(surface)
-    least_x = 9e99
-    greatest_x = -9e99
-    least_y = 9e99
-    greatest_y = -9e99
-    least_z = 9e99
-    greatest_z = -9e99
-    surface.vertices.each do |vertex|
-      if vertex.x < least_x
-        least_x = vertex.x
-      end
-      if vertex.x > greatest_x
-        greatest_x = vertex.x
-      end
-      if vertex.y < least_y
-        least_y = vertex.y
-      end
-      if vertex.y > greatest_y
-        greatest_y = vertex.y
-      end
-      if vertex.z > greatest_z
-        greatest_z = vertex.z
-      end
-      if vertex.z < least_z
-        least_z = vertex.z
-      end
-    end
-    l = greatest_x - least_x
-    w = greatest_y - least_y
-    h = greatest_z - least_z  
-    return l, w, h
-  end
-  
-  def get_attic_height_increase(eaves_depth, surfaces)
-    surfaces.each do |surface|
-      next if surface.space.get.name.to_s.downcase.include? "garage" # don't determine the attic height increase based on the garage (gable) roof
-      next unless surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
-      attic_length, attic_width, attic_height = get_surface_dimensions(surface)
-      if attic_length > attic_width
-        roof_pitch = attic_height / attic_width
-      else
-        roof_pitch = attic_height / attic_length
-      end
-      attic_increase = roof_pitch * eaves_depth          
-      return attic_increase
-    end
-  end  
-  
-  def determine_roof_type(surfaces)
-    roof_decks = []
-    gable_walls = []
-    surfaces.each do |surface|
-      next if surface.space.get.name.to_s.downcase.include? "garage" # don't determine the roof type based on the garage (gable) roof
-      if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
-        roof_decks << surface
-      elsif surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors" and surface.vertices.length == 3
-        gable_walls << surface
-      end
-    end
-    if roof_decks.length == 1
-      return Constants.RoofTypeFlat
-    elsif gable_walls.length > 0
-      return Constants.RoofTypeGable
-    else
-      return Constants.RoofTypeHip
-    end
-  end
-  
-  def get_slope_direction_and_lower_points(surface)
-    z_s = []
-    surface.vertices.each do |vertex|
-      z_s << vertex.z
-    end
-    bot_z = z_s.min
-    top_z = z_s.max
-    lower_pts = []
-    upper_pts = []
-    surface.vertices.each do |vertex|
-      if (vertex.z - bot_z).abs < 0.0001
-        lower_pts << OpenStudio::Point3d.new(vertex.x, vertex.y, vertex.z)
-      elsif (vertex.z - top_z).abs < 0.0001
-        upper_pts << OpenStudio::Point3d.new(vertex.x, vertex.y, vertex.z)
-      end        
-    end  
-    if lower_pts.length == 3
-      lower_pts.delete_at(1)
-    end
-    slope_dir = nil
-    if (lower_pts[0].x - lower_pts[1].x).abs < 0.001 and lower_pts[0].x > upper_pts[0].x
-      slope_dir = "pos_x"
-    elsif (lower_pts[0].x - lower_pts[1].x).abs < 0.001 and lower_pts[0].x < upper_pts[0].x
-      slope_dir = "neg_x"
-    elsif (lower_pts[0].y - lower_pts[1].y).abs < 0.001 and lower_pts[0].y > upper_pts[0].y
-      slope_dir = "pos_y"
-    elsif (lower_pts[0].y - lower_pts[1].y).abs < 0.001 and lower_pts[0].y < upper_pts[0].y
-      slope_dir = "neg_y"
-    end
-    return slope_dir, lower_pts, upper_pts
-  end
-  
-  def get_existing_eaves_depth(shading_surface)
-    existing_eaves_depth = 0
-    min_xs = []
-    (0..3).to_a.each do |i|
-      if (shading_surface.vertices[0].x - shading_surface.vertices[i].x).abs > existing_eaves_depth
-        min_xs << (shading_surface.vertices[0].x - shading_surface.vertices[i].x).abs
-      end
-    end
-    unless min_xs.empty?
-      return min_xs.min
-    end
-    return 0
-  end
   
   # human readable name
   def name
@@ -199,9 +78,9 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     
     case roof_type
     when Constants.RoofTypeGable
-      
-      attic_increase_existing = get_attic_height_increase(existing_eaves_depth, model.getSurfaces)
-      attic_increase_new = get_attic_height_increase(eaves_depth, model.getSurfaces)
+
+      attic_increase_existing = Geometry.get_roof_pitch(model.getSurfaces) * existing_eaves_depth
+      attic_increase_new = Geometry.get_roof_pitch(model.getSurfaces) * eaves_depth      
       attic_increase_delta = attic_increase_new - attic_increase_existing
       
       model.getSurfaces.each do |surface|
@@ -670,7 +549,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
         surfaces_modified = true
         if surface.vertices.length == 4
       
-          attic_length, attic_width, attic_height = get_surface_dimensions(surface)
+          attic_length, attic_width, attic_height = Geometry.get_surface_dimensions(surface)
         
           shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
           new_surface_left = surface.clone.to_Surface.get
@@ -822,8 +701,8 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     
     when Constants.RoofTypeHip
     
-      attic_increase_existing = get_attic_height_increase(existing_eaves_depth, model.getSurfaces)
-      attic_increase_new = get_attic_height_increase(eaves_depth, model.getSurfaces)
+      attic_increase_existing = Geometry.get_roof_pitch(model.getSurfaces) * existing_eaves_depth
+      attic_increase_new = Geometry.get_roof_pitch(model.getSurfaces) * eaves_depth
       attic_increase_delta = attic_increase_new - attic_increase_existing    
       
       model.getSurfaces.each do |surface|
@@ -1029,6 +908,80 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     return true
 
   end
+  
+  def initialize_transformation_matrix(m)
+    m[0,0] = 1
+    m[1,1] = 1
+    m[2,2] = 1
+    m[3,3] = 1
+    return m
+  end
+
+  def determine_roof_type(surfaces)
+    roof_decks = []
+    gable_walls = []
+    surfaces.each do |surface|
+      next if surface.space.get.name.to_s.downcase.include? "garage" # don't determine the roof type based on the garage (gable) roof
+      if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
+        roof_decks << surface
+      elsif surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors" and surface.vertices.length == 3
+        gable_walls << surface
+      end
+    end
+    if roof_decks.length == 1
+      return Constants.RoofTypeFlat
+    elsif gable_walls.length > 0
+      return Constants.RoofTypeGable
+    else
+      return Constants.RoofTypeHip
+    end
+  end
+  
+  def get_slope_direction_and_lower_points(surface)
+    z_s = []
+    surface.vertices.each do |vertex|
+      z_s << vertex.z
+    end
+    bot_z = z_s.min
+    top_z = z_s.max
+    lower_pts = []
+    upper_pts = []
+    surface.vertices.each do |vertex|
+      if (vertex.z - bot_z).abs < 0.0001
+        lower_pts << OpenStudio::Point3d.new(vertex.x, vertex.y, vertex.z)
+      elsif (vertex.z - top_z).abs < 0.0001
+        upper_pts << OpenStudio::Point3d.new(vertex.x, vertex.y, vertex.z)
+      end        
+    end  
+    if lower_pts.length == 3
+      lower_pts.delete_at(1)
+    end
+    slope_dir = nil
+    if (lower_pts[0].x - lower_pts[1].x).abs < 0.001 and lower_pts[0].x > upper_pts[0].x
+      slope_dir = "pos_x"
+    elsif (lower_pts[0].x - lower_pts[1].x).abs < 0.001 and lower_pts[0].x < upper_pts[0].x
+      slope_dir = "neg_x"
+    elsif (lower_pts[0].y - lower_pts[1].y).abs < 0.001 and lower_pts[0].y > upper_pts[0].y
+      slope_dir = "pos_y"
+    elsif (lower_pts[0].y - lower_pts[1].y).abs < 0.001 and lower_pts[0].y < upper_pts[0].y
+      slope_dir = "neg_y"
+    end
+    return slope_dir, lower_pts, upper_pts
+  end
+  
+  def get_existing_eaves_depth(shading_surface)
+    existing_eaves_depth = 0
+    min_xs = []
+    (0..3).to_a.each do |i|
+      if (shading_surface.vertices[0].x - shading_surface.vertices[i].x).abs > existing_eaves_depth
+        min_xs << (shading_surface.vertices[0].x - shading_surface.vertices[i].x).abs
+      end
+    end
+    unless min_xs.empty?
+      return min_xs.min
+    end
+    return 0
+  end  
   
 end
 
