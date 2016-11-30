@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>682c0097-1aa2-4f95-9d9c-c5d31ba6d561</version_id>
-  <version_modified>20161130T173021Z</version_modified>
+  <version_id>14dedfac-8f92-4f0b-8d2b-63a2ed90d766</version_id>
+  <version_modified>20161130T185620Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -110,12 +110,6 @@
       <checksum>895168BA</checksum>
     </file>
     <file>
-      <filename>create_residential_eaves_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A67CC2AB</checksum>
-    </file>
-    <file>
       <filename>geometry_gable_roof_aspect_ratio_two_default_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -128,6 +122,12 @@
       <checksum>1036AA7A</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>047FBEB1</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -136,13 +136,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EBE2726B</checksum>
+      <checksum>21EB7918</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>create_residential_eaves_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>047FBEB1</checksum>
+      <usage_type>test</usage_type>
+      <checksum>1F635286</checksum>
     </file>
   </files>
 </measure>

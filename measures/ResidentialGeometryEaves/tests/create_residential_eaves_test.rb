@@ -12,56 +12,86 @@ class CreateResidentialEavesTest < MiniTest::Test
     result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("NA", result.value.valueName)
-    assert_equal(result.info.map{ |x| x.logMessage }[0], "No surfaces found for adding eaves.")
+    assert_includes(result.info.map{ |x| x.logMessage }, "No surfaces found for adding eaves.")
   end  
     
   def test_retrofit_replace_gable_roof_aspect_ratio_two
     args_hash = {}
-    model = _test_measure("geometry_gable_roof_aspect_ratio_two_default_location.osm", args_hash, false)
-    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_values = {"eaves_depth"=>2}
+    model = _test_measure("geometry_gable_roof_aspect_ratio_two_default_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    _test_measure(model, args_hash, true)
+    expected_num_del_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_values = {"eaves_depth"=>3}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)         
   end
   
-  def test_retrofit_replace_gable_roof_aspect_ratio_half
+  def test_retrofit_replace_gable_roof_aspect_ratio_half    
     args_hash = {}
-    model = _test_measure("geometry_gable_roof_aspect_ratio_half_default_location.osm", args_hash, false)
-    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_values = {"eaves_depth"=>2}
+    model = _test_measure("geometry_gable_roof_aspect_ratio_half_default_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    _test_measure(model, args_hash, true)
+    expected_num_del_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_values = {"eaves_depth"=>3}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
-  def test_retrofit_replace_hip_roof_aspect_ratio_two
+  def test_retrofit_replace_hip_roof_aspect_ratio_two    
     args_hash = {}
-    model = _test_measure("geometry_hip_roof_aspect_ratio_two_default_location.osm", args_hash, false)
-    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_values = {"eaves_depth"=>2}
+    model = _test_measure("geometry_hip_roof_aspect_ratio_two_default_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    _test_measure(model, args_hash, true)
-  end
+    expected_num_del_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_values = {"eaves_depth"=>3}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end  
   
-  def test_retrofit_replace_hip_roof_aspect_ratio_half
+  def test_retrofit_replace_hip_roof_aspect_ratio_half   
     args_hash = {}
-    model = _test_measure("geometry_hip_roof_aspect_ratio_half_default_location.osm", args_hash, false)
-    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_values = {"eaves_depth"=>2}
+    model = _test_measure("geometry_hip_roof_aspect_ratio_half_default_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    _test_measure(model, args_hash, true)
-  end
+    expected_num_del_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_values = {"eaves_depth"=>3}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end  
   
   def test_retrofit_replace_flat_roof_aspect_ratio_two
     args_hash = {}
-    model = _test_measure("geometry_flat_roof_aspect_ratio_two_default_location.osm", args_hash, false)
-    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
+    expected_values = {"eaves_depth"=>2}
+    model = _test_measure("geometry_flat_roof_aspect_ratio_two_default_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    _test_measure(model, args_hash, true)
-  end
+    expected_num_del_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
+    expected_values = {"eaves_depth"=>3}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end  
   
   def test_retrofit_replace_flat_roof_aspect_ratio_half
     args_hash = {}
-    model = _test_measure("geometry_flat_roof_aspect_ratio_half_default_location.osm", args_hash, false)
-    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
+    expected_values = {"eaves_depth"=>2}
+    model = _test_measure("geometry_flat_roof_aspect_ratio_half_default_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    _test_measure(model, args_hash, true)
-  end  
+    expected_num_del_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
+    expected_values = {"eaves_depth"=>3}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)       
+  end   
   
   private
   
@@ -93,9 +123,9 @@ class CreateResidentialEavesTest < MiniTest::Test
       
     return result
     
-  end
+  end  
   
-  def _test_measure(osm_file_or_model, args_hash, expected_existing_eaves=false)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
     measure = CreateResidentialEaves.new
 
@@ -109,6 +139,9 @@ class CreateResidentialEavesTest < MiniTest::Test
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
+    # get the initial objects in the model
+    initial_objects = get_objects(model)
+    
     # get arguments
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
@@ -125,22 +158,42 @@ class CreateResidentialEavesTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
+    
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    existing_eaves = false
-    result.info.map{ |x| x.logMessage }.each do |info|
-        if info.include? "Removed existing eaves."
-            existing_eaves = true
-        end
-    end    
-    if expected_existing_eaves == false # new
-        assert(existing_eaves==false)
-    else # replacement
-        assert(existing_eaves==true)
-    end   
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    
+    # get the final objects in the model
+    final_objects = get_objects(model)
+    
+    # get new and deleted objects
+    obj_type_exclusions = []
+    all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
+    all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
+    
+    # check we have the expected number of new/deleted objects
+    check_num_objects(all_new_objects, expected_num_new_objects, "added")
+    check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
 
+    all_new_objects.each do |obj_type, new_objects|
+        new_objects.each do |new_object|
+            next if not new_object.respond_to?("to_#{obj_type}")
+            new_object = new_object.public_send("to_#{obj_type}").get
+            if obj_type == "ShadingSurface"
+                l, w, h = Geometry.get_surface_dimensions(new_object)
+                if l < w
+                  assert_in_epsilon(expected_values["eaves_depth"], OpenStudio::convert(l,"m","ft").get, 0.01)
+                else
+                  assert_in_epsilon(expected_values["eaves_depth"], OpenStudio::convert(w,"m","ft").get, 0.01)
+                end
+            end
+        end
+    end
+    
     return model
-  end  
+  end 
   
 end
