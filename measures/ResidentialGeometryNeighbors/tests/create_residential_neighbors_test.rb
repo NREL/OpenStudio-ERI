@@ -10,35 +10,55 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   def test_error_invalid_neighbor_offset
     args_hash = {}
     args_hash["left_offset"] = -10
-    result = _test_error_or_NA("default_geometry_location.osm", args_hash)
+    result = _test_error("default_geometry_location.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Neighbor offsets must be greater than or equal to 0.")
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Neighbor offsets must be greater than or equal to 0.")    
   end
   
   def test_not_applicable_no_surfaces
     args_hash = {}
-    result = _test_error_or_NA(nil, args_hash)
+    result = _test_error(nil, args_hash)
     assert(result.errors.size == 0)
     assert_equal("NA", result.value.valueName)
-    assert_equal(result.info.map{ |x| x.logMessage }[0], "No surfaces found to copy for neighboring buildings.")
-  end  
-    
-  def test_retrofit_replace
+    assert_includes(result.info.map{ |x| x.logMessage }, "No surfaces found to copy for neighboring buildings.")
+  end
+  
+  def test_copy_all_surfaces
+    surfaces_per_facade = 12
+    num_neighbors = 1
+    args_hash = {}
+    args_hash["left_offset"] = 10
+    args_hash["all_surfaces"] = "true"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_values = {}
+    model = _test_measure("default_geometry_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)  
+  end
+  
+  def test_retrofit_replace_minimal_required_surfaces
+    surfaces_per_facade = 3
+    num_neighbors = 4  
     args_hash = {}
     args_hash["left_offset"] = 10
     args_hash["right_offset"] = 10
     args_hash["back_offset"] = 10
     args_hash["front_offset"] = 10
-    model = _test_measure("default_geometry_location.osm", args_hash, false, true)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_values = {}
+    model = _test_measure("default_geometry_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)
     args_hash = {}
     args_hash["left_offset"] = 20
-    _test_measure(model, args_hash, true, true)
-  end  
+    expected_num_del_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*1, "ShadingSurfaceGroup"=>1}
+    expected_values = {}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1+surfaces_per_facade*1)
+  end
   
   private
   
-  def _test_error_or_NA(osm_file, args_hash)
+  def _test_error(osm_file, args_hash)
     # create an instance of the measure
     measure = CreateResidentialNeighbors.new
 
@@ -68,7 +88,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     
   end
   
-  def _test_measure(osm_file_or_model, args_hash, expected_existing_neighbors=false, expected_new_neighbors=false)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
     measure = CreateResidentialNeighbors.new
 
@@ -82,6 +102,9 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
+    # get the initial objects in the model
+    initial_objects = get_objects(model)
+    
     # get arguments
     arguments = measure.arguments(model)
     argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
@@ -98,27 +121,34 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
+    
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    existing_neighbors = false
-    new_neighbors = false
-    result.info.map{ |x| x.logMessage }.each do |info|
-        if info.include? "Removed existing neighbors."
-            existing_neighbors = true
-        elsif info.include? "Created shading surface"
-            new_neighbors = true
-        end
-    end    
-    if expected_existing_neighbors == false # new
-        assert(existing_neighbors==false)
-        assert(new_neighbors==true)
-    else # replacement
-        assert(existing_neighbors==true)
-        assert(new_neighbors==true)
-    end   
+    assert(result.info.size == num_infos)
+    assert(result.warnings.size == num_warnings)
+    
+    # get the final objects in the model
+    final_objects = get_objects(model)
+    
+    # get new and deleted objects
+    obj_type_exclusions = []
+    all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
+    all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
+    
+    # check we have the expected number of new/deleted objects
+    check_num_objects(all_new_objects, expected_num_new_objects, "added")
+    check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
 
+    all_new_objects.each do |obj_type, new_objects|
+        new_objects.each do |new_object|
+            next if not new_object.respond_to?("to_#{obj_type}")
+            new_object = new_object.public_send("to_#{obj_type}").get
+        end
+    end
+    
     return model
-  end  
+  end
   
 end
