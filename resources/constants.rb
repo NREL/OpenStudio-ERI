@@ -131,6 +131,12 @@ class Constants
   def self.BuildingUnitTypeResidential
     return 'Residential'
   end
+  def self.CeilingFanControlTypical
+    return 'typical'
+  end
+  def self.CeilingFanControlSmart
+    return 'smart'
+  end
   def self.CollectorTypeClosedLoop
     return 'closed loop'
   end

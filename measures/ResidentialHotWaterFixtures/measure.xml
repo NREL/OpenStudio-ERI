@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>74adf884-5c4b-4138-b87b-2355b6928eae</version_id>
-  <version_modified>20161130T173024Z</version_modified>
+  <version_id>b6bf6689-608a-4148-b054-25f93777766c</version_id>
+  <version_modified>20161202T205136Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -1093,16 +1093,16 @@
       <checksum>BFF023C0</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1036AA7A</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>047FBEB1</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>53E3CD4F</checksum>
     </file>
   </files>
 </measure>

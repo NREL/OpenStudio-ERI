@@ -1004,7 +1004,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       zone_air_relative_humidity_output_var.setName("Zone Air Relative Humidity")      
       sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_air_relative_humidity_output_var)
       sensor.setName("Phiin_#{unit.unit_num}")
-      sensor.setKeyName(unit.living_zone.name.to_s)      
+      sensor.setKeyName(unit.living_zone.name.to_s)
       
       zone_mean_air_humidity_ratio_output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Humidity Ratio", model)
       zone_mean_air_humidity_ratio_output_var.setName("Zone Mean Air Humidity Ratio")      

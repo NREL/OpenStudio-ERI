@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_fuel</name>
   <uid>1a71ae9e-5485-4cca-a369-16c6b8a9c1d8</uid>
-  <version_id>7077aa18-b7ea-41c7-844b-a0232b2e5cd1</version_id>
-  <version_modified>20161130T173029Z</version_modified>
+  <version_id>cfcdaf3b-9f2d-498b-a151-afa83e111d71</version_id>
+  <version_modified>20161202T205140Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessFurnaceFuel</class_name>
   <display_name>Set Residential Furnace Fuel</display_name>
@@ -340,12 +340,6 @@
       <checksum>22C6561D</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1036AA7A</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -373,6 +367,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>047FBEB1</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>53E3CD4F</checksum>
     </file>
   </files>
 </measure>
