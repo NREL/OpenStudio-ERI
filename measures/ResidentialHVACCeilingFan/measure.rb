@@ -28,12 +28,12 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return "This measure..."
+    return "Adds (or replaces) residential ceiling fan(s) and schedule in all finished spaces. For multifamily buildings, the ceiling fan(s) can be set for all units of the building."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "Uses..."
+    return "Since there is no Ceiling Fan object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is residential ceiling fan. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned."
   end
 
   # define the arguments that the user will input
@@ -89,6 +89,33 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
     cooling_setpoint_offset.setDefaultValue(0)
     args << cooling_setpoint_offset    
     
+    #make a double argument for BA Benchamrk multiplier
+    mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mult")
+    mult.setDisplayName("Building America Benchmark Multipler")
+    mult.setDefaultValue(1)
+    args << mult
+    
+    #Make a string argument for 24 weekday schedule values
+    weekday_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekday_sch", true)
+    weekday_sch.setDisplayName("Weekday schedule")
+    weekday_sch.setDescription("Specify the 24-hour weekday schedule.")
+    weekday_sch.setDefaultValue("0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05")
+    args << weekday_sch
+      
+    #Make a string argument for 24 weekend schedule values
+    weekend_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("weekend_sch", true)
+    weekend_sch.setDisplayName("Weekend schedule")
+    weekend_sch.setDescription("Specify the 24-hour weekend schedule.")
+    weekend_sch.setDefaultValue("0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05")
+    args << weekend_sch
+
+    #Make a string argument for 12 monthly schedule values
+    monthly_sch = OpenStudio::Ruleset::OSArgument::makeStringArgument("monthly_sch", true)
+    monthly_sch.setDisplayName("Month schedule")
+    monthly_sch.setDescription("Specify the 12-month schedule.")
+    monthly_sch.setDefaultValue("1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248")
+    args << monthly_sch    
+    
     return args
   end
 
@@ -117,6 +144,16 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
     control = runner.getStringArgumentValue("control",user_arguments)
     use_benchmark_energy = runner.getBoolArgumentValue("use_benchmark_energy",user_arguments)
     cooling_setpoint_offset = runner.getDoubleArgumentValue("cooling_setpoint_offset",user_arguments)
+    mult = runner.getDoubleArgumentValue("mult",user_arguments)
+    weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
+    weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
+    monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)    
+    
+    # check for valid inputs
+    if mult < 0
+      runner.registerError("Multiplier must be greater than or equal to 0.")
+      return false
+    end    
     
     if use_benchmark_energy
       coverage = nil
@@ -125,35 +162,34 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
       control = nil
     end
     
-    # Get building units
+    # get building units
     units = Geometry.get_building_units(model, runner)
     if units.nil?
-        return false
-    end    
+      return false
+    end
     
-    # Remove any existing airflow objects
+    # remove any existing ceiling fan objects
     HelperMethods.remove_object_from_osm_based_on_name(model, "OutputVariable", ["Schedule Value", "Zone Mean Air Temperature"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSensor", ["CeilingFan_sch_", "Tin_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemActuator", ["CeilingFanScheduleOverride_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgram", ["CeilingFanScheduleProgram_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgramCallingManager", ["CeilingFanProgramManager_"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "ElectricEquipmentDefinition", ["CeilingFans_", "Misc Elec Load_", "FBsmt Misc Elec Load_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "ElectricEquipmentDefinition", ["CeilingFans_", Constants.ObjectNameCeilingFan])
     HelperMethods.remove_object_from_osm_based_on_name(model, "ScheduleRuleset", ["CeilingFan_"])
     
+    sch = nil
     units.each do |building_unit|
     
       unit = Unit.new
-      unit.num_bedrooms, unit.num_bathrooms = Geometry.get_unit_beds_baths(model, building_unit, runner)
-      unit_spaces = building_unit.spaces
-      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)
       unit.unit_num = Geometry.get_unit_number(model, building_unit, runner)
-      unit.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(unit_spaces, false, runner)
-      unit.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(unit_spaces, false, runner)
-    
+      unit.num_bedrooms, unit.num_bathrooms = Geometry.get_unit_beds_baths(model, building_unit, runner)      
+      unit.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(building_unit.spaces, false, runner)
+      unit.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(building_unit.spaces, false, runner)
+
       schedules = Schedules.new
     
       # Determine geometry for spaces and zones that are unit specific
-      thermal_zones.each do |thermal_zone|
+      Geometry.get_thermal_zones_from_spaces(building_unit.spaces).each do |thermal_zone|
         if thermal_zone.name.to_s.start_with? Constants.LivingZone
           unit.living_zone = thermal_zone
         elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone
@@ -255,11 +291,10 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
         end
       end    
       
-      default_clg_sp = 76.0
       if coolingSetpointWeekday.all? {|x| x == 10000}
-        runner.registerWarning("No cooling equipment found. Assuming #{default_clg_sp} F for ceiling fan operation.")
-        coolingSetpointWeekday = Array.new(24, default_clg_sp)
-        coolingSetpointWeekend = Array.new(24, default_clg_sp)
+        runner.registerWarning("No cooling equipment found. Assuming #{Constants.DefaultCoolingSetpoint} F for ceiling fan operation.")
+        coolingSetpointWeekday = Array.new(24, Constants.DefaultCoolingSetpoint)
+        coolingSetpointWeekend = Array.new(24, Constants.DefaultCoolingSetpoint)
       end
       
       unit.cooling_setpoint_min = (coolingSetpointWeekday + coolingSetpointWeekend).min
@@ -285,9 +320,16 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
       unless schedules.CeilingFan.validated?
         return false
       end
+
+      schedule_type_limits = OpenStudio::Model::ScheduleTypeLimits.new(model)
+      schedule_type_limits.setName("OnOff")
+      schedule_type_limits.setLowerLimitValue(0)
+      schedule_type_limits.setUpperLimitValue(1)
+      schedule_type_limits.setNumericType("Discrete")
       
       schedules.CeilingFansMaster = OpenStudio::Model::ScheduleConstant.new(model)
       schedules.CeilingFansMaster.setName("CeilingFansMaster_#{unit.unit_num}")
+      schedules.CeilingFansMaster.setScheduleTypeLimits(schedule_type_limits)
       schedules.CeilingFansMaster.setValue(1)
       
       # Ceiling Fans
@@ -296,11 +338,6 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
       # it checks the indoor temperature to see if it is less than the normal cooling setpoint. In either case, it turns the fans off.
       # Otherwise it turns the fans on.
       
-      sens = 0.93
-      lat = 0.021      
-      conv = sens / 2.5
-      rad = conv * 1.5
-      
       equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
       equip_def.setName("CeilingFans_#{unit.unit_num}")
       equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
@@ -308,7 +345,7 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
       equip.setSpace(unit.living_zone.spaces[0])
       equip_def.setDesignLevel(OpenStudio::convert(ceiling_fans_max_power,"kW","W").get)
       equip_def.setFractionLatent(0)
-      equip_def.setFractionRadiant(rad)
+      equip_def.setFractionRadiant(Constants.rad)
       equip_def.setFractionLost(0)
       equip.setSchedule(schedules.CeilingFansMaster)
       equip.setEndUseSubcategory("Misc_#{unit.unit_num}")
@@ -345,50 +382,51 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
       program_calling_manager = OpenStudio::Model::EnergyManagementSystemProgramCallingManager.new(model)
       program_calling_manager.setName("CeilingFanProgramManager_#{unit.unit_num}")
       program_calling_manager.setCallingPoint("BeginTimestepBeforePredictor")
-      program_calling_manager.addProgram(program)
+      program_calling_manager.addProgram(program)    
+      
+      if use_benchmark_energy #add ceiling fan if is benchmark
+      
+        mel_ann_no_ceiling_fan = (1108.1 + 180.2 * unit.num_bedrooms + 0.2785 * unit.finished_floor_area) * mult
+        mel_ann_with_ceiling_fan = (1185.4 + 180.2 * unit.num_bedrooms + 0.3188 * unit.finished_floor_area) * mult         
+        mel_ann = mel_ann_with_ceiling_fan - mel_ann_no_ceiling_fan      
+      
+        building_unit.spaces.each do |space|
+          next if Geometry.space_is_unfinished(space)
+          
+          obj_name = "#{Constants.ObjectNameCeilingFan(building_unit.name.to_s)}"
+          space_obj_name = "#{obj_name}|#{space.name.to_s}"          
 
-      mel_multiplier = 1 # TODO: is this assumption ok?
-      other_mel = get_other_mels(unit.num_bedrooms, unit.finished_floor_area, mel_multiplier, use_benchmark_energy)
-    
-      # Calculate daily total energy
-      daily_misc_elec_energy = other_mel / 365.0
-      
-      misc_plug_load_maxval = 0.089 # TODO: what should this be?
-      max_misc_elec_power = misc_plug_load_maxval * daily_misc_elec_energy # kW 
-    
-      max_mels_elect_living = max_misc_elec_power * (unit.above_grade_finished_floor_area / unit.finished_floor_area)
-      
-      equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-      equip_def.setName("Misc Elec Load_#{unit.unit_num}")
-      equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
-      equip.setName("Misc Elec Load_#{unit.unit_num}")
-      equip.setSpace(unit.living_zone.spaces[0])
-      equip_def.setDesignLevel(OpenStudio::convert(max_mels_elect_living,"kW","W").get)
-      equip_def.setFractionLatent(lat)
-      equip_def.setFractionRadiant(rad)
-      equip_def.setFractionLost(1 - lat - sens)
-      equip.setSchedule(model.alwaysOnDiscreteSchedule) # TODO: what schedule to set here?
-      equip.setEndUseSubcategory("Misc_#{unit.unit_num}")
-    
-      unless unit.finished_basement_zone.nil?
+          if mel_ann > 0
 
-        max_mels_elect_fbsmnt = max_misc_elec_power * (OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get / unit.finished_floor_area)
-      
-        equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
-        equip_def.setName("FBsmt Misc Elec Load_#{unit.unit_num}")
-        equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
-        equip.setName("FBsmt Misc Elec Load_#{unit.unit_num}")
-        equip.setSpace(unit.living_zone.spaces[0])
-        equip_def.setDesignLevel(OpenStudio::convert(max_mels_elect_fbsmnt,"kW","W").get)
-        equip_def.setFractionLatent(lat)
-        equip_def.setFractionRadiant(rad)
-        equip_def.setFractionLost(1 - lat - sens)
-        equip.setSchedule(model.alwaysOnDiscreteSchedule) # TODO: what schedule to set here?
-        equip.setEndUseSubcategory("Misc_#{unit.unit_num}")
+            if sch.nil?
+              sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCeilingFan + " schedule", weekday_sch, weekend_sch, monthly_sch)
+              if not sch.validated?
+                return false
+              end
+            end
+            
+            space_mel_ann = mel_ann * OpenStudio.convert(space.floorArea,"m^2","ft^2").get / unit.finished_floor_area
+            space_design_level = sch.calcDesignLevelFromDailykWh(space_mel_ann / 365.0)
+
+            mel_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+            mel = OpenStudio::Model::ElectricEquipment.new(mel_def)
+            mel.setName(space_obj_name)
+            mel.setEndUseSubcategory(obj_name)
+            mel.setSpace(space)
+            mel_def.setName(space_obj_name)
+            mel_def.setDesignLevel(space_design_level)
+            mel_def.setFractionRadiant(Constants.rad)
+            mel_def.setFractionLatent(Constants.lat)
+            mel_def.setFractionLost(1 - Constants.lat - Constants.sens)
+            mel.setSchedule(sch.schedule)
+            
+          end
+          
+        end # unit spaces
         
-      end
-      
-    end
+      end # benchmark
+
+    end # units
     
     return true
 
@@ -396,17 +434,7 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
   
   def get_ceiling_fan_number(above_grade_finished_floor_area, coverage)
     return (above_grade_finished_floor_area * coverage / 300.0).round(1)
-  end
-  
-  def get_other_mels(num_beds, ffa, multiplier, use_benchmark_energy=false)
-    # Returns kWh/yr for misc electric loads, as per the 2010 BA Benchmark.
-    if use_benchmark_energy #add ceiling fan if is benchmark
-      total_mel=(1185.4 + 180.2 * num_beds + 0.3188 * ffa) * multiplier
-    else
-      total_mel=(1108.1 + 180.2 * num_beds + 0.2785 * ffa) * multiplier
-    end        
-    return total_mel
-  end
+  end 
   
 end
 
