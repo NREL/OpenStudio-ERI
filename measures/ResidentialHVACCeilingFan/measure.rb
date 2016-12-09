@@ -169,16 +169,18 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
     end
     
     # remove any existing ceiling fan objects
-    HelperMethods.remove_object_from_osm_based_on_name(model, "OutputVariable", ["Schedule Value", "Zone Mean Air Temperature"])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSensor", ["CeilingFan_sch_", "Tin_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "OutputVariable", ["ceiling_fan_Schedule Value", "ceiling_fan_Zone Mean Air Temperature"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemSensor", ["CeilingFan_sch_", "ceiling_fan_Tin_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemActuator", ["CeilingFanScheduleOverride_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgram", ["CeilingFanScheduleProgram_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "EnergyManagementSystemProgramCallingManager", ["CeilingFanProgramManager_"])
     HelperMethods.remove_object_from_osm_based_on_name(model, "ElectricEquipmentDefinition", ["CeilingFans_", Constants.ObjectNameCeilingFan])
-    HelperMethods.remove_object_from_osm_based_on_name(model, "ScheduleRuleset", ["CeilingFan_"])
+    HelperMethods.remove_object_from_osm_based_on_name(model, "ScheduleRuleset", ["CeilingFan_", Constants.ObjectNameCeilingFan])
     
     sch = nil
     units.each do |building_unit|
+    
+      obj_name = "#{Constants.ObjectNameCeilingFan(building_unit.name.to_s)}"
     
       unit = Unit.new
       unit.unit_num = Geometry.get_unit_number(model, building_unit, runner)
@@ -352,15 +354,15 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
       
       # Sensor that reports the value of the schedule CeilingFan (0 if cooling setpoint setup is in effect, 1 otherwise).
       schedule_value_output_var = OpenStudio::Model::OutputVariable.new("Schedule Value", model)
-      schedule_value_output_var.setName("Schedule Value")
+      schedule_value_output_var.setName("ceiling_fan_Schedule Value")
       sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
       sensor.setName("CeilingFan_sch_#{unit.unit_num}")
       sensor.setKeyName("CeilingFan_#{unit.unit_num}")
       
       zone_mean_air_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Temperature", model)
-      zone_mean_air_temp_output_var.setName("Zone Mean Air Temperature")
+      zone_mean_air_temp_output_var.setName("ceiling_fan_Zone Mean Air Temperature")
       sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_mean_air_temp_output_var)
-      sensor.setName("Tin_#{unit.unit_num}")
+      sensor.setName("ceiling_fan_Tin_#{unit.unit_num}")
       sensor.setKeyName(unit.living_zone.name.to_s)
       
       # Actuator that overrides the master ceiling fan schedule.
@@ -373,7 +375,7 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
       program.addLine("If CeilingFan_sch_#{unit.unit_num} == 0")
       program.addLine("Set CeilingFanScheduleOverride_#{unit.unit_num} = 0")
       # Subtract 0.1 from cooling setpoint to avoid fans cycling on and off with minor temperature variations.
-      program.addLine("ElseIf Tin_#{unit.unit_num}<#{OpenStudio::convert(unit.cooling_setpoint_min-0.1-32.0,"R","K").get}")
+      program.addLine("ElseIf ceiling_fan_Tin_#{unit.unit_num}<#{OpenStudio::convert(unit.cooling_setpoint_min-0.1-32.0,"R","K").get}")
       program.addLine("Set CeilingFanScheduleOverride_#{unit.unit_num} = 0")
       program.addLine("Else")
       program.addLine("Set CeilingFanScheduleOverride_#{unit.unit_num} = 1")
@@ -393,7 +395,6 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
         building_unit.spaces.each do |space|
           next if Geometry.space_is_unfinished(space)
           
-          obj_name = "#{Constants.ObjectNameCeilingFan(building_unit.name.to_s)}"
           space_obj_name = "#{obj_name}|#{space.name.to_s}"          
 
           if mel_ann > 0
