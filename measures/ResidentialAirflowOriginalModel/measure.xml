@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>5a7ae205-bdc2-4daf-b29e-b6f0a59366a6</uid>
-  <version_id>07ff98ec-f49f-4b16-83a6-0c5b4d8a7b0c</version_id>
-  <version_modified>20161208T173812Z</version_modified>
+  <version_id>db14871c-826a-4f83-857b-0c40c29d9d56</version_id>
+  <version_modified>20161215T170806Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
@@ -700,12 +700,6 @@
       <checksum>92D6C640</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>22C6561D</checksum>
-    </file>
-    <file>
       <filename>ASHRAE622WSF.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
@@ -747,10 +741,16 @@
       <checksum>047FBEB1</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>22C6561D</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA12364C</checksum>
+      <checksum>7F33A095</checksum>
     </file>
   </files>
 </measure>

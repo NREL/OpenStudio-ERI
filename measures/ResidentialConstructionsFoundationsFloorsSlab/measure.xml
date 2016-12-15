@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>e7436b3f-7c37-45b6-a1dc-da90a80819ba</version_id>
-  <version_modified>20161208T173817Z</version_modified>
+  <version_id>b6fb65a6-1b51-451c-8011-5b6164d6410f</version_id>
+  <version_modified>20161215T170808Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
@@ -164,12 +164,6 @@
       <checksum>671E3F3C</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>22C6561D</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_CS_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -212,10 +206,16 @@
       <checksum>047FBEB1</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>22C6561D</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA12364C</checksum>
+      <checksum>7F33A095</checksum>
     </file>
   </files>
 </measure>

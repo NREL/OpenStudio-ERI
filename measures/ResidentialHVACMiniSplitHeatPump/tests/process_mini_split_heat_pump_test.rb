@@ -136,10 +136,24 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     args_hash["pan_heater_power"] = 150.0
     expected_num_del_objects = {}
-    expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>num_units, "FanOnOff"=>num_units, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>num_units, "CoilHeatingDXVariableRefrigerantFlow"=>num_units, "CoilCoolingDXVariableRefrigerantFlow"=>num_units, "ZoneHVACBaseboardConvectiveElectric"=>num_units, "ElectricEquipment"=>num_units*1, "ElectricEquipmentDefinition"=>num_units*1, "EnergyManagementSystemSensor"=>num_units*2, "EnergyManagementSystemActuator"=>num_units*1, "EnergyManagementSystemProgram"=>num_units*1, "EnergyManagementSystemProgramCallingManager"=>num_units*1, "OutputVariable"=>num_units*2}
+    expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>num_units, "FanOnOff"=>num_units, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>num_units, "CoilHeatingDXVariableRefrigerantFlow"=>num_units, "CoilCoolingDXVariableRefrigerantFlow"=>num_units, "ZoneHVACBaseboardConvectiveElectric"=>num_units, "ElectricEquipment"=>num_units*1, "ElectricEquipmentDefinition"=>num_units*1, "EnergyManagementSystemSensor"=>num_units*2, "EnergyManagementSystemActuator"=>num_units*1, "EnergyManagementSystemProgram"=>num_units*1, "EnergyManagementSystemProgramCallingManager"=>num_units*1, "OutputVariable"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
     _test_measure("multifamily_8_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*2)
-  end  
+  end
+  
+  def test_retrofit_increase_pan_heater_power
+    args_hash = {}
+    args_hash["pan_heater_power"] = 20.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>3, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2}
+    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    model = _test_measure("singlefamily_detached_fbsmt.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    args_hash["pan_heater_power"] = 30.0
+    expected_num_del_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>3, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2}
+    expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>3, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2}
+    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
+  end
   
   private
   

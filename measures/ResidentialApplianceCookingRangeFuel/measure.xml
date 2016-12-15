@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_fuel</name>
   <uid>68bdcee3-c301-4fe9-a99f-c7d8b5930c89</uid>
-  <version_id>7a66f342-605a-4c19-833b-3961f86bbfc4</version_id>
-  <version_modified>20161208T173813Z</version_modified>
+  <version_id>cefd5a93-44fb-4a79-81d4-0a92a2259407</version_id>
+  <version_modified>20161215T170806Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeFuel</class_name>
   <display_name>Set Residential Fuel Cooking Range</display_name>
@@ -171,12 +171,6 @@
       <checksum>92D6C640</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>22C6561D</checksum>
-    </file>
-    <file>
       <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -201,10 +195,16 @@
       <checksum>047FBEB1</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>22C6561D</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA12364C</checksum>
+      <checksum>7F33A095</checksum>
     </file>
   </files>
 </measure>

@@ -561,6 +561,13 @@ class Constants
     end
     return "residential lighting#{s_unit}"
   end
+  def self.ObjectNameMiniSplitHeatPump(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "residential mini split#{s_unit}"
+  end
   def self.ObjectNameMiscPlugLoads(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit
@@ -574,6 +581,13 @@ class Constants
       s_unit = "|#{unit_name}"
     end
     return "residential occupants#{s_unit}"
+  end
+  def self.ObjectNamePhotovoltaics(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "residential photovoltaics#{s_unit}"
   end
   def self.ObjectNamePoolHeater(fueltype, unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""

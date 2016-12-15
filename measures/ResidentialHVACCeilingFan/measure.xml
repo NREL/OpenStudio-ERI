@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>6a4de848-858c-4346-a37d-07b8d46f5591</version_id>
-  <version_modified>20161209T180212Z</version_modified>
+  <version_id>40eb214f-e4b2-4878-af48-e8192cba9962</version_id>
+  <version_modified>20161215T210431Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ResidentialCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
@@ -90,7 +90,7 @@
     </argument>
     <argument>
       <name>mult</name>
-      <display_name>Building America Benchmark Multipler</display_name>
+      <display_name>Building America Benchmark Multiplier</display_name>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -164,12 +164,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>22C6561D</checksum>
-    </file>
-    <file>
       <filename>singlefamily_attached_has_cooling.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -194,16 +188,22 @@
       <checksum>CC516973</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>22C6561D</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA12364C</checksum>
+      <checksum>7F33A095</checksum>
     </file>
     <file>
       <filename>residential_ceiling_fan.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>CEFBAE5A</checksum>
+      <checksum>CD528137</checksum>
     </file>
     <file>
       <version>
@@ -214,7 +214,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2527355A</checksum>
+      <checksum>30F02D30</checksum>
     </file>
   </files>
 </measure>

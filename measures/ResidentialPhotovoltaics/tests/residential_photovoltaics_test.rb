@@ -16,7 +16,6 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   
   def test_azimuth_absolute
     args_hash = {}
-    args_hash["size"] = 2.5
     args_hash["azimuth_type"] = Constants.CoordAbsolute
     args_hash["azimuth"] = 180.0
     expected_num_del_objects = {}
@@ -49,11 +48,23 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_multifamily
     num_units = 4
     args_hash = {}
-    args_hash["size"] = 2.5
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
     expected_values = {"PanelArea"=>num_units*18.93}
     _test_measure("singlefamily_attached_4_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+  
+  def test_retrofit_size
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
+    expected_values = {"PanelArea"=>1*18.93}
+    model = _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+    args_hash["size"] = 5.0
+    expected_num_del_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
+    expected_num_new_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
+    expected_values = {"PanelArea"=>2*18.93}
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end  
   
   private
@@ -147,7 +158,6 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
             next if not new_object.respond_to?("to_#{obj_type}")
             new_object = new_object.public_send("to_#{obj_type}").get
             if obj_type == "ShadingSurface"
-                next unless new_object.name.to_s == "PV Panel"
                 assert_in_epsilon(expected_values["PanelArea"], new_object.grossArea, 0.01)
             end            
         end

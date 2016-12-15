@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>46c7b3a0-b3e5-408a-9362-01ef527eec35</version_id>
-  <version_modified>20161208T223820Z</version_modified>
+  <version_id>6e447f93-317a-4445-95f5-9868e2e3e8f3</version_id>
+  <version_modified>20161215T212634Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -761,12 +761,6 @@
       <checksum>C08598ED</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>22C6561D</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached_pierbeam_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -791,10 +785,16 @@
       <checksum>9DDC6E6A</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>22C6561D</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA12364C</checksum>
+      <checksum>7F33A095</checksum>
     </file>
     <file>
       <version>
@@ -805,7 +805,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DFA6D7E1</checksum>
+      <checksum>C79F2980</checksum>
     </file>
   </files>
 </measure>
