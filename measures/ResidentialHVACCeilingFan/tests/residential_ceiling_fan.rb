@@ -183,7 +183,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
                 end              
                 if new_object.name.to_s.start_with? Constants.ObjectNameCeilingFan + " benchmark"
                     assert_in_epsilon(expected_values["misc_elec_load_design_level"], new_object.designLevel.get, 0.01)                
-                end               
+                end
             end
         end
     end

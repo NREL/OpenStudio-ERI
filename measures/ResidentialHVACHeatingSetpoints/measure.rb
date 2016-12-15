@@ -75,6 +75,11 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
+    # Remove existing heating season schedule
+    model.getScheduleRulesets.each do |sch|
+      next unless sch.name.to_s == Constants.ObjectNameHeatingSeason
+      sch.remove
+    end
     heatingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSeason, Array.new(24, 1), Array.new(24, 1), heating_season, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
         
     unless heatingseasonschedule.validated?
@@ -132,6 +137,12 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
       end
     end
     
+    # Remove existing heating setpoint schedule
+    model.getScheduleRulesets.each do |sch|
+      next unless sch.name.to_s == Constants.ObjectNameHeatingSetpoint
+      sch.remove
+    end
+    
     finished_zones.each do |finished_zone|
     
       thermostatsetpointdualsetpoint = finished_zone.thermostatSetpointDualSetpoint
@@ -186,18 +197,16 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
           end          
         end
         
+        model.getScheduleRulesets.each do |sch|
+          next unless sch.name.to_s == Constants.ObjectNameCoolingSetpoint
+          sch.remove
+        end
+        
         heatingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
         coolingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
 
         unless heatingsetpoint.validated? and coolingsetpoint.validated?
           return false
-        end
-
-        if thermostatsetpointdualsetpoint.heatingSetpointTemperatureSchedule.is_initialized
-            thermostatsetpointdualsetpoint.heatingSetpointTemperatureSchedule.get.remove
-        end
-        if thermostatsetpointdualsetpoint.coolingSetpointTemperatureSchedule.is_initialized
-            thermostatsetpointdualsetpoint.coolingSetpointTemperatureSchedule.get.remove
         end
         
         thermostatsetpointdualsetpoint.setHeatingSetpointTemperatureSchedule(heatingsetpoint.schedule)
@@ -216,14 +225,14 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
         clg_monthly_sch = Array.new(12, 1)
         for m in 1..12
           clg_monthly_sch[m-1] = 10000
-        end        
+        end
         
         heatingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy, htg_wked, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
         coolingsetpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, Array.new(24, 1), Array.new(24, 1), clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
 
         unless heatingsetpoint.validated?
           return false
-        end        
+        end
         
         thermostatsetpointdualsetpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
         thermostatsetpointdualsetpoint.setName("#{finished_zone.name} temperature setpoint")

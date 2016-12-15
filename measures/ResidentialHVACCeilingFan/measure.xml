@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>40eb214f-e4b2-4878-af48-e8192cba9962</version_id>
-  <version_modified>20161215T210431Z</version_modified>
+  <version_id>2f734c00-dc32-45f4-8136-7dc7910a2e2f</version_id>
+  <version_modified>20161215T220434Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ResidentialCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
@@ -200,12 +200,6 @@
       <checksum>7F33A095</checksum>
     </file>
     <file>
-      <filename>residential_ceiling_fan.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CD528137</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -215,6 +209,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>30F02D30</checksum>
+    </file>
+    <file>
+      <filename>residential_ceiling_fan.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5AF893B3</checksum>
     </file>
   </files>
 </measure>

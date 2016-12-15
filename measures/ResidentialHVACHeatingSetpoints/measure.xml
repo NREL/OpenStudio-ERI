@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>55a2102f-8985-4604-8e6f-0a069920e522</version_id>
-  <version_modified>20161215T170815Z</version_modified>
+  <version_id>825fcb11-d4b1-4c30-bfa7-bcdb7bdb93dd</version_id>
+  <version_modified>20161215T225337Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -73,12 +73,6 @@
       <checksum>97B219DD</checksum>
     </file>
     <file>
-      <filename>process_heating_setpoints_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BD771227</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached_no_location.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -127,17 +121,6 @@
       <checksum>ED10A0A2</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>00336F7C</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -172,6 +155,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7F33A095</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>1D2F0720</checksum>
+    </file>
+    <file>
+      <filename>process_heating_setpoints_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6847F442</checksum>
     </file>
   </files>
 </measure>

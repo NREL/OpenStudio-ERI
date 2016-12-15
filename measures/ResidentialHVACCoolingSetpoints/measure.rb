@@ -75,6 +75,11 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
+    # Remove existing cooling season schedule
+    model.getScheduleRulesets.each do |sch|
+      next unless sch.name.to_s == Constants.ObjectNameCoolingSeason
+      sch.remove
+    end    
     coolingseasonschedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSeason, Array.new(24, 1), Array.new(24, 1), cooling_season, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)  
     
     unless coolingseasonschedule.validated?
@@ -121,6 +126,12 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         finished_zones << thermal_zone
       end
     end
+    
+    # Remove existing cooling setpoint schedule
+    model.getScheduleRulesets.each do |sch|
+      next unless sch.name.to_s == Constants.ObjectNameCoolingSetpoint
+      sch.remove
+    end    
     
     finished_zones.each do |finished_zone|
     
@@ -176,12 +187,10 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
           end          
         end
         
-        if thermostatsetpointdualsetpoint.heatingSetpointTemperatureSchedule.is_initialized
-            thermostatsetpointdualsetpoint.heatingSetpointTemperatureSchedule.get.remove
-        end
-        if thermostatsetpointdualsetpoint.coolingSetpointTemperatureSchedule.is_initialized
-            thermostatsetpointdualsetpoint.coolingSetpointTemperatureSchedule.get.remove
-        end
+        model.getScheduleRulesets.each do |sch|
+          next unless sch.name.to_s == Constants.ObjectNameHeatingSetpoint
+          sch.remove
+        end        
         
         heatingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
         coolingsetpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
