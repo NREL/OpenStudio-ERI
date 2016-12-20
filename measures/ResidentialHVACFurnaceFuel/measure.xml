@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_fuel</name>
   <uid>1a71ae9e-5485-4cca-a369-16c6b8a9c1d8</uid>
-  <version_id>55b63d90-c519-4153-9748-63cffb5693f5</version_id>
-  <version_modified>20161215T170815Z</version_modified>
+  <version_id>3003832d-9274-4ba5-b899-4e49e287945c</version_id>
+  <version_modified>20161220T162756Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessFurnaceFuel</class_name>
   <display_name>Set Residential Furnace Fuel</display_name>
@@ -366,13 +366,13 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>22C6561D</checksum>
+      <checksum>108E0E50</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7F33A095</checksum>
+      <checksum>22B51F35</checksum>
     </file>
   </files>
 </measure>

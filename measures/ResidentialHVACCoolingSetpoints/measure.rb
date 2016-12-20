@@ -133,6 +133,9 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
       sch.remove
     end    
     
+    # Make the setpoint schedules
+    heatingsetpoint = nil
+    coolingsetpoint = nil
     finished_zones.each do |finished_zone|
     
       thermostatsetpointdualsetpoint = finished_zone.thermostatSetpointDualSetpoint
@@ -198,9 +201,6 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
         unless heatingsetpoint.validated? and coolingsetpoint.validated?
           return false
         end
-
-        thermostatsetpointdualsetpoint.setHeatingSetpointTemperatureSchedule(heatingsetpoint.schedule)
-        thermostatsetpointdualsetpoint.setCoolingSetpointTemperatureSchedule(coolingsetpoint.schedule)
         
       else
         
@@ -222,14 +222,31 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
 
         unless coolingsetpoint.validated?
           return false
-        end        
+        end
+      
+      end
+      break # assume all finished zones have the same schedules
+      
+    end    
+    
+    # Set the setpoint schedules
+    finished_zones.each do |finished_zone|
+    
+      thermostatsetpointdualsetpoint = finished_zone.thermostatSetpointDualSetpoint
+      if thermostatsetpointdualsetpoint.is_initialized
+        
+        thermostatsetpointdualsetpoint = thermostatsetpointdualsetpoint.get
+        thermostatsetpointdualsetpoint.setHeatingSetpointTemperatureSchedule(heatingsetpoint.schedule)
+        thermostatsetpointdualsetpoint.setCoolingSetpointTemperatureSchedule(coolingsetpoint.schedule)
+        
+      else       
         
         thermostatsetpointdualsetpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
         thermostatsetpointdualsetpoint.setName("#{finished_zone.name} temperature setpoint")
         runner.registerInfo("Created new thermostat #{thermostatsetpointdualsetpoint.name} for #{finished_zone.name}.")
-        thermostatsetpointdualsetpoint.setCoolingSetpointTemperatureSchedule(coolingsetpoint.schedule)
-        finished_zone.setThermostatSetpointDualSetpoint(thermostatsetpointdualsetpoint)
         thermostatsetpointdualsetpoint.setHeatingSetpointTemperatureSchedule(heatingsetpoint.schedule)
+        thermostatsetpointdualsetpoint.setCoolingSetpointTemperatureSchedule(coolingsetpoint.schedule)        
+        finished_zone.setThermostatSetpointDualSetpoint(thermostatsetpointdualsetpoint)        
         runner.registerInfo("Set a dummy heating setpoint schedule for #{thermostatsetpointdualsetpoint.name}.")              
       
       end

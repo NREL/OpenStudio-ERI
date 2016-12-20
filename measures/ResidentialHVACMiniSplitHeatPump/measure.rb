@@ -325,7 +325,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
             next unless equip.name.to_s == obj_name + " pan heater equip"
             equip.electricEquipmentDefinition.remove
           end
-        end      
+        end
       
         total_slave_zone_floor_area = 0
         slave_zones.each do |slave_zone|
@@ -560,7 +560,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
           equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
           equip_def.setName(obj_name + " pan heater equip")
           equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
-          equip.setName(obj_name + " pan heater equip")
+          equip.setName(equip_def.name.to_s)
           equip.setSpace(control_zone.spaces[0])
           equip_def.setFractionRadiant(0)
           equip_def.setFractionLatent(0)

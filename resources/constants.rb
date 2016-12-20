@@ -420,6 +420,13 @@ class Constants
   def self.MonthNames
     return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   end
+  def self.ObjectNameAirflow(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "res airflow#{s_unit}"
+  end  
   def self.ObjectNameBath(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit
@@ -482,6 +489,13 @@ class Constants
     end
     return "residential dishwasher#{s_unit}"
   end
+  def self.ObjectNameDucts(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "res ducts#{s_unit}"
+  end  
   def self.ObjectNameExtraRefrigerator(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit
@@ -554,12 +568,26 @@ class Constants
     end
     return "residential hot water distribution#{s_unit}"
   end
+  def self.ObjectNameInfiltration(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "res infil#{s_unit}"
+  end
   def self.ObjectNameLighting(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"
     end
     return "residential lighting#{s_unit}"
+  end
+  def self.ObjectNameMechanicalVentilation(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "res mech vent#{s_unit}"
   end
   def self.ObjectNameMiniSplitHeatPump(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
@@ -574,6 +602,13 @@ class Constants
       s_unit = "|#{unit_name}"
     end
     return "residential misc plug loads#{s_unit}"
+  end
+  def self.ObjectNameNaturalVentilation(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "res nat vent#{s_unit}"
   end
   def self.ObjectNameOccupants(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""

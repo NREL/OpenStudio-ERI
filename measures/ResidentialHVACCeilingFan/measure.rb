@@ -378,7 +378,7 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
       equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
       equip_def.setName(obj_name + " non benchmark equip")
       equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
-      equip.setName(obj_name + " non benchmark equip")
+      equip.setName(equip_def.name.to_s)
       equip.setSpace(unit.living_zone.spaces[0])
       equip_def.setDesignLevel(OpenStudio::convert(ceiling_fans_max_power,"kW","W").get)
       equip_def.setFractionLatent(0)
