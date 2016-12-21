@@ -820,6 +820,9 @@ class Constants
     end
     return "unfinished basement zone#{s_unit}"
   end
+  def self.URBANoptFinishedZoneIdentifier
+    return "Story"
+  end
   def self.VentTypeExhaust
     return 'exhaust'
   end

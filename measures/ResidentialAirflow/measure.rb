@@ -853,16 +853,17 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       
       # Determine geometry for spaces and zones that are unit specific
       Geometry.get_thermal_zones_from_spaces(building_unit.spaces).each do |thermal_zone|
-        if thermal_zone.name.to_s.start_with? Constants.LivingZone
+        if thermal_zone.name.to_s.start_with? Constants.LivingZone or not /#{Constants.URBANoptFinishedZoneIdentifier} [1-9]\d*/.match(thermal_zone.name.to_s).nil?
           unit.living_zone = thermal_zone
           unit.living = LivingSpace.new(Geometry.get_building_height(unit.living_zone.spaces), OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_building_height(unit.living_zone.spaces) / building.stories * OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
-        elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone
+        elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone or thermal_zone.name.to_s.start_with? "#{Constants.URBANoptFinishedZoneIdentifier} 0"
           unit.finished_basement_zone = thermal_zone
           unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_building_height(unit.finished_basement_zone.spaces), OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_building_height(unit.finished_basement_zone.spaces) * OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
         end
       end
 
       if unit.living_zone.nil?
+        runner.registerError("Unable to identify the living zone for #{building_unit.name}.")
         return false
       end
       
