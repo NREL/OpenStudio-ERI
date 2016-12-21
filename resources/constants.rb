@@ -534,6 +534,13 @@ class Constants
     end
     return "residential gas lighting#{s_unit}"
   end
+  def self.ObjectNameGroundSourceHeatPumpVerticalBore(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "residential gshp vert bore#{s_unit}"
+  end
   def self.ObjectNameHeatingSeason
     return 'residential heating season'
   end

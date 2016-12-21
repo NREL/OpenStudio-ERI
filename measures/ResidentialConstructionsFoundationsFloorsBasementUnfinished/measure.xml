@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_unfinished</name>
   <uid>ebc21070-2d4b-4a2a-bd15-f18bf3e77b49</uid>
-  <version_id>5ad7f673-451e-457b-ae01-adf0c92cb62d</version_id>
-  <version_modified>20161221T215454Z</version_modified>
+  <version_id>90498764-282b-4ef3-8477-50c155a55851</version_id>
+  <version_modified>20161221T233146Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementUnfinished</class_name>
   <display_name>Set Residential Foundations/Floors - Unfinished Basement Constructions</display_name>
@@ -270,7 +270,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>654268E9</checksum>
+      <checksum>512ADF86</checksum>
     </file>
   </files>
 </measure>

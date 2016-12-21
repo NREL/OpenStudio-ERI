@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>5042767d-8e5c-413d-bf24-ac6cbbcf90de</version_id>
-  <version_modified>20161221T215508Z</version_modified>
+  <version_id>0b26d396-2058-4c12-a6ec-fd6431f02c56</version_id>
+  <version_modified>20161221T233153Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ResidentialCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
@@ -214,7 +214,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>654268E9</checksum>
+      <checksum>512ADF86</checksum>
     </file>
   </files>
 </measure>
