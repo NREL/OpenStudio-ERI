@@ -99,7 +99,7 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
               htg_coil = htg_coil.to_CoilHeatingDXSingleSpeed.get
             elsif htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized
               htg_coil = htg_coil.to_CoilHeatingDXMultiSpeed.get
-            end          
+            end
             supp_htg_coil = air_loop_unitary.supplementalHeatingCoil.get
             supp_htg_coil = supp_htg_coil.to_CoilHeatingElectric.get
             supp_htg_coil.setAvailabilitySchedule(heatingseasonschedule.schedule)
@@ -107,8 +107,10 @@ class ProcessHeatingSetpoints < OpenStudio::Ruleset::ModelUserScript
           elsif htg_coil.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow
             htg_coil = htg_coil.heatingCoil.to_CoilHeatingDXVariableRefrigerantFlow.get        
           end
-          htg_coil.setAvailabilitySchedule(heatingseasonschedule.schedule)
-          runner.registerInfo("Added availability schedule to #{htg_coil.name}.")
+          unless htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
+            htg_coil.setAvailabilitySchedule(heatingseasonschedule.schedule)
+            runner.registerInfo("Added availability schedule to #{htg_coil.name}.")
+          end
         end
         htg_equip = true
       end

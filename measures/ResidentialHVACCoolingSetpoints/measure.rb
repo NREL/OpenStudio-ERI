@@ -95,10 +95,12 @@ class ProcessCoolingSetpoints < OpenStudio::Ruleset::ModelUserScript
           if clg_coil.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner
             clg_coil = clg_coil.coolingCoil.to_CoilCoolingDXSingleSpeed.get
           elsif clg_coil.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow
-            clg_coil = clg_coil.coolingCoil.to_CoilCoolingDXVariableRefrigerantFlow.get        
+            clg_coil = clg_coil.coolingCoil.to_CoilCoolingDXVariableRefrigerantFlow.get
           end
-          clg_coil.setAvailabilitySchedule(coolingseasonschedule.schedule)
-          runner.registerInfo("Added availability schedule to #{clg_coil.name}.")
+          unless clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
+            clg_coil.setAvailabilitySchedule(coolingseasonschedule.schedule)
+            runner.registerInfo("Added availability schedule to #{clg_coil.name}.")
+          end
         end
         clg_equip = true
       end

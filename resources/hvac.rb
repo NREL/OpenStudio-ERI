@@ -660,7 +660,7 @@ class HVAC
             cooling_equipment << clg_coil
           end
         end
-      end    
+      end
       model.getAirLoopHVACs.each do |air_loop|
         air_loop.thermalZones.each do |thermalZone|
           next unless thermal_zone.handle.to_s == thermalZone.handle.to_s
@@ -693,6 +693,24 @@ class HVAC
         next unless thermal_zone.handle.to_s == tu_vrf.thermalZone.get.handle.to_s
         runner.registerInfo("Found a mini-split heat pump.")
         cooling_equipment << tu_vrf
+      end
+      model.getAirLoopHVACs.each do |air_loop|
+        air_loop.thermalZones.each do |thermalZone|
+          next unless thermal_zone.handle.to_s == thermalZone.handle.to_s
+          air_loop.supplyComponents.each do |supply_component|
+            next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+            air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
+            next unless air_loop_unitary.coolingCoil.is_initialized and air_loop_unitary.heatingCoil.is_initialized
+            clg_coil = air_loop_unitary.coolingCoil.get
+            htg_coil = air_loop_unitary.heatingCoil.get              
+            next unless clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
+            runner.registerInfo("Found a ground source heat pump.")
+            if clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
+              clg_coil = clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.get
+            end
+            cooling_equipment << clg_coil
+          end
+        end
       end
       unless cooling_equipment.empty?
         return cooling_equipment
@@ -751,9 +769,24 @@ class HVAC
         runner.registerInfo("Found a mini-split heat pump.")
         heating_equipment << tu_vrf
       end
+      model.getAirLoopHVACs.each do |air_loop|
+        air_loop.thermalZones.each do |thermalZone|
+          next unless thermal_zone.handle.to_s == thermalZone.handle.to_s
+          air_loop.supplyComponents.each do |supply_component|
+            next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+            air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
+            next unless air_loop_unitary.coolingCoil.is_initialized and air_loop_unitary.heatingCoil.is_initialized
+            clg_coil = air_loop_unitary.coolingCoil.get
+            htg_coil = air_loop_unitary.heatingCoil.get              
+            next unless clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
+            runner.registerInfo("Found a ground source heat pump.")
+            heating_equipment << air_loop_unitary
+          end
+        end
+      end
       unless heating_equipment.empty?
         return heating_equipment
-      end
+      end   
       return nil
     end    
     
@@ -934,6 +967,42 @@ class HVAC
       return nil
     end
     
+    def self.has_gshp_vert_bore(model, runner, thermal_zone, remove=false)
+      model.getAirLoopHVACs.each do |air_loop|
+        air_loop.thermalZones.each do |thermalZone|
+          next unless thermal_zone.handle.to_s == thermalZone.handle.to_s
+          air_loop.supplyComponents.each do |supply_component|
+            next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+            air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
+            next unless air_loop_unitary.coolingCoil.is_initialized and air_loop_unitary.heatingCoil.is_initialized
+            clg_coil = air_loop_unitary.coolingCoil.get
+            htg_coil = air_loop_unitary.heatingCoil.get              
+            next unless clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
+            if remove
+              runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from air loop '#{air_loop.name}'")
+              air_loop_unitary.resetHeatingCoil
+              air_loop_unitary.resetCoolingCoil              
+              htg_coil.remove
+              clg_coil.remove
+              supply_fan = air_loop_unitary.supplyFan.get.to_FanOnOff.get
+              supply_fan.fanPowerRatioFunctionofSpeedRatioCurve.remove
+              supply_fan.fanEfficiencyRatioFunctionofSpeedRatioCurve.remove
+              availability_schedule = supply_fan.availabilitySchedule
+              availability_schedule.remove
+              supply_fan.remove
+              if air_loop_unitary.supplyAirFanOperatingModeSchedule.is_initialized
+                air_loop_unitary.supplyAirFanOperatingModeSchedule.get.remove
+              end
+              return true
+            else
+              return true
+            end
+          end
+        end
+      end
+      return nil    
+    end
+    
     def self.has_air_loop(model, runner, thermal_zone, remove=false)
       model.getAirLoopHVACs.each do |air_loop|
         air_loop.thermalZones.each do |thermalZone|
@@ -966,10 +1035,11 @@ class HVAC
         counterpart_equip = self.has_furnace(model, runner, thermal_zone)
         removed_ac = self.has_central_air_conditioner(model, runner, thermal_zone, true)
         removed_room_ac = self.has_room_air_conditioner(model, runner, thermal_zone, true)
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
         if removed_mshp
           removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
         end
-        if counterpart_equip or removed_ac or removed_ashp or removed_mshp
+        if counterpart_equip or removed_ac or removed_ashp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
       when "Room Air Conditioner"
@@ -977,10 +1047,11 @@ class HVAC
         removed_mshp = self.has_mini_split_heat_pump(model, runner, thermal_zone, true)      
         removed_room_ac = self.has_room_air_conditioner(model, runner, thermal_zone, true)
         removed_ac = self.has_central_air_conditioner(model, runner, thermal_zone, true)
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
         if removed_mshp
           removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
         end        
-        if removed_ac or removed_ashp or removed_mshp
+        if removed_ac or removed_ashp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
       when "Furnace"
@@ -990,7 +1061,8 @@ class HVAC
         removed_furnace = self.has_furnace(model, runner, thermal_zone, true)
         removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
         removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
-        if counterpart_equip or removed_furnace or removed_ashp or removed_mshp
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
+        if counterpart_equip or removed_furnace or removed_ashp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
       when "Boiler"
@@ -999,7 +1071,8 @@ class HVAC
         removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
         removed_ashp = self.has_air_source_heat_pump(model, runner, thermal_zone, true)
         removed_mshp = self.has_mini_split_heat_pump(model, runner, thermal_zone, true)
-        if removed_furnace or removed_ashp or removed_mshp
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
+        if removed_furnace or removed_ashp or removed_mshp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
       when "Electric Baseboard"
@@ -1008,7 +1081,8 @@ class HVAC
         removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
         removed_ashp = self.has_air_source_heat_pump(model, runner, thermal_zone, true)
         removed_mshp = self.has_mini_split_heat_pump(model, runner, thermal_zone, true)
-        if removed_furnace or removed_ashp or removed_mshp
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
+        if removed_furnace or removed_ashp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
       when "Air Source Heat Pump"
@@ -1018,8 +1092,9 @@ class HVAC
         removed_room_ac = self.has_room_air_conditioner(model, runner, thermal_zone, true)
         removed_furnace = self.has_furnace(model, runner, thermal_zone, true)
         removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
-        removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)        
-        if removed_ashp or removed_ac or removed_furnace or removed_mshp
+        removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
+        if removed_ashp or removed_ac or removed_furnace or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
       when "Mini-Split Heat Pump"
@@ -1030,9 +1105,22 @@ class HVAC
         removed_furnace = self.has_furnace(model, runner, thermal_zone, true)
         removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
         removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
-        if removed_mshp or removed_ac or removed_furnace or removed_ashp
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
+        if removed_ac or removed_furnace or removed_ashp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
+      when "Ground Source Heat Pump Vertical Bore"
+        removed_ashp = self.has_air_source_heat_pump(model, runner, thermal_zone, true)
+        removed_mshp = self.has_mini_split_heat_pump(model, runner, thermal_zone, true)
+        removed_ac = self.has_central_air_conditioner(model, runner, thermal_zone, true)
+        removed_room_ac = self.has_room_air_conditioner(model, runner, thermal_zone, true)
+        removed_furnace = self.has_furnace(model, runner, thermal_zone, true)
+        removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
+        removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
+        if removed_ashp or removed_ac or removed_furnace
+          self.has_air_loop(model, runner, thermal_zone, true)
+        end      
       when "Mini-Split Heat Pump Original Model" # TODO: remove after testing new vrf mshp model
         removed_mshp = self.has_mini_split_heat_pump_original_model(model, runner, thermal_zone, true)
         removed_ashp = self.has_air_source_heat_pump(model, runner, thermal_zone, true)
@@ -1041,9 +1129,10 @@ class HVAC
         removed_furnace = self.has_furnace(model, runner, thermal_zone, true)
         removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
         removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
-        if removed_mshp or removed_ac or removed_furnace or removed_ashp
+        removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
+        if removed_mshp or removed_ac or removed_furnace or removed_ashp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
-        end        
+        end
       end
       unless counterpart_equip.nil?
         return counterpart_equip

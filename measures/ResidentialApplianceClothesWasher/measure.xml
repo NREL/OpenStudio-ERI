@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>4e2bda92-3f8d-4cc9-9b71-b0eb582e420d</version_id>
-  <version_modified>20161221T233144Z</version_modified>
+  <version_id>df1f5ff2-30aa-4b86-9ed2-1275cabcb702</version_id>
+  <version_modified>20161228T210500Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -636,7 +636,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>512ADF86</checksum>
+      <checksum>866A1677</checksum>
     </file>
   </files>
 </measure>

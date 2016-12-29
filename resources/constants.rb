@@ -35,6 +35,24 @@ class Constants
   def self.g
     return 32.174    # gravity (ft/s2)
   end
+  def self.GSHPPumpCapacityCtrl
+    return 1 # Default to 1 speed control
+  end  
+  def self.GSHPPipeCond
+    return 0.23 # Pipe thermal conductivity, default to high density polyethylene
+  end
+  def self.GSHPPumpEff
+    return 0.77
+  end
+  def self.GSHPPumpMinSpeed
+    return 1.0
+  end
+  def self.GSHP_CFM_Btuh
+    return OpenStudio::convert(400.0,"Btu/hr","ton").get
+  end
+  def self.GSHP_GPM_Btuh
+    return OpenStudio::convert(3.0,"Btu/hr","ton").get
+  end
   def self.lat
     return 0.021
   end
@@ -131,6 +149,27 @@ class Constants
   def self.BoilerTypeSteam
     return 'steam'
   end
+  def self.BoreConfigSingle
+    return 'single'
+  end
+  def self.BoreConfigLine
+    return 'line'
+  end
+  def self.BoreConfigOpenRectangle
+    return 'open-rectangle'
+  end  
+  def self.BoreConfigRectangle
+    return 'rectangle'
+  end
+  def self.BoreConfigLconfig
+    return 'l-config'
+  end
+  def self.BoreConfigL2config
+    return 'l2-config'
+  end  
+  def self.BoreConfigUconfig
+    return 'u-config'
+  end 
   def self.BuildingAmericaClimateZone
     return 'Building America'
   end
@@ -160,6 +199,9 @@ class Constants
   end
   def self.CollectorTypeICS
     return 'ics'
+  end
+  def self.CondenserTypeWater
+    return 'watercooled'
   end
   def self.CorridorSpace(story=1)
     s_story = ""
