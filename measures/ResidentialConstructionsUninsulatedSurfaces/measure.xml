@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_surfaces</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>2ec638d0-9ac2-4f21-8e36-3ab3b4161d7c</version_id>
-  <version_modified>20161228T210502Z</version_modified>
+  <version_id>9b7cebe3-e9a5-4550-b253-8ea85d399706</version_id>
+  <version_modified>20161229T185717Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedSurfaces</class_name>
   <display_name>Set Residential Uninsulated Surfaces</display_name>

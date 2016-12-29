@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>4258773d-9f92-41a2-ad84-6dfd66d0db7a</version_id>
-  <version_modified>20161228T210504Z</version_modified>
+  <version_id>cfacb945-4c05-48d6-931b-9e5f9fc898e2</version_id>
+  <version_modified>20161229T201909Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
   <display_name>Create Residential Single-Family Detached Geometry</display_name>

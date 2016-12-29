@@ -120,6 +120,14 @@ class ProcessRoomAirConditionerTest < MiniTest::Test
     _test_measure("singlefamily_detached_fbsmt_boiler_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2)
   end
 
+  def test_retrofit_replace_gshp_vert_bore
+    args_hash = {}
+    expected_num_del_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
+    expected_num_new_objects = {"CoilHeatingElectric"=>1, "FanOnOff"=>1, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1}
+    expected_values = {"COP"=>2.49, "NominalCapacity"=>7033.70}
+    _test_measure("singlefamily_detached_fbsmt_gshp_vert_bore.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+  end  
+  
   def test_multifamily_new_construction_1
     num_units = 4
     args_hash = {}

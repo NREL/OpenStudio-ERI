@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>aa8ffc4f-7900-4fd3-b986-ec1e3c0033ca</version_id>
-  <version_modified>20161229T173058Z</version_modified>
+  <version_id>fa0e2463-cf1b-48f8-a624-fff5c85a0c9d</version_id>
+  <version_modified>20161229T211919Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -232,7 +232,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BD88DCCE</checksum>
+      <checksum>50C4FC1A</checksum>
     </file>
   </files>
 </measure>

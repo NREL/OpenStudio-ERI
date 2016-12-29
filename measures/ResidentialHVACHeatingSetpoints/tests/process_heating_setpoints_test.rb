@@ -77,6 +77,14 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
     _test_measure("singlefamily_detached_electric_baseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end  
   
+  def test_gshp_vert_bore
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>1}
+    expected_values = {"heating_setpoint_sch_heating_season"=>71, "heating_setpoint_sch_overlap_season"=>71, "cooling_setpoint_sch_cooling_season"=>18000, "cooling_setpoint_sch_overlap_season"=>18000}
+    _test_measure("singlefamily_detached_gshp_vert_bore.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)  
+  end
+  
   def test_retrofit_replace
     args_hash = {}
     expected_num_del_objects = {}

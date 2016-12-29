@@ -1042,6 +1042,9 @@ class HVAC
         if counterpart_equip or removed_ac or removed_ashp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
+        if removed_gshp_vert_bore
+          self.remove_hot_water_loop(model, runner)
+        end
       when "Room Air Conditioner"
         removed_ashp = self.has_air_source_heat_pump(model, runner, thermal_zone, true)
         removed_mshp = self.has_mini_split_heat_pump(model, runner, thermal_zone, true)      
@@ -1054,6 +1057,9 @@ class HVAC
         if removed_ac or removed_ashp or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end
+        if removed_gshp_vert_bore
+          self.remove_hot_water_loop(model, runner)
+        end        
       when "Furnace"
         removed_ashp = self.has_air_source_heat_pump(model, runner, thermal_zone, true)
         removed_mshp = self.has_mini_split_heat_pump(model, runner, thermal_zone, true)      
@@ -1118,7 +1124,7 @@ class HVAC
         removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
         removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
         removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
-        if removed_ashp or removed_ac or removed_furnace
+        if removed_ashp or removed_ac or removed_furnace or removed_gshp_vert_bore
           self.has_air_loop(model, runner, thermal_zone, true)
         end      
       when "Mini-Split Heat Pump Original Model" # TODO: remove after testing new vrf mshp model

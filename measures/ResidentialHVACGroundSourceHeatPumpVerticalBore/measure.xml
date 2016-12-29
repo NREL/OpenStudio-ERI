@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_hp</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>f1fdfb1c-8104-499e-a7a9-b0d223eaa626</version_id>
-  <version_modified>20161229T174823Z</version_modified>
+  <version_id>ce21d518-8d17-4e49-98e3-fc10c4213721</version_id>
+  <version_modified>20161229T212004Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessGroundSourceHP</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
@@ -53,6 +53,7 @@
     <argument>
       <name>gshpVertBoreConfig</name>
       <display_name>Bore Configuration</display_name>
+      <description></description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -91,6 +92,7 @@
     <argument>
       <name>gshpVertBoreHoles</name>
       <display_name>Number of Bore Holes</display_name>
+      <description></description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -145,6 +147,7 @@
     <argument>
       <name>gshpVertBoreDepth</name>
       <display_name>Bore Depth</display_name>
+      <description></description>
       <type>Choice</type>
       <units>ft</units>
       <required>true</required>
@@ -251,6 +254,7 @@
       <display_name>Supply Fan Power</display_name>
       <description></description>
       <type>Double</type>
+      <units>W/cfm</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.5</default_value>
@@ -508,12 +512,6 @@
   </attributes>
   <files>
     <file>
-      <filename>process_ground_source_heat_pump_vertical_bore_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F7071ED2</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -526,6 +524,132 @@
       <checksum>866A1677</checksum>
     </file>
     <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>078F0169</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>92D6C640</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>108E0E50</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>97B219DD</checksum>
+    </file>
+    <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
+      <filetype>ddy</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FB253570</checksum>
+    </file>
+    <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
+      <filetype>epw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E23378AA</checksum>
+    </file>
+    <file>
+      <filename>multifamily_8_units.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>92023B4C</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_attached_fbsmt_4_units.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>749DF9E9</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_ashp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D70D26F9</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_boiler.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>936A749E</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_boiler_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4BE995A6</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_boiler_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A8565CDC</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>93078FF6</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_electric_baseboard.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>503661F2</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_electric_baseboard_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D67A5A3D</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_electric_baseboard_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C60CFF7A</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_furnace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>26C9CF96</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_furnace_central_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CC93366C</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_furnace_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1AA2822D</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_mshp.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FCEA7647</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_room_air_conditioner.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E221C03E</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -534,13 +658,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>27C4E050</checksum>
+      <checksum>9CCD59A5</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>007F75EC</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CFF01C6C</checksum>
+    </file>
+    <file>
+      <filename>singlefamily_detached_fbsmt_gshp_vert_bore.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AE04EA39</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BD88DCCE</checksum>
+      <checksum>50C4FC1A</checksum>
+    </file>
+    <file>
+      <filename>process_ground_source_heat_pump_vertical_bore_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2C58C6BD</checksum>
     </file>
   </files>
 </measure>

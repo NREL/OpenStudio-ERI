@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>9a143c29-b36b-4bd7-a85a-d5da4cb66c97</version_id>
-  <version_modified>20161229T173052Z</version_modified>
+  <version_id>7bc55b51-b46b-453e-8b46-6af90354782a</version_id>
+  <version_modified>20161229T211912Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -805,7 +805,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BD88DCCE</checksum>
+      <checksum>50C4FC1A</checksum>
     </file>
   </files>
 </measure>

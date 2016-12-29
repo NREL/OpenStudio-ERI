@@ -71,7 +71,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     end
    
     # Remove boiler hot water loop if it exists
-    HVAC.remove_hot_water_loop(model, runner)   
+    HVAC.remove_hot_water_loop(model, runner)
    
     # Get building units
     units = Geometry.get_building_units(model, runner)
