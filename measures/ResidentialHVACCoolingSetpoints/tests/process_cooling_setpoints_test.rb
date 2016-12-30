@@ -10,14 +10,14 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
   def test_error_no_weather
     args_hash = {}
     result = _test_error("singlefamily_detached_no_location.osm", args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Model has not been assigned a weather file.")    
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Model has not been assigned a weather file.")    
   end
   
   def test_argument_error_not_24_values
     args_hash = {}
     args_hash["clg_wkdy"] = "71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71"
     result = _test_error("singlefamily_detached_central_air_conditioner.osm", args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")    
+    assert_includes(result.errors.map{ |x| x.logMessage }, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")    
   end  
   
   def test_warning_no_equip

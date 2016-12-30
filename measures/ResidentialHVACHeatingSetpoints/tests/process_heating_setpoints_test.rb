@@ -10,14 +10,14 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
   def test_error_no_weather
     args_hash = {}
     result = _test_error("singlefamily_detached_no_location.osm", args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Model has not been assigned a weather file.")    
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Model has not been assigned a weather file.")    
   end 
 
   def test_argument_error_not_24_values
     args_hash = {}
     args_hash["htg_wkdy"] = "71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71"
     result = _test_error("singlefamily_detached_furnace.osm", args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 24 numbers must be entered for the weekday schedule.")    
+    assert_includes(result.errors.map{ |x| x.logMessage }, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")    
   end
   
   def test_warning_no_equip
@@ -140,7 +140,7 @@ class ProcessHeatingSetpointsTest < MiniTest::Test
     assert(result.errors.size == 1)
     
     return result
-  end  
+  end
   
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure

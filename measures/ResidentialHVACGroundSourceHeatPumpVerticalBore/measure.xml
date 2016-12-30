@@ -2,18 +2,18 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_hp</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>ce21d518-8d17-4e49-98e3-fc10c4213721</version_id>
-  <version_modified>20161229T212004Z</version_modified>
+  <version_id>d73aa585-e901-4453-89e1-3d28f06230a6</version_id>
+  <version_modified>20161230T202443Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessGroundSourceHP</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
-  <description>This measure...</description>
-  <modeler_description>Uses...</modeler_description>
+  <description>This measure removes any existing HVAC components from the building and adds a ground heat exchanger along with variable speed pump and water to air heat pump coils to a condenser plant loop. For multifamily buildings, the ground heat exchanger can be set for all units of the building.</description>
+  <modeler_description>Any supply components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. A ground heat exchanger along with variable speed pump and water to air heat pump coils are added to a condenser plant loop.</modeler_description>
   <arguments>
     <argument>
       <name>gshpVertBoreCOP</name>
       <display_name>COP</display_name>
-      <description>User can use ...</description>
+      <description>User can use AHRI/ASHRAE ISO 13556-1 rated EER value and convert it to EIR here.</description>
       <type>Double</type>
       <units>W/W</units>
       <required>true</required>
@@ -23,7 +23,7 @@
     <argument>
       <name>gshpVertBoreEER</name>
       <display_name>EER</display_name>
-      <description>This is a measure of the ...</description>
+      <description>This is a measure of the instantaneous energy efficiency of cooling equipment.</description>
       <type>Double</type>
       <units>Btu/W-h</units>
       <required>true</required>
@@ -33,7 +33,7 @@
     <argument>
       <name>gshpVertBoreGroundCond</name>
       <display_name>Ground Conductivity</display_name>
-      <description></description>
+      <description>Conductivity of the ground into which the ground heat exchangers are installed.</description>
       <type>Double</type>
       <units>Btu/hr-ft-R</units>
       <required>true</required>
@@ -43,7 +43,7 @@
     <argument>
       <name>gshpVertBoreGroutCond</name>
       <display_name>Grout Conductivity</display_name>
-      <description></description>
+      <description>Grout is used to enhance heat transfer between the pipe and the ground.</description>
       <type>Double</type>
       <units>Btu/hr-ft-R</units>
       <required>true</required>
@@ -53,7 +53,7 @@
     <argument>
       <name>gshpVertBoreConfig</name>
       <display_name>Bore Configuration</display_name>
-      <description></description>
+      <description>Different types of vertical bore configuration results in different G-functions which captures the thermal response of a bore field.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -92,7 +92,7 @@
     <argument>
       <name>gshpVertBoreHoles</name>
       <display_name>Number of Bore Holes</display_name>
-      <description></description>
+      <description>Number of vertical bores.</description>
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -147,7 +147,7 @@
     <argument>
       <name>gshpVertBoreDepth</name>
       <display_name>Bore Depth</display_name>
-      <description></description>
+      <description>Vertical well bore depth typically range from 150 to 300 feet deep.</description>
       <type>Choice</type>
       <units>ft</units>
       <required>true</required>
@@ -163,7 +163,7 @@
     <argument>
       <name>gshpVertBoreSpacing</name>
       <display_name>Bore Spacing</display_name>
-      <description></description>
+      <description>Bore holes are typically spaced 15 to 20 feet apart.</description>
       <type>Double</type>
       <units>ft</units>
       <required>true</required>
@@ -173,7 +173,7 @@
     <argument>
       <name>gshpVertBoreDia</name>
       <display_name>Bore Diameter</display_name>
-      <description></description>
+      <description>Bore hole diameter.</description>
       <type>Double</type>
       <units>in</units>
       <required>true</required>
@@ -183,7 +183,7 @@
     <argument>
       <name>gshpVertBorePipeSize</name>
       <display_name>Nominal Pipe Size</display_name>
-      <description></description>
+      <description>Pipe nominal size.</description>
       <type>Double</type>
       <units>in</units>
       <required>true</required>
@@ -193,7 +193,7 @@
     <argument>
       <name>gshpVertBoreGroundDiff</name>
       <display_name>Ground Diffusivity</display_name>
-      <description></description>
+      <description>A measure of thermal inertia, the ground diffusivity is the thermal conductivity divided by density and specific heat capacity.</description>
       <type>Double</type>
       <units>ft^2/hr</units>
       <required>true</required>
@@ -201,9 +201,28 @@
       <default_value>0.0208</default_value>
     </argument>
     <argument>
+      <name>gshpVertBoreFluidType</name>
+      <display_name>Heat Exchanger Fluid Type</display_name>
+      <description>Fluid type.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>propylene-glycol</default_value>
+      <choices>
+        <choice>
+          <value>propylene-glycol</value>
+          <display_name>propylene-glycol</display_name>
+        </choice>
+        <choice>
+          <value>water</value>
+          <display_name>water</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
       <name>gshpVertBoreFracGlycol</name>
       <display_name>Fraction Glycol</display_name>
-      <description></description>
+      <description>Fraction of glycol, 0 indicates water.</description>
       <type>Double</type>
       <units>frac</units>
       <required>true</required>
@@ -213,7 +232,7 @@
     <argument>
       <name>gshpVertBoreDTDesign</name>
       <display_name>Ground Loop Design Delta Temp</display_name>
-      <description></description>
+      <description>Ground loop design temperature difference.</description>
       <type>Double</type>
       <units>deg F</units>
       <required>true</required>
@@ -223,7 +242,7 @@
     <argument>
       <name>gshpVertBorePumpHead</name>
       <display_name>Pump Head</display_name>
-      <description></description>
+      <description>Feet of water column.</description>
       <type>Double</type>
       <units>ft of water</units>
       <required>true</required>
@@ -233,7 +252,7 @@
     <argument>
       <name>gshpVertBoreUTubeLegSep</name>
       <display_name>U Tube Leg Separation</display_name>
-      <description></description>
+      <description>U-tube leg spacing.</description>
       <type>Double</type>
       <units>in</units>
       <required>true</required>
@@ -243,7 +262,7 @@
     <argument>
       <name>gshpVertBoreRatedSHR</name>
       <display_name>Rated SHR</display_name>
-      <description></description>
+      <description>The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.</description>
       <type>Double</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -252,7 +271,7 @@
     <argument>
       <name>gshpVertBoreSupplyFanPower</name>
       <display_name>Supply Fan Power</display_name>
-      <description></description>
+      <description>Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan.</description>
       <type>Double</type>
       <units>W/cfm</units>
       <required>true</required>
@@ -650,17 +669,6 @@
       <checksum>E221C03E</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.14.0</identifier>
-        <min_compatible>1.14.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9CCD59A5</checksum>
-    </file>
-    <file>
       <filename>singlefamily_detached.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -685,10 +693,27 @@
       <checksum>50C4FC1A</checksum>
     </file>
     <file>
+      <filename>singlefamily_detached_no_location.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E39339E4</checksum>
+    </file>
+    <file>
       <filename>process_ground_source_heat_pump_vertical_bore_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>2C58C6BD</checksum>
+      <checksum>88F92528</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>1.14.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>028FA641</checksum>
     </file>
   </files>
 </measure>
