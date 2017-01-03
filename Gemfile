@@ -3,9 +3,8 @@ source 'http://rubygems.org'
 gem 'rake', '~> 11.2.2'
 
 # uncomment if you need to update the bcl measures
-# gem "bcl", "~> 0.5"
-# gem "bcl", :path => "../bcl-gem"
-gem 'bcl', git: 'https://github.com/NREL/bcl-gem', branch: 'develop'
+# gem "bcl", "~> 0.5.7"
+# gem 'bcl', git: 'https://github.com/NREL/bcl-gem', branch: 'develop'
 
 # Specify the JSON dependency so that rubocop and other gem do not try to install it
 gem 'json', '~> 1.7.7'
