@@ -39,7 +39,7 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Measure::OSArgumentVector.new
+    args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make a double argument for gshp vert bore cop
     gshpVertBoreCOP = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreCOP", true)
