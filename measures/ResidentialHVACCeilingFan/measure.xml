@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>72a36f2f-7430-4804-b312-d479a82dd302</version_id>
-  <version_modified>20161228T210507Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>71893f1e-7829-427a-a7f3-3cc9bbe1035f</version_id>
+  <version_modified>20170106T183451Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
   <description>Adds (or replaces) residential ceiling fan(s) and schedule in all finished spaces. For multifamily buildings, the ceiling fan(s) can be set for all units of the building.</description>
@@ -124,6 +124,7 @@
       <default_value>1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -170,35 +171,6 @@
       <checksum>D952C17F</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_no_cooling.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>92527627</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_fbsmt_has_cooling.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CC516973</checksum>
-    </file>
-    <file>
-      <filename>residential_ceiling_fan.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0AA9C437</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>1.13.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>FD604C2C</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -215,6 +187,35 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>residential_ceiling_fan.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A26907FB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>1.13.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>51EB2550</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2AA4E953</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>21BA7CB7</checksum>
     </file>
   </files>
 </measure>

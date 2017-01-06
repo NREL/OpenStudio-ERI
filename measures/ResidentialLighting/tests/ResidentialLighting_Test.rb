@@ -8,19 +8,15 @@ require 'fileutils'
 class ResidentialLightingTest < MiniTest::Test
 
   def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA.osm"
   end
   
   def osm_geo_loc
-    return "2000sqft_2story_FB_GRG_UA_Denver.osm"
-  end
-  
-  def osm_geo_common_garage_loc
-    return "2000sqft_2story_FB_CommonGRG_UA_Denver.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_Denver.osm"
   end
   
   def osm_geo_loc_high_latitude
-    return "2000sqft_2story_FB_GRG_UA_Anchorage.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_Anchorage.osm"
   end
 
   def osm_geo_multifamily_3_units_loc
@@ -128,14 +124,6 @@ class ResidentialLightingTest < MiniTest::Test
     expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>1159}
     _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
-  end
-  
-  def test_new_construction_common_garage
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>1733}
-    _test_measure(osm_geo_common_garage_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_new_construction_high_latitude

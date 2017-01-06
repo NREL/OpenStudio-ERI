@@ -9,14 +9,14 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
 
   def test_error_no_weather
     args_hash = {}
-    result = _test_error("singlefamily_detached_no_location.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Model has not been assigned a weather file.")    
   end
   
   def test_argument_error_not_24_values
     args_hash = {}
     args_hash["clg_wkdy"] = "71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71, 71"
-    result = _test_error("singlefamily_detached_central_air_conditioner.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "A comma-separated string of 24 numbers must be entered for the weekday schedule.")    
   end  
   
@@ -25,7 +25,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRule"=>12, "ScheduleRuleset"=>1}
     expected_values = {}
-    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)
   end
   
   def test_wkdy_wked_are_different
@@ -34,7 +34,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRule"=>48, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>1}
     expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>75, "cooling_setpoint_sch_overlap_season"=>75}
-    _test_measure("singlefamily_detached_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end  
   
   def test_central_air_conditioner
@@ -42,7 +42,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>1}
     expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
-    _test_measure("singlefamily_detached_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_air_source_heat_pump
@@ -50,7 +50,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>1}
     expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
-    _test_measure("singlefamily_detached_ashp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_ASHP_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_mini_split_heat_pump
@@ -58,7 +58,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>1}
     expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
-    _test_measure("singlefamily_detached_mshp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_MSHP_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_room_air_conditioner
@@ -66,7 +66,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>1}
     expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
-    _test_measure("singlefamily_detached_room_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_RoomAC_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
   def test_gshp_vert_bore
@@ -74,7 +74,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>1}
     expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
-    _test_measure("singlefamily_detached_gshp_vert_bore.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_GSHPVertBore_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end  
   
   def test_retrofit_replace
@@ -82,7 +82,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>1}
     expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
-    model = _test_measure("singlefamily_detached_central_air_conditioner.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
     expected_num_del_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3}
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3}
     expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
@@ -96,7 +96,7 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_del_objects = {"ScheduleRule"=>24, "ScheduleRuleset"=>2}
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3}
     expected_values = {"heating_setpoint_sch_heating_season"=>71, "heating_setpoint_sch_overlap_season"=>70.5, "cooling_setpoint_sch_cooling_season"=>70, "cooling_setpoint_sch_overlap_season"=>70.5}
-    _test_measure("singlefamily_detached_central_air_conditioner_furnace_heating_setpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_NoClgSetpoint.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end  
   
   private
@@ -167,6 +167,8 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
+    
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)

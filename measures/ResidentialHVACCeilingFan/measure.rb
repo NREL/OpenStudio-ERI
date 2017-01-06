@@ -214,6 +214,9 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
     
       unit = Unit.new
       unit.num_bedrooms, unit.num_bathrooms = Geometry.get_unit_beds_baths(model, building_unit, runner)      
+      if unit.num_bedrooms.nil? or unit.num_bathrooms.nil?
+        return false
+      end      
       unit.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(building_unit.spaces, false, runner)
       unit.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(building_unit.spaces, false, runner)
 

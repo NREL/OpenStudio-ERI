@@ -10,7 +10,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_error_invalid_azimuth
     args_hash = {}
     args_hash["azimuth"] = -180
-    result = _test_error("singlefamily_detached.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Invalid azimuth entered.")
   end
   
@@ -21,7 +21,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
     expected_values = {"PanelArea"=>18.93}
-    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_tilt_absolute
@@ -32,7 +32,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
     expected_values = {"PanelArea"=>2*18.93}
-    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_tilt_latitude
@@ -42,7 +42,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
     expected_values = {"PanelArea"=>2*18.93}
-    _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_multifamily
@@ -59,7 +59,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
     expected_values = {"PanelArea"=>1*18.93}
-    model = _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
     args_hash["size"] = 5.0
     expected_num_del_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}
     expected_num_new_objects = {"ElectricLoadCenterInverterSimple"=>1, "GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1}

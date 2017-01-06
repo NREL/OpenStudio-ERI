@@ -8,7 +8,7 @@ require 'fileutils'
 class ProcessConstructionsWallsPartitionThermalMassTest < MiniTest::Test
 
   def osm_geo
-    return "2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_SL_UA.osm"
   end
   
   def test_add_1_2in_drywall

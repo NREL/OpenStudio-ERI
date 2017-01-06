@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_dehumidifier</name>
   <uid>3b675fc9-9e54-444b-a89b-faa97c24c38d</uid>
-  <version_id>8728e1d1-c74a-4fdb-8db0-00e1cab3c625</version_id>
-  <version_modified>20161026T203042Z</version_modified>
-  <xml_checksum>9E2537CD</xml_checksum>
+  <version_id>9bb735d9-961a-4244-b171-8f2970dd5e82</version_id>
+  <version_modified>20170104T175427Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>AddResidentialDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
   <description>This measure allows the user to add an OS:ZoneHVAC:Dehumidifier:DX object to their model. Users will select the thermal zone where the dehumidifier will be added. By default, the dehumidifier will be configured to be available to operate year round. If, at the time of measure execution, the selected zone contains additional conditioning equipment (Other OS:ZoneEquipment objects or is served by an existing OS:AirLoop object) the new dehumidifier will be placed at the position of lowest cooling priority for equipment staging. In accordance with the published 2014 Building America House Simulation Protocols document, the measure will remove any existing dehumidifying setpoint schedule associated with the zone and add a new one configured to the Relative Humidity level set by the user.  Users will provide the following input describing humidifier performance: 1) Location (Thermal Zone) 2) Rated Water Removal Rate (pints/day) 3) Rated Energy Factor  4) Rated Airflow Rate 5) Relative Humidity Setpoint. Default curves for water removal, energy factor and part load fraction correlations will be used.</description>
@@ -64,6 +64,7 @@
       <model_dependent>false</model_dependent>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>

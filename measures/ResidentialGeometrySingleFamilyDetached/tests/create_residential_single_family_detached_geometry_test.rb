@@ -9,7 +9,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
 
   def test_error_existing_geometry
     args_hash = {}
-    result = _test_error("singlefamily_detached.osm", args_hash)  
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)  
     assert_includes(result.errors.map{ |x| x.logMessage }, "Starting model is not empty.")
   end
   

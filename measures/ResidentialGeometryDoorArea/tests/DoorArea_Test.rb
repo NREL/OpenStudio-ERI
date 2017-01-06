@@ -8,11 +8,11 @@ require 'fileutils'
 class DoorAreaTest < MiniTest::Test
   
   def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA.osm"
   end
   
   def osm_geo_rotated
-    return "2000sqft_2story_FB_GRG_UA_Southwest_Orientation.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_Southwest.osm"
   end
   
   def osm_geo_multifamily

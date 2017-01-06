@@ -11,49 +11,49 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     args_hash = {}
     args_hash["num_bedrooms"] = "3.0, 3.0, 3.0"
     args_hash["num_bathrooms"] = "2.0, 2.0"
-    result = _test_error("singlefamily_detached.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedroom elements specified inconsistent with number of bathroom elements specified.")
   end
   
   def test_argument_error_beds_not_equal_to_units
     args_hash = {}
     args_hash["num_bedrooms"] = "3.0, 3.0"
-    result = _test_error("singlefamily_detached.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedroom elements specified inconsistent with number of multifamily units defined in the model.")
   end
   
   def test_argument_error_baths_not_equal_to_units
     args_hash = {}
     args_hash["num_bathrooms"] = "2.0, 2.0"
-    result = _test_error("singlefamily_detached.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathroom elements specified inconsistent with number of multifamily units defined in the model.")
   end
   
   def test_argument_error_beds_not_numerical
     args_hash = {}
     args_hash["num_bedrooms"] = "3.0, 3.0, typo"
-    result = _test_error("singlefamily_detached.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedrooms must be a numerical value.")
   end
   
   def test_argument_error_baths_not_numerical
     args_hash = {}
     args_hash["num_bathrooms"] = "2.0, 2.0, typo"
-    result = _test_error("singlefamily_detached.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathrooms must be a numerical value.")  
   end
   
   def test_argument_error_beds_not_positive_integer
     args_hash = {}
     args_hash["num_bedrooms"] = "3.0, 3.0, 3.5"
-    result = _test_error("singlefamily_detached.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bedrooms must be a positive integer.")    
   end
   
   def test_argument_error_baths_not_positive_multiple_of_0pt25
     args_hash = {}
     args_hash["num_bathrooms"] = "2.0, 2.0, 2.8"
-    result = _test_error("singlefamily_detached.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Number of bathrooms must be a positive multiple of 0.25.")    
   end
   
@@ -69,7 +69,7 @@ class BedroomsAndBathroomsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {"Beds"=>3.0, "Baths"=>2.0, "Num_Units"=>num_units}
-    model = _test_measure("singlefamily_detached.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    model = _test_measure("SFD_2000sqft_2story_SL_UA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["num_bedrooms"] = "4"
     args_hash["num_bathrooms"] = "3"
     expected_num_del_objects = {}

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>6fbb201b-b9d2-4aa0-a072-0f66c8808176</version_id>
-  <version_modified>20161228T210502Z</version_modified>
-  <xml_checksum>2609226D</xml_checksum>
+  <version_id>564bcd95-1c0a-4605-beab-6364c2f4b5eb</version_id>
+  <version_modified>20170106T183443Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSteelStud</class_name>
   <display_name>Set Residential Walls - Steel Stud Construction</display_name>
   <description>This measure assigns a steel stud construction to above-grade exterior walls adjacent to finished space.</description>
@@ -92,6 +92,7 @@
       <default_value>0.46</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -120,12 +121,6 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CDD25A07</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -135,18 +130,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>720B948C</checksum>
-    </file>
-    <file>
-      <filename>SteelStud_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>47172359</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7486DA3F</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -165,6 +148,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>SteelStud_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9BA54FDF</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FDB2145F</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>04586D90</checksum>
     </file>
   </files>
 </measure>

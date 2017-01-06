@@ -8,19 +8,19 @@ require 'fileutils'
 class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
 
   def osm_geo_unfinished_attic
-    return "2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_SL_UA.osm"
   end
   
   def osm_geo_unfinished_attic_layers
-    return "2000sqft_2story_SL_UA_AllLayersButExteriorFinish.osm"
+    return "SFD_2000sqft_2story_SL_UA_AllLayersButExteriorFinish.osm"
   end
 
   def osm_geo_finished_attic
-    return "2000sqft_2story_SL_FA.osm"
+    return "SFD_2000sqft_2story_SL_FA.osm"
   end
   
   def osm_geo_finished_attic_layers
-    return "2000sqft_2story_SL_FA_AllLayersButExteriorFinish.osm"
+    return "SFD_2000sqft_2story_SL_FA_AllLayersButExteriorFinish.osm"
   end
   
   def test_unfinished_attic_add_vinyl_light

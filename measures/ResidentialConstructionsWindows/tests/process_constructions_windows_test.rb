@@ -10,7 +10,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
   def test_argument_error_invalid_ufactor
     args_hash = {}
     args_hash["ufactor"] = 0
-    result = _test_error("default_geometry_location_windows.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Denver_Windows.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid window U-value.")    
@@ -19,7 +19,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
   def test_argument_error_invalid_shgc
     args_hash = {}
     args_hash["shgc"] = 0
-    result = _test_error("default_geometry_location_windows.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Denver_Windows.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid window SHGC.")    
@@ -27,7 +27,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
   
   def test_error_no_weather
     args_hash = {}
-    result = _test_error("default_geometry_windows.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Windows.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Model has not been assigned a weather file.")    
@@ -37,7 +37,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     args_hash = {}
     args_hash["heating_shade_mult"] = 1
     args_hash["cooling_shade_mult"] = 1
-    result = _test_error("default_geometry_location_windows.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Denver_Windows.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
   end
@@ -51,14 +51,14 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
   
   def test_skip_no_windows
     args_hash = {}
-    result = _test_error("default_geometry_location.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)   
   end
   
   def test_retrofit_replace
     args_hash = {}
-    model = _test_measure("default_geometry_location_windows.osm", args_hash, 1, 1, 0)
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver_Windows.osm", args_hash, 1, 1, 0)
     args_hash = {}
     _test_measure(model, args_hash, 0, 1, 1)
   end

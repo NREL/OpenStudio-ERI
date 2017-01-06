@@ -8,39 +8,39 @@ require 'fileutils'
 class ProcessConstructionsFoundationsFloorsBasementUnfinishedTest < MiniTest::Test
 
   def osm_geo_slab
-    return "2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_SL_UA.osm"
   end
 
   def osm_geo_slab_garage
-    return "2000sqft_2story_SL_GRG_UA.osm"
+    return "SFD_2000sqft_2story_SL_GRG_UA.osm"
   end
 
   def osm_geo_crawl
-    return "2000sqft_2story_CS_UA.osm"
+    return "SFD_2000sqft_2story_CS_UA.osm"
   end
 
   def osm_geo_crawl_garage
-    return "2000sqft_2story_CS_GRG_UA.osm"
+    return "SFD_2000sqft_2story_CS_GRG_UA.osm"
   end
 
   def osm_geo_finished_basement
-    return "2000sqft_2story_FB_UA.osm"
+    return "SFD_2000sqft_2story_FB_UA.osm"
   end
 
   def osm_geo_finished_basement_garage
-    return "2000sqft_2story_FB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA.osm"
   end
 
   def osm_geo_unfinished_basement
-    return "2000sqft_2story_UB_UA.osm"
+    return "SFD_2000sqft_2story_UB_UA.osm"
   end
 
   def osm_geo_unfinished_basement_garage
-    return "2000sqft_2story_UB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_UB_GRG_UA.osm"
   end
 
   def osm_geo_pier_beam
-    return "2000sqft_2story_PB_UA.osm"
+    return "SFD_2000sqft_2story_PB_UA.osm"
   end
   
   def test_add_uninsulated

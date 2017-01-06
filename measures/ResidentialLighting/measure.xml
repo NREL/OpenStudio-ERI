@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>6587a65f-758d-43c6-832f-a2e78c4e1c9e</version_id>
-  <version_modified>20161228T210508Z</version_modified>
-  <xml_checksum>2DDDDD82</xml_checksum>
+  <version_id>138c954e-c6ec-47f9-91a2-32f22632508c</version_id>
+  <version_modified>20170106T183454Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
   <description>Sets (or replaces) the lighting energy use, based on fractions of CFLs, LFLs, and LEDs, for finished spaces, the garage, and outside. For multifamily buildings, the lighting can be set for all units of the building.</description>
@@ -105,6 +105,7 @@
       <default_value>88</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Electric Lighting.Lighting Equipment</tag>
@@ -159,34 +160,10 @@
       <checksum>97B219DD</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>850FE64F</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>697A9B20</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>62944E67</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_CommonGRG_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4A6884CD</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_Anchorage.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7656A979</checksum>
     </file>
     <file>
       <filename>multifamily_3_units_Denver_zone_multiplier.osm</filename>
@@ -204,12 +181,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>DF4291B8</checksum>
-    </file>
-    <file>
-      <filename>ResidentialLighting_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C62745C1</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
@@ -240,6 +211,30 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>ResidentialLighting_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F5936CF9</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>474881D3</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA_Anchorage.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7BD8CBF4</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>56885C2A</checksum>
     </file>
   </files>
 </measure>

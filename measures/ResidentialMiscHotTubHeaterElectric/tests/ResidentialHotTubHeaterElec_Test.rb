@@ -8,11 +8,11 @@ require 'fileutils'
 class ResidentialHotTubHeaterElecTest < MiniTest::Test
 
   def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA.osm"
   end
 
   def osm_geo_beds
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
   end
   
   def osm_geo_multifamily_3_units_beds
@@ -96,7 +96,7 @@ class ResidentialHotTubHeaterElecTest < MiniTest::Test
   end
   
   def test_retrofit_replace_gas_hot_tub_heater
-    model = get_model(File.dirname(__FILE__), "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasHotTubHeater.osm")
+    model = get_model(File.dirname(__FILE__), "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasHotTubHeater.osm")
     args_hash = {}
     args_hash["base_energy"] = 555.0
     expected_num_del_objects = {"GasEquipmentDefinition"=>1, "GasEquipment"=>1, "ScheduleRuleset"=>1}

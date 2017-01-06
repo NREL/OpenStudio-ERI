@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>8abfc3cb-4add-4884-9908-97f0e03f8ef8</version_id>
-  <version_modified>20161228T210509Z</version_modified>
-  <xml_checksum>25A40D75</xml_checksum>
+  <version_id>395f809b-924b-4294-a8bc-897bbdaf2565</version_id>
+  <version_modified>20170106T183454Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>
   <description>Adds (or replaces) a residential gas grill with the specified efficiency and schedule. The grill is assumed to be outdoors. For multifamily buildings, the grill is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Gas Equipment</tag>
@@ -94,28 +95,10 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>850FE64F</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AFD25860</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units_Beds_Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>FB1F52FA</checksum>
-    </file>
-    <file>
-      <filename>ResidentialGasGrill_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>398FA475</checksum>
     </file>
     <file>
       <version>
@@ -145,6 +128,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>ResidentialGasGrill_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AFBC2A75</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>474881D3</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>29C6CA31</checksum>
     </file>
   </files>
 </measure>

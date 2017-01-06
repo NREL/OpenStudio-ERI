@@ -8,11 +8,11 @@ require 'fileutils'
 class ProcessConstructionsWallsExteriorThermalMassTest < MiniTest::Test
 
   def osm_geo
-    return "2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_SL_UA.osm"
   end
   
   def osm_geo_layers
-    return "2000sqft_2story_SL_UA_AllLayersButThermalMass.osm"
+    return "SFD_2000sqft_2story_SL_UA_AllLayersButWallThermalMass.osm"
   end
 
   def test_add_1_2in_drywall

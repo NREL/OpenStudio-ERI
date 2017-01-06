@@ -164,8 +164,12 @@ namespace :test do
       end
     end
 
-    os_cli = "C:\\Program Files (x86)\\openstudio2-1.13.2\\bin\\openstudio.exe" # FIXME
+    os_cli = "C:\\Program Files (x86)\\openstudio-2.0.0\\bin\\openstudio.exe" # FIXME
+    os_version = os_cli.split('\\')[2].split('-')[1]
     osw_files = Dir.entries(File.expand_path("../test/osw_files/", __FILE__)).select {|entry| entry.end_with?(".osw")}
+    if File.exists?(File.expand_path("../log", __FILE__))
+        FileUtils.rm(File.expand_path("../log", __FILE__))
+    end
     osw_files.each do |osw|
         # Generate osm from osw
         osw_filename = osw
@@ -175,12 +179,28 @@ namespace :test do
         temp_osw = File.join(File.dirname(__FILE__), osw)
         osw = File.expand_path("../test/osw_files/#{osw}", __FILE__)
         FileUtils.cp(osw, temp_osw)
-        command = "\"#{os_cli}\" run -w #{temp_osw} -m > log"
+        command = "\"#{os_cli}\" run -w #{temp_osw} -m >> log"
         system(command)
         osm = File.expand_path("../run/in.osm", __FILE__)
         if not File.exists?(osm)
             puts "  ERROR: Could not generate osm."
         else
+            # Add auto-generated message to top of file
+            # Update EPW file paths to be relative for the CirceCI machine
+            # FIXME: Temporarily replace OS 2.0 version with 1.14 for CircleCI machine
+            file_text = File.readlines(osm)
+            File.open(osm, "w") do |f|
+                f.write("!- NOTE: Auto-generated from #{osw.gsub(File.dirname(__FILE__), "")}\n")
+                file_text.each do |file_line|
+                    if file_line.strip.start_with?("file:///")
+                        file_data = file_line.split('/')
+                        file_line = file_data[0] + "../tests/" + file_data[-1]
+                    elsif file_line.include?("Version Identifier")
+                        file_line = file_line.gsub(os_version, '1.14.0')
+                    end
+                    f.write(file_line)
+                end
+            end
             # Copy to appropriate measure test dirs
             osm_filename = osw_filename.gsub(".osw", ".osm")
             num_copied = 0
@@ -205,9 +225,6 @@ namespace :test do
         end
         if File.exists?(File.expand_path("../out.osw", __FILE__))
             FileUtils.rm(File.expand_path("../out.osw", __FILE__))
-        end
-        if File.exists?(File.expand_path("../log", __FILE__))
-            FileUtils.rm(File.expand_path("../log", __FILE__))
         end
     end
     

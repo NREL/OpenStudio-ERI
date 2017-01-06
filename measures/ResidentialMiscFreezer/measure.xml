@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>b617b44a-3d0f-45ec-aef2-7a27b262ec51</version_id>
-  <version_modified>20161228T210508Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>59b1cc16-7dfd-49a4-8fc3-55608fb514d2</version_id>
+  <version_modified>20170106T183454Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
   <description>Adds (or replaces) a residential freezer with the specified efficiency, operation, and schedule. For multifamily buildings, the freezer can be set for all units of the building.</description>
@@ -72,6 +72,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>
@@ -96,12 +97,6 @@
       <checksum>8A41CF93</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>850FE64F</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -111,12 +106,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>CBD079B5</checksum>
-    </file>
-    <file>
-      <filename>ResidentialFreezer_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>41EFB04C</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
@@ -135,6 +124,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>ResidentialFreezer_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>99112C79</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>474881D3</checksum>
     </file>
   </files>
 </measure>

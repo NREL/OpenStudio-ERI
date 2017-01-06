@@ -10,7 +10,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
   def test_argument_error_mult_negative
     args_hash = {}
     args_hash["mult"] = -1.0
-    result = _test_error("singlefamily_detached_fbsmt_has_cooling.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Multiplier must be greater than or equal to 0.")
   end  
   
@@ -20,7 +20,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>1, "ScheduleRule"=>12, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1}
     expected_values = {"ceiling_fans_design_level"=>22.5}
-    _test_measure("singlefamily_detached_fbsmt_has_cooling.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_coverage
@@ -31,7 +31,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>1, "ScheduleRule"=>12, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1}
     expected_values = {"ceiling_fans_design_level"=>49.5}
-    _test_measure("singlefamily_detached_fbsmt_has_cooling.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end   
   
   def test_smart_control
@@ -41,7 +41,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>1, "ScheduleRule"=>12, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1}
     expected_values = {"ceiling_fans_design_level"=>11.25}
-    _test_measure("singlefamily_detached_fbsmt_has_cooling.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_no_cooling_system
@@ -50,7 +50,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>1, "ScheduleRule"=>12, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1}
     expected_values = {"ceiling_fans_design_level"=>22.5}
-    _test_measure("singlefamily_detached_no_cooling.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)
   end
   
   def test_multifamily_new_construction_1
@@ -78,7 +78,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>2, "ScheduleRule"=>24, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>4, "ElectricEquipment"=>4}
     expected_values = {"ceiling_fans_design_level"=>0, "misc_elec_load_design_level"=>12.86}
-    model = _test_measure("singlefamily_detached_fbsmt_has_cooling.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    model = _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["specified_num"] = "2"
     args_hash["use_benchmark_energy"] = "false"
     expected_num_del_objects = {"ScheduleRuleset"=>2, "ScheduleRule"=>24, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>4, "ElectricEquipment"=>4}

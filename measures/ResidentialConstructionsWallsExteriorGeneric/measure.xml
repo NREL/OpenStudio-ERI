@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>5461c796-d640-40a4-a44d-be7186785801</version_id>
-  <version_modified>20161228T210502Z</version_modified>
-  <xml_checksum>5091078B</xml_checksum>
+  <version_id>86e04de0-7981-4447-a062-82eb1c509d38</version_id>
+  <version_modified>20170106T183443Z</version_modified>
+  <xml_checksum>16B68B0C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
   <description>This measure assigns a generic layered construction to above-grade exterior walls adjacent to finished space.</description>
@@ -195,6 +195,7 @@
       <model_dependent>false</model_dependent>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -224,24 +225,6 @@
       <checksum>3C1F1150</checksum>
     </file>
     <file>
-      <filename>2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CDD25A07</checksum>
-    </file>
-    <file>
-      <filename>Generic_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0CFCD287</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7486DA3F</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -258,6 +241,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>Generic_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>77A84B46</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FDB2145F</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>04586D90</checksum>
     </file>
   </files>
 </measure>

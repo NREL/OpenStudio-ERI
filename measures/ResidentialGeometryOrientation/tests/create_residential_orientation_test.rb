@@ -10,14 +10,14 @@ class CreateResidentialOrientationTest < MiniTest::Test
   def test_error_invalid_orientation
     args_hash = {}
     args_hash["orientation"] = -180
-    result = _test_error("default_geometry_location.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Invalid orientation entered.")
   end
     
   def test_retrofit_replace
     args_hash = {}
     args_hash["orientation"] = 0
-    model = _test_measure("default_geometry_location.osm", args_hash, 0)
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, 0)
     args_hash = {}
     args_hash["orientation"] = 180
     _test_measure(model, args_hash, 1)

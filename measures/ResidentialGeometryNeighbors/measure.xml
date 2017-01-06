@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>ed0429d1-fb7b-4ed0-a7fd-28c67b7b3939</version_id>
-  <version_modified>20161228T210503Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>b0cd929d-5e88-44dc-b82c-4b5f9b85f2bf</version_id>
+  <version_modified>20170106T183445Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
   <description>Sets the neighbors (front, back, left, and/or right) of the building for shading purposes. Neighboring buildings will have the same geometry as the model building.</description>
@@ -70,6 +70,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -110,12 +111,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>default_geometry_location.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>74673C04</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -125,12 +120,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>B931CAEE</checksum>
-    </file>
-    <file>
-      <filename>create_residential_neighbors_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C7C4E338</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -143,6 +132,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>create_residential_neighbors_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4A482C0</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D5E9DD4A</checksum>
     </file>
   </files>
 </measure>

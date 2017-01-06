@@ -8,11 +8,11 @@ require 'fileutils'
 class ProcessConstructionsWallsExteriorICFTest < MiniTest::Test
 
   def osm_geo
-    return "2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_SL_UA.osm"
   end
   
   def osm_geo_layers
-    return "2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm"
+    return "SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm"
   end
 
   def test_add_2in_eps_4in_concrete

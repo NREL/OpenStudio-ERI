@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_well_pump</name>
   <uid>13183743-6249-4762-8050-cf80f5d4650b</uid>
-  <version_id>54b3bc27-3341-4b0d-9217-a81ce89622aa</version_id>
-  <version_modified>20161228T210509Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>d9ed9a33-341f-4b84-ba08-5f7a76250ef1</version_id>
+  <version_modified>20170106T183456Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialWellPump</class_name>
   <display_name>Set Residential Well Pump</display_name>
   <description>Adds (or replaces) a residential well pump with the specified efficiency and schedule. The well is assumed to be outdoors. For multifamily buildings, the well pump is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>
@@ -94,28 +95,10 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>850FE64F</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AFD25860</checksum>
-    </file>
-    <file>
       <filename>multifamily_3_units_Beds_Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>FB1F52FA</checksum>
-    </file>
-    <file>
-      <filename>ResidentialWellPump_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2A8415F8</checksum>
     </file>
     <file>
       <version>
@@ -145,6 +128,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWellPump_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>748318FD</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>474881D3</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>29C6CA31</checksum>
     </file>
   </files>
 </measure>

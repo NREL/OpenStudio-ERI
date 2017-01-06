@@ -8,15 +8,15 @@ require 'fileutils'
 class ResidentialHotWaterFixturesTest < MiniTest::Test
 
   def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA.osm"
   end
 
   def osm_geo_beds
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
   end
 
   def osm_geo_beds_loc_tankwh
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm"
   end
 
   def osm_geo_multifamily_3_units_beds_loc_tankwh

@@ -8,7 +8,7 @@ require 'fileutils'
 class ResidentialRefrigeratorTest < MiniTest::Test
 
   def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA.osm"
   end
   
   def osm_geo_multifamily_3_units

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_covering</name>
   <uid>c0a10f27-c095-4b45-91f8-faee094a1d42</uid>
-  <version_id>2f1e0f29-91be-4608-924f-6ad156becec1</version_id>
-  <version_modified>20161228T210501Z</version_modified>
-  <xml_checksum>5091078B</xml_checksum>
+  <version_id>dcefe7e3-5517-4cd3-b587-3c9fb8c1fc34</version_id>
+  <version_modified>20170104T175419Z</version_modified>
+  <xml_checksum>16B68B0C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCovering</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Covering</display_name>
   <description>This measure assigns a covering to floors of above-grade finished spaces.</description>
@@ -30,6 +30,7 @@
       <default_value>2.08</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

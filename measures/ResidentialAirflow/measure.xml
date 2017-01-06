@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>7bc55b51-b46b-453e-8b46-6af90354782a</version_id>
-  <version_modified>20161229T211912Z</version_modified>
-  <xml_checksum>19EEDBBB</xml_checksum>
+  <version_id>dceeff40-563d-4b3c-8218-92940bb0ac7e</version_id>
+  <version_modified>20170106T183438Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
   <description>Sets (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts.</description>
@@ -607,6 +607,7 @@
       <default_value>NA</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Infiltration</tag>
@@ -671,66 +672,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_crawl_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>360A36F4</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_fbsmt_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CAFAA8DE</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_slab_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B80367D1</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_slab_mshp.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E376CF53</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_slab_neighbors_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3D585BA2</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_ufbsmt_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>12C1F3C3</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_slab_clothes_dryer_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EAD45693</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_slab_electric_baseboard.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>85B53EBD</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_slab_garage_no_attic_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B17B809</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_slab_garage_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B01B84BC</checksum>
-    </file>
-    <file>
       <filename>multifamily_8_units_slab_furnace_central_air_conditioner.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -749,24 +690,6 @@
       <checksum>92D6C640</checksum>
     </file>
     <file>
-      <filename>singlefamily_detached_slab_no_stories_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>11002BF8</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_slab.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C08598ED</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_detached_pierbeam_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1D231A61</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -777,12 +700,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
-      <filename>residential_airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EC348BDD</checksum>
     </file>
     <file>
       <version>
@@ -806,6 +723,84 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>50C4FC1A</checksum>
+    </file>
+    <file>
+      <filename>residential_airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D214F993</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_CS_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A085AED8</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2AA4E953</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_PB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A2583147</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_GRG_FR_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0748C1C5</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_GRG_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FEE91496</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>21BA7CB7</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_ElectricBaseboard.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>402DFFCB</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8715C63D</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_ClothesDryer.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DD0FC5B8</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_Neighbors.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>682E1243</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_MSHP.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FD6D2735</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_UB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CAD4588D</checksum>
     </file>
   </files>
 </measure>

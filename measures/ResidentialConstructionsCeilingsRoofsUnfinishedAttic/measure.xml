@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>53604162-3e88-488a-ae6c-14a81e8f3c04</version_id>
-  <version_modified>20161229T185709Z</version_modified>
-  <xml_checksum>1E963D9C</xml_checksum>
+  <version_id>5ddcab45-66cd-41c7-9cc3-7ce3985f6e4d</version_id>
+  <version_modified>20170104T175418Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsUnfinishedAttic</class_name>
   <display_name>Set Residential Ceilings/Roofs - Unfinished Attic Constructions</display_name>
   <description>This measure assigns constructions to unfinished attic floors and ceilings.</description>
@@ -137,6 +137,7 @@
       <default_value>7.25</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

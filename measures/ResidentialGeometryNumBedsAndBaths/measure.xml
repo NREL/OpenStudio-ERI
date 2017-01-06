@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>1928b2c8-0442-4056-affd-6f37e12c3bee</version_id>
-  <version_modified>20161229T185701Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>5b376a2b-318e-4865-b99a-720de03018c0</version_id>
+  <version_modified>20170106T183445Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
   <description>Sets the number of bedrooms and bathrooms in the building. For multifamily buildings, the bedrooms/bathrooms can be set for all units of the building.</description>
@@ -29,6 +29,7 @@
       <default_value>2</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -57,12 +58,6 @@
   </attributes>
   <files>
     <file>
-      <filename>singlefamily_detached.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E39339E4</checksum>
-    </file>
-    <file>
       <filename>multifamily_8_units.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -86,12 +81,6 @@
       <checksum>9B081256</checksum>
     </file>
     <file>
-      <filename>process_beds_and_baths_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>91481F13</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -108,6 +97,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
+    </file>
+    <file>
+      <filename>process_beds_and_baths_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2572D2DC</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FDB2145F</checksum>
     </file>
   </files>
 </measure>

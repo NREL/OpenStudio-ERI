@@ -10,11 +10,11 @@ require_relative '../resources/constants'
 class WindowAreaTest < MiniTest::Test
   
   def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA.osm"
   end
   
   def osm_geo_rotated
-    return "2000sqft_2story_FB_GRG_UA_Southwest_Orientation.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_Southwest.osm"
   end
   
   def osm_geo_multifamily
@@ -35,16 +35,16 @@ class WindowAreaTest < MiniTest::Test
 
   def test_sfd_new_construction_rotated
     args_hash = {}
-    model = _test_measure(osm_geo_rotated, args_hash, [0, 0, 0, 0], [95.6, 124.4, 62.2, 33.4])
+    model = _test_measure(osm_geo_rotated, args_hash, [0, 0, 0, 0], [81.5, 110.3, 70.0, 55.1])
   end
   
   def test_sfd_retrofit_replace
     args_hash = {}
-    model = _test_measure(osm_geo, args_hash, [0, 0, 0, 0], [95.6, 124.4, 62.2, 33.4])
+    model = _test_measure(osm_geo, args_hash, [0, 0, 0, 0], [81.5, 110.3, 70.0, 55.1])
     args_hash = {}
     args_hash["front_wwr"] = 0.12
     args_hash["left_wwr"] = 0.12
-    _test_measure(model, args_hash, [95.6, 124.4, 62.2, 33.4], [63.8, 124.4, 41.5, 33.4])
+    _test_measure(model, args_hash, [81.5, 110.3, 70.0, 55.1], [54.3, 110.3, 46.4, 55.1])
   end
   
   def test_mf_retrofit_replace

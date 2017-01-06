@@ -8,27 +8,27 @@ require 'fileutils'
 class ResidentialCookingRangeTest < MiniTest::Test
 
   def osm_geo
-    return "2000sqft_2story_FB_GRG_UA.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA.osm"
   end
 
   def osm_geo_beds
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
   end
   
   def osm_geo_beds_gasrange
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasCookingRange.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasCookingRange.osm"
   end
 
   def osm_geo_beds_gasrange_elecignition
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasCookingRangeWithElecIgnition.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasCookingRangeWithElecIgnition.osm"
   end
 
   def osm_geo_beds_propanerange
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_PropaneCookingRange.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_PropaneCookingRange.osm"
   end
 
   def osm_geo_beds_propanerange_elecignition
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_PropaneCookingRangeWithElecIgnition.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_PropaneCookingRangeWithElecIgnition.osm"
   end
 
   def osm_geo_multifamily_3_units_beds

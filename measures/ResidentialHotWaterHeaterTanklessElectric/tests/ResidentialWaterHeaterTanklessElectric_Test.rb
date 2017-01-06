@@ -8,39 +8,39 @@ require 'fileutils'
 class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
 
   def osm_geo_loc
-    return "2000sqft_2story_FB_GRG_UA_Denver.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_Denver.osm"
   end
   
   def osm_geo_beds
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
   end
 
   def osm_geo_beds_loc
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm"
   end
   
   def osm_geo_beds_loc_tank_gas
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_GasWHTank.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_GasWHTank.osm"
   end
 
   def osm_geo_beds_loc_tank_oil
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_OilWHTank.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_OilWHTank.osm"
   end
 
   def osm_geo_beds_loc_tank_propane
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_PropaneWHTank.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_PropaneWHTank.osm"
   end
 
   def osm_geo_beds_loc_tank_electric
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm"
   end
 
   def osm_geo_beds_loc_tankless_gas
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_GasWHTankless.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_GasWHTankless.osm"
   end
 
   def osm_geo_beds_loc_tankless_propane
-    return "2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_PropaneWHTankless.osm"
+    return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_PropaneWHTankless.osm"
   end
 
   def osm_geo_multifamily_3_units_beds_loc

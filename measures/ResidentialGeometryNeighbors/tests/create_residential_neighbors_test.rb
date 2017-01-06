@@ -10,7 +10,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   def test_error_invalid_neighbor_offset
     args_hash = {}
     args_hash["left_offset"] = -10
-    result = _test_error("default_geometry_location.osm", args_hash)
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Neighbor offsets must be greater than or equal to 0.")    
@@ -33,7 +33,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    model = _test_measure("default_geometry_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)  
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)  
   end
   
   def test_retrofit_replace_minimal_required_surfaces
@@ -47,7 +47,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    model = _test_measure("default_geometry_location.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)
     args_hash = {}
     args_hash["left_offset"] = 20
     expected_num_del_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
