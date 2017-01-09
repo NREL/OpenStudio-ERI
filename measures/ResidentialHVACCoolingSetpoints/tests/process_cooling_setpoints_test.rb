@@ -97,7 +97,25 @@ class ProcessCoolingSetpointsTest < MiniTest::Test
     expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3}
     expected_values = {"heating_setpoint_sch_heating_season"=>71, "heating_setpoint_sch_overlap_season"=>70.5, "cooling_setpoint_sch_cooling_season"=>70, "cooling_setpoint_sch_overlap_season"=>70.5}
     _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_NoClgSetpoint.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
-  end  
+  end
+  
+  def test_single_family_attached_new_construction
+    num_units = 4
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>num_units}
+    expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
+    _test_measure("SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*5)
+  end
+
+  def test_multifamily_new_construction
+    num_units = 8
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ScheduleRule"=>36, "ScheduleRuleset"=>3, "ThermostatSetpointDualSetpoint"=>num_units}
+    expected_values = {"heating_setpoint_sch_heating_season"=>-18000, "heating_setpoint_sch_overlap_season"=>-18000, "cooling_setpoint_sch_cooling_season"=>76, "cooling_setpoint_sch_overlap_season"=>76}
+    _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*5)
+  end
   
   private
   
