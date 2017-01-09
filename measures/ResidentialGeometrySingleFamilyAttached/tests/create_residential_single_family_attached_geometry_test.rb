@@ -9,7 +9,7 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
 
   def test_error_existing_geometry
     args_hash = {}
-    result = _test_error("singlefamily_attached.osm", args_hash)
+    result = _test_error("SFA_4units_1story_FB_UA_Denver.osm", args_hash)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Starting model is not empty.")
   end  
 

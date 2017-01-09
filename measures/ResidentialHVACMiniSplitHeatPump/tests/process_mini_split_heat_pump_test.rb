@@ -130,23 +130,23 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end  
   
-  def test_multifamily_new_construction_1
+  def test_single_family_attached_new_construction
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>num_units*2, "FanOnOff"=>num_units*2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>num_units*2, "CoilHeatingDXVariableRefrigerantFlow"=>num_units*2, "CoilCoolingDXVariableRefrigerantFlow"=>num_units*2, "ZoneHVACBaseboardConvectiveElectric"=>num_units*2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("singlefamily_attached_fbsmt_4_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*4)
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*4)
   end
 
-  def test_multifamily_new_construction_2
+  def test_multifamily_new_construction
     num_units = 8
     args_hash = {}
     args_hash["pan_heater_power"] = 150.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>num_units, "FanOnOff"=>num_units, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>num_units, "CoilHeatingDXVariableRefrigerantFlow"=>num_units, "CoilCoolingDXVariableRefrigerantFlow"=>num_units, "ZoneHVACBaseboardConvectiveElectric"=>num_units, "ElectricEquipment"=>num_units*1, "ElectricEquipmentDefinition"=>num_units*1, "EnergyManagementSystemSensor"=>num_units*2, "EnergyManagementSystemActuator"=>num_units*1, "EnergyManagementSystemProgram"=>num_units*1, "EnergyManagementSystemProgramCallingManager"=>num_units*1, "OutputVariable"=>2}
     expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
-    _test_measure("multifamily_8_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*2)
+    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*2)
   end
   
   def test_retrofit_increase_pan_heater_power

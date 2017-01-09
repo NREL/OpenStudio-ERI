@@ -53,24 +53,24 @@ class ResidentialCeilingFanTest < MiniTest::Test
     _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)
   end
   
-  def test_multifamily_new_construction_1
+  def test_single_family_attached_new_construction
     num_units = 4
     args_hash = {}
     args_hash["use_benchmark_energy"] = "false"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>num_units*1, "ScheduleRule"=>num_units*12, "EnergyManagementSystemProgram"=>num_units*1, "EnergyManagementSystemActuator"=>num_units*1, "EnergyManagementSystemSensor"=>num_units*2, "EnergyManagementSystemProgramCallingManager"=>num_units*1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>num_units*1, "ElectricEquipment"=>num_units*1}
     expected_values = {"ceiling_fans_design_level"=>22.5}
-    _test_measure("singlefamily_attached_has_cooling.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_measure("SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end  
   
-  def test_multifamily_new_construction_2
+  def test_multifamily_new_construction
     num_units = 8
     args_hash = {}
     args_hash["use_benchmark_energy"] = "false"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>num_units*1, "ScheduleRule"=>num_units*12, "EnergyManagementSystemProgram"=>num_units*1, "EnergyManagementSystemActuator"=>num_units*1, "EnergyManagementSystemSensor"=>num_units*2, "EnergyManagementSystemProgramCallingManager"=>num_units*1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>num_units*1, "ElectricEquipment"=>num_units*1}
     expected_values = {"ceiling_fans_design_level"=>22.5}
-    _test_measure("multifamily_has_cooling.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end  
   
   def test_retrofit_specify_instead_of_benchmark

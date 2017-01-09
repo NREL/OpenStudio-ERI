@@ -137,22 +137,22 @@ class ProcessVariableSpeedAirSourceHeatPumpTest < MiniTest::Test
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)
   end  
   
-  def test_multifamily_new_construction_1
+  def test_single_family_attached_new_construction
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilCoolingDXMultiSpeed"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units*2, "CoilHeatingElectric"=>num_units, "CoilHeatingDXMultiSpeed"=>num_units, "CoilCoolingDXMultiSpeedStageData"=>num_units*4, "CoilHeatingDXMultiSpeedStageData"=>num_units*4}
     expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
-    _test_measure("singlefamily_attached_fbsmt_4_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*6)
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*6)
   end
 
-  def test_multifamily_new_construction_2
+  def test_multifamily_new_construction
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilCoolingDXMultiSpeed"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units, "CoilHeatingElectric"=>num_units, "CoilHeatingDXMultiSpeed"=>num_units, "CoilCoolingDXMultiSpeedStageData"=>num_units*4, "CoilHeatingDXMultiSpeedStageData"=>num_units*4}
     expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
-    _test_measure("multifamily_8_units.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*5)
+    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*5)
   end   
   
   private
