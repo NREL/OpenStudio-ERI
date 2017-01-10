@@ -15,10 +15,6 @@ class AddResidentialOccupantsTest < MiniTest::Test
     return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
   end
 
-  def osm_geo_multifamily_3_units_beds
-    return "multifamily_3_units_Beds_Baths.osm"
-  end
-
   def test_new_construction_none
     num_finished_spaces = 3
     args_hash = {}
@@ -79,28 +75,6 @@ class AddResidentialOccupantsTest < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {"NumOccupants"=>0}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_finished_spaces)
-  end
-
-  def test_multifamily_new_construction
-    num_units = 3
-    num_finished_spaces = 5
-    args_hash = {}
-    args_hash["num_occ"] = "3"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"PeopleDefinition"=>num_finished_spaces, "People"=>num_finished_spaces, "ScheduleRuleset"=>2}
-    expected_values = {"NumOccupants"=>3*num_units}
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-  
-  def test_multifamily_new_construction_mult
-    num_units = 3
-    num_finished_spaces = 5
-    args_hash = {}
-    args_hash["num_occ"] = "1, 3, auto"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"PeopleDefinition"=>num_finished_spaces, "People"=>num_finished_spaces, "ScheduleRuleset"=>2}
-    expected_values = {"NumOccupants"=>8.31}
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
 
   def test_argument_error_num_occ_bad_string
@@ -178,6 +152,28 @@ class AddResidentialOccupantsTest < MiniTest::Test
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "No building geometry has been defined.")
   end
 
+  def test_single_family_attached_new_construction
+    num_units = 4
+    num_finished_spaces = num_units*2
+    args_hash = {}
+    args_hash["num_occ"] = "1, 2, 3, auto"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"PeopleDefinition"=>num_finished_spaces, "People"=>num_finished_spaces, "ScheduleRuleset"=>2}
+    expected_values = {"NumOccupants"=>9.39}
+    _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
+  end
+
+  def test_multifamily_new_construction
+    num_units = 8
+    num_finished_spaces = num_units
+    args_hash = {}
+    args_hash["num_occ"] = "3"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"PeopleDefinition"=>num_finished_spaces, "People"=>num_finished_spaces, "ScheduleRuleset"=>2}
+    expected_values = {"NumOccupants"=>3*num_units}
+    _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
+  end
+  
   private
   
   def _test_error(osm_file, args_hash)

@@ -19,14 +19,6 @@ class ResidentialLightingTest < MiniTest::Test
     return "SFD_2000sqft_2story_FB_GRG_UA_Anchorage.osm"
   end
 
-  def osm_geo_multifamily_3_units_loc
-    return "multifamily_3_units_Denver.osm"
-  end
-  
-  def osm_geo_multifamily_3_units_loc_zone_mult
-    return "multifamily_3_units_Denver_zone_multiplier.osm"
-  end
-
   def test_new_construction_100_incandescent
     args_hash = {}
     args_hash["hw_cfl"] = 0.0
@@ -146,39 +138,6 @@ class ResidentialLightingTest < MiniTest::Test
     expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>1252}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
-  end
-  
-  def test_multifamily_new_construction
-    num_ltg_spaces = 6
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>3684}
-    _test_measure(osm_geo_multifamily_3_units_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces)
-  end
-  
-  def test_multifamily_new_construction_zone_mult
-    num_ltg_spaces = 6
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>4636}
-    _test_measure(osm_geo_multifamily_3_units_loc_zone_mult, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces)
-  end
-
-  def test_multifamily_retrofit_replace
-    num_ltg_spaces = 6
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>3684}
-    model = _test_measure(osm_geo_multifamily_3_units_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces)
-    args_hash = {}
-    args_hash["hw_cfl"] = 1.0
-    expected_num_del_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"LightsDefinition"=>num_ltg_spaces-1, "Lights"=>num_ltg_spaces-1, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>2670}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces+1)
   end
 
   def test_argument_error_hw_cfl_lt_0
@@ -323,6 +282,26 @@ class ResidentialLightingTest < MiniTest::Test
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Model has not been assigned a weather file.")
   end
     
+  def test_single_family_attached_new_construction
+    num_units = 4
+    num_ltg_spaces = num_units*2
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Lights"=>num_ltg_spaces, "LightsDefinition"=>num_ltg_spaces, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>6285.88}
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces+1)
+  end
+
+  def test_multifamily_new_construction
+    num_units = 8
+    num_ltg_spaces = num_units+1 # plus corridor
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Lights"=>num_ltg_spaces, "LightsDefinition"=>num_ltg_spaces, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>7754.57}
+    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces+1)
+  end
+  
   private
   
   def _test_error(osm_file, args_hash)

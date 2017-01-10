@@ -15,18 +15,6 @@ class DoorAreaTest < MiniTest::Test
     return "SFD_2000sqft_2story_FB_GRG_UA_Southwest.osm"
   end
   
-  def osm_geo_multifamily
-    return "multifamily_3_units.osm"
-  end
-  
-  def osm_geo_multifamily_interior_corridor
-    return "multifamily_interior_corridor.osm"
-  end
-  
-  def osm_geo_multifamily_exterior_corridor_inset
-    return "multifamily_exterior_corridor_inset.osm"
-  end
-  
   def test_no_door_area
     args_hash = {}
     args_hash["door_area"] = 0
@@ -45,40 +33,31 @@ class DoorAreaTest < MiniTest::Test
     args_hash["door_area"] = 30
     _test_measure(model, args_hash, 20, 30, 0)
   end
-  
-  def test_mf_retrofit_replace
-    num_units = 3
-    args_hash = {}
-    model = _test_measure(osm_geo_multifamily, args_hash, 0, 20*num_units, 0)
-    args_hash = {}
-    args_hash["door_area"] = 30
-    _test_measure(model, args_hash, 20*num_units, 30*num_units, 0)
-  end
-  
-  def test_mf_interior_corridor
-    num_units = 12
-    args_hash = {}
-    model = _test_measure(osm_geo_multifamily_interior_corridor, args_hash, 0, 0, 20*num_units)
-    args_hash = {}
-    args_hash["door_area"] = 30
-    _test_measure(model, args_hash, 20*num_units, 0, 30*num_units)
-  end  
-  
-  def test_mf_exterior_corridor_inset
-    num_units = 12
-    args_hash = {}
-    model = _test_measure(osm_geo_multifamily_exterior_corridor_inset, args_hash, 0, 20*num_units, 0)
-    args_hash = {}
-    args_hash["door_area"] = 30
-    _test_measure(model, args_hash, 20*num_units, 30*num_units, 0)
-  end
 
   def test_argument_error_invalid_door_area
     args_hash = {}
     args_hash["door_area"] = -20
     result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid door area.")
+  end  
+  
+  def test_single_family_attached_new_construction
+    num_units = 4
+    args_hash = {}
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, 0, 20*num_units, 0)
   end
+
+  def test_multifamily_new_construction_interior_corridor
+    num_units = 8
+    args_hash = {}
+    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, 0, 0, 20*num_units)
+  end
+  
+  def test_multifamily_new_construction_exterior_corridor
+    num_units = 8
+    args_hash = {}
+    _test_measure("MF_8units_1story_SL_Denver_ExteriorCorridor.osm", args_hash, 0, 20*num_units, 0)
+  end  
   
   private
   

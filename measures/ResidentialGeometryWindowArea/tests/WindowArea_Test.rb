@@ -17,10 +17,6 @@ class WindowAreaTest < MiniTest::Test
     return "SFD_2000sqft_2story_FB_GRG_UA_Southwest.osm"
   end
   
-  def osm_geo_multifamily
-    return "multifamily_3_units.osm"
-  end
-  
   def test_no_window_area
     args_hash = {}
     args_hash["front_wwr"] = 0
@@ -45,16 +41,6 @@ class WindowAreaTest < MiniTest::Test
     args_hash["front_wwr"] = 0.12
     args_hash["left_wwr"] = 0.12
     _test_measure(model, args_hash, [81.5, 110.3, 70.0, 55.1], [54.3, 110.3, 46.4, 55.1])
-  end
-  
-  def test_mf_retrofit_replace
-    num_units = 3
-    args_hash = {}
-    model = _test_measure(osm_geo_multifamily, args_hash, [0, 0, 0, 0], [144, 144, 86.4, 86.4])
-    args_hash = {}
-    args_hash["back_wwr"] = 0.12
-    args_hash["right_wwr"] = 0.12
-    _test_measure(model, args_hash, [144, 144, 86.4, 86.4], [144, 96, 86.4, 57.6])
   end
   
   def test_argument_error_invalid_window_area_front_lt_0
@@ -136,7 +122,23 @@ class WindowAreaTest < MiniTest::Test
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Window Aspect Ratio must be greater than 0.")
+  end  
+  
+  def test_single_family_attached_new_construction
+    num_units = 4
+    args_hash = {}
+    args_hash["back_wwr"] = 0.12
+    args_hash["right_wwr"] = 0.12    
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, [0, 0, 0, 0, 0], [122.19, 81.46, 61.09, 40.73])
   end
+
+  def test_multifamily_new_construction
+    num_units = 8
+    args_hash = {}
+    args_hash["back_wwr"] = 0.12
+    args_hash["right_wwr"] = 0.12    
+    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, [0, 0, 0, 0, 0], [122.19, 81.46, 122.19, 81.46])
+  end 
 
   private
   
