@@ -15,10 +15,6 @@ class ResidentialPoolHeaterElecTest < MiniTest::Test
     return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm"
   end
   
-  def osm_geo_multifamily_3_units_beds
-    return "multifamily_3_units_Beds_Baths.osm"
-  end
-  
   def test_new_construction_none1
     # Using annual energy
     args_hash = {}
@@ -119,48 +115,6 @@ class ResidentialPoolHeaterElecTest < MiniTest::Test
     expected_values = {"Annual_kwh"=>0}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
-  
-  def test_multifamily_new_construction
-    num_units = 3
-    args_hash = {}
-    args_hash["base_energy"] = 2300.0
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>6151.3}
-    _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-  
-  def test_multifamily_retrofit_replace
-    num_units = 3
-    args_hash = {}
-    args_hash["base_energy"] = 2300.0
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>6151.3}
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-    args_hash = {}
-    args_hash["base_energy"] = 1150.0
-    expected_num_del_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>3075.7}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2*num_units)
-  end
-  
-  def test_multifamily_retrofit_remove
-    num_units = 3
-    args_hash = {}
-    args_hash["base_energy"] = 2300.0
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>6151.3}
-    model = _test_measure(osm_geo_multifamily_3_units_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-    args_hash = {}
-    args_hash["base_energy"] = 0.0
-    expected_num_del_objects = {"ElectricEquipmentDefinition"=>num_units, "ElectricEquipment"=>num_units, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {}
-    expected_values = {"Annual_kwh"=>0.0}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
 
   def test_argument_error_base_energy_negative
     args_hash = {}
@@ -230,6 +184,26 @@ class ResidentialPoolHeaterElecTest < MiniTest::Test
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "No building geometry has been defined.")
   end
 
+  def test_single_family_attached_new_construction
+    num_units = 4
+    args_hash = {}
+    args_hash["base_energy"] = 2300.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipment"=>num_units, "ElectricEquipmentDefinition"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>9050.21}
+    _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
+  end
+  
+  def test_multifamily_new_construction
+    num_units = 8
+    args_hash = {}
+    args_hash["base_energy"] = 2300.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipment"=>num_units, "ElectricEquipmentDefinition"=>num_units, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>15945.6}
+    _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
+  end
+  
   private
   
   def _test_error(osm_file, args_hash)
