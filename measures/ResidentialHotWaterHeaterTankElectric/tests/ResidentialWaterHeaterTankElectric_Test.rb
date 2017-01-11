@@ -59,14 +59,6 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_PropaneWHTankless.osm"
   end
 
-  def osm_geo_multifamily_3_units_beds_loc
-    return "multifamily_3_units_Beds_Baths_Denver.osm"
-  end
-
-  def osm_geo_multifamily_12_units_beds_loc
-    return "multifamily_12_units_Beds_Baths_Denver.osm"
-  end
-
   def test_new_construction_standard
     args_hash = {}
     expected_num_del_objects = {}
@@ -226,49 +218,6 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     _test_measure(osm_geo_beds_loc_tankless_propane, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
-  def test_multifamily_new_construction
-    num_units = 3
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
-    expected_values = {"TankVolume"=>136, "InputCapacity"=>13.5, "ThermalEfficiency"=>3.0, "TankUA"=>6.62, "Setpoint"=>375, "OnCycle"=>0, "OffCycle"=>0}
-    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-  
-  def test_multifamily_new_construction_living_zone
-    args_hash = {}
-    args_hash["location"] = "living zone 1"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
-    expected_values = {"TankVolume"=>50, "InputCapacity"=>4.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.21, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
-    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-  end
-
-  def test_multifamily_new_construction_mult_draw_profiles
-    num_units = 12
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
-    expected_values = {"TankVolume"=>600, "InputCapacity"=>54, "ThermalEfficiency"=>12.0, "TankUA"=>26.4, "Setpoint"=>1500, "OnCycle"=>0, "OffCycle"=>0}
-    _test_measure(osm_geo_multifamily_12_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-
-  def test_multifamily_retrofit_replace
-    num_units = 3
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
-    expected_values = {"TankVolume"=>136, "InputCapacity"=>13.5, "ThermalEfficiency"=>3.0, "TankUA"=>6.62, "Setpoint"=>375, "OnCycle"=>0, "OffCycle"=>0}
-    model = _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-    args_hash = {}
-    args_hash["energy_factor"] = "0.95"
-    args_hash["capacity"] = "5.5"
-    expected_num_del_objects = {"WaterHeaterMixed"=>num_units, "ScheduleRuleset"=>num_units}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "ScheduleRuleset"=>num_units}
-    expected_values = {"TankVolume"=>136, "InputCapacity"=>16.5, "ThermalEfficiency"=>3.0, "TankUA"=>4.01, "Setpoint"=>375, "OnCycle"=>0, "OffCycle"=>0}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-
   def test_argument_error_tank_volume_invalid_str
     args_hash = {}
     args_hash["tank_volume"] = "test"
@@ -370,7 +319,35 @@ class ResidentialHotWaterHeaterTankElectricTest < MiniTest::Test
     result = _test_error(osm_geo_beds, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Mains water temperature has not been set.")
   end
+  
+  def test_single_family_attached_new_construction
+    num_units = 4
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_values = {"TankVolume"=>num_units*50, "InputCapacity"=>num_units*4.5, "ThermalEfficiency"=>num_units*1.0, "TankUA"=>num_units*2.21, "Setpoint"=>num_units*125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
+  end
 
+  def test_single_family_attached_new_construction_living_zone
+    num_units = 4
+    args_hash = {}
+    args_hash["location"] = Constants.LivingZone
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"TankVolume"=>50, "InputCapacity"=>4.5, "ThermalEfficiency"=>1.0, "TankUA"=>2.21, "Setpoint"=>125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end  
+  
+  def test_multifamily_new_construction
+    num_units = 8
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_values = {"TankVolume"=>num_units*50, "InputCapacity"=>num_units*4.5, "ThermalEfficiency"=>num_units*1.0, "TankUA"=>num_units*2.21, "Setpoint"=>num_units*125, "OnCycle"=>0, "OffCycle"=>0}
+    _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
+  end
+  
   private
   
   def _test_error(osm_file, args_hash)

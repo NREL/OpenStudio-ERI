@@ -39,14 +39,6 @@ class ResidentialHotWaterHeaterTanklessFuelTest < MiniTest::Test
     return "SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTankless.osm"
   end
 
-  def osm_geo_multifamily_3_units_beds_loc
-    return "multifamily_3_units_Beds_Baths_Denver.osm"
-  end
-
-  def osm_geo_multifamily_12_units_beds_loc
-    return "multifamily_12_units_Beds_Baths_Denver.osm"
-  end
-
   def test_new_construction_standard
     args_hash = {}
     args_hash["fuel_type"] = Constants.FuelTypeGas
@@ -157,53 +149,6 @@ class ResidentialHotWaterHeaterTanklessFuelTest < MiniTest::Test
     _test_measure(osm_geo_beds_loc_tankless_electric, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
-  def test_multifamily_new_construction
-    num_units = 3
-    args_hash = {}
-    args_hash["fuel_type"] = Constants.FuelTypeGas
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
-    expected_values = {"InputCapacity"=>87921321, "ThermalEfficiency"=>2.262, "Setpoint"=>375, "OnCycle"=>21.76, "OffCycle"=>21.76, "FuelType"=>Constants.FuelTypeGas}
-    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-  
-  def test_multifamily_new_construction_living_zone
-    args_hash = {}
-    args_hash["location"] = "living zone 1"
-    args_hash["fuel_type"] = Constants.FuelTypeGas
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
-    expected_values = {"InputCapacity"=>29307107, "ThermalEfficiency"=>0.754, "Setpoint"=>125, "OnCycle"=>7.38, "OffCycle"=>7.38, "FuelType"=>Constants.FuelTypeGas}
-    _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-  end
-  
-  def test_multifamily_new_construction_mult_draw_profiles
-    num_units = 12
-    args_hash = {}
-    args_hash["fuel_type"] = Constants.FuelTypeGas
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
-    expected_values = {"InputCapacity"=>351685284, "ThermalEfficiency"=>9.0525, "Setpoint"=>1500, "OnCycle"=>88.54, "OffCycle"=>88.54, "FuelType"=>Constants.FuelTypeGas}
-    _test_measure(osm_geo_multifamily_12_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-
-  def test_multifamily_retrofit_replace
-    num_units = 3
-    args_hash = {}
-    args_hash["fuel_type"] = Constants.FuelTypeGas
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
-    expected_values = {"InputCapacity"=>87921321, "ThermalEfficiency"=>2.262, "Setpoint"=>375, "OnCycle"=>21.76, "OffCycle"=>21.76, "FuelType"=>Constants.FuelTypeGas}
-    model = _test_measure(osm_geo_multifamily_3_units_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-    args_hash = {}
-    args_hash["energy_factor"] = 0.96
-    args_hash["fuel_type"] = Constants.FuelTypeGas
-    expected_num_del_objects = {"WaterHeaterMixed"=>num_units, "ScheduleRuleset"=>num_units}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "ScheduleRuleset"=>num_units}
-    expected_values = {"InputCapacity"=>87921321, "ThermalEfficiency"=>2.649, "Setpoint"=>375, "OnCycle"=>21.76, "OffCycle"=>21.76, "FuelType"=>Constants.FuelTypeGas}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-
   def test_argument_error_setpoint_lt_0
     args_hash = {}
     args_hash["setpoint_temp"] = -10
@@ -299,6 +244,34 @@ class ResidentialHotWaterHeaterTanklessFuelTest < MiniTest::Test
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Mains water temperature has not been set.")
   end
 
+  def test_single_family_attached_new_construction
+    num_units = 4
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_values = {"InputCapacity"=>num_units*29307107, "ThermalEfficiency"=>num_units*0.754, "Setpoint"=>num_units*125, "OnCycle"=>num_units*7.38, "OffCycle"=>num_units*7.38, "FuelType"=>Constants.FuelTypeGas}
+    _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
+  end
+
+  def test_single_family_attached_new_construction_living_zone
+    num_units = 4
+    args_hash = {}
+    args_hash["location"] = Constants.LivingZone
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_values = {"InputCapacity"=>29307107, "ThermalEfficiency"=>0.754, "Setpoint"=>125, "OnCycle"=>7.38, "OffCycle"=>7.38, "FuelType"=>Constants.FuelTypeGas}
+    _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end  
+  
+  def test_multifamily_new_construction
+    num_units = 8
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_values = {"InputCapacity"=>num_units*29307107, "ThermalEfficiency"=>num_units*0.754, "Setpoint"=>num_units*125, "OnCycle"=>num_units*7.38, "OffCycle"=>num_units*7.38, "FuelType"=>Constants.FuelTypeGas}
+    _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
+  end  
+  
   private
   
   def _test_error(osm_file, args_hash)
