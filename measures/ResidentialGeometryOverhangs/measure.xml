@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>7387cd41-09a0-4f1a-8acd-f3e14163f8a2</version_id>
-  <version_modified>20170111T173239Z</version_modified>
+  <version_id>3f88ebe7-33b0-44d3-9956-5962b4cb6e1a</version_id>
+  <version_modified>20170111T215140Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
@@ -142,29 +142,6 @@
       <checksum>866A1677</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>90081761</checksum>
-    </file>
-    <file>
-      <filename>create_residential_overhangs.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1E752C2B</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>441F2EB3</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -175,6 +152,53 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DC36E8B8</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>C654A3F3</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>36B2871D</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>56DBF6E1</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0DF0D1C6</checksum>
+    </file>
+    <file>
+      <filename>create_residential_overhangs.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>34D19303</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1A05B32A</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4286E38F</checksum>
     </file>
   </files>
 </measure>

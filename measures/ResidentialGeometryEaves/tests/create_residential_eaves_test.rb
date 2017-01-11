@@ -13,7 +13,16 @@ class CreateResidentialEavesTest < MiniTest::Test
     assert(result.errors.size == 0)
     assert_equal("NA", result.value.valueName)
     assert_includes(result.info.map{ |x| x.logMessage }, "No surfaces found for adding eaves.")
-  end  
+  end
+    
+  def test_not_applicable_depth_zero
+    args_hash = {}
+    args_hash["eaves_depth"] = 0
+    result = _test_error("SFD_2000sqft_2story_SL_UA.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("NA", result.value.valueName)
+    assert_includes(result.info.map{ |x| x.logMessage }, "No eaves were added or removed.")
+  end
     
   def test_retrofit_replace_gable_roof_aspect_ratio_two
     args_hash = {}

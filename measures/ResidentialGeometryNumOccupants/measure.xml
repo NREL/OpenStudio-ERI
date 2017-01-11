@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>060a7a49-c167-4750-927e-dd29b26a7198</version_id>
-  <version_modified>20170111T173239Z</version_modified>
+  <version_id>890a1236-1312-492a-bc27-0447f5af0492</version_id>
+  <version_modified>20170111T215140Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -109,18 +109,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>866A1677</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FB6CD3D4</checksum>
-    </file>
-    <file>
-      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F205CF95</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>

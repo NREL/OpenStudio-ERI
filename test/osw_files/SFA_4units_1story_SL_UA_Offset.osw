@@ -1,0 +1,12 @@
+{
+	"seed_file": "seeds\\EmptySeedModel.osm",
+	"steps": [
+		{
+			"measure_dir_name": "ResidentialGeometrySingleFamilyAttached",
+			"arguments": {
+                "num_units": 4,
+                "offset": 6
+            }
+    }
+	]
+}

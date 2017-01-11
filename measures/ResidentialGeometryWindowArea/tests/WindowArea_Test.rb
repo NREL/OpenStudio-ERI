@@ -131,6 +131,14 @@ class WindowAreaTest < MiniTest::Test
     args_hash["right_wwr"] = 0.12    
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, [0, 0, 0, 0, 0], [122.19, 81.46, 61.09, 40.73])
   end
+  
+  def test_single_family_attached_new_construction_offset
+    num_units = 4
+    args_hash = {}
+    args_hash["back_wwr"] = 0.12
+    args_hash["right_wwr"] = 0.12    
+    _test_measure("SFA_4units_1story_SL_UA_Offset.osm", args_hash, [0, 0, 0, 0, 0], [122.19, 81.46, 87.01, 58.0])
+  end  
 
   def test_multifamily_new_construction
     num_units = 8
@@ -138,7 +146,15 @@ class WindowAreaTest < MiniTest::Test
     args_hash["back_wwr"] = 0.12
     args_hash["right_wwr"] = 0.12    
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, [0, 0, 0, 0, 0], [122.19, 81.46, 122.19, 81.46])
-  end 
+  end
+  
+  def test_multifamily_new_construction_inset
+    num_units = 8
+    args_hash = {}
+    args_hash["back_wwr"] = 0.12
+    args_hash["right_wwr"] = 0.12    
+    _test_measure("MF_8units_1story_SL_Inset.osm", args_hash, [0, 0, 0, 0, 0], [124.61, 83.07, 176.45, 117.63])
+  end
 
   private
   

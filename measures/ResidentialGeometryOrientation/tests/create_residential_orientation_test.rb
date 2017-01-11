@@ -19,8 +19,17 @@ class CreateResidentialOrientationTest < MiniTest::Test
     args_hash["orientation"] = 0
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, 0)
     args_hash = {}
-    args_hash["orientation"] = 180
     _test_measure(model, args_hash, 1)
+  end  
+  
+  def test_single_family_attached_new_construction
+    args_hash = {}
+    _test_measure("SFA_4units_1story_SL_UA_Windows.osm", args_hash, 1)
+  end
+
+  def test_multifamily_new_construction
+    args_hash = {}  
+    _test_measure("MF_8units_1story_SL_Windows.osm", args_hash, 1)
   end  
   
   private

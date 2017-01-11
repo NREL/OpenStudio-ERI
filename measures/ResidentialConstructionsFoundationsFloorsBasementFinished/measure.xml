@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_finished</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>7dd7ecb8-1cb1-492f-abbc-829978d64efa</version_id>
-  <version_modified>20170111T173235Z</version_modified>
+  <version_id>e0ad74a0-38d1-4c11-bbec-4fe9f2e9e9f4</version_id>
+  <version_modified>20170111T203710Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementFinished</class_name>
   <display_name>Set Residential Foundations/Floors - Finished Basement Constructions</display_name>
@@ -238,7 +238,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>441F2EB3</checksum>
+      <checksum>36B2871D</checksum>
     </file>
   </files>
 </measure>

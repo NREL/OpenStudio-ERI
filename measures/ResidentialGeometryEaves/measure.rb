@@ -62,19 +62,34 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     eaves_depth = OpenStudio.convert(runner.getDoubleArgumentValue("eaves_depth",user_arguments),"ft","m").get
 
     # remove existing eaves
+    num_removed = 0
     existing_eaves_depth = nil
     model.getShadingSurfaceGroups.each do |shading_surface_group|
+      remove_group = false
       shading_surface_group.shadingSurfaces.each do |shading_surface|
         next unless shading_surface.name.to_s.downcase.include? "eaves"
+        num_removed += 1
+        remove_group = true
         next unless existing_eaves_depth.nil?
         existing_eaves_depth = get_existing_eaves_depth(shading_surface)
       end
-      shading_surface_group.remove
+      if remove_group
+        shading_surface_group.remove
+      end
     end
+    if num_removed > 0
+      runner.registerInfo("#{num_removed} eaves shading surfaces removed.")
+    end
+    
+    # No eaves to add? Exit here.
+    if eaves_depth == 0
+      if num_removed == 0
+        runner.registerAsNotApplicable("No eaves were added or removed.")
+      end
+      return true
+    end    
     if existing_eaves_depth.nil?
       existing_eaves_depth = 0
-    else
-      runner.registerInfo("Removed existing eaves.")
     end
     
     roof_type = determine_roof_type(model.getSurfaces)

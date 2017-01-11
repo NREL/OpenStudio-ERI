@@ -40,7 +40,7 @@ class CreateResidentialOverhangsTest < MiniTest::Test
     assert(result.errors.size == 0)
     assert_equal("NA", result.value.valueName)
     assert_includes(result.info.map{ |x| x.logMessage }, "No overhangs were added or removed.")
-  end  
+  end
   
   def test_retrofit_replace_one_ft_with_two_ft
     args_hash = {}
@@ -50,11 +50,47 @@ class CreateResidentialOverhangsTest < MiniTest::Test
     expected_values = {"overhang_depth"=>1}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 36)
     args_hash["depth"] = 2
-    expected_num_del_objects = {"ShadingSurface"=>36}
+    expected_num_del_objects = {"ShadingSurface"=>36, "ShadingSurfaceGroup"=>36}
     expected_num_new_objects = {"ShadingSurface"=>36, "ShadingSurfaceGroup"=>36}
     expected_values = {"overhang_depth"=>2}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 36+1)         
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 36+1)
+  end
+  
+  def test_single_family_attached_new_construction
+    num_units = 4
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>36, "ShadingSurfaceGroup"=>36}
+    expected_values = {"overhang_depth"=>2}
+    _test_measure("SFA_4units_1story_SL_UA_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 36)
+  end
+
+  def test_single_family_attached_new_construction_offset
+    num_units = 4
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>42, "ShadingSurfaceGroup"=>42}
+    expected_values = {"overhang_depth"=>2}
+    _test_measure("SFA_4units_1story_SL_UA_Offset_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 42)
   end  
+  
+  def test_multifamily_new_construction
+    num_units = 8
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>48, "ShadingSurfaceGroup"=>48}
+    expected_values = {"overhang_depth"=>2}
+    _test_measure("MF_8units_1story_SL_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 48)
+  end
+  
+  def test_multifamily_new_construction_inset
+    num_units = 8
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>60, "ShadingSurfaceGroup"=>60}
+    expected_values = {"overhang_depth"=>2}
+    _test_measure("MF_8units_1story_SL_Inset_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 60)
+  end
   
   private
   

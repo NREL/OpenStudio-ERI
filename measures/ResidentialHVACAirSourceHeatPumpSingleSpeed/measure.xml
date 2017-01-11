@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>e8712406-dacd-42b4-95d1-096152d521ff</version_id>
-  <version_modified>20170111T173248Z</version_modified>
+  <version_id>4a5876ba-a0bd-49d8-a456-6b821b47f4a2</version_id>
+  <version_modified>20170111T205620Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessSingleSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Single-Speed Air Source Heat Pump</display_name>
@@ -643,12 +643,6 @@
       <checksum>D5E9DD4A</checksum>
     </file>
     <file>
-      <filename>process_single_speed_air_source_heat_pump_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>14376D9F</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -659,6 +653,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>1128DC50</checksum>
+    </file>
+    <file>
+      <filename>process_single_speed_air_source_heat_pump_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8F5AA896</checksum>
     </file>
   </files>
 </measure>

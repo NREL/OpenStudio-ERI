@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>20362653-6241-48c6-a59f-30d092fd230c</version_id>
-  <version_modified>20170111T173235Z</version_modified>
+  <version_id>42a3d423-0d5c-4185-8a69-4b20964425d8</version_id>
+  <version_modified>20170111T203710Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
@@ -189,7 +189,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>441F2EB3</checksum>
+      <checksum>36B2871D</checksum>
     </file>
   </files>
 </measure>

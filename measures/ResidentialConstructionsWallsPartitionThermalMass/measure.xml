@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition_thermal_mass</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>60c6a5a8-9ffa-4a81-8465-65b7595658af</version_id>
-  <version_modified>20170111T173237Z</version_modified>
+  <version_id>f3e9fd96-8632-4408-bf6a-fdfdf8764e84</version_id>
+  <version_modified>20170111T203712Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWallsPartitionThermalMass</class_name>
   <display_name>Set Residential Walls - Partition Thermal Mass</display_name>
@@ -159,7 +159,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>441F2EB3</checksum>
+      <checksum>36B2871D</checksum>
     </file>
   </files>
 </measure>

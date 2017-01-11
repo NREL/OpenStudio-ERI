@@ -153,7 +153,7 @@ class ProcessSingleSpeedAirSourceHeatPumpTest < MiniTest::Test
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilCoolingDXSingleSpeed"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units, "CoilHeatingElectric"=>num_units, "CoilHeatingDXSingleSpeed"=>num_units}
     expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>"AutoSize", "HeatingNominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>76.66}
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*5)
-  end   
+  end
   
   private
   
