@@ -406,6 +406,7 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
     
     lntts = [-8.5,-7.8,-7.2,-6.5,-5.9,-5.2,-4.5,-3.963,-3.27,-2.864,-2.577,-2.171,-1.884,-1.191,-0.497,-0.274,-0.051,0.196,0.419,0.642,0.873,1.112,1.335,1.679,2.028,2.275,3.003]
 
+    ground_heat_exch_vert.removeAllGFunctions
     gfnc_coeff.each_with_index do |g_value, i|
       ground_heat_exch_vert.addGFunction(lntts[i], g_value)
     end
