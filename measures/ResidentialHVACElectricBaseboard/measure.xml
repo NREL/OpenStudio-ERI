@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>f60bc102-9f97-4097-be9e-9ec9db744b49</version_id>
-  <version_modified>20170106T183452Z</version_modified>
+  <version_id>b1b94c2e-a56d-4dc1-95bd-bf9b2255f630</version_id>
+  <version_modified>20170111T173252Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -192,18 +192,6 @@
       <checksum>866A1677</checksum>
     </file>
     <file>
-      <filename>multifamily_8_units.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>92023B4C</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_attached_fbsmt_4_units.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>749DF9E9</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -231,12 +219,6 @@
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
       <checksum>E23378AA</checksum>
-    </file>
-    <file>
-      <filename>process_electric_baseboard_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8A89013A</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
@@ -333,6 +315,24 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>D5E9DD4A</checksum>
+    </file>
+    <file>
+      <filename>process_electric_baseboard_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B973E823</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4508B02</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1128DC50</checksum>
     </file>
   </files>
 </measure>

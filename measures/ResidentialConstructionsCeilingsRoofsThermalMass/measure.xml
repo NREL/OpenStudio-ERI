@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_thermal_mass</name>
   <uid>efe35222-f47d-43e9-b096-6bd18bfe1100</uid>
-  <version_id>a39e8ce6-3384-4e5a-aec7-7149ac0fd459</version_id>
-  <version_modified>20170106T183441Z</version_modified>
+  <version_id>632c3930-3293-4917-8912-f46f3c9e182b</version_id>
+  <version_modified>20170111T173234Z</version_modified>
   <xml_checksum>16B68B0C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsThermalMass</class_name>
   <display_name>Set Residential Ceilings/Roofs - Ceiling Thermal Mass</display_name>
@@ -141,16 +141,16 @@
       <checksum>9B545A00</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDB2145F</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButCeilingThermalMass.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>0CE1FAC0</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>441F2EB3</checksum>
     </file>
   </files>
 </measure>

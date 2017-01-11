@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>767685d0-8ed5-43fc-b6d6-f71bba10df53</version_id>
-  <version_modified>20170106T183451Z</version_modified>
+  <version_id>5eecc426-afb3-47d4-abfa-5cdfd83cfc30</version_id>
+  <version_modified>20170111T173249Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
@@ -299,18 +299,6 @@
       <checksum>DC36E8B8</checksum>
     </file>
     <file>
-      <filename>multifamily_8_units.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>92023B4C</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_attached_fbsmt_4_units.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>749DF9E9</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -333,12 +321,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>50C4FC1A</checksum>
-    </file>
-    <file>
-      <filename>process_boiler_electric_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>002C1413</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
@@ -435,6 +417,24 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>D5E9DD4A</checksum>
+    </file>
+    <file>
+      <filename>process_boiler_electric_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E8C338FA</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C4508B02</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1128DC50</checksum>
     </file>
   </files>
 </measure>

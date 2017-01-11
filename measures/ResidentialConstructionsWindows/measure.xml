@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>22135cd4-0d27-4d58-9e0b-3c773967adc4</version_id>
-  <version_modified>20170106T183444Z</version_modified>
+  <version_id>f304341a-705e-4427-92e3-3e10b73ed9a4</version_id>
+  <version_modified>20170111T173238Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -159,7 +159,7 @@
       <filename>SFD_2000sqft_2story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E968EB4E</checksum>
+      <checksum>0015F775</checksum>
     </file>
   </files>
 </measure>

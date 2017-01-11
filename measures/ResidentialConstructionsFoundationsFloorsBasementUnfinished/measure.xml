@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_unfinished</name>
   <uid>ebc21070-2d4b-4a2a-bd15-f18bf3e77b49</uid>
-  <version_id>1c2761e9-3971-4c2e-a58f-071e50b50a6c</version_id>
-  <version_modified>20170106T183442Z</version_modified>
+  <version_id>5943c69f-3a44-496a-9f12-6afa6d91fe56</version_id>
+  <version_modified>20170111T173235Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementUnfinished</class_name>
   <display_name>Set Residential Foundations/Floors - Unfinished Basement Constructions</display_name>
@@ -256,12 +256,6 @@
       <checksum>1A8F010B</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDB2145F</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_UB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -272,6 +266,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>A2D95730</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>441F2EB3</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>dceeff40-563d-4b3c-8218-92940bb0ac7e</version_id>
-  <version_modified>20170106T183438Z</version_modified>
+  <version_id>5435dbf8-43c1-43ed-b09a-77a9490c53f0</version_id>
+  <version_modified>20170111T173230Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -672,18 +672,6 @@
       <checksum>C3399417</checksum>
     </file>
     <file>
-      <filename>multifamily_8_units_slab_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3DA7AE96</checksum>
-    </file>
-    <file>
-      <filename>singlefamily_attached_slab_4_units_furnace_central_air_conditioner.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3C0D0C98</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -723,12 +711,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>50C4FC1A</checksum>
-    </file>
-    <file>
-      <filename>residential_airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D214F993</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_CS_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
@@ -801,6 +783,24 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>CAD4588D</checksum>
+    </file>
+    <file>
+      <filename>residential_airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>44F6DDA5</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F5404B12</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4EFD6F33</checksum>
     </file>
   </files>
 </measure>
