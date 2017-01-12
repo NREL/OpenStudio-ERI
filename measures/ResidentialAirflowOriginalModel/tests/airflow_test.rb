@@ -275,6 +275,22 @@ class AirflowTest < MiniTest::Test
     assert_equal("Success", result.value.valueName)    
   end
   
+  def test_single_family_attached_new_construction
+    num_units = 4
+    args_hash = {}
+    result = _test_measure("SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+  
+  def test_multifamily_new_construction
+    num_units = 8
+    args_hash = {}
+    result = _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("Success", result.value.valueName)    
+  end
+  
   private
   
   def _test_measure(osm_file_or_model, args_hash)
