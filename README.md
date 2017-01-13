@@ -29,7 +29,7 @@ You can run ```rake -T``` to see the list of possible rake tasks.
 
 ## New Construction Workflow for Users
 
-The New Construction workflow illustrates how to build up a complete residential building model from an [empty seed model](https://github.com/NREL/OpenStudio-BEopt/tree/master/geometries/EmptySeedModel.osm). Note that some measures need to be called before others. For example, the Window Constructions measure must be called after windows have been added to the building. The list below documents the intended workflow for using these measures.
+The New Construction workflow illustrates how to build up a complete residential building model from an [empty seed model](https://github.com/NREL/OpenStudio-BEopt/blob/master/seeds/EmptySeedModel.osm). Note that some measures need to be called before others. For example, the Window Constructions measure must be called after windows have been added to the building. The list below documents the intended workflow for using these measures.
 
 <nowiki>*</nowiki> Note: Nearly every measure is dependent on having the geometry defined first so this is not included in the table for readability purposes.
 
