@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>5b852d12-5959-4d0e-925f-7180002e754a</version_id>
-  <version_modified>20170111T173240Z</version_modified>
+  <version_id>30f7af13-94d6-453f-a80f-6be6647e1ff5</version_id>
+  <version_modified>20170116T200539Z</version_modified>
   <xml_checksum>A02778FF</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -117,12 +117,6 @@
       <checksum>DC36E8B8</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>866A1677</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -138,19 +132,37 @@
       <filename>WindowArea_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>33E03F87</checksum>
+      <checksum>6D3275B4</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Inset.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5F463295</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Offset.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>85893240</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C4508B02</checksum>
+      <checksum>7B66C4BA</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1128DC50</checksum>
+      <checksum>6961F6CA</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
     </file>
   </files>
 </measure>

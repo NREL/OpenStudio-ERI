@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>residential_ceiling_fan</name>
+  <name>process_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>0e14d0cf-2e0a-41be-9c18-5a16249c6b89</version_id>
-  <version_modified>20170111T173250Z</version_modified>
+  <version_id>b8f238f8-d620-4eb2-868a-a77ca3515ac5</version_id>
+  <version_modified>20170116T200550Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
-  <class_name>ResidentialCeilingFan</class_name>
+  <class_name>ProcessCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
   <description>Adds (or replaces) residential ceiling fan(s) and schedule in all finished spaces. For multifamily buildings, the ceiling fan(s) can be set for all units of the building.</description>
   <modeler_description>Since there is no Ceiling Fan object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is residential ceiling fan. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
@@ -171,23 +171,6 @@
       <checksum>DC36E8B8</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>866A1677</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>1.13.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>51EB2550</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -200,22 +183,39 @@
       <checksum>21BA7CB7</checksum>
     </file>
     <file>
-      <filename>residential_ceiling_fan.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FA868EA0</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F5404B12</checksum>
+      <checksum>49B771F8</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4EFD6F33</checksum>
+      <checksum>A271F9D6</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>1.13.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8C3A8EA6</checksum>
+    </file>
+    <file>
+      <filename>process_ceiling_fan_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2C2CAFB8</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
     </file>
   </files>
 </measure>

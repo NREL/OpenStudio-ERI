@@ -237,7 +237,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
   
   def _test_error(osm_file_or_model, args_hash)
     # create an instance of the measure
-    measure = ProcessGroundSourceHP.new
+    measure = ProcessGroundSourceHeatPumpVerticalBore.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -270,7 +270,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
   
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
-    measure = ProcessGroundSourceHP.new
+    measure = ProcessGroundSourceHeatPumpVerticalBore.new
 
     # check for standard methods
     assert(!measure.name.empty?)

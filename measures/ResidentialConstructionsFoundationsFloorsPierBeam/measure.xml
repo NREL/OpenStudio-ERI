@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_pier_beam</name>
   <uid>c47f2fc2-008e-403c-82e6-fd751b4f3b8a</uid>
-  <version_id>969fbd7a-b58f-4b1d-aeb3-38a9c02e44f7</version_id>
-  <version_modified>20170104T175419Z</version_modified>
+  <version_id>1fdbf690-3d8f-4e72-a5ff-c233955f9da4</version_id>
+  <version_modified>20170116T200532Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsPierBeam</class_name>
   <display_name>Set Residential Foundations/Floors - Pier &amp; Beam Construction</display_name>
@@ -99,7 +99,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>866A1677</checksum>
+      <checksum>3ECF4961</checksum>
     </file>
   </files>
 </measure>

@@ -22,7 +22,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -30,7 +30,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingDXSingleSpeed"=>1, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
   
@@ -38,7 +38,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
   
@@ -46,7 +46,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end  
   
@@ -54,7 +54,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -62,7 +62,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end  
 
@@ -70,7 +70,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"FanOnOff"=>2, "AirConditionerVariableRefrigerantFlow"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_MSHP.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end
   
@@ -78,7 +78,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end  
   
@@ -86,7 +86,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>2, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "CoilHeatingElectric"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end  
   
@@ -94,7 +94,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end  
   
@@ -102,7 +102,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)
   end  
 
@@ -110,7 +110,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "FanOnOff"=>1, "CoilHeatingElectric"=>1, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end   
   
@@ -118,7 +118,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "FanOnOff"=>1, "CoilHeatingElectric"=>1, "BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end
 
@@ -126,7 +126,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end  
   
@@ -135,7 +135,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>num_units*2, "FanOnOff"=>num_units*2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>num_units*2, "CoilHeatingDXVariableRefrigerantFlow"=>num_units*2, "CoilCoolingDXVariableRefrigerantFlow"=>num_units*2, "ZoneHVACBaseboardConvectiveElectric"=>num_units*2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*4)
   end
 
@@ -145,7 +145,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash["pan_heater_power"] = 150.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>num_units, "FanOnOff"=>num_units, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>num_units, "CoilHeatingDXVariableRefrigerantFlow"=>num_units, "CoilCoolingDXVariableRefrigerantFlow"=>num_units, "ZoneHVACBaseboardConvectiveElectric"=>num_units, "ElectricEquipment"=>num_units*1, "ElectricEquipmentDefinition"=>num_units*1, "EnergyManagementSystemSensor"=>num_units*2, "EnergyManagementSystemActuator"=>num_units*1, "EnergyManagementSystemProgram"=>num_units*1, "EnergyManagementSystemProgramCallingManager"=>num_units*1, "OutputVariable"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*2)
   end
   
@@ -154,12 +154,12 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash["pan_heater_power"] = 20.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>3, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     model = _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
     args_hash["pan_heater_power"] = 30.0
     expected_num_del_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>3, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2}
     expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>3, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2}
-    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>"AutoSize", "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>"AutoSize"}
+    expected_values = {"CoolingCOP"=>2.34, "HeatingCOP"=>2.79}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end
   

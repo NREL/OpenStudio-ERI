@@ -34,12 +34,12 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return "This measure..."
+    return "Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced)."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "Uses..."
+    return "Any photovoltaic panels, generators, inverters, and electric load center distribution objects are removed. A photovoltaic panel, along with generator and inverter are added to the electric load center distribution object."
   end
 
   # define the arguments that the user will input

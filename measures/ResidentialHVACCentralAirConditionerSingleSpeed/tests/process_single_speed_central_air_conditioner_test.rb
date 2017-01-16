@@ -11,7 +11,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 3)
   end  
   
@@ -28,7 +28,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -36,7 +36,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingDXSingleSpeed"=>1, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
   
@@ -44,7 +44,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -52,7 +52,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
@@ -60,7 +60,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end
   
@@ -68,7 +68,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end
   
@@ -76,7 +76,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"FanOnOff"=>2, "AirConditionerVariableRefrigerantFlow"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_MSHP.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
   end
   
@@ -84,7 +84,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end
   
@@ -92,7 +92,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>2, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "CoilHeatingElectric"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end  
   
@@ -100,7 +100,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
   
@@ -108,7 +108,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end  
 
@@ -116,7 +116,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "FanOnOff"=>1, "CoilHeatingElectric"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
@@ -124,7 +124,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1, "FanOnOff"=>1, "CoilHeatingElectric"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
 
@@ -132,7 +132,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 7)
   end  
   
@@ -141,7 +141,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilCoolingDXSingleSpeed"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units*2}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*4)
   end
 
@@ -150,7 +150,7 @@ class ProcessSingleSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>num_units, "AirLoopHVAC"=>num_units, "CoilCoolingDXSingleSpeed"=>num_units, "FanOnOff"=>num_units, "AirTerminalSingleDuctUncontrolled"=>num_units}
-    expected_values = {"COP"=>3.95, "NominalCapacity"=>"AutoSize", "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>3.95, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*3)
   end   
   

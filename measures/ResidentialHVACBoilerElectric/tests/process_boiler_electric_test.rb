@@ -21,7 +21,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash["capacity"] = "20 kBtu/hr"
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.76, "NominalCapacity"=>5861.42, "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.76, "NominalCapacity"=>5861.42, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2, 1)
   end
       
@@ -35,7 +35,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash["oat_hwst_high"] = 95.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.76, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.76, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2)
   end
   
@@ -43,7 +43,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end
   
@@ -51,7 +51,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingDXSingleSpeed"=>1, "CoilCoolingDXSingleSpeed"=>1}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end  
   
@@ -59,7 +59,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2)
   end
   
@@ -67,7 +67,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2)
   end  
   
@@ -75,7 +75,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end
   
@@ -83,7 +83,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
@@ -91,7 +91,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"FanOnOff"=>2, "AirConditionerVariableRefrigerantFlow"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_MSHP.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)
   end
   
@@ -99,7 +99,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"CoilHeatingGas"=>1}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 3)
   end  
   
@@ -107,7 +107,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Furnace_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end
   
@@ -115,7 +115,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end  
   
@@ -123,7 +123,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end  
 
@@ -131,7 +131,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end
   
@@ -139,7 +139,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"BoilerHotWater"=>1, "PumpConstantSpeed"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "SetpointManagerScheduled"=>1, "CoilHeatingWaterBaseboard"=>2, "PlantLoop"=>1}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_Boiler_RoomAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end
   
@@ -147,7 +147,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
   end  
 
@@ -156,7 +156,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>num_units*2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>num_units*2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*2)
   end
 
@@ -165,7 +165,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>num_units, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>num_units, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
-    expected_values = {"supplemental_efficiency"=>0.8, "NominalCapacity"=>"AutoSize", "FuelType"=>Constants.FuelTypeElectric}
+    expected_values = {"Efficiency"=>0.8, "FuelType"=>Constants.FuelTypeElectric}
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*1)
   end  
   
@@ -260,7 +260,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
             next if not new_object.respond_to?("to_#{obj_type}")
             new_object = new_object.public_send("to_#{obj_type}").get
             if obj_type == "BoilerHotWater"
-              assert_in_epsilon(expected_values["supplemental_efficiency"], new_object.nominalThermalEfficiency, 0.01)
+              assert_in_epsilon(expected_values["Efficiency"], new_object.nominalThermalEfficiency, 0.01)
               assert_equal(HelperMethods.eplus_fuel_map(expected_values["FuelType"]), new_object.fuelType)
               if new_object.nominalCapacity.is_initialized
                 assert_in_epsilon(expected_values["NominalCapacity"], new_object.nominalCapacity.get, 0.01)

@@ -8,7 +8,7 @@ require "#{File.dirname(__FILE__)}/resources/weather"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 
 # start the measure
-class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
+class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserScript
 
   class Curves
     def initialize
@@ -29,7 +29,7 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return "This measure removes any existing HVAC components from the building and adds a ground heat exchanger along with variable speed pump and water to air heat pump coils to a condenser plant loop. For multifamily buildings, the ground heat exchanger can be set for all units of the building."
+    return "This measure removes any existing HVAC components from the building and adds a ground heat exchanger along with variable speed pump and water to air heat pump coils to a condenser plant loop. For multifamily buildings, the supply components on the plant loop can be set for all units of the building."
   end
 
   # human readable description of modeling approach
@@ -470,6 +470,19 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
       return false
     end
     
+    model.getScheduleConstants.each do |sch|
+      next unless sch.name.to_s == "SupplyFanAvailability" or sch.name.to_s == "SupplyFanOperation"
+      sch.remove
+    end    
+    
+    supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
+    supply_fan_availability.setName("SupplyFanAvailability")
+    supply_fan_availability.setValue(1)
+    
+    supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
+    supply_fan_operation.setName("SupplyFanOperation")
+    supply_fan_operation.setValue(0)
+    
     units.each do |unit|
     
       obj_name = Constants.ObjectNameGroundSourceHeatPumpVerticalBore(unit.name.to_s)
@@ -499,7 +512,7 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
         gshp_Heat_Power_fT_coeff << 0        
         
         htg_coil = OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit.new(model)
-        htg_coil.setName(obj_name + " htg coil")
+        htg_coil.setName(obj_name + " heating coil")
         htg_coil.setRatedWaterFlowRate(OpenStudio::OptionalDouble.new(OpenStudio::convert(loop_flow,"gal/min","m^3/s").get))
         htg_coil.setRatedHeatingCapacity(OpenStudio::OptionalDouble.new(OpenStudio::convert(gshp_capacity,"Btu/h","W").get))
         htg_coil.setRatedHeatingCoefficientofPerformance(1.0 / supply.HeatingEIR[0])
@@ -549,7 +562,7 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
         gshp_Cool_Power_fT_coeff << 0        
         
         clg_coil = OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit.new(model)
-        clg_coil.setName(obj_name + " clg coil")
+        clg_coil.setName(obj_name + " cooling coil")
         clg_coil.setRatedWaterFlowRate(OpenStudio::convert(loop_flow,"gal/min","m^3/s").get)
         clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(gshp_capacity,"Btu/h","W").get)
         clg_coil.setRatedSensibleCoolingCapacity(OpenStudio::convert(gshp_capacity,"Btu/h","W").get * supply.SHR_Rated[0])
@@ -573,25 +586,17 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setRatioofInitialMoistureEvaporationRateandSteadyStateLatentCapacity(1.5)
           
         plant_loop.addDemandBranchForComponent(clg_coil)
-          
-        supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
-        supply_fan_availability.setName("SupplyFanAvailability")
-        supply_fan_availability.setValue(1)
 
         fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
-        fan.setName("#{control_zone.name} Supply Fan")
+        fan.setName(obj_name + " #{control_zone.name} supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACFan)
         fan.setFanEfficiency(supply.eff)
         fan.setPressureRise(supply.static)
         fan.setMotorEfficiency(1)
         fan.setMotorInAirstreamFraction(1)
-        
-        supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
-        supply_fan_operation.setName("SupplyFanOperation")
-        supply_fan_operation.setValue(0)
           
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " forced air")
+        air_loop_unitary.setName(obj_name + " unitary system")
         air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         air_loop_unitary.setSupplyFan(fan)
         air_loop_unitary.setHeatingCoil(htg_coil)
@@ -604,7 +609,7 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air")
+        air_loop.setName(obj_name + " central air system")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -612,25 +617,25 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
         
         air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added on/off fan '#{fan.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-        runner.registerInfo("Added DX cooling coil '#{clg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-        runner.registerInfo("Added DX heating coil '#{htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")
-        runner.registerInfo("Added electric heating coil '#{supp_htg_coil.name}' to branch '#{air_loop_unitary.name}' of air loop '#{air_loop.name}'")    
+        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")    
         
         air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
         
         zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName(obj_name + " splitter")
+        zone_splitter.setName(obj_name + " zone splitter")
         
         zone_mixer = air_loop.zoneMixer
-        zone_mixer.setName(obj_name + " mixer")
+        zone_mixer.setName(obj_name + " zone mixer")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_living.setName("#{control_zone.name} direct air")
+        diffuser_living.setName(obj_name + " #{control_zone.name} direct air")
         air_loop.addBranchForZone(control_zone, diffuser_living.to_StraightComponent)
 
         air_loop.addBranchForZone(control_zone)
-        runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{control_zone.name}' of #{unit.name.to_s}")
+        runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
 
         slave_zones.each do |slave_zone|
 
@@ -638,11 +643,11 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
           HVAC.remove_existing_hvac_equipment(model, runner, "Ground Source Heat Pump Vertical Bore", slave_zone)
       
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-          diffuser_fbsmt.setName("#{slave_zone.name} direct air")
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
 
           air_loop.addBranchForZone(slave_zone)
-          runner.registerInfo("Added air loop '#{air_loop.name}' to thermal zone '#{slave_zone.name}' of #{unit.name.to_s}")
+          runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
 
         end        
       
@@ -1043,4 +1048,4 @@ class ProcessGroundSourceHP < OpenStudio::Ruleset::ModelUserScript
 end
 
 # register the measure to be used by the application
-ProcessGroundSourceHP.new.registerWithApplication
+ProcessGroundSourceHeatPumpVerticalBore.new.registerWithApplication

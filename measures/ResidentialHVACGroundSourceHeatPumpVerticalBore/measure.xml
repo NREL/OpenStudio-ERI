@@ -1,13 +1,13 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>process_ground_source_hp</name>
+  <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>3d6e4786-29ac-4bc8-94b7-7070542bd766</version_id>
-  <version_modified>20170111T230945Z</version_modified>
+  <version_id>494c1cba-6b9d-4807-ab62-0ed8f97d9fa7</version_id>
+  <version_modified>20170116T200553Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
-  <class_name>ProcessGroundSourceHP</class_name>
+  <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
-  <description>This measure removes any existing HVAC components from the building and adds a ground heat exchanger along with variable speed pump and water to air heat pump coils to a condenser plant loop. For multifamily buildings, the ground heat exchanger can be set for all units of the building.</description>
+  <description>This measure removes any existing HVAC components from the building and adds a ground heat exchanger along with variable speed pump and water to air heat pump coils to a condenser plant loop. For multifamily buildings, the supply components on the plant loop can be set for all units of the building.</description>
   <modeler_description>Any supply components or baseboard convective electrics/waters are removed from any existing air/plant loops or zones. A ground heat exchanger along with variable speed pump and water to air heat pump coils are added to a condenser plant loop.</modeler_description>
   <arguments>
     <argument>
@@ -538,22 +538,10 @@
       <checksum>DC36E8B8</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>866A1677</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>078F0169</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>92D6C640</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -578,12 +566,6 @@
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
       <checksum>E23378AA</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>50C4FC1A</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
@@ -682,22 +664,34 @@
       <checksum>A496B9F0</checksum>
     </file>
     <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>25D1A1CB</checksum>
+    </file>
+    <file>
       <filename>process_ground_source_heat_pump_vertical_bore_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D94A8597</checksum>
+      <checksum>3EB0DAA6</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C4508B02</checksum>
+      <checksum>7B66C4BA</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1128DC50</checksum>
+      <checksum>6961F6CA</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>76C55B95</checksum>
     </file>
     <file>
       <version>
@@ -708,7 +702,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5A21986B</checksum>
+      <checksum>BE515790</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
     </file>
   </files>
 </measure>

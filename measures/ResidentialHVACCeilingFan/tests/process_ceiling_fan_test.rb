@@ -5,7 +5,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ResidentialCeilingFanTest < MiniTest::Test
+class ProcessCeilingFanTest < MiniTest::Test
   
   def test_argument_error_mult_negative
     args_hash = {}
@@ -91,7 +91,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
   
   def _test_error(osm_file_or_model, args_hash)
     # create an instance of the measure
-    measure = ResidentialCeilingFan.new
+    measure = ProcessCeilingFan.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -124,7 +124,7 @@ class ResidentialCeilingFanTest < MiniTest::Test
   
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
-    measure = ResidentialCeilingFan.new
+    measure = ProcessCeilingFan.new
 
     # check for standard methods
     assert(!measure.name.empty?)

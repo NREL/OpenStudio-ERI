@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_orientation</name>
   <uid>4bf5a7c5-bce4-404a-bc7b-72dc02b379f8</uid>
-  <version_id>95e1c9d6-c0d1-4e66-934a-0c941e1cb365</version_id>
-  <version_modified>20170111T215236Z</version_modified>
+  <version_id>40dd4a1e-e60c-4cdc-82c0-7e361fc14a25</version_id>
+  <version_modified>20170113T171200Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialOrientation</class_name>
   <display_name>Set Residential Orientation</display_name>
@@ -73,16 +73,28 @@
       <checksum>52E2E0D2</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D5E9DD4A</checksum>
-    </file>
-    <file>
       <filename>create_residential_orientation_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>686F35E7</checksum>
+      <checksum>483E0010</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>74978B7A</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CEEAD320</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>86A38CF7</checksum>
     </file>
   </files>
 </measure>

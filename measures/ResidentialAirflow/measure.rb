@@ -144,7 +144,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
   class Unit
     def initialize
     end    
-    attr_accessor(:unit_num, :num_bedrooms, :num_bathrooms, :is_existing_home, :above_grade_exterior_wall_area, :above_grade_finished_floor_area, :finished_floor_area, :dryer_exhaust, :window_area, :living_zone, :living, :finished_basement_zone, :finished_basement)
+    attr_accessor(:num_bedrooms, :num_bathrooms, :is_existing_home, :above_grade_exterior_wall_area, :above_grade_finished_floor_area, :finished_floor_area, :dryer_exhaust, :window_area, :living_zone, :living, :finished_basement_zone, :finished_basement)
   end  
 
   class NaturalVentilation
@@ -178,7 +178,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
 
   # human readable description
   def description
-    return "Sets (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts."
+    return "Adds (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts."
   end
 
   # human readable description of modeling approach
@@ -843,8 +843,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       unit.num_bedrooms, unit.num_bathrooms = Geometry.get_unit_beds_baths(model, building_unit, runner)
       if unit.num_bedrooms.nil? or unit.num_bathrooms.nil?
         return false
-      end      
-      unit.unit_num = Geometry.get_unit_number(model, building_unit, runner)
+      end
       unit.is_existing_home = is_existing_home
       unit.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(building_unit.spaces, false)
       unit.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(building_unit.spaces, false, runner)
@@ -1436,9 +1435,15 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       if ducts.has_forced_air_equipment  
         
         air_demand_inlet_node = nil
+        supply_fan = nil
         model.getAirLoopHVACs.each do |air_loop|
           next unless air_loop.thermalZones.include? unit.living_zone # get the correct air loop for this unit
           air_demand_inlet_node = air_loop.demandInletNode
+          air_loop.supplyComponents.each do |supply_component|
+            next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+            air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
+            supply_fan = air_loop_unitary.supplyFan.get
+          end
         end
         living_zone_return_air_node = unit.living_zone.returnAirModelObject().get
         
@@ -1586,7 +1591,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     
         fan_rtf_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, fan_runtime_fraction_output_var)
         fan_rtf_sensor.setName(fan_rtf + " sens")
-        fan_rtf_sensor.setKeyName("Supply Fan_#{unit.unit_num}")
+        fan_rtf_sensor.setKeyName(supply_fan.name.to_s)
 
         air_handler_vfr_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_current_density_volume_flow_rate_output_var)
         air_handler_vfr_sensor.setName(air_handler_vfr + " sens")

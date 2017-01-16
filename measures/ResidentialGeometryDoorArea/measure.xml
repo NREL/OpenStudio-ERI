@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>c6a27cc7-1c8f-4988-9e2f-1b9b7301b07b</version_id>
-  <version_modified>20170111T173238Z</version_modified>
+  <version_id>618a026c-9960-403d-b196-53fb3380ac88</version_id>
+  <version_modified>20170116T200537Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
@@ -67,12 +67,6 @@
       <checksum>DC36E8B8</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>866A1677</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -91,22 +85,28 @@
       <checksum>A21F20EB</checksum>
     </file>
     <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C4508B02</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver_ExteriorCorridor.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>0766B312</checksum>
     </file>
     <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7B66C4BA</checksum>
+    </file>
+    <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1128DC50</checksum>
+      <checksum>6961F6CA</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
     </file>
   </files>
 </measure>

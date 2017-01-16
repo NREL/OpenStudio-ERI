@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/util"
 
 # start the measure
-class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
+class ProcessCeilingFan < OpenStudio::Ruleset::ModelUserScript
 
   class Unit
     def initialize
@@ -478,4 +478,4 @@ class ResidentialCeilingFan < OpenStudio::Ruleset::ModelUserScript
 end
 
 # register the measure to be used by the application
-ResidentialCeilingFan.new.registerWithApplication
+ProcessCeilingFan.new.registerWithApplication

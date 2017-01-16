@@ -82,5 +82,15 @@ class UnitConversion
     # I don't know what this means. I just copied it directly out of Global.bmi
     return 0.01*x
   end
+  
+  def self.pint2liter(pints)
+    # pints -> liters
+    return 0.47317647*pints
+  end
+  
+  def self.liter2pint(liters)
+    # liters -> pints
+    return 2.1133764*liters
+  end
     
 end
