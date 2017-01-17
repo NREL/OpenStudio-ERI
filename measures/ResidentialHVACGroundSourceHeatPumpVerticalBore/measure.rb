@@ -42,7 +42,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args = OpenStudio::Ruleset::OSArgumentVector.new
 
     #make a double argument for gshp vert bore cop
-    gshpVertBoreCOP = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreCOP", true)
+    gshpVertBoreCOP = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cop", true)
     gshpVertBoreCOP.setDisplayName("COP")
     gshpVertBoreCOP.setUnits("W/W")
     gshpVertBoreCOP.setDescription("User can use AHRI/ASHRAE ISO 13556-1 rated EER value and convert it to EIR here.")
@@ -50,7 +50,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreCOP
     
     #make a double argument for gshp vert bore eer
-    gshpVertBoreEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreEER", true)
+    gshpVertBoreEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer", true)
     gshpVertBoreEER.setDisplayName("EER")
     gshpVertBoreEER.setUnits("Btu/W-h")
     gshpVertBoreEER.setDescription("This is a measure of the instantaneous energy efficiency of cooling equipment.")
@@ -58,7 +58,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreEER
     
     #make a double argument for gshp vert bore ground conductivity
-    gshpVertBoreGroundCond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreGroundCond", true)
+    gshpVertBoreGroundCond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ground_conductivity", true)
     gshpVertBoreGroundCond.setDisplayName("Ground Conductivity")
     gshpVertBoreGroundCond.setUnits("Btu/hr-ft-R")
     gshpVertBoreGroundCond.setDescription("Conductivity of the ground into which the ground heat exchangers are installed.")
@@ -66,7 +66,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreGroundCond
     
     #make a double argument for gshp vert bore grout conductivity
-    gshpVertBoreGroutCond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreGroutCond", true)
+    gshpVertBoreGroutCond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("grout_conductivity", true)
     gshpVertBoreGroutCond.setDisplayName("Grout Conductivity")
     gshpVertBoreGroutCond.setUnits("Btu/hr-ft-R")
     gshpVertBoreGroutCond.setDescription("Grout is used to enhance heat transfer between the pipe and the ground.")
@@ -82,7 +82,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     config_display_names << Constants.BoreConfigLconfig
     config_display_names << Constants.BoreConfigL2config
     config_display_names << Constants.BoreConfigUconfig
-    gshpVertBoreConfig = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("gshpVertBoreConfig", config_display_names, true)
+    gshpVertBoreConfig = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("bore_config", config_display_names, true)
     gshpVertBoreConfig.setDisplayName("Bore Configuration")
     gshpVertBoreConfig.setDescription("Different types of vertical bore configuration results in different G-functions which captures the thermal response of a bore field.")
     gshpVertBoreConfig.setDefaultValue(Constants.SizingAuto)
@@ -94,7 +94,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     (1..10).to_a.each do |holes|
       holes_display_names << "#{holes}"
     end 
-    gshpVertBoreHoles = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("gshpVertBoreHoles", holes_display_names, true)
+    gshpVertBoreHoles = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("bore_holes", holes_display_names, true)
     gshpVertBoreHoles.setDisplayName("Number of Bore Holes")
     gshpVertBoreHoles.setDescription("Number of vertical bores.")
     gshpVertBoreHoles.setDefaultValue(Constants.SizingAuto)
@@ -103,7 +103,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     #make a string argument for gshp bore depth
     depth_display_names = OpenStudio::StringVector.new
     depth_display_names << Constants.SizingAuto
-    gshpVertBoreDepth = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("gshpVertBoreDepth", depth_display_names, true)
+    gshpVertBoreDepth = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("bore_depth", depth_display_names, true)
     gshpVertBoreDepth.setDisplayName("Bore Depth")
     gshpVertBoreDepth.setUnits("ft")
     gshpVertBoreDepth.setDescription("Vertical well bore depth typically range from 150 to 300 feet deep.")
@@ -111,7 +111,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreDepth    
     
     #make a double argument for gshp vert bore spacing
-    gshpVertBoreSpacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreSpacing", true)
+    gshpVertBoreSpacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("bore_spacing", true)
     gshpVertBoreSpacing.setDisplayName("Bore Spacing")
     gshpVertBoreSpacing.setUnits("ft")
     gshpVertBoreSpacing.setDescription("Bore holes are typically spaced 15 to 20 feet apart.")
@@ -119,7 +119,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreSpacing
     
     #make a double argument for gshp vert bore diameter
-    gshpVertBoreDia = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreDia", true)
+    gshpVertBoreDia = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("bore_diameter", true)
     gshpVertBoreDia.setDisplayName("Bore Diameter")
     gshpVertBoreDia.setUnits("in")
     gshpVertBoreDia.setDescription("Bore hole diameter.")
@@ -127,7 +127,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreDia
     
     #make a double argument for gshp vert bore nominal pipe size
-    gshpVertBorePipeSize = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBorePipeSize", true)
+    gshpVertBorePipeSize = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("pipe_size", true)
     gshpVertBorePipeSize.setDisplayName("Nominal Pipe Size")
     gshpVertBorePipeSize.setUnits("in")
     gshpVertBorePipeSize.setDescription("Pipe nominal size.")
@@ -135,7 +135,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBorePipeSize
     
     #make a double argument for gshp vert bore ground diffusivity
-    gshpVertBoreGroundDiff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreGroundDiff", true)
+    gshpVertBoreGroundDiff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ground_diffusivity", true)
     gshpVertBoreGroundDiff.setDisplayName("Ground Diffusivity")
     gshpVertBoreGroundDiff.setUnits("ft^2/hr")
     gshpVertBoreGroundDiff.setDescription("A measure of thermal inertia, the ground diffusivity is the thermal conductivity divided by density and specific heat capacity.")
@@ -146,14 +146,14 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     fluid_display_names = OpenStudio::StringVector.new
     fluid_display_names << Constants.FluidPropyleneGlycol
     fluid_display_names << Constants.FluidWater
-    gshpVertBoreFluidType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("gshpVertBoreFluidType", fluid_display_names, true)
+    gshpVertBoreFluidType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fluid_type", fluid_display_names, true)
     gshpVertBoreFluidType.setDisplayName("Heat Exchanger Fluid Type")
     gshpVertBoreFluidType.setDescription("Fluid type.")
     gshpVertBoreFluidType.setDefaultValue(Constants.FluidPropyleneGlycol)
     args << gshpVertBoreFluidType
     
     #make a double argument for gshp vert bore frac glycol
-    gshpVertBoreFracGlycol = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreFracGlycol", true)
+    gshpVertBoreFracGlycol = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("frac_glycol", true)
     gshpVertBoreFracGlycol.setDisplayName("Fraction Glycol")
     gshpVertBoreFracGlycol.setUnits("frac")
     gshpVertBoreFracGlycol.setDescription("Fraction of glycol, 0 indicates water.")
@@ -161,7 +161,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreFracGlycol
     
     #make a double argument for gshp vert bore ground loop design delta temp
-    gshpVertBoreDTDesign = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreDTDesign", true)
+    gshpVertBoreDTDesign = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_delta_t", true)
     gshpVertBoreDTDesign.setDisplayName("Ground Loop Design Delta Temp")
     gshpVertBoreDTDesign.setUnits("deg F")
     gshpVertBoreDTDesign.setDescription("Ground loop design temperature difference.")
@@ -169,7 +169,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreDTDesign
     
     #make a double argument for gshp vert bore pump head
-    gshpVertBorePumpHead = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBorePumpHead", true)
+    gshpVertBorePumpHead = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("pump_head", true)
     gshpVertBorePumpHead.setDisplayName("Pump Head")
     gshpVertBorePumpHead.setUnits("ft of water")
     gshpVertBorePumpHead.setDescription("Feet of water column.")
@@ -177,7 +177,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBorePumpHead
     
     #make a double argument for gshp vert bore u tube leg sep
-    gshpVertBoreUTubeLegSep = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreUTubeLegSep", true)
+    gshpVertBoreUTubeLegSep = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("u_tube_leg_spacing", true)
     gshpVertBoreUTubeLegSep.setDisplayName("U Tube Leg Separation")
     gshpVertBoreUTubeLegSep.setUnits("in")
     gshpVertBoreUTubeLegSep.setDescription("U-tube leg spacing.")
@@ -185,14 +185,14 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreUTubeLegSep
     
     #make a double argument for gshp vert bore rated shr
-    gshpVertBoreRatedSHR = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreRatedSHR", true)
+    gshpVertBoreRatedSHR = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("rated_shr", true)
     gshpVertBoreRatedSHR.setDisplayName("Rated SHR")
     gshpVertBoreRatedSHR.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.")
     gshpVertBoreRatedSHR.setDefaultValue(0.732)
     args << gshpVertBoreRatedSHR
     
     #make a double argument for gshp vert bore supply fan power
-    gshpVertBoreSupplyFanPower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gshpVertBoreSupplyFanPower", true)
+    gshpVertBoreSupplyFanPower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_power", true)
     gshpVertBoreSupplyFanPower.setDisplayName("Supply Fan Power")
     gshpVertBoreSupplyFanPower.setUnits("W/cfm")
     gshpVertBoreSupplyFanPower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan.")
@@ -232,24 +232,24 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
       return false
     end
 
-    cop = runner.getDoubleArgumentValue("gshpVertBoreCOP",user_arguments)
-    eer = runner.getDoubleArgumentValue("gshpVertBoreEER",user_arguments)
-    ground_conductivity = runner.getDoubleArgumentValue("gshpVertBoreGroundCond",user_arguments)
-    grout_conductivity = runner.getDoubleArgumentValue("gshpVertBoreGroutCond",user_arguments)
-    bore_config = runner.getStringArgumentValue("gshpVertBoreConfig",user_arguments)
-    bore_holes = runner.getStringArgumentValue("gshpVertBoreHoles",user_arguments)
-    bore_depth = runner.getStringArgumentValue("gshpVertBoreDepth",user_arguments)
-    bore_spacing = runner.getDoubleArgumentValue("gshpVertBoreSpacing",user_arguments)
-    bore_diameter = runner.getDoubleArgumentValue("gshpVertBoreDia",user_arguments)
-    nom_pipe_size = runner.getDoubleArgumentValue("gshpVertBorePipeSize",user_arguments)
-    ground_diffusivity = runner.getDoubleArgumentValue("gshpVertBoreGroundDiff",user_arguments)
-    fluid_type = runner.getStringArgumentValue("gshpVertBoreFluidType",user_arguments)
-    frac_glycol = runner.getDoubleArgumentValue("gshpVertBoreFracGlycol",user_arguments)
-    design_delta_t = runner.getDoubleArgumentValue("gshpVertBoreDTDesign",user_arguments)
-    pump_head = UnitConversion.inH2O2Pa(OpenStudio::convert(runner.getDoubleArgumentValue("gshpVertBorePumpHead",user_arguments),"ft","in").get) # convert from ft H20 to Pascal
-    leg_separation = runner.getDoubleArgumentValue("gshpVertBoreUTubeLegSep",user_arguments)
-    rated_shr = runner.getDoubleArgumentValue("gshpVertBoreRatedSHR",user_arguments)
-    supply_fan_power = runner.getDoubleArgumentValue("gshpVertBoreSupplyFanPower",user_arguments)
+    cop = runner.getDoubleArgumentValue("cop",user_arguments)
+    eer = runner.getDoubleArgumentValue("eer",user_arguments)
+    ground_conductivity = runner.getDoubleArgumentValue("ground_conductivity",user_arguments)
+    grout_conductivity = runner.getDoubleArgumentValue("grout_conductivity",user_arguments)
+    bore_config = runner.getStringArgumentValue("bore_config",user_arguments)
+    bore_holes = runner.getStringArgumentValue("bore_holes",user_arguments)
+    bore_depth = runner.getStringArgumentValue("bore_depth",user_arguments)
+    bore_spacing = runner.getDoubleArgumentValue("bore_spacing",user_arguments)
+    bore_diameter = runner.getDoubleArgumentValue("bore_diameter",user_arguments)
+    nom_pipe_size = runner.getDoubleArgumentValue("pipe_size",user_arguments)
+    ground_diffusivity = runner.getDoubleArgumentValue("ground_diffusivity",user_arguments)
+    fluid_type = runner.getStringArgumentValue("fluid_type",user_arguments)
+    frac_glycol = runner.getDoubleArgumentValue("frac_glycol",user_arguments)
+    design_delta_t = runner.getDoubleArgumentValue("design_delta_t",user_arguments)
+    pump_head = UnitConversion.inH2O2Pa(OpenStudio::convert(runner.getDoubleArgumentValue("pump_head",user_arguments),"ft","in").get) # convert from ft H20 to Pascal
+    leg_separation = runner.getDoubleArgumentValue("u_tube_leg_spacing",user_arguments)
+    rated_shr = runner.getDoubleArgumentValue("rated_shr",user_arguments)
+    supply_fan_power = runner.getDoubleArgumentValue("fan_power",user_arguments)
     gshp_capacity = OpenStudio::convert(runner.getStringArgumentValue("gshp_capacity",user_arguments).split(" ")[0].to_f,"ton","Btu/h").get
     supp_capacity = runner.getStringArgumentValue("supplemental_capacity",user_arguments)
     unless supp_capacity == Constants.SizingAuto

@@ -24,7 +24,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
 
   def test_hardsized_bore_holes_1
     args_hash = {}
-    args_hash["gshpVertBoreHoles"] = "1"
+    args_hash["bore_holes"] = "1"
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>1}
@@ -33,7 +33,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
   
   def test_hardsized_bore_holes_2
     args_hash = {}
-    args_hash["gshpVertBoreHoles"] = "2"
+    args_hash["bore_holes"] = "2"
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>2}
@@ -42,7 +42,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
 
   def test_hardsized_bore_holes_3
     args_hash = {}
-    args_hash["gshpVertBoreHoles"] = "3"
+    args_hash["bore_holes"] = "3"
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>3}
@@ -51,7 +51,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
   
   def test_hardsized_bore_holes_4
     args_hash = {}
-    args_hash["gshpVertBoreHoles"] = "4"
+    args_hash["bore_holes"] = "4"
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>4}
@@ -60,7 +60,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
   
   def test_hardsized_bore_holes_5
     args_hash = {}
-    args_hash["gshpVertBoreHoles"] = "5"
+    args_hash["bore_holes"] = "5"
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>5}
@@ -69,7 +69,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
   
   def test_new_construction_frac_glycol_zero
     args_hash = {}
-    args_hash["gshpVertBoreFracGlycol"] = 0
+    args_hash["frac_glycol"] = 0
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>7}
@@ -78,7 +78,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
 
   def test_new_construction_pipe_1_in
     args_hash = {}
-    args_hash["gshpVertBorePipeSize"] = 1
+    args_hash["pipe_size"] = 1
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>6}
@@ -87,7 +87,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
 
   def test_new_construction_pipe_1_25_in
     args_hash = {}
-    args_hash["gshpVertBorePipeSize"] = 1.25
+    args_hash["pipe_size"] = 1.25
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>5}
@@ -96,7 +96,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
   
   def test_new_construction_bore_config_L
     args_hash = {}
-    args_hash["gshpVertBoreConfig"] = Constants.BoreConfigLconfig
+    args_hash["bore_config"] = Constants.BoreConfigLconfig
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>6}
