@@ -771,7 +771,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         supply.Capacity_Ratio_Cooling[i] = cap_min_per + i*(cap_max_per - cap_min_per)/(cops_Norm.length-1)
         supply.CoolingCFMs[i]= cfm_ton_min + i*(cfm_ton_max - cfm_ton_min)/(cops_Norm.length-1)
         
-        # Calculate the SHR for each speed. Use mimnimum value of 0.98 to prevent E+ bypass factor calculation errors
+        # Calculate the SHR for each speed. Use minimum value of 0.98 to prevent E+ bypass factor calculation errors
         supply.SHR_Rated[i] = [Psychrometrics.CalculateSHR(dB_rated, wB_rated, Constants.Patm, 
                                                                    OpenStudio::convert(supply.Capacity_Ratio_Cooling[i],"ton","kBtu/h").get, 
                                                                    supply.CoolingCFMs[i], ao), 0.98].min
@@ -799,7 +799,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         error = coolingSEER - calc_SEER_VariableSpeed(runner, eers_Rated, c_d, supply.Capacity_Ratio_Cooling, supply.CoolingCFMs, fanPowsRated, 
                                                      true, curves.Number_Speeds, curves)
         
-        cop_maxSpeed,cvg,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2 = HelperMethods.Iterate(cop_maxSpeed,error,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2,n,cvg)
+        cop_maxSpeed,cvg,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2 = MathTools.Iterate(cop_maxSpeed,error,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2,n,cvg)
     
         if cvg 
             break
@@ -851,20 +851,20 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     end
 
     eir_A2 = HVAC.calc_EIR_from_EER(eer_A[n_max], supplyFanPower_Rated[n_max])    
-    eir_B2 = eir_A2 * HelperMethods.biquadratic(wBin, tout_B, curves.COOL_EIR_FT_SPEC_coefficients[n_max]) 
+    eir_B2 = eir_A2 * MathTools.biquadratic(wBin, tout_B, curves.COOL_EIR_FT_SPEC_coefficients[n_max]) 
     
     eir_Av = HVAC.calc_EIR_from_EER(eer_A[n_int], supplyFanPower_Rated[n_int])    
-    eir_Ev = eir_Av * HelperMethods.biquadratic(wBin, tout_E, curves.COOL_EIR_FT_SPEC_coefficients[n_int])
+    eir_Ev = eir_Av * MathTools.biquadratic(wBin, tout_E, curves.COOL_EIR_FT_SPEC_coefficients[n_int])
     
     eir_A1 = HVAC.calc_EIR_from_EER(eer_A[n_min], supplyFanPower_Rated[n_min])
-    eir_B1 = eir_A1 * HelperMethods.biquadratic(wBin, tout_B, curves.COOL_EIR_FT_SPEC_coefficients[n_min]) 
-    eir_F1 = eir_A1 * HelperMethods.biquadratic(wBin, tout_F, curves.COOL_EIR_FT_SPEC_coefficients[n_min])
+    eir_B1 = eir_A1 * MathTools.biquadratic(wBin, tout_B, curves.COOL_EIR_FT_SPEC_coefficients[n_min]) 
+    eir_F1 = eir_A1 * MathTools.biquadratic(wBin, tout_F, curves.COOL_EIR_FT_SPEC_coefficients[n_min])
     
     q_A2 = capacityRatio[n_max]
-    q_B2 = q_A2 * HelperMethods.biquadratic(wBin, tout_B, curves.COOL_CAP_FT_SPEC_coefficients[n_max])    
-    q_Ev = capacityRatio[n_int] * HelperMethods.biquadratic(wBin, tout_E, curves.COOL_CAP_FT_SPEC_coefficients[n_int])            
-    q_B1 = capacityRatio[n_min] * HelperMethods.biquadratic(wBin, tout_B, curves.COOL_CAP_FT_SPEC_coefficients[n_min])
-    q_F1 = capacityRatio[n_min] * HelperMethods.biquadratic(wBin, tout_F, curves.COOL_CAP_FT_SPEC_coefficients[n_min])
+    q_B2 = q_A2 * MathTools.biquadratic(wBin, tout_B, curves.COOL_CAP_FT_SPEC_coefficients[n_max])    
+    q_Ev = capacityRatio[n_int] * MathTools.biquadratic(wBin, tout_E, curves.COOL_CAP_FT_SPEC_coefficients[n_int])            
+    q_B1 = capacityRatio[n_min] * MathTools.biquadratic(wBin, tout_B, curves.COOL_CAP_FT_SPEC_coefficients[n_min])
+    q_F1 = capacityRatio[n_min] * MathTools.biquadratic(wBin, tout_F, curves.COOL_CAP_FT_SPEC_coefficients[n_min])
             
     q_A2_net = q_A2 - supplyFanPower_Rated[n_max] * OpenStudio::convert(1,"W","Btu/h").get * cfm_Tons[n_max] / OpenStudio::convert(1,"ton","Btu/h").get
     q_B2_net = q_B2 - supplyFanPower_Rated[n_max] * OpenStudio::convert(1,"W","Btu/h").get * cfm_Tons[n_max] / OpenStudio::convert(1,"ton","Btu/h").get       
@@ -994,7 +994,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         
         error = heatingHSPF - calc_HSPF_VariableSpeed(runner, cops_Rated, c_d, supply.Capacity_Ratio_Heating, supply.CoolingCFMs, fanPowsRated, min_T, curves.Number_Speeds, mshp_capacity_retention_fraction, mshp_capacity_retention_temperature, curves)  
 
-        cop_maxSpeed,cvg,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2 = HelperMethods.Iterate(cop_maxSpeed,error,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2,n,cvg)
+        cop_maxSpeed,cvg,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2 = MathTools.Iterate(cop_maxSpeed,error,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2,n,cvg)
     
         if cvg
             break
@@ -1012,7 +1012,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
 
     curves.HEAT_CLOSS_FPLR_SPEC_coefficients = [(1 - c_d), c_d, 0]    # Linear part load model
             
-    # Supply Air Tempteratures     
+    # Supply Air Temperatures     
     supply.htg_supply_air_temp = 105.0 # used for sizing heating flow rate
     supply.supp_htg_max_supply_temp = 200.0 # Setting to 200F since MSHPs use electric baseboard for backup, which shouldn't be limited by a supply air temperature limit
     supply.min_hp_temp = min_T          # Minimum temperature for Heat Pump operation
@@ -1045,21 +1045,21 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     end
     
     eir_H1_2 = HVAC.calc_EIR_from_COP(cop_47[n_max], supplyFanPower_Rated[n_max])    
-    eir_H3_2 = eir_H1_2 * HelperMethods.biquadratic(tin, tout_3, curves.HEAT_EIR_FT_SPEC_coefficients[n_max])
+    eir_H3_2 = eir_H1_2 * MathTools.biquadratic(tin, tout_3, curves.HEAT_EIR_FT_SPEC_coefficients[n_max])
 
     eir_adjv = HVAC.calc_EIR_from_COP(cop_47[n_int], supplyFanPower_Rated[n_int])    
-    eir_H2_v = eir_adjv * HelperMethods.biquadratic(tin, tout_2, curves.HEAT_EIR_FT_SPEC_coefficients[n_int])
+    eir_H2_v = eir_adjv * MathTools.biquadratic(tin, tout_2, curves.HEAT_EIR_FT_SPEC_coefficients[n_int])
         
     eir_H1_1 = HVAC.calc_EIR_from_COP(cop_47[n_min], supplyFanPower_Rated[n_min])
-    eir_H0_1 = eir_H1_1 * HelperMethods.biquadratic(tin, tout_0, curves.HEAT_EIR_FT_SPEC_coefficients[n_min])
+    eir_H0_1 = eir_H1_1 * MathTools.biquadratic(tin, tout_0, curves.HEAT_EIR_FT_SPEC_coefficients[n_min])
         
     q_H1_2 = capacityRatio[n_max]
-    q_H3_2 = q_H1_2 * HelperMethods.biquadratic(tin, tout_3, curves.HEAT_CAP_FT_SPEC_coefficients[n_max])    
+    q_H3_2 = q_H1_2 * MathTools.biquadratic(tin, tout_3, curves.HEAT_CAP_FT_SPEC_coefficients[n_max])    
         
-    q_H2_v = capacityRatio[n_int] * HelperMethods.biquadratic(tin, tout_2, curves.HEAT_CAP_FT_SPEC_coefficients[n_int])
+    q_H2_v = capacityRatio[n_int] * MathTools.biquadratic(tin, tout_2, curves.HEAT_CAP_FT_SPEC_coefficients[n_int])
     
     q_H1_1 = capacityRatio[n_min]
-    q_H0_1 = q_H1_1 * HelperMethods.biquadratic(tin, tout_0, curves.HEAT_CAP_FT_SPEC_coefficients[n_min])
+    q_H0_1 = q_H1_1 * MathTools.biquadratic(tin, tout_0, curves.HEAT_CAP_FT_SPEC_coefficients[n_min])
                                   
     q_H1_2_net = q_H1_2 + supplyFanPower_Rated[n_max] * OpenStudio::convert(1,"W","Btu/h").get * cfm_Tons[n_max] / OpenStudio::convert(1,"ton","Btu/h").get
     q_H3_2_net = q_H3_2 + supplyFanPower_Rated[n_max] * OpenStudio::convert(1,"W","Btu/h").get * cfm_Tons[n_max] / OpenStudio::convert(1,"ton","Btu/h").get

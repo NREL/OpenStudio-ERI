@@ -986,7 +986,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
     geometry.stories = Geometry.get_building_stories(model.getSpaces)
     geometry.num_units = units.size
     geometry.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
-    geometry.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(model.getSpaces, false)
+    geometry.above_grade_exterior_wall_area = Geometry.calculate_above_grade_exterior_wall_area(model.getSpaces, false)
     
     garage_thermal_zone = nil
     ufbasement_thermal_zone = nil
@@ -1066,7 +1066,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
       unit = Unit.new
       unit.num_bedrooms = nbeds
       unit.num_bathrooms = nbaths
-      unit.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(unit_spaces, false)
+      unit.above_grade_exterior_wall_area = Geometry.calculate_above_grade_exterior_wall_area(unit_spaces, false)
       unit.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(unit_spaces, false, runner)
       unit.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(unit_spaces, false, runner)
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)

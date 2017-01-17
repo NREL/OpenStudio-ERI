@@ -13,6 +13,7 @@ ResidentialConstructionsCeilingsRoofsRoofingMaterial,SFD_2000sqft_2story_SL_UA.o
 ResidentialConstructionsCeilingsRoofsSheathing,SFD_2000sqft_2story_SL_UA.osw,SFD_2000sqft_2story_SL_FA_AllLayersButRoofSheathing.osw,,,,,,,,,,,,,,,,
 ResidentialConstructionsCeilingsRoofsThermalMass,SFD_2000sqft_2story_SL_UA.osw,SFD_2000sqft_2story_SL_UA_AllLayersButCeilingThermalMass.osw,,,,,,,,,,,,,,,,
 ResidentialConstructionsCeilingsRoofsUnfinishedAttic,,,,,,,,,,,,,,,,,,
+ResidentialConstructionsDoors,,,,,,,,,,,,,,,,,,
 ResidentialConstructionsFoundationsFloorsBasementFinished,SFD_2000sqft_2story_CS_GRG_UA.osw,SFD_2000sqft_2story_CS_UA.osw,SFD_2000sqft_2story_FB_GRG_UA.osw,SFD_2000sqft_2story_FB_UA.osw,SFD_2000sqft_2story_PB_UA.osw,SFD_2000sqft_2story_SL_GRG_UA.osw,SFD_2000sqft_2story_SL_UA.osw,SFD_2000sqft_2story_UB_GRG_UA.osw,SFD_2000sqft_2story_UB_UA.osw,,,,,,,,,
 ResidentialConstructionsFoundationsFloorsBasementUnfinished,SFD_2000sqft_2story_CS_GRG_UA.osw,SFD_2000sqft_2story_CS_UA.osw,SFD_2000sqft_2story_FB_GRG_UA.osw,SFD_2000sqft_2story_FB_UA.osw,SFD_2000sqft_2story_PB_UA.osw,SFD_2000sqft_2story_SL_GRG_UA.osw,SFD_2000sqft_2story_SL_UA.osw,SFD_2000sqft_2story_UB_GRG_UA.osw,SFD_2000sqft_2story_UB_UA.osw,,,,,,,,,
 ResidentialConstructionsFoundationsFloorsCovering,,,,,,,,,,,,,,,,,,

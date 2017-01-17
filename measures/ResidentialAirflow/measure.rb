@@ -668,7 +668,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     building.stories = model.getBuilding.standardsNumberOfAboveGroundStories.get
     building.num_units = units.size
     building.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
-    building.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(model.getSpaces, false)    
+    building.above_grade_exterior_wall_area = Geometry.calculate_above_grade_exterior_wall_area(model.getSpaces, false)    
     model.getThermalZones.each do |thermal_zone|
       if thermal_zone.name.to_s.start_with? Constants.GarageZone
         building.garage_zone = thermal_zone
@@ -845,7 +845,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         return false
       end
       unit.is_existing_home = is_existing_home
-      unit.above_grade_exterior_wall_area = Geometry.calculate_exterior_wall_area(building_unit.spaces, false)
+      unit.above_grade_exterior_wall_area = Geometry.calculate_above_grade_exterior_wall_area(building_unit.spaces, false)
       unit.above_grade_finished_floor_area = Geometry.get_above_grade_finished_floor_area_from_spaces(building_unit.spaces, false, runner)
       unit.finished_floor_area = Geometry.get_finished_floor_area_from_spaces(building_unit.spaces, false, runner)
       unit.window_area = Geometry.get_window_area_from_spaces(building_unit.spaces, false)
