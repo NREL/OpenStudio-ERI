@@ -1,0 +1,16 @@
+{
+	"seed_file": "seeds\\EmptySeedModel.osm",
+	"steps": [
+		{
+			"measure_dir_name": "ResidentialGeometrySingleFamilyAttached",
+			"arguments": {
+                "num_units": 4,
+                "foundation_type": "finished basement",
+                "roof_type": "flat"
+            }
+    },
+    {
+			"measure_dir_name": "ResidentialLocation"
+		}    
+	]
+}

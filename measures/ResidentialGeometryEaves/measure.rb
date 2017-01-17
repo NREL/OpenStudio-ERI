@@ -92,7 +92,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
       existing_eaves_depth = 0
     end
     
-    roof_type = determine_roof_type(model.getSurfaces)
+    roof_type = determine_roof_type(model.getSurfaces, model.getBuildingUnits.length)
     
     surfaces_modified = false
     
@@ -955,7 +955,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     return m
   end
 
-  def determine_roof_type(surfaces)
+  def determine_roof_type(surfaces, num_units)
     roof_decks = []
     gable_walls = []
     surfaces.each do |surface|
@@ -966,7 +966,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
         gable_walls << surface
       end
     end
-    if roof_decks.length == 1
+    if roof_decks.length == num_units
       return Constants.RoofTypeFlat
     elsif gable_walls.length > 0
       return Constants.RoofTypeGable

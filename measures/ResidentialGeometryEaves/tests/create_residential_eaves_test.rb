@@ -100,7 +100,43 @@ class CreateResidentialEavesTest < MiniTest::Test
     expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>3}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)       
-  end   
+  end
+  
+  def test_single_family_attached_new_construction_gable_roof_aspect_ratio_two
+    num_units = 4
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*6, "ShadingSurfaceGroup"=>num_units*2}
+    expected_values = {"eaves_depth"=>2}
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+
+  def test_single_family_attached_new_construction_hip_roof_aspect_ratio_two
+    num_units = 4
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>num_units*4}
+    expected_values = {"eaves_depth"=>2}
+    _test_measure("SFA_4units_1story_FB_UA_Denver_HipRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_single_family_attached_new_construction_flat_roof_aspect_ratio_two
+    num_units = 4
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>num_units}
+    expected_values = {"eaves_depth"=>2}
+    _test_measure("SFA_4units_1story_FB_UA_Denver_FlatRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end  
+  
+  def test_multifamily_new_construction_flat_roof_aspect_ratio_two
+    num_units = 8
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>num_units}
+    expected_values = {"eaves_depth"=>2}
+    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
   
   private
   
