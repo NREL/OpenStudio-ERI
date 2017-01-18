@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>63243a11-b439-4381-993e-55d9b07ef0ce</version_id>
-  <version_modified>20170118T000909Z</version_modified>
+  <version_id>1a15783e-287d-41d5-91d3-2310d253617b</version_id>
+  <version_modified>20170118T161516Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -189,12 +189,6 @@
       <checksum>BA676463</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -205,12 +199,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2E35D7F3</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B368FA16</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -235,6 +223,18 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>E90A54AB</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7BF8DC86</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BAAF2AEF</checksum>
     </file>
   </files>
 </measure>

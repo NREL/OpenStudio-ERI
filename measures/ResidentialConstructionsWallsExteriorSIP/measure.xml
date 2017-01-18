@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>289af86d-0491-4fb3-894c-b39ef6773080</version_id>
-  <version_modified>20170118T000858Z</version_modified>
+  <version_id>d9eac390-ad68-43e2-b3ff-b7c52cd06a93</version_id>
+  <version_modified>20170118T161500Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
@@ -132,22 +132,22 @@
       <checksum>36B2871D</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>7BF8DC86</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B368FA16</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E81E792E</checksum>
+      <checksum>BAAF2AEF</checksum>
     </file>
   </files>
 </measure>

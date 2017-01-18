@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_unfinished</name>
   <uid>ebc21070-2d4b-4a2a-bd15-f18bf3e77b49</uid>
-  <version_id>70b701f8-2283-40ef-8e05-e0b24a74e19d</version_id>
-  <version_modified>20170118T000856Z</version_modified>
+  <version_id>24ef10a2-4724-487b-a4df-8f6b529570c8</version_id>
+  <version_modified>20170118T161456Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementUnfinished</class_name>
   <display_name>Set Residential Foundations/Floors - Unfinished Basement Constructions</display_name>
@@ -256,22 +256,22 @@
       <checksum>36B2871D</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>7BF8DC86</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B368FA16</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E81E792E</checksum>
+      <checksum>BAAF2AEF</checksum>
     </file>
   </files>
 </measure>

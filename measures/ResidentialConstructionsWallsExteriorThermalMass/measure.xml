@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_thermal_mass</name>
   <uid>b2da04af-0f9f-4a30-b2a0-cc2dbc20d5aa</uid>
-  <version_id>7eca2c87-515c-4a2b-9cf3-7afbb2b347d9</version_id>
-  <version_modified>20170118T000859Z</version_modified>
+  <version_id>bdf58414-acce-42bb-8036-f5273371f450</version_id>
+  <version_modified>20170118T161500Z</version_modified>
   <xml_checksum>16B68B0C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorThermalMass</class_name>
   <display_name>Set Residential Walls - Exterior Thermal Mass</display_name>
@@ -135,22 +135,22 @@
       <checksum>36B2871D</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>7BF8DC86</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B368FA16</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E81E792E</checksum>
+      <checksum>BAAF2AEF</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>7f43ece7-9d7a-4c46-a79c-99ad04f2a123</version_id>
-  <version_modified>20170118T000900Z</version_modified>
+  <version_id>832dd63d-9f9b-4993-9ba4-7fc73f44601c</version_id>
+  <version_modified>20170118T161503Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -112,12 +112,6 @@
       <checksum>31B4007C</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -129,16 +123,22 @@
       <checksum>29156868</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B368FA16</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7BF8DC86</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BAAF2AEF</checksum>
     </file>
   </files>
 </measure>

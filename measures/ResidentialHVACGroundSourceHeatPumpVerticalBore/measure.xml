@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>edff108e-fa98-4cb8-9a0f-d68342f22474</version_id>
-  <version_modified>20170118T000908Z</version_modified>
+  <version_id>780b52a9-aaf5-40c4-b9b5-1c49acf2ab49</version_id>
+  <version_modified>20170118T161514Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
@@ -646,12 +646,6 @@
       <checksum>76C55B95</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -662,12 +656,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3C131B97</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B368FA16</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
@@ -709,6 +697,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>7781B3F6</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7BF8DC86</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BAAF2AEF</checksum>
     </file>
   </files>
 </measure>

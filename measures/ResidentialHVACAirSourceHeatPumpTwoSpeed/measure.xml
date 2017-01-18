@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_air_source_heat_pump</name>
   <uid>e1fa8fdd-4940-4364-b3ea-3bc6b93ca9c4</uid>
-  <version_id>40eafd9c-1bc4-4f65-b028-0535a4d2d499</version_id>
-  <version_modified>20170118T000905Z</version_modified>
+  <version_id>d93482b6-9ca9-466e-a2a8-a2f136c36763</version_id>
+  <version_modified>20170118T161511Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessTwoSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Two-Speed Air Source Heat Pump</display_name>
@@ -691,18 +691,6 @@
       <checksum>5C6BF81B</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B368FA16</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -725,6 +713,18 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>E90A54AB</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7BF8DC86</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BAAF2AEF</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_pier_beam</name>
   <uid>c47f2fc2-008e-403c-82e6-fd751b4f3b8a</uid>
-  <version_id>a5a6eba7-448c-4782-9dea-7925a1d11aa4</version_id>
-  <version_modified>20170118T000857Z</version_modified>
+  <version_id>f58226b4-3aa5-49a4-a60e-e93ec4b967ac</version_id>
+  <version_modified>20170118T161457Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsPierBeam</class_name>
   <display_name>Set Residential Foundations/Floors - Pier &amp; Beam Construction</display_name>
@@ -84,22 +84,22 @@
       <checksum>3DB0B540</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>7BF8DC86</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B368FA16</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E81E792E</checksum>
+      <checksum>BAAF2AEF</checksum>
     </file>
   </files>
 </measure>
