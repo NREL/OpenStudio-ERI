@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>8dfed1a6-f40a-4079-ba3d-e49effd52f6e</version_id>
-  <version_modified>20170118T161500Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>39c60e53-3634-4a66-8652-2ea82ceb190a</version_id>
+  <version_modified>20170118T174748Z</version_modified>
+  <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorICF</class_name>
   <display_name>Set Residential Walls - ICF Construction</display_name>
   <description>This measure assigns an ICF construction to above-grade exterior walls adjacent to finished space.</description>
@@ -51,7 +51,6 @@
       <default_value>0.076</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>84988276-3e55-4c8d-9121-f9225c299c29</version_id>
-  <version_modified>20170118T161456Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>23a4f63b-c336-4a7c-ae18-1e0dbf608532</version_id>
+  <version_modified>20170118T174747Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
   <description>This measure assigns constructions to the crawlspace ceilings, walls, and floors.</description>
@@ -84,7 +84,6 @@
       <default_value>9.25</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

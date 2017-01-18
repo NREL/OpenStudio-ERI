@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>67e6ac68-8365-4f39-9a7f-fa01f839738d</version_id>
-  <version_modified>20170118T160409Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>8f2821b6-cfc8-407e-8e88-27e0e5454359</version_id>
+  <version_modified>20170118T174748Z</version_modified>
+  <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
   <description>Sets the neighbors (front, back, left, and/or right) of the building for shading purposes. Neighboring buildings will have the same geometry as the model building.</description>
@@ -70,7 +70,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>

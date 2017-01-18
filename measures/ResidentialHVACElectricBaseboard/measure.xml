@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>432da725-0420-4865-950b-e43599b9c999</version_id>
-  <version_modified>20170118T161513Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>9f958dae-f5ec-4e13-ba3b-c346c03ba1a3</version_id>
+  <version_modified>20170118T174751Z</version_modified>
+  <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
   <description>This measure removes any existing electric baseboards from the building and adds electric baseboards. For multifamily buildings, the electric baseboard can be set for all units of the building.</description>
@@ -155,7 +155,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

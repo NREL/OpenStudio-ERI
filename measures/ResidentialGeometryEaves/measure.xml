@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>b1739a8b-7372-466e-892f-65b9382df9a4</version_id>
-  <version_modified>20170118T160409Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>dab1b5ee-6745-4a04-9546-b0deb2cb5fa1</version_id>
+  <version_modified>20170118T174748Z</version_modified>
+  <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
   <description>Sets the eaves for the building.</description>
@@ -40,7 +40,6 @@
       <default_value>2</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>

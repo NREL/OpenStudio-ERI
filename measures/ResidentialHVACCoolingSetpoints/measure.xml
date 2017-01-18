@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>b7fd48c8-f3af-4957-a5ff-fbdecedd2d2c</version_id>
-  <version_modified>20170118T161513Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>d635f500-fb7c-4f20-9fef-2e27dfafa0d0</version_id>
+  <version_modified>20170118T174751Z</version_modified>
+  <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
   <description>This measure creates the cooling season schedules based on weather data, and the cooling setpoint schedules.</description>
@@ -31,7 +31,6 @@
       <default_value>76</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.HVAC Controls</tag>

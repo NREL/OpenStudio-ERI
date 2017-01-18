@@ -186,7 +186,7 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     # _processSystemHydronic
     
     plant_loop = OpenStudio::Model::PlantLoop.new(model)
-    plant_loop.setName("Hydronic Heat Loop")
+    plant_loop.setName(Constants.ObjectNameBoiler(boilerFuelType) + " hydronic heat loop")
     plant_loop.setFluidType("Water")
     plant_loop.setMaximumLoopTemperature(100)
     plant_loop.setMinimumLoopTemperature(0)
@@ -198,7 +198,7 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     loop_sizing.setLoopDesignTemperatureDifference(OpenStudio::convert(20.0,"R","K").get)
     
     pump = OpenStudio::Model::PumpConstantSpeed.new(model)
-    pump.setName("Hydronic Pump")
+    pump.setName(Constants.ObjectNameBoiler(boilerFuelType) + " hydronic pump")
     if boilerOutputCapacity != Constants.SizingAuto
       pump.setRatedFlowRate(OpenStudio::convert(boilerOutputCapacity/20.0/500.0,"gal/min","m^3/s").get)
     end
@@ -208,7 +208,7 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     pump.setPumpControlType("Intermittent")
         
     boiler = OpenStudio::Model::BoilerHotWater.new(model)
-    boiler.setName("Boiler")
+    boiler.setName(Constants.ObjectNameBoiler(boilerFuelType))
     boiler.setFuelType(HelperMethods.eplus_fuel_map(boilerFuelType))
     if boilerOutputCapacity != Constants.SizingAuto
       boiler.setNominalCapacity(OpenStudio::convert(boilerOutputCapacity,"Btu/h","W").get)
@@ -243,7 +243,7 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
        
     if boilerType == Constants.BoilerTypeCondensing and boilerOATResetEnabled
       setpoint_manager_oar = OpenStudio::Model::SetpointManagerOutdoorAirReset.new(model)
-      setpoint_manager_oar.setName("Outdoor Reset")
+      setpoint_manager_oar.setName(Constants.ObjectNameBoiler(boilerFuelType) + " outdoor reset")
       setpoint_manager_oar.setControlVariable("Temperature")
       setpoint_manager_oar.setSetpointatOutdoorLowTemperature(OpenStudio::convert(boilerOATLowHWST,"F","C").get)
       setpoint_manager_oar.setOutdoorLowTemperature(OpenStudio::convert(boilerOATLow,"F","C").get)
@@ -253,11 +253,11 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     end
     
     hydronic_heat_supply_setpoint = OpenStudio::Model::ScheduleConstant.new(model)
-    hydronic_heat_supply_setpoint.setName("Hydronic Heat Supply Setpoint")
+    hydronic_heat_supply_setpoint.setName(Constants.ObjectNameBoiler(boilerFuelType) + " hydronic heat supply setpoint")
     hydronic_heat_supply_setpoint.setValue(OpenStudio::convert(boilerDesignTemp,"F","C").get)    
     
     setpoint_manager_scheduled = OpenStudio::Model::SetpointManagerScheduled.new(model, hydronic_heat_supply_setpoint)
-    setpoint_manager_scheduled.setName("Hydronic Heat Loop Setpoint Manager")
+    setpoint_manager_scheduled.setName(Constants.ObjectNameBoiler(boilerFuelType) + " hydronic heat loop setpoint manager")
     setpoint_manager_scheduled.setControlVariable("Temperature")
     
     pipe_supply_bypass = OpenStudio::Model::PipeAdiabatic.new(model)
