@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>53f383f7-f80b-492a-9899-52dc0ddfcf62</version_id>
-  <version_modified>20170116T205325Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>5d086e02-1161-432f-ba84-a4dcc852bcf3</version_id>
+  <version_modified>20170118T000854Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
   <description>Adds (or replaces) a residential dishwasher with the specified efficiency, operation, and schedule. For multifamily buildings, the dishwasher can be set for all units of the building.</description>
@@ -146,6 +146,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>
@@ -180,12 +181,6 @@
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
       <checksum>E23378AA</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>078F0169</checksum>
     </file>
     <file>
       <filename>DishwasherSchedule_1bed_unit0.csv</filename>
@@ -488,12 +483,6 @@
       <checksum>91C6AF57</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97B219DD</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -515,18 +504,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BFF023C0</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
@@ -577,16 +554,40 @@
       <checksum>0385FF65</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>25D1A1CB</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3C131B97</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2E35D7F3</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCB12FCF</checksum>
     </file>
   </files>
 </measure>

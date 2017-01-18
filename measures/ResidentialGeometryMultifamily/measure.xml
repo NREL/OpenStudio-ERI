@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>7bd23637-aa5e-4ea8-bbc4-dea0d7a6ca9c</version_id>
-  <version_modified>20170117T184013Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>02f5aa0f-c77f-452c-9ec5-d1258943fbcd</version_id>
+  <version_modified>20170118T000900Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
   <description>Sets the basic geometry for the building.</description>
@@ -218,6 +218,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -257,12 +258,6 @@
       <checksum>0D1D64A4</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
       <filename>create_residential_multifamily_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -279,6 +274,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

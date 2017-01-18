@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_fireplace</name>
   <uid>0565d3b2-593b-480b-a742-a6ec7058d3c4</uid>
-  <version_id>f8dba018-d6bc-4f7a-800c-34a342c40ac7</version_id>
-  <version_modified>20170116T205329Z</version_modified>
-  <xml_checksum>25A40D75</xml_checksum>
+  <version_id>f9228143-5156-461a-a388-4f1f420cf77f</version_id>
+  <version_modified>20170118T000910Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialGasFireplace</class_name>
   <display_name>Set Residential Gas Fireplace</display_name>
   <description>Adds (or replaces) a residential gas fireplace with the specified efficiency and schedule. For multifamily buildings, the fireplace can be set for all units of the building.</description>
@@ -91,6 +91,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Gas Equipment</tag>
@@ -124,12 +125,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C3399417</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -166,6 +161,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

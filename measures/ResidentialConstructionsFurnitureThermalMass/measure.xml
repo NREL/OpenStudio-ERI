@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>57185250-f9db-4d64-89c8-9b2c823ecaf9</version_id>
-  <version_modified>20170116T205325Z</version_modified>
-  <xml_checksum>1E963D9C</xml_checksum>
+  <version_id>2451bc8e-3fed-43a5-9609-bc736d725fdd</version_id>
+  <version_modified>20170118T000857Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>
   <description>Adds (or replaces) furniture mass to finished and unfinished spaces.</description>
@@ -69,6 +69,7 @@
       <default_value>0.29</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -98,22 +99,22 @@
       <checksum>0633DD73</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
+      <checksum>B368FA16</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

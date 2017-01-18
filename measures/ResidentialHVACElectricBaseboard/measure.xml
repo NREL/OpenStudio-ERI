@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>a931757c-f94a-44df-b857-eba03efa88dd</version_id>
-  <version_modified>20170116T205329Z</version_modified>
-  <xml_checksum>0DA5C9E6</xml_checksum>
+  <version_id>babb26c9-47f4-4037-9ef6-b0994b1d403d</version_id>
+  <version_modified>20170118T000907Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
   <description>This measure removes any existing electric baseboards from the building and adds electric baseboards. For multifamily buildings, the electric baseboard can be set for all units of the building.</description>
@@ -155,6 +155,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -172,18 +173,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
@@ -293,18 +282,6 @@
       <checksum>86A38CF7</checksum>
     </file>
     <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -332,6 +309,30 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E90A54AB</checksum>
     </file>
   </files>
 </measure>

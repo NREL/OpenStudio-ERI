@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>a4cdd2ee-8bf5-43b5-bd18-ef10df11cb4b</version_id>
-  <version_modified>20170116T205325Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>eecc63cf-d00b-4224-a0c6-738f18463b14</version_id>
+  <version_modified>20170118T000853Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>
   <description>Adds (or replaces) a residential clothes dryer with the specified efficiency, operation, and schedule. For multifamily buildings, the clothes dryer can be set for all units of the building.</description>
@@ -102,6 +102,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>
@@ -135,12 +136,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>E8B03B30</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -189,6 +184,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

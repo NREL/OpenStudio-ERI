@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_vrf_minisplit</name>
   <uid>402b168f-ed99-46bb-b367-103937011e91</uid>
-  <version_id>91eae3a5-c34e-425b-87c7-80222d239f21</version_id>
-  <version_modified>20170116T205329Z</version_modified>
-  <xml_checksum>470FC630</xml_checksum>
+  <version_id>d081b37a-228f-4c68-a31f-137018b31f85</version_id>
+  <version_modified>20170118T000908Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessVRFMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a mini-split heat pump. For multifamily buildings, the mini-split heat pump can be set for all units of the building.</description>
@@ -412,6 +412,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -439,24 +440,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>078F0169</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
@@ -560,45 +543,16 @@
       <checksum>A496B9F0</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>25D1A1CB</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>86A38CF7</checksum>
     </file>
     <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>76C55B95</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.12.4</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>7543EA48</checksum>
     </file>
     <file>
       <filename>process_mini_split_heat_pump_test.rb</filename>
@@ -611,6 +565,53 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3C131B97</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCB12FCF</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E90A54AB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.12.4</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>BFEAF309</checksum>
     </file>
   </files>
 </measure>

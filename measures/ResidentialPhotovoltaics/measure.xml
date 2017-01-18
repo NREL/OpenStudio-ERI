@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>c66434f2-2b1d-4b56-ae6a-26097bc9867d</version_id>
-  <version_modified>20170116T205329Z</version_modified>
-  <xml_checksum>1BFC8ABF</xml_checksum>
+  <version_id>285375aa-9390-4122-949a-d68b5e2682f2</version_id>
+  <version_modified>20170118T000911Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
@@ -118,6 +118,7 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Onsite Power Generation.Photovoltaic</tag>
@@ -146,18 +147,6 @@
   </attributes>
   <files>
     <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>078F0169</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97B219DD</checksum>
-    </file>
-    <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
       <usage_type>test</usage_type>
@@ -176,46 +165,16 @@
       <checksum>F7F10234</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
       <filename>residential_photovoltaics_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>81A3438C</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>25D1A1CB</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>86A38CF7</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
@@ -239,6 +198,48 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3C131B97</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2E35D7F3</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCB12FCF</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E90A54AB</checksum>
     </file>
   </files>
 </measure>

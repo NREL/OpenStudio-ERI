@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>8328bb5b-2f8f-4786-a43c-abe75acb872e</version_id>
-  <version_modified>20170116T205328Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>1ca28d0c-3d5a-463c-9ff3-44519bbfa415</version_id>
+  <version_modified>20170118T000906Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
   <description>Adds (or replaces) residential ceiling fan(s) and schedule in all finished spaces. For multifamily buildings, the ceiling fan(s) can be set for all units of the building.</description>
@@ -124,6 +124,7 @@
       <default_value>1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -156,18 +157,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C3399417</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
@@ -215,6 +204,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

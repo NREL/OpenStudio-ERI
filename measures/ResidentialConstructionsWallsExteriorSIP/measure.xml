@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>edc5dec6-e620-490f-ac9e-58fe4b66645e</version_id>
-  <version_modified>20170116T205325Z</version_modified>
-  <xml_checksum>2609226D</xml_checksum>
+  <version_id>289af86d-0491-4fb3-894c-b39ef6773080</version_id>
+  <version_modified>20170118T000858Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
   <description>This measure assigns a SIP construction to above-grade exterior walls adjacent to finished space.</description>
@@ -74,6 +74,7 @@
       <default_value>0.44</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -113,18 +114,6 @@
       <checksum>481CD808</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
       <filename>SIP_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -147,6 +136,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

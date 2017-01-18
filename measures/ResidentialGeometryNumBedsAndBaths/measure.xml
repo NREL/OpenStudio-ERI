@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>053b500f-d99b-42d2-97d0-af8c89229931</version_id>
-  <version_modified>20170116T205326Z</version_modified>
+  <version_id>9ec9bf6f-d7bf-4cc2-bb01-bfd66ebf5a43</version_id>
+  <version_modified>20170118T002041Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -57,29 +57,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9B081256</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
       <filename>process_beds_and_baths_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -92,22 +69,45 @@
       <checksum>36B2871D</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>844E2E2D</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
+      <checksum>64B3CADA</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>E90A54AB</checksum>
     </file>
   </files>
 </measure>

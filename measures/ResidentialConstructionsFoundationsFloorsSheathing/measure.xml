@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_sheathing</name>
   <uid>b59d63a5-8d7b-41e2-b290-6d22cdfc0c0c</uid>
-  <version_id>616e629c-5e01-46c7-a67f-e7ff20eadcd2</version_id>
-  <version_modified>20170116T205325Z</version_modified>
-  <xml_checksum>78504A2C</xml_checksum>
+  <version_id>8be71927-86c7-4a6c-bccc-228fd6d1bb99</version_id>
+  <version_modified>20170118T000857Z</version_modified>
+  <xml_checksum>E9AF3981</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSheathing</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Sheathing</display_name>
   <description>This measure assigns floor sheathing to floors of finished spaces, with the exception of foundation slabs.</description>
@@ -41,6 +41,7 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -110,22 +111,22 @@
       <checksum>78BB6ABF</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
+      <checksum>B368FA16</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

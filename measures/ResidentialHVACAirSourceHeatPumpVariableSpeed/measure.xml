@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_air_source_heat_pump</name>
   <uid>8d15f4f7-8bbb-4b2e-b6d0-aa861f22b697</uid>
-  <version_id>b7d75cd9-870d-4bfb-9ecd-10288b144d5b</version_id>
-  <version_modified>20170116T205328Z</version_modified>
-  <xml_checksum>470FC630</xml_checksum>
+  <version_id>b3ca23ac-a5ca-4e8d-aed2-575485eb86d7</version_id>
+  <version_modified>20170118T000905Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessVariableSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Variable-Speed Air Source Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a variable-speed air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the variable-speed air source heat pump can be set for all units of the building.</description>
@@ -643,6 +643,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -670,18 +671,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
@@ -785,28 +774,10 @@
       <checksum>A496B9F0</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>25D1A1CB</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>86A38CF7</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
@@ -836,6 +807,36 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCB12FCF</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E90A54AB</checksum>
     </file>
   </files>
 </measure>

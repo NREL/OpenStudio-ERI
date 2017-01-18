@@ -240,7 +240,7 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
         zone_hvac.setMaximumDryBulbTemperatureforDehumidifierOperation(40)
         
         zone_hvac.addToThermalZone(control_zone)
-        runner.registerInfo("Added dehumidifier '#{zone_hvac.name}' to thermal zone '#{control_zone.name}' of #{unit.name.to_s}")
+        runner.registerInfo("Added dehumidifier '#{zone_hvac.name}' to thermal zone '#{control_zone.name}' of #{unit.name}")
       
       end
     

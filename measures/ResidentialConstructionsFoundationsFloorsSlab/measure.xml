@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>d1be0a0e-a46b-40fa-b388-c93f4fdb6477</version_id>
-  <version_modified>20170116T205325Z</version_modified>
+  <version_id>7ccbf464-e39c-4d02-9e25-b40f342653c0</version_id>
+  <version_modified>20170118T002101Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
@@ -140,18 +140,6 @@
       <checksum>671E3F3C</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
       <filename>Slab_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -216,6 +204,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater_elec</name>
   <uid>05dab71a-88e0-4c98-84c4-232e380b9944</uid>
-  <version_id>64292257-39c5-446d-a077-62e51e3cccf6</version_id>
-  <version_modified>20170116T205329Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>e73c979c-1862-4436-a20f-9dea32b4ee87</version_id>
+  <version_modified>20170118T000910Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotTubHeaterElec</class_name>
   <display_name>Set Residential Hot Tub Electric Heater</display_name>
   <description>Adds (or replaces) a residential hot tub heater with the specified efficiency and schedule. The hot tub is assumed to be outdoors. For multifamily buildings, the hot tub heater is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>
@@ -109,12 +110,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C3399417</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -157,6 +152,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

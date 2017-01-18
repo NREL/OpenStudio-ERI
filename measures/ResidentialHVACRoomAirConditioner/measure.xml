@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>63af333b-802b-45c0-8cdf-eb6b2cc7a4ea</version_id>
-  <version_modified>20170116T205329Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>9c4cf5ce-f734-4a9a-aace-7e5e01f27c05</version_id>
+  <version_modified>20170118T000909Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a room air conditioner. For multifamily buildings, the room air conditioner can be set for all units of the building.</description>
@@ -133,6 +133,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -160,18 +161,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
@@ -281,18 +270,6 @@
       <checksum>86A38CF7</checksum>
     </file>
     <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -320,6 +297,30 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E90A54AB</checksum>
     </file>
   </files>
 </measure>

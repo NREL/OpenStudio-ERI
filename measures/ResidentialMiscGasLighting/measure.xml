@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_lighting</name>
   <uid>6b9211da-6274-4b09-8c76-9edbc85886c0</uid>
-  <version_id>0d3c44f6-9234-4fa1-8bbc-04b7f8d64806</version_id>
-  <version_modified>20170116T205329Z</version_modified>
-  <xml_checksum>25A40D75</xml_checksum>
+  <version_id>75992194-1def-4d11-bbf1-3b19a0e6729b</version_id>
+  <version_modified>20170118T000910Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialGasLighting</class_name>
   <display_name>Set Residential Gas Lighting</display_name>
   <description>Adds (or replaces) residential gas lighting with the specified efficiency and schedule. The lighting is assumed to be outdoors. For multifamily buildings, the lighting is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Gas Equipment</tag>
@@ -109,12 +110,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C3399417</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -151,6 +146,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

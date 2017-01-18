@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>dd5098e4-d837-41ce-9ae3-61d58ae0f354</version_id>
-  <version_modified>20170116T205326Z</version_modified>
-  <xml_checksum>9014E219</xml_checksum>
+  <version_id>86b70b56-9bf6-44a2-abe4-b80e9c5a03c1</version_id>
+  <version_modified>20170118T000901Z</version_modified>
+  <xml_checksum>A02778FF</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
   <description>Sets the window area for the building. Doors with glazing should be set as window area.</description>
@@ -56,6 +56,7 @@
       <default_value>1.333</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>
@@ -110,12 +111,6 @@
       <checksum>26A30D48</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -146,22 +141,28 @@
       <checksum>85893240</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
+      <checksum>64B3CADA</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>E90A54AB</checksum>
     </file>
   </files>
 </measure>

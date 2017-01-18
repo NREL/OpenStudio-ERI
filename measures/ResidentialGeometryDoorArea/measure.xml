@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>4953f4a4-fb78-4162-aa24-684025d5d663</version_id>
-  <version_modified>20170116T205325Z</version_modified>
-  <xml_checksum>9C8A26EB</xml_checksum>
+  <version_id>883a2f24-2b80-4240-a073-914e7435af74</version_id>
+  <version_modified>20170118T000859Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
   <description>Sets the opaque door area for the building. Doors with glazing should be set as window area. For multifamily buildings, door area can be set for all units of the building.</description>
@@ -21,6 +21,7 @@
       <default_value>20</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>
@@ -60,12 +61,6 @@
       <checksum>86B3AF68</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -90,22 +85,28 @@
       <checksum>0766B312</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
+      <checksum>64B3CADA</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3ECF4961</checksum>
+      <checksum>E90A54AB</checksum>
     </file>
   </files>
 </measure>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>9b482b3c-6434-4e24-bbe5-e4b6788c5e0a</version_id>
-  <version_modified>20170116T205325Z</version_modified>
-  <xml_checksum>2609226D</xml_checksum>
+  <version_id>b6ef03b4-0818-4168-9492-aeafc45817fb</version_id>
+  <version_modified>20170118T000858Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSteelStud</class_name>
   <display_name>Set Residential Walls - Steel Stud Construction</display_name>
   <description>This measure assigns a steel stud construction to above-grade exterior walls adjacent to finished space.</description>
@@ -92,6 +92,7 @@
       <default_value>0.46</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -131,18 +132,6 @@
       <checksum>720B948C</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
       <filename>SteelStud_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -165,6 +154,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
     </file>
   </files>
 </measure>

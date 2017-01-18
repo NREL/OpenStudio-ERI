@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer_fuel</name>
   <uid>0ed6fb35-c3e0-4a33-a397-ce4cec92d96e</uid>
-  <version_id>3880347a-bfde-4b5a-b757-14f5411d47d3</version_id>
-  <version_modified>20170116T205325Z</version_modified>
-  <xml_checksum>25A40D75</xml_checksum>
+  <version_id>0b385884-9f7c-49af-b491-3c563234ada6</version_id>
+  <version_modified>20170118T000853Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialClothesDryerFuel</class_name>
   <display_name>Set Residential Fuel Clothes Dryer</display_name>
   <description>Adds (or replaces) a residential clothes dryer with the specified efficiency, operation, and schedule. For multifamily buildings, the clothes dryer can be set for all units of the building.</description>
@@ -131,6 +131,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Gas Equipment</tag>
@@ -164,18 +165,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>6086CD71</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -214,16 +203,28 @@
       <checksum>31B4007C</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>25D1A1CB</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCB12FCF</checksum>
     </file>
   </files>
 </measure>

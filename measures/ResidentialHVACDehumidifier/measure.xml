@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>9f3df4c7-f2cd-4de1-9f04-3bb0052f00b2</version_id>
-  <version_modified>20170116T205329Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>3ae4e80b-1f31-4f74-a525-bcde68bf83e8</version_id>
+  <version_modified>20170118T000907Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
   <description>This measure removes any existing dehumidifiers from the building and adds a dehumidifier. For multifamily buildings, the dehumidifier can be set for all units of the building.</description>
@@ -66,6 +66,7 @@
       <default_value>0.6</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -94,30 +95,6 @@
   </attributes>
   <files>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>25D1A1CB</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -142,6 +119,30 @@
       <checksum>3ECF4961</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCB12FCF</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E90A54AB</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -150,7 +151,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8A77B983</checksum>
+      <checksum>84C50DD0</checksum>
     </file>
   </files>
 </measure>

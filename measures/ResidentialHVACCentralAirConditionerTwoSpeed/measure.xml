@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>572c6388-3162-46ec-b456-d98c94903426</version_id>
-  <version_modified>20170116T205328Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>35847e97-e6ad-4379-9bd4-e407984b167e</version_id>
+  <version_modified>20170118T000906Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a two-speed central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the two-speed central air conditioner can be set for all units of the building.</description>
@@ -284,6 +284,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -311,18 +312,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>108E0E50</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DC36E8B8</checksum>
-    </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
@@ -426,28 +415,10 @@
       <checksum>A496B9F0</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>25D1A1CB</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>86A38CF7</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7B66C4BA</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6961F6CA</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
@@ -477,6 +448,36 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3ECF4961</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B368FA16</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E81E792E</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCB12FCF</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E90A54AB</checksum>
     </file>
   </files>
 </measure>

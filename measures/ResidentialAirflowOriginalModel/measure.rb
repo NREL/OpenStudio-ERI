@@ -2090,10 +2090,8 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
         demand_side_outlet_node_name = nil
         demand_side_inlet_node_names = nil
         workspace.getObjectsByType("AirLoopHVAC".to_IddObjectType).each do |airloop|
-          if airloop.getString(0).to_s.include? "Central Air System_#{unit_num}"
-            demand_side_outlet_node_name = airloop.getString(7).to_s
-            demand_side_inlet_node_names = airloop.getString(8).to_s
-          end
+          demand_side_outlet_node_name = airloop.getString(7).to_s
+          demand_side_inlet_node_names = airloop.getString(8).to_s
         end
         if demand_side_outlet_node_name.nil?
           runner.registerError("Could not find AirLoopHVAC demand side outlet node name.")
