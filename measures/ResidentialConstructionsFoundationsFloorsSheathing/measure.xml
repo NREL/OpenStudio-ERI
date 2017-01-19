@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_sheathing</name>
   <uid>b59d63a5-8d7b-41e2-b290-6d22cdfc0c0c</uid>
-  <version_id>3f235b6e-11a3-49c1-bb4d-ef641293edfe</version_id>
-  <version_modified>20170118T161457Z</version_modified>
-  <xml_checksum>E9AF3981</xml_checksum>
+  <version_id>7823601b-a9dc-4101-a673-0af18aca10e2</version_id>
+  <version_modified>20170118T165742Z</version_modified>
+  <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSheathing</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Sheathing</display_name>
   <description>This measure assigns floor sheathing to floors of finished spaces, with the exception of foundation slabs.</description>
@@ -41,7 +41,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

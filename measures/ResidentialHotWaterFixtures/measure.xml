@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>45a4c019-d294-46ae-ad2b-eda7eda3f246</version_id>
-  <version_modified>20170118T161509Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>86cdde88-3f5c-4288-9122-0c9eb059474a</version_id>
+  <version_modified>20170118T165747Z</version_modified>
+  <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
   <description>Adds (or replaces) residential hot water fixtures -- showers, sinks, and baths. For multifamily buildings, the hot water fixtures can be set for all units of the building.</description>
@@ -68,7 +68,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Water Use</tag>

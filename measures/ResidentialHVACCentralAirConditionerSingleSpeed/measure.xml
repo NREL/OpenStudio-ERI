@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>946a0983-5d48-4e4d-a01f-141560781548</version_id>
-  <version_modified>20170118T161619Z</version_modified>
+  <version_id>dc2300cf-a5f1-4d25-b575-fb8d296f412d</version_id>
+  <version_modified>20170119T184806Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessSingleSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Single-Speed Central Air Conditioner</display_name>
@@ -154,8 +154,10 @@
     </argument>
     <argument>
       <name>capacity</name>
-      <display_name>Cooling Output Capacity</display_name>
+      <display_name>Cooling Capacity</display_name>
+      <description>The output cooling capacity of the air conditioner.</description>
       <type>Choice</type>
+      <units>tons</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>autosize</default_value>
@@ -165,84 +167,84 @@
           <display_name>autosize</display_name>
         </choice>
         <choice>
-          <value>0.5 tons</value>
-          <display_name>0.5 tons</display_name>
+          <value>0.5</value>
+          <display_name>0.5</display_name>
         </choice>
         <choice>
-          <value>1.0 tons</value>
-          <display_name>1.0 tons</display_name>
+          <value>1.0</value>
+          <display_name>1.0</display_name>
         </choice>
         <choice>
-          <value>1.5 tons</value>
-          <display_name>1.5 tons</display_name>
+          <value>1.5</value>
+          <display_name>1.5</display_name>
         </choice>
         <choice>
-          <value>2.0 tons</value>
-          <display_name>2.0 tons</display_name>
+          <value>2.0</value>
+          <display_name>2.0</display_name>
         </choice>
         <choice>
-          <value>2.5 tons</value>
-          <display_name>2.5 tons</display_name>
+          <value>2.5</value>
+          <display_name>2.5</display_name>
         </choice>
         <choice>
-          <value>3.0 tons</value>
-          <display_name>3.0 tons</display_name>
+          <value>3.0</value>
+          <display_name>3.0</display_name>
         </choice>
         <choice>
-          <value>3.5 tons</value>
-          <display_name>3.5 tons</display_name>
+          <value>3.5</value>
+          <display_name>3.5</display_name>
         </choice>
         <choice>
-          <value>4.0 tons</value>
-          <display_name>4.0 tons</display_name>
+          <value>4.0</value>
+          <display_name>4.0</display_name>
         </choice>
         <choice>
-          <value>4.5 tons</value>
-          <display_name>4.5 tons</display_name>
+          <value>4.5</value>
+          <display_name>4.5</display_name>
         </choice>
         <choice>
-          <value>5.0 tons</value>
-          <display_name>5.0 tons</display_name>
+          <value>5.0</value>
+          <display_name>5.0</display_name>
         </choice>
         <choice>
-          <value>5.5 tons</value>
-          <display_name>5.5 tons</display_name>
+          <value>5.5</value>
+          <display_name>5.5</display_name>
         </choice>
         <choice>
-          <value>6.0 tons</value>
-          <display_name>6.0 tons</display_name>
+          <value>6.0</value>
+          <display_name>6.0</display_name>
         </choice>
         <choice>
-          <value>6.5 tons</value>
-          <display_name>6.5 tons</display_name>
+          <value>6.5</value>
+          <display_name>6.5</display_name>
         </choice>
         <choice>
-          <value>7.0 tons</value>
-          <display_name>7.0 tons</display_name>
+          <value>7.0</value>
+          <display_name>7.0</display_name>
         </choice>
         <choice>
-          <value>7.5 tons</value>
-          <display_name>7.5 tons</display_name>
+          <value>7.5</value>
+          <display_name>7.5</display_name>
         </choice>
         <choice>
-          <value>8.0 tons</value>
-          <display_name>8.0 tons</display_name>
+          <value>8.0</value>
+          <display_name>8.0</display_name>
         </choice>
         <choice>
-          <value>8.5 tons</value>
-          <display_name>8.5 tons</display_name>
+          <value>8.5</value>
+          <display_name>8.5</display_name>
         </choice>
         <choice>
-          <value>9.0 tons</value>
-          <display_name>9.0 tons</display_name>
+          <value>9.0</value>
+          <display_name>9.0</display_name>
         </choice>
         <choice>
-          <value>9.5 tons</value>
-          <display_name>9.5 tons</display_name>
+          <value>9.5</value>
+          <display_name>9.5</display_name>
         </choice>
         <choice>
-          <value>10.0 tons</value>
-          <display_name>10.0 tons</display_name>
+          <value>10.0</value>
+          <display_name>10.0</display_name>
         </choice>
       </choices>
     </argument>
@@ -379,12 +381,6 @@
       <checksum>76C55B95</checksum>
     </file>
     <file>
-      <filename>process_single_speed_central_air_conditioner_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C8D04216</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -429,7 +425,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>817B9735</checksum>
+      <checksum>E86F0171</checksum>
+    </file>
+    <file>
+      <filename>process_single_speed_central_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5347CDF9</checksum>
     </file>
   </files>
 </measure>

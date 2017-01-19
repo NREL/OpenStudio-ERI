@@ -10,7 +10,7 @@ class ProcessFurnaceElectricTest < MiniTest::Test
   def test_new_construction_afue_1
     args_hash = {}
     args_hash["afue"] = 1
-    args_hash["capacity"] = "40 kBtu/hr"
+    args_hash["capacity"] = "40"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>1}
     expected_values = {"Efficiency"=>1, "NominalCapacity"=>2*5861.42, "MaximumSupplyAirTemperature"=>48.88}
@@ -19,7 +19,7 @@ class ProcessFurnaceElectricTest < MiniTest::Test
   
   def test_new_construction_fbsmt_afue_0_78
     args_hash = {}
-    args_hash["capacity"] = "20 kBtu/hr"
+    args_hash["capacity"] = "20"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingElectric"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}
     expected_values = {"Efficiency"=>1, "NominalCapacity"=>5861.42, "MaximumSupplyAirTemperature"=>48.88}

@@ -17,8 +17,8 @@ class ProcessSingleSpeedAirSourceHeatPumpTest < MiniTest::Test
   
   def test_new_construction_fbsmt_seer_13_7pt7_hspf
     args_hash = {}
-    args_hash["heat_pump_capacity"] = "3.0 tons"
-    args_hash["supplemental_capacity"] = "20 kBtu/hr"
+    args_hash["heat_pump_capacity"] = "3.0"
+    args_hash["supplemental_capacity"] = "20"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
     expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66}

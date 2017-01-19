@@ -45,10 +45,12 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
-      cap_display_names << "#{kbtu} kBtu/hr"
+      cap_display_names << kbtu.to_s
     end
     baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
-    baseboardcap.setDisplayName("Heating Output Capacity")
+    baseboardcap.setDisplayName("Heating Capacity")
+    baseboardcap.setDescription("The output heating capacity of the electric baseboard.")
+    baseboardcap.setUnits("kBtu/hr")
     baseboardcap.setDefaultValue(Constants.SizingAuto)
     args << baseboardcap
 	
@@ -67,7 +69,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     baseboardEfficiency = runner.getDoubleArgumentValue("efficiency",user_arguments)
     baseboardOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     unless baseboardOutputCapacity == Constants.SizingAuto
-      baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
+      baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
    
     # Remove boiler hot water loop if it exists

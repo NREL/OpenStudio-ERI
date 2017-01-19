@@ -15,7 +15,7 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
 
   def test_new_construction_fbsmt_cop_3_6_eer_16_6
     args_hash = {}
-    args_hash["supplemental_capacity"] = "20 kBtu/hr"
+    args_hash["supplemental_capacity"] = "20"
     expected_num_del_objects = {}
     expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
     expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>6}

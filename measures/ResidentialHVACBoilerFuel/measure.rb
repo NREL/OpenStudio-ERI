@@ -106,10 +106,12 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
-      cap_display_names << "#{kbtu} kBtu/hr"
+      cap_display_names << kbtu.to_s
     end
     boilerOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
-    boilerOutputCapacity.setDisplayName("Heating Output Capacity")
+    boilerOutputCapacity.setDisplayName("Heating Capacity")
+    boilerOutputCapacity.setDescription("The output heating capacity of the boiler.")
+    boilerOutputCapacity.setUnits("kBtu/hr")
     boilerOutputCapacity.setDefaultValue(Constants.SizingAuto)
     args << boilerOutputCapacity  
 
@@ -139,7 +141,7 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     boilerOATLowHWST.is_initialized ? boilerOATLowHWST = boilerOATLowHWST.get : boilerOATLowHWST = nil      
     boilerOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     if not boilerOutputCapacity == Constants.SizingAuto
-      boilerOutputCapacity = OpenStudio::convert(boilerOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
+      boilerOutputCapacity = OpenStudio::convert(boilerOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
     boilerDesignTemp = runner.getDoubleArgumentValue("design_temp",user_arguments)
     

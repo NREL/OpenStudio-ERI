@@ -173,10 +173,12 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (0.5..10.0).step(0.5) do |tons|
-      cap_display_names << "#{tons} tons"
+      cap_display_names << tons.to_s
     end
     miniSplitCoolingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
-    miniSplitCoolingOutputCapacity.setDisplayName("Cooling Output Capacity")
+    miniSplitCoolingOutputCapacity.setDisplayName("Heat Pump Capacity")
+    miniSplitCoolingOutputCapacity.setDescription("The output heating/cooling capacity of the heat pump.")
+    miniSplitCoolingOutputCapacity.setUnits("tons")
     miniSplitCoolingOutputCapacity.setDefaultValue(Constants.SizingAuto)
     args << miniSplitCoolingOutputCapacity
 
@@ -193,10 +195,12 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     cap_display_names << "NO SUPP HEAT"
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
-      cap_display_names << "#{kbtu} kBtu/hr"
+      cap_display_names << kbtu.to_s
     end  
     baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("supplemental_capacity", cap_display_names, true)
-    baseboardcap.setDisplayName("Supplemental Heating Output Capacity")
+    baseboardcap.setDisplayName("Supplemental Heating Capacity")
+    baseboardcap.setDescription("The output heating capacity of the supplemental electric baseboard.")
+    baseboardcap.setUnits("kBtu/hr")
     baseboardcap.setDefaultValue(Constants.SizingAuto)
     args << baseboardcap  
     
@@ -233,13 +237,13 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     miniSplitHPSupplyFanPower = runner.getDoubleArgumentValue("fan_power",user_arguments)
     miniSplitCoolingOutputCapacity = runner.getStringArgumentValue("heat_pump_capacity",user_arguments)
     unless miniSplitCoolingOutputCapacity == Constants.SizingAuto
-      miniSplitCoolingOutputCapacity = OpenStudio::convert(miniSplitCoolingOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
+      miniSplitCoolingOutputCapacity = OpenStudio::convert(miniSplitCoolingOutputCapacity.to_f,"ton","Btu/h").get
       miniSplitHeatingOutputCapacity = miniSplitCoolingOutputCapacity + miniSplitHPHeatingCapacityOffset
     end
     baseboardEfficiency = runner.getDoubleArgumentValue("supplemental_efficiency",user_arguments)
     baseboardOutputCapacity = runner.getStringArgumentValue("supplemental_capacity",user_arguments)
     unless baseboardOutputCapacity == Constants.SizingAuto and not baseboardOutputCapacity == "NO SUPP HEAT"
-      baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
+      baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end    
         
     # _processAirSystem

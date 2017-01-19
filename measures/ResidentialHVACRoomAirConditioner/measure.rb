@@ -66,12 +66,12 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (0.5..10.0).step(0.5) do |tons|
-      cap_display_names << "#{tons} tons"
+      cap_display_names << tons.to_s
     end
-
-    #make a string argument for room air cooling output capacity
     output_capacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
-    output_capacity.setDisplayName("Cooling Output Capacity")
+    output_capacity.setDisplayName("Cooling Capacity")
+    output_capacity.setDescription("The output cooling capacity of the air conditioner.")
+    output_capacity.setUnits("tons")
     output_capacity.setDefaultValue(Constants.SizingAuto)
     args << output_capacity  
 
@@ -95,7 +95,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     supply.coolingCFMs = runner.getDoubleArgumentValue("airflow_rate",user_arguments)
     acOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     unless acOutputCapacity == Constants.SizingAuto
-      acOutputCapacity = OpenStudio::convert(acOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
+      acOutputCapacity = OpenStudio::convert(acOutputCapacity.to_f,"ton","Btu/h").get
     end     
     
     # Performance curves

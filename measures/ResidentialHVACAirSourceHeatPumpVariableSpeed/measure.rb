@@ -362,10 +362,12 @@ class ProcessVariableSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScri
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (0.5..10.0).step(0.5) do |tons|
-      cap_display_names << "#{tons} tons"
+      cap_display_names << tons.to_s
     end
     hpcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
-    hpcap.setDisplayName("Cooling/Heating Output Capacity")
+    hpcap.setDisplayName("Heat Pump Capacity")
+    hpcap.setDescription("The output heating/cooling capacity of the heat pump.")
+    hpcap.setUnits("tons")
     hpcap.setDefaultValue(Constants.SizingAuto)
     args << hpcap
 
@@ -373,10 +375,12 @@ class ProcessVariableSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScri
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
-      cap_display_names << "#{kbtu} kBtu/hr"
+      cap_display_names << kbtu.to_s
     end
     supcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("supplemental_capacity", cap_display_names, true)
-    supcap.setDisplayName("Supplemental Heating Output Capacity")
+    supcap.setDisplayName("Supplemental Heating Capacity")
+    supcap.setDescription("The output heating capacity of the supplemental heater.")
+    supcap.setUnits("kBtu/hr")
     supcap.setDefaultValue(Constants.SizingAuto)
     args << supcap 
     
@@ -421,11 +425,11 @@ class ProcessVariableSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScri
     hpCOPCapacityDerateFactor = [hpCOPCapacityDerateFactor1ton, hpCOPCapacityDerateFactor2ton, hpCOPCapacityDerateFactor3ton, hpCOPCapacityDerateFactor4ton, hpCOPCapacityDerateFactor5ton]
     hpOutputCapacity = runner.getStringArgumentValue("heat_pump_capacity",user_arguments)
     unless hpOutputCapacity == Constants.SizingAuto
-      hpOutputCapacity = OpenStudio::convert(hpOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
+      hpOutputCapacity = OpenStudio::convert(hpOutputCapacity.to_f,"ton","Btu/h").get
     end
     supplementalOutputCapacity = runner.getStringArgumentValue("supplemental_capacity",user_arguments)
     unless supplementalOutputCapacity == Constants.SizingAuto
-      supplementalOutputCapacity = OpenStudio::convert(supplementalOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
+      supplementalOutputCapacity = OpenStudio::convert(supplementalOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
     
     # Create the material class instances

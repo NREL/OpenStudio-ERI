@@ -9,7 +9,7 @@ class ProcessRoomAirConditionerTest < MiniTest::Test
     
   def test_hardsized_room_air_conditioner
     args_hash = {}
-    args_hash["capacity"] = "2.0 tons"
+    args_hash["capacity"] = "2.0"
     expected_num_del_objects = {}
     expected_num_new_objects = {"CoilHeatingElectric"=>1, "FanOnOff"=>1, "CoilCoolingDXSingleSpeed"=>1, "ZoneHVACPackagedTerminalAirConditioner"=>1}
     expected_values = {"COP"=>2.49, "NominalCapacity"=>7033.70}

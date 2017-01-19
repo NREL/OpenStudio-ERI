@@ -17,7 +17,7 @@ class ProcessTwoSpeedCentralAirConditionerTest < MiniTest::Test
   
   def test_new_construction_fbsmt_seer_16
     args_hash = {}
-    args_hash["capacity"] = "3.0 tons"
+    args_hash["capacity"] = "3.0"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXMultiSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXMultiSpeedStageData"=>2}
     expected_values = {"COP"=>[4.3, 3.92], "NominalCapacity"=>[7596.4, 10550.55], "MaximumSupplyAirTemperature"=>48.88}

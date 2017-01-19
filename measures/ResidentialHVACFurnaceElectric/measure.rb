@@ -52,18 +52,20 @@ class ProcessFurnaceElectric < OpenStudio::Ruleset::ModelUserScript
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
-      cap_display_names << "#{kbtu} kBtu/hr"
+      cap_display_names << kbtu.to_s
     end
     furnacecap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
-    furnacecap.setDisplayName("Heating Output Capacity")
+    furnacecap.setDisplayName("Heating Capacity")
+    furnacecap.setDescription("The output heating capacity of the furnace.")
+    furnacecap.setUnits("kBtu/hr")
     furnacecap.setDefaultValue(Constants.SizingAuto)
     args << furnacecap
 
     #make an argument for entering furnace max supply temp
     maxtemp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_temp",true)
     maxtemp.setDisplayName("Max Supply Temp")
-	  maxtemp.setUnits("F")
-	  maxtemp.setDescription("Maximum supply air temperature.")
+	maxtemp.setUnits("F")
+	maxtemp.setDescription("Maximum supply air temperature.")
     maxtemp.setDefaultValue(120.0)
     args << maxtemp
 
@@ -90,7 +92,7 @@ class ProcessFurnaceElectric < OpenStudio::Ruleset::ModelUserScript
     furnaceInstalledAFUE = runner.getDoubleArgumentValue("afue",user_arguments)
     furnaceOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     if not furnaceOutputCapacity == Constants.SizingAuto
-      furnaceOutputCapacity = OpenStudio::convert(furnaceOutputCapacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
+      furnaceOutputCapacity = OpenStudio::convert(furnaceOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
     furnaceMaxSupplyTemp = runner.getDoubleArgumentValue("max_temp",user_arguments)
     furnaceInstalledSupplyFanPower = runner.getDoubleArgumentValue("fan_power_installed",user_arguments)

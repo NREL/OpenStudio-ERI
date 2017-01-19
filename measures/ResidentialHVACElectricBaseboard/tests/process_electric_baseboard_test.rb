@@ -9,7 +9,7 @@ class ProcessElectricBaseboardTest < MiniTest::Test
   
   def test_branch_to_slave_zone_hardsized_electric_baseboard
     args_hash = {}
-    args_hash["capacity"] = "20 kBtu/hr"
+    args_hash["capacity"] = "20"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ZoneHVACBaseboardConvectiveElectric"=>2}
     expected_values = {"Efficiency"=>1, "NominalCapacity"=>5861.42}

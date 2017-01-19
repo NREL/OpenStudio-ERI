@@ -150,10 +150,12 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserSc
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (0.5..10.0).step(0.5) do |tons|
-      cap_display_names << "#{tons} tons"
+      cap_display_names << tons.to_s
     end
     acCoolingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
-    acCoolingOutputCapacity.setDisplayName("Cooling Output Capacity")
+    acCoolingOutputCapacity.setDisplayName("Cooling Capacity")
+    acCoolingOutputCapacity.setDescription("The output cooling capacity of the air conditioner.")
+    acCoolingOutputCapacity.setUnits("tons")
     acCoolingOutputCapacity.setDefaultValue(Constants.SizingAuto)
     args << acCoolingOutputCapacity    
     
@@ -187,7 +189,7 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserSc
     acEERCapacityDerateFactor = [acEERCapacityDerateFactor1ton, acEERCapacityDerateFactor2ton, acEERCapacityDerateFactor3ton, acEERCapacityDerateFactor4ton, acEERCapacityDerateFactor5ton]
     acOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     unless acOutputCapacity == Constants.SizingAuto
-      acOutputCapacity = OpenStudio::convert(acOutputCapacity.split(" ")[0].to_f,"ton","Btu/h").get
+      acOutputCapacity = OpenStudio::convert(acOutputCapacity.to_f,"ton","Btu/h").get
     end 
     
     # Create the material class instances

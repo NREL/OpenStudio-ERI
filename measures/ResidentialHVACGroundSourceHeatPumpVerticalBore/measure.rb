@@ -202,21 +202,25 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     #make a string argument for gshp heating/cooling output capacity
     cap_display_names = OpenStudio::StringVector.new
     (0.5..10.0).step(0.5) do |tons|
-      cap_display_names << "#{tons} tons"
+      cap_display_names << tons.to_s
     end
     gshpOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("gshp_capacity", cap_display_names, true)
-    gshpOutputCapacity.setDisplayName("Cooling Output Capacity")
-    gshpOutputCapacity.setDefaultValue("3.0 tons")
+    gshpOutputCapacity.setDisplayName("Heat Pump Capacity")
+    gshpOutputCapacity.setDescription("The output heating/cooling capacity of the heat pump.")
+    gshpOutputCapacity.setUnits("tons")
+    gshpOutputCapacity.setDefaultValue("3.0")
     args << gshpOutputCapacity    
     
     #make a string argument for supplemental heating output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
     (5..150).step(5) do |kbtu|
-      cap_display_names << "#{kbtu} kBtu/hr"
+      cap_display_names << kbtu.to_s
     end
     supcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("supplemental_capacity", cap_display_names, true)
-    supcap.setDisplayName("Supplemental Heating Output Capacity")
+    supcap.setDisplayName("Supplemental Heating Capacity")
+    supcap.setDescription("The output heating capacity of the supplemental heater.")
+    supcap.setUnits("kBtu/hr")
     supcap.setDefaultValue(Constants.SizingAuto)
     args << supcap     
     
@@ -250,10 +254,10 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     leg_separation = runner.getDoubleArgumentValue("u_tube_leg_spacing",user_arguments)
     rated_shr = runner.getDoubleArgumentValue("rated_shr",user_arguments)
     supply_fan_power = runner.getDoubleArgumentValue("fan_power",user_arguments)
-    gshp_capacity = OpenStudio::convert(runner.getStringArgumentValue("gshp_capacity",user_arguments).split(" ")[0].to_f,"ton","Btu/h").get
+    gshp_capacity = OpenStudio::convert(runner.getStringArgumentValue("gshp_capacity",user_arguments).to_f,"ton","Btu/h").get
     supp_capacity = runner.getStringArgumentValue("supplemental_capacity",user_arguments)
     unless supp_capacity == Constants.SizingAuto
-      supp_capacity = OpenStudio::convert(supp_capacity.split(" ")[0].to_f,"kBtu/h","Btu/h").get
+      supp_capacity = OpenStudio::convert(supp_capacity.to_f,"kBtu/h","Btu/h").get
     end
     
     if fluid_type == Constants.FluidPropyleneGlycol and frac_glycol == 0

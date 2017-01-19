@@ -18,7 +18,7 @@ class ProcessBoilerElectricTest < MiniTest::Test
     args_hash = {}
     args_hash["system_type"] = Constants.BoilerTypeCondensing
     args_hash["oat_reset_enabled"] = "true"
-    args_hash["capacity"] = "20 kBtu/hr"
+    args_hash["capacity"] = "20"
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpConstantSpeed"=>1}
     expected_values = {"Efficiency"=>0.76, "NominalCapacity"=>5861.42, "FuelType"=>Constants.FuelTypeElectric}
