@@ -1444,6 +1444,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
             air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
             supply_fan = air_loop_unitary.supplyFan.get
           end
+          break
         end
         living_zone_return_air_node = unit.living_zone.returnAirModelObject().get
         
