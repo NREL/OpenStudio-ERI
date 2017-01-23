@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>753340e9-ff06-4174-a3e0-77b33c067616</version_id>
-  <version_modified>20170119T233217Z</version_modified>
-  <xml_checksum>2609226D</xml_checksum>
+  <version_id>fd7983de-6ad2-45e4-a581-b82e0765ccee</version_id>
+  <version_modified>20170123T221536Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
   <description>This measure assigns a CMU construction to above-grade exterior walls adjacent to finished space.</description>
@@ -81,6 +81,7 @@
       <default_value>24</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -138,12 +139,6 @@
       <checksum>36B2871D</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7BF8DC86</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -154,6 +149,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>97796F4C</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>389AC154</checksum>
     </file>
   </files>
 </measure>

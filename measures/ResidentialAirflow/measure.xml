@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>a74b5a27-873d-4ef0-8251-005fc3a6f7dc</version_id>
-  <version_modified>20170123T184626Z</version_modified>
-  <xml_checksum>19EEDBBB</xml_checksum>
+  <version_id>4d7b21f2-9a2c-41e7-b25e-e8dff811a83e</version_id>
+  <version_modified>20170123T221531Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
   <description>Adds (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts.</description>
@@ -607,6 +607,7 @@
       <default_value>NA</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Infiltration</tag>
@@ -767,12 +768,6 @@
       <checksum>01FC517F</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7BF8DC86</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -796,10 +791,16 @@
       <checksum>5DD69095</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>389AC154</checksum>
+    </file>
+    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>62CEFF10</checksum>
+      <checksum>965CF8D9</checksum>
     </file>
   </files>
 </measure>

@@ -289,19 +289,6 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
       zone_outdoor_air_drybulb_temp_output_var.setName(Constants.ObjectNameMiniSplitHeatPump + " zone outdoor air drybulb temp output var")
     end
     
-    model.getScheduleConstants.each do |sch|
-      next unless sch.name.to_s == "SupplyFanAvailability" or sch.name.to_s == "SupplyFanOperation"
-      sch.remove
-    end    
-    
-    supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
-    supply_fan_availability.setName("SupplyFanAvailability")
-    supply_fan_availability.setValue(1)        
-    
-    supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
-    supply_fan_operation.setName("SupplyFanOperation")
-    supply_fan_operation.setValue(0)
-    
     units.each do |unit|
     
       obj_name = Constants.ObjectNameMiniSplitHeatPump(unit.name.to_s)
@@ -424,7 +411,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
 
         # _processSystemFan
 
-        fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan.setName(obj_name + " #{control_zone.name} supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACFan)
         fan.setFanEfficiency(supply.eff)
@@ -437,7 +424,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
         tu_vrf.setName(obj_name + " #{control_zone.name} zone vrf")
         tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
-        tu_vrf.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+        tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
         tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
         tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
         tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
@@ -522,7 +509,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
           vrf.setPipingCorrectionFactorforHeightinCoolingModeCoefficient(0)
           vrf.setEquivalentPipingLengthusedforPipingCorrectionFactorinHeatingMode(0)     
 
-          fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
+          fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
           fan.setName(obj_name + " #{slave_zone.name} supply fan")
           fan.setEndUseSubcategory(Constants.EndUseHVACFan)
           fan.setFanEfficiency(supply.eff)
@@ -533,7 +520,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
           tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
           tu_vrf.setName(obj_name + " #{slave_zone.name} zone vrf")
           tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
-          tu_vrf.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+          tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
           tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
           tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
           tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)

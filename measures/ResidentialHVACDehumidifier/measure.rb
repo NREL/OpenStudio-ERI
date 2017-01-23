@@ -101,13 +101,13 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
     end
     
     model.getScheduleConstants.each do |sch|
-      next unless sch.name.to_s == "RelativeHumiditySetpoint"
+      next unless sch.name.to_s == Constants.ObjectNameRelativeHumiditySetpoint
       sch.remove
     end
     
     avg_rh_setpoint = humidity_setpoint * 100.0 # (EnergyPlus uses 60 for 60% RH)
     relative_humidity_setpoint_sch = OpenStudio::Model::ScheduleConstant.new(model)
-    relative_humidity_setpoint_sch.setName("RelativeHumiditySetpoint")
+    relative_humidity_setpoint_sch.setName(Constants.ObjectNameRelativeHumiditySetpoint)
     relative_humidity_setpoint_sch.setValue(avg_rh_setpoint)
     
     # Use a minimum capacity of 20 pints/day

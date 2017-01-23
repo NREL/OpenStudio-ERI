@@ -169,19 +169,6 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         return false
     end
     
-    model.getScheduleConstants.each do |sch|
-      next unless sch.name.to_s == "SupplyFanAvailability" or sch.name.to_s == "SupplyFanOperation"
-      sch.remove
-    end    
-    
-    supply_fan_availability = OpenStudio::Model::ScheduleConstant.new(model)
-    supply_fan_availability.setName("SupplyFanAvailability")
-    supply_fan_availability.setValue(1)           
-    
-    supply_fan_operation = OpenStudio::Model::ScheduleConstant.new(model)
-    supply_fan_operation.setName("SupplyFanOperation")
-    supply_fan_operation.setValue(0)    
-    
     units.each do |unit|
       
       obj_name = Constants.ObjectNameRoomAirConditioner(unit.name.to_s)
@@ -211,7 +198,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setMaximumOutdoorDryBulbTemperatureForCrankcaseHeaterOperation(OpenStudio::OptionalDouble.new(10))
         clg_coil.setBasinHeaterSetpointTemperature(OpenStudio::OptionalDouble.new(2))
         
-        fan = OpenStudio::Model::FanOnOff.new(model, supply_fan_availability)
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan.setName(obj_name + " supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACFan)
         fan.setFanEfficiency(1)
@@ -224,7 +211,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         
         ptac = OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner.new(model, model.alwaysOnDiscreteSchedule, fan, htg_coil, clg_coil)
         ptac.setName(obj_name + " zone ptac")
-        ptac.setSupplyAirFanOperatingModeSchedule(supply_fan_operation)
+        ptac.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
         ptac.addToThermalZone(control_zone)
         runner.registerInfo("Added '#{ptac.name}' to '#{control_zone.name}' of #{unit.name}")
       

@@ -652,7 +652,7 @@ class HVAC
             clg_coil = air_loop_unitary.coolingCoil.get
             htg_coil = air_loop_unitary.heatingCoil.get              
             next unless ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized and htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized ) or ( clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized )
-            runner.registerInfo("Found an air source heat pump.")
+            runner.registerInfo("Found #{Constants.ObjectNameAirSourceHeatPump} in #{thermal_zone.name}.")
             cooling_equipment << air_loop_unitary
           end
         end
@@ -670,19 +670,19 @@ class HVAC
               htg_coil = air_loop_unitary.heatingCoil.get
               next if htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized or htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized
             end
-            runner.registerInfo("Found a central air conditioner.")
+            runner.registerInfo("Found #{Constants.ObjectNameCentralAirConditioner} in #{thermal_zone.name}.")
             cooling_equipment << air_loop_unitary
           end
         end
       end
       model.getZoneHVACPackagedTerminalAirConditioners.each do |ptac|
         next unless thermal_zone.handle.to_s == ptac.thermalZone.get.handle.to_s
-        runner.registerInfo("Found a room air conditioner.")
+        runner.registerInfo("Found #{Constants.ObjectNameRoomAirConditioner} in #{thermal_zone.name}.")
         cooling_equipment << ptac
       end
       model.getZoneHVACTerminalUnitVariableRefrigerantFlows.each do |tu_vrf|
         next unless thermal_zone.handle.to_s == tu_vrf.thermalZone.get.handle.to_s
-        runner.registerInfo("Found a mini-split heat pump.")
+        runner.registerInfo("Found #{Constants.ObjectNameMiniSplitHeatPump} in #{thermal_zone.name}.")
         cooling_equipment << tu_vrf
       end
       model.getAirLoopHVACs.each do |air_loop|
@@ -695,7 +695,7 @@ class HVAC
             clg_coil = air_loop_unitary.coolingCoil.get
             htg_coil = air_loop_unitary.heatingCoil.get              
             next unless clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
-            runner.registerInfo("Found a ground source heat pump.")
+            runner.registerInfo("Found #{Constants.ObjectNameGroundSourceHeatPumpVerticalBore} in #{thermal_zone.name}.")
             cooling_equipment << air_loop_unitary
           end
         end
@@ -716,11 +716,12 @@ class HVAC
             clg_coil = air_loop_unitary.coolingCoil.get
             htg_coil = air_loop_unitary.heatingCoil.get    
             next unless ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized and htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized ) or ( clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized )
-            runner.registerInfo("Found an air source heat pump.")
+            runner.registerInfo("Found #{Constants.ObjectNameAirSourceHeatPump} in #{thermal_zone.name}.")
             heating_equipment << air_loop_unitary
           end
         end
-      end    
+      end
+      furnaceFuelType = nil
       model.getAirLoopHVACs.each do |air_loop|
         air_loop.thermalZones.each do |thermalZone|
           next unless thermal_zone.handle.to_s == thermalZone.handle.to_s
@@ -730,24 +731,37 @@ class HVAC
             next unless air_loop_unitary.heatingCoil.is_initialized
             htg_coil = air_loop_unitary.heatingCoil.get
             next unless htg_coil.to_CoilHeatingGas.is_initialized or htg_coil.to_CoilHeatingElectric.is_initialized
-            runner.registerInfo("Found a furnace.")
+            begin
+              furnaceFuelType = HelperMethods.reverse_eplus_fuel_map(htg_coil.to_CoilHeatingGas.get.fuelType)
+            rescue
+              furnaceFuelType = Constants.FuelTypeElectric
+            end
+            runner.registerInfo("Found #{Constants.ObjectNameFurnace(furnaceFuelType)} in #{thermal_zone.name}.")
             heating_equipment << air_loop_unitary
           end
         end
       end
+      boilerFuelType = nil
+      model.getPlantLoops.each do |plant_loop|
+        plant_loop.supplyComponents.each do |supply_component|
+          next unless supply_component.to_BoilerHotWater.is_initialized
+          boilerFuelType = HelperMethods.reverse_eplus_fuel_map(supply_component.to_BoilerHotWater.get.fuelType)
+          break
+        end
+      end
       model.getZoneHVACBaseboardConvectiveWaters.each do |baseboard|
         next unless thermal_zone.handle.to_s == baseboard.thermalZone.get.handle.to_s
-        runner.registerInfo("Found a boiler.")
+        runner.registerInfo("Found #{Constants.ObjectNameBoiler(boilerFuelType)} serving #{thermal_zone.name}.")
         heating_equipment << baseboard
       end
       model.getZoneHVACBaseboardConvectiveElectrics.each do |baseboard|
         next unless thermal_zone.handle.to_s == baseboard.thermalZone.get.handle.to_s
-        runner.registerInfo("Found an electric baseboard.")
+        runner.registerInfo("Found #{Constants.ObjectNameElectricBaseboard} in #{thermal_zone.name}.")
         heating_equipment << baseboard
       end
       model.getZoneHVACTerminalUnitVariableRefrigerantFlows.each do |tu_vrf|
         next unless thermal_zone.handle.to_s == tu_vrf.thermalZone.get.handle.to_s
-        runner.registerInfo("Found a mini-split heat pump.")
+        runner.registerInfo("Found #{Constants.ObjectNameMiniSplitHeatPump} in #{thermal_zone.name}.")
         heating_equipment << tu_vrf
       end
       model.getAirLoopHVACs.each do |air_loop|
@@ -760,7 +774,7 @@ class HVAC
             clg_coil = air_loop_unitary.coolingCoil.get
             htg_coil = air_loop_unitary.heatingCoil.get              
             next unless clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
-            runner.registerInfo("Found a ground source heat pump.")
+            runner.registerInfo("Found #{Constants.ObjectNameGroundSourceHeatPumpVerticalBore} in #{thermal_zone.name}.")
             heating_equipment << air_loop_unitary
           end
         end
@@ -816,7 +830,7 @@ class HVAC
             clg_coil = air_loop_unitary.coolingCoil.get
             next unless clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized or clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
             if remove
-              runner.registerInfo("Removed '#{clg_coil.name}' from air loop '#{air_loop.name}'")
+              runner.registerInfo("Removed '#{clg_coil.name}' from '#{air_loop.name}'.")
               air_loop_unitary.resetCoolingCoil
               clg_coil.remove
               air_loop_unitary.supplyFan.get.remove
@@ -844,7 +858,7 @@ class HVAC
       model.getZoneHVACPackagedTerminalAirConditioners.each do |ptac|
         next unless thermal_zone.handle.to_s == ptac.thermalZone.get.handle.to_s
         if remove
-          runner.registerInfo("Removed packaged terminal air conditioner '#{ptac.name}'")
+          runner.registerInfo("Removed '#{ptac.name}' from #{thermal_zone.name}.")
           ptac.remove
           return true
         end
@@ -863,7 +877,7 @@ class HVAC
             htg_coil = air_loop_unitary.heatingCoil.get
             next unless htg_coil.to_CoilHeatingGas.is_initialized or htg_coil.to_CoilHeatingElectric.is_initialized
             if remove
-              runner.registerInfo("Removed '#{htg_coil.name}' from air loop '#{air_loop.name}'")
+              runner.registerInfo("Removed '#{htg_coil.name}' from '#{air_loop.name}'.")
               air_loop_unitary.resetHeatingCoil
               htg_coil.remove
               air_loop_unitary.supplyFan.get.remove
@@ -895,7 +909,7 @@ class HVAC
       model.getZoneHVACBaseboardConvectiveWaters.each do |baseboard|
         next unless thermal_zone.handle.to_s == baseboard.thermalZone.get.handle.to_s
         if remove
-          runner.registerInfo("Removed baseboard convective water '#{baseboard.name}'")
+          runner.registerInfo("Removed '#{baseboard.name}' from #{thermal_zone.name}.")
           baseboard.remove
           return true
         end
@@ -907,7 +921,7 @@ class HVAC
       model.getZoneHVACBaseboardConvectiveElectrics.each do |baseboard|
         next unless thermal_zone.handle.to_s == baseboard.thermalZone.get.handle.to_s
         if remove
-          runner.registerInfo("Removed baseboard convective electric '#{baseboard.name}'")
+          runner.registerInfo("Removed '#{baseboard.name}' from #{thermal_zone.name}.")
           baseboard.remove
           return true
         end
@@ -927,7 +941,7 @@ class HVAC
             htg_coil = air_loop_unitary.heatingCoil.get              
             next unless ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized and htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized ) or ( clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized )
             if remove
-              runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from air loop '#{air_loop.name}'")
+              runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from '#{air_loop.name}'.")
               air_loop_unitary.resetHeatingCoil
               air_loop_unitary.resetCoolingCoil              
               htg_coil.remove
@@ -947,7 +961,7 @@ class HVAC
         vrf.terminals.each do |terminal|
           next unless thermal_zone.handle.to_s == terminal.thermalZone.get.handle.to_s
           if remove
-            runner.registerInfo("Removed variable refrigerant flow terminal unit '#{terminal.name}'")
+            runner.registerInfo("Removed '#{terminal.name}' from #{thermal_zone.name}.")
             terminal.remove
             vrf.remove
           end
@@ -969,7 +983,7 @@ class HVAC
             htg_coil = air_loop_unitary.heatingCoil.get              
             next unless clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
             if remove
-              runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from air loop '#{air_loop.name}'")
+              runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from '#{air_loop.name}'.")
               air_loop_unitary.resetHeatingCoil
               air_loop_unitary.resetCoolingCoil              
               htg_coil.remove
@@ -988,7 +1002,7 @@ class HVAC
       model.getZoneHVACDehumidifierDXs.each do |dehumidifier|
         next unless thermal_zone.handle.to_s == dehumidifier.thermalZone.get.handle.to_s
         if remove
-          runner.registerInfo("Removed dehumidifier '#{dehumidifier.name}'")
+          runner.registerInfo("Removed '#{dehumidifier.name}' from #{thermal_zone.name}.")
           dehumidifier.remove
           return true
         end
@@ -1005,7 +1019,7 @@ class HVAC
             air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
             next if air_loop_unitary.heatingCoil.is_initialized or air_loop_unitary.coolingCoil.is_initialized
             if remove
-              runner.registerInfo("Removed air loop '#{air_loop.name}'")
+              runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
               air_loop.remove
               return true
             end
@@ -1148,7 +1162,7 @@ class HVAC
             htg_coil = air_loop_unitary.heatingCoil.get
             next unless clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized
             if remove
-                runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from air loop '#{air_loop.name}'")
+                runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from '#{air_loop.name}'.")
                 air_loop_unitary.resetHeatingCoil
                 air_loop_unitary.resetCoolingCoil              
                 htg_coil.remove
@@ -1164,17 +1178,16 @@ class HVAC
     end    
     
     def self.remove_hot_water_loop(model, runner)
-      model.getPlantLoops.each do |plantLoop|
+      model.getPlantLoops.each do |plant_loop|
         remove = true
-        supplyComponents = plantLoop.supplyComponents
-        supplyComponents.each do |supplyComponent|
-          if supplyComponent.to_WaterHeaterMixed.is_initialized or supplyComponent.to_WaterHeaterStratified.is_initialized or supplyComponent.to_WaterHeaterHeatPump.is_initialized # don't remove the dhw
+        plant_loop.supplyComponents.each do |supply_component|
+          if supply_component.to_WaterHeaterMixed.is_initialized or supply_component.to_WaterHeaterStratified.is_initialized or supply_component.to_WaterHeaterHeatPump.is_initialized # don't remove the dhw
             remove = false
           end
         end
         if remove
-          runner.registerInfo("Removed plant loop '#{plantLoop.name}'")
-          plantLoop.remove
+          runner.registerInfo("Removed '#{plant_loop.name}' from model.")
+          plant_loop.remove
         end
       end
     end 
