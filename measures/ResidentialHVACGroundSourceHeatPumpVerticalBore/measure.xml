@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>9224d3b3-da06-4dc6-8338-277c792f5b75</version_id>
-  <version_modified>20170119T184808Z</version_modified>
+  <version_id>d55fe2c0-4c17-4334-96f1-64d802b8c425</version_id>
+  <version_modified>20170119T233225Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
@@ -649,12 +649,6 @@
       <checksum>76C55B95</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E81E792E</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -712,6 +706,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>DD63DF4F</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>97796F4C</checksum>
     </file>
   </files>
 </measure>

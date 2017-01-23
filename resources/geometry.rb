@@ -905,4 +905,104 @@ class Geometry
         return OpenStudio::convert(neighbor_offsets.min,"m","ft").get
     end
     
+    def self.get_thermal_zone_above_grade_exterior_walls(zone)
+        above_grade_exterior_walls = []
+        zone.spaces.each do |space|
+            next if not Geometry.space_is_finished(space)
+            space.surfaces.each do |surface|
+                next if above_grade_exterior_walls.include?(surface)
+                next if surface.surfaceType.downcase != "wall"
+                next if surface.outsideBoundaryCondition.downcase != "outdoors"
+                above_grade_exterior_walls << surface
+            end
+        end
+        return above_grade_exterior_walls
+    end
+    
+    def self.get_thermal_zone_above_grade_exterior_floors(zone)
+        above_grade_exterior_floors = []
+        zone.spaces.each do |space|
+            next if not Geometry.space_is_finished(space)
+            space.surfaces.each do |surface|
+                next if above_grade_exterior_floors.include?(surface)
+                next if surface.surfaceType.downcase != "floor"
+                next if surface.outsideBoundaryCondition.downcase != "outdoors"
+                above_grade_exterior_floors << surface
+            end
+        end
+        return above_grade_exterior_floors
+    end
+    
+    def self.get_thermal_zone_above_grade_exterior_roofs(zone)
+        above_grade_exterior_roofs = []
+        zone.spaces.each do |space|
+            next if not Geometry.space_is_finished(space)
+            space.surfaces.each do |surface|
+                next if above_grade_exterior_roofs.include?(surface)
+                next if surface.surfaceType.downcase != "roofceiling"
+                next if surface.outsideBoundaryCondition.downcase != "outdoors"
+                above_grade_exterior_roofs << surface
+            end
+        end
+        return above_grade_exterior_roofs
+    end
+    
+    def self.get_thermal_zone_interzonal_walls(zone)
+        interzonal_walls = []
+        zone.spaces.each do |space|
+            next if not Geometry.space_is_finished(space)
+            space.surfaces.each do |surface|
+                next if interzonal_walls.include?(surface)
+                next if surface.surfaceType.downcase != "wall"
+                next if not surface.adjacentSurface.is_initialized
+                next if Geometry.space_is_finished(surface.adjacentSurface.get.space.get) == Geometry.space_is_finished(space)
+                interzonal_walls << surface
+            end
+        end
+        return interzonal_walls
+    end
+    
+    def self.get_thermal_zone_interzonal_floors(zone)
+        interzonal_floors = []
+        zone.spaces.each do |space|
+            next if not Geometry.space_is_finished(space)
+            space.surfaces.each do |surface|
+                next if interzonal_floors.include?(surface)
+                next if surface.surfaceType.downcase != "floor"
+                next if not surface.adjacentSurface.is_initialized
+                next if Geometry.space_is_finished(surface.adjacentSurface.get.space.get) == Geometry.space_is_finished(space)
+                interzonal_floors << surface
+            end
+        end
+        return interzonal_floors
+    end
+
+    def self.get_thermal_zone_below_grade_exterior_walls(zone)
+        below_grade_exterior_walls = []
+        zone.spaces.each do |space|
+            next if not Geometry.space_is_finished(space)
+            space.surfaces.each do |surface|
+                next if below_grade_exterior_walls.include?(surface)
+                next if surface.surfaceType.downcase != "wall"
+                next if surface.outsideBoundaryCondition.downcase != "ground"
+                below_grade_exterior_walls << surface
+            end
+        end
+        return below_grade_exterior_walls
+    end
+
+    def self.get_thermal_zone_below_grade_exterior_floors(zone)
+        below_grade_exterior_floors = []
+        zone.spaces.each do |space|
+            next if not Geometry.space_is_finished(space)
+            space.surfaces.each do |surface|
+                next if below_grade_exterior_floors.include?(surface)
+                next if surface.surfaceType.downcase != "floor"
+                next if surface.outsideBoundaryCondition.downcase != "ground"
+                below_grade_exterior_floors << surface
+            end
+        end
+        return below_grade_exterior_floors
+    end
+
 end
