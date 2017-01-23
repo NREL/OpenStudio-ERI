@@ -640,6 +640,7 @@ class HVAC
     end
   
     def self.existing_cooling_equipment(model, runner, thermal_zone)
+      # Returns a list of cooling equipment objects (AirLoopHVACUnitarySystems or ZoneHVACComponents)
       cooling_equipment = []
       model.getAirLoopHVACs.each do |air_loop|
         air_loop.thermalZones.each do |thermalZone|
@@ -652,12 +653,7 @@ class HVAC
             htg_coil = air_loop_unitary.heatingCoil.get              
             next unless ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized and htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized ) or ( clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized )
             runner.registerInfo("Found an air source heat pump.")
-            if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
-              clg_coil = clg_coil.to_CoilCoolingDXSingleSpeed.get
-            elsif clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
-              clg_coil = clg_coil.to_CoilCoolingDXMultiSpeed.get
-            end                        
-            cooling_equipment << clg_coil
+            cooling_equipment << air_loop_unitary
           end
         end
       end
@@ -675,12 +671,7 @@ class HVAC
               next if htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized or htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized
             end
             runner.registerInfo("Found a central air conditioner.")
-            if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
-              clg_coil = clg_coil.to_CoilCoolingDXSingleSpeed.get
-            elsif clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
-              clg_coil = clg_coil.to_CoilCoolingDXMultiSpeed.get
-            end
-            cooling_equipment << clg_coil
+            cooling_equipment << air_loop_unitary
           end
         end
       end
@@ -705,20 +696,15 @@ class HVAC
             htg_coil = air_loop_unitary.heatingCoil.get              
             next unless clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
             runner.registerInfo("Found a ground source heat pump.")
-            if clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
-              clg_coil = clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.get
-            end
-            cooling_equipment << clg_coil
+            cooling_equipment << air_loop_unitary
           end
         end
       end
-      unless cooling_equipment.empty?
-        return cooling_equipment
-      end
-      return nil
+      return cooling_equipment
     end
     
     def self.existing_heating_equipment(model, runner, thermal_zone)
+      # Returns a list of heating equipment objects (AirLoopHVACUnitarySystems or ZoneHVACComponents)
       heating_equipment = []
       model.getAirLoopHVACs.each do |air_loop|
         air_loop.thermalZones.each do |thermalZone|
@@ -728,7 +714,7 @@ class HVAC
             air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
             next unless air_loop_unitary.coolingCoil.is_initialized and air_loop_unitary.heatingCoil.is_initialized
             clg_coil = air_loop_unitary.coolingCoil.get
-            htg_coil = air_loop_unitary.heatingCoil.get              
+            htg_coil = air_loop_unitary.heatingCoil.get    
             next unless ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized and htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized ) or ( clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized )
             runner.registerInfo("Found an air source heat pump.")
             heating_equipment << air_loop_unitary
@@ -745,12 +731,7 @@ class HVAC
             htg_coil = air_loop_unitary.heatingCoil.get
             next unless htg_coil.to_CoilHeatingGas.is_initialized or htg_coil.to_CoilHeatingElectric.is_initialized
             runner.registerInfo("Found a furnace.")
-            if htg_coil.to_CoilHeatingGas.is_initialized
-              htg_coil = htg_coil.to_CoilHeatingGas.get
-            elsif htg_coil.to_CoilHeatingElectric.is_initialized
-              htg_coil = htg_coil.to_CoilHeatingElectric.get
-            end
-            heating_equipment << htg_coil
+            heating_equipment << air_loop_unitary
           end
         end
       end
@@ -784,11 +765,45 @@ class HVAC
           end
         end
       end
-      unless heating_equipment.empty?
-        return heating_equipment
-      end   
-      return nil
-    end    
+      return heating_equipment
+    end  
+
+    def self.get_coil_from_hvac_component(hvac_component)
+      # Cooling coils
+      if hvac_component.to_CoilCoolingDXSingleSpeed.is_initialized
+        return hvac_component.to_CoilCoolingDXSingleSpeed.get
+      elsif hvac_component.to_CoilCoolingDXTwoSpeed.is_initialized
+        return hvac_component.to_CoilCoolingDXTwoSpeed.get
+      elsif hvac_component.to_CoilCoolingDXMultiSpeed.is_initialized
+        return hvac_component.to_CoilCoolingDXMultiSpeed.get
+      elsif hvac_component.to_CoilCoolingDXVariableSpeed.is_initialized
+        return hvac_component.to_CoilCoolingDXVariableSpeed.get
+      elsif hvac_component.to_CoilCoolingDXVariableRefrigerantFlow.is_initialized
+        return hvac_component.to_CoilCoolingDXVariableRefrigerantFlow.get
+      elsif hvac_component.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
+        return hvac_component.to_CoilCoolingWaterToAirHeatPumpEquationFit.get
+      end
+        
+      # Heating coils  
+      if hvac_component.to_CoilHeatingDXSingleSpeed.is_initialized
+        return hvac_component.to_CoilHeatingDXSingleSpeed.get
+      elsif hvac_component.to_CoilHeatingDXMultiSpeed.is_initialized
+        return hvac_component.to_CoilHeatingDXMultiSpeed.get
+      elsif hvac_component.to_CoilHeatingDXVariableSpeed.is_initialized
+        return hvac_component.to_CoilHeatingDXVariableSpeed.get
+      elsif hvac_component.to_CoilHeatingDXVariableRefrigerantFlow.is_initialized
+        return hvac_component.to_CoilHeatingDXVariableRefrigerantFlow.get
+      elsif hvac_component.to_CoilHeatingGas.is_initialized
+        return hvac_component.to_CoilHeatingGas.get
+      elsif hvac_component.to_CoilHeatingElectric.is_initialized
+        return hvac_component.to_CoilHeatingElectric.get
+      elsif hvac_component.to_CoilHeatingWaterBaseboard.is_initialized
+        return hvac_component.to_CoilHeatingWaterBaseboard.get
+      elsif hvac_component.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
+        return hvac_component.to_CoilHeatingWaterToAirHeatPumpEquationFit.get
+      end
+      return hvac_component
+    end
     
     def self.has_central_air_conditioner(model, runner, thermal_zone, remove=false, reset_air_loop=true)
       model.getAirLoopHVACs.each do |air_loop|
@@ -812,11 +827,7 @@ class HVAC
                 air_loop_unitary.resetCoolingCoil
                 clg_coil.remove
                 air_loop_unitary.supplyFan.get.remove
-                if cloned_clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
-                  cloned_clg_coil = cloned_clg_coil.to_CoilCoolingDXSingleSpeed.get
-                elsif cloned_clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
-                  cloned_clg_coil = cloned_clg_coil.to_CoilCoolingDXMultiSpeed.get
-                end
+                cloned_clg_coil = self.get_coil_from_hvac_component(cloned_clg_coil)
                 cloned_clg_coil.setName(clg_coil.name.to_s)
                 return cloned_clg_coil
               else
