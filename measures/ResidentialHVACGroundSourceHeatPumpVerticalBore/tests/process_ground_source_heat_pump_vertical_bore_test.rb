@@ -67,6 +67,35 @@ class ProcessGroundSourceHeatPumpVerticalBoreTest < MiniTest::Test
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)    
   end
   
+  def test_hardsized_bore_depth
+    args_hash = {}
+    args_hash["bore_depth"] = "150"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
+    expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>10}
+    _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6, 1)
+  end    
+  
+  def test_hardsized_bore_holes_and_depth
+    args_hash = {}
+    args_hash["bore_holes"] = "1"
+    args_hash["bore_depth"] = "150"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
+    expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>1}
+    _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6, 1)    
+  end
+  
+  def test_invalid_bore_config
+    args_hash = {}
+    args_hash["bore_config"] = Constants.BoreConfigSingle
+    args_hash["bore_holes"] = "2"    
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SetpointManagerFollowGroundTemperature"=>1, "GroundHeatExchangerVertical"=>1, "FanOnOff"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "PumpVariableSpeed"=>1, "CoilHeatingElectric"=>1, "PlantLoop"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1}
+    expected_values = {"CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "NumBoreHoles"=>2}
+    _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6, 1)    
+  end
+  
   def test_new_construction_frac_glycol_zero
     args_hash = {}
     args_hash["frac_glycol"] = 0
