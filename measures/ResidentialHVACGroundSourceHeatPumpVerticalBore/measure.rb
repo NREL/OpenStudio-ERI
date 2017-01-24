@@ -101,12 +101,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
     args << gshpVertBoreHoles
 
     #make a string argument for gshp bore depth
-    depth_display_names = OpenStudio::StringVector.new
-    depth_display_names << Constants.SizingAuto
-    (150..300).to_a.each do |depth|
-      depth_display_names << "#{depth}"
-    end    
-    gshpVertBoreDepth = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("bore_depth", depth_display_names, true)
+    gshpVertBoreDepth = OpenStudio::Ruleset::OSArgument::makeStringArgument("bore_depth", true)
     gshpVertBoreDepth.setDisplayName("Bore Depth")
     gshpVertBoreDepth.setUnits("ft")
     gshpVertBoreDepth.setDescription("Vertical well bore depth typically range from 150 to 300 feet deep.")

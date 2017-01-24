@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>d8e618f8-73c3-419d-baf6-dc3ae837f0e2</version_id>
-  <version_modified>20170123T221545Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>b97babd2-4cf9-41a7-99c1-63a3c3ae8dfc</version_id>
+  <version_modified>20170124T170338Z</version_modified>
+  <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
   <description>This measure removes any existing dehumidifiers from the building and adds a dehumidifier. For multifamily buildings, the dehumidifier can be set for all units of the building.</description>
@@ -41,21 +41,6 @@
       <default_value>auto</default_value>
     </argument>
     <argument>
-      <name>config</name>
-      <display_name>Configuration</display_name>
-      <description>The configuration of the dehumidifier. Only affects costing. If 'auto' is selected, dehumidifiers larger than 70 pints/day will be ducted.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>standalone</default_value>
-      <choices>
-        <choice>
-          <value>standalone</value>
-          <display_name>standalone</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
       <name>humidity_setpoint</name>
       <display_name>Annual Relative Humidity Setpoint</display_name>
       <description>The annual relative humidity setpoint.</description>
@@ -66,7 +51,6 @@
       <default_value>0.6</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -101,12 +85,6 @@
       <checksum>86A38CF7</checksum>
     </file>
     <file>
-      <filename>process_dehumidifier_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4670A7E1</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -131,17 +109,6 @@
       <checksum>97796F4C</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.14.0</identifier>
-        <min_compatible>1.14.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>3C6127F3</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -152,6 +119,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>965CF8D9</checksum>
+    </file>
+    <file>
+      <filename>process_dehumidifier_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>69FEAA68</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>1.14.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>1E107C00</checksum>
     </file>
   </files>
 </measure>
