@@ -252,7 +252,9 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
       garage_area_inside_footprint = garage_area * (1.0 - garage_protrusion)      
     end
     bonus_area_above_garage = garage_area * garage_protrusion
-    if foundation_type == Constants.FinishedBasementFoundationType
+    if foundation_type == Constants.FinishedBasementFoundationType and attic_type == Constants.FinishedAtticType
+        footprint = (total_ffa + 3 * garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / (num_floors + 2)
+    elsif foundation_type == Constants.FinishedBasementFoundationType or attic_type == Constants.FinishedAtticType
         footprint = (total_ffa + 2 * garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / (num_floors + 1)
     else
         footprint = (total_ffa + garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / num_floors
