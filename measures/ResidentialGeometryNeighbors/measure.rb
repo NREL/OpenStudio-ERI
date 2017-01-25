@@ -91,16 +91,23 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     end
     
     # remove existing neighbors
-    existing_neighbors = false
+    remove_group = false
     model.getShadingSurfaceGroups.each do |shading_surface_group|
       shading_surface_group.shadingSurfaces.each do |shading_surface|
         next unless shading_surface.name.to_s.downcase.include? "neighbor"
-        existing_neighbors = true
+        remove_group = true
       end
-      shading_surface_group.remove
+      if remove_group
+        shading_surface_group.remove
+      end
     end
-    if existing_neighbors
+    if remove_group
       runner.registerInfo("Removed existing neighbors.")
+    end
+    
+    if [left_neighbor_offset, right_neighbor_offset, back_neighbor_offset, front_neighbor_offset].all? {|offset| offset == 0}
+      runner.registerAsNotApplicable("No neighbors to be added.")
+      return true
     end
     
     # get x and y minima and maxima of wall surfaces
@@ -133,29 +140,45 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     directions = [[Constants.FacadeLeft, left_neighbor_offset, left_offset, 0], [Constants.FacadeRight, right_neighbor_offset, right_offset, 0], [Constants.FacadeBack, back_neighbor_offset, 0, back_offset], [Constants.FacadeFront, front_neighbor_offset, 0, front_offset]]
             
     shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
-    model.getSpaces.each do |space|
-      directions.each do |dir, neighbor_offset, x_offset, y_offset|
-        if neighbor_offset != 0
+    directions.each do |dir, neighbor_offset, x_offset, y_offset|
+      if neighbor_offset != 0
+        model.getSpaces.each do |space|
           space.surfaces.each do |surface|
-              next if surface.outsideBoundaryCondition.downcase != "outdoors" and surface.outsideBoundaryCondition.downcase != "adiabatic"
-              m = OpenStudio::Matrix.new(4,4,0)
-              m[0,0] = 1
-              m[1,1] = 1
-              m[2,2] = 1
-              m[3,3] = 1
-              m[0,3] = -x_offset
-              m[1,3] = -y_offset
-              m[2,3] = space.zOrigin
-              transformation = OpenStudio::Transformation.new(m)
-              new_vertices = transformation * surface.vertices
-              shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices, model)
-              shading_surface.setName("#{dir} Neighbor")
-              shading_surface.setShadingSurfaceGroup(shading_surface_group)
-              runner.registerInfo("Created shading surface #{shading_surface.name} from surface #{surface.name}.")				
-          end
+            next if surface.outsideBoundaryCondition.downcase != "outdoors" and surface.outsideBoundaryCondition.downcase != "adiabatic"
+            m = OpenStudio::Matrix.new(4,4,0)
+            m[0,0] = 1
+            m[1,1] = 1
+            m[2,2] = 1
+            m[3,3] = 1
+            m[0,3] = -x_offset
+            m[1,3] = -y_offset
+            m[2,3] = space.zOrigin
+            transformation = OpenStudio::Transformation.new(m)
+            new_vertices = transformation * surface.vertices
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices, model)
+            shading_surface.setName("#{dir} Neighbor")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+            runner.registerInfo("Created shading surface #{shading_surface.name} from #{surface.name}.")
+          end        
+        end
+        model.getShadingSurfaces.each do |existing_shading_surface|
+          next unless existing_shading_surface.name.to_s.downcase.include? "eaves"
+          m = OpenStudio::Matrix.new(4,4,0)
+          m[0,0] = 1
+          m[1,1] = 1
+          m[2,2] = 1
+          m[3,3] = 1
+          m[0,3] = -x_offset
+          m[1,3] = -y_offset
+          transformation = OpenStudio::Transformation.new(m)
+          new_vertices = transformation * existing_shading_surface.vertices
+          shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices, model)
+          shading_surface.setName("#{dir} Neighbor")
+          shading_surface.setShadingSurfaceGroup(shading_surface_group)
+          runner.registerInfo("Created shading surface #{shading_surface.name} from #{existing_shading_surface.name}.")	            
         end
       end
-    end
+    end     
 
     return true
 

@@ -24,72 +24,102 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     assert_includes(result.info.map{ |x| x.logMessage }, "No surfaces found to copy for neighboring buildings.")
   end
   
+  def test_not_applicable_no_neighbors
+    args_hash = {}
+    args_hash["left_offset"] = 0
+    args_hash["right_offset"] = 0    
+    result = _test_error("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash)
+    assert(result.errors.size == 0)
+    assert_equal("NA", result.value.valueName)
+    assert_includes(result.info.map{ |x| x.logMessage }, "No neighbors to be added.")
+  end  
+  
   def test_copy_all_surfaces
-    surfaces_per_facade = 12
+    surfaces_per_neighbor = 12
     num_neighbors = 2
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)  
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors)  
+  end
+    
+  def test_house_and_neighbors_have_overhangs
+    surfaces_per_neighbor = 12
+    num_neighbors = 2  
+    args_hash = {}
+    expected_num_del_objects = {"ShadingSurface"=>0, "ShadingSurfaceGroup"=>0}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_values = {}
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Overhangs.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors) 
+  end  
+
+  def test_house_and_neighbors_have_eaves
+    surfaces_per_neighbor = 12
+    num_neighbors = 2
+    args_hash = {}
+    expected_num_del_objects = {"ShadingSurface"=>0, "ShadingSurfaceGroup"=>0}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors+6*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_values = {}
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Eaves.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors+6*num_neighbors)
   end
   
   def test_retrofit_replace
-    surfaces_per_facade = 12
+    surfaces_per_neighbor = 12
     num_neighbors = 4
     args_hash = {}
     args_hash["back_offset"] = 10
     args_hash["front_offset"] = 10
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)
+    model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors)
     args_hash = {}
     args_hash["left_offset"] = 20
-    expected_num_del_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
-    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*2, "ShadingSurfaceGroup"=>1}
+    expected_num_del_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*2, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*2+1)
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*2+1)
   end
   
   def test_single_family_attached_new_construction
-    surfaces_per_facade = 26
+    surfaces_per_neighbor = 26
     num_neighbors = 2
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    _test_measure("SFA_4units_1story_SL_UA_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)
+    _test_measure("SFA_4units_1story_SL_UA_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors)
   end
 
   def test_single_family_attached_new_construction_offset
-    surfaces_per_facade = 32
+    surfaces_per_neighbor = 32
     num_neighbors = 2
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    _test_measure("SFA_4units_1story_SL_UA_Offset_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)
+    _test_measure("SFA_4units_1story_SL_UA_Offset_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors)
   end  
   
   def test_multifamily_new_construction
-    surfaces_per_facade = 40
+    surfaces_per_neighbor = 40
     num_neighbors = 2
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    _test_measure("MF_8units_1story_SL_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)
+    _test_measure("MF_8units_1story_SL_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors)
   end
   
   def test_multifamily_new_construction_inset
-    surfaces_per_facade = 62
+    surfaces_per_neighbor = 62
     num_neighbors = 2
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
-    _test_measure("MF_8units_1story_SL_Inset_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)
+    _test_measure("MF_8units_1story_SL_Inset_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors)
   end
   
   private

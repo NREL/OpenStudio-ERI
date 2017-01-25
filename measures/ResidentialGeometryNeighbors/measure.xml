@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>6abef8ac-2605-4609-bb4e-811e85e15027</version_id>
-  <version_modified>20170125T112215Z</version_modified>
+  <version_id>be8fab71-41bb-4151-8af4-6c25d8b1f280</version_id>
+  <version_modified>20170125T172541Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -133,6 +133,24 @@
       <checksum>70C27777</checksum>
     </file>
     <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Eaves.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0754B703</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Overhangs.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DED93079</checksum>
+    </file>
+    <file>
+      <filename>create_residential_neighbors_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2FFE9306</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -141,13 +159,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>74131041</checksum>
-    </file>
-    <file>
-      <filename>create_residential_neighbors_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AF244AA4</checksum>
+      <checksum>9A39DA5D</checksum>
     </file>
   </files>
 </measure>
