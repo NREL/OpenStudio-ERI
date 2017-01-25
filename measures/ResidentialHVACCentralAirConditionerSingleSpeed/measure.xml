@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>54774715-52eb-4582-9f3a-9fd29450d2b4</version_id>
-  <version_modified>20170124T232842Z</version_modified>
+  <version_id>f5b0be25-5dd8-433b-908d-d0ec070ef11d</version_id>
+  <version_modified>20170125T004131Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessSingleSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Single-Speed Central Air Conditioner</display_name>
@@ -431,7 +431,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>217FE2FD</checksum>
+      <checksum>5F4A08FA</checksum>
     </file>
   </files>
 </measure>

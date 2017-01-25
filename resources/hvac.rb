@@ -559,7 +559,7 @@ class HVAC
         supply.supp_htg_max_outdoor_temp = 40.0 # Moved from DOE-2. DOE-2 Default
         supply.max_defrost_temp = 40.0      # Moved from DOE-2. DOE-2 Default
 
-        # Supply Air Tempteratures
+        # Supply Air Temperatures
         supply.htg_supply_air_temp = 105.0 # used for sizing heating flow rate
         supply.supp_htg_max_supply_temp = 170.0 # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
         
@@ -786,12 +786,8 @@ class HVAC
       # Cooling coils
       if hvac_component.to_CoilCoolingDXSingleSpeed.is_initialized
         return hvac_component.to_CoilCoolingDXSingleSpeed.get
-      elsif hvac_component.to_CoilCoolingDXTwoSpeed.is_initialized
-        return hvac_component.to_CoilCoolingDXTwoSpeed.get
       elsif hvac_component.to_CoilCoolingDXMultiSpeed.is_initialized
         return hvac_component.to_CoilCoolingDXMultiSpeed.get
-      elsif hvac_component.to_CoilCoolingDXVariableSpeed.is_initialized
-        return hvac_component.to_CoilCoolingDXVariableSpeed.get
       elsif hvac_component.to_CoilCoolingDXVariableRefrigerantFlow.is_initialized
         return hvac_component.to_CoilCoolingDXVariableRefrigerantFlow.get
       elsif hvac_component.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
@@ -803,8 +799,6 @@ class HVAC
         return hvac_component.to_CoilHeatingDXSingleSpeed.get
       elsif hvac_component.to_CoilHeatingDXMultiSpeed.is_initialized
         return hvac_component.to_CoilHeatingDXMultiSpeed.get
-      elsif hvac_component.to_CoilHeatingDXVariableSpeed.is_initialized
-        return hvac_component.to_CoilHeatingDXVariableSpeed.get
       elsif hvac_component.to_CoilHeatingDXVariableRefrigerantFlow.is_initialized
         return hvac_component.to_CoilHeatingDXVariableRefrigerantFlow.get
       elsif hvac_component.to_CoilHeatingGas.is_initialized

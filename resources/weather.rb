@@ -138,6 +138,7 @@ class WeatherProcess
         data.WSF = get_ashrae_622_wsf(header.Station)
         
         if not epwHasDesignData
+          # TODO: Issue a warning here?
           design = calc_design_info(design, hourdata, header.Altitude)
           design.DailyTemperatureRange = data.MonthlyAvgDailyHighDrybulbs[7] - data.MonthlyAvgDailyLowDrybulbs[7]
         end

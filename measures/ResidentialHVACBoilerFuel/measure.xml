@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>afe6bdd9-65f5-4126-a4ad-b80fbfa01938</version_id>
-  <version_modified>20170124T232842Z</version_modified>
+  <version_id>4f8406b2-f991-4928-bce9-106f1e3bf1b0</version_id>
+  <version_modified>20170125T004131Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
@@ -458,7 +458,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>217FE2FD</checksum>
+      <checksum>5F4A08FA</checksum>
     </file>
   </files>
 </measure>

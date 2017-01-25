@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_fuel</name>
   <uid>1a71ae9e-5485-4cca-a369-16c6b8a9c1d8</uid>
-  <version_id>84acbc80-8470-42b5-95e6-14f894732c30</version_id>
-  <version_modified>20170124T232843Z</version_modified>
+  <version_id>516ece76-c5db-4e84-b511-9a0c802e55da</version_id>
+  <version_modified>20170125T004133Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessFurnaceFuel</class_name>
   <display_name>Set Residential Furnace Fuel</display_name>
@@ -378,12 +378,6 @@
       <checksum>70C27777</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>217FE2FD</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -393,6 +387,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>0300BFC8</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5F4A08FA</checksum>
     </file>
   </files>
 </measure>

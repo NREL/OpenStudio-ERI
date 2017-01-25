@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>ba466b8d-29cb-4ab5-8620-a17d7433c917</version_id>
-  <version_modified>20170124T232842Z</version_modified>
+  <version_id>1391e90e-72f8-4398-accd-1afa2d6c479d</version_id>
+  <version_modified>20170125T004133Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
@@ -345,12 +345,6 @@
       <checksum>70C27777</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>217FE2FD</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -360,6 +354,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>73568479</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5F4A08FA</checksum>
     </file>
   </files>
 </measure>

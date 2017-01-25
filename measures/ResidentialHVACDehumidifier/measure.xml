@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>d35af55d-dc39-48db-a07d-aff40c0321d1</version_id>
-  <version_modified>20170124T232842Z</version_modified>
+  <version_id>c767e944-7262-4a09-9511-2f093adaa46e</version_id>
+  <version_modified>20170125T004132Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
@@ -121,12 +121,6 @@
       <checksum>70C27777</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>217FE2FD</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -136,6 +130,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>FEFBC5BC</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5F4A08FA</checksum>
     </file>
   </files>
 </measure>
