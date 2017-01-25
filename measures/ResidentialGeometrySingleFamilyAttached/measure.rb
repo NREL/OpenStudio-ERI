@@ -50,7 +50,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     building_num_floors.setDefaultValue(1)
     args << building_num_floors
 
-    #make an argument for number of units per floor
+    #make an argument for number of units
     num_units = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("num_units",true)
     num_units.setDisplayName("Num Units")
     num_units.setUnits("#")

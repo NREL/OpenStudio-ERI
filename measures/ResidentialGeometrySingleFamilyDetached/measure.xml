@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>88790e75-a7a5-4c94-82cc-365fdd392d28</version_id>
-  <version_modified>20170125T230526Z</version_modified>
+  <version_id>045fbe26-c46a-495f-b31f-59f3a9946d4a</version_id>
+  <version_modified>20170125T233141Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
   <display_name>Create Residential Single-Family Detached Geometry</display_name>
@@ -43,7 +43,7 @@
     <argument>
       <name>aspect_ratio</name>
       <display_name>Aspect Ratio</display_name>
-      <description>The ratio of the front/back wall length to the left/right wall length.</description>
+      <description>The ratio of the front/back wall length to the left/right wall length, excluding any protruding garage wall area.</description>
       <type>Double</type>
       <units>FB/LR</units>
       <required>true</required>
@@ -283,16 +283,16 @@
       <checksum>70C27777</checksum>
     </file>
     <file>
-      <filename>create_residential_single_family_detached_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B377219A</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>694DF416</checksum>
+    </file>
+    <file>
+      <filename>create_residential_single_family_detached_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>45FBBF45</checksum>
     </file>
     <file>
       <version>
@@ -303,7 +303,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>47DBDE72</checksum>
+      <checksum>E5AE9D8C</checksum>
     </file>
   </files>
 </measure>

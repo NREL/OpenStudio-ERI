@@ -54,7 +54,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     aspect_ratio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("aspect_ratio",true)
     aspect_ratio.setDisplayName("Aspect Ratio")
     aspect_ratio.setUnits("FB/LR")
-    aspect_ratio.setDescription("The ratio of the front/back wall length to the left/right wall length.")
+    aspect_ratio.setDescription("The ratio of the front/back wall length to the left/right wall length, excluding any protruding garage wall area.")
     aspect_ratio.setDefaultValue(2.0)
     args << aspect_ratio
 	
@@ -253,9 +253,11 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     end
     bonus_area_above_garage = garage_area * garage_protrusion
     if foundation_type == Constants.FinishedBasementFoundationType and attic_type == Constants.FinishedAtticType
-        footprint = (total_ffa + 3 * garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / (num_floors + 2)
-    elsif foundation_type == Constants.FinishedBasementFoundationType or attic_type == Constants.FinishedAtticType
+        footprint = (total_ffa + 2 * garage_area_inside_footprint - (num_floors) * bonus_area_above_garage) / (num_floors + 2)
+    elsif foundation_type == Constants.FinishedBasementFoundationType
         footprint = (total_ffa + 2 * garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / (num_floors + 1)
+    elsif attic_type == Constants.FinishedAtticType
+        footprint = (total_ffa + garage_area_inside_footprint - (num_floors) * bonus_area_above_garage) / (num_floors + 1)
     else
         footprint = (total_ffa + garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / num_floors
     end
