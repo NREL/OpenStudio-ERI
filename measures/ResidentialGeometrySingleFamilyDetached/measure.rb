@@ -729,14 +729,14 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     OpenStudio::Model.intersectSurfaces(spaces)
     OpenStudio::Model.matchSurfaces(spaces)
     
-    # changes surface between unfinished attic and garage attic from roofceiling to wall
+    # remove triangular surface between unfinished attic and garage attic
     unless attic_space.nil?
       attic_space.surfaces.each do |surface|
-        next if surface.surfaceType.downcase != "roofceiling"
-        next unless surface.adjacentSurface.is_initialized
-        next if surface.adjacentSurface.get.surfaceType.downcase != "wall"
-        surface.setSurfaceType("Wall")
-        break
+        next unless surface.vertices.length == 3
+        next unless surface.outsideBoundaryCondition.downcase === "outdoors"
+        next unless (90 - surface.tilt*180/Math::PI).abs > 0.01 # don't remove the vertical attic walls
+        next if roof_type == Constants.RoofTypeHip
+        surface.remove
       end
     end
     
@@ -745,7 +745,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     unit.setBuildingUnitType(Constants.BuildingUnitTypeResidential)
     unit.setName(Constants.ObjectNameBuildingUnit)
     model.getSpaces.each do |space|
-        space.setBuildingUnit(unit)
+      space.setBuildingUnit(unit)
     end
     
     # Store number of units
@@ -762,7 +762,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     model.getBuilding.setStandardsNumberOfStories(num_floors)
     
     # Store the building type
-    model.getBuilding.setStandardsBuildingType("SingleFamilyDetached")  
+    model.getBuilding.setStandardsBuildingType("SingleFamilyDetached")
   
     # reporting final condition of model
     runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")
