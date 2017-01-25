@@ -153,14 +153,23 @@ class CreateResidentialEavesTest < MiniTest::Test
     _test_measure("SFA_4units_1story_FB_UA_Denver_FlatRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
-  def test_multifamily_new_construction_flat_roof_aspect_ratio_two
+  def test_multifamily_new_construction_flat_roof_aspect_ratio_two_inset_right
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>num_units}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4+num_units*2, "ShadingSurfaceGroup"=>num_units}
     expected_values = {"eaves_depth"=>2}
-    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_measure("MF_8units_1story_SL_Inset.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
+  
+  def test_multifamily_new_construction_flat_roof_aspect_ratio_two_inset_left
+    num_units = 8
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4+num_units*2, "ShadingSurfaceGroup"=>num_units}
+    expected_values = {"eaves_depth"=>2}
+    _test_measure("MF_8units_1story_SL_InsetLeft.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end  
   
   private
   

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_interzonal</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>dd92cb97-3694-4417-899f-e30bbe00dc21</version_id>
-  <version_modified>20170124T232840Z</version_modified>
-  <xml_checksum>1E963D9C</xml_checksum>
+  <version_id>ca3e12cd-0f1d-43ec-8c38-aa4d27b4d87e</version_id>
+  <version_modified>20170125T230524Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWallsInterzonal</class_name>
   <display_name>Set Residential Walls - Interzonal Construction</display_name>
   <description>This measure assigns a wood stud construction to walls between finished space and unfinished space.</description>
@@ -83,6 +83,7 @@
       <default_value>0.25</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -118,16 +119,16 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>70C27777</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>9b231fdc-6026-4e21-a7bb-8becc682da98</version_id>
-  <version_modified>20170125T004135Z</version_modified>
-  <xml_checksum>1BFC8ABF</xml_checksum>
+  <version_id>e49d0250-61fb-4549-883f-0c1a7bcca206</version_id>
+  <version_modified>20170125T230539Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
@@ -118,6 +118,7 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Onsite Power Generation.Photovoltaic</tag>
@@ -217,12 +218,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -239,6 +234,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5F4A08FA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

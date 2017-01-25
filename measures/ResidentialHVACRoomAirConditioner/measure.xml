@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>1d0e59e3-32f7-4342-8ce8-d77c2c93a660</version_id>
-  <version_modified>20170125T004134Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>f1fec3a8-4df4-4390-8573-856206bcea8e</version_id>
+  <version_modified>20170125T230536Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a room air conditioner. For multifamily buildings, the room air conditioner can be set for all units of the building.</description>
@@ -135,6 +135,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -295,12 +296,6 @@
       <checksum>3DAEB7EE</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -322,6 +317,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5F4A08FA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

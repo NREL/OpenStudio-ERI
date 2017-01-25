@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>165b4246-5915-490b-844b-982a34a06bdc</version_id>
-  <version_modified>20170125T004126Z</version_modified>
-  <xml_checksum>6FAFA9DE</xml_checksum>
+  <version_id>0b384ab3-7b58-425f-b067-7100069f8972</version_id>
+  <version_modified>20170125T230525Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
   <description>This measure assigns a construction to windows. This measure also creates the interior shading schedule, which is based on shade multipliers and the heating and cooling season logic defined in the Building America House Simulation Protocols.</description>
@@ -48,6 +48,7 @@
       <default_value>0.7</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>
@@ -137,12 +138,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -159,6 +154,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5F4A08FA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

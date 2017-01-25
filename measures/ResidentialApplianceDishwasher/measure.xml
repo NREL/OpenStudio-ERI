@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>b1048cbb-1e7f-4194-b58e-276fb94479ce</version_id>
-  <version_modified>20170125T004125Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>36cac2d6-51b5-405e-99b3-4ccdb8107cb1</version_id>
+  <version_modified>20170125T230520Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
   <description>Adds (or replaces) a residential dishwasher with the specified efficiency, operation, and schedule. For multifamily buildings, the dishwasher can be set for all units of the building.</description>
@@ -146,6 +146,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>
@@ -571,12 +572,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -587,6 +582,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>1761B796</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

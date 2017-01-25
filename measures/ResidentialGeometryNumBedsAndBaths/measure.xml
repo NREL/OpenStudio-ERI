@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>7ca3c17f-b8ba-47f7-9e7f-5f42e5996d1d</version_id>
-  <version_modified>20170124T232840Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>f335b5a6-3b1c-4628-82aa-1ddf0a7eb537</version_id>
+  <version_modified>20170125T230526Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
   <description>Sets the number of bedrooms and bathrooms in the building. For multifamily buildings, the bedrooms/bathrooms can be set for all units of the building.</description>
@@ -29,6 +29,7 @@
       <default_value>2</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -98,16 +99,16 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>70C27777</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

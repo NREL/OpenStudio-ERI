@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>4da13404-adb4-4b7c-91f6-e90cc321c37c</version_id>
-  <version_modified>20170125T150733Z</version_modified>
-  <xml_checksum>9014E219</xml_checksum>
+  <version_id>185189ff-a48f-4c77-a2ab-64bdf4c85132</version_id>
+  <version_modified>20170125T230526Z</version_modified>
+  <xml_checksum>A02778FF</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
   <description>Sets the window area for the building. Doors with glazing should be set as window area.</description>
@@ -56,6 +56,7 @@
       <default_value>1.333</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>
@@ -117,12 +118,6 @@
       <checksum>6D3275B4</checksum>
     </file>
     <file>
-      <filename>MF_8units_1story_SL_Inset.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5F463295</checksum>
-    </file>
-    <file>
       <filename>SFA_4units_1story_SL_UA_Offset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -141,12 +136,6 @@
       <checksum>E90A54AB</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -162,6 +151,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>39FC363A</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Inset.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1A76D754</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

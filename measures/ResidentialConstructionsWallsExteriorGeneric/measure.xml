@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>ba50cbd4-6f89-45e1-9a4a-638c82eface3</version_id>
-  <version_modified>20170124T232840Z</version_modified>
-  <xml_checksum>5091078B</xml_checksum>
+  <version_id>33988cfc-dd60-49db-ae45-8b7c67058913</version_id>
+  <version_modified>20170125T230523Z</version_modified>
+  <xml_checksum>16B68B0C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
   <description>This measure assigns a generic layered construction to above-grade exterior walls adjacent to finished space.</description>
@@ -195,6 +195,7 @@
       <model_dependent>false</model_dependent>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -248,16 +249,16 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>70C27777</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

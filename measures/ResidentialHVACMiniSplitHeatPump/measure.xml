@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_vrf_minisplit</name>
   <uid>402b168f-ed99-46bb-b367-103937011e91</uid>
-  <version_id>20388041-f936-45ca-b67a-06c344e649b8</version_id>
-  <version_modified>20170125T004134Z</version_modified>
-  <xml_checksum>470FC630</xml_checksum>
+  <version_id>a28bb7f9-ae01-43ce-b507-33604d71d3de</version_id>
+  <version_modified>20170125T230536Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessVRFMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a mini-split heat pump. For multifamily buildings, the mini-split heat pump can be set for all units of the building.</description>
@@ -416,6 +416,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -588,12 +589,6 @@
       <checksum>A7E8743A</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -615,6 +610,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5F4A08FA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

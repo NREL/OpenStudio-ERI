@@ -145,11 +145,11 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
         model.getSpaces.each do |space|
           space.surfaces.each do |surface|
             next if surface.outsideBoundaryCondition.downcase != "outdoors" and surface.outsideBoundaryCondition.downcase != "adiabatic"
-            m = OpenStudio::Matrix.new(4,4,0)
-            m[0,0] = 1
-            m[1,1] = 1
-            m[2,2] = 1
-            m[3,3] = 1
+            next if surface.adjacentSurface.is_initialized
+            if surface.outsideBoundaryCondition.downcase == "adiabatic" and !space.name.to_s.downcase.include? Constants.CorridorSpace
+              next
+            end
+            m = Geometry.initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
             m[0,3] = -x_offset
             m[1,3] = -y_offset
             m[2,3] = space.zOrigin
@@ -163,11 +163,7 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
         end
         model.getShadingSurfaces.each do |existing_shading_surface|
           next unless existing_shading_surface.name.to_s.downcase.include? "eaves"
-          m = OpenStudio::Matrix.new(4,4,0)
-          m[0,0] = 1
-          m[1,1] = 1
-          m[2,2] = 1
-          m[3,3] = 1
+          m = Geometry.initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
           m[0,3] = -x_offset
           m[1,3] = -y_offset
           transformation = OpenStudio::Transformation.new(m)

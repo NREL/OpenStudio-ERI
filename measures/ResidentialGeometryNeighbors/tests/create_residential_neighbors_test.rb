@@ -103,7 +103,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   end  
   
   def test_multifamily_new_construction
-    surfaces_per_neighbor = 40
+    surfaces_per_neighbor = 32
     num_neighbors = 2
     args_hash = {}
     expected_num_del_objects = {}
@@ -113,7 +113,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
   end
   
   def test_multifamily_new_construction_inset
-    surfaces_per_neighbor = 62
+    surfaces_per_neighbor = 54
     num_neighbors = 2
     args_hash = {}
     expected_num_del_objects = {}

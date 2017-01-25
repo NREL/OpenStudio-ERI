@@ -2,6 +2,14 @@ require "#{File.dirname(__FILE__)}/constants"
 
 class Geometry
 
+    def self.initialize_transformation_matrix(m)
+      m[0,0] = 1
+      m[1,1] = 1
+      m[2,2] = 1
+      m[3,3] = 1
+      return m
+    end
+
     def self.get_surface_dimensions(surface)
       least_x = 9e99
       greatest_x = -9e99

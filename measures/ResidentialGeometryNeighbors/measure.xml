@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>be8fab71-41bb-4151-8af4-6c25d8b1f280</version_id>
-  <version_modified>20170125T172541Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>dd61f2cc-f353-4b06-ad09-aa22d3918db9</version_id>
+  <version_modified>20170125T230525Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
   <description>Sets the neighbors (front, back, left, and/or right) of the building for shading purposes. Neighboring buildings will have the same geometry as the model building.</description>
@@ -51,6 +51,7 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -121,12 +122,6 @@
       <checksum>86A38CF7</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -148,7 +143,13 @@
       <filename>create_residential_neighbors_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>2FFE9306</checksum>
+      <checksum>874A99B6</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
     <file>
       <version>
@@ -159,7 +160,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9A39DA5D</checksum>
+      <checksum>3A3A990B</checksum>
     </file>
   </files>
 </measure>

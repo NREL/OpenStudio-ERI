@@ -319,11 +319,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
         # set this to the garage zone
         garage_space.setThermalZone(garage_zone)
         
-        m = OpenStudio::Matrix.new(4,4,0)
-        m[0,0] = 1
-        m[1,1] = 1
-        m[2,2] = 1
-        m[3,3] = 1
+        m = Geometry.initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
         m[0,3] = 0
         m[1,3] = 0
         m[2,3] = z
@@ -414,11 +410,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
       # set these to the living zone
       living_space.setThermalZone(living_zone)
       
-      m = OpenStudio::Matrix.new(4,4,0)
-      m[0,0] = 1
-      m[1,1] = 1
-      m[2,2] = 1
-      m[3,3] = 1
+      m = Geometry.initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
       m[0,3] = 0
       m[1,3] = 0
       m[2,3] = z
@@ -524,11 +516,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
         runner.registerInfo("Set #{attic_space_name}.")
       end
 
-      m = OpenStudio::Matrix.new(4,4,0)
-      m[0,0] = 1
-      m[1,1] = 1
-      m[2,2] = 1
-      m[3,3] = 1
+      m = Geometry.initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
       m[0,3] = 0
       m[1,3] = 0
       m[2,3] = z
@@ -594,11 +582,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
         end
       end
 
-      m = OpenStudio::Matrix.new(4,4,0)
-      m[0,0] = 1
-      m[1,1] = 1
-      m[2,2] = 1
-      m[3,3] = 1
+      m = Geometry.initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
       m[0,3] = 0
       m[1,3] = 0
       m[2,3] = z

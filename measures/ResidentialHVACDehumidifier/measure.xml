@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>c767e944-7262-4a09-9511-2f093adaa46e</version_id>
-  <version_modified>20170125T004132Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>6af8df26-be47-4718-b640-edc22f0f56e4</version_id>
+  <version_modified>20170125T230534Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
   <description>This measure removes any existing dehumidifiers from the building and adds a dehumidifier. For multifamily buildings, the dehumidifier can be set for all units of the building.</description>
@@ -51,6 +51,7 @@
       <default_value>0.6</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -103,12 +104,6 @@
       <checksum>E90A54AB</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>process_dehumidifier_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -136,6 +131,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5F4A08FA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

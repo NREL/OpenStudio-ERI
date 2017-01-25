@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>7b49b7f6-8d24-49b9-82f2-33f5ef7ae171</version_id>
-  <version_modified>20170125T004132Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>43a938c9-d47f-4232-b0c9-1799c926207c</version_id>
+  <version_modified>20170125T230533Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a two-speed central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the two-speed central air conditioner can be set for all units of the building.</description>
@@ -286,6 +286,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -452,12 +453,6 @@
       <checksum>0183D975</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -479,6 +474,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>5F4A08FA</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>

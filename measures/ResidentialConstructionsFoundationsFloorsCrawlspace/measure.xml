@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>37428628-2014-4762-9b11-3deb744c5f13</version_id>
-  <version_modified>20170124T232840Z</version_modified>
-  <xml_checksum>1E963D9C</xml_checksum>
+  <version_id>3415aa8b-bb4c-4564-ae37-7ddd1e513cde</version_id>
+  <version_modified>20170125T230522Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
   <description>This measure assigns constructions to the crawlspace ceilings, walls, and floors.</description>
@@ -84,6 +84,7 @@
       <default_value>9.25</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -173,12 +174,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>97796F4C</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -189,6 +184,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>25C7882D</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>694DF416</checksum>
     </file>
   </files>
 </measure>
