@@ -28,15 +28,14 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     surfaces_per_facade = 12
     num_neighbors = 2
     args_hash = {}
-    args_hash["all_surfaces"] = "true"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_facade*num_neighbors)  
   end
   
-  def test_retrofit_replace_minimal_required_surfaces
-    surfaces_per_facade = 3
+  def test_retrofit_replace
+    surfaces_per_facade = 12
     num_neighbors = 4
     args_hash = {}
     args_hash["back_offset"] = 10
@@ -57,7 +56,6 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     surfaces_per_facade = 26
     num_neighbors = 2
     args_hash = {}
-    args_hash["all_surfaces"] = "true"    
     expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
@@ -68,7 +66,6 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     surfaces_per_facade = 32
     num_neighbors = 2
     args_hash = {}
-    args_hash["all_surfaces"] = "true"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
@@ -79,7 +76,6 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     surfaces_per_facade = 40
     num_neighbors = 2
     args_hash = {}
-    args_hash["all_surfaces"] = "true"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
@@ -90,7 +86,6 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     surfaces_per_facade = 62
     num_neighbors = 2
     args_hash = {}
-    args_hash["all_surfaces"] = "true"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_facade*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}

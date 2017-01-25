@@ -56,13 +56,6 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     front_neighbor_offset.setDescription("The minimum distance between the simulated house and the neighboring house to the front (not including eaves). A value of zero indicates no neighbors.")
     front_neighbor_offset.setDefaultValue(0.0)
     args << front_neighbor_offset
-    
-    #make a bool argument for copying all house surfaces
-    all_surfaces = OpenStudio::Ruleset::OSArgument::makeBoolArgument("all_surfaces", false)
-    all_surfaces.setDisplayName("Copy all surfaces?")
-    all_surfaces.setDescription("Indicates whether to copy all house surfaces (useful for rendering purposes). Otherwise, only the minimal required surfaces are copied (e.g., only the left-most surfaces for the right neighbor) in order to reduce simulation runtime.")
-    all_surfaces.setDefaultValue(false)
-    args << all_surfaces    
 
     return args
   end
@@ -80,7 +73,6 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     right_neighbor_offset = OpenStudio::convert(runner.getDoubleArgumentValue("right_offset",user_arguments),"ft","m").get
     back_neighbor_offset = OpenStudio::convert(runner.getDoubleArgumentValue("back_offset",user_arguments),"ft","m").get
     front_neighbor_offset = OpenStudio::convert(runner.getDoubleArgumentValue("front_offset",user_arguments),"ft","m").get
-    all_surfaces = runner.getBoolArgumentValue("all_surfaces",user_arguments)
 	
     if left_neighbor_offset < 0 or right_neighbor_offset < 0 or back_neighbor_offset < 0 or front_neighbor_offset < 0
       runner.registerError("Neighbor offsets must be greater than or equal to 0.")
@@ -146,25 +138,6 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
         if neighbor_offset != 0
           space.surfaces.each do |surface|
               next if surface.outsideBoundaryCondition.downcase != "outdoors" and surface.outsideBoundaryCondition.downcase != "adiabatic"
-              if !all_surfaces
-                if dir == Constants.FacadeLeft
-                    if Geometry.get_facade_for_surface(surface) != Constants.FacadeRight
-                        next
-                    end
-                elsif dir == Constants.FacadeRight
-                    if Geometry.get_facade_for_surface(surface) != Constants.FacadeLeft
-                        next
-                    end                
-                elsif dir == Constants.FacadeFront
-                    if Geometry.get_facade_for_surface(surface) != Constants.FacadeBack
-                        next
-                    end                
-                elsif dir == Constants.FacadeBack
-                    if Geometry.get_facade_for_surface(surface) != Constants.FacadeFront
-                        next
-                    end                
-                end
-              end
               m = OpenStudio::Matrix.new(4,4,0)
               m[0,0] = 1
               m[1,1] = 1
