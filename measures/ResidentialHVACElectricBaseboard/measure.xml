@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>eed16d47-9efe-408d-a65a-3422b7562f6c</version_id>
-  <version_modified>20170123T221546Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>2e9311fe-a444-4a35-b219-88c8cb18e895</version_id>
+  <version_modified>20170124T232842Z</version_modified>
+  <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
   <description>This measure removes any existing electric baseboards from the building and adds electric baseboards. For multifamily buildings, the electric baseboard can be set for all units of the building.</description>
@@ -157,7 +157,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -317,7 +316,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>217FE2FD</checksum>
     </file>
     <file>
       <version>
@@ -328,13 +333,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>0C0F5772</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>965CF8D9</checksum>
+      <checksum>6B39F605</checksum>
     </file>
   </files>
 </measure>

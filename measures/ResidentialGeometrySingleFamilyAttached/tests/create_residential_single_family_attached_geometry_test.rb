@@ -136,6 +136,29 @@ class CreateResidentialSingleFamilyAttachedGeometryTest < MiniTest::Test
     _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
   end
   
+  def test_fourplex_gable_roof_aspect_ratio_half
+    args_hash = {}
+    args_hash["num_units"] = 4
+    args_hash["unit_aspect_ratio"] = 0.5
+    args_hash["has_rear_units"] = "true"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"BuildingUnit"=>4, "Surface"=>40, "ThermalZone"=>4+1, "Space"=>4+1}
+    expected_values = {"UnfinishedAtticHeight"=>5.30}
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
+  end
+  
+  def test_fourplex_hip_roof_aspect_ratio_half
+    args_hash = {}
+    args_hash["num_units"] = 4
+    args_hash["unit_aspect_ratio"] = 0.5
+    args_hash["has_rear_units"] = "true"
+    args_hash["roof_type"] = Constants.RoofTypeHip
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"BuildingUnit"=>4, "Surface"=>44, "ThermalZone"=>4+1, "Space"=>4+1}
+    expected_values = {"UnfinishedAtticHeight"=>5.30}
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
+  end    
+  
   private
   
   def _test_error(osm_file_or_model, args_hash)

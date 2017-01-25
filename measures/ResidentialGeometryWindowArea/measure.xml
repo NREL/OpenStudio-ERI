@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>93787c83-0357-4f24-b88c-744319772a78</version_id>
-  <version_modified>20170123T221539Z</version_modified>
-  <xml_checksum>A02778FF</xml_checksum>
+  <version_id>198eedfd-ce44-4832-a616-054c9372142e</version_id>
+  <version_modified>20170124T200844Z</version_modified>
+  <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
   <description>Sets the window area for the building. Doors with glazing should be set as window area.</description>
@@ -56,7 +56,6 @@
       <default_value>1.333</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>
@@ -162,7 +161,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
   </files>
 </measure>

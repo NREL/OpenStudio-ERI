@@ -217,8 +217,12 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
 
-        # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, "Dehumidifier", control_zone)
+        # Remove existing dehumidifier
+        model.getZoneHVACDehumidifierDXs.each do |dehumidifier|
+          next unless control_zone.handle.to_s == dehumidifier.thermalZone.get.handle.to_s
+          runner.registerInfo("Removed '#{dehumidifier.name}' from #{control_zone.name}.")
+          dehumidifier.remove
+        end
       
         humidistat = control_zone.zoneControlHumidistat
         if humidistat.is_initialized
@@ -244,8 +248,12 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
         
         slave_zones.each do |slave_zone|
         
-          # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, "Dehumidifier", slave_zone)
+          # Remove existing dehumidifier
+          model.getZoneHVACDehumidifierDXs.each do |dehumidifier|
+            next unless slave_zone.handle.to_s == dehumidifier.thermalZone.get.handle.to_s
+            runner.registerInfo("Removed '#{dehumidifier.name}' from #{slave_zone.name}.")
+            dehumidifier.remove
+          end
           
           humidistat = slave_zone.zoneControlHumidistat
           if humidistat.is_initialized

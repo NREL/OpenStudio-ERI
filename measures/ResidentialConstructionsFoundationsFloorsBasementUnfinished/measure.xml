@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_unfinished</name>
   <uid>ebc21070-2d4b-4a2a-bd15-f18bf3e77b49</uid>
-  <version_id>d1939519-2cf8-4657-b03a-5d3ce964325e</version_id>
-  <version_modified>20170123T221534Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>0bd6ed85-adc6-456c-b6b6-458d401a12dc</version_id>
+  <version_modified>20170124T232840Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementUnfinished</class_name>
   <display_name>Set Residential Foundations/Floors - Unfinished Basement Constructions</display_name>
   <description>This measure assigns constructions to the unfinished basement ceilings, walls, and floors.</description>
@@ -166,7 +166,6 @@
       <default_value>9.25</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -232,12 +231,6 @@
       <checksum>83B2FEED</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1A8F010B</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_UB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -271,7 +264,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>25C7882D</checksum>
     </file>
   </files>
 </measure>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_air_source_heat_pump</name>
   <uid>8d15f4f7-8bbb-4b2e-b6d0-aa861f22b697</uid>
-  <version_id>1fc1ea3a-d67b-4cf6-8b74-b6ce88b6d95d</version_id>
-  <version_modified>20170123T221544Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>5ebd60b0-f894-4725-8689-f76d7c4c828e</version_id>
+  <version_modified>20170124T232842Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVariableSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Variable-Speed Air Source Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a variable-speed air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the variable-speed air source heat pump can be set for all units of the building.</description>
@@ -647,7 +647,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -823,7 +822,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
     <file>
       <version>
@@ -834,13 +833,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3AD5FB27</checksum>
+      <checksum>6B6D9241</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>965CF8D9</checksum>
+      <checksum>217FE2FD</checksum>
     </file>
   </files>
 </measure>

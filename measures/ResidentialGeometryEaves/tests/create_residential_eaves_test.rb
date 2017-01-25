@@ -102,6 +102,30 @@ class CreateResidentialEavesTest < MiniTest::Test
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)       
   end
   
+  def test_gable_roof_garage_aspect_ratio_two
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>12, "ShadingSurfaceGroup"=>4}
+    expected_values = {"eaves_depth"=>2}
+    _test_measure("SFD_2000sqft_2story_SL_GRG_UA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)       
+  end
+  
+  def test_flat_roof_garage_left_aspect_ratio_two
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>1}
+    expected_values = {"eaves_depth"=>2}
+    _test_measure("SFD_2000sqft_2story_SL_GRGLeft_FlatRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)       
+  end
+
+  def test_flat_roof_garage_right_aspect_ratio_two
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>1}
+    expected_values = {"eaves_depth"=>2}
+    _test_measure("SFD_2000sqft_2story_SL_GRG_FlatRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)       
+  end
+  
   def test_single_family_attached_new_construction_gable_roof_aspect_ratio_two
     num_units = 4
     args_hash = {}
@@ -127,7 +151,7 @@ class CreateResidentialEavesTest < MiniTest::Test
     expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>num_units}
     expected_values = {"eaves_depth"=>2}
     _test_measure("SFA_4units_1story_FB_UA_Denver_FlatRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end  
+  end
   
   def test_multifamily_new_construction_flat_roof_aspect_ratio_two
     num_units = 8
@@ -230,8 +254,10 @@ class CreateResidentialEavesTest < MiniTest::Test
             if obj_type == "ShadingSurface"
                 l, w, h = Geometry.get_surface_dimensions(new_object)
                 if l < w
+                  next if OpenStudio::convert(l,"m","ft").get > 5
                   assert_in_epsilon(expected_values["eaves_depth"], OpenStudio::convert(l,"m","ft").get, 0.01)
                 else
+                  next if OpenStudio::convert(w,"m","ft").get > 5
                   assert_in_epsilon(expected_values["eaves_depth"], OpenStudio::convert(w,"m","ft").get, 0.01)
                 end
             end

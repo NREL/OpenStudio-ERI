@@ -278,7 +278,7 @@ class ProcessBoilerElectric < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
 
         # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, "Boiler", control_zone)
+        HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameBoiler, control_zone)
       
         baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
         baseboard_coil.setName(obj_name + " #{control_zone.name} heating coil")
@@ -300,7 +300,7 @@ class ProcessBoilerElectric < OpenStudio::Ruleset::ModelUserScript
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, "Boiler", slave_zone)       
+          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameBoiler, slave_zone)       
         
           baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
           baseboard_coil.setName(obj_name + " #{slave_zone.name} heating coil")

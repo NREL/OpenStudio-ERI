@@ -2,15 +2,14 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_surfaces</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>0bb2a0c4-c0ca-48e3-a324-0a9074241ad0</version_id>
-  <version_modified>20170123T221535Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>a7ed974e-cf44-4d1f-858e-3190ea693dc6</version_id>
+  <version_modified>20170124T232840Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedSurfaces</class_name>
   <display_name>Set Residential Uninsulated Surfaces</display_name>
   <description>This measure assigns an uninsulated constructions to 1) exterior surfaces adjacent to unfinished space, 2) surfaces between two unfinished (or two finished) spaces, or 3) adiabatic surfaces.</description>
   <modeler_description>Calculates and assigns material layer properties of uninsulated constructions for surfaces that are not typically insulated.</modeler_description>
   <arguments/>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -55,7 +54,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
   </files>
 </measure>

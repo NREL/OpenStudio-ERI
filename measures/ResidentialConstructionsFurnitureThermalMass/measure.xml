@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>fa729c11-2f26-4580-8e29-7d3ab90d8830</version_id>
-  <version_modified>20170123T221535Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>3e6cc9c7-a7e3-451a-a0ff-c1dc4e65056e</version_id>
+  <version_modified>20170124T232840Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>
   <description>Adds (or replaces) furniture mass to finished and unfinished spaces.</description>
@@ -69,7 +69,6 @@
       <default_value>0.29</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -114,7 +113,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
   </files>
 </measure>

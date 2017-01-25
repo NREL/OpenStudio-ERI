@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>5a7ae205-bdc2-4daf-b29e-b6f0a59366a6</uid>
-  <version_id>ef96ac5f-b52b-4016-be78-dc84094370ee</version_id>
-  <version_modified>20170123T221531Z</version_modified>
-  <xml_checksum>C75AF51E</xml_checksum>
+  <version_id>8751c828-e6e8-4eaa-8afe-bcf5a4bd51f2</version_id>
+  <version_modified>20170124T232839Z</version_modified>
+  <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
   <description>Sets (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts.</description>
@@ -598,7 +598,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Infiltration</tag>
@@ -757,13 +756,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>965CF8D9</checksum>
+      <checksum>217FE2FD</checksum>
     </file>
   </files>
 </measure>

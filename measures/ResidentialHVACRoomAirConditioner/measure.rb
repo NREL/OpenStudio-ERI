@@ -181,7 +181,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         next unless Geometry.zone_is_above_grade(control_zone)
 
         # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, "Room Air Conditioner", control_zone)    
+        HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameRoomAirConditioner, control_zone)    
       
         # _processSystemRoomAC
       
@@ -218,7 +218,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, "Room Air Conditioner", slave_zone)
+          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameRoomAirConditioner, slave_zone)
 
         end
       

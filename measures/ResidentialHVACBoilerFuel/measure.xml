@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>daa07cad-b4be-4390-b03d-f10e3d8802c7</version_id>
-  <version_modified>20170123T221544Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>afe6bdd9-65f5-4126-a4ad-b80fbfa01938</version_id>
+  <version_modified>20170124T232842Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a boiler along with constant speed pump and water baseboard coils to a hot water plant loop. For multifamily buildings, the supply components on the plant loop can be set for all units of the building.</description>
@@ -272,7 +272,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -442,7 +441,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
     <file>
       <version>
@@ -453,13 +452,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CC49113C</checksum>
+      <checksum>F0A68441</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>965CF8D9</checksum>
+      <checksum>217FE2FD</checksum>
     </file>
   </files>
 </measure>

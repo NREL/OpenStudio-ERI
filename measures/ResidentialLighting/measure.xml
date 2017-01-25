@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>6f43b083-a932-4d7b-929e-dd6a43ac2876</version_id>
-  <version_modified>20170123T221547Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>f83eac2e-b865-4931-836f-25de647503ba</version_id>
+  <version_modified>20170124T232843Z</version_modified>
+  <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
   <description>Sets (or replaces) the lighting energy use, based on fractions of CFLs, LFLs, and LEDs, for finished spaces, the garage, and outside. For multifamily buildings, the lighting can be set for all units of the building.</description>
@@ -105,7 +105,6 @@
       <default_value>88</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Electric Lighting.Lighting Equipment</tag>
@@ -234,7 +233,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
   </files>
 </measure>

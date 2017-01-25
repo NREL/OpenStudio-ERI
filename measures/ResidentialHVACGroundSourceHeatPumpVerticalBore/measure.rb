@@ -513,7 +513,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
       control_slave_zones_hash.each do |control_zone, slave_zones|
       
         # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, "Ground Source Heat Pump Vertical Bore", control_zone) 
+        HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameGroundSourceHeatPumpVerticalBore, control_zone) 
 
         c = [0.67104926, -0.00210834, 0.00000000, 0.01491424, 0.00000000, 0.00000000] # unit.gshp.GSHP_HEAT_CAP_FT_SPEC_coefficients
         gshp_Heat_CAP_fT_coeff = []
@@ -660,7 +660,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Ruleset::ModelUserSc
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, "Ground Source Heat Pump Vertical Bore", slave_zone)
+          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameGroundSourceHeatPumpVerticalBore, slave_zone)
       
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")

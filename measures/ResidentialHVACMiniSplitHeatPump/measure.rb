@@ -342,7 +342,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         end
 
         # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, "Mini-Split Heat Pump", control_zone)
+        HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameMiniSplitHeatPump, control_zone)
       
         # _processSystemHeatingCoil
         
@@ -448,7 +448,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, "Mini-Split Heat Pump", slave_zone)
+          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameMiniSplitHeatPump, slave_zone)
           
           htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
           htg_coil.setName(obj_name + " #{slave_zone.name} heating coil")

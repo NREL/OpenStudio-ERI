@@ -166,6 +166,8 @@ namespace :test do
 
     os_cli = "C:\\Program Files (x86)\\openstudio-2.0.0\\bin\\openstudio.exe" # FIXME
     os_version = os_cli.split('\\')[2].split('-')[1]
+    # os_cli = "C:\\openstudio-2.0.0\\bin\\openstudio.exe" # FIXME    
+    # os_version = os_cli.split('\\')[1].split('-')[1]
     osw_files = Dir.entries(File.expand_path("../test/osw_files/", __FILE__)).select {|entry| entry.end_with?(".osw")}
     if File.exists?(File.expand_path("../log", __FILE__))
         FileUtils.rm(File.expand_path("../log", __FILE__))

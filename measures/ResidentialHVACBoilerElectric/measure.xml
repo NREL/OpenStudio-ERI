@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>28bb43c0-f422-4099-88f4-78332cafbb7f</version_id>
-  <version_modified>20170123T221544Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>4dc70ab4-e5a1-40c1-b0f4-7329bb9e8420</version_id>
+  <version_modified>20170124T232842Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a boiler along with constant speed pump and water baseboard coils to a hot water plant loop. For multifamily buildings, the supply components on the plant loop can be set for all units of the building.</description>
@@ -249,7 +249,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -419,7 +418,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
     <file>
       <version>
@@ -430,13 +429,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BF06D8ED</checksum>
+      <checksum>DAA5D9FF</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>965CF8D9</checksum>
+      <checksum>217FE2FD</checksum>
     </file>
   </files>
 </measure>

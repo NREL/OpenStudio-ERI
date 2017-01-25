@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_central_air_conditioner</name>
   <uid>7387af85-5ae2-422c-9488-d64b8682dd06</uid>
-  <version_id>cc3f8ae3-b655-4dea-a0a6-396c737dd9b0</version_id>
-  <version_modified>20170123T221545Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>5bb326da-0091-459c-987f-6ddd1a3b771a</version_id>
+  <version_modified>20170124T232842Z</version_modified>
+  <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessVariableSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Variable-Speed Central Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a variable-speed central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the variable-speed central air conditioner can be set for all units of the building.</description>
@@ -360,7 +360,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -536,7 +535,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
     <file>
       <version>
@@ -547,13 +546,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D664D277</checksum>
+      <checksum>7F2085D2</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>965CF8D9</checksum>
+      <checksum>217FE2FD</checksum>
     </file>
   </files>
 </measure>

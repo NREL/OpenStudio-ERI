@@ -91,7 +91,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, "Electric Baseboard", control_zone)
+        HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameElectricBaseboard, control_zone)
       
         htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
         htg_coil.setName(obj_name + " #{control_zone.name} convective electric")
@@ -106,7 +106,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
         slave_zones.each do |slave_zone|
         
           # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, "Electric Baseboard", slave_zone)    
+          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameElectricBaseboard, slave_zone)    
         
           htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
           htg_coil.setName(obj_name + " #{slave_zone.name} convective electric")

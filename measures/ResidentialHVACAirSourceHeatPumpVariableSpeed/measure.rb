@@ -486,7 +486,7 @@ class ProcessVariableSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScri
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, "Air Source Heat Pump", control_zone)    
+        HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, control_zone)    
       
         # _processCurvesDXHeating
         htg_coil_stage_data = HVAC._processCurvesDXHeating(model, supply, hpOutputCapacity)
@@ -594,7 +594,7 @@ class ProcessVariableSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScri
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, "Air Source Heat Pump", slave_zone)
+          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, slave_zone)
       
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")

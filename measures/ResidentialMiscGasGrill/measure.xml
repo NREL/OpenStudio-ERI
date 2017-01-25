@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>98f760ce-751a-489e-94a2-e077587a4510</version_id>
-  <version_modified>20170123T221548Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>9ebd480a-690f-42df-a57b-5c3fc18a2909</version_id>
+  <version_modified>20170124T232843Z</version_modified>
+  <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>
   <description>Adds (or replaces) a residential gas grill with the specified efficiency and schedule. The grill is assumed to be outdoors. For multifamily buildings, the grill is set for all units of the building.</description>
@@ -76,7 +76,6 @@
       <default_value>1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Gas Equipment</tag>
@@ -151,7 +150,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
   </files>
 </measure>

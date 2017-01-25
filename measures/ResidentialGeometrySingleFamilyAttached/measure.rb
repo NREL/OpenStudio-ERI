@@ -853,7 +853,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
   end
   
   def get_attic_space(model, x, y, living_height, building_num_floors, roof_pitch, roof_type)
-          
+                    
     if y > 0
       nw_point = OpenStudio::Point3d.new(0, 0, living_height * building_num_floors)
       ne_point = OpenStudio::Point3d.new(x, 0, living_height * building_num_floors)
@@ -866,32 +866,84 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
       se_point = OpenStudio::Point3d.new(x, 0, living_height * building_num_floors)    
     end
     attic_polygon = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)
-    attic_height = (x / 2.0) * roof_pitch
+    if y.abs >= x
+      attic_height = (x / 2.0) * roof_pitch
+    else
+      attic_height = (y.abs / 2.0) * roof_pitch
+    end    
     
     side_type = nil
     if roof_type == Constants.RoofTypeGable
       if y > 0
-        roof_n_point = OpenStudio::Point3d.new(x / 2.0, 0, living_height * building_num_floors + attic_height)
-        roof_s_point = OpenStudio::Point3d.new(x / 2.0, -y, living_height * building_num_floors + attic_height)
+        if x <= y
+          roof_n_point = OpenStudio::Point3d.new(x / 2.0, 0, living_height * building_num_floors + attic_height)
+          roof_s_point = OpenStudio::Point3d.new(x / 2.0, -y, living_height * building_num_floors + attic_height)
+          polygon_w_roof = Geometry.make_polygon(roof_n_point, nw_point, sw_point, roof_s_point)
+          polygon_e_roof = Geometry.make_polygon(roof_s_point, se_point, ne_point, roof_n_point)
+          polygon_s_wall = Geometry.make_polygon(roof_s_point, sw_point, se_point)
+          polygon_n_wall = Geometry.make_polygon(roof_n_point, ne_point, nw_point)
+        else
+          roof_w_point = OpenStudio::Point3d.new(0, -y / 2.0, living_height * building_num_floors + attic_height)
+          roof_e_point = OpenStudio::Point3d.new(x, -y / 2.0, living_height * building_num_floors + attic_height)
+          polygon_w_roof = Geometry.make_polygon(roof_w_point, roof_e_point, ne_point, nw_point)
+          polygon_e_roof = Geometry.make_polygon(roof_e_point, roof_w_point, sw_point, se_point)
+          polygon_s_wall = Geometry.make_polygon(roof_w_point, nw_point, sw_point)
+          polygon_n_wall = Geometry.make_polygon(roof_e_point, se_point, ne_point)
+        end
       else
-        roof_n_point = OpenStudio::Point3d.new(x / 2.0, -y, living_height * building_num_floors + attic_height)
-        roof_s_point = OpenStudio::Point3d.new(x / 2.0, 0, living_height * building_num_floors + attic_height)      
+        if x <= y.abs
+          roof_n_point = OpenStudio::Point3d.new(x / 2.0, -y, living_height * building_num_floors + attic_height)
+          roof_s_point = OpenStudio::Point3d.new(x / 2.0, 0, living_height * building_num_floors + attic_height)
+          polygon_w_roof = Geometry.make_polygon(roof_n_point, nw_point, sw_point, roof_s_point)
+          polygon_e_roof = Geometry.make_polygon(roof_s_point, se_point, ne_point, roof_n_point)
+          polygon_s_wall = Geometry.make_polygon(roof_s_point, sw_point, se_point)
+          polygon_n_wall = Geometry.make_polygon(roof_n_point, ne_point, nw_point)          
+        else
+          roof_w_point = OpenStudio::Point3d.new(0, -y / 2.0, living_height * building_num_floors + attic_height)
+          roof_e_point = OpenStudio::Point3d.new(x, -y / 2.0, living_height * building_num_floors + attic_height)
+          polygon_w_roof = Geometry.make_polygon(roof_w_point, roof_e_point, ne_point, nw_point)
+          polygon_e_roof = Geometry.make_polygon(roof_e_point, roof_w_point, sw_point, se_point)
+          polygon_s_wall = Geometry.make_polygon(roof_w_point, nw_point, sw_point)
+          polygon_n_wall = Geometry.make_polygon(roof_e_point, se_point, ne_point)
+        end
       end
       side_type = "Wall"
     elsif roof_type == Constants.RoofTypeHip
       if y > 0
-        roof_n_point = OpenStudio::Point3d.new(x / 2.0, -x / 2.0, living_height * building_num_floors + attic_height)
-        roof_s_point = OpenStudio::Point3d.new(x / 2.0, -y + x / 2.0, living_height * building_num_floors + attic_height)
+        if x <= y
+          roof_n_point = OpenStudio::Point3d.new(x / 2.0, -x / 2.0, living_height * building_num_floors + attic_height)
+          roof_s_point = OpenStudio::Point3d.new(x / 2.0, -y + x / 2.0, living_height * building_num_floors + attic_height)
+          polygon_w_roof = Geometry.make_polygon(roof_n_point, nw_point, sw_point, roof_s_point)
+          polygon_e_roof = Geometry.make_polygon(roof_s_point, se_point, ne_point, roof_n_point)
+          polygon_s_wall = Geometry.make_polygon(roof_s_point, sw_point, se_point)
+          polygon_n_wall = Geometry.make_polygon(roof_n_point, ne_point, nw_point)
+        else
+          roof_w_point = OpenStudio::Point3d.new(y / 2.0, -y / 2.0, living_height * building_num_floors + attic_height)
+          roof_e_point = OpenStudio::Point3d.new(x - y / 2.0, -y / 2.0, living_height * building_num_floors + attic_height)
+          polygon_w_roof = Geometry.make_polygon(roof_w_point, sw_point, se_point, roof_e_point)
+          polygon_e_roof = Geometry.make_polygon(roof_e_point, ne_point, nw_point, roof_w_point)
+          polygon_s_wall = Geometry.make_polygon(roof_e_point, se_point, ne_point)
+          polygon_n_wall = Geometry.make_polygon(roof_w_point, nw_point, sw_point)
+        end
       else
-        roof_n_point = OpenStudio::Point3d.new(x / 2.0, -y - x / 2.0, living_height * building_num_floors + attic_height)
-        roof_s_point = OpenStudio::Point3d.new(x / 2.0, x / 2.0, living_height * building_num_floors + attic_height)      
+        if x <= y.abs
+          roof_n_point = OpenStudio::Point3d.new(x / 2.0, -y - x / 2.0, living_height * building_num_floors + attic_height)
+          roof_s_point = OpenStudio::Point3d.new(x / 2.0, x / 2.0, living_height * building_num_floors + attic_height)
+          polygon_w_roof = Geometry.make_polygon(roof_n_point, nw_point, sw_point, roof_s_point)
+          polygon_e_roof = Geometry.make_polygon(roof_s_point, se_point, ne_point, roof_n_point)
+          polygon_s_wall = Geometry.make_polygon(roof_s_point, sw_point, se_point)
+          polygon_n_wall = Geometry.make_polygon(roof_n_point, ne_point, nw_point)
+        else
+          roof_w_point = OpenStudio::Point3d.new(-y / 2.0, -y / 2.0, living_height * building_num_floors + attic_height)
+          roof_e_point = OpenStudio::Point3d.new(x + y / 2.0, -y / 2.0, living_height * building_num_floors + attic_height)
+          polygon_w_roof = Geometry.make_polygon(roof_w_point, sw_point, se_point, roof_e_point)
+          polygon_e_roof = Geometry.make_polygon(roof_e_point, ne_point, nw_point, roof_w_point)
+          polygon_s_wall = Geometry.make_polygon(roof_e_point, se_point, ne_point)
+          polygon_n_wall = Geometry.make_polygon(roof_w_point, nw_point, sw_point)
+        end
       end
       side_type = "RoofCeiling"
     end
-    polygon_w_roof = Geometry.make_polygon(roof_n_point, nw_point, sw_point, roof_s_point)
-    polygon_e_roof = Geometry.make_polygon(roof_s_point, se_point, ne_point, roof_n_point)
-    polygon_s_wall = Geometry.make_polygon(roof_s_point, sw_point, se_point)
-    polygon_n_wall = Geometry.make_polygon(roof_n_point, ne_point, nw_point)      
     
     surface_floor = OpenStudio::Model::Surface.new(attic_polygon, model)
     surface_floor.setSurfaceType("Floor") 

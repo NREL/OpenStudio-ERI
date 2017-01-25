@@ -496,7 +496,7 @@ class Constants
     end
     return "residential bath dist#{s_unit}"
   end
-  def self.ObjectNameBoiler(fueltype, unit_name=self.ObjectNameBuildingUnit)
+  def self.ObjectNameBoiler(fueltype="", unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"
@@ -593,7 +593,7 @@ class Constants
     end
     return "residential freezer#{s_unit}"
   end
-  def self.ObjectNameFurnace(fueltype, unit_name=self.ObjectNameBuildingUnit)
+  def self.ObjectNameFurnace(fueltype="", unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"

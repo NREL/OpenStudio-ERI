@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_air_source_heat_pump</name>
   <uid>e1fa8fdd-4940-4364-b3ea-3bc6b93ca9c4</uid>
-  <version_id>8cc57b3f-48c5-4d0e-b9f4-cb71165f5fc3</version_id>
-  <version_modified>20170123T221543Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>a51b72ac-03d9-4fe9-8f7c-abd4b2ebc48f</version_id>
+  <version_modified>20170124T232842Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessTwoSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Two-Speed Air Source Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a two-speed air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the two-speed air source heat pump can be set for all units of the building.</description>
@@ -535,7 +535,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -711,7 +710,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
     <file>
       <version>
@@ -722,13 +721,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F6973D06</checksum>
+      <checksum>7076150C</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>965CF8D9</checksum>
+      <checksum>217FE2FD</checksum>
     </file>
   </files>
 </measure>

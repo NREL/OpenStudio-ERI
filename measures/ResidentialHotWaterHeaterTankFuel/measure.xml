@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_fuel</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>388ac648-aaf6-40fe-8266-5a4d214b82ef</version_id>
-  <version_modified>20170123T221542Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>1c1e385d-9975-49bc-81fb-05dc8287698a</version_id>
+  <version_modified>20170124T232841Z</version_modified>
+  <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankFuel</class_name>
   <display_name>Set Residential Fuel Tank Water Heater</display_name>
   <description>This measure adds a new residential fuel storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building.</description>
@@ -118,7 +118,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Water Heating</tag>
@@ -301,7 +300,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
     </file>
   </files>
 </measure>

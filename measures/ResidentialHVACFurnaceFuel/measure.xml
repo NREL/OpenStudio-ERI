@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_fuel</name>
   <uid>1a71ae9e-5485-4cca-a369-16c6b8a9c1d8</uid>
-  <version_id>5805c05b-4221-48fe-be0a-1c0950eef4a0</version_id>
-  <version_modified>20170123T221546Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>84acbc80-8470-42b5-95e6-14f894732c30</version_id>
+  <version_modified>20170124T232843Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessFurnaceFuel</class_name>
   <display_name>Set Residential Furnace Fuel</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop. For multifamily buildings, the furnace can be set for all units of the building.</description>
@@ -200,7 +200,6 @@
       <default_value>0.5</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -376,7 +375,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>389AC154</checksum>
+      <checksum>70C27777</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>217FE2FD</checksum>
     </file>
     <file>
       <version>
@@ -387,13 +392,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BCA09142</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>965CF8D9</checksum>
+      <checksum>0300BFC8</checksum>
     </file>
   </files>
 </measure>
