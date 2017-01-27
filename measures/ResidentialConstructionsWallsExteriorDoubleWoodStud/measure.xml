@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_double_wood_stud</name>
   <uid>d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651</uid>
-  <version_id>b2d59df4-52c9-4aa7-b0d3-c3db9b65a382</version_id>
-  <version_modified>20170125T230523Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>34668864-dc0e-42a7-b389-042ddd309310</version_id>
+  <version_modified>20170126T194021Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorDoubleWoodStud</class_name>
   <display_name>Set Residential Walls - Double Wood Stud Construction</display_name>
   <description>This measure assigns a double wood stud construction to above-grade exterior walls adjacent to finished space.</description>
@@ -103,7 +103,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

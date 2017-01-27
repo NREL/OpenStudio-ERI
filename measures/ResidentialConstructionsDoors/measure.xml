@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>7eabe6a6-17db-41aa-91bf-69b357f6ba0e</version_id>
-  <version_modified>20170125T230521Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>367cb7d5-955b-49e6-a56a-6941f0ef4492</version_id>
+  <version_modified>20170126T194020Z</version_modified>
+  <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>Set Residential Door Construction</display_name>
   <description>This measure assigns a construction to exterior doors adjacent to finished or unfinished space.</description>
@@ -21,7 +21,6 @@
       <default_value>0.2</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>

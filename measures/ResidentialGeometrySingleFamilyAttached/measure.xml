@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>3d4f577c-ddc4-45d9-88ec-b8f14963826f</version_id>
-  <version_modified>20170125T233141Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>d1d80364-4e07-439e-b706-6e89109d475c</version_id>
+  <version_modified>20170127T165642Z</version_modified>
+  <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
   <description>Sets the basic geometry for the building.</description>
@@ -247,7 +247,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -294,12 +293,6 @@
       <checksum>694DF416</checksum>
     </file>
     <file>
-      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>50958151</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.2</identifier>
@@ -308,7 +301,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>937586D2</checksum>
+      <checksum>89C2F5D8</checksum>
+    </file>
+    <file>
+      <filename>create_residential_single_family_attached_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>63926DEE</checksum>
     </file>
   </files>
 </measure>

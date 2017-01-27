@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>3d47d873-7a44-435c-97bd-50d2296c8a1f</version_id>
-  <version_modified>20170127T020820Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>79891189-7a12-4dd8-86d4-44769e5b0547</version_id>
+  <version_modified>20170126T194028Z</version_modified>
+  <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
   <description>Sets (or replaces) the lighting energy use, based on fractions of CFLs, LFLs, and LEDs, for finished spaces, the garage, and outside. For multifamily buildings, the lighting can be set for all units of the building.</description>
@@ -105,7 +105,6 @@
       <default_value>88</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Electric Lighting.Lighting Equipment</tag>
@@ -225,16 +224,16 @@
       <checksum>70C27777</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1761B796</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>694DF416</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>205CEA18</checksum>
     </file>
   </files>
 </measure>

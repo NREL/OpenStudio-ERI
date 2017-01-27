@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_air_source_heat_pump</name>
   <uid>e1fa8fdd-4940-4364-b3ea-3bc6b93ca9c4</uid>
-  <version_id>159f8339-3698-4e0b-8c6b-26c4f77fe35c</version_id>
-  <version_modified>20170125T230532Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>d1268c57-a10f-4e70-b592-e07719ad4fb7</version_id>
+  <version_modified>20170126T194025Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessTwoSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Two-Speed Air Source Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a two-speed air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the two-speed air source heat pump can be set for all units of the building.</description>
@@ -535,7 +535,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

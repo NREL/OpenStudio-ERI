@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_well_pump</name>
   <uid>13183743-6249-4762-8050-cf80f5d4650b</uid>
-  <version_id>88360c40-5d56-4779-a35b-f76f19bdd0ef</version_id>
-  <version_modified>20170125T230539Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>6415dfcf-8094-4afb-9ba4-87a72c309088</version_id>
+  <version_modified>20170126T194028Z</version_modified>
+  <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialWellPump</class_name>
   <display_name>Set Residential Well Pump</display_name>
   <description>Adds (or replaces) a residential well pump with the specified efficiency and schedule. The well is assumed to be outdoors. For multifamily buildings, the well pump is set for all units of the building.</description>
@@ -76,7 +76,6 @@
       <default_value>1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

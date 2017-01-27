@@ -253,13 +253,13 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     end
     bonus_area_above_garage = garage_area * garage_protrusion
     if foundation_type == Constants.FinishedBasementFoundationType and attic_type == Constants.FinishedAtticType
-        footprint = (total_ffa + 2 * garage_area_inside_footprint - (num_floors) * bonus_area_above_garage) / (num_floors + 2)
+      footprint = (total_ffa + 2 * garage_area_inside_footprint - (num_floors) * bonus_area_above_garage) / (num_floors + 2)
     elsif foundation_type == Constants.FinishedBasementFoundationType
-        footprint = (total_ffa + 2 * garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / (num_floors + 1)
+      footprint = (total_ffa + 2 * garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / (num_floors + 1)
     elsif attic_type == Constants.FinishedAtticType
-        footprint = (total_ffa + garage_area_inside_footprint - (num_floors) * bonus_area_above_garage) / (num_floors + 1)
+      footprint = (total_ffa + garage_area_inside_footprint - (num_floors) * bonus_area_above_garage) / (num_floors + 1)
     else
-        footprint = (total_ffa + garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / num_floors
+      footprint = (total_ffa + garage_area_inside_footprint - (num_floors - 1) * bonus_area_above_garage) / num_floors
     end
 	
     # calculate the dimensions of the building
@@ -635,15 +635,22 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
           end
           
           if num_floors == 1
+            if not attic_type == Constants.FinishedAtticType
               nw_point = OpenStudio::Point3d.new(nw_point.x, nw_point.y, living_space.zOrigin+nw_point.z)
               ne_point = OpenStudio::Point3d.new(ne_point.x, ne_point.y, living_space.zOrigin+ne_point.z)
               sw_point = OpenStudio::Point3d.new(sw_point.x, sw_point.y, living_space.zOrigin+sw_point.z)
               se_point = OpenStudio::Point3d.new(se_point.x, se_point.y, living_space.zOrigin+se_point.z)
+            else
+              nw_point = OpenStudio::Point3d.new(nw_point.x, nw_point.y, nw_point.z-living_space.zOrigin-living_height)
+              ne_point = OpenStudio::Point3d.new(ne_point.x, ne_point.y, ne_point.z-living_space.zOrigin-living_height)
+              sw_point = OpenStudio::Point3d.new(sw_point.x, sw_point.y, sw_point.z-living_space.zOrigin-living_height)
+              se_point = OpenStudio::Point3d.new(se_point.x, se_point.y, se_point.z-living_space.zOrigin-living_height)
+            end
           else
-              nw_point = OpenStudio::Point3d.new(nw_point.x, nw_point.y, nw_point.z-(living_space.zOrigin/(num_floors-1)))
-              ne_point = OpenStudio::Point3d.new(ne_point.x, ne_point.y, ne_point.z-(living_space.zOrigin/(num_floors-1)))
-              sw_point = OpenStudio::Point3d.new(sw_point.x, sw_point.y, sw_point.z-(living_space.zOrigin/(num_floors-1)))
-              se_point = OpenStudio::Point3d.new(se_point.x, se_point.y, se_point.z-(living_space.zOrigin/(num_floors-1)))
+            nw_point = OpenStudio::Point3d.new(nw_point.x, nw_point.y, nw_point.z-(living_space.zOrigin/(num_floors-1)))
+            ne_point = OpenStudio::Point3d.new(ne_point.x, ne_point.y, ne_point.z-(living_space.zOrigin/(num_floors-1)))
+            sw_point = OpenStudio::Point3d.new(sw_point.x, sw_point.y, sw_point.z-(living_space.zOrigin/(num_floors-1)))
+            se_point = OpenStudio::Point3d.new(se_point.x, se_point.y, se_point.z-(living_space.zOrigin/(num_floors-1)))
           end
           
           garage_attic_height = (ne_point.x - nw_point.x)/2 * roof_pitch          
@@ -656,11 +663,16 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
           end
 
           if num_floors == 1
+            if not attic_type == Constants.FinishedAtticType
               roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2, nw_point.y+garage_attic_height/roof_pitch, living_space.zOrigin+living_height+garage_attic_height)
               roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2, sw_point.y, living_space.zOrigin+living_height+garage_attic_height)
+            else
+              roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2, nw_point.y+garage_attic_height/roof_pitch, garage_attic_height-living_space.zOrigin)
+              roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2, sw_point.y, garage_attic_height-living_space.zOrigin)            
+            end
           else
-              roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2, nw_point.y+garage_attic_height/roof_pitch, living_height+garage_attic_height-(living_space.zOrigin/(num_floors-1)))
-              roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2, sw_point.y, living_height+garage_attic_height-(living_space.zOrigin/(num_floors-1)))
+            roof_n_point = OpenStudio::Point3d.new((nw_point.x + ne_point.x)/2, nw_point.y+garage_attic_height/roof_pitch, living_height+garage_attic_height-(living_space.zOrigin/(num_floors-1)))
+            roof_s_point = OpenStudio::Point3d.new((sw_point.x + se_point.x)/2, sw_point.y, living_height+garage_attic_height-(living_space.zOrigin/(num_floors-1)))
           end
           
           polygon_w_roof = Geometry.make_polygon(nw_point, sw_point, roof_s_point, roof_n_point)
@@ -680,24 +692,24 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
           wall_s.setSurfaceType("Wall") 
           wall_s.setOutsideBoundaryCondition("Outdoors")
 
-          if num_floors == 1
-              garage_attic_space = OpenStudio::Model::Space.new(model)
-              garage_attic_space_name = Constants.GarageAtticSpace
-              garage_attic_space.setName(garage_attic_space_name)
-              garage_attic_space.setThermalZone(garage_zone)
-              deck_w.setSpace(garage_attic_space)
-              deck_e.setSpace(garage_attic_space)
-              wall_n.setSpace(garage_attic_space)
-              wall_s.setSpace(garage_attic_space)
-              runner.registerInfo("Set #{garage_attic_space_name}.")
+          if num_floors == 1 and not attic_type == Constants.FinishedAtticType
+            garage_attic_space = OpenStudio::Model::Space.new(model)
+            garage_attic_space_name = Constants.GarageAtticSpace
+            garage_attic_space.setName(garage_attic_space_name)
+            garage_attic_space.setThermalZone(garage_zone)
+            deck_w.setSpace(garage_attic_space)
+            deck_e.setSpace(garage_attic_space)
+            wall_n.setSpace(garage_attic_space)
+            wall_s.setSpace(garage_attic_space)
+            runner.registerInfo("Set #{garage_attic_space_name}.")
+            surface.remove
           else
-              deck_w.setSpace(attic_space)
-              deck_e.setSpace(attic_space)
-              wall_n.setSpace(attic_space)
-              wall_s.setSpace(attic_space)          
-          end
-                    
-          surface.remove
+            deck_w.setSpace(attic_space)
+            deck_e.setSpace(attic_space)
+            wall_n.setSpace(attic_space)
+            wall_s.setSpace(attic_space)
+            attic_floor_over_garage = surface.createAdjacentSurface(attic_space)
+          end          
           
           break
           

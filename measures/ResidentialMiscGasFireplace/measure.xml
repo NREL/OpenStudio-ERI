@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_fireplace</name>
   <uid>0565d3b2-593b-480b-a742-a6ec7058d3c4</uid>
-  <version_id>591a2900-d194-4cfc-96f4-22a3127155e1</version_id>
-  <version_modified>20170125T230537Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>768ac8d1-aad5-4b2b-9488-ced43dac8dfb</version_id>
+  <version_modified>20170126T194028Z</version_modified>
+  <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasFireplace</class_name>
   <display_name>Set Residential Gas Fireplace</display_name>
   <description>Adds (or replaces) a residential gas fireplace with the specified efficiency and schedule. For multifamily buildings, the fireplace can be set for all units of the building.</description>
@@ -91,7 +91,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Gas Equipment</tag>

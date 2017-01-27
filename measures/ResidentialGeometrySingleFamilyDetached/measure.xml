@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>045fbe26-c46a-495f-b31f-59f3a9946d4a</version_id>
-  <version_modified>20170125T233141Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>cc0311f6-dc16-4658-9ab8-78facaf51d72</version_id>
+  <version_modified>20170127T163131Z</version_modified>
+  <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
   <display_name>Create Residential Single-Family Detached Geometry</display_name>
   <description>Sets the basic geometry for the building. Building is limited to one foundation type. Garage is tucked within the building, on the front left or front right corners of the building.</description>
@@ -242,7 +242,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -289,12 +288,6 @@
       <checksum>694DF416</checksum>
     </file>
     <file>
-      <filename>create_residential_single_family_detached_geometry_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>45FBBF45</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.4</identifier>
@@ -303,7 +296,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E5AE9D8C</checksum>
+      <checksum>32BABEA4</checksum>
+    </file>
+    <file>
+      <filename>create_residential_single_family_detached_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E1DA775F</checksum>
     </file>
   </files>
 </measure>

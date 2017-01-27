@@ -246,38 +246,38 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
         zone_hvac.addToThermalZone(control_zone)
         runner.registerInfo("Added '#{zone_hvac.name}' to '#{control_zone.name}' of #{unit.name}")
         
-        slave_zones.each do |slave_zone|
+        # slave_zones.each do |slave_zone|
         
-          # Remove existing dehumidifier
-          model.getZoneHVACDehumidifierDXs.each do |dehumidifier|
-            next unless slave_zone.handle.to_s == dehumidifier.thermalZone.get.handle.to_s
-            runner.registerInfo("Removed '#{dehumidifier.name}' from #{slave_zone.name}.")
-            dehumidifier.remove
-          end
+          # # Remove existing dehumidifier
+          # model.getZoneHVACDehumidifierDXs.each do |dehumidifier|
+            # next unless slave_zone.handle.to_s == dehumidifier.thermalZone.get.handle.to_s
+            # runner.registerInfo("Removed '#{dehumidifier.name}' from #{slave_zone.name}.")
+            # dehumidifier.remove
+          # end
           
-          humidistat = slave_zone.zoneControlHumidistat
-          if humidistat.is_initialized
-            humidistat.get.remove
-          end
-          humidistat = OpenStudio::Model::ZoneControlHumidistat.new(model)
-          humidistat.setName(obj_name + " #{slave_zone.name} humidistat")
-          humidistat.setHumidifyingRelativeHumiditySetpointSchedule(relative_humidity_setpoint_sch)
-          humidistat.setDehumidifyingRelativeHumiditySetpointSchedule(relative_humidity_setpoint_sch)
-          slave_zone.setZoneControlHumidistat(humidistat)
+          # humidistat = slave_zone.zoneControlHumidistat
+          # if humidistat.is_initialized
+            # humidistat.get.remove
+          # end
+          # humidistat = OpenStudio::Model::ZoneControlHumidistat.new(model)
+          # humidistat.setName(obj_name + " #{slave_zone.name} humidistat")
+          # humidistat.setHumidifyingRelativeHumiditySetpointSchedule(relative_humidity_setpoint_sch)
+          # humidistat.setDehumidifyingRelativeHumiditySetpointSchedule(relative_humidity_setpoint_sch)
+          # slave_zone.setZoneControlHumidistat(humidistat)
         
-          zone_hvac = OpenStudio::Model::ZoneHVACDehumidifierDX.new(model, water_removal_curve, energy_factor_curve, part_load_frac_curve)
-          zone_hvac.setName(obj_name + " #{slave_zone.name} dx")
-          zone_hvac.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-          zone_hvac.setRatedWaterRemoval(water_removal_rate_rated)
-          zone_hvac.setRatedEnergyFactor(energy_factor)
-          zone_hvac.setRatedAirFlowRate(air_flow_rate)
-          zone_hvac.setMinimumDryBulbTemperatureforDehumidifierOperation(10)
-          zone_hvac.setMaximumDryBulbTemperatureforDehumidifierOperation(40)
+          # zone_hvac = OpenStudio::Model::ZoneHVACDehumidifierDX.new(model, water_removal_curve, energy_factor_curve, part_load_frac_curve)
+          # zone_hvac.setName(obj_name + " #{slave_zone.name} dx")
+          # zone_hvac.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+          # zone_hvac.setRatedWaterRemoval(water_removal_rate_rated)
+          # zone_hvac.setRatedEnergyFactor(energy_factor)
+          # zone_hvac.setRatedAirFlowRate(air_flow_rate)
+          # zone_hvac.setMinimumDryBulbTemperatureforDehumidifierOperation(10)
+          # zone_hvac.setMaximumDryBulbTemperatureforDehumidifierOperation(40)
           
-          zone_hvac.addToThermalZone(slave_zone)
-          runner.registerInfo("Added '#{zone_hvac.name}' to '#{slave_zone.name}' of #{unit.name}")
+          # zone_hvac.addToThermalZone(slave_zone)
+          # runner.registerInfo("Added '#{zone_hvac.name}' to '#{slave_zone.name}' of #{unit.name}")
         
-        end
+        # end
       
       end
     

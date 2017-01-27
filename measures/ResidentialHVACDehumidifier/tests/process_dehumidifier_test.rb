@@ -86,9 +86,9 @@ class ProcessDehumidifierTest < MiniTest::Test
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ScheduleConstant"=>2, "ZoneHVACDehumidifierDX"=>num_units*2, "ZoneControlHumidistat"=>num_units*2}
+    expected_num_new_objects = {"ScheduleConstant"=>2, "ZoneHVACDehumidifierDX"=>num_units, "ZoneControlHumidistat"=>num_units}
     expected_values = {"water_removal_rate"=>UnitConversion.pint2liter(25), "energy_factor"=>1.2, "air_flow_rate"=>0.0324}
-    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units*2)
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   
   def test_multifamily_new_construction

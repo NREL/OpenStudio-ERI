@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>c10bc7bb-d5c2-42b9-a135-e3cb8d6f57c2</version_id>
-  <version_modified>20170125T230533Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>7e076d7f-3f0d-4593-9477-a1f67ba11ae7</version_id>
+  <version_modified>20170126T194026Z</version_modified>
+  <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessSingleSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Single-Speed Central Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a single-speed central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the single-speed central air conditioner can be set for all units of the building.</description>
@@ -249,7 +249,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>

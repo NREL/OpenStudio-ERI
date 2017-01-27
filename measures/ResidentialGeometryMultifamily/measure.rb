@@ -239,7 +239,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     # calculate the dimensions of the unit
     footprint = unit_ffa + inset_width * inset_depth
     x = Math.sqrt(footprint / unit_aspect_ratio)
-    y = footprint / x    
+    y = footprint / x
     
     foundation_corr_polygon = nil
     foundation_front_polygon = nil

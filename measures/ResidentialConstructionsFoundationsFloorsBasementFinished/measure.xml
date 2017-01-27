@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_finished</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>55e89e8d-42e7-47cc-8899-d177a7a174c7</version_id>
-  <version_modified>20170125T230521Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>af01e188-c25b-4f27-8eb9-7b3baa28d03b</version_id>
+  <version_modified>20170126T194021Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementFinished</class_name>
   <display_name>Set Residential Foundations/Floors - Finished Basement Constructions</display_name>
   <description>This measure assigns constructions to finished basement walls and floors.</description>
@@ -133,7 +133,6 @@
       <default_value>9.25</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

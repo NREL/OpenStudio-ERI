@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>84fc5510-6dc6-4a05-b27f-6e4cbd4e82d7</version_id>
-  <version_modified>20170125T230532Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>ed0c79ee-fa49-47fd-8cb3-a91c3f3664a1</version_id>
+  <version_modified>20170126T194026Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a boiler along with constant speed pump and water baseboard coils to a hot water plant loop. For multifamily buildings, the supply components on the plant loop can be set for all units of the building.</description>
@@ -249,7 +249,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

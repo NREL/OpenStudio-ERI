@@ -213,8 +213,15 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     # starting spaces
     runner.registerInitialCondition("The building started with #{model.getSpaces.size} spaces.")
     
+    if foundation_type == Constants.FinishedBasementFoundationType and attic_type == Constants.FinishedAtticType
+      footprint = unit_ffa / (building_num_floors + 2)
+    elsif foundation_type == Constants.FinishedBasementFoundationType or attic_type == Constants.FinishedAtticType
+      footprint = unit_ffa / (building_num_floors + 1)
+    else
+      footprint = unit_ffa / building_num_floors
+    end    
+    
     # calculate the dimensions of the unit
-    footprint = unit_ffa / building_num_floors
     x = Math.sqrt(footprint / unit_aspect_ratio)
     y = footprint / x    
     
