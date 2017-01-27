@@ -221,18 +221,6 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
       runner.registerError("Invalid garage protrusion value entered.")
       return false
     end
-    if garage_protrusion > 0 and roof_type == Constants.RoofTypeHip
-      runner.registerError("Cannot handle protruding garage and hip roof.")
-      return false
-    end
-    if garage_protrusion > 0 and aspect_ratio < 1
-      runner.registerError("Cannot handle protruding garage and attic ridge running from front to back.")
-      return false
-    end
-    if garage_width > 0 and garage_depth > 0 and foundation_type == Constants.PierBeamFoundationType
-      runner.registerError("Cannot handle garages with a pier & beam foundation type.")
-      return false
-    end
     
     # Convert to SI
     total_ffa = OpenStudio.convert(total_ffa,"ft^2","m^2").get
@@ -241,12 +229,27 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     garage_depth = OpenStudio::convert(garage_depth,"ft","m").get
     foundation_height = OpenStudio.convert(foundation_height,"ft","m").get
     
-    # calculate the footprint of the building
     garage_area = garage_width * garage_depth
     has_garage = false
     if garage_area > 0
       has_garage = true
     end
+    
+    # error checking
+    if garage_protrusion > 0 and roof_type == Constants.RoofTypeHip and has_garage
+      runner.registerError("Cannot handle protruding garage and hip roof.")
+      return false
+    end
+    if garage_protrusion > 0 and aspect_ratio < 1 and has_garage
+      runner.registerError("Cannot handle protruding garage and attic ridge running from front to back.")
+      return false
+    end
+    if foundation_type == Constants.PierBeamFoundationType and has_garage
+      runner.registerError("Cannot handle garages with a pier & beam foundation type.")
+      return false
+    end    
+    
+    # calculate the footprint of the building
     garage_area_inside_footprint = 0
     if has_garage
       garage_area_inside_footprint = garage_area * (1.0 - garage_protrusion)      

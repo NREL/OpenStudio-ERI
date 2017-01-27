@@ -60,6 +60,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   
   def test_argument_error_hip_roof_and_garage_protrudes
     args_hash = {}
+    args_hash["garage_width"] = 12
     args_hash["garage_protrusion"] = 0.5
     args_hash["roof_type"] = Constants.RoofTypeHip
     result = _test_error(nil, args_hash)
@@ -68,6 +69,7 @@ class CreateResidentialSingleFamilyDetachedGeometryTest < MiniTest::Test
   
   def test_argument_error_living_and_garage_ridges_are_parallel
     args_hash = {}
+    args_hash["garage_width"] = 12
     args_hash["garage_protrusion"] = 0.5
     args_hash["aspect_ratio"] = 0.75
     result = _test_error(nil, args_hash)

@@ -105,7 +105,7 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_gable_roof_garage_aspect_ratio_two
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>12, "ShadingSurfaceGroup"=>4}
+    expected_num_new_objects = {"ShadingSurface"=>10, "ShadingSurfaceGroup"=>4}
     expected_values = {"eaves_depth"=>2}
     _test_measure("SFD_2000sqft_2story_SL_GRG_UA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)       
   end
