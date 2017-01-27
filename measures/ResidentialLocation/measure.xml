@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>41e986eb-1c6a-4384-9f39-8cc6bdce6aa2</version_id>
-  <version_modified>20170125T230537Z</version_modified>
+  <version_id>6a805f60-ce26-4be6-aa58-02ec3a74bd85</version_id>
+  <version_modified>20170127T020820Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
@@ -138,7 +138,7 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1761B796</checksum>
+      <checksum>205CEA18</checksum>
     </file>
   </files>
 </measure>
