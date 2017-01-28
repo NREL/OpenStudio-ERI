@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_fuel</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>e504d897-2cc9-49cb-8b5d-de0fd218c81b</version_id>
-  <version_modified>20170126T194025Z</version_modified>
-  <xml_checksum>9882CBDB</xml_checksum>
+  <version_id>ad4d4dd5-02d9-42d0-8173-811c21dd35f5</version_id>
+  <version_modified>20170128T000320Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessFuel</class_name>
   <display_name>Set Residential Fuel Tankless Water Heater</display_name>
   <description>This measure adds a new residential fuel tankless water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building.</description>
@@ -104,6 +104,7 @@
       <default_value>65</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Water Heating</tag>
@@ -262,13 +263,13 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1761B796</checksum>
+      <checksum>8322C807</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>694DF416</checksum>
+      <checksum>2B062E6C</checksum>
     </file>
   </files>
 </measure>

@@ -43,6 +43,7 @@ class Geometry
       return l, w, h
     end
 
+    # FIXME: Use algorithm in calculate_avg_roof_pitch instead
     def self.get_roof_pitch(surfaces)
       surfaces.each do |surface|
         next if surface.space.get.name.to_s.downcase.include? "garage" # don't determine the attic height increase based on the garage (gable) roof
@@ -592,10 +593,9 @@ class Geometry
         num_surf = 0
         spaces.each do |space|
             space.surfaces.each do |surface|
-                if surface.surfaceType.downcase == "roofceiling"
-                    sum_tilt += surface.tilt
-                    num_surf += 1
-                end
+                next if surface.surfaceType.downcase != "roofceiling"
+                sum_tilt += surface.tilt
+                num_surf += 1
             end
         end
         if num_surf == 0

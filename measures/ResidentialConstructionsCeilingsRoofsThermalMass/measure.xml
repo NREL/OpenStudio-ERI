@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_thermal_mass</name>
   <uid>efe35222-f47d-43e9-b096-6bd18bfe1100</uid>
-  <version_id>1d4b6bbc-61d5-4960-8cb6-fdb9978fa6f6</version_id>
-  <version_modified>20170126T194020Z</version_modified>
-  <xml_checksum>5091078B</xml_checksum>
+  <version_id>0a4ac0b9-f05f-46c2-aeb7-e628b65f03d4</version_id>
+  <version_modified>20170128T000312Z</version_modified>
+  <xml_checksum>16B68B0C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsThermalMass</class_name>
   <display_name>Set Residential Ceilings/Roofs - Ceiling Thermal Mass</display_name>
   <description>This measure assigns thermal mass to ceilings adjacent to finished space.</description>
@@ -87,6 +87,7 @@
       <model_dependent>false</model_dependent>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -149,7 +150,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>694DF416</checksum>
+      <checksum>2B062E6C</checksum>
     </file>
   </files>
 </measure>

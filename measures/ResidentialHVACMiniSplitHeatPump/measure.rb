@@ -246,18 +246,49 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
       baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end    
         
-    # _processAirSystem
+    # Performance curves
+    
+    # NOTE: These coefficients are in SI UNITS
+    curves.COOL_CAP_FT_SPEC_coefficients = [[1.008993521905866, 0.006512749025457, 0.0, 0.003917565735935, -0.000222646705889, 0.0]] * Constants.Num_Speeds_MSHP
+    curves.COOL_EIR_FT_SPEC_coefficients = [[0.429214441601141, -0.003604841598515, 0.000045783162727, 0.026490875804937, -0.000159212286878, -0.000159062656483]] * Constants.Num_Speeds_MSHP                
+    curves.COOL_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]] * Constants.Num_Speeds_MSHP
+    curves.COOL_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]] * Constants.Num_Speeds_MSHP
+    
+    # Mini-Split Heat Pump Heating Curve Coefficients
+    # Derive coefficients from user input for capacity retention at outdoor drybulb temperature X [C].
+    # Biquadratic: capacity multiplier = a + b*IAT + c*IAT^2 + d*OAT + e*OAT^2 + f*IAT*OAT
+    x_A = OpenStudio::convert(miniSplitHPCapacityRetentionTemperature,"F", "C").get
+    y_A = miniSplitHPCapacityRetentionFraction
+    x_B = OpenStudio::convert(47.0,"F","C").get # 47F is the rating point
+    y_B = 1.0 # Maximum capacity factor is 1 at the rating point, by definition (this is maximum capacity, not nominal capacity)
+    oat_slope = (y_B - y_A) / (x_B - x_A)
+    oat_intercept = y_A - (x_A*oat_slope)
+    
+    # Coefficients for the indoor temperature relationship are retained from the BEoptDefault curve (Daikin lab data).
+    iat_slope = -0.010386676170938
+    iat_intercept = 0.219274275 
+    
+    a = oat_intercept + iat_intercept
+    b = iat_slope
+    c = 0
+    d = oat_slope
+    e = 0
+    f = 0
+    curves.HEAT_CAP_FT_SPEC_coefficients = [[a, b, c, d, e, f]] * Constants.Num_Speeds_MSHP         
+    
+    # COP/EIR as a function of temperature
+    # Generic "BEoptDefault" curves (=Daikin from lab data)            
+    curves.HEAT_EIR_FT_SPEC_coefficients = [[0.966475472847719, 0.005914950101249, 0.000191201688297, -0.012965668198361, 0.000042253229429, -0.000524002558712]] * Constants.Num_Speeds_MSHP
+    
+    curves.HEAT_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]] * Constants.Num_Speeds_MSHP
+    curves.HEAT_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]] * Constants.Num_Speeds_MSHP
     
     curves.mshp_indices = [1,3,5,9]
     
     # Cooling Coil
-    curves = HVAC.get_cooling_coefficients(runner, Constants.Num_Speeds_MSHP, true, curves)
-
     curves, supply = _processAirSystemMiniSplitCooling(runner, miniSplitHPCoolingRatedSEER, miniSplitHPCoolingMinCapacity, miniSplitHPCoolingMaxCapacity, miniSplitHPCoolingMinAirflow, miniSplitHPCoolingMaxAirflow, miniSplitHPRatedSHR, miniSplitHPSupplyFanPower, curves, supply)
 
     # Heating Coil
-    curves = HVAC.get_heating_coefficients(runner, Constants.Num_Speeds_MSHP, curves, nil, miniSplitHPCapacityRetentionFraction, miniSplitHPCapacityRetentionTemperature)
-                                                    
     curves, supply = _processAirSystemMiniSplitHeating(runner, miniSplitHPHeatingRatedHSPF, miniSplitHPHeatingMinCapacity, miniSplitHPHeatingMaxCapacity, miniSplitHPHeatingMinAirflow, miniSplitHPHeatingMaxAirflow, miniSplitHPSupplyFanPower, miniSplitHPCapacityRetentionFraction, miniSplitHPCapacityRetentionTemperature, curves, supply)
         
     # Remove boiler hot water loop if it exists
@@ -822,10 +853,6 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
   
   def calc_SEER_VariableSpeed(runner, eer_A, c_d, capacityRatio, cfm_Tons, supplyFanPower_Rated, isHeatPump, num_speeds, curves)
     
-    #Note: Make sure this method still works for BEopt central, variable speed units, which have 4 speeds (if needed in future)
-    
-    curves = HVAC.get_cooling_coefficients(runner, num_speeds, isHeatPump, curves)
-
     n_max = (eer_A.length-1.0)-3.0 # Don't use max speed
     n_min = 0.0
     n_int = (n_min + (n_max-n_min)/3.0).ceil.to_i
@@ -1015,10 +1042,6 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
   end  
   
   def calc_HSPF_VariableSpeed(runner, cop_47, c_d, capacityRatio, cfm_Tons, supplyFanPower_Rated, min_temp, num_speeds, mshp_capacity_retention_fraction, mshp_capacity_retention_temperature, curves)
-    
-    #TODO: Make sure this method still works for BEopt central, variable speed units, which have 4 speeds, if needed in future
-    
-    curves = HVAC.get_heating_coefficients(runner, 10, curves, min_temp, mshp_capacity_retention_fraction, mshp_capacity_retention_temperature)
     
     n_max = (cop_47.length-1.0)#-3 # Don't use max speed
     n_min = 0

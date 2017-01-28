@@ -300,8 +300,19 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       supplementalOutputCapacity = OpenStudio::convert(supplementalOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
     
-    # Create the material class instances
     supply = Supply.new
+    
+    # Performance curves
+    
+    # NOTE: These coefficients are in IP UNITS
+    supply.COOL_CAP_FT_SPEC_coefficients = [3.68637657, -0.098352478, 0.000956357, 0.005838141, -0.0000127, -0.000131702]
+    supply.COOL_EIR_FT_SPEC_coefficients = [-3.437356399, 0.136656369, -0.001049231, -0.0079378, 0.000185435, -0.0001441]
+    supply.COOL_CAP_FFLOW_SPEC_coefficients = [0.718664047, 0.41797409, -0.136638137]
+    supply.COOL_EIR_FFLOW_SPEC_coefficients = [1.143487507, -0.13943972, -0.004047787]
+    supply.HEAT_CAP_FT_SPEC_coefficients = [0.566333415, -0.000744164, -0.0000103, 0.009414634, 0.0000506, -0.00000675]
+    supply.HEAT_EIR_FT_SPEC_coefficients = [0.718398423, 0.003498178, 0.000142202, -0.005724331, 0.00014085, -0.000215321]
+    supply.HEAT_CAP_FFLOW_SPEC_coefficients = [0.694045465, 0.474207981, -0.168253446]
+    supply.HEAT_EIR_FFLOW_SPEC_coefficients = [2.185418751, -1.942827919, 0.757409168]
 
     supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
@@ -312,12 +323,10 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     supply.SpaceConditionedMult = 1 # Default used for central equipment    
     
     # Cooling Coil
-    supply = HVAC.get_cooling_coefficients(runner, 1, true, supply)
     supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateCooling, hpFanspeedRatioCooling, hpCapacityRatio)
     supply = HVAC._processAirSystemCoolingCoil(runner, 1, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, supply)
 
     # Heating Coil
-    supply = HVAC.get_heating_coefficients(runner, supply.Number_Speeds, supply, hpMinT)
     supply.CFM_TON_Rated_Heat = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateHeating, hpFanspeedRatioHeating, hpCapacityRatio)
     supply = HVAC._processAirSystemHeatingCoil(hpHeatingCOP, hpHeatingInstalledHSPF, hpSupplyFanPowerRated, hpCapacityRatio, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, supply)
     

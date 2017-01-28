@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>97705112-ea72-42d0-9c3a-37d4b1eacacf</version_id>
-  <version_modified>20170126T194028Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>6caeae15-9a1d-41c0-af9e-0a65b49447d0</version_id>
+  <version_modified>20170128T000323Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
   <description>Adds (or replaces) a residential freezer with the specified efficiency, operation, and schedule. For multifamily buildings, the freezer can be set for all units of the building.</description>
@@ -72,6 +72,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>
@@ -146,7 +147,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>694DF416</checksum>
+      <checksum>2B062E6C</checksum>
     </file>
   </files>
 </measure>

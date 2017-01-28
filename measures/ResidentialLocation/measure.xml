@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>ace56d26-58ce-468f-a879-b6881cb58d6e</version_id>
-  <version_modified>20170126T194028Z</version_modified>
-  <xml_checksum>D8922A73</xml_checksum>
+  <version_id>0a1eda52-555c-480f-901c-95cd0369d1d1</version_id>
+  <version_modified>20170128T000323Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
   <description>Sets the EPW weather file (EPW), supplemental data specific to the location, and daylight saving time start/end dates.</description>
@@ -47,6 +47,7 @@
       <default_value>October 26</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Whole Building.Space Types</tag>
@@ -137,7 +138,7 @@
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1761B796</checksum>
+      <checksum>8322C807</checksum>
     </file>
   </files>
 </measure>

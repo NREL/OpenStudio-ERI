@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>2258551e-5abd-4eed-9bd9-7618025d42be</version_id>
-  <version_modified>20170126T194021Z</version_modified>
-  <xml_checksum>2609226D</xml_checksum>
+  <version_id>37282369-994b-4ef1-89fe-25f4a9e01a07</version_id>
+  <version_modified>20170128T000315Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>
   <description>This measure assigns wall sheathing to all above-grade walls adjacent to finished space.</description>
@@ -41,6 +41,7 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -119,7 +120,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>694DF416</checksum>
+      <checksum>2B062E6C</checksum>
     </file>
   </files>
 </measure>

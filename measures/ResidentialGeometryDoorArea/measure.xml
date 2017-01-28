@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>3ccbda88-c421-4a31-9887-707a8de25c1e</version_id>
-  <version_modified>20170126T175059Z</version_modified>
-  <xml_checksum>9C8A26EB</xml_checksum>
+  <version_id>05ae570f-fb2f-4450-9862-eda183773ec2</version_id>
+  <version_modified>20170128T000316Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
   <description>Sets the opaque door area for the building. Doors with glazing should be set as window area. For multifamily buildings, door area can be set for all units of the building.</description>
@@ -21,6 +21,7 @@
       <default_value>20</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>
@@ -105,7 +106,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>694DF416</checksum>
+      <checksum>2B062E6C</checksum>
     </file>
   </files>
 </measure>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_finish</name>
   <uid>d7e5d5a3-38bf-40ea-abc9-2d50024a7090</uid>
-  <version_id>c0d339f9-57ef-4720-a0b6-26b82a710d9c</version_id>
-  <version_modified>20170126T194021Z</version_modified>
-  <xml_checksum>2609226D</xml_checksum>
+  <version_id>0266c96e-31a9-4985-9db7-dd63ef4d8fa6</version_id>
+  <version_modified>20170128T000314Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorFinish</class_name>
   <display_name>Set Residential Walls - Exterior Finish</display_name>
   <description>This measure assigns the exterior finish to all above-grade exterior walls.</description>
@@ -69,6 +69,7 @@
       <default_value>0.9</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -153,7 +154,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>694DF416</checksum>
+      <checksum>2B062E6C</checksum>
     </file>
   </files>
 </measure>

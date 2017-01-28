@@ -16,7 +16,7 @@ end
 class WeatherDesign
   def initialize
   end
-  attr_accessor(:HeatingDrybulb, :HeatingWindspeed, :CoolingDrybulb, :CoolingWetbulb, :CoolingHumidityRatio, :CoolingWindspeed, :DailyTemperatureRange, :DehumidDrybulb, :DehumidHumidityRatio)
+  attr_accessor(:HeatingDrybulb, :HeatingWindspeed, :CoolingDrybulb, :CoolingWetbulb, :CoolingHumidityRatio, :CoolingWindspeed, :DailyTemperatureRange, :DehumidDrybulb, :DehumidHumidityRatio, :CoolingDirectNormal, :CoolingDiffuseHorizontal)
 end
 
 class WeatherProcess
@@ -147,6 +147,8 @@ class WeatherProcess
           design.DailyTemperatureRange = data.MonthlyAvgDailyHighDrybulbs[7] - data.MonthlyAvgDailyLowDrybulbs[7]
         end
         
+        design = calc_design_solar_radiation(design, hourdata)
+        
         return header, data, design
 
       end
@@ -259,6 +261,29 @@ class WeatherProcess
           data.MonthlyAvgDailyLowDrybulbs << OpenStudio::convert(avg_low,"C","F").get
         end
         return data
+      end
+      
+      def calc_design_solar_radiation(design, hourdata)
+        # Calculate cooling design day info, for roof surface sol air temperature, which is used for attic temperature calculation for Manual J/ASHRAE Std 152: 
+        # Max summer direct normal solar radiation
+        # Diffuse horizontal solar radiation during hour with max direct normal
+        summer_hourdata = []
+        months = [6,7,8,9]
+        for hr in 0..(hourdata.size - 1)
+            next if not months.include?(hourdata[hr]['month'])
+            summer_hourdata << hourdata[hr]
+        end
+        
+        r_d = (1 + Math::cos(26.565052 * Math::PI / 180 ))/2 # Correct diffuse horizontal for tilt. Assume 6:12 roof pitch for this calculation.
+        max_solar_radiation_hour = summer_hourdata[0]
+        for hr in 1..(summer_hourdata.size - 1)
+            next if summer_hourdata[hr]['dirnormal'] + summer_hourdata[hr]['diffhoriz'] * r_d < max_solar_radiation_hour['dirnormal'] + max_solar_radiation_hour['diffhoriz'] * r_d
+            max_solar_radiation_hour = summer_hourdata[hr]
+        end
+        
+        design.CoolingDirectNormal = max_solar_radiation_hour['dirnormal']
+        design.CoolingDiffuseHorizontal = max_solar_radiation_hour['diffhoriz']
+        return design
       end
 
       def calc_mains_temperature(data, header)

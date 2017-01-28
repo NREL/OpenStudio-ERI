@@ -99,7 +99,15 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     end     
     
     # Performance curves
-    supply, curves = get_cooling_coefficients_RoomAC(supply, curves)                   
+    # From Frigidaire 10.7 EER unit in Winkler et. al. Lab Testing of Window ACs (2013)
+    # NOTE: These coefficients are in SI UNITS
+    curves.cool_CAP_FT_SPEC_coefficients = [0.6405, 0.01568, 0.0004531, 0.001615, -0.0001825, 0.00006614]
+    curves.cool_EIR_FT_SPEC_coefficients = [2.287, -0.1732, 0.004745, 0.01662, 0.000484, -0.001306]
+    curves.cool_CAP_FFLOW_SPEC_coefficients = [0.887, 0.1128, 0]
+    curves.cool_EIR_FFLOW_SPEC_coefficients = [1.763, -0.6081, 0]
+    curves.cool_PLF_FPLR = [0.78, 0.22, 0]
+    supply.cfm_TON_Rated = [312]    # medium speed
+
     # To avoid BEopt errors
     supply.min_flow_ratio = 1
     curves.number_Speeds = 1
@@ -229,22 +237,6 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     return true
 
   end
-  
-  def get_cooling_coefficients_RoomAC(supply, curves)
-    
-    # From Frigidaire 10.7 EER unit in Winkler et. al. Lab Testing of Window ACs (2013)
-    
-    # Hard coded coefficients in SI UNITS
-    curves.cool_CAP_FT_SPEC_coefficients = [0.6405, 0.01568, 0.0004531, 0.001615, -0.0001825, 0.00006614]
-    curves.cool_EIR_FT_SPEC_coefficients = [2.287, -0.1732, 0.004745, 0.01662, 0.000484, -0.001306]
-    curves.cool_CAP_FFLOW_SPEC_coefficients = [0.887, 0.1128, 0]
-    curves.cool_EIR_FFLOW_SPEC_coefficients = [1.763, -0.6081, 0]
-    curves.cool_PLF_FPLR = [0.78, 0.22, 0]
-    supply.cfm_TON_Rated = [312]    # medium speed
-
-    return supply, curves
-
-  end    
   
 end
 

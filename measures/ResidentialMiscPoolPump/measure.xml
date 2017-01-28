@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_pump</name>
   <uid>b5648903-279f-4e58-9139-c44134c0cf76</uid>
-  <version_id>52bd21b7-3be6-4fbb-8a10-5f3f0ad7b5cd</version_id>
-  <version_modified>20170126T194028Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>a039b164-8104-49ee-bad3-c392c11e2738</version_id>
+  <version_modified>20170128T000325Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialPoolPump</class_name>
   <display_name>Set Residential Pool Pump</display_name>
   <description>Adds (or replaces) a residential pool pump with the specified efficiency and schedule. The pool is assumed to be outdoors. For multifamily buildings, the pool pump is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>
@@ -150,7 +151,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>694DF416</checksum>
+      <checksum>2B062E6C</checksum>
     </file>
   </files>
 </measure>

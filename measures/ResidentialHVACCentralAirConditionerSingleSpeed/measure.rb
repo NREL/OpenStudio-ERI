@@ -192,10 +192,15 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserSc
       acOutputCapacity = OpenStudio::convert(acOutputCapacity.to_f,"ton","Btu/h").get
     end 
     
-    # Create the material class instances
     supply = Supply.new
 
-    # _processAirSystem
+    # Performance curves
+    
+    # NOTE: These coefficients are in IP UNITS
+    supply.COOL_CAP_FT_SPEC_coefficients = [3.670270705, -0.098652414, 0.000955906, 0.006552414, -0.0000156, -0.000131877]
+    supply.COOL_EIR_FT_SPEC_coefficients = [-3.302695861, 0.137871531, -0.001056996, -0.012573945, 0.000214638, -0.000145054]
+    supply.COOL_CAP_FFLOW_SPEC_coefficients = [0.718605468, 0.410099989, -0.128705457]
+    supply.COOL_EIR_FFLOW_SPEC_coefficients = [1.32299905, -0.477711207, 0.154712157]
     
     supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
@@ -206,7 +211,6 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserSc
     supply.SpaceConditionedMult = 1 # Default used for central equipment    
         
     # Cooling Coil
-    supply = HVAC.get_cooling_coefficients(runner, 1, false, supply)
     supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(acRatedAirFlowRate, acFanspeedRatio, acCapacityRatio)
     supply = HVAC._processAirSystemCoolingCoil(runner, 1, acCoolingEER, acCoolingInstalledSEER, acSupplyFanPowerInstalled, acSupplyFanPowerRated, acSHRRated, acCapacityRatio, acFanspeedRatio, acCrankcase, acCrankcaseMaxT, acEERCapacityDerateFactor, supply)
     

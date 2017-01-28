@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>9960c4e9-69b0-421c-86bd-83c56fa5c5e6</version_id>
-  <version_modified>20170126T194021Z</version_modified>
-  <xml_checksum>57232789</xml_checksum>
+  <version_id>812e22e9-e65e-417d-9a39-8c58916f7fe5</version_id>
+  <version_modified>20170128T000316Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
   <description>Sets the number of occupants in the building. For multifamily buildings, the people can be set for all units of the building.</description>
@@ -47,6 +47,7 @@
       <default_value>1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>People.Characteristics</tag>
@@ -137,7 +138,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>694DF416</checksum>
+      <checksum>2B062E6C</checksum>
     </file>
   </files>
 </measure>

@@ -344,8 +344,27 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
       supplementalOutputCapacity = OpenStudio::convert(supplementalOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
     
-    # Create the material class instances
     supply = Supply.new
+    
+    # Performance curves
+    
+    # NOTE: These coefficients are in IP UNITS
+    supply.COOL_CAP_FT_SPEC_coefficients = [[3.998418659, -0.108728222, 0.001056818, 0.007512314, -0.0000139, -0.000164716], 
+                                            [3.466810106, -0.091476056, 0.000901205, 0.004163355, -0.00000919, -0.000110829]]
+    supply.COOL_EIR_FT_SPEC_coefficients = [[-4.282911381, 0.181023691, -0.001357391, -0.026310378, 0.000333282, -0.000197405], 
+                                            [-3.557757517, 0.112737397, -0.000731381, 0.013184877, 0.000132645, -0.000338716]]
+    supply.COOL_CAP_FFLOW_SPEC_coefficients = [[0.655239515, 0.511655216, -0.166894731], 
+                                               [0.618281092, 0.569060264, -0.187341356]]
+    supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1.639108268, -0.998953996, 0.359845728], 
+                                               [1.570774717, -0.914152018, 0.343377302]]
+    supply.HEAT_CAP_FT_SPEC_coefficients = [[0.335690634, 0.002405123, -0.0000464, 0.013498735, 0.0000499, -0.00000725], 
+                                            [0.306358843, 0.005376987, -0.0000579, 0.011645092, 0.0000591, -0.0000203]]
+    supply.HEAT_EIR_FT_SPEC_coefficients = [[0.36338171, 0.013523725, 0.000258872, -0.009450269, 0.000439519, -0.000653723], 
+                                            [0.981100941, -0.005158493, 0.000243416, -0.005274352, 0.000230742, -0.000336954]]
+    supply.HEAT_CAP_FFLOW_SPEC_coefficients = [[0.741466907, 0.378645444, -0.119754733], 
+                                               [0.76634609, 0.32840943, -0.094701495]]
+    supply.HEAT_EIR_FFLOW_SPEC_coefficients = [[2.153618211, -1.737190609, 0.584269478], 
+                                               [2.001041353, -1.58869128, 0.587593517]]
 
     supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
@@ -356,12 +375,10 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     supply.SpaceConditionedMult = 1 # Default used for central equipment    
     
     # Cooling Coil
-    supply = HVAC.get_cooling_coefficients(runner, 2, true, supply)
     supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateCooling, hpFanspeedRatioCooling, hpCapacityRatio)
     supply = HVAC._processAirSystemCoolingCoil(runner, 2, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, supply)
 
     # Heating Coil
-    supply = HVAC.get_heating_coefficients(runner, supply.Number_Speeds, supply, hpMinT)
     supply.CFM_TON_Rated_Heat = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateHeating, hpFanspeedRatioHeating, hpCapacityRatio)
     supply = HVAC._processAirSystemHeatingCoil(hpHeatingCOP, hpHeatingInstalledHSPF, hpSupplyFanPowerRated, hpCapacityRatio, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, supply)
     
