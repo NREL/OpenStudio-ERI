@@ -10,10 +10,10 @@
 require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/weather"
 
-# FIXME: Unit conversions as needed
 # FIXME: Combine heating/cooling/dehumid calculations as appropriate
-# FIXME: Audit methods' args and remove where not needed
+# FIXME: Improve performance (e.g., don't run certain code sections if no dehumidifier or if not autosizing hvac)
 
 #start the measure
 class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
@@ -130,7 +130,9 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     if model.yearDescription.is_initialized
         modelYear = model.yearDescription.get.assumedYear
     end
-
+    
+    northAxis = model.getBuilding.northAxis
+    
     # Constants
     minCoolingCapacity = 1 # Btu/hr
     
@@ -164,21 +166,58 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         hvac = get_hvac_for_unit(runner, model, unit_thermal_zones)
         return false if hvac.nil?
         
-        # Ducts
-        has_ducts = true # FIXME
-        ducts_not_in_living = true # FIXME
-        ductSystemEfficiency = nil # FIXME
+        # Ducts FIXME
+        has_ducts = true
+        ducts_not_in_living = true
+        ductSystemEfficiency = nil
         ductNormLeakageToOutside = nil
-        supply_duct_surface_area = 100 # FIXME
-        return_duct_surface_area = 50 # FIXME
-        ductLocationFracConduction = 0.5 # FIXME
-        supply_duct_loss = 0.15 # FIXME
-        return_duct_loss = 0.05 # FIXME
-        supply_duct_r = 2.0 # FIXME
-        return_duct_r = 1.5 # FIXME
-        ductLocation = 'Constants.SpaceGarage' # FIXME
+        ffa = Geometry.get_finished_floor_area_from_spaces(unit.spaces)
+        has_finished_basement = false
+        Geometry.get_finished_basement_spaces(unit.spaces).each do |sp|
+            if unit.spaces.include?(sp)
+                has_finished_basement = true
+            end
+        end
+        if has_finished_basement
+            num_stories_for_ducts = building_num_stories + 1
+        else
+            num_stories_for_ducts = building_num_stories
+        end
+        num_returns = 1 + num_stories_for_ducts
+        if num_stories_for_ducts == 1
+            supply_duct_surface_area = 0.27 * ffa
+            return_duct_surface_area = [0.05 * num_returns * ffa, 0.25 * ffa].min
+            ductLocationFracConduction = 1.0
+        else
+            supply_duct_surface_area = 0.2 * ffa
+            return_duct_surface_area = [0.04 * num_returns * ffa, 0.19 * ffa].min
+            ductLocationFracConduction = 0.65
+        end
+        ductTotalLeakage = 0.3
+        ductSupplyLeakageFractionOfTotal = 0.6
+        ductReturnLeakageFractionOfTotal = 0.0667
+        ductAHSupplyLeakageFractionOfTotal = 0.0667
+        ductAHReturnLeakageFractionOfTotal = 0.267
+        ductSupplyLeakage = ductSupplyLeakageFractionOfTotal * ductTotalLeakage
+        ductReturnLeakage = ductReturnLeakageFractionOfTotal * ductTotalLeakage
+        ductAHSupplyLeakage = ductAHSupplyLeakageFractionOfTotal * ductTotalLeakage
+        ductAHReturnLeakage = ductAHReturnLeakageFractionOfTotal * ductTotalLeakage 
+        direct_oa_supply_duct_loss = 0.000001
+        supply_duct_loss = (ductLocationFracConduction * 
+                            (ductSupplyLeakage - direct_oa_supply_duct_loss) + 
+                            (ductAHSupplyLeakage + direct_oa_supply_duct_loss))
+        return_duct_loss = ductReturnLeakage + ductAHReturnLeakage
+        duct_r = 2.0
+        if duct_r <= 0
+            supply_duct_r = 1.7
+            return_duct_r = 1.7
+        else
+            supply_duct_r = 2.2438 + 0.5619*duct_r
+            return_duct_r = 2.0388 + 0.7053*duct_r
+        end
+        ductLocation = 'Constants.SpaceGarage'
         if ductLocation == 'Constants.SpaceGarage'
-            ductLocationSpace = Geometry.get_garage_spaces(unit.spaces, model)[0] # FIXME
+            ductLocationSpace = Geometry.get_garage_spaces(unit.spaces, model)[0]
         else
             runner.registerError("Unexpected duct location '#{ductLocation.to_s}'.")
             return false
@@ -198,12 +237,12 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             
             # FIXME: ensure coincidence of window loads and internal gains across zones in a unit
             zone_loads = ZoneValues.new
-            zone_loads = processLoadWindows(runner, mj8, thermal_zone, zone_loads, weather)
+            zone_loads = processLoadWindows(runner, mj8, thermal_zone, zone_loads, weather, northAxis)
             zone_loads = processLoadDoors(runner, mj8, thermal_zone, zone_loads, weather)
-            zone_loads = processLoadWalls(runner, mj8, thermal_zone, zone_loads, weather)
+            zone_loads = processLoadWalls(runner, mj8, thermal_zone, zone_loads, weather, northAxis)
             zone_loads = processLoadRoofs(runner, mj8, thermal_zone, zone_loads, weather)
             zone_loads = processLoadFloors(runner, mj8, thermal_zone, zone_loads, weather)
-            zone_loads = processInfiltrationVentilation(runner, mj8, zone_loads, weather)
+            zone_loads = processInfiltrationVentilation(runner, mj8, thermal_zone, zone_loads, weather)
             zone_loads = processInternalGains(runner, mj8, thermal_zone, zone_loads, weather, nbeds, unit_ffa_for_people, modelYear, model.alwaysOnDiscreteSchedule)
             return false if zone_loads.nil?
             
@@ -228,7 +267,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         # Process equipment
         unit_final = processCoolingEquipmentAdjustments(runner, mj8, unit_init, unit_final, weather, hvac, minCoolingCapacity, shr_biquadratic_coefficients)
         unit_final = processFixedEquipment(runner, unit_final, hvac)
-        unit_final = processFinalize(runner, mj8, unit_final, weather, hvac)
+        unit_final = processFinalize(runner, mj8, unit_final, weather, hvac, minCoolingCapacity)
         unit_final = processSlaveZoneFlowRatios(runner, unit_final)
         unit_final = processEfficientCapacityDerate(runner, hvac, unit_final)
         unit_final = processDehumidifierSizing(runner, mj8, unit_final, weather, unit_init.Dehumid_Load_Lat, hvac, minCoolingCapacity, shr_biquadratic_coefficients)
@@ -414,7 +453,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
 
         # for roof in geometry.roofs.roof:
             # if sim._getSpace(roof.space_below_id).spacetype == Constants.SpaceGarage:
-                # garage_area_under_attic += roof.area * Math::cos(roof.tilt.degrees)  
+                # garage_area_under_attic += roof.area * Math::cos(roof.tilt.deg2rad)  
 
         # garage_area_mj8 = garage_area_under_living + garage_area_under_attic
 
@@ -488,7 +527,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                             # unfinished_attic.cool_design_temp_mj8 = 105
                        
                     # else:
-                        # SimWarning('Specified roofing material is not supported by BEopt Manual J calculations. Assuming dark asphalt shingles')
+                        # runner.registerInfo('Specified roofing material is not supported by BEopt Manual J calculations. Assuming dark asphalt shingles')
                         # unfinished_attic.cool_design_temp_mj8 = 130
                 
                 # else: # with a radiant barrier
@@ -520,7 +559,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                             # unfinished_attic.cool_design_temp_mj8 = 105
                        
                     # else:
-                        # SimWarning('Specified roofing material is not supported by BEopt Manual J calculations. Assuming dark asphalt shingles')
+                        # runner.registerInfo('Specified roofing material is not supported by BEopt Manual J calculations. Assuming dark asphalt shingles')
                         # unfinished_attic.cool_design_temp_mj8 = 120
             
             # # Adjust base CLTD for cooling design temperature and daily range
@@ -529,7 +568,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return mj8
   end
   
-  def processLoadWindows(runner, mj8, thermal_zone, zone_loads, weather)
+  def processLoadWindows(runner, mj8, thermal_zone, zone_loads, weather, northAxis)
     '''
     Heating, Cooling, and Dehumidification Loads: Windows
     '''
@@ -652,8 +691,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     zone_loads.Dehumid_Windows = 0
     
     Geometry.get_thermal_zone_above_grade_exterior_walls(thermal_zone).each do |wall|
-        # FIXME: Need to include north axis?
-        cnt225 = (wall.azimuth / 22.5).to_i
+        wall_true_azimuth = true_azimuth(wall, northAxis)
+        cnt225 = (wall_true_azimuth / 22.5).round.to_i
         
         wall.subSurfaces.each do |window|
             next if not window.subSurfaceType.downcase.include?("window")
@@ -673,12 +712,12 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             overhangDepth = 2 # FIXME
             overhangOffset = 0.5 # FIXME
             
-            for hr in 0..12
-    
-                # If hr == 0: Calculate the Average Load Procedure (ALP) Load
+            for hr in -1..12
+            
+                # If hr == -1: Calculate the Average Load Procedure (ALP) Load
                 # Else: Calculate the hourly Aggregate Fenestration Load (AFL)
                 
-                if hr == 0
+                if hr == -1
                     if has_IntGains_shade
                         # Average Cooling Load Factor for the given window direction
                         clf_d = clf_avg_is[cnt225]
@@ -709,63 +748,74 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         
                 # Hourly Heat Transfer Multiplier for a window facing North (fully shaded)
                 htm_n = psf_lat[8] * clf_n * shgc_with_IntGains_shade_cool / 0.87 + u_window * mj8.ctd
-               
-                surf_azimuth = wall.azimuth # FIXME
-               
+                
+                if wall_true_azimuth < 180
+                    surf_azimuth = wall_true_azimuth
+                else
+                    surf_azimuth = wall_true_azimuth - 360
+                end
+                
                 # TODO: Account for eaves, porches, etc.
                 if windowHasOverhang
-                    hour_angle = 0.25 * ((hr + 8) - 12) * 60 # ASHRAE HOF 1997 pg 29.19 (start at hour 8)
-                    altitude_angle = (Math::asin((Math::cos(weather.header.Latitude.degrees) * 
-                                                  Math::cos(declination_angle.degrees) * 
-                                                  Math::cos(hour_angle.degrees) + 
-                                                  Math::sin(weather.header.Latitude.degrees) * 
-                                                  Math::sin(declination_angle.degrees)).degrees))
-                    temp_arg = [(Math::sin(altitude_angle.degrees) * 
-                                 Math::sin(weather.header.Latitude.degrees) - 
-                                 Math::sin(declination_angle.degrees)) / 
-                                (Math::cos(altitude_angle.degrees) * 
-                                 Math::cos(weather.header.Latitude.degrees)), 1.0].min
-                    temp_arg = [temp_arg, -1.0].max
-                    solar_azimuth = Math::acos(temp_arg.degrees)
-
-                    if (hr > 0 and (hr + 8) < 12) or (hr == 0 and slm_alp_hr[cnt225] < 12)
-                        solar_azimuth = -1.0 * solar_azimuth
-                    end
-
-                    sol_surf_azimuth = solar_azimuth - surf_azimuth
-
-                    if sol_surf_azimuth.abs >= 90 and sol_surf_azimuth.abs <= 270
-                        # Window is entirely in the shade if the solar surface azimuth is greater than 90 and less than 270
-                        htm = htm_n
-                    else
-                        slm = Math::tan(altitude_angle.degrees) / Math::cos(sol_surf_azimuth.degrees)
-                        z_sl = slm * overhangDepth
-
-                        if z_sl < overhangOffset
-                            # Overhang is too short to provide shade
-                            htm = htm_d
-                        elsif z_sl < (overhangOffset + windowHeight)
-                            percent_shaded = (z_sl - overhangOffset) / windowHeight
-                            htm = percent_shaded * htm_n + (1 - percent_shaded) * htm_d
+                    if (hr == -1 and surf_azimuth.abs < 90.1) or (hr > -1) # FIXME: This if/else statement is in one spot in sizing.py but not another
+                        if hr == -1
+                            actual_hr = slm_alp_hr[cnt225]
                         else
-                            # Window is entirely in the shade since the shade line is below the windowsill
-                            htm = htm_n
+                            actual_hr = hr + 8 # start at hour 8
                         end
+                        hour_angle = 0.25 * (actual_hr - 12) * 60 # ASHRAE HOF 1997 pg 29.19
+                        altitude_angle = (Math::asin((Math::cos(weather.header.Latitude.deg2rad) * 
+                                                      Math::cos(declination_angle.deg2rad) * 
+                                                      Math::cos(hour_angle.deg2rad) + 
+                                                      Math::sin(weather.header.Latitude.deg2rad) * 
+                                                      Math::sin(declination_angle.deg2rad)))).rad2deg
+                        temp_arg = [(Math::sin(altitude_angle.deg2rad) * 
+                                     Math::sin(weather.header.Latitude.deg2rad) - 
+                                     Math::sin(declination_angle.deg2rad)) / 
+                                    (Math::cos(altitude_angle.deg2rad) * 
+                                     Math::cos(weather.header.Latitude.deg2rad)), 1.0].min
+                        temp_arg = [temp_arg, -1.0].max
+                        solar_azimuth = Math::acos(temp_arg).rad2deg
+                        if actual_hr < 12
+                            solar_azimuth = -1.0 * solar_azimuth
+                        end
+
+                        sol_surf_azimuth = solar_azimuth - surf_azimuth
+                        if sol_surf_azimuth.abs >= 90 and sol_surf_azimuth.abs <= 270
+                            # Window is entirely in the shade if the solar surface azimuth is greater than 90 and less than 270
+                            htm = htm_n
+                        else
+                            slm = Math::tan(altitude_angle.deg2rad) / Math::cos(sol_surf_azimuth.deg2rad)
+                            z_sl = slm * overhangDepth
+
+                            if z_sl < overhangOffset
+                                # Overhang is too short to provide shade
+                                htm = htm_d
+                            elsif z_sl < (overhangOffset + windowHeight)
+                                percent_shaded = (z_sl - overhangOffset) / windowHeight
+                                htm = percent_shaded * htm_n + (1 - percent_shaded) * htm_d
+                            else
+                                # Window is entirely in the shade since the shade line is below the windowsill
+                                htm = htm_n
+                            end
+                        end
+                    else
+                        # Window is north of East and West azimuths. Shading calculations do not apply.
+                        htm = htm_d
                     end
-                    
                 else
                     htm = htm_d
                 end
 
-                if hr == 0
-                    alp_load = alp_load + htm * OpenStudio::convert(window.grossArea,"m^2","ft^2").get
+                if hr == -1
+                    alp_load += htm * OpenStudio::convert(window.grossArea,"m^2","ft^2").get
                 else
-                    afl_hr[hr] = afl_hr[hr] + htm * OpenStudio::convert(window.grossArea,"m^2","ft^2").get
+                    afl_hr[hr] += htm * OpenStudio::convert(window.grossArea,"m^2","ft^2").get
                 end
             end
         end # window
     end # wall
-
+    
     # Daily Average Load (DAL)
     dal = afl_hr.inject{ |sum, n| sum + n } / afl_hr.size
 
@@ -817,7 +867,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return zone_loads
   end
   
-  def processLoadWalls(runner, mj8, thermal_zone, zone_loads, weather)
+  def processLoadWalls(runner, mj8, thermal_zone, zone_loads, weather, northAxis)
     '''
     Heating, Cooling, and Dehumidification Loads: Walls
     '''
@@ -957,7 +1007,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     Geometry.get_thermal_zone_above_grade_exterior_walls(thermal_zone).each do |wall|
         wall_uvalue = get_surface_uvalue(runner, wall, wall.surfaceType)
         return nil if wall_uvalue.nil?
-        if wall.azimuth >= 157.5 and wall.azimuth <= 202.5
+        wall_true_azimuth = true_azimuth(wall, northAxis)
+        if wall_true_azimuth >= 157.5 and wall_true_azimuth <= 202.5
             zone_loads.Cool_Walls += wall_uvalue * OpenStudio::convert(wall.netArea,"m^2","ft^2").get * cltd_Wall_Shade
         else
             zone_loads.Cool_Walls += wall_uvalue * OpenStudio::convert(wall.netArea,"m^2","ft^2").get * cltd_Wall_Sun
@@ -1091,6 +1142,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         return nil if floor_uvalue.nil?
         adjacent_space = floor.adjacentSurface.get.space.get
         zone_loads.Cool_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.cool_design_temps[adjacent_space] - mj8.cool_setpoint)
+        fr = OpenStudio::convert(floor.filmResistance,"m^2*K/W","ft^2*h*R/Btu").get
         zone_loads.Heat_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.heat_setpoint - mj8.heat_design_temps[adjacent_space])
         zone_loads.Dehumid_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.cool_setpoint - mj8.dehum_design_temps[adjacent_space])
     end
@@ -1118,7 +1170,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return zone_loads
   end
   
-  def processInfiltrationVentilation(runner, mj8, zone_loads, weather)
+  def processInfiltrationVentilation(runner, mj8, thermal_zone, zone_loads, weather)
     '''
     Heating, Cooling, and Dehumidification Loads: Infiltration & Ventilation
     '''
@@ -1166,6 +1218,14 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     zone_loads.Dehumid_Infil_Sens = 1.1 * mj8.acf * cfm_Dehumid_Load_Sens * mj8.dtd
     zone_loads.Dehumid_Infil_Lat = 0.68 * mj8.acf * cfm_Dehumid_Load_Lat * (mj8.dehum_design_grains - mj8.grains_indoor_dehumid)
     
+    if Geometry.zone_is_below_grade(thermal_zone)
+        zone_loads.Heat_Infil =  0 # FIXME: Calculate using actual basement infiltration?
+        zone_loads.Cool_Infil_Sens = 0
+        zone_loads.Cool_Infil_Lat = 0
+        zone_loads.Dehumid_Infil_Sens = 0
+        zone_loads.Dehumid_Infil_Lat = 0
+    end
+    
     return zone_loads
   end
   
@@ -1175,6 +1235,14 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     '''
     
     return nil if mj8.nil? or zone_loads.nil?
+    
+    if Geometry.zone_is_below_grade(thermal_zone)
+        zone_loads.Cool_IntGains_Sens = 0
+        zone_loads.Cool_IntGains_Lat = 0
+        zone_loads.Dehumid_IntGains_Sens = 0
+        zone_loads.Dehumid_IntGains_Lat = 0
+        return zone_loads
+    end
     
     int_Tot_Max = 0
     int_Lat_Max = 0
@@ -1336,7 +1404,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     unit_init.Heat_Load = 0
     unit_init.Cool_Load_Sens = 0
     unit_init.Cool_Load_Lat = 0
-    unit_init.Cool_Load_Tot = 0
     unit_init.Dehumid_Load_Sens = 0
     unit_init.Dehumid_Load_Lat = 0
     zones_loads.keys.each do |thermal_zone|
@@ -1345,26 +1412,26 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         # FIXME: Ask Jon about where max(0,foo) is used below
         
         # Heating
-        unit_init.Heat_Load = [zone_loads.Heat_Windows + zone_loads.Heat_Doors +
-                               zone_loads.Heat_Walls + + zone_loads.Heat_Floors + 
-                               zone_loads.Heat_Roofs, 0].max + zone_loads.Heat_Infil
+        unit_init.Heat_Load += [zone_loads.Heat_Windows + zone_loads.Heat_Doors +
+                                zone_loads.Heat_Walls + zone_loads.Heat_Floors + 
+                                zone_loads.Heat_Roofs, 0].max + zone_loads.Heat_Infil
 
         # Cooling
-        unit_init.Cool_Load_Sens = zone_loads.Cool_Windows + zone_loads.Cool_Doors +
-                                   zone_loads.Cool_Walls + zone_loads.Cool_Floors +
-                                   zone_loads.Cool_Roofs + zone_loads.Cool_Infil_Sens +
-                                   zone_loads.Cool_IntGains_Sens
-        unit_init.Cool_Load_Lat = [zone_loads.Cool_Infil_Lat + zone_loads.Cool_IntGains_Lat, 0].max
-        unit_init.Cool_Load_Tot = unit_init.Cool_Load_Sens + unit_init.Cool_Load_Lat
+        unit_init.Cool_Load_Sens += zone_loads.Cool_Windows + zone_loads.Cool_Doors +
+                                    zone_loads.Cool_Walls + zone_loads.Cool_Floors +
+                                    zone_loads.Cool_Roofs + zone_loads.Cool_Infil_Sens +
+                                    zone_loads.Cool_IntGains_Sens
+        unit_init.Cool_Load_Lat += [zone_loads.Cool_Infil_Lat + zone_loads.Cool_IntGains_Lat, 0].max
         
         # Dehumidification
-        unit_init.Dehumid_Load_Sens = zone_loads.Dehumid_Windows + zone_loads.Dehumid_Doors + 
-                                   zone_loads.Dehumid_Walls + zone_loads.Dehumid_Floors +
-                                   zone_loads.Dehumid_Roofs + zone_loads.Dehumid_Infil_Sens + 
-                                   zone_loads.Dehumid_IntGains_Sens
-        unit_init.Dehumid_Load_Lat = zone_loads.Dehumid_Infil_Lat + zone_loads.Dehumid_IntGains_Lat
+        unit_init.Dehumid_Load_Sens += zone_loads.Dehumid_Windows + zone_loads.Dehumid_Doors + 
+                                       zone_loads.Dehumid_Walls + zone_loads.Dehumid_Floors +
+                                       zone_loads.Dehumid_Roofs + zone_loads.Dehumid_Infil_Sens + 
+                                       zone_loads.Dehumid_IntGains_Sens
+        unit_init.Dehumid_Load_Lat += zone_loads.Dehumid_Infil_Lat + zone_loads.Dehumid_IntGains_Lat
     end
     
+    unit_init.Cool_Load_Tot = unit_init.Cool_Load_Sens + unit_init.Cool_Load_Lat
     shr = [unit_init.Cool_Load_Sens / unit_init.Cool_Load_Tot, 1.0].min
     
     # Determine the Leaving Air Temperature (LAT) based on Manual S Table 1-4
@@ -1508,33 +1575,43 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         if ductLocation == 'Constants.SpaceUnfinAttic'
             iterate_Tattic = true
             
-            # FIXME: Need to do
-                # if (space_int.spacetype == Constants.SpaceUnfinAttic and
-                      # space_ext.spacetype == Constants.SpaceOutside):
-                    # # Need to sum the gable UA for attic temperature iteration
-                    # mj8.gable_ua += (wall.surface_type.Uvalue * wall.net_area) 
+            # FIXME
+            # if (space_int.spacetype == Constants.SpaceUnfinAttic and
+                  # space_ext.spacetype == Constants.SpaceOutside):
+                # # Need to sum the gable UA for attic temperature iteration
+                # mj8.gable_ua += (wall.surface_type.Uvalue * wall.net_area) 
                     
             ## Calculate constant variables used in iteration:
             ## Multiply by fraction of attic apportioned to this unit (unit.unfin_attic_floor_area_frac).
-            #mj8.UA_atticfloor = (sim.getSurfaceType(Constants.SurfaceTypeFinInsUnfinUAFloor).Uvalue *
+            #uA_atticfloor = (sim.getSurfaceType(Constants.SurfaceTypeFinInsUnfinUAFloor).Uvalue *
             #                     unit.unfin_attic_floor_area)
-            #mj8.UA_roof = ((sim.getSurfaceType(Constants.SurfaceTypeUnfinInsExtRoof).Uvalue *
+            #uA_roof = ((sim.getSurfaceType(Constants.SurfaceTypeUnfinInsExtRoof).Uvalue *
             #                geometry.roofs.ua_roof_area * unit.unfin_attic_floor_area_frac) + 
             #                mj8.gable_ua * unit.unfin_attic_floor_area_frac)
-            #try:
-            #    mj8.mdotCp_atticvent = (sim._getSpace(Constants.SpaceUnfinAttic).inf_flow * # cfm
+            #    mdotCp_atticvent = (sim._getSpace(Constants.SpaceUnfinAttic).inf_flow * # cfm
             #                        sim.outside_air_density *
             #                        sim.mat.air.inside_air_sh *
             #                        units.hr2min(1) *
             #                        unit.unfin_attic_floor_area_frac)
-            #except TypeError:
-            #    pass
-            #self._calculate_Tsolair(sim, mj8, geometry, weather) # Sol air temperature on outside of roof surface # 1)
-            # 
-            ## Calculate starting attic temp (ignoring duct losses)
-            #unit_final.Cool_Load_Ducts_Sens = 0
-            #self._calculate_Tattic_iter(mj8)
-            #dse_Tamb_cooling = mj8.Tattic_iter
+            
+            # Get average roofing material absorptance
+            sumRoofAbs = 0.0
+            numSurf = 0.0
+            ductLocationSpace.surfaces.each do |surface|
+                next if surface.surfaceType.downcase != "roofceiling"
+                sumRoofAbs += surface.construction.get.to_LayeredConstruction.get.getLayer(0).to_OpaqueMaterial.get.solarAbsorptance
+                numSurf += 1.0
+            end
+            roofAbsorptance = sumRoofAbs / numSurf
+            
+            roofPitch = Geometry.calculate_avg_roof_pitch([ductLocationSpace])
+            
+            t_solair = calculate_t_solair(weather, roofAbsorptance, roofPitch) # Sol air temperature on outside of roof surface # 1)
+             
+            # Calculate starting attic temp (ignoring duct losses)
+            unit_final.Cool_Load_Ducts_Sens = 0
+            t_attic_iter = calculate_t_attic_iter(uA_roof, mdotCp_atticvent, t_solair, uA_atticfloor, mj8.cool_setpoint, unit_final.Cool_Load_Ducts_Sens)
+            dse_Tamb_cooling = t_attic_iter
         end
         
         # Initialize for the iteration
@@ -1543,11 +1620,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         coolingLoad_Tot_Next = unit_init.Cool_Load_Tot
         unit_final.Cool_Load_Tot  = unit_init.Cool_Load_Tot
         unit_final.Cool_Load_Sens = unit_init.Cool_Load_Sens
-        
-        # FIXME
-        #if not hasattr(unit.ducts, 'return_duct_loss'):
-        #    unit_init.Cool_Airflow = unit_final.Cool_Load_Sens / (1.1 * sim.site.acf * (mj8.cool_setpoint - unit_init.LAT))
-        #    simpy.calc_duct_leakage_from_test(sim, unit.ducts, unit.finished_floor_area, unit_init.Cool_Airflow)
         
         unit_final.Cool_Load_Lat, unit_final.Cool_Load_Sens = calculate_sensible_latent_split(mj8.cool_design_grains, mj8.grains_indoor_cooling, mj8.acf, return_duct_loss, coolingLoad_Tot_Next, unit_init.Cool_Load_Lat, unit_init.Cool_Airflow)
         
@@ -1573,18 +1645,19 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 delta_attic = 1
                 
                 for _iter_attic in 1..20
-                    # FIXME: Need to do
-                    #break if delta_attic.abs <= 0.001
-                    #
-                    #t_attic_old = mj8.Tattic_iter
-                    #self._calculate_Tattic_iter(mj8)
-                    #sim._getSpace(Constants.SpaceUnfinAttic).cool_design_temp_mj8 = mj8.Tattic_iter
-                    #
-                    ## Calculate the change since the last iteration
-                    #delta_attic = (mj8.Tattic_iter - t_attic_old) / t_attic_old                  
+                    break if delta_attic.abs <= 0.001
+                    
+                    t_attic_old = t_attic_iter
+                    t_attic_iter = calculate_t_attic_iter(uA_roof, mdotCp_atticvent, t_solair, uA_atticfloor, mj8.cool_setpoint, unit_final.Cool_Load_Ducts_Sens)
+                    
+                    # FIXME
+                    #sim._getSpace(Constants.SpaceUnfinAttic).cool_design_temp_mj8 = t_attic_iter
+                    
+                    # Calculate the change since the last iteration
+                    delta_attic = (t_attic_iter - t_attic_old) / t_attic_old                  
                     
                     # Calculate enthalpy in attic using new Tattic
-                    dse_h_Return_Cooling = (1.006 * OpenStudio::convert(mj8.Tattic_iter,"F","C").get + weather.design.CoolingHumidityRatio * (2501 + 1.86 * OpenStudio::convert(mj8.Tattic_iter,"F","C").get)) * OpenStudio::convert(1,"kJ","Btu").get * OpenStudio::convert(1,"lb","kg").get
+                    dse_h_Return_Cooling = (1.006 * OpenStudio::convert(t_attic_iter,"F","C").get + weather.design.CoolingHumidityRatio * (2501 + 1.86 * OpenStudio::convert(t_attic_iter,"F","C").get)) * OpenStudio::convert(1,"kJ","Btu").get * OpenStudio::convert(1,"lb","kg").get
                     
                     # Calculate duct efficiency using new Tattic:
                     dse_DEcorr_cooling, dse_dTe_cooling, unit_final.Cool_Load_Ducts_Sens = calc_dse_cooling(mj8.acf, mj8.enthalpy_indoor_cooling, unit_init.LAT, unit_init.Cool_Airflow, unit_final.Cool_Load_Sens, dse_Tamb_cooling, dse_As, dse_Ar, mj8.cool_setpoint, unit_final.dse_Fregain, unit_final.Cool_Load_Tot, ductNormLeakageToOutside, supply_duct_loss, return_duct_loss, ducts_not_in_living, supply_duct_r, return_duct_r, ductSystemEfficiency, dse_h_Return_Cooling)
@@ -1592,7 +1665,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                     dse_precorrect = 1 - (unit_final.Cool_Load_Ducts_Sens / unit_final.Cool_Load_Sens)
                 end
                 
-                dse_Tamb_cooling = mj8.Tattic_iter
+                dse_Tamb_cooling = t_attic_iter
                 mj8 = processLoadFloors(runner, mj8, thermal_zone, zone_loads, weather)
                 mj8 = processIntermediateTotalLoads(runner, mj8, FIXME, weather, hvac.HtgSupplyAirTemp, hvac)
                 
@@ -1692,7 +1765,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         end
         
         cool_design_db = weather.design.CoolingDrybulb
-
+        
         # Adjust the total cooling capacity to the rated conditions using performance curves
         if not hvac.HasGroundSourceHeatPump
             enteringTemp = cool_design_db
@@ -1717,7 +1790,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             else
                 coefficients = hvac.COOL_CAP_FT_SPEC_coefficients[0]
             end
-
+            
             totalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, coefficients)
             coolCap_Rated = unit_final.Cool_Load_Tot / totalCap_CurveValue
             if hvac.NumSpeedsCooling > 1
@@ -1731,7 +1804,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             sensibleCap_CurveValue = process_curve_fit(unit_final.Cool_Airflow, unit_final.Cool_Load_Tot, enteringTemp, shr_biquadratic_coefficients)
             sensCap_Design = sensCap_Rated * sensibleCap_CurveValue
             latCap_Design = [unit_final.Cool_Load_Tot - sensCap_Design, 1].max
-        
+            
             if hvac.NumSpeedsCooling == 1
                 overSizeLimit = 1.15
             elsif hvac.NumSpeedsCooling == 2
@@ -1788,7 +1861,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 unit_final.Cool_Capacity_Sens = unit_final.Cool_Capacity * sHR_Rated_Equip
                             
             elsif  sensCap_Design < underSizeLimit * unit_final.Cool_Load_Sens
-                
                 # Size by MJ8 Sensible load, return to rated conditions, find Sens with SHR_rated. Limit total 
                 # capacity to oversizing limit
                 
@@ -1815,7 +1887,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 unit_final.Cool_Airflow = cool_Load_SensCap_Design / (1.1 * mj8.acf * (mj8.cool_setpoint - unit_init.LAT))
 
             else
-                
                 unit_final.Cool_Capacity = unit_final.Cool_Load_Tot / totalCap_CurveValue
                 unit_final.Cool_Capacity_Sens = unit_final.Cool_Capacity * sHR_Rated_Equip
                 
@@ -1848,7 +1919,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             
             # overSizeLimit = 1.3
                          
-            # totalCap_CurveValue = MathTools.biquadratic(units.deltaF2C(mj8.wetbulb_indoor_cooling), units.deltaF2C(enteringTemp), coefficients)
+            # totalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, coefficients)
             
             # unit_final.Cool_Capacity = (unit_final.Cool_Load_Tot / totalCap_CurveValue)
             # unit_final.Cool_Capacity_Sens =  unit_final.Cool_Capacity * hvac.SHR_Rated[sizingSpeed]
@@ -1859,7 +1930,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             # FIXME
             # coefficients = hvac.COOL_CAP_FT_SPEC_coefficients[0]
                          
-            # totalCap_CurveValue = MathTools.biquadratic(units.deltaF2C(mj8.wetbulb_indoor_cooling), units.deltaF2C(enteringTemp), coefficients)
+            # totalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, coefficients)
             
             # unit_final.Cool_Capacity = unit_final.Cool_Load_Tot / totalCap_CurveValue                                            
             # unit_final.Cool_Capacity_Sens =  unit_final.Cool_Capacity * hvac.SHR_Rated
@@ -1935,7 +2006,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return unit_final
   end
     
-  def processFinalize(runner, mj8, unit_final, weather, hvac)
+  def processFinalize(runner, mj8, unit_final, weather, hvac, minCoolingCapacity)
     ''' 
     Finalize Sizing Calculations
     '''
@@ -1949,20 +2020,22 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
 
     elsif hvac.HasCentralAirSourceHeatPump
         
-        # FIXME
-        # if not hvac.FixedHeatingCapacity.nil? or not hvac.FixedCoolingCapacity.nil?:
-            # unit_final.Heat_Capacity = unit_final.Heat_Load
-        # else:
-            # self._processHeatPumpAdjustment(sim, mj8, weather, geometry, unit)
+        if not hvac.FixedHeatingCapacity.nil? or not hvac.FixedCoolingCapacity.nil?
+            unit_final.Heat_Capacity = unit_final.Heat_Load
+        else
+            # FIXME
+            runner.registerError("FIXME")
+            return nil
+            #_processHeatPumpAdjustment(sim, mj8, weather, geometry, unit)
+        end
             
-        # unit_final.Heat_Capacity_Supp = unit_final.Heat_Load
+        unit_final.Heat_Capacity_Supp = unit_final.Heat_Load
             
-        # if unit_final.Cool_Capacity > Constants.MinCoolingCapacity:
-            # unit_final.Heat_Airflow = unit_final.Heat_Capacity / (1.1 * sim.site.acf * \
-                                    # (hvac.HtgSupplyAirTemp - mj8.heat_setpoint))
-        # else:
-            # unit_final.Heat_Airflow = unit_final.Heat_Capacity_Supp / (1.1 * sim.site.acf * \
-                                    # (hvac.HtgSupplyAirTemp - mj8.heat_setpoint))
+        if unit_final.Cool_Capacity > minCoolingCapacity
+            unit_final.Heat_Airflow = unit_final.Heat_Capacity / (1.1 * mj8.acf * (hvac.HtgSupplyAirTemp - mj8.heat_setpoint))
+        else
+            unit_final.Heat_Airflow = unit_final.Heat_Capacity_Supp / (1.1 * mj8.acf * (hvac.HtgSupplyAirTemp - mj8.heat_setpoint))
+        end
 
     elsif hvac.HasMiniSplitHeatPump
         
@@ -2018,7 +2091,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                                                                       # unit.supply.HXVertBoreDia,
                                                                       # unit.supply.HXPipeOD,
                                                                       # unit.supply.HXPipeRvalue,
-                                                                      # unit.supply.Heat_LoadingEIR,
+                                                                      # unit.supply.HeatingEIR,
                                                                       # unit.supply.CoolingEIR,
                                                                       # unit.supply.HXCHWDesign,
                                                                       # unit.supply.HXHWDesign,
@@ -2036,7 +2109,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             # HDD_Ref_Bal = min(HDD65F, max(HDD50F, HDD50F + (HDD65F - HDD50F) / (65 - 50) * (T_Ref_Bal - 50)))
             # CDD_Ref_Bal = min(CDD50F, max(CDD65F, CDD50F + (CDD65F - CDD50F) / (65 - 50) * (T_Ref_Bal - 50)))
             # ANNL_Grnd_Cool = (1 + unit.supply.CoolingEIR[0]) * CDD_Ref_Bal * BLC_Cool * 24 * 0.6  # use 0.6 to account for average solar load
-            # ANNL_Grnd_Heat = (1 - unit.supply.Heat_LoadingEIR[0]) * HDD_Ref_Bal * BLC_Heat * 24
+            # ANNL_Grnd_Heat = (1 - unit.supply.HeatingEIR[0]) * HDD_Ref_Bal * BLC_Heat * 24
     
             # # Normalized net annual ground energy load
             # NNAGL = max((ANNL_Grnd_Heat - ANNL_Grnd_Cool) / (weather.data.AnnualAvgDrybulb - (2 * unit.supply.HXHWDesign - unit.supply.HXDTDesign) / 2), \
@@ -2096,7 +2169,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 # unit.supply.HXVertDepth = floor(unit.supply.VertHXBoreLength / unit.supply.HXNumOfBoreHole) + 5
         
             # else:
-                # SimWarning("User is hard sizing the bore field, improper sizing may lead to unbalanced / unsteady ground loop temperature and erroneous prediction of system energy related cost.")
+                # runner.registerInfo("User is hard sizing the bore field, improper sizing may lead to unbalanced / unsteady ground loop temperature and erroneous prediction of system energy related cost.")
                 # unit.supply.HXNumOfBoreHole = float(unit.supply.HXNumOfBoreHole)
                 # unit.supply.HXVertDepth = float(unit.supply.HXVertDepth)
         
@@ -2169,8 +2242,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
     return nil if unit_final.nil?
     
-    eER_CapacityDerateFactor = [] # FIXME
-    cOP_CapacityDerateFactor = [] # FIXME
+    eER_CapacityDerateFactor = [1.0, 1.0, 1.0, 1.0, 1.0] # FIXME
+    cOP_CapacityDerateFactor = [1.0, 1.0, 1.0, 1.0, 1.0] # FIXME
     tonnages = [1.5, 2, 3, 4, 5] # FIXME: Get from HVAC measures
     
     if not hvac.HasCentralAirConditioner and not hvac.HasCentralAirSourceHeatPump
@@ -2180,20 +2253,18 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     # EER_CapacityDerateFactor values correspond to 1.5, 2, 3, 4, 5 ton air-conditioners. Interpolate in between nominal sizes.
     aC_Tons = OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","ton").get
     
-    eER_Multiplier = 1
-    
     if aC_Tons <= 1.5
         eER_Multiplier = eER_CapacityDerateFactor[0]
     elsif aC_Tons <= 5
-        index = int(floor(aC_Tons) - 1)
+        index = (aC_Tons.floor - 1).to_i
         eER_Multiplier = MathTools.interp2(aC_Tons, tonnages[index-1], tonnages[index],
-                                      eER_CapacityDerateFactor[index-1], 
-                                      eER_CapacityDerateFactor[index])
+                                           eER_CapacityDerateFactor[index-1], 
+                                           eER_CapacityDerateFactor[index])
     elsif aC_Tons <= 10
-        index = int(floor(aC_Tons/2) - 1)
-        eER_Multiplier = MathTools.interp2(aC_Tons/2, tonnages[index-1], tonnages[index],
-                                      eER_CapacityDerateFactor[index-1], 
-                                      eER_CapacityDerateFactor[index])
+        index = ((aC_Tons/2.0).floor - 1).to_i
+        eER_Multiplier = MathTools.interp2(aC_Tons/2.0, tonnages[index-1], tonnages[index],
+                                           eER_CapacityDerateFactor[index-1], 
+                                           eER_CapacityDerateFactor[index])
     else
         eER_Multiplier = eER_CapacityDerateFactor[-1]
     end
@@ -2205,18 +2276,16 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
     if hvac.HasCentralAirSourceHeatPump
     
-        cOP_Multiplier = 1
-    
         if aC_Tons <= 1.5
             cOP_Multiplier = cOP_CapacityDerateFactor[0]
         elsif aC_Tons <= 5
-            index = int(floor(aC_Tons) - 1)
+            index = (aC_Tons.floor - 1).to_i
             cOP_Multiplier = MathTools.interp2(aC_Tons, tonnages[index-1], tonnages[index], 
                                                cOP_CapacityDerateFactor[index-1], 
                                                cOP_CapacityDerateFactor[index])
         elsif aC_Tons <= 10
-            index = int(floor(aC_Tons/2) - 1)
-            cOP_Multiplier = MathTools.interp2(aC_Tons/2, tonnages[index-1], tonnages[index], 
+            index = ((aC_Tons/2.0).floor - 1).to_i
+            cOP_Multiplier = MathTools.interp2(aC_Tons/2.0, tonnages[index-1], tonnages[index], 
                                                cOP_CapacityDerateFactor[index-1], 
                                                cOP_CapacityDerateFactor[index])
         else
@@ -2225,7 +2294,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
         for speed in 0..(hvac.NumSpeedsCooling-1)
             # FIXME
-            #unit.supply.Heat_LoadingEIR[speed] = unit.supply.Heat_LoadingEIR[speed] / cOP_Multiplier
+            #unit.supply.HeatingEIR[speed] = unit.supply.HeatingEIR[speed] / cOP_Multiplier
         end
         
     end
@@ -2277,8 +2346,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 dehumid_AC_TotCap_i_1 = 0
                 for i in 0..(hvac.NumSpeedsCooling - 1)
                 
-                    # FIXME: This has unit conversions and above equations don't. Is this correct?
-                    totalCap_CurveValue = MathTools.biquadratic(OpenStudio::convert(mj8.wetbulb_indoor_dehumid,"F","C").get, OpenStudio::convert(dehum_design_db,"F","C").get, cOOL_CAP_FT_SPEC_coefficients[i])
+                    totalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, dehum_design_db, cOOL_CAP_FT_SPEC_coefficients[i])
                     
                     dehumid_AC_TotCap = totalCap_CurveValue * unit_final.Cool_Capacity * hvac.CapacityRatioCooling[i]
                     sens_cap = hvac.SHR_Rated[i] * dehumid_AC_TotCap  #TODO: This could be slightly improved by not assuming a constant SHR
@@ -2600,7 +2668,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                Gas.Air.cp * (dse_Bs - 1) * (leavingAirTemp - dse_Tamb))
     
     # Calculate the sensible heat transfer from surroundings
-    # FIXME: Move elsewhere
+    # FIXME: Move elsewhere?
     coolingLoad_Ducts_Sens = (1 - [dse_DE,0].max) * load_Inter_Sens
     
     return dse_DE, coolingLoad_Ducts_Sens
@@ -2665,7 +2733,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     hvac.COOL_CAP_FT_SPEC_coefficients = nil
     hvac.HtgSupplyAirTemp = nil
     hvac.SHR_Rated = nil
-    hvac.CapacityRatioCooling = [1.0] # FIXME
+    hvac.CapacityRatioCooling = nil
     hvac.FixedCoolingCapacity = nil
     hvac.FixedHeatingCapacity = nil
     
@@ -2715,7 +2783,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         hvac.HasCooling = true
     
         if clg_equips.size > 1
-            runner.registerError("Cannot currently handle multiple cooling equipment in a unit.")
+            runner.registerError("Cannot currently handle multiple cooling equipment in a unit: #{clg_equips.to_s}.")
             return nil
         end
         clg_equip = clg_equips[0]
@@ -2733,46 +2801,54 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         
         if clg_coil.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed
             hvac.NumSpeedsCooling = 1
+            hvac.CapacityRatioCooling = [1.0]
             curves = [clg_coil.totalCoolingCapacityFunctionOfTemperatureCurve]
-            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_curves(curves, hvac.NumSpeedsCooling)
+            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_COOL_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
             if not clg_coil.ratedSensibleHeatRatio.is_initialized
                 runner.registerError("SHR not set for #{clg_coil.name}.")
                 return nil
             end
             hvac.SHR_Rated = [clg_coil.ratedSensibleHeatRatio.get]
             if clg_coil.ratedTotalCoolingCapacity.is_initialized
-                hvac.FixedCoolingCapacity = clg_coil.ratedTotalCoolingCapacity.get
+                hvac.FixedCoolingCapacity = OpenStudio::convert(clg_coil.ratedTotalCoolingCapacity.get,"W","ton").get
             end
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed
             hvac.NumSpeedsCooling = clg_coil.stages.size
+            if hvac.NumSpeedsCooling == 2
+                hvac.CapacityRatioCooling = [0.71, 1.0] # FIXME
+            else
+                hvac.CapacityRatioCooling = [0.36, 0.64, 1.0, 1.16] # FIXME
+            end
             curves = []
             hvac.SHR_Rated = []
             clg_coil.stages.each do |stage|
                 curves << stage.totalCoolingCapacityFunctionofTemperatureCurve
-                if not clg_coil.grossRatedSensibleHeatRatio.is_initialized
+                if not stage.grossRatedSensibleHeatRatio.is_initialized
                     runner.registerError("SHR not set for #{clg_coil.name}.")
                     return nil
                 end
                 hvac.SHR_Rated << stage.grossRatedSensibleHeatRatio.get
                 if stage.grossRatedTotalCoolingCapacity.is_initialized
-                    hvac.FixedCoolingCapacity = stage.grossRatedTotalCoolingCapacity.get # FIXME: Using last stage
+                    hvac.FixedCoolingCapacity = OpenStudio::convert(stage.grossRatedTotalCoolingCapacity.get,"W","ton").get # FIXME: Using last stage
                 end
             end
-            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_curves(curves, hvac.NumSpeedsCooling)
+            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_COOL_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow
             hvac.NumSpeedsCooling = Constants.Num_Speeds_MSHP # FIXME: Can we obtain from the object?
+            hvac.CapacityRatioCooling = [] # FIXME
             curves = [clg_coil.coolingCapacityModifierCurveFunctionofFlowFraction]
-            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_curves(curves, hvac.NumSpeedsCooling)
+            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_COOL_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
             if not clg_coil.ratedSensibleHeatRatio.is_initialized
                 runner.registerError("SHR not set for #{clg_coil.name}.")
                 return nil
             end
             hvac.SHR_Rated = [clg_coil.ratedSensibleHeatRatio.get] # FIXME: just one value?
             if clg_coil.ratedTotalCoolingCapacity.is_initialized
-                hvac.FixedCoolingCapacity = clg_coil.ratedTotalCoolingCapacity.get
+                hvac.FixedCoolingCapacity = OpenStudio::convert(clg_coil.ratedTotalCoolingCapacity.get,"W","ton").get
             end
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit
             hvac.NumSpeedsCooling = 1 # FIXME: Can it be multi-speed?
+            hvac.CapacityRatioCooling = [1.0]
             hvac.COOL_CAP_FT_SPEC_coefficients = [[totalCoolingCapacityCoefficient1,
                                                    totalCoolingCapacityCoefficient2,
                                                    totalCoolingCapacityCoefficient3,
@@ -2784,7 +2860,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             end
             hvac.SHR_Rated = [clg_coil.ratedSensibleCoolingCapacity.get / clg_coil.ratedTotalCoolingCapacity.get]
             if clg_coil.ratedTotalCoolingCapacity.is_initialized
-                hvac.FixedCoolingCapacity = clg_coil.ratedTotalCoolingCapacity.get
+                hvac.FixedCoolingCapacity = OpenStudio::convert(clg_coil.ratedTotalCoolingCapacity.get,"W","ton").get
             end
         else
             runner.registerError("Unexpected cooling coil: #{clg_coil.name}.")
@@ -2794,9 +2870,9 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
 
     if htg_equips.size > 0
         hvac.HasHeating = true
-    
+        
         if htg_equips.size > 1
-            runner.registerError("Cannot currently handle multiple heating equipment in a unit.")
+            runner.registerError("Cannot currently handle multiple heating equipment in a unit: #{htg_equips.to_s}.")
             return nil
         end
         htg_equip = htg_equips[0]
@@ -2821,39 +2897,39 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         if htg_coil.is_a? OpenStudio::Model::CoilHeatingElectric
             hvac.NumSpeedsHeating = 1
             if htg_coil.nominalCapacity.is_initialized
-                hvac.FixedHeatingCapacity = htg_coil.nominalCapacity.get
+                hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.nominalCapacity.get,"W","ton").get
             end
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingGas
             hvac.NumSpeedsHeating = 1
             if htg_coil.nominalCapacity.is_initialized
-                hvac.FixedHeatingCapacity = htg_coil.nominalCapacity.get
+                hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.nominalCapacity.get,"W","ton").get
             end
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterBaseboard
             hvac.NumSpeedsHeating = 1
             if htg_coil.heatingDesignCapacity.is_initialized
-                hvac.FixedHeatingCapacity = htg_coil.heatingDesignCapacity.get
+                hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.heatingDesignCapacity.get,"W","ton").get
             end
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
             hvac.NumSpeedsHeating = 1
             if htg_coil.ratedTotalHeatingCapacity.is_initialized
-                hvac.FixedHeatingCapacity = htg_coil.ratedTotalHeatingCapacity.get
+                hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.ratedTotalHeatingCapacity.get,"W","ton").get
             end
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
             hvac.NumSpeedsHeating = htg_coil.stages.size
             clg_coil.stages.each do |stage|
                 if htg_coil.grossRatedHeatingCapacity.is_initialized
-                    hvac.FixedHeatingCapacity = stage.grossRatedHeatingCapacity.get # FIXME: Using last stage
+                    hvac.FixedHeatingCapacity = OpenStudio::convert(stage.grossRatedHeatingCapacity.get,"W","ton").get # FIXME: Using last stage
                 end
             end
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow
             hvac.NumSpeedsHeating = Constants.Num_Speeds_MSHP # FIXME: Can we obtain from the object?
             if htg_coil.ratedTotalHeatingCapacity.is_initialized
-                hvac.FixedHeatingCapacity = htg_coil.ratedTotalHeatingCapacity.get
+                hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.ratedTotalHeatingCapacity.get,"W","ton").get
             end
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit
             hvac.NumSpeedsHeating = 1 # FIXME: Can it be multi-speed?
             if htg_coil.ratedHeatingCapacity.is_initialized
-                hvac.FixedHeatingCapacity = htg_coil.ratedHeatingCapacity.get
+                hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.ratedHeatingCapacity.get,"W","ton").get
             end
         else
             runner.registerError("Unexpected heating coil: #{htg_coil.name}.")
@@ -2865,26 +2941,93 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
   end
   
   
-  def get_2d_vector_from_curves(curves, num_speeds)
-    # FIXME: Need to do unit conversion?
-    v = []
+  def get_2d_vector_from_COOL_CAP_FT_SPEC_curves(curves, num_speeds)
+    vector = []
     curves.each do |curve|
-        b = curve.to_CurveBiquadratic.get
-        v << [b.coefficient1Constant, b.coefficient2x, b.coefficient3xPOW2, b.coefficient4y, b.coefficient5yPOW2, b.coefficient6xTIMESY]
+        bi = curve.to_CurveBiquadratic.get
+        c_si = [bi.coefficient1Constant, bi.coefficient2x, bi.coefficient3xPOW2, 
+             bi.coefficient4y, bi.coefficient5yPOW2, bi.coefficient6xTIMESY]
+        # Convert from SI coefficients to IP coefficients
+        c_ip = []
+        c_ip << c_si[0] - 160.0/9.0 * (c_si[1] + c_si[3]) + 25600.0/81.0 * (c_si[2] + c_si[4] + c_si[5])
+        c_ip << 5.0/9.0 * (c_si[1] - 320.0/9.0 * c_si[2] - 160.0/9.0 * c_si[5])
+        c_ip << 25.0/81.0 * c_si[2]
+        c_ip << 5.0/9.0 * (c_si[3] - 320.0/9.0 * c_si[4] - 160.0/9.0 * c_si[5])
+        c_ip << 25.0/81.0 * c_si[4]
+        c_ip << 25.0/81.0 * c_si[5]
+        vector << c_ip
     end
-    if num_speeds > 1 and v.size == 1
+    if num_speeds > 1 and vector.size == 1
         # Repeat coefficients for each speed
         for i in 1..num_speeds
-            v << v[0]
+            vector << vector[0]
         end
     end
-    return v
+    return vector
   end
   
   def process_curve_fit(airFlowRate, capacity, temp, shr_biquadratic_coefficients)
     # TODO: Get rid of this curve by using ADP/BF calculations
     capacity_tons = OpenStudio::convert(capacity,"Btu/h","ton").get
     return MathTools.biquadratic(airFlowRate / capacity_tons, temp, shr_biquadratic_coefficients)
+  end
+  
+  def true_azimuth(surface, northAxis)
+    true_azimuth = nil
+    facade = Geometry.get_facade_for_surface(surface)
+    if facade == Constants.FacadeFront
+        true_azimuth = northAxis
+    elsif facade == Constants.FacadeBack
+        true_azimuth = northAxis + 180
+    elsif facade == Constants.FacadeLeft
+        true_azimuth = northAxis + 90
+    elsif facade == Constants.FacadeRight
+        true_azimuth = northAxis + 270
+    end
+    if not true_azimuth.nil? and true_azimuth >= 360
+        true_azimuth = true_azimuth - 360
+    end
+    return true_azimuth
+  end
+  
+  def calculate_t_attic_iter(uA_roof, mdotCp_atticvent, t_solair, uA_atticfloor, cool_setpoint, coolingLoad_Ducts_Sens)
+    # Calculate new value for Tattic based on updated duct losses
+    t_attic_iter = (((uA_roof + mdotCp_atticvent) * t_solair + uA_atticfloor * cool_setpoint - coolingLoad_Ducts_Sens) /
+                    (uA_atticfloor + uA_roof + mdotCp_atticvent))
+    t_attic_iter = min(t_attic_iter, t_solair) # Prevent attic from being hotter than T_solair
+    t_attic_iter = max(t_attic_iter, cool_setpoint) # Prevent attic from being colder than cool_setpoint
+    return t_attic_iter
+  end
+  
+  def calculate_t_solair(weather, roofAbsorptance, roofPitch)
+    # Calculates Tsolair under design conditions
+    # Uses equation (30) from 2009 ASHRAE Handbook-Fundamentals (IP), p 18.22:
+    
+    t_outdoor = weather.design.CoolingDrybulb # Design outdoor air temp (F)
+    i_b = weather.design.CoolingDirectNormal
+    i_d = weather.design.CoolingDiffuseHorizontal
+    
+    # Use max summer direct normal plus diffuse solar radiation, adjusted for roof pitch
+    # (Not calculating max coincident i_b + i_d because that requires knowing roofPitch in advance; will typically coincide with peak i_b though.)
+    i_T = OpenStudio::convert(i_b + i_d * (1 + Math::cos(roofPitch.deg2rad))/2,"W/m^2","Btu/ft^2*h") # total solar radiation incident on surface (Btu/h/ft2)
+    # Adjust diffuse horizontal for roof pitch using isotropic diffuse model (Liu and Jordan 1963) from Duffie and Beckman eq 2.15.1
+    
+    h_o = 4 # coefficient of heat transfer for long-wave radiation and convection at outer surface (Btu/h-ft2-F)
+            # Value of 4.0 for 7.5 mph wind (summer design) from 2009 ASHRAE H-F (IP) p 26.1
+            # p 18.22 assumes h_o = 3.0 Btu/hft2F for horizontal surfaces, but we found 4.0 gives 
+            # more realistic sol air temperatures and is more realistic for residential roofs. 
+    
+    emittance = 1.0 # hemispherical emittance of surface = 1 for horizontal surface, from 2009 ASHRAE H-F (IP) p 18.22
+    
+    deltaR = 20 # difference between long-wave radiation incident on surface from sky and surroundings
+                # and radiation emitted by blackbody at outdoor air temperature
+                # 20 Btu/h-ft2 appropriate for horizontal surfaces, from ASHRAE H-F (IP) p 18.22
+                
+    deltaR_inclined = deltaR * Math::cos(roofPitch.deg2rad) # Corrent deltaR for inclined surface,
+    # from eq. 2.32 in  Castelino, R.L. 1992. "Implementation of the Revised Transfer Function Method and Evaluation of the CLTD/SCL/CLF Method" (Thesis) Oklahoma State University 
+    
+    t_solair = t_outdoor + (roofAbsorptance * i_T - emittance * deltaR_inclined) / h_o
+    return t_solair
   end
   
   def display_zone_loads(runner, unit_num, zone_loads)
@@ -2918,7 +3061,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                       :Dehumid_IntGains_Lat,
                      ]
         properties.each do |property|
-            s += "\n#{property.to_s.gsub("_"," ")} = #{loads.send(property).round(0).to_s} Btu/hr"
+            s += "\n#{property.to_s.gsub("_"," ")} = #{loads.send(property).round(0).to_s}" # FIXME: Btu/hr"
         end
         runner.registerInfo("#{s}\n")
     end
@@ -2938,10 +3081,10 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 :Cool_Airflow, 
                ]
     loads.each do |load|
-        s += "\n#{load.to_s.gsub("_"," ")} = #{unit_init.send(load).round(0).to_s} Btu/hr"
+        s += "\n#{load.to_s.gsub("_"," ")} = #{unit_init.send(load).round(0).to_s}" # FIXME: Btu/hr"
     end
     airflows.each do |airflow|
-        s += "\n#{airflow.to_s.gsub("_"," ")} = #{unit_init.send(airflow).round(0).to_s} cfm"
+        s += "\n#{airflow.to_s.gsub("_"," ")} = #{unit_init.send(airflow).round(0).to_s}" # FIXME: cfm"
     end
     runner.registerInfo("#{s}\n")
   end
@@ -2973,16 +3116,16 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
               :Dehumid_WaterRemoval,
              ]
     loads.each do |load|
-        s += "\n#{load.to_s.gsub("_"," ")} = #{unit_final.send(load).round(0).to_s} Btu/hr"
+        s += "\n#{load.to_s.gsub("_"," ")} = #{unit_final.send(load).round(0).to_s}"# FIXME: Btu/hr"
     end
     caps.each do |cap|
-        s += "\n#{cap.to_s.gsub("_"," ")} = #{unit_final.send(cap).round(0).to_s} Btu/hr"
+        s += "\n#{cap.to_s.gsub("_"," ")} = #{unit_final.send(cap).round(0).to_s}" # FIXME: Btu/hr"
     end
     airflows.each do |airflow|
-        s += "\n#{airflow.to_s.gsub("_"," ")} = #{unit_final.send(airflow).round(0).to_s} cfm"
+        s += "\n#{airflow.to_s.gsub("_"," ")} = #{unit_final.send(airflow).round(0).to_s}" # FIXME: cfm"
     end
     waters.each do |water|
-        s += "\n#{water.to_s.gsub("_"," ")} = #{unit_final.send(water).round(0).to_s} L/day"
+        s += "\n#{water.to_s.gsub("_"," ")} = #{unit_final.send(water).round(0).to_s}" # FIXME: L/day"
     end
     runner.registerInfo("#{s}\n")
   end
@@ -2990,8 +3133,11 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
 end #end the measure
 
 class Numeric
-  def degrees
+  def deg2rad
     self * Math::PI / 180 
+  end
+  def rad2deg
+    self * 180 / Math::PI 
   end
 end
 
