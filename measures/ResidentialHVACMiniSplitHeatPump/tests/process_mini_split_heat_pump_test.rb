@@ -18,6 +18,17 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)    
   end  
   
+  def test_new_construction_fbsmt_seer_14_5_8_2_hspf_no_supp_heating
+    args_hash = {}
+    args_hash["pan_heater_power"] = 150.0
+    args_hash["heat_pump_capacity"] = "3.0"
+    args_hash["supplemental_capacity"] = "NO SUPP HEAT"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"AirConditionerVariableRefrigerantFlow"=>2, "FanOnOff"=>2, "ZoneHVACTerminalUnitVariableRefrigerantFlow"=>2, "CoilHeatingDXVariableRefrigerantFlow"=>2, "CoilCoolingDXVariableRefrigerantFlow"=>2, "ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "EnergyManagementSystemSensor"=>3, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2}
+    expected_values = {"CoolingCOP"=>2.34, "CoolingNominalCapacity"=>8440.45, "FBsmtZoneCoolingNominalCapacity"=>4220.22, "HeatingCOP"=>2.79, "HeatingNominalCapacity"=>8979.70, "FBsmtZoneHeatingNominalCapacity"=>4489.85}
+    _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2)    
+  end  
+  
   def test_retrofit_replace_furnace
     args_hash = {}
     expected_num_del_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilHeatingGas"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2}

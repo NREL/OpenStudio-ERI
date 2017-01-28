@@ -242,7 +242,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     end
     baseboardEfficiency = runner.getDoubleArgumentValue("supplemental_efficiency",user_arguments)
     baseboardOutputCapacity = runner.getStringArgumentValue("supplemental_capacity",user_arguments)
-    unless baseboardOutputCapacity == Constants.SizingAuto and not baseboardOutputCapacity == "NO SUPP HEAT"
+    unless baseboardOutputCapacity == Constants.SizingAuto or baseboardOutputCapacity == "NO SUPP HEAT"
       baseboardOutputCapacity = OpenStudio::convert(baseboardOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end    
         
