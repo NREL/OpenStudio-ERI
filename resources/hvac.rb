@@ -664,7 +664,6 @@ class HVAC
               air_loop_unitary.resetCoolingCoil
               clg_coil.remove
               air_loop_unitary.supplyFan.get.remove
-              return true
             else
               if reset_air_loop
                 cloned_clg_coil = clg_coil.clone
@@ -674,10 +673,9 @@ class HVAC
                 cloned_clg_coil = self.get_coil_from_hvac_component(cloned_clg_coil)
                 cloned_clg_coil.setName(clg_coil.name.to_s)
                 return cloned_clg_coil
-              else
-                return true
               end
             end
+            return true
           end
         end
       end
@@ -690,8 +688,8 @@ class HVAC
         if remove
           runner.registerInfo("Removed '#{ptac.name}' from #{thermal_zone.name}.")
           ptac.remove
-          return true
         end
+        return true
       end
       return nil
     end
@@ -711,7 +709,6 @@ class HVAC
               air_loop_unitary.resetHeatingCoil
               htg_coil.remove
               air_loop_unitary.supplyFan.get.remove
-              return true
             else
               if reset_air_loop
                 cloned_htg_coil = htg_coil.clone
@@ -725,10 +722,9 @@ class HVAC
                 end
                 cloned_htg_coil.setName(htg_coil.name.to_s)
                 return cloned_htg_coil
-              else
-                return true
               end
             end
+            return true
           end
         end
       end
@@ -741,8 +737,8 @@ class HVAC
         if remove
           runner.registerInfo("Removed '#{baseboard.name}' from #{thermal_zone.name}.")
           baseboard.remove
-          return true
         end
+        return true
       end
       return nil
     end
@@ -753,8 +749,8 @@ class HVAC
         if remove
           runner.registerInfo("Removed '#{baseboard.name}' from #{thermal_zone.name}.")
           baseboard.remove
-          return true
         end
+        return true
       end
       return nil
     end
@@ -776,10 +772,8 @@ class HVAC
               air_loop_unitary.resetCoolingCoil              
               htg_coil.remove
               clg_coil.remove
-              return true
-            else
-              return true
             end
+            return true
           end
         end
       end
@@ -818,14 +812,12 @@ class HVAC
               air_loop_unitary.resetCoolingCoil              
               htg_coil.remove
               clg_coil.remove
-              return true
-            else
-              return true
             end
+            return true
           end
         end
       end
-      return nil    
+      return nil
     end
     
     def self.has_air_loop(model, runner, thermal_zone, remove=false)
@@ -839,8 +831,8 @@ class HVAC
             if remove
               runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
               air_loop.remove
-              return true
             end
+            return true
           end
         end
       end

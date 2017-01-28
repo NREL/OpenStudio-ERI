@@ -45,7 +45,7 @@ class ProcessBoilerElectric < OpenStudio::Ruleset::ModelUserScript
     boilerInstalledAFUE.setDisplayName("Installed AFUE")
     boilerInstalledAFUE.setUnits("Btu/Btu")
     boilerInstalledAFUE.setDescription("The installed Annual Fuel Utilization Efficiency (AFUE) of the boiler, which can be used to account for performance derating or degradation relative to the rated value.")
-    boilerInstalledAFUE.setDefaultValue(0.80)
+    boilerInstalledAFUE.setDefaultValue(1.0)
     args << boilerInstalledAFUE
     
     #make a bool argument for whether the boiler OAT enabled

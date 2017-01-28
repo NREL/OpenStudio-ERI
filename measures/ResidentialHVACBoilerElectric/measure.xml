@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>d2fcc3b6-52a5-4dae-9fef-456feb7b1fe4</version_id>
-  <version_modified>20170128T000320Z</version_modified>
+  <version_id>843537a1-e2e7-409a-8d87-d0730b799ba3</version_id>
+  <version_modified>20170128T215945Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
@@ -45,7 +45,7 @@
       <units>Btu/Btu</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>0.8</default_value>
+      <default_value>1</default_value>
     </argument>
     <argument>
       <name>oat_reset_enabled</name>
@@ -404,16 +404,22 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>process_boiler_electric_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>87D8B525</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>70C27777</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2B062E6C</checksum>
+    </file>
+    <file>
+      <filename>process_boiler_electric_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>04DE4DAB</checksum>
     </file>
     <file>
       <version>
@@ -424,19 +430,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DAA5D9FF</checksum>
+      <checksum>C6FFB78E</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AD0220F2</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2B062E6C</checksum>
+      <checksum>048F7BD2</checksum>
     </file>
   </files>
 </measure>
