@@ -98,8 +98,9 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
       building_type = "SingleFamilyDetached"
     end
     roof_type = determine_roof_type(model.getSurfaces, model.getBuildingUnits.length, building_type)
-    inset_position = determine_inset_position(model.getSurfaces)
     garage_pos, garage_width = get_garage_pos_and_width(model.getSurfaces)
+    inset_position = determine_inset_position(model.getSurfaces)
+    top_floor_z = determine_top_floor_z(model.getSpaces)
     
     surfaces_modified = false
 
@@ -721,9 +722,15 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     when Constants.RoofTypeFlat
     
       model.getSurfaces.each do |surface|
-        next unless surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
+        if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
+        elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "adiabatic" and surface.vertices.length == 4 # corridor roof deck # TODO: need to only apply to top corridor
+        else
+          next
+        end
         surfaces_modified = true
         if surface.vertices.length == 4
+
+          next unless surface.vertices.all? {|vertex| (vertex.z + surface.space.get.zOrigin - top_floor_z).abs < 0.01}
       
           attic_length, attic_width, attic_height = Geometry.get_surface_dimensions(surface)
         
@@ -875,6 +882,9 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
           vertices = surface.vertices
           z_offset = surface.space.get.zOrigin
           rear_unit = surface.vertices.all? {|vertex| vertex.y >= 0 }
+          if building_type == "SingleFamilyDetached"
+            rear_unit = false
+          end
           
           shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
           
@@ -1490,7 +1500,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
       next unless surface.surfaceType.downcase == "roofceiling"
       next unless surface.outsideBoundaryCondition.downcase == "outdoors"
       sorted_vertices = surface.vertices.sort_by { |vertex| [vertex.y, vertex.x] }
-      next unless sorted_vertices[0].y < 0 # determine only from the front units
+      next unless sorted_vertices[0].y <= 0 # determine only from the front units
       if sorted_vertices[0].x < sorted_vertices[2].x
         return "Right"
       else
@@ -1558,7 +1568,23 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
       return min_xs.min
     end
     return 0
-  end  
+  end
+  
+  def determine_top_floor_z(spaces)
+    space_max_zs = []
+    spaces.each do |space|
+      surfaces_max_zs = []
+      space.surfaces.each do |surface|
+        zvalues = Geometry.getSurfaceZValues([surface])
+        space_max_zs << zvalues.max + OpenStudio::convert(space.zOrigin,"m","ft").get
+      end
+      space_max_zs << space_max_zs.max
+    end
+    unless space_max_zs.empty?
+      return OpenStudio::convert(space_max_zs.max,"ft","m").get
+    end
+    return nil
+  end
   
 end
 

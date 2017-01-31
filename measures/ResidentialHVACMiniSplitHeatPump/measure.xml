@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_vrf_minisplit</name>
   <uid>402b168f-ed99-46bb-b367-103937011e91</uid>
-  <version_id>7f437f0e-fec7-4bb0-9f0e-39c77a094df5</version_id>
-  <version_modified>20170128T215947Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>2003050f-67b1-4530-905a-d1f19504730e</version_id>
+  <version_modified>20170131T181733Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVRFMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a mini-split heat pump. For multifamily buildings, the mini-split heat pump can be set for all units of the building.</description>
@@ -416,7 +416,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

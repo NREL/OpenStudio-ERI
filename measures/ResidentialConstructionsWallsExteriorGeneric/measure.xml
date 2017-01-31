@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>8677ad20-d597-4d9c-ad89-d41fb903938d</version_id>
-  <version_modified>20170128T000314Z</version_modified>
-  <xml_checksum>16B68B0C</xml_checksum>
+  <version_id>db3d8a74-4e74-4598-a542-9a9c404d2b95</version_id>
+  <version_modified>20170131T181727Z</version_modified>
+  <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
   <description>This measure assigns a generic layered construction to above-grade exterior walls adjacent to finished space.</description>
@@ -195,7 +195,6 @@
       <model_dependent>false</model_dependent>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

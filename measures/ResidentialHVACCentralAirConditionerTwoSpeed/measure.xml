@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>fad34b50-86d8-41e3-a9e8-23c9bfe6d5af</version_id>
-  <version_modified>20170128T215946Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>ee8274eb-241f-4e9f-8bdb-d445f5dc70c8</version_id>
+  <version_modified>20170131T181732Z</version_modified>
+  <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a two-speed central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the two-speed central air conditioner can be set for all units of the building.</description>
@@ -286,7 +286,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>

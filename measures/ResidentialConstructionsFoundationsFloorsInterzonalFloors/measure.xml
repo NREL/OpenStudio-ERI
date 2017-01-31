@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_interzonal_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>445b91bd-a26a-4180-b6be-10599099a460</version_id>
-  <version_modified>20170128T000313Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>00a612d2-e29c-432e-bda1-55abf9b080c8</version_id>
+  <version_modified>20170131T181727Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsInterzonalFloors</class_name>
   <display_name>Set Residential Foundations/Floors - Interzonal Floor Construction</display_name>
   <description>This measure assigns a wood stud construction to floors between finished space and unfinished space or floors below cantilevered finished space.</description>
@@ -54,7 +54,6 @@
       <default_value>0.13</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

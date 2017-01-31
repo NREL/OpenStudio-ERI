@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>a462e10a-1a21-4039-842c-4e5daa0ae64b</version_id>
-  <version_modified>20170128T215946Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>8eb2a3a7-f69f-4d38-acb2-9d6d12366b88</version_id>
+  <version_modified>20170131T181733Z</version_modified>
+  <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop. For multifamily buildings, the furnace can be set for all units of the building.</description>
@@ -177,7 +177,6 @@
       <default_value>0.5</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

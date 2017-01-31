@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_electric_loads</name>
   <uid>3ac41688-ef52-4679-b79c-8cbdf7cbd0e7</uid>
-  <version_id>d9ee097b-4c55-4254-ba2f-32bea0bb42cd</version_id>
-  <version_modified>20170128T000324Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>be8da0c3-5d76-4425-be30-49fb7c2b0879</version_id>
+  <version_modified>20170131T181734Z</version_modified>
+  <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialMiscellaneousElectricLoads</class_name>
   <display_name>Set Residential Plug Loads</display_name>
   <description>Adds (or replaces) residential plug loads with the specified efficiency and schedule in all finished spaces. For multifamily buildings, the plug loads can be set for all units of the building.</description>
@@ -46,7 +46,6 @@
       <default_value>1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

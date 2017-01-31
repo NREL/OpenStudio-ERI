@@ -2,15 +2,14 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>094161ff-6feb-4e81-ae43-1c2346c7147d</version_id>
-  <version_modified>20170128T233319Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>7f71b9e9-5ffd-4251-b232-9b005144eff1</version_id>
+  <version_modified>20170131T181734Z</version_modified>
+  <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
   <description>This measure performs HVAC sizing calculations via Manual J, as well as sizing calculations for ground source heat pumps and dehumidifiers.</description>
   <modeler_description>This measure assigns HVAC heating/cooling capacities, airflow rates, etc.</modeler_description>
   <arguments/>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.HVAC Controls</tag>
