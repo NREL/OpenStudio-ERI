@@ -910,7 +910,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Ruleset::ModelUserScrip
     model.getBuilding.setStandardsNumberOfStories(building_num_floors)
     
     # Store the building type
-    model.getBuilding.setStandardsBuildingType("Multifamily")
+    model.getBuilding.setStandardsBuildingType(Constants.BuildingTypeMultifamily)
     
     # reporting final condition of model
     runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")   

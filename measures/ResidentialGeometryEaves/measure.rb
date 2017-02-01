@@ -92,15 +92,12 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
       existing_eaves_depth = 0
     end
     
-    if model.getBuilding.standardsBuildingType.is_initialized
-      building_type = model.getBuilding.standardsBuildingType.get
-    else
-      building_type = "SingleFamilyDetached"
-    end
+    building_type = Geometry.get_building_type(model)
     roof_type = determine_roof_type(model.getSurfaces, model.getBuildingUnits.length, building_type)
-    garage_pos, garage_width = get_garage_pos_and_width(model.getSurfaces)
+    garage_pos, garage_width, garage_depth = get_garage_pos_and_width(model.getSurfaces)
     inset_position = determine_inset_position(model.getSurfaces)
     top_floor_z = determine_top_floor_z(model.getSpaces)
+    num_floors = Geometry.get_building_stories(model.getSpaces)
     
     surfaces_modified = false
 
@@ -723,12 +720,21 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     
       model.getSurfaces.each do |surface|
         if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
-        elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "adiabatic" and surface.vertices.length == 4 # corridor roof deck # TODO: need to only apply to top corridor
+        elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "adiabatic" and surface.vertices.length == 4 # corridor roof deck
         else
           next
         end
+        
         surfaces_modified = true
+        
+        shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
+        
         if surface.vertices.length == 4
+        
+          garage_roof = false
+          if surface.space.get.name.to_s.downcase.include? Constants.GarageSpace
+            garage_roof = true
+          end        
 
           next unless surface.vertices.all? {|vertex| (vertex.z + surface.space.get.zOrigin - top_floor_z).abs < 0.01}
       
@@ -764,7 +770,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
           m_bottom_far_left[2,3] = z_offset
           m_bottom_far_right[0,3] = eaves_depth
           m_bottom_far_right[1,3] = -attic_width
-          m_bottom_far_right[2,3] = z_offset          
+          m_bottom_far_right[2,3] = z_offset
           m_bottom_close_left[0,3] = -eaves_depth
           m_bottom_close_left[1,3] = -eaves_depth
           m_bottom_close_left[2,3] = z_offset
@@ -833,61 +839,76 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
           new_vertices_left << transformation_left_close * bottom_left
           new_vertices_left << transformation_left_close * top_left               
           
-          shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
-          
-          new_surface_left.setVertices(new_vertices_left)
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_left.vertices, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)								
-          new_surface_left.remove
-
           new_vertices_right = OpenStudio::Point3dVector.new
           new_vertices_right << transformation_right_far * top_left
           new_vertices_right << transformation_right_close * top_right
           new_vertices_right << transformation_right_close * bottom_right          
-          new_vertices_right << transformation_right_far * bottom_left
+          new_vertices_right << transformation_right_far * bottom_left          
           
-          new_surface_right.setVertices(new_vertices_right)		
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_right.vertices, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)								
-          new_surface_right.remove
-
           new_vertices_bottom = OpenStudio::Point3dVector.new
           new_vertices_bottom << transformation_bottom_far_left * top_left
           new_vertices_bottom << transformation_bottom_far_right * top_right
           new_vertices_bottom << transformation_bottom_close_right * bottom_right
-          new_vertices_bottom << transformation_bottom_close_left * bottom_left
-          
-          new_surface_bottom.setVertices(new_vertices_bottom)		
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_bottom.vertices, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)								
-          new_surface_bottom.remove
+          new_vertices_bottom << transformation_bottom_close_left * bottom_left          
           
           new_vertices_top = OpenStudio::Point3dVector.new
           new_vertices_top << transformation_top_far_left * bottom_left
           new_vertices_top << transformation_top_close_left * top_left
           new_vertices_top << transformation_top_close_right * top_right
-          new_vertices_top << transformation_top_far_right * bottom_right
+          new_vertices_top << transformation_top_far_right * bottom_right          
           
-          new_surface_top.setVertices(new_vertices_top)		
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_top.vertices, model)
+          if garage_roof and garage_pos == "Left"
+          
+            new_surface_left.setVertices(new_vertices_left)
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_left.vertices, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+          
+          elsif garage_roof and garage_pos == "Right"
+          
+            new_surface_right.setVertices(new_vertices_right)		
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_right.vertices, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+          
+          else
+          
+            new_surface_top.setVertices(new_vertices_top)		
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_top.vertices, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+          
+            new_surface_left.setVertices(new_vertices_left)
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_left.vertices, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+            
+            new_surface_right.setVertices(new_vertices_right)		
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_right.vertices, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+          
+          end
+
+          new_surface_bottom.setVertices(new_vertices_bottom)		
+          shading_surface = OpenStudio::Model::ShadingSurface.new(new_surface_bottom.vertices, model)
           shading_surface.setName("eaves")
           shading_surface.setShadingSurfaceGroup(shading_surface_group)								
+          
           new_surface_top.remove
+          new_surface_left.remove
+          new_surface_right.remove
+          new_surface_bottom.remove
         
         elsif surface.vertices.length == 6 # has garage
           
           vertices = surface.vertices
           z_offset = surface.space.get.zOrigin
           rear_unit = surface.vertices.all? {|vertex| vertex.y >= 0 }
-          if building_type == "SingleFamilyDetached"
+          if building_type == Constants.BuildingTypeSingleFamilyDetached
             rear_unit = false
           end
-          
-          shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
-          
+                    
           if inset_position == "Left"
           
             if not rear_unit
@@ -960,8 +981,13 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
               se_point = OpenStudio::Point3d.new(bottom_right.x+eaves_depth,bottom_right.y,bottom_right.z+z_offset)
               new_vertices_right = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)	
 
-              sw_point = OpenStudio::Point3d.new(bottom_mid.x-eaves_depth,bottom_mid.y-eaves_depth,bottom_mid.z+z_offset)
-              nw_point = OpenStudio::Point3d.new(bottom_mid.x-eaves_depth,bottom_mid.y,bottom_mid.z+z_offset)
+              if num_floors > 1 or garage_pos == "None"
+                sw_point = OpenStudio::Point3d.new(bottom_mid.x-eaves_depth,bottom_mid.y-eaves_depth,bottom_mid.z+z_offset)
+                nw_point = OpenStudio::Point3d.new(bottom_mid.x-eaves_depth,bottom_mid.y,bottom_mid.z+z_offset)
+              else
+                sw_point = OpenStudio::Point3d.new(bottom_mid.x,bottom_mid.y-eaves_depth,bottom_mid.z+z_offset)
+                nw_point = OpenStudio::Point3d.new(bottom_mid.x,bottom_mid.y,bottom_mid.z+z_offset)              
+              end
               ne_point = OpenStudio::Point3d.new(bottom_right.x+eaves_depth,bottom_right.y,bottom_right.z+z_offset)
               se_point = OpenStudio::Point3d.new(bottom_right.x+eaves_depth,bottom_right.y-eaves_depth,bottom_right.z+z_offset)
               new_vertices_inset_one = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)	
@@ -1130,8 +1156,13 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 
               sw_point = OpenStudio::Point3d.new(bottom_left.x-eaves_depth,bottom_left.y-eaves_depth,bottom_left.z+z_offset)
               nw_point = OpenStudio::Point3d.new(bottom_left.x-eaves_depth,bottom_left.y,bottom_left.z+z_offset)
-              ne_point = OpenStudio::Point3d.new(bottom_mid.x+eaves_depth,bottom_mid.y,bottom_mid.z+z_offset)
-              se_point = OpenStudio::Point3d.new(bottom_mid.x+eaves_depth,bottom_mid.y-eaves_depth,bottom_mid.z+z_offset)
+              if num_floors > 1 or garage_pos == "None"
+                ne_point = OpenStudio::Point3d.new(bottom_mid.x+eaves_depth,bottom_mid.y,bottom_mid.z+z_offset)
+                se_point = OpenStudio::Point3d.new(bottom_mid.x+eaves_depth,bottom_mid.y-eaves_depth,bottom_mid.z+z_offset)
+              else
+                ne_point = OpenStudio::Point3d.new(bottom_mid.x,bottom_mid.y,bottom_mid.z+z_offset)
+                se_point = OpenStudio::Point3d.new(bottom_mid.x,bottom_mid.y-eaves_depth,bottom_mid.z+z_offset)              
+              end
               new_vertices_inset_one = Geometry.make_polygon(sw_point, nw_point, ne_point, se_point)	
 
               sw_point = OpenStudio::Point3d.new(bottom_mid.x,bottom_mid.y,bottom_mid.z+z_offset)
@@ -1226,29 +1257,51 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
             
           end
           
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_bottom, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)
+          if num_floors > 1 or garage_pos == "None"
           
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_top, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_bottom, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+            
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_top, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
 
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_left, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_left, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
 
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_right, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_right, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
 
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_inset_one, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_inset_one, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
 
-          shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_inset_two, model)
-          shading_surface.setName("eaves")
-          shading_surface.setShadingSurfaceGroup(shading_surface_group)          
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_inset_two, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+          
+          else
+            
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_top, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_left, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_right, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)
+            
+            shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices_inset_one, model)
+            shading_surface.setName("eaves")
+            shading_surface.setShadingSurfaceGroup(shading_surface_group)            
+          
+          end
           
         end
         
@@ -1485,7 +1538,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
         gable_walls << surface
       end
     end
-    if roof_decks.length == num_units or building_type == "Multifamily"
+    if roof_decks.length == num_units or building_type == Constants.BuildingTypeMultifamily
       return Constants.RoofTypeFlat
     elsif gable_walls.length > 0
       return Constants.RoofTypeGable
@@ -1519,9 +1572,9 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
         pos = "Left"
       end
       l, w, h = Geometry.get_surface_dimensions(surface)
-      return pos, l
+      return pos, l, w
     end
-    return "None", 0
+    return "None", 0, 0
   end
   
   def get_slope_direction_and_lower_points(surface)

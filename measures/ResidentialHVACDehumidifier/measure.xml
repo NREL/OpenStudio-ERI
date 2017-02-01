@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>e19a8348-db68-464c-b4ac-d33b65c0d6c7</version_id>
-  <version_modified>20170131T181733Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>f4cfe993-a345-4c61-86b2-264e1d38c5ea</version_id>
+  <version_modified>20170201T173720Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
   <description>This measure removes any existing dehumidifiers from the building and adds a dehumidifier. For multifamily buildings, the dehumidifier can be set for all units of the building.</description>
@@ -51,6 +51,7 @@
       <default_value>0.6</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -103,12 +104,6 @@
       <checksum>E90A54AB</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>70C27777</checksum>
-    </file>
-    <file>
       <filename>process_dehumidifier_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -126,16 +121,22 @@
       <checksum>9DBED5E2</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2B062E6C</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>048F7BD2</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>44E4E210</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E02944E8</checksum>
     </file>
   </files>
 </measure>

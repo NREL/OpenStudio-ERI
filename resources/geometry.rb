@@ -57,7 +57,7 @@ class Geometry
       end
     end  
   
-    def self.get_building_stories(spaces) # TODO: remove after testing new airflow measure
+    def self.get_building_stories(spaces)
       space_min_zs = []
       spaces.each do |space|
         next if not self.space_is_finished(space)

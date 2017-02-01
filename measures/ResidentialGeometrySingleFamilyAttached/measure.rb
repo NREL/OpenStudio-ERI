@@ -810,7 +810,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Ruleset::Model
     model.getBuilding.setStandardsNumberOfStories(building_num_floors)
     
     # Store the building type
-    model.getBuilding.setStandardsBuildingType("SingleFamilyAttached")
+    model.getBuilding.setStandardsBuildingType(Constants.BuildingTypeSingleFamilyAttached)
     
     # reporting final condition of model
     runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")  

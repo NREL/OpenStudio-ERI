@@ -763,7 +763,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     model.getBuilding.setStandardsNumberOfStories(num_floors)
     
     # Store the building type
-    model.getBuilding.setStandardsBuildingType("SingleFamilyDetached")
+    model.getBuilding.setStandardsBuildingType(Constants.BuildingTypeSingleFamilyDetached)
   
     # reporting final condition of model
     runner.registerFinalCondition("The building finished with #{model.getSpaces.size} spaces.")

@@ -176,6 +176,15 @@ class Constants
   def self.BuildingAmericaClimateZone
     return 'Building America'
   end
+  def self.BuildingTypeMultifamily
+    return 'multifamily'
+  end
+  def self.BuildingTypeSingleFamilyAttached
+    return 'singlefamilyttached'
+  end
+  def self.BuildingTypeSingleFamilyDetached
+    return 'singlefamilydetached'
+  end
   def self.BuildingUnitFeatureDHWSchedIndex
     return 'DHWSchedIndex'
   end
