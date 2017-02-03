@@ -917,6 +917,7 @@ class Geometry
         above_grade_exterior_walls = []
         zone.spaces.each do |space|
             next if not Geometry.space_is_finished(space)
+            next if not Geometry.space_is_above_grade(space)
             space.surfaces.each do |surface|
                 next if above_grade_exterior_walls.include?(surface)
                 next if surface.surfaceType.downcase != "wall"
@@ -931,6 +932,7 @@ class Geometry
         above_grade_exterior_floors = []
         zone.spaces.each do |space|
             next if not Geometry.space_is_finished(space)
+            next if not Geometry.space_is_above_grade(space)
             space.surfaces.each do |surface|
                 next if above_grade_exterior_floors.include?(surface)
                 next if surface.surfaceType.downcase != "floor"
@@ -941,10 +943,26 @@ class Geometry
         return above_grade_exterior_floors
     end
     
+    def self.get_thermal_zone_above_grade_ground_floors(zone)
+        above_grade_ground_floors = []
+        zone.spaces.each do |space|
+            next if not Geometry.space_is_finished(space)
+            next if not Geometry.space_is_above_grade(space)
+            space.surfaces.each do |surface|
+                next if above_grade_ground_floors.include?(surface)
+                next if surface.surfaceType.downcase != "floor"
+                next if surface.outsideBoundaryCondition.downcase != "ground"
+                above_grade_ground_floors << surface
+            end
+        end
+        return above_grade_ground_floors
+    end
+    
     def self.get_thermal_zone_above_grade_exterior_roofs(zone)
         above_grade_exterior_roofs = []
         zone.spaces.each do |space|
             next if not Geometry.space_is_finished(space)
+            next if not Geometry.space_is_above_grade(space)
             space.surfaces.each do |surface|
                 next if above_grade_exterior_roofs.include?(surface)
                 next if surface.surfaceType.downcase != "roofceiling"
@@ -989,6 +1007,7 @@ class Geometry
         below_grade_exterior_walls = []
         zone.spaces.each do |space|
             next if not Geometry.space_is_finished(space)
+            next if not Geometry.space_is_below_grade(space)
             space.surfaces.each do |surface|
                 next if below_grade_exterior_walls.include?(surface)
                 next if surface.surfaceType.downcase != "wall"
@@ -1003,6 +1022,7 @@ class Geometry
         below_grade_exterior_floors = []
         zone.spaces.each do |space|
             next if not Geometry.space_is_finished(space)
+            next if not Geometry.space_is_below_grade(space)
             space.surfaces.each do |surface|
                 next if below_grade_exterior_floors.include?(surface)
                 next if surface.surfaceType.downcase != "floor"

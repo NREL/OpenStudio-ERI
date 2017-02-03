@@ -163,14 +163,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             return false
         end
         
-        # Get floor area for unit spaces with people objects
-        # FIXME: Is there a better approach here?
-        spaces_with_people = []
-        unit.spaces.each do |space|
-            next if space.people.size == 0
-            spaces_with_people << space
-        end
-        unit_ffa_for_people = Geometry.get_finished_floor_area_from_spaces(spaces_with_people)
+        # Get finished floor area for unit
+        unit_ffa = Geometry.get_finished_floor_area_from_spaces(unit.spaces)
         
         # Get unit number
         unit_num = Geometry.get_unit_number(model, unit)
@@ -185,14 +179,14 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         hvac = get_hvac_for_unit(runner, model, unit_thermal_zones)
         return false if hvac.nil?
         
-        ducts = get_ducts_for_unit(runner, model, unit.spaces, hvac, building_num_stories)
+        ducts = get_ducts_for_unit(runner, model, unit.spaces, hvac, unit_ffa, building_num_stories)
         return false if ducts.nil?
 
         # Calculate loads for each thermal zone in the unit
         zones_loads = {}
         unit_thermal_zones.each do |thermal_zone|
             next if not Geometry.zone_is_finished(thermal_zone)
-            zone_loads = processZoneLoads(runner, mj8, thermal_zone, weather, northAxis, nbeds, unit_ffa_for_people, modelYear, model.alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories)
+            zone_loads = processZoneLoads(runner, mj8, thermal_zone, weather, northAxis, nbeds, unit_ffa, modelYear, model.alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories)
             return false if zone_loads.nil?
             zones_loads[thermal_zone] = zone_loads
         end
@@ -465,7 +459,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return mj8
   end
   
-  def processZoneLoads(runner, mj8, thermal_zone, weather, northAxis, nbeds, unit_ffa_for_people, modelYear, alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories)
+  def processZoneLoads(runner, mj8, thermal_zone, weather, northAxis, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories)
     # FIXME: ensure coincidence of window loads and internal gains across zones in a unit
     zone_loads = ZoneValues.new
     zone_loads = processLoadWindows(runner, mj8, thermal_zone, zone_loads, weather, northAxis)
@@ -474,7 +468,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     zone_loads = processLoadRoofs(runner, mj8, thermal_zone, zone_loads, weather)
     zone_loads = processLoadFloors(runner, mj8, thermal_zone, zone_loads, weather)
     zone_loads = processInfiltrationVentilation(runner, mj8, thermal_zone, zone_loads, weather, unit_shelter_class, building_num_stories)
-    zone_loads = processInternalGains(runner, mj8, thermal_zone, zone_loads, weather, nbeds, unit_ffa_for_people, modelYear, alwaysOnDiscreteSchedule)
+    zone_loads = processInternalGains(runner, mj8, thermal_zone, zone_loads, weather, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule)
     return zone_loads
   end
   
@@ -617,10 +611,37 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             shgc_with_IntGains_shade_cool, shgc_with_IntGains_shade_heat = get_window_shgc(runner, window)
             
             windowHeight = Geometry.surface_height(window)
-            has_IntGains_shade = true # FIXME
-            windowHasOverhang = true # FIXME
-            overhangDepth = 2 # FIXME
-            overhangOffset = 0.5 # FIXME
+            windowHasIntShading = window.shadingControl.is_initialized
+            
+            # Determine window overhang properties
+            windowHasOverhang = false
+            windowOverhangDepth = 0
+            windowOverhangOffset = 0
+            window.shadingSurfaceGroups.each do |ssg|
+                ssg.shadingSurfaces.each do |ss|
+                    length, width, height = Geometry.get_surface_dimensions(ss)
+                    if height > 0
+                        runner.registerWarning("Shading surface '#{}' is not horizontal; assumed to not be a window overhang.")
+                        next
+                    else
+                        facade = Geometry.get_facade_for_surface(wall)
+                        if facade.nil?
+                            runner.registerError("Unknown facade for wall '#{wall.name.to_s}'.")
+                            return nil
+                        end
+                        if [Constants.FacadeFront,Constants.FacadeBack].include?(facade)
+                            windowOverhangDepth = OpenStudio::convert(width,"m","ft").get
+                        else
+                            windowOverhangDepth = OpenStudio::convert(length,"m","ft").get
+                        end
+                        overhangZ = Geometry.getSurfaceZValues([ss])[0]
+                        windowTopZ = Geometry.getSurfaceZValues([window]).max
+                        windowOverhangOffset = overhangZ - windowTopZ
+                        windowHasOverhang = true
+                        break
+                    end
+                end
+            end
             
             for hr in -1..12
             
@@ -628,7 +649,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 # Else: Calculate the hourly Aggregate Fenestration Load (AFL)
                 
                 if hr == -1
-                    if has_IntGains_shade
+                    if windowHasIntShading
                         # Average Cooling Load Factor for the given window direction
                         clf_d = clf_avg_is[cnt225]
                         #Average Cooling Load Factor for a window facing North (fully shaded)
@@ -640,7 +661,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                         clf_n = clf_avg_nois[8]
                     end
                 else
-                    if has_IntGains_shade
+                    if windowHasIntShading
                         # Average Cooling Load Factor for the given window Direction
                         clf_d = clf_hr_is[cnt225][hr]
                         # Average Cooling Load Factor for a window facing North (fully shaded)
@@ -667,7 +688,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 
                 # TODO: Account for eaves, porches, etc.
                 if windowHasOverhang
-                    if (hr == -1 and surf_azimuth.abs < 90.1) or (hr > -1) # FIXME: This if/else statement is in one spot in sizing.py but not another
+                    if (hr == -1 and surf_azimuth.abs < 90.1) or (hr > -1) # FIXME ASKJON This if/else statement is in one spot in sizing.py but not another
                         if hr == -1
                             actual_hr = slm_alp_hr[cnt225]
                         else
@@ -696,13 +717,13 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                             htm = htm_n
                         else
                             slm = Math::tan(altitude_angle.deg2rad) / Math::cos(sol_surf_azimuth.deg2rad)
-                            z_sl = slm * overhangDepth
+                            z_sl = slm * windowOverhangDepth
 
-                            if z_sl < overhangOffset
+                            if z_sl < windowOverhangOffset
                                 # Overhang is too short to provide shade
                                 htm = htm_d
-                            elsif z_sl < (overhangOffset + windowHeight)
-                                percent_shaded = (z_sl - overhangOffset) / windowHeight
+                            elsif z_sl < (windowOverhangOffset + windowHeight)
+                                percent_shaded = (z_sl - windowOverhangOffset) / windowHeight
                                 htm = percent_shaded * htm_n + (1 - percent_shaded) * htm_d
                             else
                                 # Window is entirely in the shade since the shade line is below the windowsill
@@ -785,14 +806,24 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return nil if mj8.nil? or zone_loads.nil?
     
     wall_type = 'Constants.WallTypeWoodStud' # FIXME
-    finishDensity = 11.0 # FIXME
-    finishAbsorptivity = 0.6 # FIXME
-    wallSheathingContInsRvalue = 5.0 # FIXME
-    wallSheathingContInsThickness = 1.0 # FIXME
+    wallSheathingContInsRvalue = 0.0 # FIXME
     wallCavityInsRvalueInstalled = 13.0 # FIXME
-    sipInsThickness = 5.0 # FIXME
-    cmuFurringInsRvalue = 15.0 # FIXME
     
+    # Calculate area-weighted average density/absorptivity of exterior finish
+    total_area = 0
+    exteriorFinishDensity = 0.0
+    exteriorFinishAbsorptivity = 0.0
+    Geometry.get_thermal_zone_above_grade_exterior_walls(thermal_zone).each do |wall|
+        wall_area = OpenStudio::convert(wall.netArea,"m^2","ft^2").get
+        wall_abs = wall.construction.get.to_LayeredConstruction.get.getLayer(0).to_StandardOpaqueMaterial.get.solarAbsorptance
+        wall_dens = OpenStudio::convert(wall.construction.get.to_LayeredConstruction.get.getLayer(0).to_StandardOpaqueMaterial.get.density,"kg/m^3","lb/ft^3").get
+        exteriorFinishDensity += (wall_area * wall_dens)
+        exteriorFinishAbsorptivity += (wall_area * wall_abs)
+        total_area += wall_area
+    end
+    exteriorFinishDensity = exteriorFinishDensity / total_area
+    exteriorFinishAbsorptivity = exteriorFinishAbsorptivity / total_area
+
     cool_design_db = weather.design.CoolingDrybulb
     
     # Determine the wall Group Number (A - K = 1 - 11) for exterior walls (ie. all walls except basement walls)
@@ -802,6 +833,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     # approach than including the Group Number.
     if ['Constants.WallTypeWoodStud', 'Constants.WallTypeSteelStud'].include?(wall_type)
         wallGroup = get_wallgroup_wood_or_steel_stud(wallCavityInsRvalueInstalled)
+
         # Adjust the base wall group for rigid foam insulation
         if wallSheathingContInsRvalue > 1 and wallSheathingContInsRvalue <= 7
             if wallCavityInsRvalueInstalled < 2
@@ -816,19 +848,22 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 wallGroup = wallGroup + 6
             end
         end
+
         #Assume brick if the outside finish density is >= 100 lb/ft^3
-        if finishDensity >= 100
+        if exteriorFinishDensity >= 100
             if wallCavityInsRvalueInstalled < 2
                 wallGroup = wallGroup + 4
             else
                 wallGroup = wallGroup + 6
             end
         end
+
     elsif wall_type == 'Constants.WallTypeDoubleStud'
         wallGroup = 10     # J (assumed since MJ8 does not include double stud constructions)
-        if finishDensity >= 100
+        if exteriorFinishDensity >= 100
             wallGroup = 11  # K
         end
+        
     elsif wall_type == 'Constants.WallTypeSIP'
         # Manual J refers to SIPs as Structural Foam Panel (SFP)
         if sipInsThickness + wallSheathingContInsThickness < 4.5
@@ -838,9 +873,10 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         else
             wallGroup = 11  # K
         end
-        if finishDensity >= 100
+        if exteriorFinishDensity >= 100
             wallGroup = wallGroup + 3
         end
+        
     elsif wall_type == 'Constants.WallTypeCMU'
         # Manual J uses the same wall group for filled or hollow block
         if cmuFurringInsRvalue < 2
@@ -860,11 +896,14 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         end
         # This is an estimate based on Table 4A - Construction Number 13
         wallGroup = wallGroup + (wallSheathingContInsRvalue / 3.0).floor # Group is increased by approximately 1 letter for each R3
+        
     elsif wall_type == 'Constants.WallTypeICF'
         wallGroup = 11  # K
+        
     elsif wall_type == 'Constants.WallTypeMisc'
         # Assume Wall Group K since 'Other' Wall Type is likely to have a high thermal mass
         wallGroup = 11  # K
+        
     else
         runner.registerError('Wall type #{walL_type} not found.')
         return nil
@@ -876,9 +915,9 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     # Adjust base Cooling Load Temperature Difference (CLTD)
     # Assume absorptivity for light walls < 0.5, medium walls <= 0.75, dark walls > 0.75 (based on MJ8 Table 4B Notes)
 
-    if finishAbsorptivity <= 0.5
+    if exteriorFinishAbsorptivity <= 0.5
         colorMultiplier = 0.65      # MJ8 Table 4B Notes, pg 348
-    elsif finishAbsorptivity <= 0.75
+    elsif exteriorFinishAbsorptivity <= 0.75
         colorMultiplier = 0.83      # MJ8 Appendix 12, pg 519
     else
         colorMultiplier = 1.0
@@ -939,10 +978,33 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         
     # Foundation walls
     Geometry.get_thermal_zone_below_grade_exterior_walls(thermal_zone).each do |wall|
-        # FIXME: Deviating substantially from sizing.py
         wall_uvalue = get_surface_uvalue(runner, wall, wall.surfaceType)
         return nil if wall_uvalue.nil?
-        zone_loads.Heat_Walls += wall_uvalue * OpenStudio::convert(wall.netArea,"m^2","ft^2").get * mj8.htd
+        
+        k_soil = OpenStudio::convert(BaseMaterial.Soil.k_in,"in","ft").get
+        wall_ins_height = 8.0 # FIXME
+        wall_rigid_r = 10.0 # FIXME
+        ins_wall_uvalue = wall_uvalue # FIXME
+        unins_wall_uvalue = 1.0 / ((1.0 / wall_uvalue) - wall_rigid_r) # FIXME
+        above_grade_height = Geometry.space_height(wall.space.get) - Geometry.surface_height(wall)
+        
+        # Calculated based on Manual J 8th Ed. procedure in section A12-4 (15% decrease due to soil thermal storage)
+        u_value_mj8 = 0.0
+        wall_height_ft = Geometry.get_surface_height(wall).round
+        for d in 1..wall_height_ft
+            r_soil = (Math::PI * d / 2.0) / k_soil
+            if d <= above_grade_height
+                r_wall = 1.0 / ins_wall_uvalue + AirFilms.OutsideR
+            elsif d <= wall_ins_height
+                r_wall = 1.0 / ins_wall_uvalue
+            else
+                r_wall = 1.0 / unins_wall_uvalue
+            end
+            u_value_mj8 += 1.0 / (r_soil + r_wall)
+        end
+        u_value_mj8 = (u_value_mj8 / wall_height_ft) * 0.85
+        
+        zone_loads.Heat_Walls += u_value_mj8 * OpenStudio::convert(wall.netArea,"m^2","ft^2").get * mj8.htd
     end
             
     return zone_loads
@@ -1036,7 +1098,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     zone_loads.Heat_Floors = 0
     zone_loads.Cool_Floors = 0
     zone_loads.Dehumid_Floors = 0
-
+    
     # Exterior Floors
     Geometry.get_thermal_zone_above_grade_exterior_floors(thermal_zone).each do |floor|
         floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
@@ -1059,22 +1121,21 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
      
     # Foundation Floors
     Geometry.get_thermal_zone_below_grade_exterior_floors(thermal_zone).each do |floor|
-        # FIXME: Need to do
-        # if Geometry.get_finished_basement_spaces(model.getSpaces).include?(floor.space.get)
-            # # Finished basement floor combinations based on MJ 8th Ed. A12-7 and ASHRAE HoF 2013 pg 18.31 Eq 40
-            # R_other = sim.mat.materials[Constants.MaterialConcrete4in].Rvalue + sim.film.floor_average
-            # for floor in unit.floors.floor:
-                # floor.surface_type.Uvalue_fbsmt_mj8 = 0
-                # z_f = below_grade_height
-                # w_b = min( max(floor.vertices.coord.x) - min(floor.vertices.coord.x), max(floor.vertices.coord.y) - min(floor.vertices.coord.y) )
-                # U_avg_bf = (2*k_soil/(Constants.Pi*w_b)) * (log(w_b/2+z_f/2+(k_soil*R_other)/Constants.Pi) - log(z_f/2+(k_soil*R_other)/Constants.Pi))                     
-                # floor.surface_type.Uvalue_fbsmt_mj8 = 0.85 * U_avg_bf 
-                # zone_loads.Heat_Floors += floor.surface_type.Uvalue_fbsmt_mj8 * floor.area * mj8.htd
-        # else # Slab
-        #     floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
-        #     return nil if floor_uvalue.nil?
-        #     zone_loads.Heat_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.heat_setpoint - weather.data.GroundMonthlyTemps[0])
-        # end
+        # Finished basement floor combinations based on MJ 8th Ed. A12-7 and ASHRAE HoF 2013 pg 18.31 Eq 40
+        k_soil = OpenStudio::convert(BaseMaterial.Soil.k_in,"in","ft").get
+        r_other = Material.Concrete4in.rvalue + Material.AirFilmFloorAverage.rvalue
+        z_f = -1 * (Geometry.getSurfaceZValues([floor]).min + OpenStudio::convert(floor.space.get.zOrigin,"m","ft").get)
+        w_b = [Geometry.getSurfaceXValues([floor]).max - Geometry.getSurfaceXValues([floor]).min, Geometry.getSurfaceYValues([floor]).max - Geometry.getSurfaceYValues([floor]).min].min
+        u_avg_bf = (2.0* k_soil / (Math::PI * w_b)) * (Math::log(w_b / 2.0 + z_f / 2.0 + (k_soil * r_other) / Math::PI) - Math::log(z_f / 2.0 + (k_soil * r_other) / Math::PI))
+        u_value_mj8 = 0.85 * u_avg_bf 
+        zone_loads.Heat_Floors += u_value_mj8 * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * mj8.htd
+    end
+    
+    # Ground Floors (Slab)
+    Geometry.get_thermal_zone_above_grade_ground_floors(thermal_zone).each do |floor|
+        floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
+        return nil if floor_uvalue.nil?
+        zone_loads.Heat_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.heat_setpoint - weather.data.GroundMonthlyTemps[0])
     end
 
     return zone_loads
@@ -1158,7 +1219,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return zone_loads
   end
   
-  def processInternalGains(runner, mj8, thermal_zone, zone_loads, weather, nbeds, unit_ffa_for_people, modelYear, alwaysOnDiscreteSchedule)
+  def processInternalGains(runner, mj8, thermal_zone, zone_loads, weather, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule)
     '''
     Cooling and Dehumidification Loads: Internal Gains
     '''
@@ -1176,16 +1237,12 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     int_Tot_Max = 0
     int_Lat_Max = 0
     
-    # Calculate number of occupants based on Section 22-3
-    n_occupants = nbeds + 1
-    
     # Plug loads, appliances, showers/sinks/baths, occupants, ceiling fans
     gains = []
     thermal_zone.spaces.each do |space|
         gains.push(*space.electricEquipment)
         gains.push(*space.gasEquipment)
         gains.push(*space.otherEquipment)
-        gains.push(*space.people)
     end
     
     july_dates = []
@@ -1203,72 +1260,51 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         latent_frac = nil
         design_level = nil
         
-        if gain.is_a?(OpenStudio::Model::ElectricEquipment) or gain.is_a?(OpenStudio::Model::GasEquipment) or gain.is_a?(OpenStudio::Model::OtherEquipment)
-            # Get design level
-            if gain.is_a?(OpenStudio::Model::OtherEquipment)
-                design_level_obj = gain.otherEquipmentDefinition
-            else
-                design_level_obj = gain
-            end
-            if not design_level_obj.designLevel.is_initialized
-                runner.registerWarning("DesignLevel not provided for object '#{gain.name.to_s}'. Skipping...")
-                next
-            end
-            design_level = design_level_obj.designLevel.get
-            
-            # Get schedule
-            if not gain.schedule.is_initialized
-                runner.registerError("Schedule not provided for object '#{gain.name.to_s}'. Skipping...")
-                next
-            end
-            sched_base = gain.schedule.get
-            if sched_base.name.to_s == alwaysOnDiscreteSchedule.name.to_s
-                next # Skip our airflow dummy equipment objects
-            elsif sched_base.to_ScheduleRuleset.is_initialized
-                sched = sched_base.to_ScheduleRuleset.get
-            elsif sched_base.to_ScheduleFixedInterval.is_initialized
-                sched = sched_base.to_ScheduleFixedInterval.get
-            else
-                runner.registerWarning("Expected ScheduleRuleset or ScheduleFixedInterval for object '#{gain.name.to_s}'. Skipping...")
-                next
-            end
-            
-            # Get sensible/latent fractions
-            if gain.is_a?(OpenStudio::Model::ElectricEquipment)
-                sensible_frac = 1.0 - gain.electricEquipmentDefinition.fractionLost - gain.electricEquipmentDefinition.fractionLatent
-                latent_frac = gain.electricEquipmentDefinition.fractionLatent
-            elsif gain.is_a?(OpenStudio::Model::GasEquipment)
-                sensible_frac = 1.0 - gain.gasEquipmentDefinition.fractionLost - gain.gasEquipmentDefinition.fractionLatent
-                latent_frac = gain.gasEquipmentDefinition.fractionLatent
-            elsif gain.is_a?(OpenStudio::Model::OtherEquipment)
-                sensible_frac = 1.0 - gain.otherEquipmentDefinition.fractionLost - gain.otherEquipmentDefinition.fractionLatent
-                latent_frac = gain.otherEquipmentDefinition.fractionLatent
-            else
-                runner.registerError("Unexpected type for object '#{gain.name.to_s}' in processInternalGains.")
-                return nil
-            end
+        # Get design level
+        if gain.is_a?(OpenStudio::Model::OtherEquipment)
+            design_level_obj = gain.otherEquipmentDefinition
+        else
+            design_level_obj = gain
+        end
+        if not design_level_obj.designLevel.is_initialized
+            runner.registerWarning("DesignLevel not provided for object '#{gain.name.to_s}'. Skipping...")
+            next
+        end
+        design_level = design_level_obj.designLevel.get
         
-        elsif gain.is_a?(OpenStudio::Model::People)
-            # Get schedule
-            if not gain.numberofPeopleSchedule.is_initialized
-                runner.registerError("NumberOfPeopleSchedule not provided for object '#{gain.name.to_s}'. Skipping...")
-                return nil
-            end
-            sched_base = gain.numberofPeopleSchedule.get
-            if sched_base.to_ScheduleRuleset.is_initialized
-                sched = sched_base.to_ScheduleRuleset.get
-            elsif sched_base.to_ScheduleFixedInterval.is_initialized
-                sched = sched_base.to_ScheduleFixedInterval.get
-            else
-                runner.registerError("Expected ScheduleRuleset or ScheduleFixedInterval for object '#{gain.name.to_s}'. Skipping...")
-                return nil
-            end
+        # Get schedule
+        if not gain.schedule.is_initialized
+            runner.registerError("Schedule not provided for object '#{gain.name.to_s}'. Skipping...")
+            next
+        end
+        sched_base = gain.schedule.get
+        if sched_base.name.to_s == alwaysOnDiscreteSchedule.name.to_s
+            next # Skip our airflow dummy equipment objects
+        elsif sched_base.to_ScheduleRuleset.is_initialized
+            sched = sched_base.to_ScheduleRuleset.get
+        elsif sched_base.to_ScheduleFixedInterval.is_initialized
+            sched = sched_base.to_ScheduleFixedInterval.get
+        else
+            runner.registerWarning("Expected ScheduleRuleset or ScheduleFixedInterval for object '#{gain.name.to_s}'. Skipping...")
+            next
+        end
+        
+        # Get sensible/latent fractions
+        if gain.is_a?(OpenStudio::Model::ElectricEquipment)
+            sensible_frac = 1.0 - gain.electricEquipmentDefinition.fractionLost - gain.electricEquipmentDefinition.fractionLatent
+            latent_frac = gain.electricEquipmentDefinition.fractionLatent
+        elsif gain.is_a?(OpenStudio::Model::GasEquipment)
+            sensible_frac = 1.0 - gain.gasEquipmentDefinition.fractionLost - gain.gasEquipmentDefinition.fractionLatent
+            latent_frac = gain.gasEquipmentDefinition.fractionLatent
+        elsif gain.is_a?(OpenStudio::Model::OtherEquipment)
+            sensible_frac = 1.0 - gain.otherEquipmentDefinition.fractionLost - gain.otherEquipmentDefinition.fractionLatent
+            latent_frac = gain.otherEquipmentDefinition.fractionLatent
         else
             runner.registerError("Unexpected type for object '#{gain.name.to_s}' in processInternalGains.")
             return nil
         end
         
-        next if sched.nil?
+        next if sched.nil? or design_level.nil? or sensible_frac.nil? or latent_frac.nil?
 
         # Get schedule hourly values
         if sched.is_a?(OpenStudio::Model::ScheduleRuleset)
@@ -1294,20 +1330,22 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             next
         end
         
-        if gain.is_a?(OpenStudio::Model::People)
-            for hr in 0..23
-                int_Sens_Hr[hr] += sched_values[hr] * 230 * n_occupants * OpenStudio::convert(gain.space.get.floorArea,"m^2","ft^2").get / unit_ffa_for_people
-                int_Lat_Hr[hr] += sched_values[hr] * 200 * n_occupants * OpenStudio::convert(gain.space.get.floorArea,"m^2","ft^2").get / unit_ffa_for_people
-            end
-        else
-            next if design_level.nil? or sensible_frac.nil? or latent_frac.nil?
-            for hr in 0..23
-                int_Sens_Hr[hr] += sched_values[hr] * OpenStudio::convert(design_level,"W","Btu/hr").get * sensible_frac
-                int_Lat_Hr[hr] += sched_values[hr] * OpenStudio::convert(design_level,"W","Btu/hr").get * latent_frac
-            end
+        for hr in 0..23
+            int_Sens_Hr[hr] += sched_values[hr] * OpenStudio::convert(design_level,"W","Btu/hr").get * sensible_frac
+            int_Lat_Hr[hr] += sched_values[hr] * OpenStudio::convert(design_level,"W","Btu/hr").get * latent_frac
         end
     end
     
+    # Process occupants
+    n_occupants = nbeds + 1 # Number of occupants based on Section 22-3
+    occ_sched = [1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189,
+                 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000]
+    zone_ffa = Geometry.get_finished_floor_area_from_spaces(thermal_zone.spaces)
+    for hr in 0..23
+        int_Sens_Hr[hr] += occ_sched[hr] * 230 * n_occupants * zone_ffa / unit_ffa
+        int_Lat_Hr[hr] += occ_sched[hr] * 200 * n_occupants * zone_ffa / unit_ffa
+    end
+            
     # Store the sensible and latent loads associated with the hour of the maximum total load for cooling load calculations
     zone_loads.Cool_IntGains_Sens = int_Sens_Hr.max
     zone_loads.Cool_IntGains_Lat = int_Lat_Hr.max
@@ -1339,7 +1377,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     zones_loads.keys.each do |thermal_zone|
         zone_loads = zones_loads[thermal_zone]
         
-        # FIXME: Ask Jon about where max(0,foo) is used below
+        # FIXME ASKJON: Ask about where max(0,foo) is used below
         
         # Heating
         unit_init.Heat_Load += [zone_loads.Heat_Windows + zone_loads.Heat_Doors +
@@ -1542,15 +1580,17 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             #                        units.hr2min(1) *
             #                        unit.unfin_attic_floor_area_frac)
             
-            # Get average roofing material absorptance
-            sumRoofAbs = 0.0
-            numSurf = 0.0
+            # Get area-weighted average roofing material absorptance
+            roofAbsorptance = 0.0
+            total_area = 0.0
             ducts.LocationSpace.surfaces.each do |surface|
                 next if surface.surfaceType.downcase != "roofceiling"
-                sumRoofAbs += surface.construction.get.to_LayeredConstruction.get.getLayer(0).to_OpaqueMaterial.get.solarAbsorptance
-                numSurf += 1.0
+                surf_area = OpenStudio::convert(surface.netArea,"m^2","ft^2").get
+                surf_abs = surface.construction.get.to_LayeredConstruction.get.getLayer(0).to_StandardOpaqueMaterial.get.solarAbsorptance
+                roofAbsorptance += (surf_area * surf_abs)
+                total_area += surf_area
             end
-            roofAbsorptance = sumRoofAbs / numSurf
+            roofAbsorptance = roofAbsorptance / total_area
             
             roofPitch = Geometry.calculate_avg_roof_pitch([ducts.LocationSpace])
             
@@ -1929,7 +1969,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     if not hvac.FixedCoolingCapacity.nil?
         unit_final.Cool_Capacity = OpenStudio::convert(hvac.FixedCoolingCapacity,"ton","Btu/h").get / spaceConditionedMult
     end
-    # FIXME: Better handle heat pump heating vs supplemental heating?
+    # FIXME ASKJON: Better handle heat pump heating vs supplemental heating?
     if not hvac.FixedHeatingCapacity.nil?
         unit_final.Heat_Load = OpenStudio::convert(hvac.FixedHeatingCapacity,"ton","Btu/h").get # (supplemental capacity, so don't divide by spaceConditionedMult)
     end
@@ -2122,13 +2162,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         unit_final.Heat_Airflow = 0
     end
 
-    # Use fixed airflow rates if provided
-    # FIXME
-    #if unit_final.Cool_Airflow != 0 and unit.cool_airflow_rate is not None:
-    #    unit_final.Cool_Airflow = unit.cool_airflow_rate
-    #if unit_final.Heat_Airflow != 0 and unit.heat_airflow_rate is not None:
-    #    unit_final.Heat_Airflow = unit.heat_airflow_rate
-    
     unit_final.Fan_Airflow = [unit_final.Heat_Airflow, unit_final.Cool_Airflow].max
   
     return unit_final
@@ -2151,12 +2184,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         heat_pump_load = unit_final.Heat_Load
     else
         
-        # FIXME FIXME FIXME
-        # Ask Jon: Why not calculate the loads up front using the min hp temp
-        #          rather than the design drybulb?
-        # FIXME FIXME FIXME
-    
-    
         # Calculate the heating load at the minimum compressor temperature to limit unutilized capacity
         heat_db = hvac.MinOutdoorTemp
         htd =  mj8.heat_setpoint - heat_db
@@ -2184,7 +2211,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         # zones_loads = []
         # unit_thermal_zones.each do |thermal_zone|
             # next if not Geometry.zone_is_finished(thermal_zone)
-            # zone_loads = processZoneLoads(runner, mj8, thermal_zone, weather, northAxis, nbeds, unit_ffa_for_people, modelYear, model.alwaysOnDiscreteSchedule)
+            # zone_loads = processZoneLoads(runner, mj8, thermal_zone, weather, northAxis, nbeds, unit_ffa, modelYear, model.alwaysOnDiscreteSchedule)
             # return nil if zone_loads.nil?
             # zones_loads << zone_loads
         # end
@@ -2754,7 +2781,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return cool_Load_Lat, cool_Load_Sens
   end
   
-  def get_ducts_for_unit(runner, model, unit_spaces, hvac, building_num_stories)
+  def get_ducts_for_unit(runner, model, unit_spaces, hvac, unit_ffa, building_num_stories)
     ducts = DuctsInfo.new
     
     ducts.Has = false # FIXME
@@ -2777,10 +2804,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             num_stories_for_ducts = building_num_stories
         end
         
-        # Get finished floor area and number of returns
-        ffa = Geometry.get_finished_floor_area_from_spaces(unit_spaces)
         num_returns = 1 + num_stories_for_ducts # FIXME
-        
         if num_stories_for_ducts == 1
             ducts.SupplySurfaceArea = 0.27 * ffa
             ducts.ReturnSurfaceArea = [0.05 * num_returns * ffa, 0.25 * ffa].min

@@ -52,14 +52,14 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     #make an argument for entering optional window u-factor
     heating_shade_mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("heating_shade_mult",false)
     heating_shade_mult.setDisplayName("Heating Shade Multiplier")
-    heating_shade_mult.setDescription("Interior shading multiplier for heating season.")
+    heating_shade_mult.setDescription("Interior shading multiplier for heating season. 1.0 indicates no reduction in solar gain, 0.85 indicates 15% reduction, etc.")
     heating_shade_mult.setDefaultValue(0.7)
     args << heating_shade_mult
 
     #make an argument for entering optional window shgc
     cooling_shade_mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cooling_shade_mult",false)
     cooling_shade_mult.setDisplayName("Cooling Shade Multiplier")
-    cooling_shade_mult.setDescription("Interior shading multiplier for cooling season.")
+    cooling_shade_mult.setDescription("Interior shading multiplier for cooling season. 1.0 indicates no reduction in solar gain, 0.85 indicates 15% reduction, etc.")
     cooling_shade_mult.setDefaultValue(0.7)
     args << cooling_shade_mult
 

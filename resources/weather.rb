@@ -210,9 +210,9 @@ class WeatherProcess
       def calc_heat_cool_degree_days(data, hd, dailydbs)
         # Calculates and stores heating/cooling degree days
         data.HDD65F = calc_degree_days(dailydbs, 65, true)
-        #data.HDD50F = calc_degree_days(dailydbs, 50, true)
-        #data.CDD65F = calc_degree_days(dailydbs, 65, false)
-        #data.CDD50F = calc_degree_days(dailydbs, 50, false)
+        data.HDD50F = calc_degree_days(dailydbs, 50, true)
+        data.CDD65F = calc_degree_days(dailydbs, 65, false)
+        data.CDD50F = calc_degree_days(dailydbs, 50, false)
 
         return data
 
