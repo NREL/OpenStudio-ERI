@@ -91,18 +91,10 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     end
     
     # remove existing neighbors
-    remove_group = false
     model.getShadingSurfaceGroups.each do |shading_surface_group|
-      shading_surface_group.shadingSurfaces.each do |shading_surface|
-        next unless shading_surface.name.to_s.downcase.include? "neighbor"
-        remove_group = true
-      end
-      if remove_group
-        shading_surface_group.remove
-      end
-    end
-    if remove_group
-      runner.registerInfo("Removed existing neighbors.")
+      next unless shading_surface_group.name.to_s == Constants.ObjectNameNeighbors
+      shading_surface_group.remove
+      runner.registerInfo("Removed existing #{Constants.ObjectNameNeighbors}.")
     end
     
     if [left_neighbor_offset, right_neighbor_offset, back_neighbor_offset, front_neighbor_offset].all? {|offset| offset == 0}
@@ -140,25 +132,25 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
     directions = [[Constants.FacadeLeft, left_neighbor_offset, left_offset, 0], [Constants.FacadeRight, right_neighbor_offset, right_offset, 0], [Constants.FacadeBack, back_neighbor_offset, 0, back_offset], [Constants.FacadeFront, front_neighbor_offset, 0, front_offset]]
             
     shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
-    directions.each do |dir, neighbor_offset, x_offset, y_offset|
+    shading_surface_group.setName(Constants.ObjectNameNeighbors)
+    
+    directions.each do |facade, neighbor_offset, x_offset, y_offset|
       if neighbor_offset != 0
         model.getSpaces.each do |space|
-          space.surfaces.each do |surface|
-            next if surface.outsideBoundaryCondition.downcase != "outdoors" and surface.outsideBoundaryCondition.downcase != "adiabatic"
-            next if surface.adjacentSurface.is_initialized
-            if surface.outsideBoundaryCondition.downcase == "adiabatic" and !space.name.to_s.downcase.include? Constants.CorridorSpace
-              next
-            end
+          space.surfaces.each do |existing_surface|
+            next if existing_surface.outsideBoundaryCondition.downcase != "outdoors" and existing_surface.outsideBoundaryCondition.downcase != "adiabatic"
+            next if existing_surface.adjacentSurface.is_initialized
+            next if existing_surface.outsideBoundaryCondition.downcase == "adiabatic" and !space.name.to_s.downcase.include? Constants.CorridorSpace
             m = Geometry.initialize_transformation_matrix(OpenStudio::Matrix.new(4,4,0))
             m[0,3] = -x_offset
             m[1,3] = -y_offset
             m[2,3] = space.zOrigin
             transformation = OpenStudio::Transformation.new(m)
-            new_vertices = transformation * surface.vertices
+            new_vertices = transformation * existing_surface.vertices
             shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices, model)
-            shading_surface.setName("#{dir} Neighbor")
+            shading_surface.setName(Constants.ObjectNameNeighbors(facade))
             shading_surface.setShadingSurfaceGroup(shading_surface_group)
-            runner.registerInfo("Created shading surface #{shading_surface.name} from #{surface.name}.")
+            runner.registerInfo("Created '#{shading_surface.name}' from '#{existing_surface.name}'")
           end        
         end
         model.getShadingSurfaces.each do |existing_shading_surface|
@@ -169,9 +161,9 @@ class CreateResidentialNeighbors < OpenStudio::Ruleset::ModelUserScript
           transformation = OpenStudio::Transformation.new(m)
           new_vertices = transformation * existing_shading_surface.vertices
           shading_surface = OpenStudio::Model::ShadingSurface.new(new_vertices, model)
-          shading_surface.setName("#{dir} Neighbor")
+          shading_surface.setName(Constants.ObjectNameNeighbors(facade))
           shading_surface.setShadingSurfaceGroup(shading_surface_group)
-          runner.registerInfo("Created shading surface #{shading_surface.name} from #{existing_shading_surface.name}.")	            
+          runner.registerInfo("Created '#{shading_surface.name}' from '#{existing_shading_surface.name}'")	            
         end
       end
     end     

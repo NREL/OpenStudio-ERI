@@ -27,12 +27,12 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_retrofit_replace_gable_roof_aspect_ratio_two
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver_GableRoof_AspectRatioTwo.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    expected_num_del_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
-    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_num_del_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>3}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)         
   end
@@ -40,12 +40,12 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_retrofit_replace_gable_roof_aspect_ratio_half    
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver_GableRoof_AspectRatioHalf.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    expected_num_del_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
-    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_num_del_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>3}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -53,12 +53,12 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_retrofit_replace_hip_roof_aspect_ratio_two    
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver_HipRoof_AspectRatioTwo.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    expected_num_del_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
-    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_num_del_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>3}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end  
@@ -66,12 +66,12 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_retrofit_replace_hip_roof_aspect_ratio_half   
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver_HipRoof_AspectRatioHalf.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["eaves_depth"] = 3
-    expected_num_del_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
-    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>4}
+    expected_num_del_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
+    expected_num_new_objects = {"ShadingSurface"=>4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>3}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end  
@@ -105,7 +105,7 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_gable_roof_garage_aspect_ratio_two
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>10, "ShadingSurfaceGroup"=>4}
+    expected_num_new_objects = {"ShadingSurface"=>10, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     _test_measure("SFD_2000sqft_2story_SL_GRG_UA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)       
   end
@@ -129,7 +129,7 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_onestory_flat_roof_garage_left_aspect_ratio_two
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_num_new_objects = {"ShadingSurface"=>7, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     _test_measure("SFD_2000sqft_1story_SL_GRGLeft_FlatRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)       
   end  
@@ -137,7 +137,7 @@ class CreateResidentialEavesTest < MiniTest::Test
   def test_onestory_flat_roof_garage_right_aspect_ratio_two
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>6, "ShadingSurfaceGroup"=>2}
+    expected_num_new_objects = {"ShadingSurface"=>7, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     _test_measure("SFD_2000sqft_1story_SL_GRG_FlatRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)       
   end  
@@ -146,7 +146,7 @@ class CreateResidentialEavesTest < MiniTest::Test
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>num_units*6, "ShadingSurfaceGroup"=>num_units*2}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*6, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -155,7 +155,7 @@ class CreateResidentialEavesTest < MiniTest::Test
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>num_units*4}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     _test_measure("SFA_4units_1story_FB_UA_Denver_HipRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -164,7 +164,7 @@ class CreateResidentialEavesTest < MiniTest::Test
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>num_units}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     _test_measure("SFA_4units_1story_FB_UA_Denver_FlatRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -173,7 +173,7 @@ class CreateResidentialEavesTest < MiniTest::Test
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>num_units*4+num_units*2+1*4, "ShadingSurfaceGroup"=>num_units+1}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4+num_units*2+1*4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     _test_measure("MF_8units_1story_SL_Inset.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -182,7 +182,7 @@ class CreateResidentialEavesTest < MiniTest::Test
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ShadingSurface"=>num_units*4+num_units*2+1*4, "ShadingSurfaceGroup"=>num_units+1}
+    expected_num_new_objects = {"ShadingSurface"=>num_units*4+num_units*2+1*4, "ShadingSurfaceGroup"=>1}
     expected_values = {"eaves_depth"=>2}
     _test_measure("MF_8units_1story_SL_InsetLeft.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end  

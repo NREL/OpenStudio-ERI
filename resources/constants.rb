@@ -261,16 +261,16 @@ class Constants
     return 'residential mech vent fan'
   end
   def self.FacadeFront
-    return 'Front'
+    return 'front'
   end
   def self.FacadeBack
-    return 'Back'
+    return 'back'
   end
   def self.FacadeLeft
-    return 'Left'
+    return 'left'
   end
   def self.FacadeRight
-    return 'Right'
+    return 'right'
   end
   def self.FinishedAtticSpace(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
@@ -580,6 +580,12 @@ class Constants
       s_unit = "|#{unit_name}"
     end
     return "res ducts#{s_unit}"
+  end  
+  def self.ObjectNameEaves(facade="")
+    unless facade.nil?
+      facade = " #{facade}"
+    end
+    return "residential eaves#{facade}"
   end
   def self.ObjectNameElectricBaseboard(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
@@ -723,6 +729,12 @@ class Constants
     end
     return "res nat vent#{s_unit}"
   end
+  def self.ObjectNameNeighbors(facade="")
+    if facade != ""
+      facade = " #{facade}"
+    end
+    return "residential neighbors#{facade}"
+  end  
   def self.ObjectNameOccupants(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit

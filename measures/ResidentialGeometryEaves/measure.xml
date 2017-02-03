@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>15d71df3-175f-4ee4-9bf7-a4f495ff7d9a</version_id>
-  <version_modified>20170203T222019Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>e8986a17-5bed-4745-accb-b76415fff22c</version_id>
+  <version_modified>20170203T224026Z</version_modified>
+  <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
   <description>Sets the eaves for the building.</description>
@@ -40,7 +40,6 @@
       <default_value>2</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -189,22 +188,22 @@
       <checksum>17494BCE</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>44E4E210</checksum>
+    </file>
+    <file>
       <filename>create_residential_eaves_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>7163A50C</checksum>
+      <checksum>29E1E7B6</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E02944E8</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DB21F74A</checksum>
+      <checksum>9E871278</checksum>
     </file>
     <file>
       <version>
@@ -215,7 +214,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8CED6183</checksum>
+      <checksum>9B8F0D7C</checksum>
     </file>
   </files>
 </measure>
