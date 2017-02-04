@@ -303,7 +303,7 @@ class ResidentialHotTubHeaterGasTest < MiniTest::Test
             next if not new_object.respond_to?("to_#{obj_type}")
             new_object = new_object.public_send("to_#{obj_type}").get
             if obj_type == "GasEquipment"
-                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
+                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, new_object.schedule.get)
                 actual_values["Annual_therm"] += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "therm").get
             end
         end

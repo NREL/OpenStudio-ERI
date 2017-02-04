@@ -619,7 +619,7 @@ class Schedule
   
 
   # return [Double] The total number of full load hours for this schedule.
-  def self.annual_equivalent_full_load_hrs(model, schedule)
+  def self.annual_equivalent_full_load_hrs(modelYear, schedule)
 
     if schedule.to_ScheduleInterval.is_initialized
         timeSeries = schedule.to_ScheduleInterval.get.timeSeries
@@ -634,10 +634,8 @@ class Schedule
     schedule = schedule.to_ScheduleRuleset.get
 
     # Define the start and end date
-    year_description = model.yearDescription.get
-    year = year_description.assumedYear
-    year_start_date = OpenStudio::Date.new(OpenStudio::MonthOfYear.new("January"),1,year)
-    year_end_date = OpenStudio::Date.new(OpenStudio::MonthOfYear.new("December"),31,year)
+    year_start_date = OpenStudio::Date.new(OpenStudio::MonthOfYear.new("January"),1,modelYear)
+    year_end_date = OpenStudio::Date.new(OpenStudio::MonthOfYear.new("December"),31,modelYear)
 
     # Get the ordered list of all the day schedules
     # that are used by this schedule ruleset

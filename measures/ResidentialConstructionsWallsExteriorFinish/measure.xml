@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_finish</name>
   <uid>d7e5d5a3-38bf-40ea-abc9-2d50024a7090</uid>
-  <version_id>36ceb9f7-1391-4ba0-a348-4f839ee396f5</version_id>
-  <version_modified>20170203T223747Z</version_modified>
+  <version_id>1580029c-2240-45d8-baf3-c155d1a68058</version_id>
+  <version_modified>20170204T025626Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorFinish</class_name>
   <display_name>Set Residential Walls - Exterior Finish</display_name>
@@ -145,16 +145,16 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>44E4E210</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>9E871278</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AEAAA470</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_electric_loads</name>
   <uid>3ac41688-ef52-4679-b79c-8cbdf7cbd0e7</uid>
-  <version_id>d94e4e3b-060a-4bd3-b265-d45727a820aa</version_id>
-  <version_modified>20170203T223802Z</version_modified>
+  <version_id>dba62237-2e62-458e-99b9-e1b3cd41d570</version_id>
+  <version_modified>20170204T025637Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialMiscellaneousElectricLoads</class_name>
   <display_name>Set Residential Plug Loads</display_name>
@@ -65,12 +65,6 @@
   </attributes>
   <files>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C3399417</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -81,12 +75,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>29C6CA31</checksum>
-    </file>
-    <file>
-      <filename>ResidentialMiscellaneousElectricLoads_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>72DF440B</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
@@ -112,16 +100,28 @@
       <checksum>6726DE73</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>44E4E210</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>9E871278</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
+      <filename>ResidentialMiscellaneousElectricLoads_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5311285B</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AEAAA470</checksum>
     </file>
   </files>
 </measure>

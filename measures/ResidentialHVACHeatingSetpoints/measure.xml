@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>28e42336-9e36-45f8-8a71-0bbc77ea4c73</version_id>
-  <version_modified>20170203T223800Z</version_modified>
+  <version_id>c594a1c0-17bf-4782-8c83-08158708ee8d</version_id>
+  <version_modified>20170204T025635Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -60,12 +60,6 @@
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
       <checksum>E23378AA</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C3399417</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
@@ -169,28 +163,34 @@
       <checksum>1B401884</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8322C807</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>048F7BD2</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>44E4E210</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>9E871278</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A43AD845</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AEAAA470</checksum>
     </file>
   </files>
 </measure>

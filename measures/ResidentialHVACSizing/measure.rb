@@ -133,13 +133,9 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
       return false
     end
     building_num_stories = model.getBuilding.standardsNumberOfAboveGroundStories.get
-    building_num_stories = 2 # FIXME: Should finished attic count as a separate story? It wasn't in BEopt
 
     # Get year of model
-    modelYear = 2009
-    if model.yearDescription.is_initialized
-        modelYear = model.yearDescription.get.assumedYear
-    end
+    modelYear = model.yearDescription.get.assumedYear
     
     northAxis = model.getBuilding.northAxis
     isExistingHome = false # FIXME
@@ -1114,7 +1110,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         return nil if floor_uvalue.nil?
         adjacent_space = floor.adjacentSurface.get.space.get
         zone_loads.Cool_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.cool_design_temps[adjacent_space] - mj8.cool_setpoint)
-        fr = OpenStudio::convert(floor.filmResistance,"m^2*K/W","ft^2*h*R/Btu").get
         zone_loads.Heat_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.heat_setpoint - mj8.heat_design_temps[adjacent_space])
         zone_loads.Dehumid_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.cool_setpoint - mj8.dehum_design_temps[adjacent_space])
     end
@@ -1150,7 +1145,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
     infil_type = 'ach50' # FIXME
     space_ela = 0.6876 # FIXME
-    space_inf_flow = 50.0 # FIXME
     mechVentType = 'Constants.VentTypeExhaust' # FIXME
     whole_house_vent_rate = 64.04 # FIXME
     mechVentApparentSensibleEffectiveness = nil # FIXME
@@ -1164,17 +1158,19 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     # Stack Coefficient (Cs) for infiltration calculation taken from Table 5D
     # Wind Coefficient (Cw) for Shielding Classes 1-5 for infiltration calculation taken from Table 5D
     # Coefficients converted to regression equations to allow for more than 3 stories
-    c_s = 0.015 * building_num_stories
+    zone_finished_top = Geometry.get_height_of_spaces(Geometry.get_finished_spaces(thermal_zone.spaces))
+    zone_top_story = (zone_finished_top / 8.0).round
+    c_s = 0.015 * zone_top_story
     if unit_shelter_class == 1
-        c_w = 0.0119 * building_num_stories ** 0.4
+        c_w = 0.0119 * zone_top_story ** 0.4
     elsif unit_shelter_class == 2
-        c_w = 0.0092 * building_num_stories ** 0.4
+        c_w = 0.0092 * zone_top_story ** 0.4
     elsif unit_shelter_class == 3
-        c_w = 0.0065 * building_num_stories ** 0.4
+        c_w = 0.0065 * zone_top_story ** 0.4
     elsif unit_shelter_class == 4
-        c_w = 0.0039 * building_num_stories ** 0.4
+        c_w = 0.0039 * zone_top_story ** 0.4
     elsif unit_shelter_class == 5
-        c_w = 0.0012 * building_num_stories ** 0.4
+        c_w = 0.0012 * zone_top_story ** 0.4
     else
         runner.registerError('Invalid shelter_class: {}'.format(unit_shelter_class))
         return nil
@@ -1226,14 +1222,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
     return nil if mj8.nil? or zone_loads.nil?
     
-    if Geometry.zone_is_below_grade(thermal_zone)
-        zone_loads.Cool_IntGains_Sens = 0
-        zone_loads.Cool_IntGains_Lat = 0
-        zone_loads.Dehumid_IntGains_Sens = 0
-        zone_loads.Dehumid_IntGains_Lat = 0
-        return zone_loads
-    end
-    
     int_Tot_Max = 0
     int_Lat_Max = 0
     
@@ -1270,7 +1258,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             runner.registerWarning("DesignLevel not provided for object '#{gain.name.to_s}'. Skipping...")
             next
         end
-        design_level = design_level_obj.designLevel.get
+        design_level_w = design_level_obj.designLevel.get
+        design_level = OpenStudio::convert(design_level_w,"W","Btu/hr").get # Btu/hr
         
         # Get schedule
         if not gain.schedule.is_initialized
@@ -1310,17 +1299,37 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         if sched.is_a?(OpenStudio::Model::ScheduleRuleset)
             sched_values = sched.getDaySchedules(july_dates[0], july_dates[1])[0].values
         elsif sched.is_a?(OpenStudio::Model::ScheduleFixedInterval)
-            # Smooth by using all days in July
-            sched_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-            for day in 1..(july_dates.size - 1)
-                sched_values_timestep = sched.timeSeries.values(OpenStudio::DateTime.new(july_dates[day-1]), OpenStudio::DateTime.new(july_dates[day]))
-                # Aggregate into hourly values
-                timesteps_per_hr = ((sched_values_timestep.size - 1) / 24).to_i
-                for ts in 0..(sched_values_timestep.size - 2)
-                    hr = (ts / timesteps_per_hr).floor
-                    sched_values[hr] += sched_values_timestep[ts] / (july_dates.size - 1).to_f
-                end
+            # Override with smoothed schedules
+            # FIXME: Is there a better approach here?
+            if gain.name.to_s.start_with?(Constants.ObjectNameShower)
+                sched_values = [0.011, 0.005, 0.003, 0.005, 0.014, 0.052, 0.118, 0.117, 0.095, 0.074, 0.060, 0.047, 0.034, 0.029, 0.026, 0.025, 0.030, 0.039, 0.042, 0.042, 0.042, 0.041, 0.029, 0.021]
+                max_mult = 1.05 * 1.04
+                annual_energy = Schedule.annual_equivalent_full_load_hrs(modelYear, sched) * design_level_w * gain.multiplier # Wh
+                daily_load = OpenStudio::convert(annual_energy, "Wh", "Btu").get / 365.0 # Btu/day
+            elsif gain.name.to_s.start_with?(Constants.ObjectNameSink)
+                sched_values = [0.014, 0.007, 0.005, 0.005, 0.007, 0.018, 0.042, 0.062, 0.066, 0.062, 0.054, 0.050, 0.049, 0.045, 0.043, 0.041, 0.048, 0.065, 0.075, 0.069, 0.057, 0.048, 0.040, 0.027]
+                max_mult = 1.04 * 1.04
+            elsif gain.name.to_s.start_with?(Constants.ObjectNameBath)
+                sched_values = [0.008, 0.004, 0.004, 0.004, 0.008, 0.019, 0.046, 0.058, 0.066, 0.058, 0.046, 0.035, 0.031, 0.023, 0.023, 0.023, 0.039, 0.046, 0.077, 0.100, 0.100, 0.077, 0.066, 0.039]
+                max_mult = 1.26 * 1.04
+            elsif gain.name.to_s.start_with?(Constants.ObjectNameDishwasher)
+                sched_values = [0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.041, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031]
+                max_mult = 1.05 * 1.04
+            elsif gain.name.to_s.start_with?(Constants.ObjectNameClothesWasher)
+                sched_values = [0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.052, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017]
+                max_mult = 1.15 * 1.04
+            else
+                runner.registerError("Unexpected gain '#{gain.name.to_s}' with ScheduleFixedInterval in processInternalGains.")
+                return nil
             end
+            # Calculate daily load
+            annual_energy = Schedule.annual_equivalent_full_load_hrs(modelYear, sched) * design_level_w * gain.multiplier # Wh
+            daily_load = OpenStudio::convert(annual_energy, "Wh", "Btu").get / 365.0 # Btu/day
+            # Calculate design level in Btu/hr
+            design_level = sched_values.max * daily_load * max_mult # Btu/hr
+            # Normalize schedule values to be max=1 from sum=1
+            sched_values_max = sched_values.max
+            sched_values = sched_values.collect { |n| n / sched_values_max }
         else
             runner.registerError("Unexpected type for object '#{sched.name.to_s}' in processInternalGains.")
             return nil
@@ -1331,8 +1340,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         end
         
         for hr in 0..23
-            int_Sens_Hr[hr] += sched_values[hr] * OpenStudio::convert(design_level,"W","Btu/hr").get * sensible_frac
-            int_Lat_Hr[hr] += sched_values[hr] * OpenStudio::convert(design_level,"W","Btu/hr").get * latent_frac
+            int_Sens_Hr[hr] += sched_values[hr] * design_level * sensible_frac
+            int_Lat_Hr[hr] += sched_values[hr] * design_level * latent_frac
         end
     end
     
@@ -1346,9 +1355,15 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         int_Lat_Hr[hr] += occ_sched[hr] * 200 * n_occupants * zone_ffa / unit_ffa
     end
             
+    int_Tot_Hr = []
+    for hr in 0..23
+        int_Tot_Hr << int_Sens_Hr[hr] + int_Lat_Hr[hr]
+    end
+    
     # Store the sensible and latent loads associated with the hour of the maximum total load for cooling load calculations
-    zone_loads.Cool_IntGains_Sens = int_Sens_Hr.max
-    zone_loads.Cool_IntGains_Lat = int_Lat_Hr.max
+    idx = int_Tot_Hr.each_with_index.max[1]
+    zone_loads.Cool_IntGains_Sens = int_Sens_Hr[idx]
+    zone_loads.Cool_IntGains_Lat = int_Lat_Hr[idx]
     
     # Store the sensible and latent loads associated with the hour of the maximum latent load for dehumidification load calculations
     idx = int_Lat_Hr.each_with_index.max[1]
@@ -2507,7 +2522,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
   def get_shelter_class(model, unit)
 
     neighbor_offset_ft = Geometry.get_closest_neighbor_distance(model)
-    unit_height_ft = Geometry.get_building_height(unit.spaces)
+    unit_height_ft = Geometry.get_height_of_spaces(unit.spaces)
     exposed_wall_ratio = Geometry.calculate_above_grade_exterior_wall_area(unit.spaces) / 
                          Geometry.calculate_above_grade_wall_area(unit.spaces)
 

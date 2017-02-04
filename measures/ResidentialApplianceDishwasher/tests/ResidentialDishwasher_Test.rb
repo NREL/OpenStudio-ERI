@@ -382,11 +382,11 @@ class ResidentialDishwasherTest < MiniTest::Test
             next if not new_object.respond_to?("to_#{obj_type}")
             new_object = new_object.public_send("to_#{obj_type}").get
             if obj_type == "ElectricEquipment"
-                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.schedule.get)
+                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, new_object.schedule.get)
                 actual_values["Annual_kwh"] += OpenStudio.convert(full_load_hrs * new_object.designLevel.get * new_object.multiplier, "Wh", "kWh").get
                 actual_values["Space"] << new_object.space.get.name.to_s
             elsif obj_type == "WaterUseEquipment"
-                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model, new_object.flowRateFractionSchedule.get)
+                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, new_object.flowRateFractionSchedule.get)
                 actual_values["HotWater_gpd"] += OpenStudio.convert(full_load_hrs * new_object.waterUseEquipmentDefinition.peakFlowRate * new_object.multiplier, "m^3/s", "gal/min").get * 60.0 / 365.0
                 actual_values["Space"] << new_object.space.get.name.to_s
             end

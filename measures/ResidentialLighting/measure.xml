@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>3dd939c3-0a98-4f4e-b470-369b405ca0a1</version_id>
-  <version_modified>20170203T223801Z</version_modified>
+  <version_id>ee5ca853-3436-4141-a89a-f4fdc83d3791</version_id>
+  <version_modified>20170204T025636Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -159,12 +159,6 @@
       <checksum>DF4291B8</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C3399417</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -181,12 +175,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>56885C2A</checksum>
-    </file>
-    <file>
-      <filename>ResidentialLighting_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BA676463</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
@@ -219,22 +207,34 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9E871278</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
+      <filename>ResidentialLighting_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>81582E61</checksum>
+    </file>
+    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8322C807</checksum>
+      <checksum>A43AD845</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>44E4E210</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9E871278</checksum>
+      <checksum>AEAAA470</checksum>
     </file>
   </files>
 </measure>

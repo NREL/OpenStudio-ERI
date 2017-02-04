@@ -323,15 +323,12 @@ class Geometry
       return window_area
     end
     
-    # Calculates the space height as the max z coordinate minus the min z coordinate
     def self.space_height(space)
-        zvalues = self.getSurfaceZValues(space.surfaces)
-        minz = zvalues.min
-        maxz = zvalues.max
-        return maxz - minz
+        return Geometry.get_height_of_spaces([space])
     end
     
-    def self.get_building_height(spaces)
+    # Calculates space heights as the max z coordinate minus the min z coordinate
+    def self.get_height_of_spaces(spaces)
       minzs = []
       maxzs = []
       spaces.each do |space|

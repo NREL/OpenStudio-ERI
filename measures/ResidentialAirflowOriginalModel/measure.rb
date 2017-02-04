@@ -982,7 +982,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
     if geometry.above_grade_finished_floor_area.nil?
       return false
     end
-    geometry.building_height = Geometry.get_building_height(model.getSpaces)
+    geometry.building_height = Geometry.get_height_of_spaces(model.getSpaces)
     geometry.stories = Geometry.get_building_stories(model.getSpaces)
     geometry.num_units = units.size
     geometry.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
@@ -996,27 +996,27 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
     model.getThermalZones.each do |thermal_zone|
       if thermal_zone.name.to_s.start_with? Constants.GarageZone
         garage_thermal_zone = thermal_zone
-        garage.height = Geometry.get_building_height(garage_thermal_zone.spaces)
+        garage.height = Geometry.get_height_of_spaces(garage_thermal_zone.spaces)
         garage.area = OpenStudio::convert(garage_thermal_zone.floorArea,"m^2","ft^2").get
         garage.volume = garage.height * garage.area        
       elsif thermal_zone.name.to_s.start_with? Constants.UnfinishedBasementZone
         ufbasement_thermal_zone = thermal_zone
-        unfinished_basement.height = Geometry.get_building_height(ufbasement_thermal_zone.spaces)
+        unfinished_basement.height = Geometry.get_height_of_spaces(ufbasement_thermal_zone.spaces)
         unfinished_basement.area = OpenStudio::convert(ufbasement_thermal_zone.floorArea,"m^2","ft^2").get
         unfinished_basement.volume = unfinished_basement.height * unfinished_basement.area        
       elsif thermal_zone.name.to_s.start_with? Constants.CrawlZone
         crawl_thermal_zone = thermal_zone
-        crawlspace.height = Geometry.get_building_height(crawl_thermal_zone.spaces)
+        crawlspace.height = Geometry.get_height_of_spaces(crawl_thermal_zone.spaces)
         crawlspace.area = OpenStudio::convert(crawl_thermal_zone.floorArea,"m^2","ft^2").get
         crawlspace.volume = crawlspace.height * crawlspace.area        
       elsif thermal_zone.name.to_s.start_with? Constants.PierBeamZone
         pierbeam_thermal_zone = thermal_zone
-        pierbeam.height = Geometry.get_building_height(pierbeam_thermal_zone.spaces)
+        pierbeam.height = Geometry.get_height_of_spaces(pierbeam_thermal_zone.spaces)
         pierbeam.area = OpenStudio::convert(pierbeam_thermal_zone.floorArea,"m^2","ft^2").get
         pierbeam.volume = pierbeam.height * pierbeam.area        
       elsif thermal_zone.name.to_s.start_with? Constants.UnfinishedAtticZone
         ufattic_thermal_zone = thermal_zone
-        unfinished_attic.height = Geometry.get_building_height(ufattic_thermal_zone.spaces)
+        unfinished_attic.height = Geometry.get_height_of_spaces(ufattic_thermal_zone.spaces)
         unfinished_attic.area = OpenStudio::convert(ufattic_thermal_zone.floorArea,"m^2","ft^2").get
         unfinished_attic.volume = unfinished_attic.height * unfinished_attic.area        
       end
@@ -1083,12 +1083,12 @@ class ProcessAirflowOriginalModel < OpenStudio::Ruleset::WorkspaceUserScript
       thermal_zones.each do |thermal_zone|
         if thermal_zone.name.to_s.start_with? Constants.LivingZone
           living_thermal_zone = thermal_zone
-          living_space.height = Geometry.get_building_height(living_thermal_zone.spaces)
+          living_space.height = Geometry.get_height_of_spaces(living_thermal_zone.spaces)
           living_space.area = OpenStudio::convert(living_thermal_zone.floorArea,"m^2","ft^2").get
           living_space.volume = living_space.height/geometry.stories.to_f * living_space.area          
         elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone
           fbasement_thermal_zone = thermal_zone
-          finished_basement.height = Geometry.get_building_height(fbasement_thermal_zone.spaces)
+          finished_basement.height = Geometry.get_height_of_spaces(fbasement_thermal_zone.spaces)
           finished_basement.area = OpenStudio::convert(fbasement_thermal_zone.floorArea,"m^2","ft^2").get
           finished_basement.volume = finished_basement.height * finished_basement.area            
         end

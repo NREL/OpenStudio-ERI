@@ -293,10 +293,10 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
             new_object = new_object.public_send("to_#{obj_type}").get
             if obj_type == "Space"
                 if new_object.name.to_s.start_with?(Constants.UnfinishedBasementFoundationType)
-                    actual_values["UnfinishedBasementHeight"] = Geometry.get_building_height([new_object])
+                    actual_values["UnfinishedBasementHeight"] = Geometry.get_height_of_spaces([new_object])
                     actual_values["UnfinishedBasementFloorArea"] += OpenStudio::convert(new_object.floorArea,"m^2","ft^2").get
                 elsif new_object.name.to_s.start_with?(Constants.CrawlFoundationType)
-                    actual_values["CrawlspaceHeight"] = Geometry.get_building_height([new_object])
+                    actual_values["CrawlspaceHeight"] = Geometry.get_height_of_spaces([new_object])
                     actual_values["CrawlspaceFloorArea"] += OpenStudio::convert(new_object.floorArea,"m^2","ft^2").get
                 end
                 if Geometry.space_is_finished(new_object)
@@ -315,7 +315,7 @@ class CreateResidentialMultifamilyGeometryTest < MiniTest::Test
         assert_in_epsilon(expected_values["CrawlspaceFloorArea"], actual_values["CrawlspaceFloorArea"], 0.01)
     end 
     assert_in_epsilon(expected_values["FinishedFloorArea"], actual_values["FinishedFloorArea"], 0.01)
-    assert_in_epsilon(expected_values["BuildingHeight"], Geometry.get_building_height(new_spaces), 0.01)
+    assert_in_epsilon(expected_values["BuildingHeight"], Geometry.get_height_of_spaces(new_spaces), 0.01)
     
     return model
   end  
