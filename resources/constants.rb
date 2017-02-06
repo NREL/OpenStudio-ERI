@@ -582,7 +582,10 @@ class Constants
     return "res ducts#{s_unit}"
   end  
   def self.ObjectNameEaves(facade="")
-    unless facade.nil?
+    if facade.nil?
+      facade = ""
+    end
+    if facade != ""
       facade = " #{facade}"
     end
     return "residential eaves#{facade}"
@@ -730,6 +733,9 @@ class Constants
     return "res nat vent#{s_unit}"
   end
   def self.ObjectNameNeighbors(facade="")
+    if facade.nil?
+      facade = ""
+    end
     if facade != ""
       facade = " #{facade}"
     end

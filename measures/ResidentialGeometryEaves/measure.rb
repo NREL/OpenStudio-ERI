@@ -71,6 +71,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
         existing_eaves_depth = get_existing_eaves_depth(shading_surface)
       end
       shading_surface_group.remove
+      runner.registerInfo("Removed existing #{Constants.ObjectNameEaves}.")
     end
     if num_removed > 0
       runner.registerInfo("#{num_removed} eaves shading surfaces removed.")
