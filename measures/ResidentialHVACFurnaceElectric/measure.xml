@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>dea6ff77-9daf-4b06-a91a-fb572de099db</version_id>
-  <version_modified>20170206T155953Z</version_modified>
+  <version_id>6a81ddee-8ebb-44ec-8f1a-f0f95ca32fcf</version_id>
+  <version_modified>20170214T155127Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>

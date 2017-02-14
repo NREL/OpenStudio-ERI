@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>e7601e1b-f251-4cfc-b9cb-c5c0c73a8f6e</version_id>
-  <version_modified>20170206T155953Z</version_modified>
+  <version_id>55b6d637-2894-4fdb-bc72-fd27e74bbe35</version_id>
+  <version_modified>20170214T155127Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>

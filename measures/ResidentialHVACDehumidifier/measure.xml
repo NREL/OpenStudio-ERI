@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>d2682fdb-c773-4c85-80d9-1cf9ae984bd4</version_id>
-  <version_modified>20170206T155952Z</version_modified>
+  <version_id>4a54e52e-4c44-4462-b26d-8f993308d825</version_id>
+  <version_modified>20170214T155126Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>

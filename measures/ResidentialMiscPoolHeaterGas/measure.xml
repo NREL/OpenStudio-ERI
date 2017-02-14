@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater_gas</name>
   <uid>bbb7dbaa-5517-438e-bb14-5b92e9d09284</uid>
-  <version_id>5c016838-af58-4a1e-8452-953257a8cbbb</version_id>
-  <version_modified>20170206T155956Z</version_modified>
+  <version_id>2c32e204-89e6-4a0b-802b-46b93f6cf5da</version_id>
+  <version_modified>20170214T155131Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialPoolHeaterGas</class_name>
   <display_name>Set Residential Pool Gas Heater</display_name>

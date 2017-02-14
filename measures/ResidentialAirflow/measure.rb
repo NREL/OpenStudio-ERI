@@ -989,11 +989,16 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       model.getThermalZones.each do |thermal_zone|
         next unless thermal_zone.name.to_s == obj_name_ducts + " dist system eff zone" or thermal_zone.name.to_s == obj_name_ducts + " ret air zone"
         thermal_zone.spaces.each do |space|
+          space.surfaces.each do |surface|
+            if surface.surfacePropertyConvectionCoefficients.is_initialized
+              surface.surfacePropertyConvectionCoefficients.get.remove
+            end
+          end
           space.remove
         end
         thermal_zone.removeReturnPlenum
         thermal_zone.remove
-      end      
+      end
 
       # Search for clothes dryer
       (model.getElectricEquipments + model.getOtherEquipments).each do |equip|
@@ -1430,7 +1435,11 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         surface.setOutsideBoundaryCondition("Adiabatic")
         surface.setSunExposure("NoSun")
         surface.setWindExposure("NoWind")
-      end  
+        surface_property_convection_coefficients = OpenStudio::Model::SurfacePropertyConvectionCoefficients.new(surface)
+        surface_property_convection_coefficients.setConvectionCoefficient1Location("Inside")
+        surface_property_convection_coefficients.setConvectionCoefficient1Type("Value")
+        surface_property_convection_coefficients.setConvectionCoefficient1(999)
+      end
         
       if ducts.has_forced_air_equipment  
         

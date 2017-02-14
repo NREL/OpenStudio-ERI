@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_pump</name>
   <uid>58b3f782-0d34-455c-9101-df36412196f1</uid>
-  <version_id>f6315293-ccab-4011-8025-c701aee8d491</version_id>
-  <version_modified>20170206T155956Z</version_modified>
+  <version_id>d8dcd6b1-18e1-4ef1-a538-bbed7e079397</version_id>
+  <version_modified>20170214T155130Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotTubPump</class_name>
   <display_name>Set Residential Hot Tub Pump</display_name>

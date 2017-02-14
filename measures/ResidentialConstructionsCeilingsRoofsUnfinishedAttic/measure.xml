@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>c64a5975-fa98-4d7f-9105-41f57b576fee</version_id>
-  <version_modified>20170206T155940Z</version_modified>
+  <version_id>47ac8ef6-a64b-4fd2-b349-11e271295b8b</version_id>
+  <version_modified>20170214T155115Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsUnfinishedAttic</class_name>
   <display_name>Set Residential Ceilings/Roofs - Unfinished Attic Constructions</display_name>

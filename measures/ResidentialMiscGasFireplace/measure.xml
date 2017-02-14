@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_fireplace</name>
   <uid>0565d3b2-593b-480b-a742-a6ec7058d3c4</uid>
-  <version_id>7c617b39-e5ca-4823-8940-c7783915b92d</version_id>
-  <version_modified>20170206T155955Z</version_modified>
+  <version_id>831ec5b4-8855-42c7-ba64-5091c6cb5a1d</version_id>
+  <version_modified>20170214T155130Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialGasFireplace</class_name>
   <display_name>Set Residential Gas Fireplace</display_name>

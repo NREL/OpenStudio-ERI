@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater_gas</name>
   <uid>65550b9d-c0bf-405b-9229-dc63721eb887</uid>
-  <version_id>a7130732-2a70-417a-8504-87310c3933b1</version_id>
-  <version_modified>20170206T155956Z</version_modified>
+  <version_id>3916437d-abab-4f62-a892-e7d683b184eb</version_id>
+  <version_modified>20170214T155130Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotTubHeaterGas</class_name>
   <display_name>Set Residential Hot Tub Gas Heater</display_name>

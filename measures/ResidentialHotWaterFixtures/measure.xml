@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>55bf45f0-153c-4b7d-9811-f634e43e2bc4</version_id>
-  <version_modified>20170206T155949Z</version_modified>
+  <version_id>2a121105-9372-4916-92d4-dc522e696e16</version_id>
+  <version_modified>20170214T155122Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
