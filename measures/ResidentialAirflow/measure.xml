@@ -795,7 +795,7 @@
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.1</identifier>
-        <min_compatible>1.13.1</min_compatible>
+        <min_compatible>2.0.2</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
