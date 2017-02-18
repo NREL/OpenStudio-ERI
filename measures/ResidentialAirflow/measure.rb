@@ -239,11 +239,11 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     args << pier_beam_ach
 
     #make a double argument for infiltration of unfinished attic
-    unfinished_attic_ach = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("unfinished_attic_ach", false)
-    unfinished_attic_ach.setDisplayName("Unfinished Attic: SLA")
-    unfinished_attic_ach.setDescription("Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.")
-    unfinished_attic_ach.setDefaultValue(0.00333)
-    args << unfinished_attic_ach
+    unfinished_attic_sla = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("unfinished_attic_sla", false)
+    unfinished_attic_sla.setDisplayName("Unfinished Attic: SLA")
+    unfinished_attic_sla.setDescription("Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.")
+    unfinished_attic_sla.setDefaultValue(0.00333)
+    args << unfinished_attic_sla
 
     #make a double argument for shelter coefficient
     shelter_coef = OpenStudio::Ruleset::OSArgument::makeStringArgument("shelter_coef", false)
@@ -288,7 +288,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
 
     #make a choice argument for ventilation type
     ventilation_types_names = OpenStudio::StringVector.new
-    ventilation_types_names << "none"
+    ventilation_types_names << Constants.VentTypeNone
     ventilation_types_names << Constants.VentTypeExhaust
     ventilation_types_names << Constants.VentTypeSupply
     ventilation_types_names << Constants.VentTypeBalanced
@@ -582,7 +582,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     pierbeamACH = runner.getDoubleArgumentValue("pier_beam_ach",user_arguments)
     fbsmtACH = runner.getDoubleArgumentValue("finished_basement_ach",user_arguments)
     ufbsmtACH = runner.getDoubleArgumentValue("unfinished_basement_ach",user_arguments)
-    uaSLA = runner.getDoubleArgumentValue("unfinished_attic_ach",user_arguments)
+    uaSLA = runner.getDoubleArgumentValue("unfinished_attic_sla",user_arguments)
     infiltrationShelterCoefficient = runner.getStringArgumentValue("shelter_coef",user_arguments)
     has_hvac_flue = runner.getBoolArgumentValue("has_hvac_flue",user_arguments)
     has_water_heater_flue = runner.getBoolArgumentValue("has_water_heater_flue",user_arguments)
@@ -595,7 +595,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     mechVentHouseFanPower = runner.getDoubleArgumentValue("mech_vent_fan_power",user_arguments)
     mechVentFractionOfASHRAE = runner.getDoubleArgumentValue("mech_vent_frac_62_2",user_arguments)
     mechVentASHRAEStandard = runner.getStringArgumentValue("mech_vent_ashrae_std",user_arguments)
-    if mechVentType == "none"
+    if mechVentType == Constants.VentTypeNone
       mechVentFractionOfASHRAE = 0.0
       mechVentHouseFanPower = 0.0
       mechVentTotalEfficiency = 0.0
@@ -1782,8 +1782,52 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       program_calling_manager.setName(obj_name_ducts + " program calling manager")
       program_calling_manager.setCallingPoint("EndOfSystemTimestepAfterHVACReporting")
       program_calling_manager.addProgram(duct_leakage_program)
+
+      # Store info for HVAC Sizing measure
+      building_unit.setFeature(Constants.SizingInfoMechVentType, mech_vent.MechVentType)
+      building_unit.setFeature(Constants.SizingInfoMechVentTotalEfficiency, mech_vent.MechVentTotalEfficiency)
+      building_unit.setFeature(Constants.SizingInfoMechVentLatentEffectiveness, mech_vent.MechVentLatentEffectiveness)
+      building_unit.setFeature(Constants.SizingInfoMechVentApparentSensibleEffectiveness, mech_vent.MechVentApparentSensibleEffectiveness)
+      building_unit.setFeature(Constants.SizingInfoMechVentWholeHouseRate, mech_vent.whole_house_vent_rate)
+      building_unit.setFeature(Constants.SizingInfoDuctsSupplyRvalue, ducts.supply_duct_r)
+      building_unit.setFeature(Constants.SizingInfoDuctsReturnRvalue, ducts.return_duct_r)
+      building_unit.setFeature(Constants.SizingInfoDuctsSupplyLoss, ducts.supply_duct_loss)
+      building_unit.setFeature(Constants.SizingInfoDuctsReturnLoss, ducts.return_duct_loss)
+      building_unit.setFeature(Constants.SizingInfoDuctsSupplySurfaceArea, ducts.supply_duct_surface_area)
+      building_unit.setFeature(Constants.SizingInfoDuctsReturnSurfaceArea, ducts.return_duct_surface_area)
+      building_unit.setFeature(Constants.SizingInfoDuctsLocationZone, ducts.duct_location_name)
+      building_unit.setFeature(Constants.SizingInfoDuctsLocationFrac, ducts.DuctLocationFracLeakage)
+      unless unit.finished_basement_zone.nil?
+        unit.finished_basement_zone.spaces.each do |space|
+          building_unit.setFeature(Constants.SizingInfoSpaceHasInfiltration(space), (unit.finished_basement.ACH > 0))
+        end
+      end
       
     end # end unit loop
+    
+    # Store info for HVAC Sizing measure
+    units.each do |building_unit|
+      unless building.crawlspace_zone.nil?
+        building.crawlspace_zone.spaces.each do |space|
+          building_unit.setFeature(Constants.SizingInfoSpaceHasInfiltration(space), (building.crawlspace.ACH > 0))
+        end
+      end
+      unless building.pierbeam_zone.nil?
+        building.pierbeam_zone.spaces.each do |space|
+          building_unit.setFeature(Constants.SizingInfoSpaceHasInfiltration(space), (building.pierbeam.ACH > 0))
+        end
+      end
+      unless building.unfinished_basement_zone.nil?
+        building.unfinished_basement_zone.spaces.each do |space|
+          building_unit.setFeature(Constants.SizingInfoSpaceHasInfiltration(space), (building.unfinished_basement.ACH > 0))
+        end
+      end
+      unless building.unfinished_attic_zone.nil?
+        building.unfinished_attic_zone.spaces.each do |space|
+          building_unit.setFeature(Constants.SizingInfoSpaceIsVented(space), (building.unfinished_attic.SLA > 0))
+        end
+      end
+    end
 
     terrain = {Constants.TerrainOcean=>"Ocean",      # Ocean, Bayou flat country
                Constants.TerrainPlains=>"Country",   # Flat, open country
@@ -2524,6 +2568,8 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       ducts.DuctLocationFracConduction = 0
       ducts.unconditioned_duct_ua = 0
       ducts.return_duct_ua = 0
+      ducts.supply_duct_r = 0
+      ducts.return_duct_r = 0
     end
     
     # Calculate Duct Volume

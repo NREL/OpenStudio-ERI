@@ -635,11 +635,16 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
           program_calling_manager.setCallingPoint("BeginTimestepBeforePredictor")
           program_calling_manager.addProgram(program)
           
-        end
+        end # slave_zone
       
-      end
+      end # control_zone
       
-    end
+      # Store info for HVAC Sizing measure
+      unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, supply.Capacity_Ratio_Cooling.join(","))
+      unit.setFeature(Constants.SizingInfoHVACCoolingCFMs, supply.CoolingCFMs.join(","))
+      unit.setFeature(Constants.SizingInfoHVACHeatingCapacityOffset, miniSplitHPHeatingCapacityOffset)
+      
+    end # unit
 
     return true
 

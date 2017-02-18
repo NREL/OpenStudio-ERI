@@ -40,6 +40,32 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterial < OpenStudio::Ruleset::Mo
 	emiss.setDefaultValue(0.91)
 	args << emiss
     
+    #make a choice argument for material
+    choices = OpenStudio::StringVector.new
+    choices << Constants.RoofMaterialAsphaltShingles
+    choices << Constants.RoofMaterialMembrane
+    choices << Constants.RoofMaterialMetal
+    choices << Constants.RoofMaterialTarGravel
+    choices << Constants.RoofMaterialTile
+    choices << Constants.RoofMaterialWoodShakes
+    material = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("material", choices, true)
+    material.setDisplayName("Material")
+    material.setDescription("Material description used only for Manual J sizing calculations.")
+    material.setDefaultValue(Constants.RoofMaterialAsphaltShingles)
+    args << material
+    
+    #make a choice argument for color
+    choices = OpenStudio::StringVector.new
+    choices << Constants.ColorWhite
+    choices << Constants.ColorLight
+    choices << Constants.ColorMedium
+    choices << Constants.ColorDark
+    color = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("color", choices, true)
+    color.setDisplayName("Color")
+    color.setDescription("Color description used only for Manual J sizing calculations.")
+    color.setDefaultValue(Constants.ColorMedium)
+    args << color
+    
     return args
   end
 
@@ -69,6 +95,8 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterial < OpenStudio::Ruleset::Mo
     # Get inputs
     solar_abs = runner.getDoubleArgumentValue("solar_abs",user_arguments)
     emiss = runner.getDoubleArgumentValue("emissivity",user_arguments)
+    manual_j_color = runner.getStringArgumentValue("color",user_arguments)
+    manual_j_material = runner.getStringArgumentValue("material",user_arguments)
     
     # Validate inputs
     if solar_abs < 0.0 or solar_abs > 1.0
@@ -90,6 +118,16 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterial < OpenStudio::Ruleset::Mo
     # Create and assign construction to surfaces
     if not roof_mat.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
+    end
+    
+    # Store info for HVAC Sizing measure
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
+        return false
+    end
+    units.each do |unit|
+        unit.setFeature(Constants.SizingInfoRoofColor, manual_j_color)
+        unit.setFeature(Constants.SizingInfoRoofMaterial, manual_j_material)
     end
     
     # Remove any constructions/materials that aren't used

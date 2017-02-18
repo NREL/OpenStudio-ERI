@@ -104,6 +104,18 @@ class Constants
   def self.Auto
     return 'auto'
   end
+  def self.ColorWhite
+    return 'white'
+  end
+  def self.ColorLight
+    return 'light'
+  end
+  def self.ColorMedium
+    return 'medium'
+  end
+  def self.ColorDark
+    return 'dark'
+  end
   def self.CoordRelative
     return 'relative'
   end
@@ -873,6 +885,24 @@ class Constants
   def self.RecircTypeNone
     return 'none'
   end
+  def self.RoofMaterialAsphaltShingles
+    return 'asphalt shingles'
+  end
+  def self.RoofMaterialMembrane
+    return 'membrane'
+  end
+  def self.RoofMaterialMetal
+    return 'metal'
+  end
+  def self.RoofMaterialTarGravel
+    return 'tar gravel'
+  end
+  def self.RoofMaterialTile
+    return 'tile'
+  end
+  def self.RoofMaterialWoodShakes
+    return 'wood shakes'
+  end
   def self.RoofStructureRafter
     return 'rafter'
   end
@@ -902,6 +932,112 @@ class Constants
   end
   def self.SizingAuto
     return 'autosize'
+  end
+  def self.SizingInfo(property, obj=nil)
+    s_obj = ''
+    if not obj.nil?
+        s_obj = "|#{obj.handle.to_s}"
+    end
+    return "#{property}#{s_obj}"
+  end
+  def self.SizingInfoAtticHasRadiantBarrier
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoDuctsLocationFrac
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoDuctsLocationZone
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoDuctsReturnLoss
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoDuctsReturnRvalue
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoDuctsReturnSurfaceArea
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoSpaceCeilingInsulated(space)
+    return self.SizingInfo(__method__.to_s, space)
+  end
+  def self.SizingInfoSpaceHasInfiltration(space)
+    return self.SizingInfo(__method__.to_s, space)
+  end
+  def self.SizingInfoSpaceIsVented(space)
+    return self.SizingInfo(__method__.to_s, space)
+  end
+  def self.SizingInfoSpaceWallsInsulated(space)
+    return self.SizingInfo(__method__.to_s, space)
+  end
+  def self.SizingInfoDuctsSupplyLoss
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoDuctsSupplyRvalue
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoDuctsSupplySurfaceArea
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHVACCapacityDerateFactorCOP
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHVACCapacityDerateFactorEER
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHVACCapacityRatioCooling
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHVACCoolingCFMs
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHVACFanspeedRatioCooling
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHVACHeatingCapacityOffset
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoMechVentType
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoMechVentApparentSensibleEffectiveness
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoMechVentLatentEffectiveness
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoMechVentTotalEfficiency
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoMechVentWholeHouseRate
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoRoofCavityRvalue(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoRoofColor
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoRoofMaterial
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoRoofRigidInsRvalue(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoSIPWallInsThickness(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoWallType(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoWallRigidInsRvalue(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoWallRigidInsThickness(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoWoodStudWallCavityRvalue(surface)
+    return self.SizingInfo(__method__.to_s, surface)
   end
   def self.SlabFoundationType
     return 'slab'
@@ -969,6 +1105,9 @@ class Constants
   end
   def self.VentTypeExhaust
     return 'exhaust'
+  end
+  def self.VentTypeNone
+    return 'none'
   end
   def self.VentTypeSupply
     return 'supply'

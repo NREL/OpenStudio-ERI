@@ -624,11 +624,17 @@ class ProcessVariableSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScri
           air_loop.addBranchForZone(slave_zone)
           runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
 
-        end    
+        end # slave_zone
       
-      end
+      end # control_zone
       
-    end
+      # Store info for HVAC Sizing measure
+      unit.setFeature(Constants.SizingInfoHVACFanspeedRatioCooling, hpFanspeedRatioCooling.join(","))
+      unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, hpCapacityRatio.join(","))
+      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, hpEERCapacityDerateFactor.join(","))
+      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, hpCOPCapacityDerateFactor.join(","))
+      
+    end # unit
 	
     return true
  

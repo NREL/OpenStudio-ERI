@@ -131,6 +131,19 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
     if not wall_sh.create_and_assign_constructions(surfaces, runner, model, name=nil)
         return false
     end
+    
+    # Store info for HVAC Sizing measure
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
+        return false
+    end
+    surfaces.each do |surface|
+        units.each do |unit|
+            next if not unit.spaces.include?(surface.space.get)
+            unit.setFeature(Constants.SizingInfoWallRigidInsRvalue(surface), rigid_rvalue)
+            unit.setFeature(Constants.SizingInfoWallRigidInsThickness(surface), rigid_thick_in)
+        end
+    end
 
     # Remove any constructions/materials that aren't used
     HelperMethods.remove_unused_constructions_and_materials(model, runner)

@@ -340,11 +340,14 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserSc
           air_loop.addBranchForZone(slave_zone)
           runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
 
-        end    
+        end # slave_zone
       
-      end
+      end # control_zone
       
-    end
+      # Store info for HVAC Sizing measure
+      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, acEERCapacityDerateFactor.join(","))
+      
+    end # unit
 	
     return true
  

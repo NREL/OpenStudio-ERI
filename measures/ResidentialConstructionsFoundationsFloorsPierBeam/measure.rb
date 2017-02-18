@@ -65,7 +65,8 @@ class ProcessConstructionsFoundationsFloorsPierBeam < OpenStudio::Ruleset::Model
     end
 
     surfaces = []
-    Geometry.get_pier_beam_spaces(model.getSpaces).each do |space|
+    spaces = Geometry.get_pier_beam_spaces(model.getSpaces)
+    spaces.each do |space|
         space.surfaces.each do |surface|
             next if surface.surfaceType.downcase != "roofceiling"
             surfaces << surface
@@ -120,6 +121,19 @@ class ProcessConstructionsFoundationsFloorsPierBeam < OpenStudio::Ruleset::Model
     # Create and assign construction to surfaces
     if not pb_const.create_and_assign_constructions(surfaces, runner, model, name="UnfinInsFinPierBeamFloor")
         return false
+    end
+    
+    # Store info for HVAC Sizing measure
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
+        return false
+    end
+    units.each do |unit|
+        unit.spaces.each do |space|
+            next if not spaces.include?(space)
+            unit.setFeature(Constants.SizingInfoSpaceWallsInsulated(space), false)
+            unit.setFeature(Constants.SizingInfoSpaceCeilingInsulated(space), (pbCeilingCavityInsRvalueNominal > 0))
+        end
     end
     
     # Remove any constructions/materials that aren't used

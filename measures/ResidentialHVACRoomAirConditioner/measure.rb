@@ -92,7 +92,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     
     roomaceer = runner.getDoubleArgumentValue("eer",user_arguments)
     supply.shr_Rated = runner.getDoubleArgumentValue("shr",user_arguments)
-    supply.coolingCFMs = runner.getDoubleArgumentValue("airflow_rate",user_arguments)
+    supply.coolingCFMs = [runner.getDoubleArgumentValue("airflow_rate",user_arguments)]
     acOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     unless acOutputCapacity == Constants.SizingAuto
       acOutputCapacity = OpenStudio::convert(acOutputCapacity.to_f,"ton","Btu/h").get
@@ -228,11 +228,14 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
           # Remove existing equipment
           HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameRoomAirConditioner, slave_zone)
 
-        end
+        end # slave_zone
       
-      end
+      end # control_zone
       
-    end
+      # Store info for HVAC Sizing measure
+      unit.setFeature(Constants.SizingInfoHVACCoolingCFMs, supply.coolingCFMs.join(","))
+      
+    end # unit
     
     return true
 

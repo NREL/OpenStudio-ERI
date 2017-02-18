@@ -910,9 +910,9 @@ class Geometry
         return OpenStudio::convert(neighbor_offsets.min,"m","ft").get
     end
     
-    def self.get_thermal_zone_above_grade_exterior_walls(zone)
+    def self.get_spaces_above_grade_exterior_walls(spaces)
         above_grade_exterior_walls = []
-        zone.spaces.each do |space|
+        spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             next if not Geometry.space_is_above_grade(space)
             space.surfaces.each do |surface|
@@ -925,9 +925,9 @@ class Geometry
         return above_grade_exterior_walls
     end
     
-    def self.get_thermal_zone_above_grade_exterior_floors(zone)
+    def self.get_spaces_above_grade_exterior_floors(spaces)
         above_grade_exterior_floors = []
-        zone.spaces.each do |space|
+        spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             next if not Geometry.space_is_above_grade(space)
             space.surfaces.each do |surface|
@@ -940,9 +940,9 @@ class Geometry
         return above_grade_exterior_floors
     end
     
-    def self.get_thermal_zone_above_grade_ground_floors(zone)
+    def self.get_spaces_above_grade_ground_floors(spaces)
         above_grade_ground_floors = []
-        zone.spaces.each do |space|
+        spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             next if not Geometry.space_is_above_grade(space)
             space.surfaces.each do |surface|
@@ -955,9 +955,9 @@ class Geometry
         return above_grade_ground_floors
     end
     
-    def self.get_thermal_zone_above_grade_exterior_roofs(zone)
+    def self.get_spaces_above_grade_exterior_roofs(spaces)
         above_grade_exterior_roofs = []
-        zone.spaces.each do |space|
+        spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             next if not Geometry.space_is_above_grade(space)
             space.surfaces.each do |surface|
@@ -970,9 +970,9 @@ class Geometry
         return above_grade_exterior_roofs
     end
     
-    def self.get_thermal_zone_interzonal_walls(zone)
+    def self.get_spaces_interzonal_walls(spaces)
         interzonal_walls = []
-        zone.spaces.each do |space|
+        spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             space.surfaces.each do |surface|
                 next if interzonal_walls.include?(surface)
@@ -985,9 +985,9 @@ class Geometry
         return interzonal_walls
     end
     
-    def self.get_thermal_zone_interzonal_floors(zone)
+    def self.get_spaces_interzonal_floors(spaces)
         interzonal_floors = []
-        zone.spaces.each do |space|
+        spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             space.surfaces.each do |surface|
                 next if interzonal_floors.include?(surface)
@@ -1000,9 +1000,9 @@ class Geometry
         return interzonal_floors
     end
 
-    def self.get_thermal_zone_below_grade_exterior_walls(zone)
+    def self.get_spaces_below_grade_exterior_walls(spaces)
         below_grade_exterior_walls = []
-        zone.spaces.each do |space|
+        spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             next if not Geometry.space_is_below_grade(space)
             space.surfaces.each do |surface|
@@ -1015,9 +1015,9 @@ class Geometry
         return below_grade_exterior_walls
     end
 
-    def self.get_thermal_zone_below_grade_exterior_floors(zone)
+    def self.get_spaces_below_grade_exterior_floors(spaces)
         below_grade_exterior_floors = []
-        zone.spaces.each do |space|
+        spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             next if not Geometry.space_is_below_grade(space)
             space.surfaces.each do |surface|

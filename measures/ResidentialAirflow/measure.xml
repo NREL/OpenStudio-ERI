@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>278fe804-cda1-4b91-b5aa-434d15e9b12d</version_id>
-  <version_modified>20170214T155111Z</version_modified>
+  <version_id>33e3405d-e6f1-402c-a7a2-2d76808cfd63</version_id>
+  <version_modified>20170218T013328Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -71,7 +71,7 @@
       <default_value>100</default_value>
     </argument>
     <argument>
-      <name>unfinished_attic_ach</name>
+      <name>unfinished_attic_sla</name>
       <display_name>Unfinished Attic: SLA</display_name>
       <description>Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.</description>
       <type>Double</type>
@@ -777,19 +777,19 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AEAAA470</checksum>
+      <checksum>B3399235</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>23B6B8C0</checksum>
+      <checksum>EBE267C7</checksum>
     </file>
     <file>
       <filename>residential_airflow_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D3BB129D</checksum>
+      <checksum>7884D23F</checksum>
     </file>
     <file>
       <version>
@@ -800,7 +800,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1AC03564</checksum>
+      <checksum>23A88C4F</checksum>
     </file>
   </files>
 </measure>

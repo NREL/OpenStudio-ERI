@@ -321,6 +321,19 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
             return false
         end
     end
+    
+    # Store info for HVAC Sizing measure
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
+        return false
+    end
+    units.each do |unit|
+        unit.spaces.each do |space|
+            next if not spaces.include?(space)
+            unit.setFeature(Constants.SizingInfoSpaceWallsInsulated(space), ((fbsmtWallCavityDepth > 0 and fbsmtWallCavityInsRvalueInstalled > 0) or (fbsmtWallContInsThickness > 0 and fbsmtWallContInsRvalue > 0)))
+            unit.setFeature(Constants.SizingInfoSpaceCeilingInsulated(space), false)
+        end
+    end
 
     # Remove any constructions/materials that aren't used
     HelperMethods.remove_unused_constructions_and_materials(model, runner)

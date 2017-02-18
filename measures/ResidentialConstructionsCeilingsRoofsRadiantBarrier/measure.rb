@@ -81,6 +81,15 @@ class ProcessConstructionsCeilingsRoofsRadiantBarrier < OpenStudio::Ruleset::Mod
         return false
     end
     
+    # Store info for HVAC Sizing measure
+    units = Geometry.get_building_units(model, runner)
+    if units.nil?
+        return false
+    end
+    units.each do |unit|
+        unit.setFeature(Constants.SizingInfoAtticHasRadiantBarrier, has_rb)
+    end
+    
     # Remove any constructions/materials that aren't used
     HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
