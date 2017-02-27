@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>38ee3663-4fa7-4943-8a1d-39609fc196fc</version_id>
-  <version_modified>20170218T013334Z</version_modified>
+  <version_id>d597bdcb-4374-47d0-b8a3-7c8dfb067d66</version_id>
+  <version_modified>20170227T161815Z</version_modified>
   <xml_checksum>A02778FF</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>

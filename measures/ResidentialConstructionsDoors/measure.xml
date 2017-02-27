@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_doors</name>
   <uid>b78f10fa-b38d-4de2-86e9-344a78e68847</uid>
-  <version_id>68b289b4-9795-499c-b271-e0755f9b11a6</version_id>
-  <version_modified>20170218T013330Z</version_modified>
+  <version_id>0fa267f6-72ea-4efa-b543-40922151ef39</version_id>
+  <version_modified>20170227T161808Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsDoors</class_name>
   <display_name>Set Residential Door Construction</display_name>

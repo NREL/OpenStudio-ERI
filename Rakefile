@@ -240,7 +240,7 @@ task :update_resources do
   require 'bcl'
   require 'openstudio'
 
-  measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry =='.' || entry == '..') }
+  measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
   measures.each do |m|
     measurerb = File.expand_path("../measures/#{m}/measure.rb", __FILE__)
     
@@ -263,8 +263,42 @@ task :update_resources do
           end
         end
       end
-    end  
+    end
     
+    # Add/update ssc files as needed
+    if m == "ResidentialPhotovoltaics"
+      ssc_path = File.expand_path(File.join(File.dirname(__FILE__), "resources/sam-sdk-2017-1-17"))
+      if /win/.match(RUBY_PLATFORM) or /mingw/.match(RUBY_PLATFORM)
+        ssc_path = File.join(ssc_path, 'win64')
+      elsif /darwin/.match(RUBY_PLATFORM)
+        ssc_path = File.join(ssc_path, 'osx64')
+      elsif /linux2/.match(RUBY_PLATFORM)
+        ssc_path = File.join(ssc_path, 'linux64')
+      else
+        puts "Platform not supported: #{RUBY_PLATFORM}"
+      end
+      Dir.entries(ssc_path).select {|entry| !(entry =='.' || entry == '..') }.each do |resource|
+        resource = File.join(ssc_path, resource)
+        if not File.exist?(resource)
+          puts "Cannot find resource: #{resource}."
+          next
+        end
+        r = File.basename(resource)
+        dest_resource = File.expand_path("../measures/#{m}/resources/#{r}", __FILE__)
+        measure_resource_dir = File.dirname(dest_resource)
+        if not File.directory?(measure_resource_dir)
+          FileUtils.mkdir_p(measure_resource_dir)
+        end
+        if not File.file?(dest_resource)
+          FileUtils.cp(resource, measure_resource_dir)
+          puts "Added #{r} to #{m}/resources."
+        elsif not FileUtils.compare_file(resource, dest_resource)
+          FileUtils.cp(resource, measure_resource_dir)
+          puts "Updated #{r} in #{m}/resources."
+        end
+      end
+    end
+
     # Add/update resource files as needed
     resources.each do |resource|
       if not File.exist?(resource)
@@ -289,7 +323,7 @@ task :update_resources do
     # Any extra resource files?
     if File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
       Dir.foreach(File.expand_path("../measures/#{m}/resources", __FILE__)) do |item|
-        next if item == '.' or item == '..'
+        next if item == '.' or item == '..' or item.end_with? '.dll' or item.end_with? '.exp' or item.end_with? '.exe' or item.end_with? '.so' or item.end_with? '.dylib' or item.end_with? '.lib' 
         if subdir_resources.include?(item)
           item = subdir_resources[item]
         end
@@ -326,8 +360,7 @@ task :update_resources do
         rescue Exception => e
             puts e.message
         end
-    end
-    
+    end      
     
   end
 

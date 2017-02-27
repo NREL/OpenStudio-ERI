@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>8bf570d5-7d02-465b-b692-5795b0daae6f</version_id>
-  <version_modified>20170218T013332Z</version_modified>
+  <version_id>83a2fadf-b26d-4bfe-855f-dbb686f35293</version_id>
+  <version_modified>20170227T161812Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorWoodStud</class_name>
   <display_name>Set Residential Walls - Wood Stud Construction</display_name>

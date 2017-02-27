@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>d22ee5cb-9b38-4787-9911-20d7abaa5bcd</version_id>
-  <version_modified>20170218T013332Z</version_modified>
+  <version_id>1d66cc1d-111c-4504-8bee-23692fff8bad</version_id>
+  <version_modified>20170227T161812Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSteelStud</class_name>
   <display_name>Set Residential Walls - Steel Stud Construction</display_name>

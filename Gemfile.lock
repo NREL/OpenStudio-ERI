@@ -47,7 +47,8 @@ GEM
     excon (0.55.0)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
-    hashie (3.5.1)
+    ffi (1.9.17-x64-mingw32)
+    hashie (3.5.5)
     json (1.8.6)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
@@ -85,7 +86,7 @@ GEM
     rubocop-checkstyle_formatter (0.1.1)
       rubocop (>= 0.14.0)
     ruby-progressbar (1.8.1)
-    rubyXL (3.3.22)
+    rubyXL (3.3.23)
       nokogiri (>= 1.4.4)
       rubyzip (>= 1.1.6)
     rubyzip (1.2.1)
@@ -113,6 +114,7 @@ DEPENDENCIES
   colored (~> 1.2)
   coveralls
   docker-api
+  ffi (~> 1.9.17)
   json (~> 1.8)
   minitest (~> 5.9)
   minitest-ci!

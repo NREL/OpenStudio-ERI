@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>ad114cb6-7434-4908-bcdf-ace260ea50b2</version_id>
-  <version_modified>20170218T013338Z</version_modified>
+  <version_id>4a994ef0-3108-4063-9d73-61fca6a3b85f</version_id>
+  <version_modified>20170227T161821Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessSingleSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Single-Speed Central Air Conditioner</display_name>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>36727721-2adb-4b78-ab61-6ded1b233f63</version_id>
-  <version_modified>20170218T013342Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>369b5d2f-c9b0-4a88-acdd-bdbcdf674e6f</version_id>
+  <version_modified>20170227T182608Z</version_modified>
+  <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
@@ -118,7 +118,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Onsite Power Generation.Photovoltaic</tag>
@@ -177,17 +176,6 @@
       <checksum>86A38CF7</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>1.13.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>0090FAB7</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -240,6 +228,83 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>EBE267C7</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>1.13.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>EF736EF5</checksum>
+    </file>
+    <file>
+      <filename>libcurl.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>212CE8F6</checksum>
+    </file>
+    <file>
+      <filename>libeay32.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BC55E41D</checksum>
+    </file>
+    <file>
+      <filename>libssh2.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>51F3FA96</checksum>
+    </file>
+    <file>
+      <filename>msvcp120.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EB750CD0</checksum>
+    </file>
+    <file>
+      <filename>msvcr120.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CBEC1BB0</checksum>
+    </file>
+    <file>
+      <filename>sdktool.exe</filename>
+      <filetype>exe</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>ED76FB3E</checksum>
+    </file>
+    <file>
+      <filename>ssc.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A425E261</checksum>
+    </file>
+    <file>
+      <filename>ssc.exp</filename>
+      <filetype>exp</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9825C3DE</checksum>
+    </file>
+    <file>
+      <filename>ssc.lib</filename>
+      <filetype>lib</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>06263298</checksum>
+    </file>
+    <file>
+      <filename>ssleay32.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>11A9104E</checksum>
+    </file>
+    <file>
+      <filename>sscapi.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>68FC7AD9</checksum>
     </file>
   </files>
 </measure>

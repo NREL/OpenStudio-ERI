@@ -27,3 +27,5 @@ group :test do
 end
 
 gem 'docker-api', require: 'docker'
+
+gem 'ffi', '~> 1.9.17'

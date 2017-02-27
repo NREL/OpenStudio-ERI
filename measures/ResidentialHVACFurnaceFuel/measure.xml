@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_fuel</name>
   <uid>1a71ae9e-5485-4cca-a369-16c6b8a9c1d8</uid>
-  <version_id>f3053f66-619f-4709-a17e-da5b58693a71</version_id>
-  <version_modified>20170218T013339Z</version_modified>
+  <version_id>87b1fd73-ef9b-4169-a2e3-15ae39504f89</version_id>
+  <version_modified>20170227T161824Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessFurnaceFuel</class_name>
   <display_name>Set Residential Furnace Fuel</display_name>

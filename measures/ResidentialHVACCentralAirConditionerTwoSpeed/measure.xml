@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>f3232500-a7eb-4151-bdf8-2290ce5e24d5</version_id>
-  <version_modified>20170218T013338Z</version_modified>
+  <version_id>8b96f798-3ebc-4a4f-9282-ad16ea7b5e87</version_id>
+  <version_modified>20170227T161822Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>

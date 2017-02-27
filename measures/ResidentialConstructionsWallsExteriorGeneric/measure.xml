@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>3d164c12-4ddd-4194-afc2-ba516f12211d</version_id>
-  <version_modified>20170218T013332Z</version_modified>
+  <version_id>dedbe07b-da66-4de8-8f55-a6b7050b3b7b</version_id>
+  <version_modified>20170227T161811Z</version_modified>
   <xml_checksum>16B68B0C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
