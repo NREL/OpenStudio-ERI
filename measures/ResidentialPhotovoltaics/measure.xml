@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>05b78edb-76d7-47c7-8f60-91bcd9248e21</version_id>
-  <version_modified>20170227T195634Z</version_modified>
+  <version_id>09f0882f-566f-4408-bb13-5dbad52fdf31</version_id>
+  <version_modified>20170227T230913Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -290,6 +290,18 @@
       <checksum>11A9104E</checksum>
     </file>
     <file>
+      <filename>ssc_ffi.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>5056C130</checksum>
+    </file>
+    <file>
+      <filename>ssc_api.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C9F510A2</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -298,13 +310,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4457174A</checksum>
-    </file>
-    <file>
-      <filename>sscapi.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>41397853</checksum>
+      <checksum>406FA4C3</checksum>
     </file>
   </files>
 </measure>

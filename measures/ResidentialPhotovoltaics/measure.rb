@@ -254,7 +254,7 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     
     # TODO: testing sam call
     $:.unshift 'C:/Ruby22-x64/lib/ruby/gems/2.2.0/gems/ffi-1.9.17-x64-mingw32/lib' # TODO: why do i have to specify this when running pat? do we need this gem shipped with openstudio?
-    require "#{File.dirname(__FILE__)}/resources/sscapi"    
+    require "#{File.dirname(__FILE__)}/resources/ssc_api"
     
     wf = model.weatherFile.get
     # Sometimes path is available, sometimes just url. Should be improved in OS 2.0.
@@ -267,12 +267,19 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
       epw_path = File.join(File.dirname(__FILE__), "resources", epw_path)
     end
         
-    ssc = RbSSC.new
-    p_dat = ssc.data_create
-    setup_pv(ssc, p_dat)
-    ssc.data_set_string(p_dat, 'solar_resource_file', epw_path)
-    p_mod = ssc.module_create("pvwattsv5")
-    ssc.module_exec_set_print(0)
+    p_data = SscApi.create_data_object
+    SscApi.set_number(p_data, 'system_capacity', 4)
+    SscApi.set_number(p_data, 'module_type', 0)
+    SscApi.set_number(p_data, 'array_type', 0)
+    SscApi.set_number(p_data, 'losses', 14)
+    SscApi.set_number(p_data, 'tilt', 15)
+    SscApi.set_number(p_data, 'azimuth', 180)
+    SscApi.set_number(p_data, 'adjust:constant', 0)
+    SscApi.set_string(p_data, 'solar_resource_file', epw_path)
+    p_mod = SscApi.create_module("pvwattsv5")
+    SscApi.set_print(false)
+    SscApi.execute_module(p_mod, p_data)
+    puts SscApi.get_number(p_data, "ac_annual")
     
     return true
 
