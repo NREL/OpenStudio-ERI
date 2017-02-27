@@ -253,27 +253,30 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     runner.registerInfo("Added #{OpenStudio::convert(panel_length ** 2,"m^2","ft^2").get.round(1)} square feet of PV.")
     
     # TODO: testing sam call
-    $:.unshift 'C:/Ruby22-x64/lib/ruby/gems/2.2.0/gems/ffi-1.9.17-x64-mingw32/lib' # TODO: why do i have to specify this when running pat?
-    require "#{File.dirname(__FILE__)}/resources/sscapi"    
-    
-    wf = model.weatherFile.get
-    # Sometimes path is available, sometimes just url. Should be improved in OS 2.0.
-    if wf.path.is_initialized
-      epw_path = wf.path.get.to_s
-    else
-      epw_path = wf.url.to_s.sub("file:///","").sub("file://","").sub("file:","")
+    test_sam = false
+    if test_sam
+      $:.unshift 'C:/Ruby22-x64/lib/ruby/gems/2.2.0/gems/ffi-1.9.17-x64-mingw32/lib' # TODO: why do i have to specify this when running pat?
+      require "#{File.dirname(__FILE__)}/resources/sscapi"    
+      
+      wf = model.weatherFile.get
+      # Sometimes path is available, sometimes just url. Should be improved in OS 2.0.
+      if wf.path.is_initialized
+        epw_path = wf.path.get.to_s
+      else
+        epw_path = wf.url.to_s.sub("file:///","").sub("file://","").sub("file:","")
+      end
+      if not File.exist? epw_path # Handle relative paths for unit tests
+        epw_path = File.join(measure_dir, "resources", epw_path)
+      end
+          
+      ssc = RbSSC.new
+      p_dat = ssc.data_create
+      setup_pv(ssc, p_dat)
+      ssc.data_set_string(p_dat, 'solar_resource_file', epw_path)
+      p_mod = ssc.module_create("pvwattsv5")
+      ssc.module_exec_set_print(0)  
+      ssc.data_get_number(p_dat, "ac_annual")
     end
-    if not File.exist? epw_path # Handle relative paths for unit tests
-      epw_path = File.join(measure_dir, "resources", epw_path)
-    end
-        
-    ssc = RbSSC.new
-    p_dat = ssc.data_create
-    setup_pv(ssc, p_dat)
-    ssc.data_set_string(p_dat, 'solar_resource_file', epw_path)
-    p_mod = ssc.module_create("pvwattsv5")
-    ssc.module_exec_set_print(0)  
-    ssc.data_get_number(p_dat, "ac_annual")
     
     return true
 
