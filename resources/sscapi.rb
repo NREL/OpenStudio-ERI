@@ -6,11 +6,12 @@ module SSC
   ffi_lib FFI::Library::LIBC
   
   if /win/.match(RUBY_PLATFORM) or /mingw/.match(RUBY_PLATFORM)
-    ffi_lib "./resources/ssc.dll"
+    # ffi_lib "./resources/ssc.dll"
+    ffi_lib "#{File.dirname(__FILE__)}/ssc.dll"
   elsif /darwin/.match(RUBY_PLATFORM)
-    ffi_lib "ssc.dylib"
+    ffi_lib "#{File.dirname(__FILE__)}/ssc.dylib"
   elsif /linux2/.match(RUBY_PLATFORM)
-    ffi_lib "ssc.so"
+    ffi_lib "#{File.dirname(__FILE__)}/ssc.so"
   else
     puts "Platform not supported: #{RUBY_PLATFORM}"
   end
@@ -375,4 +376,4 @@ def run_test
   
 end
 
-run_test
+# run_test

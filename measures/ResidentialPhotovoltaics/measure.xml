@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>369b5d2f-c9b0-4a88-acdd-bdbcdf674e6f</version_id>
-  <version_modified>20170227T182608Z</version_modified>
+  <version_id>05b78edb-76d7-47c7-8f60-91bcd9248e21</version_id>
+  <version_modified>20170227T195634Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -230,17 +230,6 @@
       <checksum>EBE267C7</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>1.13.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>EF736EF5</checksum>
-    </file>
-    <file>
       <filename>libcurl.dll</filename>
       <filetype>dll</filetype>
       <usage_type>resource</usage_type>
@@ -301,10 +290,21 @@
       <checksum>11A9104E</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>1.13.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4457174A</checksum>
+    </file>
+    <file>
       <filename>sscapi.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>68FC7AD9</checksum>
+      <checksum>41397853</checksum>
     </file>
   </files>
 </measure>
