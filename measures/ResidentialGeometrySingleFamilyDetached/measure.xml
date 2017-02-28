@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>3a4a028b-8b8d-4cb5-9598-847e84435c0b</version_id>
-  <version_modified>20170227T161815Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>366f63b8-2832-43a3-9452-7b77ae33605f</version_id>
+  <version_modified>20170228T174553Z</version_modified>
+  <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
   <display_name>Create Residential Single-Family Detached Geometry</display_name>
   <description>Sets the basic geometry for the building. Building is limited to one foundation type. Garage is tucked within the building, on the front left or front right corners of the building.</description>
@@ -242,7 +242,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>
@@ -303,7 +302,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EBE267C7</checksum>
+      <checksum>DE1177FB</checksum>
     </file>
   </files>
 </measure>

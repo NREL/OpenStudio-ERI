@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>5a7ae205-bdc2-4daf-b29e-b6f0a59366a6</uid>
-  <version_id>bb1a2937-baf0-4d28-ad26-af457a84ce35</version_id>
-  <version_modified>20170227T161805Z</version_modified>
-  <xml_checksum>C75AF51E</xml_checksum>
+  <version_id>e2622ade-b4c0-4941-ac71-983d2d83d1d4</version_id>
+  <version_modified>20170228T174553Z</version_modified>
+  <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
   <description>Sets (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts.</description>
@@ -598,7 +598,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Infiltration</tag>
@@ -748,22 +747,22 @@
       <checksum>BAF0C714</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A43AD845</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B3399235</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D7840724</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EBE267C7</checksum>
+      <checksum>DE1177FB</checksum>
     </file>
   </files>
 </measure>

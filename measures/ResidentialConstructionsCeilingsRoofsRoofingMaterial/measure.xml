@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_roofing_material</name>
   <uid>3239e82d-5efc-4a17-9223-c7c1cd8c9cf7</uid>
-  <version_id>7bdeabca-cf66-425c-b3d0-f4524ccc1091</version_id>
-  <version_modified>20170227T161808Z</version_modified>
-  <xml_checksum>A02778FF</xml_checksum>
+  <version_id>d59f60c2-8335-471f-886f-9e8fd384397c</version_id>
+  <version_modified>20170228T174553Z</version_modified>
+  <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRoofingMaterial</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roofing Material</display_name>
   <description>This measure assigns the roofing material to all roof surfaces.</description>
@@ -91,7 +91,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -179,7 +178,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EBE267C7</checksum>
+      <checksum>DE1177FB</checksum>
     </file>
   </files>
 </measure>

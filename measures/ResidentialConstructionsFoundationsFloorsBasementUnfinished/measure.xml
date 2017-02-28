@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_unfinished</name>
   <uid>ebc21070-2d4b-4a2a-bd15-f18bf3e77b49</uid>
-  <version_id>33018d34-9979-4aff-a5be-f94236bf05d8</version_id>
-  <version_modified>20170227T161809Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>aa65e7d2-d733-42c5-a5ef-f83c6bfaa4c2</version_id>
+  <version_modified>20170228T174553Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementUnfinished</class_name>
   <display_name>Set Residential Foundations/Floors - Unfinished Basement Constructions</display_name>
   <description>This measure assigns constructions to the unfinished basement ceilings, walls, and floors.</description>
@@ -166,7 +166,6 @@
       <default_value>9.25</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -271,7 +270,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EBE267C7</checksum>
+      <checksum>DE1177FB</checksum>
     </file>
   </files>
 </measure>

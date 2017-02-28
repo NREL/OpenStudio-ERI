@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_fireplace</name>
   <uid>0565d3b2-593b-480b-a742-a6ec7058d3c4</uid>
-  <version_id>3fe28e53-7e58-4edd-99e2-10d7e6748f20</version_id>
-  <version_modified>20170227T161826Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>a8791192-e2d2-4077-b9e7-9b376f7d64e0</version_id>
+  <version_modified>20170228T174555Z</version_modified>
+  <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasFireplace</class_name>
   <display_name>Set Residential Gas Fireplace</display_name>
   <description>Adds (or replaces) a residential gas fireplace with the specified efficiency and schedule. For multifamily buildings, the fireplace can be set for all units of the building.</description>
@@ -91,7 +91,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Gas Equipment</tag>
@@ -166,7 +165,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EBE267C7</checksum>
+      <checksum>DE1177FB</checksum>
     </file>
   </files>
 </measure>

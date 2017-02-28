@@ -486,6 +486,15 @@ class Constants
   def self.PVModuleTypeCSI
     return 'c-si'
   end
+  def self.PVModuleTypeStandard
+    return 'standard'
+  end
+  def self.PVModuleTypePremium
+    return 'premium'
+  end
+  def self.PVModuleTypeThinFilm
+    return 'thin film'
+  end
   def self.MonthNames
     return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   end

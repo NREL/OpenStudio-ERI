@@ -266,7 +266,7 @@ task :update_resources do
     end
     
     # Add/update ssc files as needed
-    if m == "ResidentialPhotovoltaics"
+    if m == "ResidentialPhotovoltaicsSAM"
       ssc_path = File.expand_path(File.join(File.dirname(__FILE__), "resources/sam-sdk-2017-1-17"))
       if /win/.match(RUBY_PLATFORM) or /mingw/.match(RUBY_PLATFORM)
         ssc_path = File.join(ssc_path, 'win64')

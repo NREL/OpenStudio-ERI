@@ -1,12 +1,12 @@
 <measure>
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
-  <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>a0ad1536-c668-4d12-9a23-547c70a187ac</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
+  <version_id>75748f99-6f2a-4734-ad16-77855ab0ee25</version_id>
+  <version_modified>20170228T182537Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
-  <display_name>Set Residential Photovoltaics</display_name>
+  <display_name>Set Residential Photovoltaics SAM</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
   <modeler_description>Any photovoltaic panels, generators, inverters, and electric load center distribution objects are removed. A photovoltaic panel, along with generator and inverter are added to the electric load center distribution object.</modeler_description>
   <arguments>
@@ -27,11 +27,19 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>c-si</default_value>
+      <default_value>standard</default_value>
       <choices>
         <choice>
-          <value>c-si</value>
-          <display_name>c-si</display_name>
+          <value>standard</value>
+          <display_name>standard</display_name>
+        </choice>
+        <choice>
+          <value>premium</value>
+          <display_name>premium</display_name>
+        </choice>
+        <choice>
+          <value>thin film</value>
+          <display_name>thin film</display_name>
         </choice>
       </choices>
     </argument>
@@ -146,6 +154,30 @@
   </attributes>
   <files>
     <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>64B3CADA</checksum>
+    </file>
+    <file>
+      <filename>residential_photovoltaics_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>32E39407</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E90A54AB</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>86A38CF7</checksum>
+    </file>
+    <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
       <usage_type>test</usage_type>
@@ -158,52 +190,10 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>Modules.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F7F10234</checksum>
-    </file>
-    <file>
-      <filename>residential_photovoltaics_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>81A3438C</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>86A38CF7</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3C131B97</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DCB12FCF</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>64B3CADA</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E90A54AB</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BAAF2AEF</checksum>
+      <checksum>B3399235</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
@@ -212,21 +202,94 @@
       <checksum>048F7BD2</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
+      <filename>libcurl.dll</filename>
+      <filetype>dll</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B3399235</checksum>
+      <checksum>212CE8F6</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>1.13.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
+      <filename>libeay32.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BC55E41D</checksum>
+    </file>
+    <file>
+      <filename>libssh2.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>51F3FA96</checksum>
+    </file>
+    <file>
+      <filename>msvcp120.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EB750CD0</checksum>
+    </file>
+    <file>
+      <filename>msvcr120.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CBEC1BB0</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>0090FAB7</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>3C131B97</checksum>
+    </file>
+    <file>
+      <filename>sdktool.exe</filename>
+      <filetype>exe</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>ED76FB3E</checksum>
+    </file>
+    <file>
+      <filename>ssc.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A425E261</checksum>
+    </file>
+    <file>
+      <filename>ssc.exp</filename>
+      <filetype>exp</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9825C3DE</checksum>
+    </file>
+    <file>
+      <filename>ssc.lib</filename>
+      <filetype>lib</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>06263298</checksum>
+    </file>
+    <file>
+      <filename>ssc_api.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C9F510A2</checksum>
+    </file>
+    <file>
+      <filename>ssc_ffi.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F9271192</checksum>
+    </file>
+    <file>
+      <filename>ssleay32.dll</filename>
+      <filetype>dll</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>11A9104E</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DCB12FCF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BAAF2AEF</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
@@ -235,10 +298,27 @@
       <checksum>D7840724</checksum>
     </file>
     <file>
+      <filename>Modules.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F7F10234</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DE1177FB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>1.14.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8E54B549</checksum>
     </file>
   </files>
 </measure>

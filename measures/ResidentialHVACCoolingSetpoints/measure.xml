@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>eb918792-d70c-4751-8a9e-ce5dd6f7295a</version_id>
-  <version_modified>20170227T161822Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>703aa4f5-5b1f-4331-94c1-92bfc16317d5</version_id>
+  <version_modified>20170228T174555Z</version_modified>
+  <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
   <description>This measure creates the cooling season schedules based on weather data, and the cooling setpoint schedules.</description>
@@ -31,7 +31,6 @@
       <default_value>76</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.HVAC Controls</tag>
@@ -179,22 +178,22 @@
       <checksum>38632BB3</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A43AD845</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B3399235</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D7840724</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EBE267C7</checksum>
+      <checksum>DE1177FB</checksum>
     </file>
   </files>
 </measure>

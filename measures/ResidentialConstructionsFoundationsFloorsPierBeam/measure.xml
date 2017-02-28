@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_pier_beam</name>
   <uid>c47f2fc2-008e-403c-82e6-fd751b4f3b8a</uid>
-  <version_id>42941329-d150-40a5-b093-5f22e4a4cc5f</version_id>
-  <version_modified>20170227T161810Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>69ecf12c-e6cf-470f-acaa-8ab9ef88f59b</version_id>
+  <version_modified>20170228T174553Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsPierBeam</class_name>
   <display_name>Set Residential Foundations/Floors - Pier &amp; Beam Construction</display_name>
   <description>This measure assigns a wood stud construction to the ceiling of the pier &amp; beam space.</description>
@@ -54,7 +54,6 @@
       <default_value>0.13</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -99,7 +98,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EBE267C7</checksum>
+      <checksum>DE1177FB</checksum>
     </file>
   </files>
 </measure>

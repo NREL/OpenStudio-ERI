@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>8aa3fe3d-6b33-49f9-afe8-4ea84f1602bb</version_id>
-  <version_modified>20170227T161810Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>00d34aa6-2b12-4042-b7d7-dd6498a1a10f</version_id>
+  <version_modified>20170228T174553Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
   <description>This measure assigns a construction to slabs-on-grade.</description>
@@ -111,7 +111,6 @@
       <default_value>0.2</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
@@ -216,7 +215,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EBE267C7</checksum>
+      <checksum>DE1177FB</checksum>
     </file>
   </files>
 </measure>
