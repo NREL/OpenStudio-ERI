@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>9e8b24f5-f70e-4968-89b8-7a24cf798680</version_id>
-  <version_modified>20170228T174553Z</version_modified>
+  <version_id>61b70d0e-8965-4003-85c9-b84afc4433c5</version_id>
+  <version_modified>20170301T233630Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Set Residential Electric Cooking Range</display_name>

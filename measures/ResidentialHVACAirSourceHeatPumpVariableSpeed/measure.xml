@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_air_source_heat_pump</name>
   <uid>8d15f4f7-8bbb-4b2e-b6d0-aa861f22b697</uid>
-  <version_id>e478c1b2-0578-45ed-8d0e-df9606404237</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <version_id>e338820b-bfdc-4180-bc1a-8a7c27fc64bc</version_id>
+  <version_modified>20170301T233635Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVariableSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Variable-Speed Air Source Heat Pump</display_name>

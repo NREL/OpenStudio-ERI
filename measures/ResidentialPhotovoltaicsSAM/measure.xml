@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>75748f99-6f2a-4734-ad16-77855ab0ee25</version_id>
-  <version_modified>20170228T182537Z</version_modified>
+  <version_id>490efdb7-f36f-4e6a-a2c9-cda6bea4d1ef</version_id>
+  <version_modified>20170301T235813Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics SAM</display_name>
@@ -154,42 +154,6 @@
   </attributes>
   <files>
     <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>64B3CADA</checksum>
-    </file>
-    <file>
-      <filename>residential_photovoltaics_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>32E39407</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E90A54AB</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>86A38CF7</checksum>
-    </file>
-    <file>
-      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FB253570</checksum>
-    </file>
-    <file>
-      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E23378AA</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -298,12 +262,6 @@
       <checksum>D7840724</checksum>
     </file>
     <file>
-      <filename>Modules.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F7F10234</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -318,7 +276,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8E54B549</checksum>
+      <checksum>CB9FBF34</checksum>
     </file>
   </files>
 </measure>

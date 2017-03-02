@@ -185,40 +185,52 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     p_mod = SscApi.create_module("pvwattsv5")
     SscApi.set_print(false)
     SscApi.execute_module(p_mod, p_data)
-    hourly_kwhs = SscApi.get_array(p_data, "ac").collect {|x| (x / 1000.0).round(2)}
-    runner.registerInfo(hourly_kwhs.to_s)
+    hourly_whs = SscApi.get_array(p_data, "ac")
+    runner.registerInfo("#{(hourly_whs.inject(0){ |sum, x| sum + x } / 8760.0).round(2)} W")
+      
+    obj_name = Constants.ObjectNamePhotovoltaics
+      
+    units.each do |unit|  
+      
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+      
+      control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
+      control_slave_zones_hash.each do |control_zone, slave_zones|      
+        
+        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
+        other_equip_def.setName(obj_name + " equip def")
+        other_equip_def.setFractionRadiant(0)
+        other_equip_def.setFractionLatent(0)
+        other_equip_def.setFractionLost(1)        
+        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
+        other_equip.setName(obj_name + " equip")
+        other_equip.setFuelType("Electricity")
+        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
+        other_equip.setSpace(control_zone.spaces[0])
+        other_equip.setEndUseSubcategory(obj_name)
+        
+        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+        actuator.setName("#{obj_name} actuator")
+        
+        program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
+        program.setName(obj_name + " program")
+        program.addLine("Set #{actuator.name} = -#{(hourly_whs.inject(0){ |sum, x| sum + x } / 8760.0).round(2)}") # W
+        
+        program_calling_manager = OpenStudio::Model::EnergyManagementSystemProgramCallingManager.new(model)
+        program_calling_manager.setName(obj_name + " program calling manager")
+        program_calling_manager.setCallingPoint("EndOfSystemTimestepAfterHVACReporting")
+        program_calling_manager.addProgram(program)
+        
+        break
+    
+      end
+      
+      break
+    
+    end
       
     return true
 
-  end
-  
-  def _getPVModuleCharacteristics(module_type)
-  
-    modules_csv = File.join(File.dirname(__FILE__), "resources", "Modules.csv")
-    modules_csvlines = []
-    File.open(modules_csv) do |file|
-      file.each do |line|
-        line = line.strip.chomp.chomp(',').chomp(',').chomp # remove RHS whitespace and extra commas
-        modules_csvlines << line
-      end
-    end
-
-    pv_module = nil
-    modules_csvlines[1..-1].each_with_index do |line, i|
-      pv_module = Hash[modules_csvlines[0].split(',').zip(line.split(','))]
-      break if pv_module["Material"].downcase == module_type
-    end
-    
-    if pv_module.nil?
-      runner.registerError("Could not find PV module characteristics.")
-    else
-      pv_module["Impo"] = pv_module["Impo"].to_f
-      pv_module["Vmpo"] = pv_module["Vmpo"].to_f
-      pv_module["Area"] = pv_module["Area"].to_f
-    end
-    
-    return pv_module
-  
   end
   
   def get_abs_azimuth(azimuth_type, relative_azimuth, building_orientation)

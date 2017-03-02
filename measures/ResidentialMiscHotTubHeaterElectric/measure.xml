@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater_elec</name>
   <uid>05dab71a-88e0-4c98-84c4-232e380b9944</uid>
-  <version_id>83ab40e8-a947-4ee8-bc10-c2d54a102147</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <version_id>0fc03bd8-6c65-4a3c-b997-a03c7380b55c</version_id>
+  <version_modified>20170301T233638Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialHotTubHeaterElec</class_name>
   <display_name>Set Residential Hot Tub Electric Heater</display_name>

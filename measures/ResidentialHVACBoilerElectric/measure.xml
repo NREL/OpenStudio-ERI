@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>b7415dea-a601-4773-b4c7-e860abf95f73</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <version_id>b5721b26-bcb9-438f-8d29-09ec40e527c7</version_id>
+  <version_modified>20170301T233635Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>

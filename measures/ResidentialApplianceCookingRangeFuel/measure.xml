@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_fuel</name>
   <uid>68bdcee3-c301-4fe9-a99f-c7d8b5930c89</uid>
-  <version_id>de0e2475-61fd-49ba-9487-53de8095aa8b</version_id>
-  <version_modified>20170228T174553Z</version_modified>
+  <version_id>d0a0ed8c-e19d-4d28-8712-af9227e33f22</version_id>
+  <version_modified>20170301T233630Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeFuel</class_name>
   <display_name>Set Residential Fuel Cooking Range</display_name>

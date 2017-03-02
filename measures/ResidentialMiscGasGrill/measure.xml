@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>14c57284-7aa8-438e-9f19-3abd9d85a2c3</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <version_id>f34efaf4-0a82-444a-9431-8207e45d51ff</version_id>
+  <version_modified>20170301T233638Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>

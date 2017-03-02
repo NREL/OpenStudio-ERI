@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_extra_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>6d0b4a4d-e8e3-4f05-9a56-1af762bcfbe0</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <version_id>f6f4cfb3-17c4-4965-9131-a206f4a61e80</version_id>
+  <version_modified>20170301T233638Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialExtraRefrigerator</class_name>
   <display_name>Set Residential Extra Refrigerator</display_name>

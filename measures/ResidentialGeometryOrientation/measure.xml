@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_orientation</name>
   <uid>4bf5a7c5-bce4-404a-bc7b-72dc02b379f8</uid>
-  <version_id>ca07ffef-6510-4d2f-8e43-bb618ac36f26</version_id>
-  <version_modified>20170228T174553Z</version_modified>
+  <version_id>27903e5f-aec2-49d6-a706-776c89aad264</version_id>
+  <version_modified>20170301T233631Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialOrientation</class_name>
   <display_name>Set Residential Orientation</display_name>

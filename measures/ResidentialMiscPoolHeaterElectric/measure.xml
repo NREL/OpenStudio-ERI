@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater_elec</name>
   <uid>29865d0a-e979-4f09-87b9-7fa7154b9833</uid>
-  <version_id>10fd768a-0a5a-4484-83ec-22f52d954d51</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <version_id>f326cb76-f731-47de-894a-da72fe1ac467</version_id>
+  <version_modified>20170301T233638Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolHeaterElec</class_name>
   <display_name>Set Residential Pool Electric Heater</display_name>

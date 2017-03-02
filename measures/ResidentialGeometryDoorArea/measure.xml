@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>71294b89-c529-4ab8-bae9-f8f59de915f2</version_id>
-  <version_modified>20170228T174553Z</version_modified>
+  <version_id>dc68c8dd-6ab9-415e-97ba-0c3dd0575d39</version_id>
+  <version_modified>20170301T233631Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>

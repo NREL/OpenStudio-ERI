@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>f86cfdee-11d0-4a6e-a45b-605c9640cefa</version_id>
-  <version_modified>20170228T174553Z</version_modified>
+  <version_id>28111d9d-28de-40a5-8463-36e9424aeb33</version_id>
+  <version_modified>20170301T233630Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorICF</class_name>
   <display_name>Set Residential Walls - ICF Construction</display_name>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>a53ba916-30b0-4545-9b53-a5b7a7582388</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <version_id>56bbf0c7-40cc-4911-b63f-e3f45af6b6ae</version_id>
+  <version_modified>20170301T233638Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>

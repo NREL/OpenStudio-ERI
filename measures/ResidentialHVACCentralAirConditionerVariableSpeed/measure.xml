@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_central_air_conditioner</name>
   <uid>7387af85-5ae2-422c-9488-d64b8682dd06</uid>
-  <version_id>d680a41b-0a34-4db2-9d49-1555fc77c24d</version_id>
-  <version_modified>20170228T174555Z</version_modified>
+  <version_id>facc3ca3-05f6-4e6a-a898-f01bc21c574e</version_id>
+  <version_modified>20170301T233636Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessVariableSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Variable-Speed Central Air Conditioner</display_name>

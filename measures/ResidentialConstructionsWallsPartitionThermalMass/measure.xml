@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition_thermal_mass</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>1b6b04dc-95db-4530-b3ac-4a12bc4954d9</version_id>
-  <version_modified>20170228T174553Z</version_modified>
+  <version_id>6c65cbf0-da7a-4785-bfcc-49a1da1b8961</version_id>
+  <version_modified>20170301T233631Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsPartitionThermalMass</class_name>
   <display_name>Set Residential Walls - Partition Thermal Mass</display_name>
