@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>9283d941-364b-4c4d-a876-c0e3fae363b4</version_id>
-  <version_modified>20170301T233636Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>9288306d-d95d-4936-bf20-ea5a575f53ff</version_id>
+  <version_modified>20170304T001952Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a two-speed central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the two-speed central air conditioner can be set for all units of the building.</description>
@@ -75,16 +75,6 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
-    </argument>
-    <argument>
-      <name>airflow_rate</name>
-      <display_name>Rated Air Flow Rate</display_name>
-      <description>Air flow rate (cfm) per ton of rated capacity.</description>
-      <type>Double</type>
-      <units>cfm/ton</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>355.2</default_value>
     </argument>
     <argument>
       <name>fan_speed_ratio</name>
@@ -286,6 +276,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>
@@ -458,17 +449,6 @@
       <checksum>048F7BD2</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>1.13.2</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>D514FF3A</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -479,6 +459,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DE1177FB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>1.13.2</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B597E478</checksum>
     </file>
   </files>
 </measure>

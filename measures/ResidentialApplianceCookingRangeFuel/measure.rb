@@ -230,7 +230,7 @@ class ResidentialCookingRangeFuel < OpenStudio::Ruleset::ModelUserScript
             rng_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
             rng = OpenStudio::Model::OtherEquipment.new(rng_def)
             rng.setName(unit_obj_name_f)
-            #rng.setEndUseSubcategory(unit_obj_name_f) # FIXME: Not wrapped in OpenStudio
+            rng.setEndUseSubcategory(unit_obj_name_f)
             rng.setFuelType(HelperMethods.eplus_fuel_map(fuel_type))
             rng.setSpace(space)
             rng_def.setName(unit_obj_name_f)

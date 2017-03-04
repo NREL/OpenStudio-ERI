@@ -319,7 +319,7 @@ class ResidentialClothesDryerFuel < OpenStudio::Ruleset::ModelUserScript
             cd_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
             cd = OpenStudio::Model::OtherEquipment.new(cd_def)
             cd.setName(unit_obj_name_f)
-            #cd.setEndUseSubcategory(unit_obj_name_f) # FIXME: Not wrapped in OpenStudio
+            cd.setEndUseSubcategory(unit_obj_name_f)
             cd.setFuelType(HelperMethods.eplus_fuel_map(cd_fuel_type))
             cd.setSpace(space)
             cd_def.setName(unit_obj_name_f)

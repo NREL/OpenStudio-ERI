@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>fe5012ac-a14f-4b2f-abee-9b48cfc9747b</version_id>
-  <version_modified>20170301T233634Z</version_modified>
-  <xml_checksum>9882CBDB</xml_checksum>
+  <version_id>a19faec6-54c9-486e-8d3b-c45bc535a49c</version_id>
+  <version_modified>20170304T001950Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankElectric</class_name>
   <display_name>Set Residential Electric Tank Water Heater</display_name>
   <description>This measure adds a new residential electric storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building.</description>
@@ -65,6 +65,7 @@
       <default_value>0.92</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Water Heating</tag>

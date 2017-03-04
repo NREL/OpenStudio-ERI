@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>3078f280-d1f0-4589-a4e9-cd5186d90b87</version_id>
-  <version_modified>20170301T233635Z</version_modified>
-  <xml_checksum>0DA5C9E6</xml_checksum>
+  <version_id>290c6107-ebaf-47b6-853d-683409ddd9d0</version_id>
+  <version_modified>20170304T001951Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessSingleSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Single-Speed Air Source Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a single-speed air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the single-speed air source heat pump can be set for all units of the building.</description>
@@ -67,26 +67,6 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
-    </argument>
-    <argument>
-      <name>airflow_rate_cooling</name>
-      <display_name>Rated Air Flow Rate, Cooling</display_name>
-      <description>Air flow rate (cfm) per ton of rated capacity, in cooling mode.</description>
-      <type>Double</type>
-      <units>cfm/ton</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>394.2</default_value>
-    </argument>
-    <argument>
-      <name>airflow_rate_heating</name>
-      <display_name>Rated Air Flow Rate, Heating</display_name>
-      <description>Air flow rate (cfm) per ton of rated capacity, in heating mode.</description>
-      <type>Double</type>
-      <units>cfm/ton</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>384.1</default_value>
     </argument>
     <argument>
       <name>fan_speed_ratio_cooling</name>
@@ -479,6 +459,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>
@@ -641,17 +622,6 @@
       <checksum>048F7BD2</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.11.5</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>A92245E6</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -662,6 +632,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DE1177FB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.11.5</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>2C6C8478</checksum>
     </file>
   </files>
 </measure>

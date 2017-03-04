@@ -116,22 +116,6 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     ashpCapacityRatio.setDefaultValue(1.0)
     args << ashpCapacityRatio    
     
-    #make a double argument for ashp rated air flow rate cooling
-    ashpRatedAirFlowRateCooling = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("airflow_rate_cooling", true)
-    ashpRatedAirFlowRateCooling.setDisplayName("Rated Air Flow Rate, Cooling")
-    ashpRatedAirFlowRateCooling.setUnits("cfm/ton")
-    ashpRatedAirFlowRateCooling.setDescription("Air flow rate (cfm) per ton of rated capacity, in cooling mode.")
-    ashpRatedAirFlowRateCooling.setDefaultValue(344.1)
-    args << ashpRatedAirFlowRateCooling    
-    
-    #make a double argument for ashp rated air flow rate heating
-    ashpRatedAirFlowRateHeating = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("airflow_rate_heating", true)
-    ashpRatedAirFlowRateHeating.setDisplayName("Rated Air Flow Rate, Heating")
-    ashpRatedAirFlowRateHeating.setUnits("cfm/ton")
-    ashpRatedAirFlowRateHeating.setDescription("Air flow rate (cfm) per ton of rated capacity, in heating mode.")
-    ashpRatedAirFlowRateHeating.setDefaultValue(352.2)
-    args << ashpRatedAirFlowRateHeating
-
     #make a double argument for ashp fan speed ratio cooling
     ashpFanspeedRatioCooling = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_speed_ratio_cooling", true)
     ashpFanspeedRatioCooling.setDisplayName("Fan Speed Ratio Cooling")
@@ -314,8 +298,6 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     hpHeatingCOP = [runner.getDoubleArgumentValue("cop",user_arguments), runner.getDoubleArgumentValue("cop2",user_arguments)]
     hpSHRRated = [runner.getDoubleArgumentValue("shr",user_arguments), runner.getDoubleArgumentValue("shr2",user_arguments)]
     hpCapacityRatio = [runner.getDoubleArgumentValue("capacity_ratio",user_arguments), runner.getDoubleArgumentValue("capacity_ratio2",user_arguments)]
-    hpRatedAirFlowRateCooling = runner.getDoubleArgumentValue("airflow_rate_cooling",user_arguments)
-    hpRatedAirFlowRateHeating = runner.getDoubleArgumentValue("airflow_rate_heating",user_arguments)
     hpFanspeedRatioCooling = [runner.getDoubleArgumentValue("fan_speed_ratio_cooling",user_arguments), runner.getDoubleArgumentValue("fan_speed_ratio_cooling2",user_arguments)]
     hpFanspeedRatioHeating = [runner.getDoubleArgumentValue("fan_speed_ratio_heating",user_arguments), runner.getDoubleArgumentValue("fan_speed_ratio_heating2",user_arguments)]
     hpSupplyFanPowerRated = runner.getDoubleArgumentValue("fan_power_rated",user_arguments)
@@ -375,10 +357,12 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     supply.SpaceConditionedMult = 1 # Default used for central equipment    
     
     # Cooling Coil
+    hpRatedAirFlowRateCooling = 344.1 # cfm
     supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateCooling, hpFanspeedRatioCooling, hpCapacityRatio)
     supply = HVAC._processAirSystemCoolingCoil(runner, 2, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, supply)
 
     # Heating Coil
+    hpRatedAirFlowRateHeating = 352.2 # cfm
     supply.CFM_TON_Rated_Heat = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateHeating, hpFanspeedRatioHeating, hpCapacityRatio)
     supply = HVAC._processAirSystemHeatingCoil(hpHeatingCOP, hpHeatingInstalledHSPF, hpSupplyFanPowerRated, hpCapacityRatio, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, supply)
     

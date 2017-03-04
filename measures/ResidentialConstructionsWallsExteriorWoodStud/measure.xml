@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>c4f579fc-cbdd-4169-8c0d-7ba78a1822c0</version_id>
-  <version_modified>20170301T233631Z</version_modified>
-  <xml_checksum>1E963D9C</xml_checksum>
+  <version_id>b9c70c5a-6ee8-44bc-aafa-d63c9ce6121a</version_id>
+  <version_modified>20170304T001945Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorWoodStud</class_name>
   <display_name>Set Residential Walls - Wood Stud Construction</display_name>
   <description>This measure assigns a wood stud construction to above-grade exterior walls adjacent to finished space.</description>
@@ -83,6 +83,7 @@
       <default_value>0.25</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

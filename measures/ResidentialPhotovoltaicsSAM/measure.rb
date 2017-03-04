@@ -150,7 +150,7 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     pv_azimuth = PVAzimuth.new
     pv_tilt = PVTilt.new
     
-    @weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
+    @weather = WeatherProcess.new(model, runner, File.dirname(__FILE__), header_only=true)
     if @weather.error?
       return false
     end

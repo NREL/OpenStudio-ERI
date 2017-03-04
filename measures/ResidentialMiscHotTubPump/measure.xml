@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_pump</name>
   <uid>58b3f782-0d34-455c-9101-df36412196f1</uid>
-  <version_id>0b8df265-8080-4b85-9320-a921ae3e6eee</version_id>
-  <version_modified>20170301T233638Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>61c91429-5377-4af3-9392-46a3cd005d64</version_id>
+  <version_modified>20170304T001956Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotTubPump</class_name>
   <display_name>Set Residential Hot Tub Pump</display_name>
   <description>Adds (or replaces) a residential hot tub pump with the specified efficiency and schedule. The hot tub is assumed to be outdoors. For multifamily buildings, the hot tub pump is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>0.921, 0.928, 0.921, 0.915, 0.921, 1.160, 1.158, 1.158, 1.160, 0.921, 0.915, 0.921</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

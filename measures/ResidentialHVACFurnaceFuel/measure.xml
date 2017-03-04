@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_fuel</name>
   <uid>1a71ae9e-5485-4cca-a369-16c6b8a9c1d8</uid>
-  <version_id>5864156e-0f86-4a77-b84a-18e13a7fe15a</version_id>
-  <version_modified>20170301T233637Z</version_modified>
-  <xml_checksum>470FC630</xml_checksum>
+  <version_id>1949b3b1-0657-4523-94ba-d18a82a35fb7</version_id>
+  <version_modified>20170304T001954Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessFurnaceFuel</class_name>
   <display_name>Set Residential Furnace Fuel</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop. For multifamily buildings, the furnace can be set for all units of the building.</description>
@@ -200,6 +200,7 @@
       <default_value>0.5</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

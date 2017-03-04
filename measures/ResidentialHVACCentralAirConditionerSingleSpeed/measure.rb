@@ -64,14 +64,6 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserSc
     acCapacityRatio.setDefaultValue(1.0)
     args << acCapacityRatio
     
-    #make a double argument for central ac rated air flow rate
-    acRatedAirFlowRate = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("airflow_rate", true)
-    acRatedAirFlowRate.setDisplayName("Rated Air Flow Rate")
-    acRatedAirFlowRate.setUnits("cfm/ton")
-    acRatedAirFlowRate.setDescription("Air flow rate (cfm) per ton of rated capacity.")
-    acRatedAirFlowRate.setDefaultValue(386.1)
-    args << acRatedAirFlowRate
-    
     #make a double argument for central ac fan speed ratio
     acFanspeedRatio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_speed_ratio", true)
     acFanspeedRatio.setDisplayName("Fan Speed Ratio")
@@ -175,7 +167,6 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserSc
     acCoolingEER = [runner.getDoubleArgumentValue("eer",user_arguments)]
     acSHRRated = [runner.getDoubleArgumentValue("shr",user_arguments)]
     acCapacityRatio = [runner.getDoubleArgumentValue("capacity_ratio",user_arguments)]
-    acRatedAirFlowRate = runner.getDoubleArgumentValue("airflow_rate",user_arguments)
     acFanspeedRatio = [runner.getDoubleArgumentValue("fan_speed_ratio",user_arguments)]
     acSupplyFanPowerRated = runner.getDoubleArgumentValue("fan_power_rated",user_arguments)
     acSupplyFanPowerInstalled = runner.getDoubleArgumentValue("fan_power_installed",user_arguments)
@@ -211,6 +202,7 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserSc
     supply.SpaceConditionedMult = 1 # Default used for central equipment    
         
     # Cooling Coil
+    acRatedAirFlowRate = 386.1 # cfm
     supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(acRatedAirFlowRate, acFanspeedRatio, acCapacityRatio)
     supply = HVAC._processAirSystemCoolingCoil(runner, 1, acCoolingEER, acCoolingInstalledSEER, acSupplyFanPowerInstalled, acSupplyFanPowerRated, acSHRRated, acCapacityRatio, acFanspeedRatio, acCrankcase, acCrankcaseMaxT, acEERCapacityDerateFactor, supply)
     

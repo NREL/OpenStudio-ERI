@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>82e6aa81-0d1f-48f3-896a-539852339ea6</version_id>
-  <version_modified>20170301T233638Z</version_modified>
-  <xml_checksum>D8922A73</xml_checksum>
+  <version_id>5d598c57-42fc-4945-a80f-84a510b34827</version_id>
+  <version_modified>20170304T001955Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
   <description>Sets the EPW weather file (EPW), supplemental data specific to the location, and daylight saving time start/end dates.</description>
@@ -47,6 +47,7 @@
       <default_value>October 26</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Whole Building.Space Types</tag>
@@ -138,18 +139,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DE1177FB</checksum>
-    </file>
-    <file>
-      <filename>USA_FL_Tampa.Intl.AP.722110_TMY3.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7682DC11</checksum>
-    </file>
-    <file>
-      <filename>USA_FL_Tampa.Intl.AP.722110_TMY3.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>847DE5F2</checksum>
     </file>
   </files>
 </measure>

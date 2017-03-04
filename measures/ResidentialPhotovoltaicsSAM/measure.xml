@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>490efdb7-f36f-4e6a-a2c9-cda6bea4d1ef</version_id>
-  <version_modified>20170301T235813Z</version_modified>
-  <xml_checksum>1BFC8ABF</xml_checksum>
+  <version_id>5ea681ef-6204-4cbc-836c-302c95287ffc</version_id>
+  <version_modified>20170304T001958Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics SAM</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
@@ -126,6 +126,7 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Onsite Power Generation.Photovoltaic</tag>
@@ -276,7 +277,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CB9FBF34</checksum>
+      <checksum>685C4EF3</checksum>
     </file>
   </files>
 </measure>
