@@ -40,7 +40,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
   
   def test_new_construction_standard
     args_hash = {}
-    args_hash["cw_mef"] = 1.41
+    args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
@@ -50,7 +50,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
   
   def test_new_construction_energystar
     args_hash = {}
-    args_hash["cw_mef"] = 2.47
+    args_hash["cw_imef"] = (2.47 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 123
     args_hash["cw_annual_cost"] = 9.0
     args_hash["cw_drum_volume"] = 3.68
@@ -62,7 +62,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
   
   def test_new_construction_standard_2003
     args_hash = {}
-    args_hash["cw_mef"] = 1.41
+    args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["cw_test_date"] = 2003
     expected_num_del_objects = {}
@@ -73,7 +73,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
 
   def test_new_construction_standard_mult_0_80
     args_hash = {}
-    args_hash["cw_mef"] = 1.41
+    args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["cw_mult_e"] = 0.8
     args_hash["cw_mult_hw"] = 0.8
@@ -85,7 +85,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
   
   def test_new_construction_standard_int_heater
     args_hash = {}
-    args_hash["cw_mef"] = 1.41
+    args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["cw_internal_heater"] = "true"
     expected_num_del_objects = {}
@@ -96,7 +96,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
 
   def test_new_construction_standard_no_thermostatic_control
     args_hash = {}
-    args_hash["cw_mef"] = 1.41
+    args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["cw_thermostatic_control"] = "false"
     expected_num_del_objects = {}
@@ -107,7 +107,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
 
   def test_new_construction_energystar_cold_inlet
     args_hash = {}
-    args_hash["cw_mef"] = 2.47
+    args_hash["cw_imef"] = (2.47 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 123.0
     args_hash["cw_annual_cost"] = 9.0
     args_hash["cw_drum_volume"] = 3.68
@@ -120,7 +120,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
 
   def test_new_construction_energystar_cold_inlet_tankless
     args_hash = {}
-    args_hash["cw_mef"] = 2.47
+    args_hash["cw_imef"] = (2.47 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 123.0
     args_hash["cw_annual_cost"] = 9.0
     args_hash["cw_drum_volume"] = 3.68
@@ -133,7 +133,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
 
   def test_new_construction_basement
     args_hash = {}
-    args_hash["cw_mef"] = 1.41
+    args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["space"] = Constants.FinishedBasementSpace
     expected_num_del_objects = {}
@@ -144,14 +144,14 @@ class ResidentialClothesWasherTest < MiniTest::Test
 
   def test_retrofit_replace
     args_hash = {}
-    args_hash["cw_mef"] = 1.41
+    args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>42.9, "HotWater_gpd"=>10.00, "Space"=>args_hash["space"]}
     model = _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
-    args_hash["cw_mef"] = 2.47
+    args_hash["cw_imef"] = (2.47 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 123.0
     args_hash["cw_annual_cost"] = 9.0
     args_hash["cw_drum_volume"] = 3.68
@@ -163,7 +163,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     
   def test_retrofit_remove
     args_hash = {}
-    args_hash["cw_mef"] = 1.41
+    args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
@@ -178,18 +178,18 @@ class ResidentialClothesWasherTest < MiniTest::Test
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
-  def test_argument_error_cw_mef_negative
+  def test_argument_error_cw_imef_negative
     args_hash = {}
-    args_hash["cw_mef"] = -1
+    args_hash["cw_imef"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Modified energy factor must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Integrated modified energy factor must be greater than 0.0.")
   end
   
-  def test_argument_error_cw_mef_zero
+  def test_argument_error_cw_imef_zero
     args_hash = {}
-    args_hash["cw_mef"] = 0
+    args_hash["cw_imef"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Modified energy factor must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Integrated modified energy factor must be greater than 0.0.")
   end
 
   def test_argument_error_cw_rated_annual_energy_negative

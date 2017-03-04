@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer_fuel</name>
   <uid>0ed6fb35-c3e0-4a33-a397-ce4cec92d96e</uid>
-  <version_id>4242c1dd-863c-4c9e-9221-beeed5dd194e</version_id>
-  <version_modified>20170304T001939Z</version_modified>
+  <version_id>bcfc0aeb-f5e0-4ecf-b6cd-e5cbc28b6580</version_id>
+  <version_modified>20170304T005920Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialClothesDryerFuel</class_name>
   <display_name>Set Residential Fuel Clothes Dryer</display_name>
@@ -30,14 +30,14 @@
       </choices>
     </argument>
     <argument>
-      <name>cd_ef</name>
-      <display_name>Energy Factor</display_name>
-      <description>The Energy Factor measures the pounds of clothing that can be dried per kWh (Fuel equivalent) of electricity.</description>
+      <name>cd_cef</name>
+      <display_name>Combined Energy Factor</display_name>
+      <description>The Combined Energy Factor (CEF) measures the pounds of clothing that can be dried per kWh (Fuel equivalent) of electricity, including energy consumed during Stand-by and Off modes. If only an Energy Factor (EF) is available, convert using the equation: CEF = EF / 1.15.</description>
       <type>Double</type>
       <units>lb/kWh</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>2.75</default_value>
+      <default_value>2.4</default_value>
     </argument>
     <argument>
       <name>cd_fuel_split</name>
@@ -86,14 +86,14 @@
       <default_value>1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0</default_value>
     </argument>
     <argument>
-      <name>cw_mef</name>
-      <display_name>Clothes Washer Energy Factor</display_name>
-      <description>The Modified Energy Factor (MEF) is the quotient of the capacity of the clothes container, C, divided by the total clothes washer energy consumption per cycle, with such energy consumption expressed as the sum of the machine electrical energy consumption, M, the hot water energy consumption, E, and the energy required for removal of the remaining moisture in the wash load, D. The higher the value, the more efficient the clothes washer is. Procedures to test MEF are defined by the Department of Energy (DOE) in 10 Code of Federal Regulations Part 430, Appendix J to Subpart B.</description>
+      <name>cw_imef</name>
+      <display_name>Integrated Modified Energy Factor</display_name>
+      <description>The Integrated Modified Energy Factor (IMEF) is the capacity of the clothes container divided by the total clothes washer energy consumption per cycle, where the energy consumption is the sum of the machine electrical energy consumption, the hot water energy consumption, the energy required for removal of the remaining moisture in the wash load, standby energy, and off-mode energy consumption. If only a Modified Energy Factor (MEF) is available, convert using the equation: IMEF = (MEF - 0.503) / 0.95.</description>
       <type>Double</type>
       <units>ft^3/kWh-cycle</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>1.41</default_value>
+      <default_value>0.95</default_value>
     </argument>
     <argument>
       <name>cw_rated_annual_energy</name>
@@ -198,12 +198,6 @@
       <checksum>38632BB3</checksum>
     </file>
     <file>
-      <filename>ResidentialClothesDryerFuel_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>458154DB</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -216,6 +210,12 @@
       <checksum>DE1177FB</checksum>
     </file>
     <file>
+      <filename>ResidentialClothesDryerFuel_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>323DDDA3</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -224,7 +224,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>53CCA49C</checksum>
+      <checksum>30F9D2C1</checksum>
     </file>
   </files>
 </measure>

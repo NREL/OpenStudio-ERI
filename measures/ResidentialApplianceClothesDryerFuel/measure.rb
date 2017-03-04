@@ -34,12 +34,12 @@ class ResidentialClothesDryerFuel < OpenStudio::Ruleset::ModelUserScript
     args << cd_fuel_type
 
 	#make a double argument for Energy Factor
-	cd_ef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cd_ef",true)
-	cd_ef.setDisplayName("Energy Factor")
-    cd_ef.setDescription("The Energy Factor measures the pounds of clothing that can be dried per kWh (Fuel equivalent) of electricity.")
-	cd_ef.setDefaultValue(2.75)
-    cd_ef.setUnits("lb/kWh")
-	args << cd_ef
+	cd_cef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cd_cef",true)
+	cd_cef.setDisplayName("Combined Energy Factor")
+    cd_cef.setDescription("The Combined Energy Factor (CEF) measures the pounds of clothing that can be dried per kWh (Fuel equivalent) of electricity, including energy consumed during Stand-by and Off modes. If only an Energy Factor (EF) is available, convert using the equation: CEF = EF / 1.15.")
+	cd_cef.setDefaultValue(2.4)
+    cd_cef.setUnits("lb/kWh")
+	args << cd_cef
     
     #make a double argument for Assumed Fuel Electric Split
     cd_fuel_split = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cd_fuel_split",true)
@@ -77,14 +77,14 @@ class ResidentialClothesDryerFuel < OpenStudio::Ruleset::ModelUserScript
 	cd_monthly_sch.setDefaultValue("1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0")
 	args << cd_monthly_sch
 
-	#make a double argument for Clothes Washer Modified Energy Factor
+	#make a double argument for Clothes Washer Integrated Modified Energy Factor
     #TODO: Remove when clothes washer info available
-	cw_mef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cw_mef",true)
-	cw_mef.setDisplayName("Clothes Washer Energy Factor")
-    cw_mef.setUnits("ft^3/kWh-cycle")
-    cw_mef.setDescription("The Modified Energy Factor (MEF) is the quotient of the capacity of the clothes container, C, divided by the total clothes washer energy consumption per cycle, with such energy consumption expressed as the sum of the machine electrical energy consumption, M, the hot water energy consumption, E, and the energy required for removal of the remaining moisture in the wash load, D. The higher the value, the more efficient the clothes washer is. Procedures to test MEF are defined by the Department of Energy (DOE) in 10 Code of Federal Regulations Part 430, Appendix J to Subpart B.")
-	cw_mef.setDefaultValue(1.41)
-	args << cw_mef
+	cw_imef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cw_imef",true)
+	cw_imef.setDisplayName("Integrated Modified Energy Factor")
+    cw_imef.setUnits("ft^3/kWh-cycle")
+    cw_imef.setDescription("The Integrated Modified Energy Factor (IMEF) is the capacity of the clothes container divided by the total clothes washer energy consumption per cycle, where the energy consumption is the sum of the machine electrical energy consumption, the hot water energy consumption, the energy required for removal of the remaining moisture in the wash load, standby energy, and off-mode energy consumption. If only a Modified Energy Factor (MEF) is available, convert using the equation: IMEF = (MEF - 0.503) / 0.95.")
+	cw_imef.setDefaultValue(0.95)
+	args << cw_imef
     
     #make a double argument for Clothes Washer Rated Annual Consumption
     #TODO: Remove when clothes washer info available
@@ -134,20 +134,20 @@ class ResidentialClothesDryerFuel < OpenStudio::Ruleset::ModelUserScript
 
     #assign the user inputs to variables
     cd_fuel_type = runner.getStringArgumentValue("cd_fuel_type",user_arguments)
-	cd_ef = runner.getDoubleArgumentValue("cd_ef",user_arguments)
+	cd_cef = runner.getDoubleArgumentValue("cd_cef",user_arguments)
     cd_fuel_split = runner.getDoubleArgumentValue("cd_fuel_split",user_arguments)
 	cd_mult = runner.getDoubleArgumentValue("cd_mult",user_arguments)
 	cd_weekday_sch = runner.getStringArgumentValue("cd_weekday_sch",user_arguments)
 	cd_weekend_sch = runner.getStringArgumentValue("cd_weekend_sch",user_arguments)
     cd_monthly_sch = runner.getStringArgumentValue("cd_monthly_sch",user_arguments)
-	cw_mef = runner.getDoubleArgumentValue("cw_mef",user_arguments)
+	cw_imef = runner.getDoubleArgumentValue("cw_imef",user_arguments)
     cw_rated_annual_energy = runner.getDoubleArgumentValue("cw_rated_annual_energy",user_arguments)
 	cw_drum_volume = runner.getDoubleArgumentValue("cw_drum_volume",user_arguments)
 	space_r = runner.getStringArgumentValue("space",user_arguments)
 
     #Check for valid inputs
-	if cd_ef <= 0
-		runner.registerError("Energy factor must be greater than 0.0.")
+	if cd_cef <= 0
+		runner.registerError("Combined energy factor must be greater than 0.0.")
         return false
 	end
     if cd_fuel_split < 0 or cd_fuel_split > 1
@@ -157,8 +157,8 @@ class ResidentialClothesDryerFuel < OpenStudio::Ruleset::ModelUserScript
 		runner.registerError("Occupancy energy multiplier must be greater than or equal to 0.0.")
         return false
     end
-    if cw_mef <= 0
-        runner.registerError("Clothes washer modified energy factor must be greater than 0.0.")
+    if cw_imef <= 0
+        runner.registerError("Clothes washer integrated modified energy factor must be greater than 0.0.")
         return false
     end
     if cw_rated_annual_energy <= 0
@@ -225,6 +225,9 @@ class ResidentialClothesDryerFuel < OpenStudio::Ruleset::ModelUserScript
             end
         end
         
+        cd_ef = cd_cef * 1.15 # RESNET interpretation
+        cw_mef = 0.503 + 0.95 * cw_imef # RESNET interpretation
+
         # Energy Use is based on "Method for Evaluating Energy Use of Dishwashers, Clothes 
         # Washers, and Clothes Dryers" by Eastment and Hendron, Conference Paper NREL/CP-550-39769, 
         # August 2006. Their paper is in part based on the energy use calculations presented in the 

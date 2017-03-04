@@ -31,7 +31,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
   
   def test_new_construction_standard
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
@@ -41,7 +41,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
   
   def test_new_construction_premium
     args_hash = {}
-    args_hash["cd_ef"] = 3.48
+    args_hash["cd_cef"] = 3.48 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
@@ -51,7 +51,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
   
   def test_new_construction_standard_propane
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypePropane
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
@@ -61,7 +61,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
   
   def test_new_construction_premium_propane
     args_hash = {}
-    args_hash["cd_ef"] = 3.48
+    args_hash["cd_cef"] = 3.48 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypePropane
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
@@ -71,7 +71,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
 
   def test_new_construction_mult_0_80
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["cd_mult"] = 0.8
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {}
@@ -82,7 +82,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
 
   def test_new_construction_split_0_05
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["cd_fuel_split"] = 0.05
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {}
@@ -93,8 +93,8 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
 
   def test_new_construction_estar_washer
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
-    args_hash["cw_mef"] = 2.47
+    args_hash["cd_cef"] = 2.75 / 1.15
+    args_hash["cw_imef"] = (2.47 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 123.0
     args_hash["cw_drum_volume"] = 3.68
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
@@ -106,7 +106,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
 
   def test_new_construction_modified_schedule
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["cd_weekday_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["cd_weekend_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
     args_hash["cd_monthly_sch"] = "1,2,3,4,5,6,7,8,9,10,11,12"
@@ -119,7 +119,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
 
   def test_new_construction_basement
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["space"] = Constants.FinishedBasementSpace
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {}
@@ -130,7 +130,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
 
   def test_new_construction_garage
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["space"] = Constants.GarageSpace
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {}
@@ -141,14 +141,14 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
 
   def test_retrofit_replace_gas_with_propane
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>81.0, "Annual_therm"=>36.7, "Annual_gal"=>0, "FuelType"=>Constants.FuelTypeGas, "Space"=>args_hash["space"]}
     model = _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
-    args_hash["cd_ef"] = 3.48
+    args_hash["cd_cef"] = 3.48 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypePropane
     expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
@@ -158,14 +158,14 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
     
   def test_retrofit_replace_propane_with_gas
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypePropane
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>81.0, "Annual_therm"=>0, "Annual_gal"=>40.1, "FuelType"=>Constants.FuelTypePropane, "Space"=>args_hash["space"]}
     model = _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
-    args_hash["cd_ef"] = 3.48
+    args_hash["cd_cef"] = 3.48 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
@@ -176,7 +176,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
   def test_retrofit_replace_elec_clothes_dryer
     model = get_model(File.dirname(__FILE__), osm_geo_beds_elecdryer)
     args_hash = {}
-    args_hash["cd_ef"] = 3.48
+    args_hash["cd_cef"] = 3.48 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
@@ -186,7 +186,7 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
 
   def test_retrofit_remove
     args_hash = {}
-    args_hash["cd_ef"] = 2.75
+    args_hash["cd_cef"] = 2.75 / 1.15
     args_hash["cd_fuel_type"] = Constants.FuelTypeGas
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "OtherEquipmentDefinition"=>1, "OtherEquipment"=>1, "ScheduleRuleset"=>1}
@@ -200,18 +200,18 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
-  def test_argument_error_cd_ef_negative
+  def test_argument_error_cd_cef_negative
     args_hash = {}
-    args_hash["cd_ef"] = -1
+    args_hash["cd_cef"] = -1
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Energy factor must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Combined energy factor must be greater than 0.0.")
   end
   
-  def test_argument_error_cd_ef_zero
+  def test_argument_error_cd_cef_zero
     args_hash = {}
-    args_hash["cd_ef"] = 0
+    args_hash["cd_cef"] = 0
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Energy factor must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Combined energy factor must be greater than 0.0.")
   end
 
   def test_argument_error_cd_fuel_split_lt_0
@@ -277,18 +277,18 @@ class ResidentialClothesDryerFuelTest < MiniTest::Test
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "A comma-separated string of 12 numbers must be entered for the monthly schedule.")
   end
   
-  def test_argument_error_cw_mef_negative
+  def test_argument_error_cw_imef_negative
     args_hash = {}
-    args_hash["cw_mef"] = -1
+    args_hash["cw_imef"] = -1
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Clothes washer modified energy factor must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Clothes washer integrated modified energy factor must be greater than 0.0.")
   end
   
-  def test_argument_error_cw_mef_zero
+  def test_argument_error_cw_imef_zero
     args_hash = {}
-    args_hash["cw_mef"] = 0
+    args_hash["cw_imef"] = 0
     result = _test_error(osm_geo_beds, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Clothes washer modified energy factor must be greater than 0.0.")
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Clothes washer integrated modified energy factor must be greater than 0.0.")
   end
 
   def test_argument_error_cw_rated_annual_energy_negative

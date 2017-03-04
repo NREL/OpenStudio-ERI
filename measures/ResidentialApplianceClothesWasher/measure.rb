@@ -27,13 +27,13 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     
 	#TODO: New argument for demand response for clothes washer (alternate schedules if automatic DR control is specified)
 
-	#make a double argument for Modified Energy Factor
-	cw_mef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cw_mef",true)
-	cw_mef.setDisplayName("Energy Factor")
-    cw_mef.setUnits("ft^3/kWh-cycle")
-    cw_mef.setDescription("The Modified Energy Factor (MEF) is the quotient of the capacity of the clothes container, C, divided by the total clothes washer energy consumption per cycle, with such energy consumption expressed as the sum of the machine electrical energy consumption, M, the hot water energy consumption, E, and the energy required for removal of the remaining moisture in the wash load, D. The higher the value, the more efficient the clothes washer is. Procedures to test MEF are defined by the Department of Energy (DOE) in 10 Code of Federal Regulations Part 430, Appendix J to Subpart B.")
-	cw_mef.setDefaultValue(1.41)
-	args << cw_mef
+	#make a double argument for Integrated Modified Energy Factor
+	cw_imef = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cw_imef",true)
+	cw_imef.setDisplayName("Integrated Modified Energy Factor")
+    cw_imef.setUnits("ft^3/kWh-cycle")
+    cw_imef.setDescription("The Integrated Modified Energy Factor (IMEF) is the capacity of the clothes container divided by the total clothes washer energy consumption per cycle, where the energy consumption is the sum of the machine electrical energy consumption, the hot water energy consumption, the energy required for removal of the remaining moisture in the wash load, standby energy, and off-mode energy consumption. If only a Modified Energy Factor (MEF) is available, convert using the equation: IMEF = (MEF - 0.503) / 0.95.")
+	cw_imef.setDefaultValue(0.95)
+	args << cw_imef
     
     #make a double argument for Rated Annual Consumption
     cw_rated_annual_energy = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cw_rated_annual_energy",true)
@@ -150,7 +150,7 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     end
 
     #assign the user inputs to variables
-	cw_mef = runner.getDoubleArgumentValue("cw_mef",user_arguments)
+	cw_imef = runner.getDoubleArgumentValue("cw_imef",user_arguments)
     cw_rated_annual_energy = runner.getDoubleArgumentValue("cw_rated_annual_energy",user_arguments)
     cw_annual_cost = runner.getDoubleArgumentValue("cw_annual_cost",user_arguments)
 	cw_test_date = runner.getIntegerArgumentValue("cw_test_date", user_arguments)
@@ -165,8 +165,8 @@ class ResidentialClothesWasher < OpenStudio::Ruleset::ModelUserScript
     plant_loop_s = runner.getStringArgumentValue("plant_loop", user_arguments)
 
     #Check for valid inputs
-    if cw_mef <= 0
-        runner.registerError("Modified energy factor must be greater than 0.0.")
+    if cw_imef <= 0
+        runner.registerError("Integrated modified energy factor must be greater than 0.0.")
         return false
     end
     if cw_rated_annual_energy <= 0
