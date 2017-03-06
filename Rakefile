@@ -265,48 +265,6 @@ task :update_resources do
       end
     end
     
-    # Add/update ssc files as needed
-    if m == "ResidentialPhotovoltaicsSAM"
-      ssc_path = File.expand_path(File.join(File.dirname(__FILE__), "resources/sam-sdk-2017-1-17"))
-      if /win/.match(RUBY_PLATFORM) or /mingw/.match(RUBY_PLATFORM)
-        ssc_path = File.join(ssc_path, 'win64')
-      elsif /darwin/.match(RUBY_PLATFORM)
-        ssc_path = File.join(ssc_path, 'osx64')
-      elsif /linux2/.match(RUBY_PLATFORM)
-        ssc_path = File.join(ssc_path, 'linux64')
-      else
-        puts "Platform not supported: #{RUBY_PLATFORM}"
-      end
-      Dir.entries(ssc_path).select {|entry| !(entry =='.' || entry == '..') }.each do |resource|
-        resource = File.join(ssc_path, resource)
-        if not File.exist?(resource)
-          puts "Cannot find resource: #{resource}."
-          next
-        end
-        r = File.basename(resource)
-        dest_resource = File.expand_path("../measures/#{m}/resources/#{r}", __FILE__)
-        measure_resource_dir = File.dirname(dest_resource)
-        if not File.directory?(measure_resource_dir)
-          FileUtils.mkdir_p(measure_resource_dir)
-        end
-        if not File.file?(dest_resource)
-          FileUtils.cp(resource, measure_resource_dir)
-          puts "Added #{r} to #{m}/resources."
-        elsif not FileUtils.compare_file(resource, dest_resource)
-          FileUtils.cp(resource, measure_resource_dir)
-          puts "Updated #{r} in #{m}/resources."
-        end
-      end
-      ffi_path = File.expand_path(File.join(File.dirname(__FILE__), "resources/ffi-1.9.17-x64-mingw32"))
-      dest_resource = File.expand_path("../measures/#{m}/resources", __FILE__)
-      FileUtils.cp_r(ffi_path, dest_resource)
-      ffi_dir = File.expand_path(File.join(dest_resource, "ffi-1.9.17-x64-mingw32"))
-      ffi_zip = File.expand_path(File.join(dest_resource, "ffi-1.9.17-x64-mingw32.zip"))
-      zip_file = OpenStudio::ZipFile.new(ffi_zip, false)
-      zip_file.addDirectory(ffi_dir, OpenStudio::toPath("/"))
-      FileUtils.rm_rf(ffi_dir)
-    end
-    
     # Add/update resource files as needed
     resources.each do |resource|
       if not File.exist?(resource)

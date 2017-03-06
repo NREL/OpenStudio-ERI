@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>6a708ba0-5d19-4f61-91ae-2007aa1d4260</version_id>
-  <version_modified>20170306T172116Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>0db699dc-c645-4c90-899d-da571d68d0df</version_id>
+  <version_modified>20170306T202945Z</version_modified>
+  <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics SAM</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
@@ -126,7 +126,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Onsite Power Generation.Photovoltaic</tag>
@@ -167,82 +166,16 @@
       <checksum>048F7BD2</checksum>
     </file>
     <file>
-      <filename>libcurl.dll</filename>
-      <filetype>dll</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>212CE8F6</checksum>
-    </file>
-    <file>
-      <filename>libeay32.dll</filename>
-      <filetype>dll</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BC55E41D</checksum>
-    </file>
-    <file>
-      <filename>libssh2.dll</filename>
-      <filetype>dll</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>51F3FA96</checksum>
-    </file>
-    <file>
-      <filename>msvcp120.dll</filename>
-      <filetype>dll</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>EB750CD0</checksum>
-    </file>
-    <file>
-      <filename>msvcr120.dll</filename>
-      <filetype>dll</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>CBEC1BB0</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3C131B97</checksum>
     </file>
     <file>
-      <filename>sdktool.exe</filename>
-      <filetype>exe</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ED76FB3E</checksum>
-    </file>
-    <file>
-      <filename>ssc.dll</filename>
-      <filetype>dll</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A425E261</checksum>
-    </file>
-    <file>
-      <filename>ssc.exp</filename>
-      <filetype>exp</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9825C3DE</checksum>
-    </file>
-    <file>
-      <filename>ssc.lib</filename>
-      <filetype>lib</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>06263298</checksum>
-    </file>
-    <file>
       <filename>ssc_api.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C9F510A2</checksum>
-    </file>
-    <file>
-      <filename>ssc_ffi.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F9271192</checksum>
-    </file>
-    <file>
-      <filename>ssleay32.dll</filename>
-      <filetype>dll</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11A9104E</checksum>
     </file>
     <file>
       <filename>unit_conversions.rb</filename>
@@ -257,15 +190,10 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.14.0</identifier>
-        <min_compatible>1.14.0</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
+      <filename>ssc_ffi.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>685C4EF3</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>8C3BA37F</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
@@ -278,6 +206,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0E779DFB</checksum>
+    </file>
+    <file>
+      <filename>ffi-1.9.17-x64-mingw32.zip</filename>
+      <filetype>zip</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3316BB1D</checksum>
+    </file>
+    <file>
+      <filename>sam-sdk-2017-1-17.zip</filename>
+      <filetype>zip</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A2C31AE2</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>1.14.0</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>9171CCF8</checksum>
     </file>
   </files>
 </measure>

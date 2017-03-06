@@ -130,10 +130,15 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
-    ffi_zip = "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32.zip"
-    ffi_dir = "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32"
-    unzip_file = OpenStudio::UnzipFile.new(ffi_zip)
-    unzip_file.extractAllFiles(OpenStudio::toPath(ffi_dir))    
+    if !File.directory? "#{File.dirname(__FILE__)}/resources/sam-sdk-2017-1-17"
+      unzip_file = OpenStudio::UnzipFile.new("#{File.dirname(__FILE__)}/resources/sam-sdk-2017-1-17.zip")
+      unzip_file.extractAllFiles(OpenStudio::toPath("#{File.dirname(__FILE__)}/resources"))
+    end
+    
+    if !File.directory? "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32"
+      unzip_file = OpenStudio::UnzipFile.new("#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32.zip")
+      unzip_file.extractAllFiles(OpenStudio::toPath("#{File.dirname(__FILE__)}/resources"))
+    end
     $:.unshift "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32/lib" # TODO: since ffi is not packaged with openstudio
     require "#{File.dirname(__FILE__)}/resources/ssc_api"
     
@@ -157,12 +162,6 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     
     @weather = WeatherProcess.new(model, runner, File.dirname(__FILE__), header_only=true)
     if @weather.error?
-      return false
-    end
-    
-    # Get building units
-    units = Geometry.get_building_units(model, runner)
-    if units.nil?
       return false
     end
     
@@ -198,6 +197,18 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     vertices << OpenStudio::Point3d.new(0, 1, 0)
     vertices << OpenStudio::Point3d.new(1, 1, 0)
     vertices << OpenStudio::Point3d.new(1, 0, 0)
+      
+    # Remove existing photovoltaics
+    model.getElectricLoadCenterDistributions.each do |electric_load_center_dist|
+      next unless electric_load_center_dist.name.to_s == obj_name + " elec load center dist"
+      electric_load_center_dist.generators.each do |generator|
+        panel = generator.to_GeneratorPhotovoltaic.get
+        panel.surface.get.to_ShadingSurface.get.shadingSurfaceGroup.get.remove
+        panel.remove
+      end
+      electric_load_center_dist.trackScheduleSchemeSchedule.get.remove
+      electric_load_center_dist.remove
+    end      
       
     shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
     shading_surface_group.setName(obj_name + " panel")
