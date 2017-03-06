@@ -297,8 +297,16 @@ task :update_resources do
           puts "Updated #{r} in #{m}/resources."
         end
       end
+      ffi_path = File.expand_path(File.join(File.dirname(__FILE__), "resources/ffi-1.9.17-x64-mingw32"))
+      dest_resource = File.expand_path("../measures/#{m}/resources", __FILE__)
+      FileUtils.cp_r(ffi_path, dest_resource)
+      ffi_dir = File.expand_path(File.join(dest_resource, "ffi-1.9.17-x64-mingw32"))
+      ffi_zip = File.expand_path(File.join(dest_resource, "ffi-1.9.17-x64-mingw32.zip"))
+      zip_file = OpenStudio::ZipFile.new(ffi_zip, false)
+      zip_file.addDirectory(ffi_dir, OpenStudio::toPath("/"))
+      FileUtils.rm_rf(ffi_dir)
     end
-
+    
     # Add/update resource files as needed
     resources.each do |resource|
       if not File.exist?(resource)
@@ -323,7 +331,7 @@ task :update_resources do
     # Any extra resource files?
     if File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
       Dir.foreach(File.expand_path("../measures/#{m}/resources", __FILE__)) do |item|
-        next if item == '.' or item == '..' or item.end_with? '.dll' or item.end_with? '.exp' or item.end_with? '.exe' or item.end_with? '.so' or item.end_with? '.dylib' or item.end_with? '.lib' 
+        next if item == '.' or item == '..' or item.end_with? '.dll' or item.end_with? '.exp' or item.end_with? '.exe' or item.end_with? '.so' or item.end_with? '.dylib' or item.end_with? '.lib' or item.end_with? '.zip'
         if subdir_resources.include?(item)
           item = subdir_resources[item]
         end

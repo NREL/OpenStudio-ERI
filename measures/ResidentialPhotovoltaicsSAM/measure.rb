@@ -5,8 +5,6 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/weather"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/geometry"
-$:.unshift 'C:/Ruby22-x64/lib/ruby/gems/2.2.0/gems/ffi-1.9.17-x64-mingw32/lib' # TODO: since ffi is not packaged with openstudio
-require "#{File.dirname(__FILE__)}/resources/ssc_api"
 
 # start the measure
 class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
@@ -132,6 +130,13 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
       return false
     end
 
+    ffi_zip = "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32.zip"
+    ffi_dir = "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32"
+    unzip_file = OpenStudio::UnzipFile.new(ffi_zip)
+    unzip_file.extractAllFiles(OpenStudio::toPath(ffi_dir))    
+    $:.unshift "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32/lib" # TODO: since ffi is not packaged with openstudio
+    require "#{File.dirname(__FILE__)}/resources/ssc_api"
+    
     size = runner.getDoubleArgumentValue("size",user_arguments)
     module_type = runner.getStringArgumentValue("module_type",user_arguments)
     system_losses = runner.getDoubleArgumentValue("system_losses",user_arguments)
@@ -185,49 +190,49 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     p_mod = SscApi.create_module("pvwattsv5")
     SscApi.set_print(false)
     SscApi.execute_module(p_mod, p_data)
-    hourly_whs = SscApi.get_array(p_data, "ac")
-    runner.registerInfo("#{(hourly_whs.inject(0){ |sum, x| sum + x } / 8760.0).round(2)} W")
       
     obj_name = Constants.ObjectNamePhotovoltaics
       
-    units.each do |unit|  
+    vertices = OpenStudio::Point3dVector.new
+    vertices << OpenStudio::Point3d.new(0, 0, 0)
+    vertices << OpenStudio::Point3d.new(0, 1, 0)
+    vertices << OpenStudio::Point3d.new(1, 1, 0)
+    vertices << OpenStudio::Point3d.new(1, 0, 0)
       
-      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+    shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
+    shading_surface_group.setName(obj_name + " panel")
+    shading_surface = OpenStudio::Model::ShadingSurface.new(vertices, model)
+    shading_surface.setName(obj_name + " panel")
+    shading_surface.setShadingSurfaceGroup(shading_surface_group)
       
-      control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
-      control_slave_zones_hash.each do |control_zone, slave_zones|      
-        
-        other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip_def.setName(obj_name + " equip def")
-        other_equip_def.setFractionRadiant(0)
-        other_equip_def.setFractionLatent(0)
-        other_equip_def.setFractionLost(1)        
-        other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
-        other_equip.setName(obj_name + " equip")
-        other_equip.setFuelType("Electricity")
-        other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
-        other_equip.setSpace(control_zone.spaces[0])
-        other_equip.setEndUseSubcategory(obj_name)
-        
-        actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        actuator.setName("#{obj_name} actuator")
-        
-        program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
-        program.setName(obj_name + " program")
-        program.addLine("Set #{actuator.name} = -#{(hourly_whs.inject(0){ |sum, x| sum + x } / 8760.0).round(2)}") # W
-        
-        program_calling_manager = OpenStudio::Model::EnergyManagementSystemProgramCallingManager.new(model)
-        program_calling_manager.setName(obj_name + " program calling manager")
-        program_calling_manager.setCallingPoint("EndOfSystemTimestepAfterHVACReporting")
-        program_calling_manager.addProgram(program)
-        
-        break
-    
-      end
-      
-      break
-    
+    runner.registerInfo("#{(SscApi.get_array(p_data, "ac").inject(0){ |sum, x| sum + x }).round(2)} W-h")
+    values = OpenStudio::Vector.new(8760)
+    SscApi.get_array(p_data, "ac").each_with_index do |wh, i|
+      values[i] = wh.to_f
     end
+    start_date = model.getYearDescription.makeDate(1, 1)
+    time_step = OpenStudio::Time.new(0, 0, 60, 0)
+    timeseries = OpenStudio::TimeSeries.new(start_date, time_step, values, "W")
+    schedule = OpenStudio::Model::ScheduleInterval.fromTimeSeries(timeseries, model).get
+    schedule.setName(obj_name + " watt-hours")
+      
+    electric_load_center_dist = OpenStudio::Model::ElectricLoadCenterDistribution.new(model)
+    electric_load_center_dist.setName(obj_name + " elec load center dist")
+    electric_load_center_dist.setGeneratorOperationSchemeType("TrackSchedule")
+    electric_load_center_dist.setTrackScheduleSchemeSchedule(schedule)
+    electric_load_center_dist.setElectricalBussType("AlternatingCurrent")
+      
+    panel = OpenStudio::Model::GeneratorPhotovoltaic::simple(model)
+    panel.setName(obj_name + " system")
+    panel.setSurface(shading_surface)
+    panel.setHeatTransferIntegrationMode("Decoupled")
+
+    performance = panel.photovoltaicPerformance.to_PhotovoltaicPerformanceSimple.get
+    performance.setName(obj_name + " module")
+    performance.setFractionOfSurfaceAreaWithActiveSolarCells(1)
+    performance.setFixedEfficiency(1)
+          
+    electric_load_center_dist.addGenerator(panel)
       
     return true
 
