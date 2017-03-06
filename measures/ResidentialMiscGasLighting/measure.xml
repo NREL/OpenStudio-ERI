@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_lighting</name>
   <uid>6b9211da-6274-4b09-8c76-9edbc85886c0</uid>
-  <version_id>c6c96bc2-600c-4866-b945-80ce716477c6</version_id>
-  <version_modified>20170306T172114Z</version_modified>
+  <version_id>d7c1a5f9-b274-46ea-b3e8-c5239b854138</version_id>
+  <version_modified>20170306T223253Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialGasLighting</class_name>
   <display_name>Set Residential Gas Lighting</display_name>

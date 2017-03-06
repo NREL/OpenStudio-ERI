@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>371a6217-9cf9-4737-8dd9-47d589991543</version_id>
-  <version_modified>20170306T172113Z</version_modified>
+  <version_id>3317fde6-5439-443b-b19c-baebb0869501</version_id>
+  <version_modified>20170306T223253Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>

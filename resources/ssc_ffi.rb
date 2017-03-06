@@ -7,15 +7,25 @@ module SscApi
   
     extend FFI::Library
     
+    ssc_path = nil
     if /win/.match(RUBY_PLATFORM) or /mingw/.match(RUBY_PLATFORM)
-      ffi_lib "#{File.dirname(__FILE__)}/ssc.dll"
+      if RUBY_PLATFORM.include? "x64"
+        ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/win64/ssc.dll"
+      else
+        ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/win32/ssc.dll"
+      end
     elsif /darwin/.match(RUBY_PLATFORM)
-      ffi_lib "#{File.dirname(__FILE__)}/ssc.dylib"
+      ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/osx64/ssc.dylib"
     elsif /linux2/.match(RUBY_PLATFORM)
-      ffi_lib "#{File.dirname(__FILE__)}/ssc.so"
+      ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/linux64/ssc.so"
     else
       puts "Platform not supported: #{RUBY_PLATFORM}"
     end
+    
+    if !File.exist? ssc_path
+      puts "File not found: #{ssc_path}"
+    end
+    ffi_lib ssc_path
 
     SSC_INVALID = 0
     SSC_STRING = 1

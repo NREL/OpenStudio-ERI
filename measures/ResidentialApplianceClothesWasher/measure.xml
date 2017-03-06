@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>7f630bd6-1b92-4edc-a008-ddda4ee93c95</version_id>
-  <version_modified>20170306T172059Z</version_modified>
+  <version_id>a73cb67d-63fe-4b5e-affc-48af5a7e8a19</version_id>
+  <version_modified>20170306T223239Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>

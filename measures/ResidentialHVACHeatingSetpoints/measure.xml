@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>d1ce326e-b5fb-48ba-9cc5-91ea3f094070</version_id>
-  <version_modified>20170306T172112Z</version_modified>
+  <version_id>14495ebc-2f28-4d5b-8515-4fec50524668</version_id>
+  <version_modified>20170306T223251Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>1bab0358-8e32-4e28-a29a-fa329483643d</version_id>
-  <version_modified>20170306T172115Z</version_modified>
+  <version_id>82ade481-48f5-4280-abe1-e4c26d55e837</version_id>
+  <version_modified>20170306T223254Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>

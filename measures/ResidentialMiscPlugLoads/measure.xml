@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_electric_loads</name>
   <uid>3ac41688-ef52-4679-b79c-8cbdf7cbd0e7</uid>
-  <version_id>f9b29a29-1a39-4dca-86f5-29bdf343ce53</version_id>
-  <version_modified>20170306T172114Z</version_modified>
+  <version_id>75e7e25d-9810-4386-9bf8-e6cc6348ba55</version_id>
+  <version_modified>20170306T223254Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialMiscellaneousElectricLoads</class_name>
   <display_name>Set Residential Plug Loads</display_name>

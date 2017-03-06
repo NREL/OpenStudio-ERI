@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>3738fb32-7ba2-4ec8-b1d2-03c0e037b763</version_id>
-  <version_modified>20170306T172112Z</version_modified>
+  <version_id>d422500b-a338-4d63-b7b0-acede8a636c3</version_id>
+  <version_modified>20170306T223251Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>

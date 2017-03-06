@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>3395d7e8-acc6-4994-bdbd-4850c9636ac7</version_id>
-  <version_modified>20170306T172102Z</version_modified>
+  <version_id>7208b4ef-4df7-42b1-9d61-281fb1190db3</version_id>
+  <version_modified>20170306T223243Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>

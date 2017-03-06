@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>544e7fae-8471-46ca-b753-f5b4ab02b3fa</version_id>
-  <version_modified>20170306T172104Z</version_modified>
+  <version_id>f4c23376-9114-446f-b2e0-8bd0b808dbab</version_id>
+  <version_modified>20170306T223244Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>

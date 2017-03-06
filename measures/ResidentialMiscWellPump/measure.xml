@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_well_pump</name>
   <uid>13183743-6249-4762-8050-cf80f5d4650b</uid>
-  <version_id>1f19b50a-662e-475d-ae78-f3f7f1e5e7dd</version_id>
-  <version_modified>20170306T172115Z</version_modified>
+  <version_id>59b2a9ce-8acc-4e74-91da-6e597523e76a</version_id>
+  <version_modified>20170306T223254Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialWellPump</class_name>
   <display_name>Set Residential Well Pump</display_name>

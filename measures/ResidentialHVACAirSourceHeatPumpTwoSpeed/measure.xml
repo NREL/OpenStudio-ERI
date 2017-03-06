@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_air_source_heat_pump</name>
   <uid>e1fa8fdd-4940-4364-b3ea-3bc6b93ca9c4</uid>
-  <version_id>0398d578-c241-4168-905b-79961f5bde43</version_id>
-  <version_modified>20170306T172109Z</version_modified>
+  <version_id>0b867c92-c2e8-4e72-88f7-d9881cd2967c</version_id>
+  <version_modified>20170306T223249Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessTwoSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Two-Speed Air Source Heat Pump</display_name>

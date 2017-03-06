@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>f0259bdc-1391-41eb-80eb-efc10bd1bc02</uid>
-  <version_id>a4f7b230-f330-464f-a4a3-e31f6219ff31</version_id>
-  <version_modified>20170306T172059Z</version_modified>
+  <version_id>303c9bc3-4347-4ce6-81e3-52a3b5f3239e</version_id>
+  <version_modified>20170306T223240Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Set Residential Refrigerator</display_name>

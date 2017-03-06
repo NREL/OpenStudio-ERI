@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>5a7ae205-bdc2-4daf-b29e-b6f0a59366a6</uid>
-  <version_id>9772cc17-e35c-4eca-9552-9554faaf57ac</version_id>
-  <version_modified>20170306T172058Z</version_modified>
+  <version_id>e38df978-2e4d-425d-a055-f0c6b0829e49</version_id>
+  <version_modified>20170306T223239Z</version_modified>
   <xml_checksum>C75AF51E</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>

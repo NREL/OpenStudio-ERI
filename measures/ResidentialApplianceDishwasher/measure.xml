@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>68d1adce-b49e-45ce-a0c5-d5af3d93616d</version_id>
-  <version_modified>20170306T172059Z</version_modified>
+  <version_id>6e644c6c-a4cc-4bda-ada9-ee34a0afe217</version_id>
+  <version_modified>20170306T223240Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>

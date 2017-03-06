@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>62d4b7b2-9bea-400d-a4ca-6083196c2798</version_id>
-  <version_modified>20170306T172104Z</version_modified>
+  <version_id>bf6c31f3-d35d-470f-a14e-7a406b9f5c20</version_id>
+  <version_modified>20170306T223245Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
