@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
+class ResidentialPhotovoltaicsSAM < OpenStudio::Ruleset::ModelUserScript
 
   class PVSystem
     def initialize
@@ -285,4 +285,4 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
 end
 
 # register the measure to be used by the application
-ResidentialPhotovoltaics.new.registerWithApplication
+ResidentialPhotovoltaicsSAM.new.registerWithApplication
