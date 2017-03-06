@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics_sam</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>a778dfc9-27c3-4332-abf5-610aea3e9778</version_id>
-  <version_modified>20170306T224133Z</version_modified>
+  <version_id>5719b02d-2cd1-4e56-a034-54aad0783137</version_id>
+  <version_modified>20170306T232809Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialPhotovoltaicsSAM</class_name>
   <display_name>Set Residential Photovoltaics SAM</display_name>
@@ -265,7 +265,7 @@
       <filename>ssc_ffi.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7808D565</checksum>
+      <checksum>C9D9AEF2</checksum>
     </file>
   </files>
 </measure>

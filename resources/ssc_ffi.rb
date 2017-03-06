@@ -16,13 +16,15 @@ module SscApi
       end
     elsif /darwin/.match(RUBY_PLATFORM)
       ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/osx64/ssc.dylib"
-    elsif /linux2/.match(RUBY_PLATFORM)
+    elsif /linux/.match(RUBY_PLATFORM)
       ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/linux64/ssc.so"
     else
       puts "Platform not supported: #{RUBY_PLATFORM}"
     end
     
-    if !File.exist? ssc_path
+    if ssc_path.nil?
+      puts "Ruby platform not matched: #{RUBY_PLATFORM}"
+    elsif !File.exist? ssc_path
       puts "File not found: #{ssc_path}"
     end
     ffi_lib ssc_path
