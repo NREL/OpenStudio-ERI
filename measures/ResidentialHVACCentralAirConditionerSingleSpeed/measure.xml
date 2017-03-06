@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>9bc95224-fe14-49dc-91db-8f4038b98ea6</version_id>
-  <version_modified>20170304T001952Z</version_modified>
+  <version_id>73674916-9067-4980-afaf-05f6eaf53a86</version_id>
+  <version_modified>20170306T172110Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessSingleSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Single-Speed Central Air Conditioner</display_name>
@@ -408,12 +408,6 @@
       <checksum>B3399235</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DE1177FB</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -423,6 +417,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>CF6F7D9A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E779DFB</checksum>
     </file>
   </files>
 </measure>

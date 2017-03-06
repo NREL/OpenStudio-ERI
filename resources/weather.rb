@@ -83,6 +83,7 @@ class WeatherProcess
         end
         
         design = WeatherDesign.new
+        # FIXME: This path should be passed in.
         ddy_path = epw_path.gsub(".epw",".ddy")
         epwHasDesignData = false
         if File.exist?(ddy_path)

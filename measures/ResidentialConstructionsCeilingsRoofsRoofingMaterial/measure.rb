@@ -125,9 +125,12 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterial < OpenStudio::Ruleset::Mo
     if units.nil?
         return false
     end
-    units.each do |unit|
-        unit.setFeature(Constants.SizingInfoRoofColor, manual_j_color)
-        unit.setFeature(Constants.SizingInfoRoofMaterial, manual_j_material)
+    surfaces.each do |surface|
+        units.each do |unit|
+            next if not unit.spaces.include?(surface.space.get)
+            unit.setFeature(Constants.SizingInfoRoofColor(surface), manual_j_color)
+            unit.setFeature(Constants.SizingInfoRoofMaterial(surface), manual_j_material)
+        end
     end
     
     # Remove any constructions/materials that aren't used

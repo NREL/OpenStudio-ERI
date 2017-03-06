@@ -124,7 +124,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Get the weather data
-    weather = WeatherProcess.new(model, runner, File.dirname(__FILE__), header_only=false)
+    weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
     if weather.error?
         return false
     end
@@ -151,17 +151,13 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     northAxis = model.getBuilding.northAxis
     minCoolingCapacity = 1 # Btu/hr
     
-    roof_color = get_model_feature(runner, units, Constants.SizingInfoRoofColor, 'string')
-    roof_material = get_model_feature(runner, units, Constants.SizingInfoRoofMaterial, 'string')
-    return false if roof_color.nil? or roof_material.nil?
-    
     # Based on EnergyPlus's model for calculating SHR at off-rated conditions. This curve fit 
     # avoids the iterations in the actual model. It does not account for altitude or variations 
     # in the SHRRated. It is a function of ODB (MJ design temp) and CFM/Ton (from MJ)
     shr_biquadratic_coefficients = [1.08464364, 0.002096954, 0, -0.005766327, 0, -0.000011147]
     
     
-    mj8 = processSiteCalcsAndDesignTemps(runner, mj8, weather, model, roof_color, roof_material)
+    mj8 = processSiteCalcsAndDesignTemps(runner, mj8, weather, model)
     return false if mj8.nil?
         
     units.each do |unit|
@@ -190,14 +186,9 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         ducts = get_ducts_for_unit(runner, model, unit, unit_thermal_zones, hvac, unit_ffa, building_num_stories)
         return false if ducts.nil?
 
-        # Calculate loads for each thermal zone in the unit
-        zones_loads = {}
-        unit_thermal_zones.each do |thermal_zone|
-            next if not Geometry.zone_is_finished(thermal_zone)
-            zone_loads = processZoneLoads(runner, mj8, unit, thermal_zone, weather, northAxis, nbeds, unit_ffa, modelYear, model.alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories, roof_color, roof_material)
-            return false if zone_loads.nil?
-            zones_loads[thermal_zone] = zone_loads
-        end
+        # Calculate loads for each conditioned thermal zone in the unit
+        zones_loads = processZoneLoads(runner, mj8, unit, unit_thermal_zones, weather, northAxis, nbeds, unit_ffa, modelYear, model.alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories)
+        return false if zones_loads.nil?
         display_zone_loads(runner, unit_num, zones_loads)
         
         # Aggregate zone loads into initial unit loads
@@ -217,7 +208,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
  
   end #end the run method
   
-  def processSiteCalcsAndDesignTemps(runner, mj8, weather, model, roof_color, roof_material)
+  def processSiteCalcsAndDesignTemps(runner, mj8, weather, model)
     '''
     Site Calculations and Design Temperatures
     '''
@@ -342,11 +333,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             
         elsif Geometry.get_unfinished_attic_spaces(model.getSpaces, model).include?(space)
         
-            attic_has_radiant_barrier = get_model_feature(runner, units, Constants.SizingInfoAtticHasRadiantBarrier, 'boolean', false)
-            if attic_has_radiant_barrier.nil?
-                attic_has_radiant_barrier = false
-            end
-            
             is_vented = get_unit_feature(runner, unit, Constants.SizingInfoSpaceIsVented(space), 'boolean')
             return nil if is_vented.nil?
             
@@ -390,86 +376,106 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 temps['dehum'] = weather.design.DehumidDrybulb
                 
                 # Calculate the cooling design temperature for the unfinished attic based on Figure A12-14
-                if is_vented
-                    if not attic_has_radiant_barrier
-                        temps['cool'] = 150 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]
-                    else
-                        temps['cool'] = 130 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]
-                    end
-                    
-                else # not is_vented
-                    
-                    if not attic_has_radiant_barrier
-                        if [Constants.RoofMaterialAsphaltShingles, Constants.RoofMaterialTarGravel].include?(roof_material)
-                            if roof_color == Constants.ColorDark
-                                temps['cool'] = 130
-                            else
-                                temps['cool'] = 120
-                            end
-                        
-                        elsif [Constants.RoofMaterialWoodShakes].include?(roof_material)
-                            temps['cool'] = 120
-                          
-                        elsif [Constants.RoofMaterialMetal, Constants.RoofMaterialMembrane].include?(roof_material)
-                            if roof_color == Constants.ColorDark
-                                temps['cool'] = 130
-                            elsif roof_color == Constants.ColorWhite
-                                temps['cool'] = 95
-                            else
-                                temps['cool'] = 120
-                            end
-                                
-                        elsif [Constants.RoofMaterialTile].include?(roof_material)
-                            if roof_color == Constants.ColorDark
-                                temps['cool'] = 110
-                            elsif roof_color == Constants.ColorWhite
-                                temps['cool'] = 95
-                            else
-                                temps['cool'] = 105
-                            end
-                           
-                        else
-                            runner.registerWarning("Specified roofing material (#{roof_material}) is not supported by BEopt Manual J calculations. Assuming dark asphalt shingles")
-                            temps['cool'] = 130
-                        end
-                    
-                    else # with a radiant barrier
-                        if [Constants.RoofMaterialAsphaltShingles, Constants.RoofMaterialTarGravel].include?(roof_material)
-                            if roof_color == Constants.ColorDark
-                                temps['cool'] = 120
-                            else
-                                temps['cool'] = 110
-                            end
-                        
-                        elsif [Constants.RoofMaterialWoodShakes].include?(roof_material)
-                            temps['cool'] = 110
-                            
-                        elsif [Constants.RoofMaterialMetal, Constants.RoofMaterialMembrane].include?(roof_material)
-                            if roof_color == Constants.ColorDark
-                                temps['cool'] = 120
-                            elsif roof_color == Constants.ColorWhite
-                                temps['cool'] = 95
-                            else
-                                temps['cool'] = 110
-                            end
-                                
-                        elsif [Constants.RoofMaterialTile].include?(roof_material)
-                            if roof_color == Constants.ColorDark
-                                temps['cool'] = 105
-                            elsif roof_color == Constants.ColorWhite
-                                temps['cool'] = 95
-                            else
-                                temps['cool'] = 105
-                            end
-                           
-                        else
-                            runner.registerWarning("Specified roofing material (#{roof_material}) is not supported by BEopt Manual J calculations. Assuming dark asphalt shingles")
-                            temps['cool'] = 120
-                        
-                        end
-                    end        
-                end
+                # Use an area-weighted temperature in case roof surfaces are different
+                tot_roof_area = 0
+                temps['cool'] = 0
                 
+                Geometry.get_spaces_above_grade_exterior_roofs([space]).each do |roof|
+                    tot_roof_area += surface.netArea
+
+                    roof_color = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofColor(surface), 'string')
+                    roof_material = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofMaterial(surface), 'string')
+                    return false if roof_color.nil? or roof_material.nil?
+                    
+                    has_radiant_barrier = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofHasRadiantBarrier(surface), 'boolean', false)
+                    if has_radiant_barrier.nil?
+                        has_radiant_barrier = false
+                    end
+                
+                    if is_vented
+                        if not has_radiant_barrier
+                            temps['cool'] = 150 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]
+                        else
+                            temps['cool'] = 130 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]
+                        end
+                        
+                    else # not is_vented
+                
+                        if not has_radiant_barrier
+                            if [Constants.RoofMaterialAsphaltShingles, Constants.RoofMaterialTarGravel].include?(roof_material)
+                                if roof_color == Constants.ColorDark
+                                    temps['cool'] += 130 * surface.netArea
+                                else
+                                    temps['cool'] += 120 * surface.netArea
+                                end
+                            
+                            elsif [Constants.RoofMaterialWoodShakes].include?(roof_material)
+                                temps['cool'] += 120 * surface.netArea
+                              
+                            elsif [Constants.RoofMaterialMetal, Constants.RoofMaterialMembrane].include?(roof_material)
+                                if roof_color == Constants.ColorDark
+                                    temps['cool'] += 130 * surface.netArea
+                                elsif roof_color == Constants.ColorWhite
+                                    temps['cool'] += 95 * surface.netArea
+                                else
+                                    temps['cool'] += 120 * surface.netArea
+                                end
+                                    
+                            elsif [Constants.RoofMaterialTile].include?(roof_material)
+                                if roof_color == Constants.ColorDark
+                                    temps['cool'] += 110 * surface.netArea
+                                elsif roof_color == Constants.ColorWhite
+                                    temps['cool'] += 95 * surface.netArea
+                                else
+                                    temps['cool'] += 105 * surface.netArea
+                                end
+                               
+                            else
+                                runner.registerWarning("Specified roofing material (#{roof_material}) is not supported by BEopt Manual J calculations. Assuming dark asphalt shingles")
+                                temps['cool'] += 130 * surface.netArea
+                            end
+                        
+                        else # with a radiant barrier
+                            if [Constants.RoofMaterialAsphaltShingles, Constants.RoofMaterialTarGravel].include?(roof_material)
+                                if roof_color == Constants.ColorDark
+                                    temps['cool'] += 120 * surface.netArea
+                                else
+                                    temps['cool'] += 110 * surface.netArea
+                                end
+                            
+                            elsif [Constants.RoofMaterialWoodShakes].include?(roof_material)
+                                temps['cool'] += 110 * surface.netArea
+                                
+                            elsif [Constants.RoofMaterialMetal, Constants.RoofMaterialMembrane].include?(roof_material)
+                                if roof_color == Constants.ColorDark
+                                    temps['cool'] += 120 * surface.netArea
+                                elsif roof_color == Constants.ColorWhite
+                                    temps['cool'] += 95 * surface.netArea
+                                else
+                                    temps['cool'] += 110 * surface.netArea
+                                end
+                                    
+                            elsif [Constants.RoofMaterialTile].include?(roof_material)
+                                if roof_color == Constants.ColorDark
+                                    temps['cool'] += 105 * surface.netArea
+                                elsif roof_color == Constants.ColorWhite
+                                    temps['cool'] += 95 * surface.netArea
+                                else
+                                    temps['cool'] += 105 * surface.netArea
+                                end
+                               
+                            else
+                                runner.registerWarning("Specified roofing material (#{roof_material}) is not supported by BEopt Manual J calculations. Assuming dark asphalt shingles")
+                                temps['cool'] += 120 * surface.netArea
+                            
+                            end
+                        end   
+                    end # vented/unvented
+                    
+                end # each roof surface
+                
+                temps['cool'] = temps['cool'] / tot_roof_area
+                    
                 # Adjust base CLTD for cooling design temperature and daily range
                 temps['cool'] += (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]
             
@@ -490,17 +496,57 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return mj8
   end
   
-  def processZoneLoads(runner, mj8, unit, thermal_zone, weather, northAxis, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories, roof_color, roof_material)
-    # FIXME: ensure coincidence of window loads and internal gains across zones in a unit
-    zone_loads = ZoneValues.new
-    zone_loads = processLoadWindows(runner, mj8, thermal_zone, zone_loads, weather, northAxis)
-    zone_loads = processLoadDoors(runner, mj8, thermal_zone, zone_loads, weather)
-    zone_loads = processLoadWalls(runner, mj8, unit, thermal_zone, zone_loads, weather, northAxis)
-    zone_loads = processLoadRoofs(runner, mj8, unit, thermal_zone, zone_loads, weather, roof_color, roof_material)
-    zone_loads = processLoadFloors(runner, mj8, thermal_zone, zone_loads, weather)
-    zone_loads = processInfiltrationVentilation(runner, mj8, unit, thermal_zone, zone_loads, weather, unit_shelter_class, building_num_stories)
-    zone_loads = processInternalGains(runner, mj8, thermal_zone, zone_loads, weather, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule)
-    return zone_loads
+  def processZoneLoads(runner, mj8, unit, thermal_zones, weather, northAxis, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories)
+    # Constant loads (no variation throughout day)
+    zones_loads = {}
+    thermal_zones.each do |thermal_zone|
+        next if not Geometry.zone_is_finished(thermal_zone)
+        zone_loads = ZoneValues.new
+        zone_loads = processLoadWindows(runner, mj8, thermal_zone, zone_loads, weather, northAxis)
+        zone_loads = processLoadDoors(runner, mj8, thermal_zone, zone_loads, weather)
+        zone_loads = processLoadWalls(runner, mj8, unit, thermal_zone, zone_loads, weather, northAxis)
+        zone_loads = processLoadRoofs(runner, mj8, unit, thermal_zone, zone_loads, weather)
+        zone_loads = processLoadFloors(runner, mj8, thermal_zone, zone_loads, weather)
+        zone_loads = processInfiltrationVentilation(runner, mj8, unit, thermal_zone, zone_loads, weather, unit_shelter_class, building_num_stories)
+        return nil if zone_loads.nil?
+        zones_loads[thermal_zone] = zone_loads
+    end
+    
+    # Varying loads (ensure coincidence of loads during the day)
+    # FIXME: Currently handles internal gains but not window loads
+    zones_sens = {}
+    zones_lat = {}
+    thermal_zones.each do |thermal_zone|
+        next if not Geometry.zone_is_finished(thermal_zone)
+        zones_sens[thermal_zone], zones_lat[thermal_zone] = processInternalGains(runner, mj8, thermal_zone, weather, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule)
+        return nil if zones_sens[thermal_zone].nil? or zones_lat[thermal_zone].nil?
+    end
+    # Find hour of the maximum total & latent loads
+    tot_loads = [0]*24
+    lat_loads = [0]*24
+    for hr in 0..23
+        zones_sens.each do |tz, hourly_sens|
+            tot_loads[hr] += hourly_sens[hr]
+        end
+        zones_lat.each do |tz, hourly_lat|
+            tot_loads[hr] += hourly_lat[hr]
+            lat_loads[hr] += hourly_lat[hr]
+        end
+    end
+    idx_tot = tot_loads.each_with_index.max[1]
+    idx_lat = lat_loads.each_with_index.max[1]
+    # Assign zone loads for each zone at the coincident hour
+    zones_loads.each do |thermal_zone, zone_loads|
+        # Cooling based on max total hr
+        zone_loads.Cool_IntGains_Sens = zones_sens[thermal_zone][idx_tot]
+        zone_loads.Cool_IntGains_Lat = zones_lat[thermal_zone][idx_tot]
+        
+        # Dehumidification based on max latent hr
+        zone_loads.Dehumid_IntGains_Sens = zones_sens[thermal_zone][idx_lat]
+        zone_loads.Dehumid_IntGains_Lat = zones_lat[thermal_zone][idx_lat]
+    end
+    
+    return zones_loads
   end
   
   def processLoadWindows(runner, mj8, thermal_zone, zone_loads, weather, northAxis)
@@ -932,7 +978,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return zone_loads
   end
   
-  def processLoadRoofs(runner, mj8, unit, thermal_zone, zone_loads, weather, roof_color, roof_material)
+  def processLoadRoofs(runner, mj8, unit, thermal_zone, zone_loads, weather)
     '''
     Heating, Cooling, and Dehumidification Loads: Ceilings
     '''
@@ -947,6 +993,10 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
     # Roofs
     Geometry.get_spaces_above_grade_exterior_roofs(thermal_zone.spaces).each do |roof|
+    
+        roof_color = get_unit_feature(runner, unit, Constants.SizingInfoRoofColor(roof), 'string')
+        roof_material = get_unit_feature(runner, unit, Constants.SizingInfoRoofMaterial(roof), 'string')
+        return false if roof_color.nil? or roof_material.nil?
     
         cavity_r = get_unit_feature(runner, unit, Constants.SizingInfoRoofCavityRvalue(roof), 'double')
         return nil if cavity_r.nil?
@@ -1123,12 +1173,12 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return zone_loads
   end
   
-  def processInternalGains(runner, mj8, thermal_zone, zone_loads, weather, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule)
+  def processInternalGains(runner, mj8, thermal_zone, weather, nbeds, unit_ffa, modelYear, alwaysOnDiscreteSchedule)
     '''
     Cooling and Dehumidification Loads: Internal Gains
     '''
     
-    return nil if mj8.nil? or zone_loads.nil?
+    return nil if mj8.nil?
     
     int_Tot_Max = 0
     int_Lat_Max = 0
@@ -1146,10 +1196,13 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         july_dates << OpenStudio::Date.new(OpenStudio::MonthOfYear.new('July'), day, modelYear)
     end
 
-    int_Sens_Hr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    int_Lat_Hr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    int_Sens_Hr = [0]*24
+    int_Lat_Hr = [0]*24
     
     gains.each do |gain|
+    
+        # FIXME: The line below is for testing against BEopt
+        next if gain.name.to_s == 'residential hot water distribution'
     
         sched = nil
         sensible_frac = nil
@@ -1265,23 +1318,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         int_Sens_Hr[hr] += occ_sched[hr] * 230 * n_occupants * zone_ffa / unit_ffa
         int_Lat_Hr[hr] += occ_sched[hr] * 200 * n_occupants * zone_ffa / unit_ffa
     end
-            
-    int_Tot_Hr = []
-    for hr in 0..23
-        int_Tot_Hr << int_Sens_Hr[hr] + int_Lat_Hr[hr]
-    end
-    
-    # Store the sensible and latent loads associated with the hour of the maximum total load for cooling load calculations
-    idx = int_Tot_Hr.each_with_index.max[1]
-    zone_loads.Cool_IntGains_Sens = int_Sens_Hr[idx]
-    zone_loads.Cool_IntGains_Lat = int_Lat_Hr[idx]
-    
-    # Store the sensible and latent loads associated with the hour of the maximum latent load for dehumidification load calculations
-    idx = int_Lat_Hr.each_with_index.max[1]
-    zone_loads.Dehumid_IntGains_Sens = int_Sens_Hr[idx]
-    zone_loads.Dehumid_IntGains_Lat = int_Lat_Hr[idx]
-            
-    return zone_loads
+                
+    return int_Sens_Hr, int_Lat_Hr
   end
     
   def processIntermediateTotalLoads(runner, mj8, zones_loads, weather, hvac)

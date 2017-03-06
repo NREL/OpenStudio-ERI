@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>6257d8e7-5e8a-4476-985f-389446b65bf3</version_id>
-  <version_modified>20170304T001957Z</version_modified>
+  <version_id>1bab0358-8e32-4e28-a29a-fa329483643d</version_id>
+  <version_modified>20170306T172115Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -219,18 +219,6 @@
       <checksum>B3399235</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D7840724</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DE1177FB</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -240,6 +228,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>ECB98B89</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>457F689A</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E779DFB</checksum>
     </file>
   </files>
 </measure>

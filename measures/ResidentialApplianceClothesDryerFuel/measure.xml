@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer_fuel</name>
   <uid>0ed6fb35-c3e0-4a33-a397-ce4cec92d96e</uid>
-  <version_id>bcfc0aeb-f5e0-4ecf-b6cd-e5cbc28b6580</version_id>
-  <version_modified>20170304T005920Z</version_modified>
+  <version_id>f86e3a57-85c6-4ed3-a9c2-c0d100e3c8e7</version_id>
+  <version_modified>20170306T172058Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialClothesDryerFuel</class_name>
   <display_name>Set Residential Fuel Clothes Dryer</display_name>
@@ -204,12 +204,6 @@
       <checksum>B3399235</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DE1177FB</checksum>
-    </file>
-    <file>
       <filename>ResidentialClothesDryerFuel_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -225,6 +219,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>30F9D2C1</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E779DFB</checksum>
     </file>
   </files>
 </measure>

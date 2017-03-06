@@ -949,9 +949,6 @@ class Constants
     end
     return "#{property}#{s_obj}"
   end
-  def self.SizingInfoAtticHasRadiantBarrier
-    return self.SizingInfo(__method__.to_s)
-  end
   def self.SizingInfoDuctsLocationFrac
     return self.SizingInfo(__method__.to_s)
   end
@@ -1024,11 +1021,14 @@ class Constants
   def self.SizingInfoRoofCavityRvalue(surface)
     return self.SizingInfo(__method__.to_s, surface)
   end
-  def self.SizingInfoRoofColor
-    return self.SizingInfo(__method__.to_s)
+  def self.SizingInfoRoofColor(surface)
+    return self.SizingInfo(__method__.to_s, surface)
   end
-  def self.SizingInfoRoofMaterial
-    return self.SizingInfo(__method__.to_s)
+  def self.SizingInfoRoofHasRadiantBarrier(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoRoofMaterial(surface)
+    return self.SizingInfo(__method__.to_s, surface)
   end
   def self.SizingInfoRoofRigidInsRvalue(surface)
     return self.SizingInfo(__method__.to_s, surface)

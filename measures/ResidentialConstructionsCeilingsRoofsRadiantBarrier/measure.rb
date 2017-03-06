@@ -86,8 +86,11 @@ class ProcessConstructionsCeilingsRoofsRadiantBarrier < OpenStudio::Ruleset::Mod
     if units.nil?
         return false
     end
-    units.each do |unit|
-        unit.setFeature(Constants.SizingInfoAtticHasRadiantBarrier, has_rb)
+    surfaces.each do |surface|
+        units.each do |unit|
+            next if not unit.spaces.include?(surface.space.get)
+            unit.setFeature(Constants.SizingInfoRoofHasRadiantBarrier(surface), has_rb)
+        end
     end
     
     # Remove any constructions/materials that aren't used

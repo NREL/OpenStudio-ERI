@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_air_source_heat_pump</name>
   <uid>e1fa8fdd-4940-4364-b3ea-3bc6b93ca9c4</uid>
-  <version_id>406cdb1a-ada2-43ce-8b01-e64c88d500cf</version_id>
-  <version_modified>20170304T001951Z</version_modified>
+  <version_id>0398d578-c241-4168-905b-79961f5bde43</version_id>
+  <version_modified>20170306T172109Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessTwoSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Two-Speed Air Source Heat Pump</display_name>
@@ -694,12 +694,6 @@
       <checksum>B3399235</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DE1177FB</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -709,6 +703,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>E4E4520C</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E779DFB</checksum>
     </file>
   </files>
 </measure>

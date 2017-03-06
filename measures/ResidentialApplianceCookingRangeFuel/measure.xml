@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_fuel</name>
   <uid>68bdcee3-c301-4fe9-a99f-c7d8b5930c89</uid>
-  <version_id>55bb1915-effd-48ae-964e-c4f891d26903</version_id>
-  <version_modified>20170304T001940Z</version_modified>
+  <version_id>0a537fa7-9e72-4120-846b-af8a6c2b4a1b</version_id>
+  <version_modified>20170306T172059Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialCookingRangeFuel</class_name>
   <display_name>Set Residential Fuel Cooking Range</display_name>
@@ -197,12 +197,6 @@
       <checksum>B3399235</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DE1177FB</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -212,6 +206,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>63007933</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E779DFB</checksum>
     </file>
   </files>
 </measure>
