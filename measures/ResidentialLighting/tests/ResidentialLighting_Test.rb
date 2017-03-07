@@ -288,7 +288,7 @@ class ResidentialLightingTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"Lights"=>num_ltg_spaces, "LightsDefinition"=>num_ltg_spaces, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>6285.88}
+    expected_values = {"Annual_kwh"=>3811.31}
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces+1)
   end
 

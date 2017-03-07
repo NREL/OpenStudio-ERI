@@ -234,6 +234,21 @@ namespace :test do
         end
     end
     
+    # Remove any extra osm's in the measures test dirs
+    measures.each do |m|
+        osms = Dir[File.expand_path("../measures/#{m}/tests/*.osm", __FILE__)]
+        osms.each do |osm|
+            osw = File.basename(osm).gsub('.osm','.osw')
+            if not osw_map[osw].nil? and not osw_map[osw].include?(m)
+                puts "Extra file #{osw} found in #{m}/tests. Do you want to delete it? (y/n)"
+                input = STDIN.gets.strip.downcase
+                next if input != "y"
+                FileUtils.rm(osm)
+                puts "File deleted."
+            end
+        end
+    end    
+    
     puts "Completed. #{num_success} of #{num_tot} osm files were regenerated successfully."
     
   end

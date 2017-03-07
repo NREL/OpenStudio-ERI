@@ -154,7 +154,7 @@ class ResidentialMiscellaneousElectricLoadsTest < MiniTest::Test
     args_hash["mult"] = 1.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipment"=>num_fin_spaces, "ElectricEquipmentDefinition"=>num_fin_spaces, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>8590.57}
+    expected_values = {"Annual_kwh"=>7589.07}
     _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_fin_spaces)
   end
   

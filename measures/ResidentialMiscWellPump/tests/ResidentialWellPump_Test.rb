@@ -180,7 +180,7 @@ class ResidentialWellPumpTest < MiniTest::Test
     args_hash["base_energy"] = 400.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipment"=>num_units, "ElectricEquipmentDefinition"=>num_units, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>1573.95}
+    expected_values = {"Annual_kwh"=>1386.57}
     _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   

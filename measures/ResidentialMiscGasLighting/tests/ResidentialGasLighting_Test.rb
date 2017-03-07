@@ -180,7 +180,7 @@ class ResidentialGasLightingTest < MiniTest::Test
     args_hash["base_energy"] = 19.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GasEquipmentDefinition"=>num_units, "GasEquipment"=>num_units, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_therm"=>74.76, "Space"=>args_hash["space"]}
+    expected_values = {"Annual_therm"=>65.86, "Space"=>args_hash["space"]}
     _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   

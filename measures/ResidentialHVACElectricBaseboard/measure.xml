@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>7c66b25f-18a4-4634-b561-cad40feef742</version_id>
-  <version_modified>20170307T160715Z</version_modified>
+  <version_id>11998239-4e31-4a47-98d4-6ed4c5d5ff88</version_id>
+  <version_modified>20170307T165342Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -186,12 +186,6 @@
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
       <checksum>E23378AA</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>86A38CF7</checksum>
     </file>
     <file>
       <filename>util.rb</filename>

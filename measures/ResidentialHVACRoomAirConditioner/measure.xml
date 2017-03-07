@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>9807c79e-f08b-4280-9a30-e3a4f62a18a0</version_id>
-  <version_modified>20170307T160716Z</version_modified>
+  <version_id>d120a524-bc6e-4664-b6b6-b015a4759fcf</version_id>
+  <version_modified>20170307T165343Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -174,12 +174,6 @@
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
       <checksum>E23378AA</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>86A38CF7</checksum>
     </file>
     <file>
       <filename>util.rb</filename>

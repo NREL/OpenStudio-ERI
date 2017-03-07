@@ -129,7 +129,7 @@ class WindowAreaTest < MiniTest::Test
     args_hash = {}
     args_hash["back_wwr"] = 0.12
     args_hash["right_wwr"] = 0.12    
-    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, [0, 0, 0, 0, 0], [122.19, 81.46, 61.09, 40.73])
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, [0, 0, 0, 0, 0], [86.4, 57.6, 43.2, 28.8])
   end
   
   def test_single_family_attached_new_construction_offset
