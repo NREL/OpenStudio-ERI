@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics_sam</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>3b56f01f-a986-4713-ae56-bd023e259175</version_id>
-  <version_modified>20170307T160911Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>89c68862-14eb-4b1a-b5c4-6648055e5e73</version_id>
+  <version_modified>20170307T200051Z</version_modified>
+  <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaicsSAM</class_name>
   <display_name>Set Residential Photovoltaics SAM</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
@@ -126,7 +126,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Onsite Power Generation.Photovoltaic</tag>
@@ -159,12 +158,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B3399235</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>048F7BD2</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
@@ -257,6 +250,12 @@
       <checksum>C3D47B00</checksum>
     </file>
     <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>11A72D9A</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -265,7 +264,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9443871F</checksum>
+      <checksum>BFA16664</checksum>
     </file>
   </files>
 </measure>

@@ -135,11 +135,6 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Ruleset::ModelUserScript
       unzip_file.extractAllFiles(OpenStudio::toPath("#{File.dirname(__FILE__)}/resources"))
     end
     
-    if !File.directory? "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32"
-      unzip_file = OpenStudio::UnzipFile.new("#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32.zip")
-      unzip_file.extractAllFiles(OpenStudio::toPath("#{File.dirname(__FILE__)}/resources"))
-    end
-    $:.unshift "#{File.dirname(__FILE__)}/resources/ffi-1.9.17-x64-mingw32/lib" # TODO: since ffi is not packaged with openstudio
     require "#{File.dirname(__FILE__)}/resources/ssc_api"
     
     size = runner.getDoubleArgumentValue("size",user_arguments)
