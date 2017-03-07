@@ -289,7 +289,7 @@ task :update_resources do
     # Any extra resource files?
     if File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
       Dir.foreach(File.expand_path("../measures/#{m}/resources", __FILE__)) do |item|
-        next if item == '.' or item == '..' or item.end_with? '.dll' or item.end_with? '.exp' or item.end_with? '.exe' or item.end_with? '.so' or item.end_with? '.dylib' or item.end_with? '.lib' or item.end_with? '.zip'
+        next if item == '.' or item == '..'
         if subdir_resources.include?(item)
           item = subdir_resources[item]
         end
