@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>699b9f48-1e3e-4d66-b59e-f89b12061297</version_id>
-  <version_modified>20170306T223252Z</version_modified>
+  <version_id>c2423467-a0a8-41a2-989e-8604ef48fe99</version_id>
+  <version_modified>20170307T160717Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>

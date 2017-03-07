@@ -16,6 +16,8 @@ require 'json'
 # you must be an administrator or editor member of a group to
 # upload content to that group
 
+os_cli = "C:\\openstudio-2.0.4\\bin\\openstudio.exe" # FIXME
+
 namespace :measures do
   desc 'Generate measures to prepare for upload to BCL '
   task :generate do
@@ -135,47 +137,49 @@ namespace :test do
 
     num_tot = 0
     num_success = 0
+    
+    osw_path = File.expand_path("../test/osw_files/", __FILE__)
   
     # Generate hash that maps osw's to measures
     osw_map = {}
-    missing_measure_dirs = []
-    File.open(File.expand_path("../test/osw_to_measure_mapping.csv", __FILE__)) do |file|
-      file.each do |line|
-        line = line.chomp.split(',').reject { |l| l.empty? }
-        measure = line.delete_at(0)
-        line.each do |osw|
-          osw_full = File.expand_path("../test/osw_files/#{osw}", __FILE__)
-          if not File.exists?(osw_full)
-            puts "ERROR: OSW file #{osw_full} not found."
-          end
-          measure_dir = File.expand_path("../measures/#{measure}/", __FILE__)
-          if not Dir.exists?(measure_dir)
-            if not missing_measure_dirs.include?(measure_dir)
-              puts "ERROR: Measure dir #{measure_dir} not found."
-              missing_measure_dirs << measure_dir
+    measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
+    measures.each do |m|
+        testrbs = Dir[File.expand_path("../measures/#{m}/tests/*.rb", __FILE__)]
+        if testrbs.size == 1
+            # Get osm's specified in the test rb
+            testrb = testrbs[0]
+            osms = get_osms_listed_in_test(testrb)
+            osms.each do |osm|
+                osw = File.basename(osm).gsub('.osm','.osw')
+                if not osw_map.keys.include?(osw)
+                    osw_map[osw] = []
+                end
+                osw_map[osw] << m
             end
-          else
-            if not osw_map.keys.include?(osw)
-              osw_map[osw] = []
-            end
-            osw_map[osw] << measure
-          end
-        end
+        elsif testrbs.size > 1
+            puts "ERROR: Multiple .rb files found in #{m} tests dir."
+            exit
       end
     end
 
-    os_cli = "C:\\openstudio-2.0.3\\bin\\openstudio.exe" # FIXME    
+    if not File.exists?(os_cli)
+        puts "ERROR: #{os_cli} not found."
+        exit
+    end
+    
     os_version = os_cli.split('\\')[-3].split('-')[1]
-    osw_files = Dir.entries(File.expand_path("../test/osw_files/", __FILE__)).select {|entry| entry.end_with?(".osw")}
+    osw_files = Dir.entries(osw_path).select {|entry| entry.end_with?(".osw")}
     if File.exists?(File.expand_path("../log", __FILE__))
         FileUtils.rm(File.expand_path("../log", __FILE__))
     end
+    osw_num = 0
     osw_files.each do |osw|
         # Generate osm from osw
+        osw_num += 1
         osw_filename = osw
         next if osw_map[osw_filename].nil? # No measures to copy osm to
         num_tot += 1
-        puts "Regenerating osm from #{osw}..."
+        puts "[#{osw_num}/#{osw_files.size}] Regenerating osm from #{osw}..."
         temp_osw = File.join(File.dirname(__FILE__), osw)
         osw = File.expand_path("../test/osw_files/#{osw}", __FILE__)
         FileUtils.cp(osw, temp_osw)
@@ -184,6 +188,7 @@ namespace :test do
         osm = File.expand_path("../run/in.osm", __FILE__)
         if not File.exists?(osm)
             puts "  ERROR: Could not generate osm."
+            exit
         else
             # Add auto-generated message to top of file
             # Update EPW file paths to be relative for the CirceCI machine
@@ -208,6 +213,7 @@ namespace :test do
                 measure_test_dir = File.expand_path("../measures/#{measure}/tests/", __FILE__)
                 if not Dir.exists?(measure_test_dir)
                     puts "  ERROR: Could not copy osm to #{measure_test_dir}."
+                    exit
                 end
                 FileUtils.cp(osm, File.expand_path("#{measure_test_dir}/#{osm_filename}", __FILE__))
                 num_copied += 1
@@ -356,6 +362,16 @@ def get_requires_from_file(filerb)
     end
   end
   return requires
+end
+
+def get_osms_listed_in_test(testrb)
+    osms = []
+    if not File.exists?(testrb)
+      return osms
+    end
+    str = File.readlines(testrb).join("\n")
+    osms = str.scan(/\w+\.osm/)
+    return osms.uniq
 end
 
 def replace_name_in_measure_xmls()

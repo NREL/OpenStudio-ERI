@@ -194,9 +194,9 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Ruleset::ModelUserScript
       
     vertices = OpenStudio::Point3dVector.new
     vertices << OpenStudio::Point3d.new(0, 0, 0)
-    vertices << OpenStudio::Point3d.new(0, 1, 0)
-    vertices << OpenStudio::Point3d.new(1, 1, 0)
     vertices << OpenStudio::Point3d.new(1, 0, 0)
+    vertices << OpenStudio::Point3d.new(1, 1, 0)
+    vertices << OpenStudio::Point3d.new(0, 1, 0)
       
     # Remove existing photovoltaics
     model.getElectricLoadCenterDistributions.each do |electric_load_center_dist|
