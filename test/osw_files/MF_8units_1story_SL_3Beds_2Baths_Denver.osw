@@ -1,5 +1,8 @@
 {
-	"seed_file": "seeds\\EmptySeedModel.osm",
+    "measure_paths": [
+        "../../measures/"
+    ],
+    "seed_file": "../../seeds/EmptySeedModel.osm",
 	"steps": [
 		{
 			"measure_dir_name": "ResidentialGeometryMultifamily",

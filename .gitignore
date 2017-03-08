@@ -5,3 +5,5 @@ coverage
 /.bundle
 /log
 /run
+/test/osw_files/out.osw
+/test/osw_files/run

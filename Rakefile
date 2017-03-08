@@ -142,7 +142,7 @@ namespace :test do
   
     # Generate hash that maps osw's to measures
     osw_map = {}
-    #measures = ["ResidentialConstructionsFoundationsFloorsSlab"] # Use this to specify individual measures (instead of all measures on the following line)
+    #measures = ["ResidentialHVACSizing"] # Use this to specify individual measures (instead of all measures on the following line)
     measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
     measures.each do |m|
         testrbs = Dir[File.expand_path("../measures/#{m}/tests/*.rb", __FILE__)]
@@ -182,11 +182,9 @@ namespace :test do
         num_tot += 1
         
         puts "[#{num_tot}/#{osw_map.size}] Regenerating osm from #{osw}..."
-        temp_osw = File.join(File.dirname(__FILE__), osw)
         osw = File.expand_path("../test/osw_files/#{osw}", __FILE__)
-        FileUtils.cp(osw, temp_osw)
-        osm = File.expand_path("../run/in.osm", __FILE__)
-        command = "\"#{os_cli}\" run -w #{temp_osw} -m >> log"
+        osm = File.expand_path("../test/osw_files/run/in.osm", __FILE__)
+        command = "\"#{os_cli}\" run -w #{osw} -m >> log"
         for _retry in 1..3
             system(command)
             break if File.exists?(osm)
@@ -229,15 +227,12 @@ namespace :test do
         num_success += 1
 
         # Clean up
-        run_dir = File.expand_path("../run", __FILE__)
+        run_dir = File.expand_path("../test/osw_files/run", __FILE__)
         if Dir.exists?(run_dir)
             FileUtils.rmtree(run_dir)
         end
-        if File.exists?(temp_osw)
-            FileUtils.rm(temp_osw)
-        end
-        if File.exists?(File.expand_path("../out.osw", __FILE__))
-            FileUtils.rm(File.expand_path("../out.osw", __FILE__))
+        if File.exists?(File.expand_path("../test/osw_files/out.osw", __FILE__))
+            FileUtils.rm(File.expand_path("../test/osw_files/out.osw", __FILE__))
         end
     end
     
