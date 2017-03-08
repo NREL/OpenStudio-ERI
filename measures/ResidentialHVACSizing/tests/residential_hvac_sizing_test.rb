@@ -59,6 +59,7 @@ class ProcessHVACSizingTest < MiniTest::Test
            }
   end
 
+=begin
   def test_loads_finished_basement
     args_hash = {}
     expected_num_del_objects = {}
@@ -211,7 +212,6 @@ class ProcessHVACSizingTest < MiniTest::Test
     _test_measure("SFD_HVACSizing_Load_S.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 3)
   end  
 
-=begin
   def test_equip_ASHP_one_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
