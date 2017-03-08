@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>7d047f51-7df5-4c4a-9e9a-59673f9bf25d</version_id>
-  <version_modified>20170307T165338Z</version_modified>
+  <version_id>b4d34fd1-0278-4bf4-b132-53c3a946f561</version_id>
+  <version_modified>20170308T012711Z</version_modified>
   <xml_checksum>A02778FF</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -111,12 +111,6 @@
       <checksum>39FC363A</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B3399235</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -165,10 +159,10 @@
       <checksum>5F0C068D</checksum>
     </file>
     <file>
-      <filename>SFA_4units_1story_FB_UA_Denver-cbe7e6b.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E90A54AB</checksum>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04ACB78D</checksum>
     </file>
   </files>
 </measure>

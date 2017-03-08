@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>a19b22d1-3099-448a-8834-45aeda2a9581</version_id>
-  <version_modified>20170307T160706Z</version_modified>
+  <version_id>53b78dc1-d3bc-4db9-b0a1-c447cfc18b31</version_id>
+  <version_modified>20170308T012707Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
@@ -141,22 +141,10 @@
       <checksum>671E3F3C</checksum>
     </file>
     <file>
-      <filename>Slab_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6EAC2DB3</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BAAF2AEF</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B3399235</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -217,6 +205,24 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>5BB44DCC</checksum>
+    </file>
+    <file>
+      <filename>Slab_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F64A4CA4</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04ACB78D</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_GRG_UA_Windows_Doors.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8C2AF962</checksum>
     </file>
   </files>
 </measure>

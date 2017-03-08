@@ -142,6 +142,7 @@ namespace :test do
   
     # Generate hash that maps osw's to measures
     osw_map = {}
+    #measures = ["ResidentialConstructionsFoundationsFloorsSlab"] # Use this to specify individual measures (instead of all measures on the following line)
     measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
     measures.each do |m|
         testrbs = Dir[File.expand_path("../measures/#{m}/tests/*.rb", __FILE__)]
@@ -172,55 +173,61 @@ namespace :test do
     if File.exists?(File.expand_path("../log", __FILE__))
         FileUtils.rm(File.expand_path("../log", __FILE__))
     end
-    osw_num = 0
+    
     osw_files.each do |osw|
+
         # Generate osm from osw
-        osw_num += 1
         osw_filename = osw
         next if osw_map[osw_filename].nil? # No measures to copy osm to
         num_tot += 1
-        puts "[#{osw_num}/#{osw_files.size}] Regenerating osm from #{osw}..."
+        
+        puts "[#{num_tot}/#{osw_map.size}] Regenerating osm from #{osw}..."
         temp_osw = File.join(File.dirname(__FILE__), osw)
         osw = File.expand_path("../test/osw_files/#{osw}", __FILE__)
         FileUtils.cp(osw, temp_osw)
-        command = "\"#{os_cli}\" run -w #{temp_osw} -m >> log"
-        system(command)
         osm = File.expand_path("../run/in.osm", __FILE__)
+        command = "\"#{os_cli}\" run -w #{temp_osw} -m >> log"
+        for _retry in 1..3
+            system(command)
+            break if File.exists?(osm)
+        end
         if not File.exists?(osm)
             puts "  ERROR: Could not generate osm."
             exit
-        else
-            # Add auto-generated message to top of file
-            # Update EPW file paths to be relative for the CirceCI machine
-            # FIXME: Temporarily replace OS 2.0 version with 1.14 for CircleCI machine
-            file_text = File.readlines(osm)
-            File.open(osm, "w") do |f|
-                f.write("!- NOTE: Auto-generated from #{osw.gsub(File.dirname(__FILE__), "")}\n")
-                file_text.each do |file_line|
-                    if file_line.strip.start_with?("file:///")
-                        file_data = file_line.split('/')
-                        file_line = file_data[0] + "../tests/" + file_data[-1]
-                    elsif file_line.include?("Version Identifier")
-                        file_line = file_line.gsub(os_version, '1.14.0')
-                    end
-                    f.write(file_line)
-                end
-            end
-            # Copy to appropriate measure test dirs
-            osm_filename = osw_filename.gsub(".osw", ".osm")
-            num_copied = 0
-            osw_map[osw_filename].each do |measure|
-                measure_test_dir = File.expand_path("../measures/#{measure}/tests/", __FILE__)
-                if not Dir.exists?(measure_test_dir)
-                    puts "  ERROR: Could not copy osm to #{measure_test_dir}."
-                    exit
-                end
-                FileUtils.cp(osm, File.expand_path("#{measure_test_dir}/#{osm_filename}", __FILE__))
-                num_copied += 1
-            end
-            puts "  Copied to #{num_copied} measure(s)."
-            num_success += 1
         end
+
+        # Add auto-generated message to top of file
+        # Update EPW file paths to be relative for the CirceCI machine
+        # FIXME: Temporarily replace OS 2.0 version with 1.14 for CircleCI machine
+        file_text = File.readlines(osm)
+        File.open(osm, "w") do |f|
+            f.write("!- NOTE: Auto-generated from #{osw.gsub(File.dirname(__FILE__), "")}\n")
+            file_text.each do |file_line|
+                if file_line.strip.start_with?("file:///")
+                    file_data = file_line.split('/')
+                    file_line = file_data[0] + "../tests/" + file_data[-1]
+                elsif file_line.include?("Version Identifier")
+                    file_line = file_line.gsub(os_version, '1.14.0')
+                end
+                f.write(file_line)
+            end
+        end
+
+        # Copy to appropriate measure test dirs
+        osm_filename = osw_filename.gsub(".osw", ".osm")
+        num_copied = 0
+        osw_map[osw_filename].each do |measure|
+            measure_test_dir = File.expand_path("../measures/#{measure}/tests/", __FILE__)
+            if not Dir.exists?(measure_test_dir)
+                puts "  ERROR: Could not copy osm to #{measure_test_dir}."
+                exit
+            end
+            FileUtils.cp(osm, File.expand_path("#{measure_test_dir}/#{osm_filename}", __FILE__))
+            num_copied += 1
+        end
+        puts "  Copied to #{num_copied} measure(s)."
+        num_success += 1
+
         # Clean up
         run_dir = File.expand_path("../run", __FILE__)
         if Dir.exists?(run_dir)

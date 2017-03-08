@@ -14,6 +14,10 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
   def osm_geo_slab_garage
     return "SFD_2000sqft_2story_SL_GRG_UA.osm"
   end
+  
+  def osm_geo_slab_garage_windows_doors
+    return "SFD_2000sqft_2story_SL_GRG_UA_Windows_Doors.osm"
+  end
 
   def osm_geo_crawl
     return "SFD_2000sqft_2story_CS_UA.osm"
@@ -90,6 +94,18 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
     expected_num_new_objects = {"Material"=>3, "Construction"=>1}
     expected_values = {"LayerRValue"=>0.0254/0.00743+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2}
     _test_measure(osm_geo_slab_garage, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_add_whole_slab_r20_r10_gap_garage_windows_doors
+    # This model has multiple front wall surfaces due to the door/window measures,
+    # which makes calculation of the exterior perimeter more complex.
+    args_hash = {}
+    args_hash["whole_r"] = 20
+    args_hash["gap_r"] = 10
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>3, "Construction"=>1}
+    expected_values = {"LayerRValue"=>0.0254/0.00743+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2}
+    _test_measure(osm_geo_slab_garage_windows_doors, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_argument_error_perim_r_negative

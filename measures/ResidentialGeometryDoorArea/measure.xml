@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>852b2ab2-168b-47ab-a44a-74f87b78ee32</version_id>
-  <version_modified>20170307T160708Z</version_modified>
+  <version_id>8563d6ef-4bb3-406d-b4ea-cbfb9dfd0a3f</version_id>
+  <version_modified>20170308T012710Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
@@ -67,12 +67,6 @@
       <checksum>4DFF118C</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B3399235</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -107,6 +101,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>B558D9C1</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04ACB78D</checksum>
     </file>
   </files>
 </measure>
