@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_interzonal</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>37c73c97-26fc-4ea8-b8df-85fc964f474d</version_id>
-  <version_modified>20170308T012709Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>e9cd9fb1-ce0c-476d-acd4-b3e989e8d361</version_id>
+  <version_modified>20170308T221038Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsInterzonal</class_name>
   <display_name>Set Residential Walls - Interzonal Construction</display_name>
   <description>This measure assigns a wood stud construction to walls between finished space and unfinished space.</description>
@@ -83,7 +83,6 @@
       <default_value>0.25</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

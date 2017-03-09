@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>3ee8050d-e47e-4a74-8306-2b2898f78aaf</version_id>
-  <version_modified>20170308T012717Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>bc9b8822-2b72-4ee1-834b-0e20406aefe4</version_id>
+  <version_modified>20170308T221041Z</version_modified>
+  <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a room air conditioner. For multifamily buildings, the room air conditioner can be set for all units of the building.</description>
@@ -135,7 +135,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>

@@ -19,7 +19,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     args_hash["azimuth_type"] = Constants.CoordAbsolute
     args_hash["azimuth"] = 180.0
     expected_num_del_objects = {}
-    expected_num_new_objects = {"GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1, "ScheduleFixedInterval"=>1}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"PanelArea"=>18.93}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end  
@@ -30,7 +30,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     args_hash["tilt_type"] = Constants.CoordAbsolute
     args_hash["tilt"] = 0.5
     expected_num_del_objects = {}
-    expected_num_new_objects = {"GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1, "ScheduleFixedInterval"=>1}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"PanelArea"=>2*18.93}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -40,7 +40,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     args_hash["size"] = 5.0
     args_hash["tilt_type"] = Constants.TiltLatitude
     expected_num_del_objects = {}
-    expected_num_new_objects = {"GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1, "ScheduleFixedInterval"=>1}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"PanelArea"=>2*18.93}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end  
@@ -49,7 +49,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1, "ScheduleFixedInterval"=>1}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {}
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -58,7 +58,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1, "ScheduleFixedInterval"=>1}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {}
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -66,12 +66,12 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_retrofit_size
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1, "ScheduleFixedInterval"=>1}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
     args_hash["size"] = 5.0
-    expected_num_del_objects = {"GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1, "ScheduleFixedInterval"=>1}
-    expected_num_new_objects = {"GeneratorPhotovoltaic"=>1, "ShadingSurfaceGroup"=>1, "ShadingSurface"=>1, "ElectricLoadCenterDistribution"=>1, "PhotovoltaicPerformanceSimple"=>1, "ScheduleFixedInterval"=>1}
+    expected_num_del_objects = {"GeneratorMicroTurbine"=>1, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end  

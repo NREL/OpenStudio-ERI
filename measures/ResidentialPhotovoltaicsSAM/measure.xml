@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics_sam</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>d3dc9082-1599-47c4-b0be-9b56f3389277</version_id>
-  <version_modified>20170308T012722Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>2cdf1c87-5b8a-4776-a304-0d5ea2ffece8</version_id>
+  <version_modified>20170309T003254Z</version_modified>
+  <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaicsSAM</class_name>
   <display_name>Set Residential Photovoltaics SAM</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
@@ -126,7 +126,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Onsite Power Generation.Photovoltaic</tag>
@@ -154,6 +153,12 @@
     </attribute>
   </attributes>
   <files>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>048F7BD2</checksum>
+    </file>
     <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
@@ -191,12 +196,6 @@
       <checksum>0E779DFB</checksum>
     </file>
     <file>
-      <filename>residential_photovoltaics_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1DFE1F28</checksum>
-    </file>
-    <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
       <usage_type>test</usage_type>
@@ -213,12 +212,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F45561F7</checksum>
-    </file>
-    <file>
-      <filename>ffi-1.9.17-x64-mingw32.zip</filename>
-      <filetype>zip</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>733C4C73</checksum>
     </file>
     <file>
       <filename>sam-sdk-2017-1-17.zip</filename>
@@ -245,6 +238,18 @@
       <checksum>C3D47B00</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>04ACB78D</checksum>
+    </file>
+    <file>
+      <filename>residential_photovoltaics_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4CC9259E</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -253,19 +258,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BFA16664</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>04ACB78D</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>048F7BD2</checksum>
+      <checksum>6A8D5C63</checksum>
     </file>
   </files>
 </measure>

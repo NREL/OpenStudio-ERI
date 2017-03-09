@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>e4b49f49-7051-4bca-9dd2-f36d7916ba2f</version_id>
-  <version_modified>20170308T012704Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>7c551a3c-5e9c-42d7-a45c-73a9dc8ffa57</version_id>
+  <version_modified>20170308T221037Z</version_modified>
+  <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
   <description>Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule. For multifamily buildings, the clothes washer can be set for all units of the building.</description>
@@ -184,7 +184,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

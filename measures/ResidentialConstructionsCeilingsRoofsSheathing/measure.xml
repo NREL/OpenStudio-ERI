@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_sheathing</name>
   <uid>f9125155-4fe6-4dae-b5a6-e1249eb2da3c</uid>
-  <version_id>f56e39d5-7b27-4350-bb0e-f00114e4b52a</version_id>
-  <version_modified>20170308T012706Z</version_modified>
-  <xml_checksum>A02778FF</xml_checksum>
+  <version_id>231f7f04-b9c6-4deb-9c0d-634a5b92a372</version_id>
+  <version_modified>20170308T221037Z</version_modified>
+  <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsSheathing</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roof Sheathing</display_name>
   <description>This measure assigns roof sheathing to all attic roofs.</description>
@@ -41,7 +41,6 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>3d5873f3-4075-40e5-afd5-6f997fad2bd7</version_id>
-  <version_modified>20170308T012720Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>49d1711f-3a95-4c22-a8c4-c12b04ea6a0b</version_id>
+  <version_modified>20170308T221043Z</version_modified>
+  <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
   <description>Adds (or replaces) a residential freezer with the specified efficiency, operation, and schedule. For multifamily buildings, the freezer can be set for all units of the building.</description>
@@ -72,7 +72,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

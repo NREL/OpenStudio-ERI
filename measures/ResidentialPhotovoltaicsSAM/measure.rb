@@ -187,29 +187,17 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Ruleset::ModelUserScript
       
     obj_name = Constants.ObjectNamePhotovoltaics
       
-    vertices = OpenStudio::Point3dVector.new
-    vertices << OpenStudio::Point3d.new(0, 0, 0)
-    vertices << OpenStudio::Point3d.new(1, 0, 0)
-    vertices << OpenStudio::Point3d.new(1, 1, 0)
-    vertices << OpenStudio::Point3d.new(0, 1, 0)
-      
     # Remove existing photovoltaics
+    curves_to_remove = []
     model.getElectricLoadCenterDistributions.each do |electric_load_center_dist|
       next unless electric_load_center_dist.name.to_s == obj_name + " elec load center dist"
       electric_load_center_dist.generators.each do |generator|
-        panel = generator.to_GeneratorPhotovoltaic.get
-        panel.surface.get.to_ShadingSurface.get.shadingSurfaceGroup.get.remove
-        panel.remove
+        micro_turbine = generator.to_GeneratorMicroTurbine.get
+        micro_turbine.remove
       end
       electric_load_center_dist.trackScheduleSchemeSchedule.get.remove
       electric_load_center_dist.remove
-    end      
-      
-    shading_surface_group = OpenStudio::Model::ShadingSurfaceGroup.new(model)
-    shading_surface_group.setName(obj_name + " panel")
-    shading_surface = OpenStudio::Model::ShadingSurface.new(vertices, model)
-    shading_surface.setName(obj_name + " panel")
-    shading_surface.setShadingSurfaceGroup(shading_surface_group)
+    end
       
     runner.registerInfo("#{(SscApi.get_array(p_data, "ac").inject(0){ |sum, x| sum + x }).round(2)} W-h")
     values = OpenStudio::Vector.new(8760)
@@ -226,19 +214,45 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Ruleset::ModelUserScript
     electric_load_center_dist.setName(obj_name + " elec load center dist")
     electric_load_center_dist.setGeneratorOperationSchemeType("TrackSchedule")
     electric_load_center_dist.setTrackScheduleSchemeSchedule(schedule)
+    electric_load_center_dist.setDemandLimitSchemePurchasedElectricDemandLimit(0)
     electric_load_center_dist.setElectricalBussType("AlternatingCurrent")
       
-    panel = OpenStudio::Model::GeneratorPhotovoltaic::simple(model)
-    panel.setName(obj_name + " system")
-    panel.setSurface(shading_surface)
-    panel.setHeatTransferIntegrationMode("Decoupled")
-
-    performance = panel.photovoltaicPerformance.to_PhotovoltaicPerformanceSimple.get
-    performance.setName(obj_name + " module")
-    performance.setFractionOfSurfaceAreaWithActiveSolarCells(1)
-    performance.setFixedEfficiency(1)
+    micro_turbine = OpenStudio::Model::GeneratorMicroTurbine.new(model)
+    micro_turbine.setName(obj_name + " generator")
+    micro_turbine.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+    
+    curve_biquadratic = micro_turbine.electricalPowerFunctionofTemperatureandElevationCurve.to_CurveBiquadratic.get
+    curve_biquadratic.setName("null input curve biquadratic")    
+    curve_biquadratic.setCoefficient1Constant(1)
+    curve_biquadratic.setCoefficient2x(0)
+    curve_biquadratic.setCoefficient3xPOW2(0)
+    curve_biquadratic.setCoefficient4y(0)
+    curve_biquadratic.setCoefficient5yPOW2(0)
+    curve_biquadratic.setCoefficient6xTIMESY(0)
+    curve_biquadratic.setMinimumValueofx(0)
+    curve_biquadratic.setMaximumValueofx(0)
+    curve_biquadratic.setMinimumValueofy(0)
+    curve_biquadratic.setMaximumValueofy(1)    
+    
+    curve_cubic = micro_turbine.electricalEfficiencyFunctionofTemperatureCurve.to_CurveCubic.get
+    curve_cubic.setName("null input curve cubic 1")
+    curve_cubic.setCoefficient1Constant(1)
+    curve_cubic.setCoefficient2x(0)
+    curve_cubic.setCoefficient3xPOW2(0)
+    curve_cubic.setCoefficient4xPOW3(0)
+    curve_cubic.setMinimumValueofx(0)
+    curve_cubic.setMaximumValueofx(1)
+    
+    curve_cubic = micro_turbine.electricalEfficiencyFunctionofPartLoadRatioCurve.to_CurveCubic.get
+    curve_cubic.setName("null input curve cubic 2")
+    curve_cubic.setCoefficient1Constant(1)
+    curve_cubic.setCoefficient2x(0)
+    curve_cubic.setCoefficient3xPOW2(0)
+    curve_cubic.setCoefficient4xPOW3(0)
+    curve_cubic.setMinimumValueofx(0)
+    curve_cubic.setMaximumValueofx(1)
           
-    electric_load_center_dist.addGenerator(panel)
+    electric_load_center_dist.addGenerator(micro_turbine)
       
     return true
 

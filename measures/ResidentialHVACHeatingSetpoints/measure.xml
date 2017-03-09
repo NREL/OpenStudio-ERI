@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>6848759a-e0b1-4d49-93bb-550554579da3</version_id>
-  <version_modified>20170308T012717Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>0f392399-c92c-41b0-bfaf-73295334b382</version_id>
+  <version_modified>20170308T221041Z</version_modified>
+  <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
   <description>This measure creates the heating season schedules based on weather data, and the heating setpoint schedules.</description>
@@ -31,7 +31,6 @@
       <default_value>71</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.HVAC Controls</tag>

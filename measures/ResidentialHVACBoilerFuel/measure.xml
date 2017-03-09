@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>def9f40d-76ca-4f18-a430-04dd3ad90742</version_id>
-  <version_modified>20170308T012715Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>dbc991e9-9c2b-4d5a-88f3-713651d7a889</version_id>
+  <version_modified>20170308T221040Z</version_modified>
+  <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a boiler along with constant speed pump and water baseboard coils to a hot water plant loop. For multifamily buildings, the supply components on the plant loop can be set for all units of the building.</description>
@@ -272,7 +272,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

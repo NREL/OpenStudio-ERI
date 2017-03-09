@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>128197f3-124b-4a96-b5df-948323c2fed5</version_id>
-  <version_modified>20170308T012708Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>156e0bf6-df84-424d-9301-7a612414bcbd</version_id>
+  <version_modified>20170308T221038Z</version_modified>
+  <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
   <description>This measure assigns a CMU construction to above-grade exterior walls adjacent to finished space.</description>
@@ -81,7 +81,6 @@
       <default_value>24</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

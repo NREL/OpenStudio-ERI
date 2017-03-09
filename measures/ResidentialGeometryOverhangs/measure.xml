@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>b6128817-773b-4e7f-8d68-62c17cf7bbdf</version_id>
-  <version_modified>20170308T012710Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>d4db4528-ff33-4eb6-8612-0269b09816dc</version_id>
+  <version_modified>20170308T221038Z</version_modified>
+  <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
   <description>Sets presence/dimensions of overhangs for windows on the specified building facade(s).</description>
@@ -107,7 +107,6 @@
       </choices>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Fenestration</tag>
