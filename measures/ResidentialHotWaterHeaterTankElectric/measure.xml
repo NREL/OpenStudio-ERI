@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>ec31a67b-8140-45c3-9bd8-822828810f9d</version_id>
-  <version_modified>20170308T221039Z</version_modified>
+  <version_id>44550e6b-5dc3-4d22-8dbc-9651ba5d59b8</version_id>
+  <version_modified>20170309T180739Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankElectric</class_name>
   <display_name>Set Residential Electric Tank Water Heater</display_name>

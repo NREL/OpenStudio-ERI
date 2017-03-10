@@ -240,7 +240,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
       runner.registerError("Cannot handle protruding garage and hip roof.")
       return false
     end
-    if garage_protrusion > 0 and aspect_ratio < 1 and has_garage
+    if garage_protrusion > 0 and aspect_ratio < 1 and has_garage and roof_type == Constants.RoofTypeGable
       runner.registerError("Cannot handle protruding garage and attic ridge running from front to back.")
       return false
     end

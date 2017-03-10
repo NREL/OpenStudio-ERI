@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>cbae7529-470e-4a40-bc23-d6263ff2ff52</version_id>
-  <version_modified>20170308T221037Z</version_modified>
+  <version_id>718f6ab1-9ad1-4d44-abdb-e7780b66847a</version_id>
+  <version_modified>20170309T180738Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>

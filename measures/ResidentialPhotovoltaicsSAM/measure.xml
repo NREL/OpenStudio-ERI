@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics_sam</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>2cdf1c87-5b8a-4776-a304-0d5ea2ffece8</version_id>
-  <version_modified>20170309T003254Z</version_modified>
+  <version_id>a4adcf78-829f-4863-9847-9b302f20f047</version_id>
+  <version_modified>20170309T180741Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaicsSAM</class_name>
   <display_name>Set Residential Photovoltaics SAM</display_name>
@@ -247,7 +247,7 @@
       <filename>residential_photovoltaics_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>4CC9259E</checksum>
+      <checksum>C23C11C3</checksum>
     </file>
     <file>
       <version>
@@ -258,7 +258,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6A8D5C63</checksum>
+      <checksum>3E9482DB</checksum>
     </file>
   </files>
 </measure>

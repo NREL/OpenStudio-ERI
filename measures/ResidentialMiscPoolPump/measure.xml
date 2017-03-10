@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_pump</name>
   <uid>b5648903-279f-4e58-9139-c44134c0cf76</uid>
-  <version_id>9b70d9d5-08ab-4bca-a5c6-6707cbcea08b</version_id>
-  <version_modified>20170308T221043Z</version_modified>
+  <version_id>c96d8017-7f2e-4c2d-8481-04d7b06b7e0d</version_id>
+  <version_modified>20170309T180741Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolPump</class_name>
   <display_name>Set Residential Pool Pump</display_name>

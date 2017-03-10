@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>706a4ecd-ce99-46d7-b178-b911d15e1367</version_id>
-  <version_modified>20170308T221039Z</version_modified>
+  <version_id>7e767cbe-5b27-4522-94a8-8d79f5f3640c</version_id>
+  <version_modified>20170309T180739Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>

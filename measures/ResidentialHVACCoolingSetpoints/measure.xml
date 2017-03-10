@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>96ad536f-2e33-4afb-9014-d4ecc49a103c</version_id>
-  <version_modified>20170308T221040Z</version_modified>
+  <version_id>b7a57c43-c099-4f06-9927-717f282107b3</version_id>
+  <version_modified>20170309T180740Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>

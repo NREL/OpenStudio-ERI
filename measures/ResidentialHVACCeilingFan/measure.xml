@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>2eea3738-8a38-403c-863f-59ff2c6b61d1</version_id>
-  <version_modified>20170308T221040Z</version_modified>
+  <version_id>e4656455-b7cd-4224-8b7e-1960d20f5b91</version_id>
+  <version_modified>20170309T180739Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>

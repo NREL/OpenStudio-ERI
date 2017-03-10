@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>dbc991e9-9c2b-4d5a-88f3-713651d7a889</version_id>
-  <version_modified>20170308T221040Z</version_modified>
+  <version_id>6863b589-d6da-4fee-a9bb-6d9ec3b1c63f</version_id>
+  <version_modified>20170309T180739Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>

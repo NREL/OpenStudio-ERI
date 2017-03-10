@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>0e9f52b3-b521-47b0-87b5-699f65ce5eb3</version_id>
-  <version_modified>20170308T221038Z</version_modified>
+  <version_id>a9b4be22-3341-4fd4-9698-1977e8ce98cf</version_id>
+  <version_modified>20170309T180738Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
