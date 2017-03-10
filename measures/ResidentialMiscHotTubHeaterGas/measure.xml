@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater_gas</name>
   <uid>65550b9d-c0bf-405b-9229-dc63721eb887</uid>
-  <version_id>7eacb2cd-2ea1-4841-9f85-ff55e2ba49bf</version_id>
-  <version_modified>20170309T180741Z</version_modified>
-  <xml_checksum>25A40D75</xml_checksum>
+  <version_id>8203af1a-6e06-4487-83f9-7387c81d76b5</version_id>
+  <version_modified>20170310T183627Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotTubHeaterGas</class_name>
   <display_name>Set Residential Hot Tub Gas Heater</display_name>
   <description>Adds (or replaces) a residential hot tub heater with the specified efficiency and schedule. The hot tub is assumed to be outdoors. For multifamily buildings, the hot tub heater is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Gas Equipment</tag>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_extra_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>9354e2d3-a3aa-4d45-b18a-b5ea3a5fe539</version_id>
-  <version_modified>20170309T180741Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>39b64013-2145-4b9c-95cb-02a6252300dd</version_id>
+  <version_modified>20170310T183626Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialExtraRefrigerator</class_name>
   <display_name>Set Residential Extra Refrigerator</display_name>
   <description>Adds (or replaces) a residential extra refrigerator with the specified efficiency, operation, and schedule. For multifamily buildings, the extra refrigerator can be set for all units of the building.</description>
@@ -72,6 +72,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

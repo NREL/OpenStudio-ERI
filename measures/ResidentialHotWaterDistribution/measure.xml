@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>7e767cbe-5b27-4522-94a8-8d79f5f3640c</version_id>
-  <version_modified>20170309T180739Z</version_modified>
-  <xml_checksum>D2231FB9</xml_checksum>
+  <version_id>e94f12f2-d021-43c9-b673-776a642b5915</version_id>
+  <version_modified>20170310T183617Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>
   <description>Adds a hot water distribution system, including pipes and any recirculation pumps, into the home. This measure must be run after hot water fixtures have been added to the home. For multifamily buildings, the hot water fixtures can be set for all units of the building.</description>
@@ -101,6 +101,7 @@
       <default_value>0</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Distribution</tag>

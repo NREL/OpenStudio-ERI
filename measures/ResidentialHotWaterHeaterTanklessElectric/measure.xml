@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>6c61c71e-ccbb-4b76-acfb-ed16defb180f</version_id>
-  <version_modified>20170309T180739Z</version_modified>
-  <xml_checksum>9882CBDB</xml_checksum>
+  <version_id>b2c6aec3-b6c9-40d3-9e2d-a91345300c60</version_id>
+  <version_modified>20170310T183619Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessElectric</class_name>
   <display_name>Set Residential Electric Tankless Water Heater</display_name>
   <description>This measure adds a new residential electric tankless water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building.</description>
@@ -65,6 +65,7 @@
       <default_value>0.08</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Water Heating</tag>

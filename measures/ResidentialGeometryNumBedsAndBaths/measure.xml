@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>c2d02223-3f86-456e-8c16-69360cd05a8b</version_id>
-  <version_modified>20170309T180738Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>0fdd530d-d4f0-4175-ac1b-1d58f924c9c4</version_id>
+  <version_modified>20170310T183614Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
   <description>Sets the number of bedrooms and bathrooms in the building. For multifamily buildings, the bedrooms/bathrooms can be set for all units of the building.</description>
@@ -29,6 +29,7 @@
       <default_value>2</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Form</tag>

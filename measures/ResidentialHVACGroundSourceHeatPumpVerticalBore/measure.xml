@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>fbac7311-2729-4f06-b424-ecc7d83d1acb</version_id>
-  <version_modified>20170309T180740Z</version_modified>
-  <xml_checksum>470FC630</xml_checksum>
+  <version_id>6a68f6f9-df29-4429-82d3-432b5a9fe685</version_id>
+  <version_modified>20170310T183622Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a ground heat exchanger along with variable speed pump and water to air heat pump coils to a condenser plant loop. For multifamily buildings, the supply components on the plant loop can be set for all units of the building.</description>
@@ -501,6 +501,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

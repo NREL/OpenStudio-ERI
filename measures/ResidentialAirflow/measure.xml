@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>92900284-5072-4eca-9527-592060a51027</version_id>
-  <version_modified>20170309T180738Z</version_modified>
-  <xml_checksum>19EEDBBB</xml_checksum>
+  <version_id>311a8ea2-320a-4f93-92df-7f8b5935d825</version_id>
+  <version_modified>20170310T183607Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
   <description>Adds (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts.</description>
@@ -607,6 +607,7 @@
       <default_value>NA</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Infiltration</tag>

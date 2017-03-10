@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_radiant_barrier</name>
   <uid>fd81853a-75a3-4c57-a5b5-373793430f49</uid>
-  <version_id>0c5d4475-db8b-4e79-9d3c-253ee536227f</version_id>
-  <version_modified>20170309T180738Z</version_modified>
-  <xml_checksum>78504A2C</xml_checksum>
+  <version_id>56cf75c0-da1b-4cf2-84bd-bc9f63609cfd</version_id>
+  <version_modified>20170310T183609Z</version_modified>
+  <xml_checksum>E9AF3981</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRadiantBarrier</class_name>
   <display_name>Set Residential Ceilings/Roofs - Radiant Barrier</display_name>
   <description>This measure assigns the radiant barrier material to all roof surfaces attached to unfinished space.</description>
@@ -29,6 +29,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>

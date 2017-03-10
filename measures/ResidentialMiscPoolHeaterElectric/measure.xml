@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater_elec</name>
   <uid>29865d0a-e979-4f09-87b9-7fa7154b9833</uid>
-  <version_id>c3cc506f-9b86-49f6-8a5e-481f8cd359b1</version_id>
-  <version_modified>20170309T180741Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>988696e1-72ee-4298-80ac-bc0d9f277cf9</version_id>
+  <version_modified>20170310T183627Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialPoolHeaterElec</class_name>
   <display_name>Set Residential Pool Electric Heater</display_name>
   <description>Adds (or replaces) a residential pool heater with the specified efficiency and schedule. The pool is assumed to be outdoors. For multifamily buildings, the pool heater is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

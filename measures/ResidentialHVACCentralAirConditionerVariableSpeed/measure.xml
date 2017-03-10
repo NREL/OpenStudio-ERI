@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_central_air_conditioner</name>
   <uid>7387af85-5ae2-422c-9488-d64b8682dd06</uid>
-  <version_id>aaf23a6f-40a1-4f70-abb0-3a77e7042f67</version_id>
-  <version_modified>20170309T180740Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>3ef8e7a4-47bb-4468-8b76-b70ace15a6c8</version_id>
+  <version_modified>20170310T183621Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessVariableSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Variable-Speed Central Air Conditioner</display_name>
   <description>This measure removes any existing HVAC cooling components from the building and adds a variable-speed central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the variable-speed central air conditioner can be set for all units of the building.</description>
@@ -350,6 +350,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Cooling</tag>

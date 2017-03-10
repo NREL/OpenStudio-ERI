@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_fuel</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>e8acd0c6-1b5b-4921-a413-b9db04b5c9ed</version_id>
-  <version_modified>20170309T180739Z</version_modified>
-  <xml_checksum>9882CBDB</xml_checksum>
+  <version_id>f6694fd0-5850-4591-95fa-935a18adfd0e</version_id>
+  <version_modified>20170310T183619Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessFuel</class_name>
   <display_name>Set Residential Fuel Tankless Water Heater</display_name>
   <description>This measure adds a new residential fuel tankless water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building.</description>
@@ -104,6 +104,7 @@
       <default_value>65</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Service Water Heating.Water Heating</tag>

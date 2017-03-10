@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>3adb183f-3c3e-4db1-98e8-25ace3ba1e10</version_id>
-  <version_modified>20170309T180739Z</version_modified>
-  <xml_checksum>0DA5C9E6</xml_checksum>
+  <version_id>f4454a19-832b-40cc-984a-152b3a477ec7</version_id>
+  <version_modified>20170310T183619Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessSingleSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Single-Speed Air Source Heat Pump</display_name>
   <description>This measure removes any existing HVAC components from the building and adds a single-speed air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the single-speed air source heat pump can be set for all units of the building.</description>
@@ -459,6 +459,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>HVAC.Heating</tag>

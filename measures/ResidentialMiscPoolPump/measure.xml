@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_pump</name>
   <uid>b5648903-279f-4e58-9139-c44134c0cf76</uid>
-  <version_id>c96d8017-7f2e-4c2d-8481-04d7b06b7e0d</version_id>
-  <version_modified>20170309T180741Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>aa42799c-1c8b-46cf-8720-fb12b738b4ec</version_id>
+  <version_modified>20170310T183628Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialPoolPump</class_name>
   <display_name>Set Residential Pool Pump</display_name>
   <description>Adds (or replaces) a residential pool pump with the specified efficiency and schedule. The pool is assumed to be outdoors. For multifamily buildings, the pool pump is set for all units of the building.</description>
@@ -76,6 +76,7 @@
       <default_value>1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

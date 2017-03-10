@@ -361,7 +361,7 @@ task :copy_beopt_files do
   require 'openstudio'
 
   beopt_measures_dir = File.join(File.dirname(__FILE__), "measures")
-  hpxml_measures_dir = File.join(File.dirname(__FILE__), "measures", "HPXMLBuildModel", "resources", "measures")
+  hpxml_measures_dir = File.join(File.dirname(__FILE__), "resources", "measures")
   if not Dir.exist?(beopt_measures_dir)
     puts "Cannot find OpenStudio-BEopt measures dir at #{beopt_measures_dir}."
   end
@@ -401,7 +401,7 @@ task :copy_beopt_files do
   extra_files.each do |extra_file|
       puts "Copying #{extra_file}..."
       resstock_file = File.join(File.dirname(__FILE__), "..", "OpenStudio-ResStock", extra_file)
-      hpxml_file = File.join(File.dirname(__FILE__), "measures", "HPXMLBuildModel", extra_file)
+      hpxml_file = File.join(File.dirname(__FILE__), extra_file)
       if File.exists?(hpxml_file)
         FileUtils.rm(hpxml_file)
       end

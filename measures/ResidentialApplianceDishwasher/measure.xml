@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>d7b7b893-c6ba-462c-8914-93b54ae7626c</version_id>
-  <version_modified>20170309T180738Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>13c03e82-ae35-4b4f-ab80-e26bc84974d9</version_id>
+  <version_modified>20170310T183609Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
   <description>Adds (or replaces) a residential dishwasher with the specified efficiency, operation, and schedule. For multifamily buildings, the dishwasher can be set for all units of the building.</description>
@@ -146,6 +146,7 @@
       </choices>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Equipment.Electric Equipment</tag>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_thermal_mass</name>
   <uid>324b197d-f75e-4513-b8b8-151d77132961</uid>
-  <version_id>31e597c0-7378-42eb-b0cf-aa6b6b778bdb</version_id>
-  <version_modified>20170309T180738Z</version_modified>
-  <xml_checksum>5091078B</xml_checksum>
+  <version_id>d711c859-5cdd-4e48-8792-98db2d204ea5</version_id>
+  <version_modified>20170310T183611Z</version_modified>
+  <xml_checksum>16B68B0C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsThermalMass</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Thermal Mass</display_name>
   <description>This measure assigns floor mass to floors of finished spaces, with the exception of foundation slabs.</description>
@@ -51,6 +51,7 @@
       <default_value>0.29</default_value>
     </argument>
   </arguments>
+  <outputs/>
   <provenances/>
   <tags>
     <tag>Envelope.Opaque</tag>
