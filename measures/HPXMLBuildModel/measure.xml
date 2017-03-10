@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>d09c8e8a-f171-40b8-914d-b49ecce271e3</version_id>
-  <version_modified>20170310T215532Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>fba7bb91-1641-4a1a-afae-42312ebfdfff</version_id>
+  <version_modified>20170310T224218Z</version_modified>
+  <xml_checksum>D8922A73</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
   <description>E+ RESNET</description>
@@ -35,10 +35,8 @@
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>../../../OpenStudio-BEopt/measures</default_value>
     </argument>
   </arguments>
-  <outputs/>
   <provenances/>
   <tags>
     <tag>Whole Building.Space Types</tag>
@@ -73,22 +71,16 @@
       <checksum>505846B0</checksum>
     </file>
     <file>
-      <filename>audit.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>505846B0</checksum>
+      <filename>helper_methods.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>809DC08A</checksum>
     </file>
     <file>
       <filename>hpxml_build_model_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>9DFBCE98</checksum>
-    </file>
-    <file>
-      <filename>helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>809DC08A</checksum>
+      <checksum>05600DF9</checksum>
     </file>
     <file>
       <version>
@@ -99,7 +91,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>37372369</checksum>
+      <checksum>8CA2314F</checksum>
     </file>
   </files>
 </measure>

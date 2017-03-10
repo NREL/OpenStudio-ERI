@@ -9,7 +9,7 @@ class HPXMLBuildModelTest < MiniTest::Test
 
   def test_location
     args_hash = {}
-    args_hash["hpxml_file_name"] = "audit.xml"
+    args_hash["measures_dir"] = ".."
     expected_num_del_objects = {}
     expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ClimateZones"=>1, "Site"=>1, "YearDescription"=>1}
     expected_values = {}

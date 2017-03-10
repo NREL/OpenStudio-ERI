@@ -41,7 +41,6 @@ class HPXMLBuildModel < OpenStudio::Ruleset::ModelUserScript
     arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("measures_dir", true)
     arg.setDisplayName("Residential Measures Directory")
     arg.setDescription("Absolute (or relative) directory to residential measures.")
-    arg.setDefaultValue("../../../OpenStudio-BEopt/measures")
     args << arg
     
     return args
@@ -66,11 +65,8 @@ class HPXMLBuildModel < OpenStudio::Ruleset::ModelUserScript
     hpxml_file = File.join(hpxml_directory, hpxml_file_name)    
 
     unless (Pathname.new measures_dir).absolute?
-      puts File.dirname(__FILE__)
-      puts File.join(File.dirname(__FILE__), measures_dir)
       measures_dir = File.expand_path(File.join(File.dirname(__FILE__), measures_dir))
     end
-    puts measures_dir
     
     # Get file/dir paths
     resources_dir = File.join(File.dirname(__FILE__), "resources")
@@ -83,18 +79,18 @@ class HPXMLBuildModel < OpenStudio::Ruleset::ModelUserScript
     measures = {}
     Dir.foreach(measures_dir) do |measure_subdir|
       next if !measure_subdir.include? 'Residential'
-      next if !measure_subdir.include? 'ResidentialLocation' # TODO: remove
+      next if !measure_subdir.include? 'ResidentialLocation' # TODO: Remove
       full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
       check_file_exists(full_measure_path, runner)      
       measure_instance = get_measure_instance(full_measure_path)
       measures[measure_subdir] = default_args_hash(model, measure_instance)
     end
     
-    # Parse hpxml and update measure arguments    
+    # TODO: Parse hpxml and update measure arguments
     doc = REXML::Document.new(File.read(hpxml_file))
     zip = REXML::XPath.first(doc, '//HPXML/Building/Site/Address/ZipCode').text
     
-    measures = measures.select {|k, v| k == "ResidentialLocation"} # TODO: remove
+    measures = measures.select {|k, v| k == "ResidentialLocation"} # TODO: Remove
     
     # Call each measure for sample to build up model
     measures.keys.each do |measure_subdir|
