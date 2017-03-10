@@ -63,9 +63,17 @@ class HPXMLBuildModel < OpenStudio::Ruleset::ModelUserScript
       hpxml_directory = File.expand_path(File.join(File.dirname(__FILE__), hpxml_directory))
     end
     hpxml_file = File.join(hpxml_directory, hpxml_file_name)    
-
+    unless File.exists?(hpxml_file) and hpxml_file_name.downcase.end_with? ".xml"
+      runner.registerError("'#{hpxml_file}' does not exist or is not an .xml file.")
+      return false
+    end
+    
     unless (Pathname.new measures_dir).absolute?
       measures_dir = File.expand_path(File.join(File.dirname(__FILE__), measures_dir))
+    end
+    unless Dir.exists?(measures_dir)
+      runner.registerError("'#{measures_dir}' does not exist.")
+      return false
     end
     
     # Get file/dir paths

@@ -81,7 +81,7 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
     else
       runner.registerError("'#{weather_file}' does not exist or is not an .epw file.")
       return false
-    end    
+    end
     
     if model.getSite.weatherFile.is_initialized
       runner.registerInfo("Found an existing weather file.")

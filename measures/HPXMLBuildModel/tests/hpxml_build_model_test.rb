@@ -7,6 +7,38 @@ require 'fileutils'
 
 class HPXMLBuildModelTest < MiniTest::Test
 
+  def test_invalid_hpxml_directory
+    args_hash = {}
+    args_hash["hpxml_directory"] = "./resuorces"
+    args_hash["hpxml_file_name"] = "audit.xml"
+    args_hash["measures_dir"] = ".."
+    result = _test_error_or_NA(nil, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["hpxml_directory"], args_hash["hpxml_file_name"]))}' does not exist or is not an .xml file.")      
+  end
+
+  def test_invalid_hpxml_file_name
+    args_hash = {}
+    args_hash["hpxml_directory"] = "./resources"
+    args_hash["hpxml_file_name"] = "audit.txt"
+    args_hash["measures_dir"] = ".."
+    result = _test_error_or_NA(nil, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["hpxml_directory"], args_hash["hpxml_file_name"]))}' does not exist or is not an .xml file.")      
+  end
+
+  def test_invalid_measures_path
+    args_hash = {}
+    args_hash["measures_dir"] = "../../mesaures"
+    result = _test_error_or_NA(nil, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    puts File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["measures_dir"]))
+    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["measures_dir"]))}' does not exist.")      
+  end
+  
   def test_location
     args_hash = {}
     args_hash["measures_dir"] = ".."
@@ -18,7 +50,7 @@ class HPXMLBuildModelTest < MiniTest::Test
 
   private
   
-  def _test_error(osm_file_or_model, args_hash)
+  def _test_error_or_NA(osm_file_or_model, args_hash)
     # create an instance of the measure
     measure = HPXMLBuildModel.new
 
@@ -43,13 +75,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
-
-    # assert that it didn't run
-    assert_equal("Fail", result.value.valueName)
-    assert(result.errors.size == 1)
-    
+      
     return result
-  end  
+    
+  end
   
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
