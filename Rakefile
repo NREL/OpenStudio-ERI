@@ -355,46 +355,8 @@ task :update_resources do
 
 end
 
-desc 'Copy measures/osms from OpenStudio-BEopt repo'
-task :copy_beopt_files do
-  require 'fileutils'
-  require 'openstudio'
-
-  beopt_measures_dir = File.join(File.dirname(__FILE__), "measures")
-  hpxml_measures_dir = File.join(File.dirname(__FILE__), "resources", "measures")
-  if not Dir.exist?(beopt_measures_dir)
-    puts "Cannot find OpenStudio-BEopt measures dir at #{beopt_measures_dir}."
-  end
-  
-  puts "Deleting #{hpxml_measures_dir}..."
-  while Dir.exist?(hpxml_measures_dir)
-    FileUtils.rm_rf("#{hpxml_measures_dir}/.", secure: true)
-    sleep 1
-  end
-  FileUtils.makedirs(hpxml_measures_dir)
-  
-  Dir.foreach(beopt_measures_dir) do |item|
-    next if !item.include? 'Residential'
-    beopt_measure_dir = File.join(beopt_measures_dir, item)
-    next if not Dir.exist?(beopt_measure_dir)
-    puts "Copying #{item} measure..."
-    FileUtils.cp_r(beopt_measure_dir, hpxml_measures_dir)
-    hpxml_measure_test_dir = File.join(hpxml_measures_dir, item, "tests")
-    if Dir.exist?(hpxml_measure_test_dir)
-      FileUtils.rm_rf("#{hpxml_measure_test_dir}/.", secure: true)
-    end
-    hpxml_measure_cov_dir = File.join(hpxml_measures_dir, item, "coverage")
-    if Dir.exist?(hpxml_measure_cov_dir)
-      FileUtils.rm_rf("#{hpxml_measure_cov_dir}/.", secure: true)
-    end
-  end
-  
-  measures_dir = OpenStudio::toPath(hpxml_measures_dir)
-  measures_zip = OpenStudio::toPath("#{hpxml_measures_dir}.zip")
-  zip_file = OpenStudio::ZipFile.new(measures_zip, false)
-  zip_file.addDirectory(measures_dir, OpenStudio::toPath("/"))
-  FileUtils.rm_rf(hpxml_measures_dir)
-  
+desc 'Copy resources from OpenStudio-ResStock repo'
+task :copy_resstock_resources do  
   extra_files = [
                  File.join("resources", "helper_methods.rb")
                 ]  

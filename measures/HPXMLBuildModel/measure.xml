@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>042803c8-3848-4aee-8bc7-53b4729d5751</version_id>
-  <version_modified>20170310T205119Z</version_modified>
+  <version_id>d09c8e8a-f171-40b8-914d-b49ecce271e3</version_id>
+  <version_modified>20170310T215532Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
@@ -27,6 +27,15 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>audit.xml</default_value>
+    </argument>
+    <argument>
+      <name>measures_dir</name>
+      <display_name>Residential Measures Directory</display_name>
+      <description>Absolute (or relative) directory to residential measures.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>../../../OpenStudio-BEopt/measures</default_value>
     </argument>
   </arguments>
   <outputs/>
@@ -76,6 +85,12 @@
       <checksum>9DFBCE98</checksum>
     </file>
     <file>
+      <filename>helper_methods.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>809DC08A</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -84,19 +99,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B5933E78</checksum>
-    </file>
-    <file>
-      <filename>helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>809DC08A</checksum>
-    </file>
-    <file>
-      <filename>measures.zip</filename>
-      <filetype>zip</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>08E7B611</checksum>
+      <checksum>37372369</checksum>
     </file>
   </files>
 </measure>

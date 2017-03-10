@@ -38,6 +38,12 @@ class HPXMLBuildModel < OpenStudio::Ruleset::ModelUserScript
     arg.setDefaultValue("audit.xml")
     args << arg
 
+    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("measures_dir", true)
+    arg.setDisplayName("Residential Measures Directory")
+    arg.setDescription("Absolute (or relative) directory to residential measures.")
+    arg.setDefaultValue("../../../OpenStudio-BEopt/measures")
+    args << arg
+    
     return args
   end
 
@@ -51,20 +57,24 @@ class HPXMLBuildModel < OpenStudio::Ruleset::ModelUserScript
     end
 
     hpxml_directory = runner.getStringArgumentValue("hpxml_directory", user_arguments)
-    hpxml_file_name = runner.getStringArgumentValue("hpxml_file_name", user_arguments)    
+    hpxml_file_name = runner.getStringArgumentValue("hpxml_file_name", user_arguments)
+    measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
 
     unless (Pathname.new hpxml_directory).absolute?
       hpxml_directory = File.expand_path(File.join(File.dirname(__FILE__), hpxml_directory))
     end
     hpxml_file = File.join(hpxml_directory, hpxml_file_name)    
 
+    unless (Pathname.new measures_dir).absolute?
+      puts File.dirname(__FILE__)
+      puts File.join(File.dirname(__FILE__), measures_dir)
+      measures_dir = File.expand_path(File.join(File.dirname(__FILE__), measures_dir))
+    end
+    puts measures_dir
+    
     # Get file/dir paths
     resources_dir = File.join(File.dirname(__FILE__), "resources")
     helper_methods_file = File.join(resources_dir, "helper_methods.rb")
-    measures_dir = File.join(resources_dir, "measures")
-    measures_zip = OpenStudio::toPath(File.join(resources_dir, "measures.zip"))
-    unzip_file = OpenStudio::UnzipFile.new(measures_zip)
-    unzip_file.extractAllFiles(OpenStudio::toPath(measures_dir))
     
     # Load helper_methods
     require File.join(File.dirname(helper_methods_file), File.basename(helper_methods_file, File.extname(helper_methods_file)))    
