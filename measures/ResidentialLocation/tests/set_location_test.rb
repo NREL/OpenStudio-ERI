@@ -14,7 +14,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
     result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "'#{File.join(File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_directory"])), args_hash["weather_file_name"])}' does not exist or is not an .epw file.")
+    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_directory"], args_hash["weather_file_name"]))}' does not exist or is not an .epw file.")
   end
   
   def test_error_invalid_daylight_saving
@@ -23,7 +23,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
     result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid daylight saving date specified.")
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Invalid daylight saving date specified.")
   end   
   
   def test_NA_daylight_saving
@@ -49,7 +49,7 @@ class SetResidentialEPWFileTest < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {"StartDate"=>"2009-Apr-08", "EndDate"=>"2009-Oct-27"}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)      
-  end  
+  end
   
   private
   

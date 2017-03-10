@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_epw_file</name>
   <uid>16ac2c0c-6177-4bf2-91a5-1b6e8de4e85b</uid>
-  <version_id>c590f3c7-ab81-427a-bbcc-d61a8bd9c2f0</version_id>
-  <version_modified>20170310T183626Z</version_modified>
+  <version_id>6e1d4ff6-f3c1-491d-9a3e-9d752472c74e</version_id>
+  <version_modified>20170310T205042Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>SetResidentialEPWFile</class_name>
   <display_name>Set Residential Location</display_name>
@@ -105,12 +105,6 @@
       <checksum>49CEE97F</checksum>
     </file>
     <file>
-      <filename>set_location_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E31491B9</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -139,6 +133,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0E779DFB</checksum>
+    </file>
+    <file>
+      <filename>set_location_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7621DC75</checksum>
     </file>
   </files>
 </measure>
