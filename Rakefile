@@ -9,8 +9,6 @@ require 'pp'
 require 'colored'
 require 'json'
 
-require 'openstudio'
-
 # change the file: users/username/.bcl/config.yml
 # to the ID of the BCL group you want your measures to go into
 # get the group id number from the URL of the group on BCL
@@ -360,6 +358,7 @@ end
 desc 'Copy measures/osms from OpenStudio-BEopt repo'
 task :copy_beopt_files do
   require 'fileutils'
+  require 'openstudio'
 
   beopt_measures_dir = File.join(File.dirname(__FILE__), "measures")
   hpxml_measures_dir = File.join(File.dirname(__FILE__), "measures", "HPXMLBuildModel", "resources", "measures")
