@@ -69,6 +69,8 @@ def get_model_object_type(model_object)
     obj_type = model_object.to_s.split(',')[0].gsub('OS:','').gsub(':','')
     if obj_type == "MaterialNoMass"
         obj_type = "Material"
+    elsif obj_type == "WindowMaterialSimpleGlazingSystem"
+        obj_type = "SimpleGlazing"
     end
     return obj_type
 end

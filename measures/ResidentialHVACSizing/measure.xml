@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>edb28c86-ac90-4517-b6b1-d7ef08076e83</version_id>
-  <version_modified>20170311T001852Z</version_modified>
+  <version_id>86ad3fee-e8ac-4af5-8390-17ecedef6b10</version_id>
+  <version_modified>20170311T161438Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
@@ -111,27 +111,10 @@
       <checksum>07204EC3</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.11.5</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>8C6939C6</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>53D20E39</checksum>
-    </file>
-    <file>
-      <filename>residential_hvac_sizing_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>296DB6AC</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHP1_Autosize.osm</filename>
@@ -230,12 +213,6 @@
       <checksum>CFEA8B35</checksum>
     </file>
     <file>
-      <filename>SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2150EAD0</checksum>
-    </file>
-    <file>
       <filename>SFD_HVACSizing_Load_2story_CS_GRG_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -290,16 +267,45 @@
       <checksum>94FA3F07</checksum>
     </file>
     <file>
-      <filename>_load_tests.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0FB7B5EC</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>38632BB3</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.11.5</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>EAE5C297</checksum>
+    </file>
+    <file>
+      <filename>residential_hvac_sizing_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>47D939BE</checksum>
+    </file>
+    <file>
+      <filename>_load_tests.BEopt</filename>
+      <filetype>BEopt</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7CCABE16</checksum>
+    </file>
+    <file>
+      <filename>residential_hvac_sizing_test.rb.bak</filename>
+      <filetype>bak</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7A5E6FA2</checksum>
+    </file>
+    <file>
+      <filename>SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D30441D7</checksum>
     </file>
   </files>
 </measure>

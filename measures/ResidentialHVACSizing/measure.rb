@@ -685,6 +685,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             
             # SHGC & Internal Shading
             shgc_with_IntGains_shade_cool, shgc_with_IntGains_shade_heat = get_window_shgc(runner, window)
+            return nil if shgc_with_IntGains_shade_cool.nil? or shgc_with_IntGains_shade_heat.nil?
             
             windowHeight = Geometry.surface_height(window)
             windowHasIntShading = window.shadingControl.is_initialized
@@ -2615,24 +2616,26 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
   def get_window_shgc(runner, surface)
     simple_glazing = get_window_simple_glazing(runner, surface)
     return nil if simple_glazing.nil?
+    
     shgc_with_IntGains_shade_heat = simple_glazing.solarHeatGainCoefficient
-    if not surface.shadingControl.is_initialized
-        runner.registerError("Expected shading control for window '#{surface.name.to_s}'.")
-        return nil
+    
+    int_shade_heat_to_cool_ratio = 1.0
+    if surface.shadingControl.is_initialized
+        shading_control = surface.shadingControl.get
+        if shading_control.shadingMaterial.is_initialized
+            shading_material = shading_control.shadingMaterial.get
+            if shading_material.to_Shade.is_initialized
+                shade = shading_material.to_Shade.get
+                int_shade_heat_to_cool_ratio = shade.solarTransmittance
+            else
+                runner.registerError("Unhandled shading material: #{shading_material.name.to_s}.")
+                return nil
+            end
+        end
     end
-    shading_control = surface.shadingControl.get
-    if not shading_control.shadingMaterial.is_initialized
-        runner.registerError("Expected shading material for window '#{surface.name.to_s}'.")
-        return nil
-    end
-    shading_material = shading_control.shadingMaterial.get
-    if not shading_material.to_Shade.is_initialized
-        runner.registerError("Expected shade for window '#{surface.name.to_s}'.")
-        return nil
-    end
-    shade = shading_material.to_Shade.get
-    int_shade_heat_to_cool_ratio = shade.solarTransmittance
+    
     shgc_with_IntGains_shade_cool = shgc_with_IntGains_shade_heat * int_shade_heat_to_cool_ratio
+    
     return [shgc_with_IntGains_shade_cool, shgc_with_IntGains_shade_heat]
   end
   

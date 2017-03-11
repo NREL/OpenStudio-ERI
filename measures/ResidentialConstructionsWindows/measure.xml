@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>938a966f-4bff-46b4-a49b-c2fe124ada12</version_id>
-  <version_modified>20170311T001842Z</version_modified>
+  <version_id>d1eba7d2-a722-443b-95e4-1e42a3e67ccb</version_id>
+  <version_modified>20170311T161431Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -79,12 +79,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>process_constructions_windows_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6FD2057D</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -107,17 +101,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>38632BB3</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>70DD4C4D</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
@@ -160,6 +143,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>53D20E39</checksum>
+    </file>
+    <file>
+      <filename>process_constructions_windows_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3FB4D380</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4A24CA3A</checksum>
     </file>
   </files>
 </measure>

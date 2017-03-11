@@ -259,7 +259,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false, 3)
   end
 
-  def test_loads_1story_slab_unfinished_attic_unvented_no_overhangs
+  def test_loads_1story_slab_unfinished_attic_unvented_no_overhangs_no_interior_shading
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
@@ -279,7 +279,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Walls' => -499,
                         'Dehumid Roofs' => 0,
                         'Dehumid Floors' => 212,
-                        'Cool Windows' => 2846,
+                        'Cool Windows' => 4262,
                         'Cool Doors' => 91,
                         'Cool Walls' => 649,
                         'Cool Roofs' => 0,
@@ -289,12 +289,12 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool IntGains Sens' => 2547,
                         'Cool IntGains Lat' => 1053,
                         'Heat Load' => 18756,
-                        'Cool Load Sens' => 7962,
+                        'Cool Load Sens' => 9379,
                         'Cool Load Lat' => 0,
                         'Dehumid Load Sens' => 554,
                         'Dehumid Load Lat' => 549,
                       }
-    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false, 3)
+    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false, 3)
   end
 
   def test_loads_1story_slab_unfinished_attic_unvented_atlanta
