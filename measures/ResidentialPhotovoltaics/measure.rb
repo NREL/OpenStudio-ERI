@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
+class ResidentialPhotovoltaics < OpenStudio::Measure::ModelMeasure
 
   class PVSystem
     def initialize
@@ -44,10 +44,10 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for size
-    size = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("size", false)
+    size = OpenStudio::Measure::OSArgument::makeDoubleArgument("size", false)
     size.setDisplayName("Size")
     size.setUnits("kW")
     size.setDescription("Size (power) per unit of the photovoltaic array in kW DC.")
@@ -57,14 +57,14 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     #make a choice arguments for module type
     module_types_names = OpenStudio::StringVector.new
     module_types_names << Constants.PVModuleTypeCSI
-    module_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("module_type", module_types_names, true)
+    module_type = OpenStudio::Measure::OSArgument::makeChoiceArgument("module_type", module_types_names, true)
     module_type.setDisplayName("Module Type")
     module_type.setDescription("Type of module to use for the PV simulation.")
     module_type.setDefaultValue(Constants.PVModuleTypeCSI)
     args << module_type
 
     #make a double argument for system losses
-    system_losses = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("system_losses", false)
+    system_losses = OpenStudio::Measure::OSArgument::makeDoubleArgument("system_losses", false)
     system_losses.setDisplayName("System Losses")
     system_losses.setUnits("frac")
     system_losses.setDescription("Difference between theoretical module-level and actual PV system performance due to wiring resistance losses, dust, module mismatch, etc.")
@@ -72,7 +72,7 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     args << system_losses
     
     #make a double argument for inverter efficiency
-    inverter_efficiency = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("inverter_efficiency", false)
+    inverter_efficiency = OpenStudio::Measure::OSArgument::makeDoubleArgument("inverter_efficiency", false)
     inverter_efficiency.setDisplayName("Inverter Efficiency")
     inverter_efficiency.setUnits("frac")
     inverter_efficiency.setDescription("The efficiency of the inverter.")
@@ -83,14 +83,14 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     azimuth_types_names = OpenStudio::StringVector.new
     azimuth_types_names << Constants.CoordRelative
     azimuth_types_names << Constants.CoordAbsolute
-    azimuth_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("azimuth_type", azimuth_types_names, true)
+    azimuth_type = OpenStudio::Measure::OSArgument::makeChoiceArgument("azimuth_type", azimuth_types_names, true)
     azimuth_type.setDisplayName("Azimuth Type")
     azimuth_type.setDescription("Relative azimuth angle is measured clockwise from the front of the house. Absolute azimuth angle is measured clockwise from due south.")
     azimuth_type.setDefaultValue(Constants.CoordRelative)
     args << azimuth_type    
     
     #make a double argument for azimuth
-    azimuth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("azimuth", false)
+    azimuth = OpenStudio::Measure::OSArgument::makeDoubleArgument("azimuth", false)
     azimuth.setDisplayName("Azimuth")
     azimuth.setUnits("degrees")
     azimuth.setDescription("The azimuth angle is measured clockwise.")
@@ -102,14 +102,14 @@ class ResidentialPhotovoltaics < OpenStudio::Ruleset::ModelUserScript
     tilt_types_names << Constants.TiltPitch
     tilt_types_names << Constants.CoordAbsolute
     tilt_types_names << Constants.TiltLatitude
-    tilt_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("tilt_type", tilt_types_names, true)
+    tilt_type = OpenStudio::Measure::OSArgument::makeChoiceArgument("tilt_type", tilt_types_names, true)
     tilt_type.setDisplayName("Tilt Type")
     tilt_type.setDescription("Type of tilt angle referenced.")
     tilt_type.setDefaultValue(Constants.TiltPitch)
     args << tilt_type      
     
     #make a double argument for tilt
-    tilt = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("tilt", false)
+    tilt = OpenStudio::Measure::OSArgument::makeDoubleArgument("tilt", false)
     tilt.setDisplayName("Tilt")
     tilt.setUnits("degrees")
     tilt.setDescription("Angle of the tilt.")

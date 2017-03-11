@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/resources/weather"
 require "#{File.dirname(__FILE__)}/resources/constants"
 
 # start the measure
-class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
+class SetResidentialEPWFile < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
@@ -24,27 +24,27 @@ class SetResidentialEPWFile < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("weather_directory", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_directory", true)
     arg.setDisplayName("Weather Directory")
     arg.setDescription("Absolute (or relative) directory to weather files.")
     arg.setDefaultValue("./resources")
     args << arg
 
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("weather_file_name", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_file_name", true)
     arg.setDisplayName("Weather File Name")
     arg.setDescription("Name of the EPW weather file to assign. The corresponding DDY file must also be in the same directory.")
     arg.setDefaultValue("USA_CO_Denver_Intl_AP_725650_TMY3.epw")
     args << arg
 
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("dst_start_date", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("dst_start_date", true)
     arg.setDisplayName("Daylight Saving Start Date")
     arg.setDescription("Set to 'NA' if no daylight saving.")
     arg.setDefaultValue("April 7")
     args << arg
     
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("dst_end_date", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("dst_end_date", true)
     arg.setDisplayName("Daylight Saving End Date")
     arg.setDescription("Set to 'NA' if no daylight saving.")
     arg.setDefaultValue("October 26")

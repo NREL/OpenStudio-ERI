@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 # start the measure
-class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
+class ProcessRoomAirConditioner < OpenStudio::Measure::ModelMeasure
 
   class Supply
     def initialize
@@ -38,10 +38,10 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for room air eer
-    eer = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer", true)
+    eer = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer", true)
     eer.setDisplayName("EER")
     eer.setUnits("Btu/W-h")
     eer.setDescription("This is a measure of the instantaneous energy efficiency of the cooling equipment.")
@@ -49,14 +49,14 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     args << eer         
     
     #make a double argument for room air shr
-    shr = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shr", true)
+    shr = OpenStudio::Measure::OSArgument::makeDoubleArgument("shr", true)
     shr.setDisplayName("Rated SHR")
     shr.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.")
     shr.setDefaultValue(0.65)
     args << shr
 
     #make a double argument for room air airflow
-    airflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("airflow_rate", true)
+    airflow = OpenStudio::Measure::OSArgument::makeDoubleArgument("airflow_rate", true)
     airflow.setDisplayName("Airflow")
     airflow.setUnits("cfm/ton")
     airflow.setDefaultValue(350.0)
@@ -68,7 +68,7 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
     (0.5..10.0).step(0.5) do |tons|
       cap_display_names << tons.to_s
     end
-    output_capacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
+    output_capacity = OpenStudio::Measure::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
     output_capacity.setDisplayName("Cooling Capacity")
     output_capacity.setDescription("The output cooling capacity of the air conditioner.")
     output_capacity.setUnits("tons")
@@ -198,8 +198,8 @@ class ProcessRoomAirConditioner < OpenStudio::Ruleset::ModelUserScript
         if acOutputCapacity != Constants.SizingAuto
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(acOutputCapacity,"Btu/h","W").get)
           clg_coil.setRatedAirFlowRate(supply.cfm_TON_Rated[0] * acOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
-          clg_coil.setRatedSensibleHeatRatio(supply.shr_Rated)
         end
+        clg_coil.setRatedSensibleHeatRatio(supply.shr_Rated)
         clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(OpenStudio::convert(roomaceer, "Btu/h", "W").get))
         clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(773.3))
         clg_coil.setEvaporativeCondenserEffectiveness(OpenStudio::OptionalDouble.new(0.9))

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>620b776e-8998-4792-b43c-339e6dc7cb63</version_id>
-  <version_modified>20170311T001836Z</version_modified>
+  <version_id>6f5788c8-c24c-490f-9089-48b6bedf8b06</version_id>
+  <version_modified>20170311T210550Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
@@ -75,24 +75,24 @@
       <filename>helper_methods.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>809DC08A</checksum>
-    </file>
-    <file>
-      <filename>hpxml_build_model_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>70567A8A</checksum>
+      <checksum>25ED0CF7</checksum>
     </file>
     <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
-        <min_compatible>1.14.0</min_compatible>
+        <min_compatible>2.0.4</min_compatible>
       </version>
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>23B4A800</checksum>
+      <checksum>F9404692</checksum>
+    </file>
+    <file>
+      <filename>hpxml_build_model_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AC7B534A</checksum>
     </file>
   </files>
 </measure>

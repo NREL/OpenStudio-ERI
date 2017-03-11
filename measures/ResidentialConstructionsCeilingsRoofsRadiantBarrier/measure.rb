@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ProcessConstructionsCeilingsRoofsRadiantBarrier < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsCeilingsRoofsRadiantBarrier < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
@@ -24,10 +24,10 @@ class ProcessConstructionsCeilingsRoofsRadiantBarrier < OpenStudio::Ruleset::Mod
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a boolean argument for Has Radiant Barrier
-	has_rb = OpenStudio::Ruleset::OSArgument::makeBoolArgument("has_rb",true)
+	has_rb = OpenStudio::Measure::OSArgument::makeBoolArgument("has_rb",true)
 	has_rb.setDisplayName("Has Radiant Barrier")
 	has_rb.setDefaultValue(false)
 	args << has_rb

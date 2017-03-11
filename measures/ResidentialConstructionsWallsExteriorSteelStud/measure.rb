@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
@@ -24,10 +24,10 @@ class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUse
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for nominal R-value of nominal cavity insulation
-    cavity_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_r", true)
+    cavity_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("cavity_r", true)
     cavity_r.setDisplayName("Cavity Insulation Nominal R-value")
     cavity_r.setUnits("hr-ft^2-R/Btu")
     cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
@@ -39,14 +39,14 @@ class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUse
     installgrade_display_names << "I"
     installgrade_display_names << "II"
     installgrade_display_names << "III"
-    install_grade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("install_grade", installgrade_display_names, true)
+    install_grade = OpenStudio::Measure::OSArgument::makeChoiceArgument("install_grade", installgrade_display_names, true)
     install_grade.setDisplayName("Cavity Install Grade")
     install_grade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     install_grade.setDefaultValue("I")
     args << install_grade
 
     #make a double argument for wall cavity depth
-    cavity_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cavity_depth", true)
+    cavity_depth = OpenStudio::Measure::OSArgument::makeDoubleArgument("cavity_depth", true)
     cavity_depth.setDisplayName("Cavity Depth")
     cavity_depth.setUnits("in")
     cavity_depth.setDescription("Depth of the stud cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
@@ -54,14 +54,14 @@ class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUse
     args << cavity_depth
     
     #make a bool argument for whether the cavity insulation fills the cavity
-    ins_fills_cavity = OpenStudio::Ruleset::OSArgument::makeBoolArgument("ins_fills_cavity", true)
+    ins_fills_cavity = OpenStudio::Measure::OSArgument::makeBoolArgument("ins_fills_cavity", true)
     ins_fills_cavity.setDisplayName("Insulation Fills Cavity")
     ins_fills_cavity.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
     ins_fills_cavity.setDefaultValue(true)
     args << ins_fills_cavity
     
     #make a double argument for framing factor
-    framing_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", true)
+    framing_factor = OpenStudio::Measure::OSArgument::makeDoubleArgument("framing_factor", true)
     framing_factor.setDisplayName("Framing Factor")
     framing_factor.setUnits("frac")
     framing_factor.setDescription("The fraction of a wall assembly that is comprised of structural framing.")
@@ -69,7 +69,7 @@ class ProcessConstructionsWallsExteriorSteelStud < OpenStudio::Ruleset::ModelUse
     args << framing_factor
 
     #make a double argument for correction factor
-    correction_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("correction_factor", true)
+    correction_factor = OpenStudio::Measure::OSArgument::makeDoubleArgument("correction_factor", true)
     correction_factor.setDisplayName("Correction Factor")
     correction_factor.setDescription("The parallel path correction factor, as specified in Table C402.1.4.1 of the 2015 IECC as well as ASHRAE Standard 90.1, is used to determine the thermal resistance of wall assemblies containing metal framing.")
     correction_factor.setDefaultValue(0.46)

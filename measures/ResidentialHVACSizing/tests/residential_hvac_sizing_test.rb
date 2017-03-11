@@ -55,7 +55,7 @@ class ProcessHVACSizingTest < MiniTest::Test
             "Cool_AirFlowRate"=>["Unit 1 Final Results","Cool Airflow"],
             "Heat_AirFlowRate"=>["Unit 1 Final Results","Heat Airflow"],
             "Fan_AirFlowRate"=>["Unit 1 Final Results","Fan Airflow"],
-            "Dehumid_WaterRemoval_Auto"=>["Unit 1 Final Results","Dehumid WaterReoval"]
+            "Dehumid_WaterRemoval_Auto"=>["Unit 1 Final Results","Dehumid WaterRemoval"]
            }
   end
   
@@ -68,7 +68,6 @@ class ProcessHVACSizingTest < MiniTest::Test
     return (beopt_finished_attic_volume + living_volume) / (os_finished_attic_volume + living_volume)
   end
 
-=begin
   def test_loads_2story_finished_basement_garage_finished_attic
     args_hash = {}
     expected_num_del_objects = {}
@@ -104,7 +103,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => -1682,
                         'Dehumid Load Lat' => -95,
                       }
-    _test_measure("SFD_HVACSizing_Load_2story_FB_GRG_FA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true, 4)
+    _test_measure("SFD_HVACSizing_Load_2story_FB_GRG_FA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_loads_2story_unfinished_basement_garage_finished_attic
@@ -142,7 +141,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => -8,
                         'Dehumid Load Lat' => -86,
                       }
-    _test_measure("SFD_HVACSizing_Load_2story_UB_GRG_FA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true, 3)
+    _test_measure("SFD_HVACSizing_Load_2story_UB_GRG_FA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_loads_2story_crawlspace_garage_finished_attic
@@ -180,7 +179,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => -143,
                         'Dehumid Load Lat' => -86,
                       }
-    _test_measure("SFD_HVACSizing_Load_2story_CS_GRG_FA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true, 3)
+    _test_measure("SFD_HVACSizing_Load_2story_CS_GRG_FA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
 
   def test_loads_2story_slab_garage_finished_attic
@@ -218,7 +217,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => -1739,
                         'Dehumid Load Lat' => -86,
                       }
-    _test_measure("SFD_HVACSizing_Load_2story_S_GRG_FA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true, 3)
+    _test_measure("SFD_HVACSizing_Load_2story_S_GRG_FA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_loads_1story_slab_unfinished_attic_unvented
@@ -256,7 +255,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => 554,
                         'Dehumid Load Lat' => 549,
                       }
-    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false, 3)
+    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
 
   def test_loads_1story_slab_unfinished_attic_unvented_no_overhangs_no_interior_shading
@@ -294,7 +293,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => 554,
                         'Dehumid Load Lat' => 549,
                       }
-    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false, 3)
+    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
 
   def test_loads_1story_slab_unfinished_attic_unvented_atlanta
@@ -332,7 +331,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => 2923,
                         'Dehumid Load Lat' => 3682,
                       }
-    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_Atlanta.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false, 3)
+    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_Atlanta.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
   
   def test_loads_1story_slab_unfinished_attic_unvented_losangeles
@@ -370,7 +369,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => 1472,
                         'Dehumid Load Lat' => 1859,
                       }
-    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_LosAngeles.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false, 3)
+    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_LosAngeles.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
   
   def test_loads_1story_pierbeam_unfinished_attic_unvented
@@ -408,39 +407,233 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Dehumid Load Sens' => 927,
                         'Dehumid Load Lat' => 589,
                       }
-    _test_measure("SFD_HVACSizing_Load_1story_PB_UA_Unvented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false, 3)
+    _test_measure("SFD_HVACSizing_Load_1story_PB_UA_Unvented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
 
   def test_equip_ASHP_one_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_ASHP1_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    expected_values = {
+                        'DehumidLoad_Inf_Sens' => -1567,
+                        'DehumidLoad_Inf_Lat' => -1161,
+                        'DehumidLoad_Int_Sens' => 2303,
+                        'DehumidLoad_Int_Lat' => 1065,
+                        'Heat Windows' => 8623,
+                        'Heat Doors' => 252,
+                        'Heat Walls' => 12768,
+                        'Heat Roofs' => 2242,
+                        'Heat Floors' => 2049,
+                        'Heat Infil' => 15650,
+                        'Dehumid Windows' => -1053,
+                        'Dehumid Doors' => -30,
+                        'Dehumid Walls' => -1069,
+                        'Dehumid Roofs' => -273,
+                        'Dehumid Floors' => 9,
+                        'Cool Windows' => 5778,
+                        'Cool Doors' => 91,
+                        'Cool Walls' => 1777,
+                        'Cool Roofs' => 591,
+                        'Cool Floors' => 230,
+                        'Cool Infil Sens' => 1963,
+                        'Cool Infil Lat' => -3226,
+                        'Cool IntGains Sens' => 2912,
+                        'Cool IntGains Lat' => 1062,
+                        'Heat Load' => 41587,
+                        'Cool Load Sens' => 13344,
+                        'Cool Load Lat' => 0,
+                        'Dehumid Load Sens' => -1682,
+                        'Dehumid Load Lat' => -95,
+                        'Heat Airflow' => 1311,
+                        'Cool Airflow' => 866,
+                        'HeatingLoad' => 94511,
+                        'HeatingDuctLoad' => 52923,
+                        'CoolingLoad_Lat' => 0,
+                        'CoolingLoad_Sens' => 26771,
+                        'CoolingLoad_Ducts_Lat' => -609,
+                        'CoolingLoad_Ducts_Sens' => 14036,
+                        'DehumidLoad_Sens' => -2314,
+                        'DehumidLoad_Ducts_Lat' => 0,
+                        'Cool_Capacity' => 32173,
+                        'Cool_SensCap' => 20720,
+                        'Heat_Capacity' => 32173,
+                        'SuppHeat_Capacity' => 94511,
+                        'Cool_AirFlowRate' => 1337,
+                        'Heat_AirFlowRate' => 1014,
+                        'Fan_AirFlowRate' => 1337,
+                        'Dehumid_WaterRemoval_Auto' => 0,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_ASHP1_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
-  
+
+=begin  
   def test_equip_ASHP_one_speed_fixedsize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_ASHP1_FixedCapacities.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    expected_values = {
+                        'DehumidLoad_Inf_Sens' => -1567,
+                        'DehumidLoad_Inf_Lat' => -1161,
+                        'DehumidLoad_Int_Sens' => 2303,
+                        'DehumidLoad_Int_Lat' => 1065,
+                        'Heat Windows' => 8623,
+                        'Heat Doors' => 252,
+                        'Heat Walls' => 12768,
+                        'Heat Roofs' => 2242,
+                        'Heat Floors' => 2049,
+                        'Heat Infil' => 15650,
+                        'Dehumid Windows' => -1053,
+                        'Dehumid Doors' => -30,
+                        'Dehumid Walls' => -1069,
+                        'Dehumid Roofs' => -273,
+                        'Dehumid Floors' => 9,
+                        'Cool Windows' => 5778,
+                        'Cool Doors' => 91,
+                        'Cool Walls' => 1777,
+                        'Cool Roofs' => 591,
+                        'Cool Floors' => 230,
+                        'Cool Infil Sens' => 1963,
+                        'Cool Infil Lat' => -3226,
+                        'Cool IntGains Sens' => 2912,
+                        'Cool IntGains Lat' => 1062,
+                        'Heat Load' => 41587,
+                        'Cool Load Sens' => 13344,
+                        'Cool Load Lat' => 0,
+                        'Dehumid Load Sens' => -1682,
+                        'Dehumid Load Lat' => -95,
+                        'Heat Airflow' => 1311,
+                        'Cool Airflow' => 866,
+                        'HeatingLoad' => 50000,
+                        'HeatingDuctLoad' => 52923,
+                        'CoolingLoad_Lat' => 0,
+                        'CoolingLoad_Sens' => 26771,
+                        'CoolingLoad_Ducts_Lat' => -609,
+                        'CoolingLoad_Ducts_Sens' => 14036,
+                        'DehumidLoad_Sens' => -2314,
+                        'DehumidLoad_Ducts_Lat' => 0,
+                        'Cool_Capacity' => 60000,
+                        'Cool_SensCap' => 20720,
+                        'Heat_Capacity' => 50000,
+                        'SuppHeat_Capacity' => 50000,
+                        'Cool_AirFlowRate' => 1163,
+                        'Heat_AirFlowRate' => 1577,
+                        'Fan_AirFlowRate' => 1577,
+                        'Dehumid_WaterRemoval_Auto' => 0,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_ASHP1_FixedCapacities.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
+=end
   
   def test_equip_ASHP_two_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_ASHP2_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    expected_values = {
+                        'DehumidLoad_Inf_Sens' => -1567,
+                        'DehumidLoad_Inf_Lat' => -1161,
+                        'DehumidLoad_Int_Sens' => 2303,
+                        'DehumidLoad_Int_Lat' => 1065,
+                        'Heat Windows' => 8623,
+                        'Heat Doors' => 252,
+                        'Heat Walls' => 12768,
+                        'Heat Roofs' => 2242,
+                        'Heat Floors' => 2049,
+                        'Heat Infil' => 15650,
+                        'Dehumid Windows' => -1053,
+                        'Dehumid Doors' => -30,
+                        'Dehumid Walls' => -1069,
+                        'Dehumid Roofs' => -273,
+                        'Dehumid Floors' => 9,
+                        'Cool Windows' => 5778,
+                        'Cool Doors' => 91,
+                        'Cool Walls' => 1777,
+                        'Cool Roofs' => 591,
+                        'Cool Floors' => 230,
+                        'Cool Infil Sens' => 1963,
+                        'Cool Infil Lat' => -3226,
+                        'Cool IntGains Sens' => 2912,
+                        'Cool IntGains Lat' => 1062,
+                        'Heat Load' => 41587,
+                        'Cool Load Sens' => 13344,
+                        'Cool Load Lat' => 0,
+                        'Dehumid Load Sens' => -1682,
+                        'Dehumid Load Lat' => -95,
+                        'Heat Airflow' => 1311,
+                        'Cool Airflow' => 866,
+                        'HeatingLoad' => 94511,
+                        'HeatingDuctLoad' => 52923,
+                        'CoolingLoad_Lat' => 0,
+                        'CoolingLoad_Sens' => 26771,
+                        'CoolingLoad_Ducts_Lat' => -609,
+                        'CoolingLoad_Ducts_Sens' => 14036,
+                        'DehumidLoad_Sens' => -2314,
+                        'DehumidLoad_Ducts_Lat' => 0,
+                        'Cool_Capacity' => 33858,
+                        'Cool_SensCap' => 20505,
+                        'Heat_Capacity' => 33858,
+                        'SuppHeat_Capacity' => 94511,
+                        'Cool_AirFlowRate' => 1407,
+                        'Heat_AirFlowRate' => 1067,
+                        'Fan_AirFlowRate' => 1407,
+                        'Dehumid_WaterRemoval_Auto' => 0,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_ASHP2_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_ASHP_variable_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_ASHPV_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    expected_values = {
+                        'DehumidLoad_Inf_Sens' => -1567,
+                        'DehumidLoad_Inf_Lat' => -1161,
+                        'DehumidLoad_Int_Sens' => 2303,
+                        'DehumidLoad_Int_Lat' => 1065,
+                        'Heat Windows' => 8623,
+                        'Heat Doors' => 252,
+                        'Heat Walls' => 12768,
+                        'Heat Roofs' => 2242,
+                        'Heat Floors' => 2049,
+                        'Heat Infil' => 15650,
+                        'Dehumid Windows' => -1053,
+                        'Dehumid Doors' => -30,
+                        'Dehumid Walls' => -1069,
+                        'Dehumid Roofs' => -273,
+                        'Dehumid Floors' => 9,
+                        'Cool Windows' => 5778,
+                        'Cool Doors' => 91,
+                        'Cool Walls' => 1777,
+                        'Cool Roofs' => 591,
+                        'Cool Floors' => 230,
+                        'Cool Infil Sens' => 1963,
+                        'Cool Infil Lat' => -3226,
+                        'Cool IntGains Sens' => 2912,
+                        'Cool IntGains Lat' => 1062,
+                        'Heat Load' => 41587,
+                        'Cool Load Sens' => 13344,
+                        'Cool Load Lat' => 0,
+                        'Dehumid Load Sens' => -1682,
+                        'Dehumid Load Lat' => -95,
+                        'Heat Airflow' => 1311,
+                        'Cool Airflow' => 866,
+                        'HeatingLoad' => 94511,
+                        'HeatingDuctLoad' => 52923,
+                        'CoolingLoad_Lat' => 0,
+                        'CoolingLoad_Sens' => 26771,
+                        'CoolingLoad_Ducts_Lat' => -609,
+                        'CoolingLoad_Ducts_Sens' => 14036,
+                        'DehumidLoad_Sens' => -2314,
+                        'DehumidLoad_Ducts_Lat' => 0,
+                        'Cool_Capacity' => 35655,
+                        'Cool_SensCap' => 19306,
+                        'Heat_Capacity' => 35655,
+                        'SuppHeat_Capacity' => 94511,
+                        'Cool_AirFlowRate' => 1482,
+                        'Heat_AirFlowRate' => 1124,
+                        'Fan_AirFlowRate' => 1482,
+                        'Dehumid_WaterRemoval_Auto' => 0,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_ASHPV_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_electric_baseboard_autosize
@@ -448,47 +641,240 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_BB_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    _test_measure("SFD_HVACSizing_Equip_BB_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_electric_furnace_and_ac_two_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_EF_AC2_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    expected_values = {
+                        'DehumidLoad_Inf_Sens' => -1567,
+                        'DehumidLoad_Inf_Lat' => -1161,
+                        'DehumidLoad_Int_Sens' => 2303,
+                        'DehumidLoad_Int_Lat' => 1065,
+                        'Heat Windows' => 8623,
+                        'Heat Doors' => 252,
+                        'Heat Walls' => 12768,
+                        'Heat Roofs' => 2242,
+                        'Heat Floors' => 2049,
+                        'Heat Infil' => 15650,
+                        'Dehumid Windows' => -1053,
+                        'Dehumid Doors' => -30,
+                        'Dehumid Walls' => -1069,
+                        'Dehumid Roofs' => -273,
+                        'Dehumid Floors' => 9,
+                        'Cool Windows' => 5778,
+                        'Cool Doors' => 91,
+                        'Cool Walls' => 1777,
+                        'Cool Roofs' => 591,
+                        'Cool Floors' => 230,
+                        'Cool Infil Sens' => 1963,
+                        'Cool Infil Lat' => -3226,
+                        'Cool IntGains Sens' => 2912,
+                        'Cool IntGains Lat' => 1062,
+                        'Heat Load' => 41587,
+                        'Cool Load Sens' => 13344,
+                        'Cool Load Lat' => 0,
+                        'Dehumid Load Sens' => -1682,
+                        'Dehumid Load Lat' => -95,
+                        'Heat Airflow' => 918,
+                        'Cool Airflow' => 866,
+                        'HeatingLoad' => 92501,
+                        'HeatingDuctLoad' => 50913,
+                        'CoolingLoad_Lat' => 0,
+                        'CoolingLoad_Sens' => 26771,
+                        'CoolingLoad_Ducts_Lat' => -609,
+                        'CoolingLoad_Ducts_Sens' => 14036,
+                        'DehumidLoad_Sens' => -2314,
+                        'DehumidLoad_Ducts_Lat' => 0,
+                        'Cool_Capacity' => 27997,
+                        'Cool_SensCap' => 20543,
+                        'Heat_Capacity' => 92501,
+                        'SuppHeat_Capacity' => 0,
+                        'Cool_AirFlowRate' => 1164,
+                        'Heat_AirFlowRate' => 2042,
+                        'Fan_AirFlowRate' => 2042,
+                        'Dehumid_WaterRemoval_Auto' => 0,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_EF_AC2_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_electric_furnace_and_ac_variable_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_EF_ACV_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    expected_values = {
+                        'DehumidLoad_Inf_Sens' => -1567,
+                        'DehumidLoad_Inf_Lat' => -1161,
+                        'DehumidLoad_Int_Sens' => 2303,
+                        'DehumidLoad_Int_Lat' => 1065,
+                        'Heat Windows' => 8623,
+                        'Heat Doors' => 252,
+                        'Heat Walls' => 12768,
+                        'Heat Roofs' => 2242,
+                        'Heat Floors' => 2049,
+                        'Heat Infil' => 15650,
+                        'Dehumid Windows' => -1053,
+                        'Dehumid Doors' => -30,
+                        'Dehumid Walls' => -1069,
+                        'Dehumid Roofs' => -273,
+                        'Dehumid Floors' => 9,
+                        'Cool Windows' => 5778,
+                        'Cool Doors' => 91,
+                        'Cool Walls' => 1777,
+                        'Cool Roofs' => 591,
+                        'Cool Floors' => 230,
+                        'Cool Infil Sens' => 1963,
+                        'Cool Infil Lat' => -3226,
+                        'Cool IntGains Sens' => 2912,
+                        'Cool IntGains Lat' => 1062,
+                        'Heat Load' => 41587,
+                        'Cool Load Sens' => 13344,
+                        'Cool Load Lat' => 0,
+                        'Dehumid Load Sens' => -1682,
+                        'Dehumid Load Lat' => -95,
+                        'Heat Airflow' => 918,
+                        'Cool Airflow' => 866,
+                        'HeatingLoad' => 92501,
+                        'HeatingDuctLoad' => 50913,
+                        'CoolingLoad_Lat' => 0,
+                        'CoolingLoad_Sens' => 26771,
+                        'CoolingLoad_Ducts_Lat' => -609,
+                        'CoolingLoad_Ducts_Sens' => 14036,
+                        'DehumidLoad_Sens' => -2314,
+                        'DehumidLoad_Ducts_Lat' => 0,
+                        'Cool_Capacity' => 28360,
+                        'Cool_SensCap' => 19962,
+                        'Heat_Capacity' => 92501,
+                        'SuppHeat_Capacity' => 0,
+                        'Cool_AirFlowRate' => 1179,
+                        'Heat_AirFlowRate' => 2042,
+                        'Fan_AirFlowRate' => 2042,
+                        'Dehumid_WaterRemoval_Auto' => 0,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_EF_ACV_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_gas_furnace_and_ac_one_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_GF_AC1_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    expected_values = {
+                        'DehumidLoad_Inf_Sens' => -1567,
+                        'DehumidLoad_Inf_Lat' => -1161,
+                        'DehumidLoad_Int_Sens' => 2303,
+                        'DehumidLoad_Int_Lat' => 1065,
+                        'Heat Windows' => 8623,
+                        'Heat Doors' => 252,
+                        'Heat Walls' => 12768,
+                        'Heat Roofs' => 2242,
+                        'Heat Floors' => 2049,
+                        'Heat Infil' => 15650,
+                        'Dehumid Windows' => -1053,
+                        'Dehumid Doors' => -30,
+                        'Dehumid Walls' => -1069,
+                        'Dehumid Roofs' => -273,
+                        'Dehumid Floors' => 9,
+                        'Cool Windows' => 5778,
+                        'Cool Doors' => 91,
+                        'Cool Walls' => 1777,
+                        'Cool Roofs' => 591,
+                        'Cool Floors' => 230,
+                        'Cool Infil Sens' => 1963,
+                        'Cool Infil Lat' => -3226,
+                        'Cool IntGains Sens' => 2912,
+                        'Cool IntGains Lat' => 1062,
+                        'Heat Load' => 41587,
+                        'Cool Load Sens' => 13344,
+                        'Cool Load Lat' => 0,
+                        'Dehumid Load Sens' => -1682,
+                        'Dehumid Load Lat' => -95,
+                        'Heat Airflow' => 918,
+                        'Cool Airflow' => 866,
+                        'HeatingLoad' => 92501,
+                        'HeatingDuctLoad' => 50913,
+                        'CoolingLoad_Lat' => 0,
+                        'CoolingLoad_Sens' => 26771,
+                        'CoolingLoad_Ducts_Lat' => -609,
+                        'CoolingLoad_Ducts_Sens' => 14036,
+                        'DehumidLoad_Sens' => -2314,
+                        'DehumidLoad_Ducts_Lat' => 0,
+                        'Cool_Capacity' => 27883,
+                        'Cool_SensCap' => 20645,
+                        'Heat_Capacity' => 92501,
+                        'SuppHeat_Capacity' => 0,
+                        'Cool_AirFlowRate' => 1159,
+                        'Heat_AirFlowRate' => 2042,
+                        'Fan_AirFlowRate' => 2042,
+                        'Dehumid_WaterRemoval_Auto' => 0,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_GF_AC1_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_gas_furnace_and_ac_one_speed_fixedsize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_GF_AC1_FixedCapacities.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    expected_values = {
+                        'DehumidLoad_Inf_Sens' => -1567,
+                        'DehumidLoad_Inf_Lat' => -1161,
+                        'DehumidLoad_Int_Sens' => 2303,
+                        'DehumidLoad_Int_Lat' => 1065,
+                        'Heat Windows' => 8623,
+                        'Heat Doors' => 252,
+                        'Heat Walls' => 12768,
+                        'Heat Roofs' => 2242,
+                        'Heat Floors' => 2049,
+                        'Heat Infil' => 15650,
+                        'Dehumid Windows' => -1053,
+                        'Dehumid Doors' => -30,
+                        'Dehumid Walls' => -1069,
+                        'Dehumid Roofs' => -273,
+                        'Dehumid Floors' => 9,
+                        'Cool Windows' => 5778,
+                        'Cool Doors' => 91,
+                        'Cool Walls' => 1777,
+                        'Cool Roofs' => 591,
+                        'Cool Floors' => 230,
+                        'Cool Infil Sens' => 1963,
+                        'Cool Infil Lat' => -3226,
+                        'Cool IntGains Sens' => 2912,
+                        'Cool IntGains Lat' => 1062,
+                        'Heat Load' => 41587,
+                        'Cool Load Sens' => 13344,
+                        'Cool Load Lat' => 0,
+                        'Dehumid Load Sens' => -1682,
+                        'Dehumid Load Lat' => -95,
+                        'Heat Airflow' => 918,
+                        'Cool Airflow' => 866,
+                        'HeatingLoad' => 100000,
+                        'HeatingDuctLoad' => 50913,
+                        'CoolingLoad_Lat' => 0,
+                        'CoolingLoad_Sens' => 26771,
+                        'CoolingLoad_Ducts_Lat' => -609,
+                        'CoolingLoad_Ducts_Sens' => 14036,
+                        'DehumidLoad_Sens' => -2314,
+                        'DehumidLoad_Ducts_Lat' => 0,
+                        'Cool_Capacity' => 60000,
+                        'Cool_SensCap' => 20645,
+                        'Heat_Capacity' => 100000,
+                        'SuppHeat_Capacity' => 0,
+                        'Cool_AirFlowRate' => 1159,
+                        'Heat_AirFlowRate' => 2207,
+                        'Fan_AirFlowRate' => 2207,
+                        'Dehumid_WaterRemoval_Auto' => 0,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_GF_AC1_FixedCapacities.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
+=begin
   def test_equip_gas_furnace_and_room_air_conditioner_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_GF_RAC_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    _test_measure("SFD_HVACSizing_Equip_GF_RAC_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_mshp_autosize
@@ -496,7 +882,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_MSHP_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    _test_measure("SFD_HVACSizing_Equip_MSHP_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_mshp_and_electric_baseboard_autosize
@@ -504,9 +890,10 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    _test_measure("SFD_HVACSizing_Equip_MSHP_BB_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
+    _test_measure("SFD_HVACSizing_Equip_MSHP_BB_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
-=end  
+=end
+  
   private
   
   def _test_error(osm_file_or_model, args_hash)
@@ -514,13 +901,13 @@ class ProcessHVACSizingTest < MiniTest::Test
     measure = ProcessHVACSizing.new
 
     # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
     # get arguments
     arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -542,7 +929,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     return result
   end  
   
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, apply_volume_adj=false, num_infos=0, num_warnings=0, debug=false)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, apply_volume_adj=false)
     # create an instance of the measure
     measure = ProcessHVACSizing.new
 
@@ -552,7 +939,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     assert(!measure.modeler_description.empty?)
 
     # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
@@ -561,7 +948,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     
     # get arguments
     arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -580,8 +967,6 @@ class ProcessHVACSizingTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    assert(result.info.size == num_infos)
-    assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model
     final_objects = get_objects(model)
@@ -608,12 +993,17 @@ class ProcessHVACSizingTest < MiniTest::Test
         os_header = map[beopt_key][0]
         os_key = map[beopt_key][1]
         os_val = 0.0
+        os_val_found = false
         result.info.map{ |x| x.logMessage }.each do |info|
             next if not info.split("\n")[0].start_with?(os_header)
             info.split("\n").each do |info_line|
                 next if info_line.split('=')[0].strip != os_key
                 os_val += info_line.split('=')[1].strip.to_f
+                os_val_found = true
             end
+        end
+        if not os_val_found
+            exit("Could not find corresponding OS value.")
         end
         
         if apply_volume_adj
@@ -630,7 +1020,7 @@ class ProcessHVACSizingTest < MiniTest::Test
             assert_in_delta(beopt_val, os_val, 100) # cfm
         elsif os_header.downcase.include?("results")
             # Aggregate results
-            assert_in_delta(beopt_val, os_val, 1000) # Btu/hr
+            assert_in_delta(beopt_val, os_val, 1500) # Btu/hr
         else
             # Individual components
             assert_in_delta(beopt_val, os_val, 250) # Btu/hr

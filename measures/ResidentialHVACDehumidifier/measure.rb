@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/constants"
 
 # start the measure
-class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
+class ProcessDehumidifier < OpenStudio::Measure::ModelMeasure
 
   class Curves
     def initialize
@@ -32,10 +32,10 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
    	#Make a string argument for dehumidifier energy factor
-    energy_factor = OpenStudio::Ruleset::OSArgument::makeStringArgument("energy_factor", true)
+    energy_factor = OpenStudio::Measure::OSArgument::makeStringArgument("energy_factor", true)
     energy_factor.setDisplayName("Energy Factor")
     energy_factor.setDescription("The energy efficiency of dehumidifiers is measured by its energy factor, in liters of water removed per kilowatt-hour (kWh) of energy consumed or L/kWh.")
     energy_factor.setUnits("L/kWh")
@@ -43,7 +43,7 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
     args << energy_factor
     
    	#Make a string argument for dehumidifier water removal rate
-    water_removal_rate = OpenStudio::Ruleset::OSArgument::makeStringArgument("water_removal_rate", true)
+    water_removal_rate = OpenStudio::Measure::OSArgument::makeStringArgument("water_removal_rate", true)
     water_removal_rate.setDisplayName("Water Removal Rate")
     water_removal_rate.setDescription("Dehumidifier rated water removal rate measured in pints per day at an inlet condition of 80 degrees F DB/60%RH.")
     water_removal_rate.setUnits("Pints/day")
@@ -51,7 +51,7 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
     args << water_removal_rate
     
    	#Make a string argument for dehumidifier air flow rate
-    air_flow_rate = OpenStudio::Ruleset::OSArgument::makeStringArgument("air_flow_rate", true)
+    air_flow_rate = OpenStudio::Measure::OSArgument::makeStringArgument("air_flow_rate", true)
     air_flow_rate.setDisplayName("Air Flow Rate")
     air_flow_rate.setDescription("The dehumidifier rated air flow rate in CFM. If 'auto' is entered, the air flow will be determined using the rated water removal rate.")
     air_flow_rate.setUnits("cfm")
@@ -62,14 +62,14 @@ class ProcessDehumidifier < OpenStudio::Ruleset::ModelUserScript
     # config_display_names = OpenStudio::StringVector.new
     # config_display_names << Constants.Standalone
     # config_display_names << Constants.Ducted
-    # config = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("config", config_display_names, true)
+    # config = OpenStudio::Measure::OSArgument::makeChoiceArgument("config", config_display_names, true)
     # config.setDisplayName("Configuration")
     # config.setDescription("The configuration of the dehumidifier. Only affects costing. If 'auto' is selected, dehumidifiers larger than 70 pints/day will be ducted.")
     # config.setDefaultValue(Constants.Standalone)
     # args << config
     
    	#Make a string argument for humidity setpoint
-    humidity_setpoint = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("humidity_setpoint", true)
+    humidity_setpoint = OpenStudio::Measure::OSArgument::makeDoubleArgument("humidity_setpoint", true)
     humidity_setpoint.setDisplayName("Annual Relative Humidity Setpoint")
     humidity_setpoint.setDescription("The annual relative humidity setpoint.")
     humidity_setpoint.setUnits("frac")

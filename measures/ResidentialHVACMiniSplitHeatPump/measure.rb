@@ -9,7 +9,7 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 # start the measure
-class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
+class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
 
   class Supply
     def initialize
@@ -40,10 +40,10 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
     
     #make a double argument for minisplit cooling rated seer
-    miniSplitHPCoolingRatedSEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("seer", true)
+    miniSplitHPCoolingRatedSEER = OpenStudio::Measure::OSArgument::makeDoubleArgument("seer", true)
     miniSplitHPCoolingRatedSEER.setDisplayName("Rated SEER")
     miniSplitHPCoolingRatedSEER.setUnits("Btu/W-h")
     miniSplitHPCoolingRatedSEER.setDescription("Seasonal Energy Efficiency Ratio (SEER) is a measure of equipment energy efficiency over the cooling season.")
@@ -51,7 +51,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingRatedSEER 
     
     #make a double argument for minisplit cooling min capacity
-    miniSplitHPCoolingMinCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_cooling_capacity", true)
+    miniSplitHPCoolingMinCapacity = OpenStudio::Measure::OSArgument::makeDoubleArgument("min_cooling_capacity", true)
     miniSplitHPCoolingMinCapacity.setDisplayName("Minimum Cooling Capacity")
     miniSplitHPCoolingMinCapacity.setUnits("frac")
     miniSplitHPCoolingMinCapacity.setDescription("Minimum cooling capacity as a fraction of the nominal cooling capacity at rated conditions.")
@@ -59,7 +59,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingMinCapacity     
     
     #make a double argument for minisplit cooling max capacity
-    miniSplitHPCoolingMaxCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_cooling_capacity", true)
+    miniSplitHPCoolingMaxCapacity = OpenStudio::Measure::OSArgument::makeDoubleArgument("max_cooling_capacity", true)
     miniSplitHPCoolingMaxCapacity.setDisplayName("Maximum Cooling Capacity")
     miniSplitHPCoolingMaxCapacity.setUnits("frac")
     miniSplitHPCoolingMaxCapacity.setDescription("Maximum cooling capacity as a fraction of the nominal cooling capacity at rated conditions.")
@@ -67,14 +67,14 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingMaxCapacity    
     
     #make a double argument for minisplit rated shr
-    miniSplitHPRatedSHR = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shr", true)
+    miniSplitHPRatedSHR = OpenStudio::Measure::OSArgument::makeDoubleArgument("shr", true)
     miniSplitHPRatedSHR.setDisplayName("Rated SHR")
     miniSplitHPRatedSHR.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.")
     miniSplitHPRatedSHR.setDefaultValue(0.73)
     args << miniSplitHPRatedSHR        
     
     #make a double argument for minisplit cooling min airflow
-    miniSplitHPCoolingMinAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_cooling_airflow_rate", true)
+    miniSplitHPCoolingMinAirflow = OpenStudio::Measure::OSArgument::makeDoubleArgument("min_cooling_airflow_rate", true)
     miniSplitHPCoolingMinAirflow.setDisplayName("Minimum Cooling Airflow")
     miniSplitHPCoolingMinAirflow.setUnits("cfm/ton")
     miniSplitHPCoolingMinAirflow.setDescription("Minimum cooling cfm divided by the nominal rated cooling capacity.")
@@ -82,7 +82,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingMinAirflow      
     
     #make a double argument for minisplit cooling max airflow
-    miniSplitHPCoolingMaxAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_cooling_airflow_rate", true)
+    miniSplitHPCoolingMaxAirflow = OpenStudio::Measure::OSArgument::makeDoubleArgument("max_cooling_airflow_rate", true)
     miniSplitHPCoolingMaxAirflow.setDisplayName("Maximum Cooling Airflow")
     miniSplitHPCoolingMaxAirflow.setUnits("cfm/ton")
     miniSplitHPCoolingMaxAirflow.setDescription("Maximum cooling cfm divided by the nominal rated cooling capacity.")
@@ -90,7 +90,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCoolingMaxAirflow     
     
     #make a double argument for minisplit rated hspf
-    miniSplitHPHeatingRatedHSPF = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("hspf", true)
+    miniSplitHPHeatingRatedHSPF = OpenStudio::Measure::OSArgument::makeDoubleArgument("hspf", true)
     miniSplitHPHeatingRatedHSPF.setDisplayName("Rated HSPF")
     miniSplitHPHeatingRatedHSPF.setUnits("Btu/W-h")
     miniSplitHPHeatingRatedHSPF.setDescription("The Heating Seasonal Performance Factor (HSPF) is a measure of a heat pump's energy efficiency over one heating season.")
@@ -98,7 +98,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingRatedHSPF
     
     #make a double argument for minisplit heating capacity offset
-    miniSplitHPHeatingCapacityOffset = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("heating_capacity_offset", true)
+    miniSplitHPHeatingCapacityOffset = OpenStudio::Measure::OSArgument::makeDoubleArgument("heating_capacity_offset", true)
     miniSplitHPHeatingCapacityOffset.setDisplayName("Heating Capacity Offset")
     miniSplitHPHeatingCapacityOffset.setUnits("Btu/h")
     miniSplitHPHeatingCapacityOffset.setDescription("The difference between the nominal rated heating capacity and the nominal rated cooling capacity.")
@@ -106,7 +106,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingCapacityOffset    
     
     #make a double argument for minisplit heating min capacity
-    miniSplitHPHeatingMinCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_heating_capacity", true)
+    miniSplitHPHeatingMinCapacity = OpenStudio::Measure::OSArgument::makeDoubleArgument("min_heating_capacity", true)
     miniSplitHPHeatingMinCapacity.setDisplayName("Minimum Heating Capacity")
     miniSplitHPHeatingMinCapacity.setUnits("frac")
     miniSplitHPHeatingMinCapacity.setDescription("Minimum heating capacity as a fraction of nominal heating capacity at rated conditions.")
@@ -114,7 +114,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingMinCapacity     
     
     #make a double argument for minisplit heating max capacity
-    miniSplitHPHeatingMaxCapacity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_heating_capacity", true)
+    miniSplitHPHeatingMaxCapacity = OpenStudio::Measure::OSArgument::makeDoubleArgument("max_heating_capacity", true)
     miniSplitHPHeatingMaxCapacity.setDisplayName("Maximum Heating Capacity")
     miniSplitHPHeatingMaxCapacity.setUnits("frac")
     miniSplitHPHeatingMaxCapacity.setDescription("Maximum heating capacity as a fraction of nominal heating capacity at rated conditions.")
@@ -122,7 +122,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingMaxCapacity        
     
     #make a double argument for minisplit heating min airflow
-    miniSplitHPHeatingMinAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_heating_airflow_rate", true)
+    miniSplitHPHeatingMinAirflow = OpenStudio::Measure::OSArgument::makeDoubleArgument("min_heating_airflow_rate", true)
     miniSplitHPHeatingMinAirflow.setDisplayName("Minimum Heating Airflow")
     miniSplitHPHeatingMinAirflow.setUnits("cfm/ton")
     miniSplitHPHeatingMinAirflow.setDescription("Minimum heating cfm divided by the nominal rated heating capacity.")
@@ -130,7 +130,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingMinAirflow     
     
     #make a double argument for minisplit heating min airflow
-    miniSplitHPHeatingMaxAirflow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_heating_airflow_rate", true)
+    miniSplitHPHeatingMaxAirflow = OpenStudio::Measure::OSArgument::makeDoubleArgument("max_heating_airflow_rate", true)
     miniSplitHPHeatingMaxAirflow.setDisplayName("Maximum Heating Airflow")
     miniSplitHPHeatingMaxAirflow.setUnits("cfm/ton")
     miniSplitHPHeatingMaxAirflow.setDescription("Maximum heating cfm divided by the nominal rated heating capacity.")
@@ -138,7 +138,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPHeatingMaxAirflow         
     
     #make a double argument for minisplit capacity retention fraction
-    miniSplitHPCapacityRetentionFraction = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cap_retention_frac", true)
+    miniSplitHPCapacityRetentionFraction = OpenStudio::Measure::OSArgument::makeDoubleArgument("cap_retention_frac", true)
     miniSplitHPCapacityRetentionFraction.setDisplayName("Heating Capacity Retention Fraction")
     miniSplitHPCapacityRetentionFraction.setUnits("frac")
     miniSplitHPCapacityRetentionFraction.setDescription("The maximum heating capacity at X degrees divided by the maximum heating capacity at 47 degrees F.")
@@ -146,7 +146,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCapacityRetentionFraction
     
     #make a double argument for minisplit capacity retention temperature
-    miniSplitHPCapacityRetentionTemperature = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cap_retention_temp", true)
+    miniSplitHPCapacityRetentionTemperature = OpenStudio::Measure::OSArgument::makeDoubleArgument("cap_retention_temp", true)
     miniSplitHPCapacityRetentionTemperature.setDisplayName("Heating Capacity Retention Temperature")
     miniSplitHPCapacityRetentionTemperature.setUnits("degrees F")
     miniSplitHPCapacityRetentionTemperature.setDescription("The outdoor drybulb temperature at which the heating capacity retention fraction is defined.")
@@ -154,7 +154,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPCapacityRetentionTemperature    
     
     #make a double argument for minisplit pan heater power
-    miniSplitHPPanHeaterPowerPerUnit = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("pan_heater_power", true)
+    miniSplitHPPanHeaterPowerPerUnit = OpenStudio::Measure::OSArgument::makeDoubleArgument("pan_heater_power", true)
     miniSplitHPPanHeaterPowerPerUnit.setDisplayName("Pan Heater")
     miniSplitHPPanHeaterPowerPerUnit.setUnits("W/unit")
     miniSplitHPPanHeaterPowerPerUnit.setDescription("Prevents ice build up from damaging the coil.")
@@ -162,7 +162,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitHPPanHeaterPowerPerUnit    
     
     #make a double argument for minisplit supply fan power
-    miniSplitHPSupplyFanPower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_power", true)
+    miniSplitHPSupplyFanPower = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power", true)
     miniSplitHPSupplyFanPower.setDisplayName("Supply Fan Power")
     miniSplitHPSupplyFanPower.setUnits("W/cfm")
     miniSplitHPSupplyFanPower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the fan.")
@@ -175,7 +175,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     (0.5..10.0).step(0.5) do |tons|
       cap_display_names << tons.to_s
     end
-    miniSplitCoolingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
+    miniSplitCoolingOutputCapacity = OpenStudio::Measure::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
     miniSplitCoolingOutputCapacity.setDisplayName("Heat Pump Capacity")
     miniSplitCoolingOutputCapacity.setDescription("The output heating/cooling capacity of the heat pump.")
     miniSplitCoolingOutputCapacity.setUnits("tons")
@@ -183,7 +183,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     args << miniSplitCoolingOutputCapacity
 
     #make an argument for entering supplemental efficiency
-    baseboardeff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("supplemental_efficiency",true)
+    baseboardeff = OpenStudio::Measure::OSArgument::makeDoubleArgument("supplemental_efficiency",true)
     baseboardeff.setDisplayName("Supplemental Efficiency")
     baseboardeff.setUnits("Btu/Btu")
     baseboardeff.setDescription("The efficiency of the supplemental electric baseboard.")
@@ -197,7 +197,7 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
     (5..150).step(5) do |kbtu|
       cap_display_names << kbtu.to_s
     end  
-    baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("supplemental_capacity", cap_display_names, true)
+    baseboardcap = OpenStudio::Measure::OSArgument::makeChoiceArgument("supplemental_capacity", cap_display_names, true)
     baseboardcap.setDisplayName("Supplemental Heating Capacity")
     baseboardcap.setDescription("The output heating capacity of the supplemental electric baseboard.")
     baseboardcap.setUnits("kBtu/hr")
@@ -392,9 +392,9 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setName(obj_name + " #{control_zone.name} cooling coil")
         if miniSplitCoolingOutputCapacity != Constants.SizingAuto
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]] * (1.0 - fbsmt_frac))
-          clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[curves.mshp_indices[-1]])
           clg_coil.setRatedAirFlowRate(supply.CoolingCFMs[curves.mshp_indices[-1]]* miniSplitCoolingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * (1.0 - fbsmt_frac))
         end
+        clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[curves.mshp_indices[-1]])
         clg_coil.setCoolingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
         clg_coil.setCoolingCapacityModifierCurveFunctionofFlowFraction(constant_cubic)
       
@@ -494,9 +494,9 @@ class ProcessVRFMinisplit < OpenStudio::Ruleset::ModelUserScript
           clg_coil.setName(obj_name + " #{slave_zone.name} cooling coil")
           if miniSplitCoolingOutputCapacity != Constants.SizingAuto
             clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]] * fbsmt_frac)
-            clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[curves.mshp_indices[-1]])
             clg_coil.setRatedAirFlowRate(supply.CoolingCFMs[curves.mshp_indices[-1]]* miniSplitCoolingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * fbsmt_frac)
           end          
+          clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[curves.mshp_indices[-1]])
           clg_coil.setCoolingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic)
           clg_coil.setCoolingCapacityModifierCurveFunctionofFlowFraction(constant_cubic)
                 

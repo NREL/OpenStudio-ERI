@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsWallsExteriorICF < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
@@ -24,10 +24,10 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for nominal R-value of the icf insulation
-    icf_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("icf_r", true)
+    icf_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("icf_r", true)
     icf_r.setDisplayName("Nominal Insulation R-value")
     icf_r.setUnits("hr-ft^2-R/Btu")
     icf_r.setDescription("R-value of each insulating layer of the form.")
@@ -35,7 +35,7 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     args << icf_r
 
     #make a double argument for thickness of the icf insulation
-    ins_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ins_thick_in", true)
+    ins_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("ins_thick_in", true)
     ins_thick_in.setDisplayName("Insulation Thickness")
     ins_thick_in.setUnits("in")
     ins_thick_in.setDescription("Thickness of each insulating layer of the form.")
@@ -43,7 +43,7 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     args << ins_thick_in 
 
     #make a double argument for thickness of the concrete
-    concrete_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("concrete_thick_in", true)
+    concrete_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("concrete_thick_in", true)
     concrete_thick_in.setDisplayName("Concrete Thickness")
     concrete_thick_in.setUnits("in")
     concrete_thick_in.setDescription("The thickness of the concrete core of the ICF.")
@@ -51,7 +51,7 @@ class ProcessConstructionsWallsExteriorICF < OpenStudio::Ruleset::ModelUserScrip
     args << concrete_thick_in
 
     #make a double argument for framing factor
-    framing_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", true)
+    framing_factor = OpenStudio::Measure::OSArgument::makeDoubleArgument("framing_factor", true)
     framing_factor.setDisplayName("Framing Factor")
     framing_factor.setUnits("frac")
     framing_factor.setDescription("Total fraction of the wall that is framing for windows or doors.")

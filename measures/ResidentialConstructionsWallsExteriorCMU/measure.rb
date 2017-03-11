@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsWallsExteriorCMU < OpenStudio::Measure::ModelMeasure
     
   # human readable name
   def name
@@ -24,10 +24,10 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
         
     #make a double argument for thickness of the cmu block
-    thickness = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("thickness", true)
+    thickness = OpenStudio::Measure::OSArgument::makeDoubleArgument("thickness", true)
     thickness.setDisplayName("CMU Block Thickness")
     thickness.setUnits("in")
     thickness.setDescription("Thickness of the CMU portion of the wall.")
@@ -35,7 +35,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     args << thickness
     
     #make a double argument for conductivity of the cmu block
-    conductivity = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("conductivity", true)
+    conductivity = OpenStudio::Measure::OSArgument::makeDoubleArgument("conductivity", true)
     conductivity.setDisplayName("CMU Conductivity")
     conductivity.setUnits("Btu-in/hr-ft^2-R")
     conductivity.setDescription("Overall conductivity of the finished CMU block.")
@@ -43,7 +43,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     args << conductivity 
     
     #make a double argument for density of the cmu block
-    density = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("density", true)
+    density = OpenStudio::Measure::OSArgument::makeDoubleArgument("density", true)
     density.setDisplayName("CMU Density")
     density.setUnits("lb/ft^3")
     density.setDescription("The density of the finished CMU block.")
@@ -51,7 +51,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     args << density      
     
     #make a double argument for framing factor
-    framing_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", true)
+    framing_factor = OpenStudio::Measure::OSArgument::makeDoubleArgument("framing_factor", true)
     framing_factor.setDisplayName("Framing Factor")
     framing_factor.setUnits("frac")
     framing_factor.setDescription("Total fraction of the wall that is framing for windows or doors.")
@@ -59,7 +59,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     args << framing_factor
     
     #make a double argument for furring insulation R-value
-    furring_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_r", true)
+    furring_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("furring_r", true)
     furring_r.setDisplayName("Furring Insulation R-value")
     furring_r.setUnits("hr-ft^2-R/Btu")
     furring_r.setDescription("R-value of the insulation filling the furring cavity. Enter zero for no furring strips.")
@@ -67,7 +67,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     args << furring_r
     
     #make a double argument for furring cavity depth
-    furring_cavity_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_cavity_depth", true)
+    furring_cavity_depth = OpenStudio::Measure::OSArgument::makeDoubleArgument("furring_cavity_depth", true)
     furring_cavity_depth.setDisplayName("Furring Cavity Depth")
     furring_cavity_depth.setUnits("in")
     furring_cavity_depth.setDescription("The depth of the interior furring cavity. Enter zero for no furring strips.")
@@ -75,7 +75,7 @@ class ProcessConstructionsWallsExteriorCMU < OpenStudio::Ruleset::ModelUserScrip
     args << furring_cavity_depth 
     
     #make a double argument for furring stud spacing
-    furring_spacing = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("furring_spacing", true)
+    furring_spacing = OpenStudio::Measure::OSArgument::makeDoubleArgument("furring_spacing", true)
     furring_spacing.setDisplayName("Furring Stud Spacing")
     furring_spacing.setUnits("in")
     furring_spacing.setDescription("Spacing of studs in the furring. Enter zero for no furring strips.")

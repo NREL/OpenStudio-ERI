@@ -14,7 +14,7 @@ require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 #start the measure
-class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
+class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
 
   class Supply
     def initialize
@@ -38,10 +38,10 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
   
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a string argument for ashp installed seer
-    ashpInstalledSEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("seer", true)
+    ashpInstalledSEER = OpenStudio::Measure::OSArgument::makeDoubleArgument("seer", true)
     ashpInstalledSEER.setDisplayName("Installed SEER")
     ashpInstalledSEER.setUnits("Btu/W-h")
     ashpInstalledSEER.setDescription("The installed Seasonal Energy Efficiency Ratio (SEER) of the heat pump.")
@@ -49,7 +49,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpInstalledSEER
     
     #make a string argument for ashp installed hspf
-    ashpInstalledHSPF = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("hspf", true)
+    ashpInstalledHSPF = OpenStudio::Measure::OSArgument::makeDoubleArgument("hspf", true)
     ashpInstalledHSPF.setDisplayName("Installed HSPF")
     ashpInstalledHSPF.setUnits("Btu/W-h")
     ashpInstalledHSPF.setDescription("The installed Heating Seasonal Performance Factor (HSPF) of the heat pump.")
@@ -57,7 +57,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpInstalledHSPF
 
     #make a double argument for ashp eer
-    ashpEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer", true)
+    ashpEER = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer", true)
     ashpEER.setDisplayName("EER")
     ashpEER.setUnits("kBtu/kWh")
     ashpEER.setDescription("EER (net) from the A test (95 ODB/80 EDB/67 EWB).")
@@ -65,7 +65,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpEER
     
     #make a double argument for ashp cop
-    ashpCOP = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cop", true)
+    ashpCOP = OpenStudio::Measure::OSArgument::makeDoubleArgument("cop", true)
     ashpCOP.setDisplayName("COP")
     ashpCOP.setUnits("Wh/Wh")
     ashpCOP.setDescription("COP (net) at 47 ODB/70 EDB/60 EWB (AHRI rated conditions).")
@@ -73,35 +73,35 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpCOP    
     
     #make a double argument for ashp rated shr
-    ashpSHRRated = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shr", true)
+    ashpSHRRated = OpenStudio::Measure::OSArgument::makeDoubleArgument("shr", true)
     ashpSHRRated.setDisplayName("Rated SHR")
     ashpSHRRated.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.")
     ashpSHRRated.setDefaultValue(0.73)
     args << ashpSHRRated
 
     #make a double argument for ashp capacity ratio
-    ashpCapacityRatio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("capacity_ratio", true)
+    ashpCapacityRatio = OpenStudio::Measure::OSArgument::makeDoubleArgument("capacity_ratio", true)
     ashpCapacityRatio.setDisplayName("Capacity Ratio")
     ashpCapacityRatio.setDescription("Capacity divided by rated capacity.")
     ashpCapacityRatio.setDefaultValue(1.0)
     args << ashpCapacityRatio
 
     #make a double argument for ashp fan speed ratio cooling
-    ashpFanspeedRatioCooling = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_speed_ratio_cooling", true)
+    ashpFanspeedRatioCooling = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_speed_ratio_cooling", true)
     ashpFanspeedRatioCooling.setDisplayName("Fan Speed Ratio Cooling")
     ashpFanspeedRatioCooling.setDescription("Cooling fan speed divided by fan speed at the compressor speed for which Capacity Ratio = 1.0.")
     ashpFanspeedRatioCooling.setDefaultValue(1.0)
     args << ashpFanspeedRatioCooling
     
     #make a double argument for ashp fan speed ratio heating
-    ashpFanspeedRatioHeating = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_speed_ratio_heating", true)
+    ashpFanspeedRatioHeating = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_speed_ratio_heating", true)
     ashpFanspeedRatioHeating.setDisplayName("Fan Speed Ratio Heating")
     ashpFanspeedRatioHeating.setDescription("Heating fan speed divided by fan speed at the compressor speed for which Capacity Ratio = 1.0.")
     ashpFanspeedRatioHeating.setDefaultValue(1.0)
     args << ashpFanspeedRatioHeating    
 
     #make a double argument for ashp rated supply fan power
-    ashpSupplyFanPowerRated = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_power_rated", true)
+    ashpSupplyFanPowerRated = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power_rated", true)
     ashpSupplyFanPowerRated.setDisplayName("Rated Supply Fan Power")
     ashpSupplyFanPowerRated.setUnits("W/cfm")
     ashpSupplyFanPowerRated.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the outdoor fan under conditions prescribed by AHRI Standard 210/240 for SEER testing.")
@@ -109,7 +109,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpSupplyFanPowerRated
     
     #make a double argument for ashp installed supply fan power
-    ashpSupplyFanPowerInstalled = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_power_installed", true)
+    ashpSupplyFanPowerInstalled = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power_installed", true)
     ashpSupplyFanPowerInstalled.setDisplayName("Installed Supply Fan Power")
     ashpSupplyFanPowerInstalled.setUnits("W/cfm")
     ashpSupplyFanPowerInstalled.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the outdoor fan for the maximum fan speed under actual operating conditions.")
@@ -117,7 +117,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpSupplyFanPowerInstalled    
     
     #make a double argument for ashp min t
-    ashpMinTemp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("min_temp", true)
+    ashpMinTemp = OpenStudio::Measure::OSArgument::makeDoubleArgument("min_temp", true)
     ashpMinTemp.setDisplayName("Min Temp")
     ashpMinTemp.setUnits("degrees F")
     ashpMinTemp.setDescription("Outdoor dry-bulb temperature below which compressor turns off.")
@@ -125,7 +125,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpMinTemp  
   
     #make a double argument for central ac crankcase
-    ashpCrankcase = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("crankcase_capacity", true)
+    ashpCrankcase = OpenStudio::Measure::OSArgument::makeDoubleArgument("crankcase_capacity", true)
     ashpCrankcase.setDisplayName("Crankcase")
     ashpCrankcase.setUnits("kW")
     ashpCrankcase.setDescription("Capacity of the crankcase heater for the compressor.")
@@ -133,7 +133,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpCrankcase
 
     #make a double argument for ashp crankcase max t
-    ashpCrankcaseMaxT = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("crankcase_max_temp", true)
+    ashpCrankcaseMaxT = OpenStudio::Measure::OSArgument::makeDoubleArgument("crankcase_max_temp", true)
     ashpCrankcaseMaxT.setDisplayName("Crankcase Max Temp")
     ashpCrankcaseMaxT.setUnits("degrees F")
     ashpCrankcaseMaxT.setDescription("Outdoor dry-bulb temperature above which compressor crankcase heating is disabled.")
@@ -141,70 +141,70 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     args << ashpCrankcaseMaxT
     
     #make a double argument for ashp 1.5 ton eer capacity derate
-    ashpEERCapacityDerateFactor1ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_1ton", true)
+    ashpEERCapacityDerateFactor1ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_1ton", true)
     ashpEERCapacityDerateFactor1ton.setDisplayName("1.5 Ton EER Capacity Derate")
     ashpEERCapacityDerateFactor1ton.setDescription("EER multiplier for 1.5 ton air-conditioners.")
     ashpEERCapacityDerateFactor1ton.setDefaultValue(1.0)
     args << ashpEERCapacityDerateFactor1ton
     
     #make a double argument for central ac 2 ton eer capacity derate
-    ashpEERCapacityDerateFactor2ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_2ton", true)
+    ashpEERCapacityDerateFactor2ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_2ton", true)
     ashpEERCapacityDerateFactor2ton.setDisplayName("2 Ton EER Capacity Derate")
     ashpEERCapacityDerateFactor2ton.setDescription("EER multiplier for 2 ton air-conditioners.")
     ashpEERCapacityDerateFactor2ton.setDefaultValue(1.0)
     args << ashpEERCapacityDerateFactor2ton
 
     #make a double argument for central ac 3 ton eer capacity derate
-    ashpEERCapacityDerateFactor3ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_3ton", true)
+    ashpEERCapacityDerateFactor3ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_3ton", true)
     ashpEERCapacityDerateFactor3ton.setDisplayName("3 Ton EER Capacity Derate")
     ashpEERCapacityDerateFactor3ton.setDescription("EER multiplier for 3 ton air-conditioners.")
     ashpEERCapacityDerateFactor3ton.setDefaultValue(1.0)
     args << ashpEERCapacityDerateFactor3ton
 
     #make a double argument for central ac 4 ton eer capacity derate
-    ashpEERCapacityDerateFactor4ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_4ton", true)
+    ashpEERCapacityDerateFactor4ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_4ton", true)
     ashpEERCapacityDerateFactor4ton.setDisplayName("4 Ton EER Capacity Derate")
     ashpEERCapacityDerateFactor4ton.setDescription("EER multiplier for 4 ton air-conditioners.")
     ashpEERCapacityDerateFactor4ton.setDefaultValue(1.0)
     args << ashpEERCapacityDerateFactor4ton
 
     #make a double argument for central ac 5 ton eer capacity derate
-    ashpEERCapacityDerateFactor5ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_5ton", true)
+    ashpEERCapacityDerateFactor5ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_5ton", true)
     ashpEERCapacityDerateFactor5ton.setDisplayName("5 Ton EER Capacity Derate")
     ashpEERCapacityDerateFactor5ton.setDescription("EER multiplier for 5 ton air-conditioners.")
     ashpEERCapacityDerateFactor5ton.setDefaultValue(1.0)
     args << ashpEERCapacityDerateFactor5ton
     
     #make a double argument for ashp 1.5 ton cop capacity derate
-    ashpCOPCapacityDerateFactor1ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cop_capacity_derate_1ton", true)
+    ashpCOPCapacityDerateFactor1ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("cop_capacity_derate_1ton", true)
     ashpCOPCapacityDerateFactor1ton.setDisplayName("1.5 Ton COP Capacity Derate")
     ashpCOPCapacityDerateFactor1ton.setDescription("COP multiplier for 1.5 ton air-conditioners.")
     ashpCOPCapacityDerateFactor1ton.setDefaultValue(1.0)
     args << ashpCOPCapacityDerateFactor1ton
     
     #make a double argument for ashp 2 ton cop capacity derate
-    ashpCOPCapacityDerateFactor2ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cop_capacity_derate_2ton", true)
+    ashpCOPCapacityDerateFactor2ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("cop_capacity_derate_2ton", true)
     ashpCOPCapacityDerateFactor2ton.setDisplayName("2 Ton COP Capacity Derate")
     ashpCOPCapacityDerateFactor2ton.setDescription("COP multiplier for 2 ton air-conditioners.")
     ashpCOPCapacityDerateFactor2ton.setDefaultValue(1.0)
     args << ashpCOPCapacityDerateFactor2ton
 
     #make a double argument for ashp 3 ton cop capacity derate
-    ashpCOPCapacityDerateFactor3ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cop_capacity_derate_3ton", true)
+    ashpCOPCapacityDerateFactor3ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("cop_capacity_derate_3ton", true)
     ashpCOPCapacityDerateFactor3ton.setDisplayName("3 Ton COP Capacity Derate")
     ashpCOPCapacityDerateFactor3ton.setDescription("COP multiplier for 3 ton air-conditioners.")
     ashpCOPCapacityDerateFactor3ton.setDefaultValue(1.0)
     args << ashpCOPCapacityDerateFactor3ton
 
     #make a double argument for ashp 4 ton cop capacity derate
-    ashpCOPCapacityDerateFactor4ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cop_capacity_derate_4ton", true)
+    ashpCOPCapacityDerateFactor4ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("cop_capacity_derate_4ton", true)
     ashpCOPCapacityDerateFactor4ton.setDisplayName("4 Ton COP Capacity Derate")
     ashpCOPCapacityDerateFactor4ton.setDescription("COP multiplier for 4 ton air-conditioners.")
     ashpCOPCapacityDerateFactor4ton.setDefaultValue(1.0)
     args << ashpCOPCapacityDerateFactor4ton
 
     #make a double argument for ashp 5 ton cop capacity derate
-    ashpCOPCapacityDerateFactor5ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cop_capacity_derate_5ton", true)
+    ashpCOPCapacityDerateFactor5ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("cop_capacity_derate_5ton", true)
     ashpCOPCapacityDerateFactor5ton.setDisplayName("5 Ton COP Capacity Derate")
     ashpCOPCapacityDerateFactor5ton.setDescription("COP multiplier for 5 ton air-conditioners.")
     ashpCOPCapacityDerateFactor5ton.setDefaultValue(1.0)
@@ -216,7 +216,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     (0.5..10.0).step(0.5) do |tons|
       cap_display_names << tons.to_s
     end
-    hpcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
+    hpcap = OpenStudio::Measure::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
     hpcap.setDisplayName("Heat Pump Capacity")
     hpcap.setDescription("The output heating/cooling capacity of the heat pump.")
     hpcap.setUnits("tons")
@@ -229,7 +229,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
     (5..150).step(5) do |kbtu|
       cap_display_names << kbtu.to_s
     end
-    supcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("supplemental_capacity", cap_display_names, true)
+    supcap = OpenStudio::Measure::OSArgument::makeChoiceArgument("supplemental_capacity", cap_display_names, true)
     supcap.setDisplayName("Supplemental Heating Capacity")
     supcap.setDescription("The output heating capacity of the supplemental heater.")
     supcap.setUnits("kBtu/hr")
@@ -389,9 +389,9 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Ruleset::ModelUserScript
         clg_coil.setName(obj_name + " cooling coil")
         if hpOutputCapacity != Constants.SizingAuto
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
-          clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
           clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end
+        clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
         clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0 / supply.CoolingEIR[0]))
         clg_coil.setRatedEvaporatorFanPowerPerVolumeFlowRate(OpenStudio::OptionalDouble.new(supply.fan_power_rated / OpenStudio::convert(1.0,"cfm","m^3/s").get))
         clg_coil.setNominalTimeForCondensateRemovalToBegin(OpenStudio::OptionalDouble.new(1000.0))

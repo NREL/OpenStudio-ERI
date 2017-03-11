@@ -16,7 +16,13 @@ require 'json'
 # you must be an administrator or editor member of a group to
 # upload content to that group
 
-os_cli = "C:\\openstudio-2.0.4\\bin\\openstudio.exe" # FIXME
+# Get latest installed version of openstudio.exe
+os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"]
+if os_clis.size == 0
+    puts "ERROR: Could not find openstudio.exe. You may need to install the OpenStudio Command Line Interface."
+    exit
+end
+os_cli = os_clis[-1]
 
 namespace :measures do
   desc 'Generate measures to prepare for upload to BCL '
@@ -163,12 +169,6 @@ namespace :test do
       end
     end
 
-    if not File.exists?(os_cli)
-        puts "ERROR: #{os_cli} not found."
-        exit
-    end
-    
-    os_version = os_cli.split('\\')[-3].split('-')[1]
     osw_files = Dir.entries(osw_path).select {|entry| entry.end_with?(".osw")}
     if File.exists?(File.expand_path("../log", __FILE__))
         FileUtils.rm(File.expand_path("../log", __FILE__))
@@ -196,7 +196,6 @@ namespace :test do
 
         # Add auto-generated message to top of file
         # Update EPW file paths to be relative for the CirceCI machine
-        # FIXME: Temporarily replace OS 2.0 version with 1.14 for CircleCI machine
         file_text = File.readlines(osm)
         File.open(osm, "w") do |f|
             f.write("!- NOTE: Auto-generated from #{osw.gsub(File.dirname(__FILE__), "")}\n")
@@ -204,8 +203,6 @@ namespace :test do
                 if file_line.strip.start_with?("file:///")
                     file_data = file_line.split('/')
                     file_line = file_data[0] + "../tests/" + file_data[-1]
-                elsif file_line.include?("Version Identifier")
-                    file_line = file_line.gsub(os_version, '1.14.0')
                 end
                 f.write(file_line)
             end
@@ -260,10 +257,9 @@ end
 desc 'update all resources'
 task :update_resources do
 
-  require 'bcl'
-  require 'openstudio'
-
-  measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
+  measures_dir = File.expand_path("../measures/", __FILE__)
+  
+  measures = Dir.entries(measures_dir).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
   measures.each do |m|
     measurerb = File.expand_path("../measures/#{m}/measure.rb", __FILE__)
     
@@ -326,32 +322,12 @@ task :update_resources do
       end
     end
     
-    # Update measure xml
-    measure_dir = File.expand_path("../measures/#{m}/", __FILE__)
-    measure = OpenStudio::BCLMeasure.load(measure_dir)
-    if not measure.empty?
-        begin
-            measure = measure.get
-
-            file_updates = measure.checkForUpdatesFiles # checks if any files have been updated
-            xml_updates = measure.checkForUpdatesXML # only checks if xml as loaded has been changed since last save
-      
-            if file_updates || xml_updates
-
-                # try to load the ruby measure
-                info = OpenStudio::Ruleset.getInfo(measure, OpenStudio::Model::OptionalModel.new, OpenStudio::OptionalWorkspace.new)
-                info.update(measure)
-
-                measure.save
-            end
-            
-            
-        rescue Exception => e
-            puts e.message
-        end
-    end      
-    
   end
+  
+  # Update measure xmls
+  command = "\"#{os_cli}\" measure --update_all #{measures_dir} >> log"
+  puts "Updating measure.xml files..."
+  system(command)
 
 end
 

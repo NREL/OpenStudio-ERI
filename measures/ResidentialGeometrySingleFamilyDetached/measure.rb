@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::ModelUserScript
+class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Measure::ModelMeasure
     
   # human readable name
   def name
@@ -24,10 +24,10 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make an argument for total living space floor area
-    total_ffa = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("total_ffa",true)
+    total_ffa = OpenStudio::Measure::OSArgument::makeDoubleArgument("total_ffa",true)
     total_ffa.setDisplayName("Total Finished Floor Area")
     total_ffa.setUnits("ft^2")
     total_ffa.setDescription("The total floor area of the finished space (including any finished basement floor area).")
@@ -35,7 +35,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     args << total_ffa
 	
     #make an argument for living space height
-    living_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("living_height",true)
+    living_height = OpenStudio::Measure::OSArgument::makeDoubleArgument("living_height",true)
     living_height.setDisplayName("Wall Height (Per Floor)")
     living_height.setUnits("ft")
     living_height.setDescription("The height of the living space (and garage) walls.")
@@ -43,7 +43,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     args << living_height	
 	
     #make an argument for number of floors
-    num_floors = OpenStudio::Ruleset::OSArgument::makeIntegerArgument("num_floors",true)
+    num_floors = OpenStudio::Measure::OSArgument::makeIntegerArgument("num_floors",true)
     num_floors.setDisplayName("Num Floors")
     num_floors.setUnits("#")
     num_floors.setDescription("The number of floors above grade.")
@@ -51,7 +51,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     args << num_floors
 	
     #make an argument for aspect ratio
-    aspect_ratio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("aspect_ratio",true)
+    aspect_ratio = OpenStudio::Measure::OSArgument::makeDoubleArgument("aspect_ratio",true)
     aspect_ratio.setDisplayName("Aspect Ratio")
     aspect_ratio.setUnits("FB/LR")
     aspect_ratio.setDescription("The ratio of the front/back wall length to the left/right wall length, excluding any protruding garage wall area.")
@@ -59,7 +59,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     args << aspect_ratio
 	
     #make a double argument for garage area
-    garage_width = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("garage_width", true)
+    garage_width = OpenStudio::Measure::OSArgument::makeDoubleArgument("garage_width", true)
     garage_width.setDisplayName("Garage Width")
     garage_width.setUnits("ft")
     garage_width.setDescription("The width of the garage.")
@@ -67,7 +67,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     args << garage_width
 	
     #make a double argument for garage height
-    garage_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("garage_depth", true)
+    garage_depth = OpenStudio::Measure::OSArgument::makeDoubleArgument("garage_depth", true)
     garage_depth.setDisplayName("Garage Depth")
     garage_depth.setUnits("ft")
     garage_depth.setDescription("The depth of the garage.")
@@ -75,7 +75,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     args << garage_depth
 
     #make a double argument for garage protrusion
-    garage_protrusion = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("garage_protrusion", true)
+    garage_protrusion = OpenStudio::Measure::OSArgument::makeDoubleArgument("garage_protrusion", true)
     garage_protrusion.setDisplayName("Garage Protrusion")
     garage_protrusion.setUnits("frac")
     garage_protrusion.setDescription("The fraction of the garage that is protruding from the living space.")
@@ -88,7 +88,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     garage_pos_display_names << "Left"
 	
     #make a choice argument for garage position
-    garage_pos = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("garage_pos", garage_pos_display_names, true)
+    garage_pos = OpenStudio::Measure::OSArgument::makeChoiceArgument("garage_pos", garage_pos_display_names, true)
     garage_pos.setDisplayName("Garage Position")
     garage_pos.setDescription("The position of the garage.")
     garage_pos.setDefaultValue("Right")
@@ -103,14 +103,14 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     foundation_display_names << Constants.PierBeamFoundationType
 	
     #make a choice argument for foundation type
-    foundation_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("foundation_type", foundation_display_names, true)
+    foundation_type = OpenStudio::Measure::OSArgument::makeChoiceArgument("foundation_type", foundation_display_names, true)
     foundation_type.setDisplayName("Foundation Type")
     foundation_type.setDescription("The foundation type of the building.")
     foundation_type.setDefaultValue(Constants.SlabFoundationType)
     args << foundation_type
 
     #make an argument for crawlspace height
-    foundation_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("foundation_height",true)
+    foundation_height = OpenStudio::Measure::OSArgument::makeDoubleArgument("foundation_height",true)
     foundation_height.setDisplayName("Crawlspace Height")
     foundation_height.setUnits("ft")
     foundation_height.setDescription("The height of the crawlspace walls.")
@@ -123,7 +123,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     attic_type_display_names << Constants.FinishedAtticType
 	
     #make a choice argument for attic type
-    attic_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("attic_type", attic_type_display_names, true)
+    attic_type = OpenStudio::Measure::OSArgument::makeChoiceArgument("attic_type", attic_type_display_names, true)
     attic_type.setDisplayName("Attic Type")
     attic_type.setDescription("The attic type of the building.")
     attic_type.setDefaultValue(Constants.UnfinishedAtticType)
@@ -136,7 +136,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     roof_type_display_names << Constants.RoofTypeFlat
 	
     #make a choice argument for roof type
-    roof_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("roof_type", roof_type_display_names, true)
+    roof_type = OpenStudio::Measure::OSArgument::makeChoiceArgument("roof_type", roof_type_display_names, true)
     roof_type.setDisplayName("Roof Type")
     roof_type.setDescription("The roof type of the building.")
     roof_type.setDefaultValue(Constants.RoofTypeGable)
@@ -158,7 +158,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Ruleset::Model
     roof_pitch_display_names << "12:12"
 	
     #make a choice argument for roof pitch
-    roof_pitch = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("roof_pitch", roof_pitch_display_names, true)
+    roof_pitch = OpenStudio::Measure::OSArgument::makeChoiceArgument("roof_pitch", roof_pitch_display_names, true)
     roof_pitch.setDisplayName("Roof Pitch")
     roof_pitch.setDescription("The roof pitch of the attic.")
     roof_pitch.setDefaultValue("6:12")

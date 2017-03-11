@@ -140,7 +140,7 @@
         {
 			"measure_dir_name": "ResidentialAirflow",
 			"arguments": {
-                "duct_location": "garage zone",
+                "duct_location": "none",
                 "unfinished_attic_sla": 0
             }            
 		}

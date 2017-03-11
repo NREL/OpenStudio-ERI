@@ -6,7 +6,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsWallsExteriorSIP < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
@@ -25,10 +25,10 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for nominal R-value of the sip insulation
-    sip_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("sip_r", true)
+    sip_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("sip_r", true)
     sip_r.setDisplayName("Nominal Insulation R-value")
     sip_r.setUnits("hr-ft^2-R/Btu")
     sip_r.setDescription("R-value is a measure of insulation's ability to resist heat traveling through it.")
@@ -36,7 +36,7 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
     args << sip_r
 
     #make a double argument for thickness of the sip insulation
-    thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("thick_in", true)
+    thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("thick_in", true)
     thick_in.setDisplayName("Insulation Thickness")
     thick_in.setUnits("in")
     thick_in.setDescription("Thickness of the insulating core of the SIP.")
@@ -44,7 +44,7 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
     args << thick_in 
 
     #make a double argument for framing factor
-    framing_factor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("framing_factor", true)
+    framing_factor = OpenStudio::Measure::OSArgument::makeDoubleArgument("framing_factor", true)
     framing_factor.setDisplayName("Framing Factor")
     framing_factor.setUnits("frac")
     framing_factor.setDescription("Total fraction of the wall that is framing for windows or doors.")
@@ -56,14 +56,14 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Ruleset::ModelUserScrip
     intsheathing_display_names << Constants.MaterialOSB
     intsheathing_display_names << Constants.MaterialGypsum
     intsheathing_display_names << Constants.MaterialGypcrete
-    sheathing_type = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("sheathing_type", intsheathing_display_names, true)
+    sheathing_type = OpenStudio::Measure::OSArgument::makeChoiceArgument("sheathing_type", intsheathing_display_names, true)
     sheathing_type.setDisplayName("Interior Sheathing Type")
     sheathing_type.setDescription("The interior sheathing type of the SIP wall.")
     sheathing_type.setDefaultValue(Constants.MaterialOSB)
     args << sheathing_type   
     
     #make a double argument for thickness of the interior sheathing
-    sheathing_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("sheathing_thick_in", true)
+    sheathing_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("sheathing_thick_in", true)
     sheathing_thick_in.setDisplayName("Interior Sheathing Thickness")
     sheathing_thick_in.setUnits("in")
     sheathing_thick_in.setDescription("The thickness of the interior sheathing.")

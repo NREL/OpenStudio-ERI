@@ -5,7 +5,7 @@ require 'rexml/document'
 require 'rexml/xpath'
 
 # start the measure
-class HPXMLBuildModel < OpenStudio::Ruleset::ModelUserScript
+class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
@@ -24,21 +24,21 @@ class HPXMLBuildModel < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("hpxml_directory", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_directory", true)
     arg.setDisplayName("HPXML Directory")
     arg.setDescription("Absolute (or relative) directory to HPXML files.")
     arg.setDefaultValue("./resources")
     args << arg
 
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("hpxml_file_name", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_file_name", true)
     arg.setDisplayName("HPXML File Name")
     arg.setDescription("Name of the HPXML file.")
     arg.setDefaultValue("audit.xml")
     args << arg
 
-    arg = OpenStudio::Ruleset::OSArgument.makeStringArgument("measures_dir", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("measures_dir", true)
     arg.setDisplayName("Residential Measures Directory")
     arg.setDescription("Absolute (or relative) directory to residential measures.")
     args << arg

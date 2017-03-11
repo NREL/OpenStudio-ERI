@@ -4,7 +4,7 @@
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
+class CreateResidentialEaves < OpenStudio::Measure::ModelMeasure
   
   # human readable name
   def name
@@ -23,7 +23,7 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
     
     #make a choice argument for model objects
     roof_structure_display_names = OpenStudio::StringVector.new
@@ -31,14 +31,14 @@ class CreateResidentialEaves < OpenStudio::Ruleset::ModelUserScript
     roof_structure_display_names << Constants.RoofStructureRafter
 	
     #make a choice argument for roof type
-    roof_structure = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("roof_structure", roof_structure_display_names, true)
+    roof_structure = OpenStudio::Measure::OSArgument::makeChoiceArgument("roof_structure", roof_structure_display_names, true)
     roof_structure.setDisplayName("Roof Structure")
     roof_structure.setDescription("The roof structure of the building.")
     roof_structure.setDefaultValue(Constants.RoofStructureTrussCantilever)
     args << roof_structure	
 	
     #make a choice argument for eaves depth
-    eaves_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eaves_depth", true)
+    eaves_depth = OpenStudio::Measure::OSArgument::makeDoubleArgument("eaves_depth", true)
     eaves_depth.setDisplayName("Eaves Depth")
     eaves_depth.setUnits("ft")
     eaves_depth.setDescription("The eaves depth of the roof.")

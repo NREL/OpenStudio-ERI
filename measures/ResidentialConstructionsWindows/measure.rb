@@ -14,7 +14,7 @@ require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 #start the measure
-class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsWindows < OpenStudio::Measure::ModelMeasure
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
@@ -32,10 +32,10 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
   
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make an argument for entering optional window u-factor
-    ufactor = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ufactor",false)
+    ufactor = OpenStudio::Measure::OSArgument::makeDoubleArgument("ufactor",false)
     ufactor.setDisplayName("U-Value")
     ufactor.setUnits("Btu/hr-ft^2-R")
     ufactor.setDescription("The heat transfer coefficient of the windows.")
@@ -43,21 +43,21 @@ class ProcessConstructionsWindows < OpenStudio::Ruleset::ModelUserScript
     args << ufactor
 
     #make an argument for entering optional window shgc
-    shgc = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shgc",false)
+    shgc = OpenStudio::Measure::OSArgument::makeDoubleArgument("shgc",false)
     shgc.setDisplayName("SHGC")
     shgc.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening.")
     shgc.setDefaultValue(0.3)
     args << shgc
 
     #make an argument for entering optional window u-factor
-    heating_shade_mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("heating_shade_mult",false)
+    heating_shade_mult = OpenStudio::Measure::OSArgument::makeDoubleArgument("heating_shade_mult",false)
     heating_shade_mult.setDisplayName("Heating Shade Multiplier")
     heating_shade_mult.setDescription("Interior shading multiplier for heating season. 1.0 indicates no reduction in solar gain, 0.85 indicates 15% reduction, etc.")
     heating_shade_mult.setDefaultValue(0.7)
     args << heating_shade_mult
 
     #make an argument for entering optional window shgc
-    cooling_shade_mult = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("cooling_shade_mult",false)
+    cooling_shade_mult = OpenStudio::Measure::OSArgument::makeDoubleArgument("cooling_shade_mult",false)
     cooling_shade_mult.setDisplayName("Cooling Shade Multiplier")
     cooling_shade_mult.setDescription("Interior shading multiplier for cooling season. 1.0 indicates no reduction in solar gain, 0.85 indicates 15% reduction, etc.")
     cooling_shade_mult.setDefaultValue(0.7)

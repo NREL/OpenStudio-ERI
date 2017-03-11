@@ -6,7 +6,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Measure::ModelMeasure
 
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
@@ -24,10 +24,10 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
   
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for wall insulation height
-    wall_ins_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_ins_height", true)
+    wall_ins_height = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_ins_height", true)
     wall_ins_height.setDisplayName("Wall Insulation Height")
 	wall_ins_height.setUnits("ft")
 	wall_ins_height.setDescription("Height of the insulation on the basement wall.")
@@ -35,7 +35,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     args << wall_ins_height
 
     #make a double argument for wall cavity R-value
-    wall_cavity_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_cavity_r", true)
+    wall_cavity_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_cavity_r", true)
     wall_cavity_r.setDisplayName("Wall Cavity Insulation Installed R-value")
 	wall_cavity_r.setUnits("h-ft^2-R/Btu")
 	wall_cavity_r.setDescription("Refers to the R-value of the cavity insulation as installed and not the overall R-value of the assembly. If batt insulation must be compressed to fit within the cavity (e.g. R19 in a 5.5\" 2x6 cavity), use an R-value that accounts for this effect (see HUD Mobile Home Construction and Safety Standards 3280.509 for reference).")
@@ -49,14 +49,14 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     installgrade_display_names << "III"
 
 	#make a choice argument for wall cavity insulation installation grade
-	wall_cavity_grade = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("wall_cavity_grade", installgrade_display_names, true)
+	wall_cavity_grade = OpenStudio::Measure::OSArgument::makeChoiceArgument("wall_cavity_grade", installgrade_display_names, true)
 	wall_cavity_grade.setDisplayName("Wall Cavity Install Grade")
 	wall_cavity_grade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     wall_cavity_grade.setDefaultValue("I")
 	args << wall_cavity_grade
     
     #make a double argument for wall cavity depth
-    wall_cavity_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_cavity_depth", true)
+    wall_cavity_depth = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_cavity_depth", true)
     wall_cavity_depth.setDisplayName("Wall Cavity Depth")
 	wall_cavity_depth.setUnits("in")
 	wall_cavity_depth.setDescription("Depth of the stud cavity. 3.5\" for 2x4s, 5.5\" for 2x6s, etc.")
@@ -64,14 +64,14 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     args << wall_cavity_depth
     
 	#make a bool argument for whether the cavity insulation fills the wall cavity
-	wall_cavity_insfills = OpenStudio::Ruleset::OSArgument::makeBoolArgument("wall_cavity_insfills", true)
+	wall_cavity_insfills = OpenStudio::Measure::OSArgument::makeBoolArgument("wall_cavity_insfills", true)
 	wall_cavity_insfills.setDisplayName("Wall Insulation Fills Cavity")
 	wall_cavity_insfills.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
     wall_cavity_insfills.setDefaultValue(false)
 	args << wall_cavity_insfills
     
     #make a double argument for wall framing factor
-    wall_ff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_ff", true)
+    wall_ff = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_ff", true)
     wall_ff.setDisplayName("Wall Framing Factor")
 	wall_ff.setUnits("frac")
 	wall_ff.setDescription("The fraction of a basement wall assembly that is comprised of structural framing.")
@@ -79,7 +79,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     args << wall_ff
     
     #make a double argument for wall continuous insulation R-value
-    wall_rigid_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_rigid_r", true)
+    wall_rigid_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_rigid_r", true)
     wall_rigid_r.setDisplayName("Wall Continuous Insulation Nominal R-value")
 	wall_rigid_r.setUnits("hr-ft^2-R/Btu")
 	wall_rigid_r.setDescription("The R-value of the continuous insulation.")
@@ -87,7 +87,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     args << wall_rigid_r
 
     #make a double argument for wall continuous insulation thickness
-    wall_rigid_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("wall_rigid_thick_in", true)
+    wall_rigid_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_rigid_thick_in", true)
     wall_rigid_thick_in.setDisplayName("Wall Continuous Insulation Thickness")
 	wall_rigid_thick_in.setUnits("in")
 	wall_rigid_thick_in.setDescription("The thickness of the continuous insulation.")
@@ -95,7 +95,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
     args << wall_rigid_thick_in
     
 	#make a choice argument for ceiling framing factor
-	ceil_ff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ceil_ff", true)
+	ceil_ff = OpenStudio::Measure::OSArgument::makeDoubleArgument("ceil_ff", true)
     ceil_ff.setDisplayName("Ceiling Framing Factor")
 	ceil_ff.setUnits("frac")
 	ceil_ff.setDescription("Fraction of ceiling that is framing.")
@@ -103,7 +103,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
 	args << ceil_ff
 
 	#make a choice argument for ceiling joist height
-	ceil_joist_height = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ceil_joist_height", true)
+	ceil_joist_height = OpenStudio::Measure::OSArgument::makeDoubleArgument("ceil_joist_height", true)
 	ceil_joist_height.setDisplayName("Ceiling Joist Height")
 	ceil_joist_height.setUnits("in")
 	ceil_joist_height.setDescription("Height of the joist member.")

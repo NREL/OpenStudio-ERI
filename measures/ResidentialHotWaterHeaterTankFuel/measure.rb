@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ResidentialHotWaterHeaterTankFuel < OpenStudio::Ruleset::ModelUserScript
+class ResidentialHotWaterHeaterTankFuel < OpenStudio::Measure::ModelMeasure
 
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
@@ -25,7 +25,7 @@ class ResidentialHotWaterHeaterTankFuel < OpenStudio::Ruleset::ModelUserScript
 
     #define the arguments that the user will input
     def arguments(model)
-        ruleset = OpenStudio::Ruleset
+        ruleset = OpenStudio::Measure
     
         osargument = ruleset::OSArgument
     
@@ -36,7 +36,7 @@ class ResidentialHotWaterHeaterTankFuel < OpenStudio::Ruleset::ModelUserScript
         fuel_display_names << Constants.FuelTypeGas
         fuel_display_names << Constants.FuelTypeOil
         fuel_display_names << Constants.FuelTypePropane
-        fueltype = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fuel_type", fuel_display_names, true)
+        fueltype = OpenStudio::Measure::OSArgument::makeChoiceArgument("fuel_type", fuel_display_names, true)
         fueltype.setDisplayName("Fuel Type")
         fueltype.setDescription("Type of fuel used for water heating.")
         fueltype.setDefaultValue(Constants.FuelTypeGas)

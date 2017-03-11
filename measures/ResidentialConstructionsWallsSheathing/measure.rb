@@ -6,7 +6,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 # start the measure
-class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsWallsSheathing < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
@@ -25,10 +25,10 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for OSB/Plywood Thickness
-	osb_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("osb_thick_in",true)
+	osb_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("osb_thick_in",true)
 	osb_thick_in.setDisplayName("OSB/Plywood Thickness")
     osb_thick_in.setUnits("in")
 	osb_thick_in.setDescription("Specifies the thickness of the walls' OSB/plywood sheathing. Enter 0 for no sheathing (if the wall has other means to handle the shear load on the wall such as cross-bracing).")
@@ -36,7 +36,7 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
 	args << osb_thick_in
     
 	#make a double argument for Rigid Insulation R-value
-	rigid_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("rigid_r",true)
+	rigid_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("rigid_r",true)
 	rigid_r.setDisplayName("Continuous Insulation Nominal R-value")
     rigid_r.setUnits("h-ft^2-R/Btu")
     rigid_r.setDescription("The R-value of the continuous insulation.")
@@ -44,7 +44,7 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Ruleset::ModelUserScript
 	args << rigid_r
 
 	#make a double argument for Rigid Insulation Thickness
-	rigid_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("rigid_thick_in",true)
+	rigid_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("rigid_thick_in",true)
 	rigid_thick_in.setDisplayName("Continuous Insulation Thickness")
     rigid_thick_in.setUnits("in")
     rigid_thick_in.setDescription("The thickness of the continuous insulation.")

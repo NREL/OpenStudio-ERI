@@ -8,7 +8,7 @@ require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 #start the measure
-class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScript
+class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasure
 
   class Supply
     def initialize
@@ -32,10 +32,10 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
   
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
   
     #make a double argument for central ac cooling rated seer
-    acCoolingInstalledSEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("seer", true)
+    acCoolingInstalledSEER = OpenStudio::Measure::OSArgument::makeDoubleArgument("seer", true)
     acCoolingInstalledSEER.setDisplayName("Rated SEER")
     acCoolingInstalledSEER.setUnits("Btu/W-h")
     acCoolingInstalledSEER.setDescription("Seasonal Energy Efficiency Ratio (SEER) is a measure of equipment energy efficiency over the cooling season.")
@@ -43,7 +43,7 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
     args << acCoolingInstalledSEER
     
     #make a double argument for central ac eer
-    acCoolingEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer", true)
+    acCoolingEER = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer", true)
     acCoolingEER.setDisplayName("EER")
     acCoolingEER.setUnits("kBtu/kWh")
     acCoolingEER.setDescription("EER (net) from the A test (95 ODB/80 EDB/67 EWB).")
@@ -51,7 +51,7 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
     args << acCoolingEER
 
     #make a double argument for central ac eer 2
-    acCoolingEER = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer2", true)
+    acCoolingEER = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer2", true)
     acCoolingEER.setDisplayName("EER 2")
     acCoolingEER.setUnits("kBtu/kWh")
     acCoolingEER.setDescription("EER (net) from the A test (95 ODB/80 EDB/67 EWB) for the second speed.")
@@ -59,49 +59,49 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
     args << acCoolingEER    
     
     #make a double argument for central ac rated shr
-    acSHRRated = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shr", true)
+    acSHRRated = OpenStudio::Measure::OSArgument::makeDoubleArgument("shr", true)
     acSHRRated.setDisplayName("Rated SHR")
     acSHRRated.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity.")
     acSHRRated.setDefaultValue(0.71)
     args << acSHRRated
     
     #make a double argument for central ac rated shr 2
-    acSHRRated = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("shr2", true)
+    acSHRRated = OpenStudio::Measure::OSArgument::makeDoubleArgument("shr2", true)
     acSHRRated.setDisplayName("Rated SHR 2")
     acSHRRated.setDescription("The sensible heat ratio (ratio of the sensible portion of the load to the total load) at the nominal rated capacity for the second speed.")
     acSHRRated.setDefaultValue(0.73)
     args << acSHRRated    
     
     #make a double argument for central ac capacity ratio
-    acCapacityRatio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("capacity_ratio", true)
+    acCapacityRatio = OpenStudio::Measure::OSArgument::makeDoubleArgument("capacity_ratio", true)
     acCapacityRatio.setDisplayName("Capacity Ratio")
     acCapacityRatio.setDescription("Capacity divided by rated capacity.")
     acCapacityRatio.setDefaultValue(0.72)
     args << acCapacityRatio
     
     #make a double argument for central ac capacity ratio 2
-    acCapacityRatio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("capacity_ratio2", true)
+    acCapacityRatio = OpenStudio::Measure::OSArgument::makeDoubleArgument("capacity_ratio2", true)
     acCapacityRatio.setDisplayName("Capacity Ratio 2")
     acCapacityRatio.setDescription("Capacity divided by rated capacity for the second speed.")
     acCapacityRatio.setDefaultValue(1.0)
     args << acCapacityRatio    
     
     #make a double argument for central ac fan speed ratio
-    acFanspeedRatio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_speed_ratio", true)
+    acFanspeedRatio = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_speed_ratio", true)
     acFanspeedRatio.setDisplayName("Fan Speed Ratio")
     acFanspeedRatio.setDescription("Fan speed divided by fan speed at the compressor speed for which Capacity Ratio = 1.0.")
     acFanspeedRatio.setDefaultValue(0.86)
     args << acFanspeedRatio
     
     #make a double argument for central ac fan speed ratio 2
-    acFanspeedRatio = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_speed_ratio2", true)
+    acFanspeedRatio = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_speed_ratio2", true)
     acFanspeedRatio.setDisplayName("Fan Speed Ratio 2")
     acFanspeedRatio.setDescription("Fan speed divided by fan speed at the compressor speed for which Capacity Ratio = 1.0 for the second speed.")
     acFanspeedRatio.setDefaultValue(1.0)
     args << acFanspeedRatio    
     
     #make a double argument for central ac rated supply fan power
-    acSupplyFanPowerRated = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_power_rated", true)
+    acSupplyFanPowerRated = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power_rated", true)
     acSupplyFanPowerRated.setDisplayName("Rated Supply Fan Power")
     acSupplyFanPowerRated.setUnits("W/cfm")
     acSupplyFanPowerRated.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the outdoor fan under conditions prescribed by AHRI Standard 210/240 for SEER testing.")
@@ -109,7 +109,7 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
     args << acSupplyFanPowerRated
     
     #make a double argument for central ac installed supply fan power
-    acSupplyFanPowerInstalled = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_power_installed", true)
+    acSupplyFanPowerInstalled = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power_installed", true)
     acSupplyFanPowerInstalled.setDisplayName("Installed Supply Fan Power")
     acSupplyFanPowerInstalled.setUnits("W/cfm")
     acSupplyFanPowerInstalled.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the outdoor fan for the maximum fan speed under actual operating conditions.")
@@ -117,7 +117,7 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
     args << acSupplyFanPowerInstalled
     
     #make a double argument for central ac crankcase
-    acCrankcase = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("crankcase_capacity", true)
+    acCrankcase = OpenStudio::Measure::OSArgument::makeDoubleArgument("crankcase_capacity", true)
     acCrankcase.setDisplayName("Crankcase")
     acCrankcase.setUnits("kW")
     acCrankcase.setDescription("Capacity of the crankcase heater for the compressor.")
@@ -125,7 +125,7 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
     args << acCrankcase
 
     #make a double argument for central ac crankcase max t
-    acCrankcaseMaxT = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("crankcase_max_temp", true)
+    acCrankcaseMaxT = OpenStudio::Measure::OSArgument::makeDoubleArgument("crankcase_max_temp", true)
     acCrankcaseMaxT.setDisplayName("Crankcase Max Temp")
     acCrankcaseMaxT.setUnits("degrees F")
     acCrankcaseMaxT.setDescription("Outdoor dry-bulb temperature above which compressor crankcase heating is disabled.")
@@ -133,35 +133,35 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
     args << acCrankcaseMaxT
     
     #make a double argument for central ac 1.5 ton eer capacity derate
-    acEERCapacityDerateFactor1ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_1ton", true)
+    acEERCapacityDerateFactor1ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_1ton", true)
     acEERCapacityDerateFactor1ton.setDisplayName("1.5 Ton EER Capacity Derate")
     acEERCapacityDerateFactor1ton.setDescription("EER multiplier for 1.5 ton air-conditioners.")
     acEERCapacityDerateFactor1ton.setDefaultValue(1.0)
     args << acEERCapacityDerateFactor1ton
     
     #make a double argument for central ac 2 ton eer capacity derate
-    acEERCapacityDerateFactor2ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_2ton", true)
+    acEERCapacityDerateFactor2ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_2ton", true)
     acEERCapacityDerateFactor2ton.setDisplayName("2 Ton EER Capacity Derate")
     acEERCapacityDerateFactor2ton.setDescription("EER multiplier for 2 ton air-conditioners.")
     acEERCapacityDerateFactor2ton.setDefaultValue(1.0)
     args << acEERCapacityDerateFactor2ton
 
     #make a double argument for central ac 3 ton eer capacity derate
-    acEERCapacityDerateFactor3ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_3ton", true)
+    acEERCapacityDerateFactor3ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_3ton", true)
     acEERCapacityDerateFactor3ton.setDisplayName("3 Ton EER Capacity Derate")
     acEERCapacityDerateFactor3ton.setDescription("EER multiplier for 3 ton air-conditioners.")
     acEERCapacityDerateFactor3ton.setDefaultValue(1.0)
     args << acEERCapacityDerateFactor3ton
 
     #make a double argument for central ac 4 ton eer capacity derate
-    acEERCapacityDerateFactor4ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_4ton", true)
+    acEERCapacityDerateFactor4ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_4ton", true)
     acEERCapacityDerateFactor4ton.setDisplayName("4 Ton EER Capacity Derate")
     acEERCapacityDerateFactor4ton.setDescription("EER multiplier for 4 ton air-conditioners.")
     acEERCapacityDerateFactor4ton.setDefaultValue(1.0)
     args << acEERCapacityDerateFactor4ton
 
     #make a double argument for central ac 5 ton eer capacity derate
-    acEERCapacityDerateFactor5ton = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("eer_capacity_derate_5ton", true)
+    acEERCapacityDerateFactor5ton = OpenStudio::Measure::OSArgument::makeDoubleArgument("eer_capacity_derate_5ton", true)
     acEERCapacityDerateFactor5ton.setDisplayName("5 Ton EER Capacity Derate")
     acEERCapacityDerateFactor5ton.setDescription("EER multiplier for 5 ton air-conditioners.")
     acEERCapacityDerateFactor5ton.setDefaultValue(1.0)
@@ -173,7 +173,7 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Ruleset::ModelUserScrip
     (0.5..10.0).step(0.5) do |tons|
       cap_display_names << tons.to_s
     end
-    acCoolingOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
+    acCoolingOutputCapacity = OpenStudio::Measure::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
     acCoolingOutputCapacity.setDisplayName("Cooling Capacity")
     acCoolingOutputCapacity.setDescription("The output cooling capacity of the air conditioner.")
     acCoolingOutputCapacity.setUnits("tons")

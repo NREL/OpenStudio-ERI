@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 # start the measure
-class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
+class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
@@ -26,14 +26,14 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
     
     #make a string argument for boiler fuel type
     fuel_display_names = OpenStudio::StringVector.new
     fuel_display_names << Constants.FuelTypeGas
     fuel_display_names << Constants.FuelTypeOil
     fuel_display_names << Constants.FuelTypePropane
-    boilerFuelType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("fuel_type", fuel_display_names, true)
+    boilerFuelType = OpenStudio::Measure::OSArgument::makeChoiceArgument("fuel_type", fuel_display_names, true)
     boilerFuelType.setDisplayName("Fuel Type")
     boilerFuelType.setDescription("Type of fuel used for heating.")
     boilerFuelType.setDefaultValue(Constants.FuelTypeGas)
@@ -45,14 +45,14 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     boiler_display_names << Constants.BoilerTypeCondensing
     boiler_display_names << Constants.BoilerTypeNaturalDraft
     boiler_display_names << Constants.BoilerTypeSteam
-    boilerType = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("system_type", boiler_display_names, true)
+    boilerType = OpenStudio::Measure::OSArgument::makeChoiceArgument("system_type", boiler_display_names, true)
     boilerType.setDisplayName("System Type")
     boilerType.setDescription("The system type of the boiler.")
     boilerType.setDefaultValue(Constants.BoilerTypeForcedDraft)
     args << boilerType
     
     #make an argument for entering boiler installed afue
-    boilerInstalledAFUE = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("afue",true)
+    boilerInstalledAFUE = OpenStudio::Measure::OSArgument::makeDoubleArgument("afue",true)
     boilerInstalledAFUE.setDisplayName("Installed AFUE")
     boilerInstalledAFUE.setUnits("Btu/Btu")
     boilerInstalledAFUE.setDescription("The installed Annual Fuel Utilization Efficiency (AFUE) of the boiler, which can be used to account for performance derating or degradation relative to the rated value.")
@@ -60,42 +60,42 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     args << boilerInstalledAFUE
     
     #make a bool argument for whether the boiler OAT enabled
-    boilerOATResetEnabled = OpenStudio::Ruleset::OSArgument::makeBoolArgument("oat_reset_enabled", true)
+    boilerOATResetEnabled = OpenStudio::Measure::OSArgument::makeBoolArgument("oat_reset_enabled", true)
     boilerOATResetEnabled.setDisplayName("Outside Air Reset Enabled")
     boilerOATResetEnabled.setDescription("Outside Air Reset Enabled on Hot Water Supply Temperature.")
     boilerOATResetEnabled.setDefaultValue(false)
     args << boilerOATResetEnabled    
     
     #make an argument for entering boiler OAT high
-    boilerOATHigh = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("oat_high",false)
+    boilerOATHigh = OpenStudio::Measure::OSArgument::makeDoubleArgument("oat_high",false)
     boilerOATHigh.setDisplayName("High Outside Air Temp")
     boilerOATHigh.setUnits("degrees F")
     boilerOATHigh.setDescription("High Outside Air Temperature.")
     args << boilerOATHigh    
     
     #make an argument for entering boiler OAT low
-    boilerOATLow = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("oat_low",false)
+    boilerOATLow = OpenStudio::Measure::OSArgument::makeDoubleArgument("oat_low",false)
     boilerOATLow.setDisplayName("Low Outside Air Temp")
     boilerOATLow.setUnits("degrees F")
     boilerOATLow.setDescription("Low Outside Air Temperature.")
     args << boilerOATLow
     
     #make an argument for entering boiler OAT high HWST
-    boilerOATHighHWST = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("oat_hwst_high",false)
+    boilerOATHighHWST = OpenStudio::Measure::OSArgument::makeDoubleArgument("oat_hwst_high",false)
     boilerOATHighHWST.setDisplayName("Hot Water Supply Temp High Outside Air")
     boilerOATHighHWST.setUnits("degrees F")
     boilerOATHighHWST.setDescription("Hot Water Supply Temperature corresponding to High Outside Air Temperature.")
     args << boilerOATHighHWST
     
     #make an argument for entering boiler OAT low HWST
-    boilerOATLowHWST = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("oat_hwst_low",false)
+    boilerOATLowHWST = OpenStudio::Measure::OSArgument::makeDoubleArgument("oat_hwst_low",false)
     boilerOATLowHWST.setDisplayName("Hot Water Supply Temp Low Outside Air")
     boilerOATLowHWST.setUnits("degrees F")
     boilerOATLowHWST.setDescription("Hot Water Supply Temperature corresponding to Low Outside Air Temperature.")
     args << boilerOATLowHWST        
     
     #make an argument for entering boiler design temp
-    boilerDesignTemp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("design_temp",false)
+    boilerDesignTemp = OpenStudio::Measure::OSArgument::makeDoubleArgument("design_temp",false)
     boilerDesignTemp.setDisplayName("Design Temperature")
     boilerDesignTemp.setUnits("degrees F")
     boilerDesignTemp.setDescription("Temperature of the outlet water.")
@@ -108,7 +108,7 @@ class ProcessBoilerFuel < OpenStudio::Ruleset::ModelUserScript
     (5..150).step(5) do |kbtu|
       cap_display_names << kbtu.to_s
     end
-    boilerOutputCapacity = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
+    boilerOutputCapacity = OpenStudio::Measure::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
     boilerOutputCapacity.setDisplayName("Heating Capacity")
     boilerOutputCapacity.setDescription("The output heating capacity of the boiler.")
     boilerOutputCapacity.setUnits("kBtu/hr")

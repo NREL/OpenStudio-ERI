@@ -159,8 +159,8 @@ class HVAC
         if outputCapacity != Constants.SizingAuto
           stage_data.setGrossRatedTotalCoolingCapacity(outputCapacity * OpenStudio::convert(1.0,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[speed])
           stage_data.setRatedAirFlowRate(supply.CFM_TON_Rated[speed] * outputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * supply.Capacity_Ratio_Cooling[speed]) 
-          stage_data.setGrossRatedSensibleHeatRatio(supply.SHR_Rated[speed])
         end
+        stage_data.setGrossRatedSensibleHeatRatio(supply.SHR_Rated[speed])
         stage_data.setGrossRatedCoolingCOP(1.0 / supply.CoolingEIR[speed])
         stage_data.setNominalTimeforCondensateRemovaltoBegin(1000)
         stage_data.setRatioofInitialMoistureEvaporationRateandSteadyStateLatentCapacity(1.5)

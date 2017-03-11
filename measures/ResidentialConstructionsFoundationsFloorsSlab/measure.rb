@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUserScript
+class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeasure
   
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
@@ -23,10 +23,10 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
   
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
 	#make a double argument for slab perimeter insulation R-value
-	perim_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("perim_r", true)
+	perim_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("perim_r", true)
 	perim_r.setDisplayName("Perimeter Insulation Nominal R-value")
 	perim_r.setUnits("hr-ft^2-R/Btu")
 	perim_r.setDescription("Perimeter insulation is placed horizontally below the perimeter of the slab.")
@@ -34,7 +34,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << perim_r
     
 	#make a double argument for slab perimeter insulation width
-	perim_width = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("perim_width", true)
+	perim_width = OpenStudio::Measure::OSArgument::makeDoubleArgument("perim_width", true)
 	perim_width.setDisplayName("Perimeter Insulation Width")
 	perim_width.setUnits("ft")
 	perim_width.setDescription("The distance from the perimeter of the house where the perimeter insulation ends.")
@@ -42,7 +42,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << perim_width
 
 	#make a double argument for whole slab insulation R-value
-	whole_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("whole_r", true)
+	whole_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("whole_r", true)
 	whole_r.setDisplayName("Whole Slab Insulation Nominal R-value")
 	whole_r.setUnits("hr-ft^2-R/Btu")
 	whole_r.setDescription("Whole slab insulation is placed horizontally below the entire slab.")
@@ -50,7 +50,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << whole_r
     
 	#make a double argument for slab gap R-value
-	gap_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("gap_r", true)
+	gap_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("gap_r", true)
 	gap_r.setDisplayName("Gap Insulation Nominal R-value")
 	gap_r.setUnits("hr-ft^2-R/Btu")
 	gap_r.setDescription("Gap insulation is placed vertically between the edge of the slab and the foundation wall.")
@@ -58,7 +58,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << gap_r
 
 	#make a double argument for slab exterior insulation R-value
-	ext_r = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ext_r", true)
+	ext_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("ext_r", true)
 	ext_r.setDisplayName("Exterior Insulation Nominal R-value")
 	ext_r.setUnits("hr-ft^2-R/Btu")
 	ext_r.setDescription("Exterior insulation is placed vertically on the exterior of the foundation wall.")
@@ -66,7 +66,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << ext_r
     
 	#make a double argument for slab exterior insulation depth
-	ext_depth = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("ext_depth", true)
+	ext_depth = OpenStudio::Measure::OSArgument::makeDoubleArgument("ext_depth", true)
 	ext_depth.setDisplayName("Exterior Insulation Depth")
 	ext_depth.setUnits("ft")
 	ext_depth.setDescription("The depth of the exterior foundation insulation.")
@@ -74,7 +74,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << ext_depth
 
 	#make a double argument for slab mass thickness
-	mass_thick_in = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mass_thick_in", true)
+	mass_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("mass_thick_in", true)
 	mass_thick_in.setDisplayName("Mass Thickness")
 	mass_thick_in.setUnits("in")
 	mass_thick_in.setDescription("Thickness of the slab foundation mass.")
@@ -82,7 +82,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << mass_thick_in
 	
 	#make a double argument for slab mass conductivity
-	mass_cond = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mass_conductivity", true)
+	mass_cond = OpenStudio::Measure::OSArgument::makeDoubleArgument("mass_conductivity", true)
 	mass_cond.setDisplayName("Mass Conductivity")
 	mass_cond.setUnits("Btu-in/h-ft^2-R")
 	mass_cond.setDescription("Conductivity of the slab foundation mass.")
@@ -90,7 +90,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << mass_cond
 
 	#make a double argument for slab mass density
-	mass_dens = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mass_density", true)
+	mass_dens = OpenStudio::Measure::OSArgument::makeDoubleArgument("mass_density", true)
 	mass_dens.setDisplayName("Mass Density")
 	mass_dens.setUnits("lb/ft^3")
 	mass_dens.setDescription("Density of the slab foundation mass.")
@@ -98,7 +98,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Ruleset::ModelUser
 	args << mass_dens
 
 	#make a double argument for slab mass specific heat
-	mass_specheat = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("mass_specific_heat", true)
+	mass_specheat = OpenStudio::Measure::OSArgument::makeDoubleArgument("mass_specific_heat", true)
 	mass_specheat.setDisplayName("Mass Specific Heat")
 	mass_specheat.setUnits("Btu/lb-R")
 	mass_specheat.setDescription("Specific heat of the slab foundation mass.")

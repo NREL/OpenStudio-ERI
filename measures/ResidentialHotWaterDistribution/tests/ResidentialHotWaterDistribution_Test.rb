@@ -457,13 +457,13 @@ class ResidentialHotWaterDistributionTest < MiniTest::Test
     measure = ResidentialHotWaterDistribution.new
     
     # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     model = get_model(File.dirname(__FILE__), osm_file)
 
     # get arguments
     arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|
@@ -498,7 +498,7 @@ class ResidentialHotWaterDistributionTest < MiniTest::Test
     assert(!measure.modeler_description.empty?)
 
     # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
 
@@ -507,7 +507,7 @@ class ResidentialHotWaterDistributionTest < MiniTest::Test
 
     # get arguments
     arguments = measure.arguments(model)
-    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # populate argument with specified hash value if specified
     arguments.each do |arg|

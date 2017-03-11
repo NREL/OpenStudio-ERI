@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
-class ResidentialHotWaterHeaterTanklessElectric < OpenStudio::Ruleset::ModelUserScript
+class ResidentialHotWaterHeaterTanklessElectric < OpenStudio::Measure::ModelMeasure
 
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
@@ -25,7 +25,7 @@ class ResidentialHotWaterHeaterTanklessElectric < OpenStudio::Ruleset::ModelUser
 
     #define the arguments that the user will input
     def arguments(model)
-        ruleset = OpenStudio::Ruleset
+        ruleset = OpenStudio::Measure
     
         osargument = ruleset::OSArgument
     

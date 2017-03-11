@@ -15,7 +15,7 @@ require "#{File.dirname(__FILE__)}/resources/weather"
 require "#{File.dirname(__FILE__)}/resources/schedules"
 
 #start the measure
-class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
+class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
 
   class MJ8
     def initialize
@@ -104,7 +104,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
   
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
   
     return args
   end #end the arguments method
@@ -153,6 +153,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     # in the SHRRated. It is a function of ODB (MJ design temp) and CFM/Ton (from MJ)
     shr_biquadratic_coefficients = [1.08464364, 0.002096954, 0, -0.005766327, 0, -0.000011147]
     
+    assumed_inside_temp = 73.5 # F
+    @inside_air_dens = UnitConversion.atm2Btu_ft3(weather.header.LocalPressure) / (Gas.Air.r * (assumed_inside_temp + 460.0))
     
     mj8 = processSiteCalcsAndDesignTemps(runner, mj8, weather, model)
     return false if mj8.nil?
@@ -192,7 +194,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         unit_init = processIntermediateTotalLoads(runner, mj8, zones_loads, weather, hvac)
         return false if unit_init.nil?
         display_unit_initial_results(runner, unit_num, unit_init)
-        
+
         # Process unit duct loads and equipment
         unit_final = processUnitLoadsAndEquipment(runner, mj8, unit, unit_init, weather, hvac, ducts, minCoolingCapacity, shr_biquadratic_coefficients)
         return false if unit_final.nil?
@@ -319,8 +321,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             
         elsif space.name.to_s.start_with?(Constants.UnfinishedAtticSpace)
         
-            infiltration_cfm = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double')
-            return nil if infiltration_cfm.nil?
+            infiltration_cfm = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double', false)
+            infiltration_cfm = 0 if infiltration_cfm.nil?
             
             # Get area-weighted average roofing material absorptance
             attic_floor_r = 0.0
@@ -377,9 +379,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                     return false if roof_color.nil? or roof_material.nil?
                     
                     has_radiant_barrier = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofHasRadiantBarrier(surface), 'boolean', false)
-                    if has_radiant_barrier.nil?
-                        has_radiant_barrier = false
-                    end
+                    has_radiant_barrier = false if has_radiant_barrier.nil?
                     
                     if infiltration_cfm > 0
                         if not has_radiant_barrier
@@ -1004,9 +1004,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         return nil if cavity_r.nil?
     
         rigid_r = get_unit_feature(runner, unit, Constants.SizingInfoRoofRigidInsRvalue(roof), 'double', false)
-        if rigid_r.nil?
-            rigid_r = 0
-        end
+        rigid_r = 0 if rigid_r.nil?
 
         total_r = cavity_r + rigid_r
 
@@ -1155,8 +1153,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         return nil
     end
     
-    ela = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationELA(thermal_zone), 'double', true)
-    return nil if ela.nil?
+    ela = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationELA(thermal_zone), 'double', false)
+    ela = 0 if ela.nil?
     
     icfm_Cooling = ela * ft2in ** 2 * (c_s * mj8.ctd.abs + c_w * (weather.design.CoolingWindspeed / mph2m_s) ** 2) ** 0.5
     icfm_Heating = ela * ft2in ** 2 * (c_s * mj8.htd.abs + c_w * (weather.design.HeatingWindspeed / mph2m_s) ** 2) ** 0.5
@@ -1390,7 +1388,12 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     end
     
     if hvac.HtgSupplyAirTemp.nil?
-        hvac.HtgSupplyAirTemp = 105
+        # FIXME ASKJON: Is this correct?
+        if hvac.HasFurnace
+            hvac.HtgSupplyAirTemp = 120 # F
+        else
+            hvac.HtgSupplyAirTemp = 105 # F
+        end
     end
     
     unit_init.Cool_Airflow = unit_init.Cool_Load_Sens / (1.1 * mj8.acf * (mj8.cool_setpoint - unit_init.LAT))
@@ -1403,6 +1406,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     unit_final = UnitFinalValues.new
     unit_final = processDuctRegainFactors(runner, unit, unit_final, ducts)
     unit_final = processDuctLoads_Heating(runner, mj8, unit_final, weather, hvac, unit_init.Heat_Load, ducts)
+    # TODO: Combine processDuctLoads_Cool_Dehum with processDuctLoads_Heating? Some duplicate code
     unit_final = processDuctLoads_Cool_Dehum(runner, mj8, unit_init, unit_final, weather, hvac, ducts)
     unit_final = processCoolingEquipmentAdjustments(runner, mj8, unit_init, unit_final, weather, hvac, minCoolingCapacity, shr_biquadratic_coefficients)
     unit_final = processFixedEquipment(runner, unit_final, hvac)
@@ -1426,8 +1430,10 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
 
             walls_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceWallsInsulated(ducts.LocationSpace), 'boolean')
             ceiling_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceCeilingInsulated(ducts.LocationSpace), 'boolean')
-            infiltration_cfm = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationCFM(ducts.LocationSpace.thermalZone.get), 'double')
-            return nil if walls_insulated.nil? or ceiling_insulated.nil? or infiltration_cfm.nil?
+            return nil if walls_insulated.nil? or ceiling_insulated.nil?
+
+            infiltration_cfm = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationCFM(ducts.LocationSpace.thermalZone.get), 'double', false)
+            infiltration_cfm = 0 if infiltration_cfm.nil?
             
             if not ceiling_insulated
                 if not walls_insulated
@@ -1459,8 +1465,10 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             
             walls_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceWallsInsulated(ducts.LocationSpace), 'boolean')
             ceiling_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceCeilingInsulated(ducts.LocationSpace), 'boolean')
-            infiltration_cfm = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationCFM(ducts.LocationSpace.thermalZone.get), 'double')
-            return nil if walls_insulated.nil? or ceiling_insulated.nil? or infiltration_cfm.nil?
+            return nil if walls_insulated.nil? or ceiling_insulated.nil?
+
+            infiltration_cfm = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationCFM(ducts.LocationSpace.thermalZone.get), 'double', false)
+            infiltration_cfm = 0 if infiltration_cfm.nil?
             
             if infiltration_cfm > 0
                 if ceiling_insulated
@@ -1667,8 +1675,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         
         # Supply and return conduction functions, Bs and Br
         if ducts.NotInLiving
-            dse_Bs_dehumid = Math.exp((-1.0 * dse_As) / (60 * unit_final.Cool_Airflow * Gas.Air.rho * Gas.Air.cp * ducts.SupplyRvalue))
-            dse_Br_dehumid = Math.exp((-1.0 * dse_Ar) / (60 * unit_final.Cool_Airflow * Gas.Air.rho * Gas.Air.cp * ducts.ReturnRvalue))
+            dse_Bs_dehumid = Math.exp((-1.0 * dse_As) / (60 * unit_final.Cool_Airflow * @inside_air_dens * Gas.Air.cp * ducts.SupplyRvalue))
+            dse_Br_dehumid = Math.exp((-1.0 * dse_Ar) / (60 * unit_final.Cool_Airflow * @inside_air_dens * Gas.Air.cp * ducts.ReturnRvalue))
         else
             dse_Bs_dehumid = 1
             dse_Br_dehumid = 1
@@ -2648,7 +2656,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     # Supply and return duct surface areas located outside conditioned space
     dse_As = ducts.SupplySurfaceArea * ducts.LocationFrac
     dse_Ar = ducts.ReturnSurfaceArea
-        
+    
     # Initialize for the iteration
     delta = 1
     heatingLoad_Prev = heatingLoad
@@ -2678,7 +2686,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     '''
     Calculate the Distribution System Efficiency using the method of ASHRAE Standard 152 (used for heating and cooling).
     '''
-  
     dse_Bs, dse_Br, dse_a_s, dse_a_r, dse_dTe, dse_dT = _calc_dse_init(ducts, acf, cfm_inter, load_Inter_Sens, dse_Tamb, dse_As, dse_Ar, t_setpoint)
     dse_DE = _calc_dse_DE_heating(dse_a_s, dse_Bs, dse_a_r, dse_Br, dse_dT, dse_dTe)
     dse_DEcorr = _calc_dse_DEcorr(ducts, dse_DE, dse_Fregain, dse_Br, dse_a_r)
@@ -2705,8 +2712,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
 
     # Supply and return conduction functions, Bs and Br
     if ducts.NotInLiving
-        dse_Bs = Math.exp((-1.0 * dse_As) / (60 * cfm_inter * Gas.Air.rho * Gas.Air.cp * ducts.SupplyRvalue))
-        dse_Br = Math.exp((-1.0 * dse_Ar) / (60 * cfm_inter * Gas.Air.rho * Gas.Air.cp * ducts.ReturnRvalue))
+        dse_Bs = Math.exp((-1.0 * dse_As) / (60 * cfm_inter * @inside_air_dens * Gas.Air.cp * ducts.SupplyRvalue))
+        dse_Br = Math.exp((-1.0 * dse_Ar) / (60 * cfm_inter * @inside_air_dens * Gas.Air.cp * ducts.ReturnRvalue))
 
     else
         dse_Bs = 1
@@ -2726,8 +2733,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     # FIXME: Comments below apply here or below?
     # Calculate the delivery effectiveness (Equation 6-23) 
     # NOTE: This equation is for heating but DE equation for cooling requires psychrometric calculations. This should be corrected.
-    dse_DE = ((dse_a_s * 60 * cfm_inter * Gas.Air.rho) / (-1 * coolingLoad_Tot)) * \
-              (((-1 * coolingLoad_Tot) / (60 * cfm_inter * Gas.Air.rho)) + \
+    dse_DE = ((dse_a_s * 60 * cfm_inter * @inside_air_dens) / (-1 * coolingLoad_Tot)) * \
+              (((-1 * coolingLoad_Tot) / (60 * cfm_inter * @inside_air_dens)) + \
                (1 - dse_a_r) * (dse_h_Return_Cooling - enthalpy_indoor_cooling) + \
                dse_a_r * Gas.Air.cp * (dse_Br - 1) * dse_dT + \
                Gas.Air.cp * (dse_Bs - 1) * (leavingAirTemp - dse_Tamb))
@@ -2800,7 +2807,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         return nil if ducts.SupplyLoss.nil? or ducts.ReturnLoss.nil?
 
         ducts.SupplyRvalue = get_unit_feature(runner, unit, Constants.SizingInfoDuctsSupplyRvalue, 'double')
-        ducts.ReturnRvalue = get_unit_feature(runner, unit, Constants.SizingInfoDuctsSupplyRvalue, 'double')
+        ducts.ReturnRvalue = get_unit_feature(runner, unit, Constants.SizingInfoDuctsReturnRvalue, 'double')
         return nil if ducts.SupplyRvalue.nil? or ducts.ReturnRvalue.nil?
         
         locationZoneName = get_unit_feature(runner, unit, Constants.SizingInfoDuctsLocationZone, 'string')
@@ -3063,13 +3070,11 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 runner.registerError("Maximum supply air temperature not set for #{htg_equip.name}.")
                 return nil
             end
-            hvac.HtgSupplyAirTemp = OpenStudio::convert(htg_equip.maximumSupplyAirTemperature.get,"C","F").get # FIXME is this right?
             
         elsif htg_equip.to_ZoneHVACComponent.is_initialized
             if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
                 htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil)
             end
-            hvac.HtgSupplyAirTemp = 105 # FIXME
             
         else
             runner.registerError("Unexpected heating equipment: #{htg_equip.name}.")
@@ -3291,8 +3296,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Infiltration UA
-    infiltration_cfm = get_model_feature(runner, units, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double')
-    return nil if infiltration_cfm.nil?
+    infiltration_cfm = get_model_feature(runner, units, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double', false)
+    infiltration_cfm = 0 if infiltration_cfm.nil?
     outside_air_density = UnitConversion.atm2Btu_ft3(weather.header.LocalPressure) / (Gas.Air.r * (weather.data.AnnualAvgDrybulb + 460.0))
     space_UAs['infil'] = infiltration_cfm * outside_air_density * Gas.Air.cp * OpenStudio::convert(1.0,"hr","min").get
     
@@ -3339,9 +3344,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return nil if wall_type.nil?
     
     rigid_r = get_unit_feature(runner, unit, Constants.SizingInfoWallRigidInsRvalue(wall), 'double', false)
-    if rigid_r.nil?
-        rigid_r = 0
-    end
+    rigid_r = 0 if rigid_r.nil?
         
     # Determine the wall Group Number (A - K = 1 - 11) for exterior walls (ie. all walls except basement walls)
     maxWallGroup = 11
@@ -3385,10 +3388,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         end
         
     elsif wall_type == 'SIP'
-        rigid_thick_in = get_unit_feature(runner, unit, Constants.SizingInfoWallRigidInsThickness(wall), 'double')
-        if rigid_thick_in.nil?
-            rigid_thick_in = 0
-        end
+        rigid_thick_in = get_unit_feature(runner, unit, Constants.SizingInfoWallRigidInsThickness(wall), 'double', false)
+        rigid_r = 0 if rigid_thick_in.nil?
         
         sip_ins_thick_in = get_unit_feature(runner, unit, Constants.SizingInfoSIPWallInsThickness(wall), 'double')
         return nil if sip_ins_thick_in.nil?

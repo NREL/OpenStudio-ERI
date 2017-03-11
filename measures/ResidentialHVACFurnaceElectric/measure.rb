@@ -14,7 +14,7 @@ require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 #start the measure
-class ProcessFurnaceElectric < OpenStudio::Ruleset::ModelUserScript
+class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
 
   class Supply
     def initialize
@@ -38,10 +38,10 @@ class ProcessFurnaceElectric < OpenStudio::Ruleset::ModelUserScript
   
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 	
     #make an argument for entering furnace installed afue
-    afue = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("afue",true)
+    afue = OpenStudio::Measure::OSArgument::makeDoubleArgument("afue",true)
     afue.setDisplayName("Installed AFUE")
     afue.setUnits("Btu/Btu")
     afue.setDescription("The installed Annual Fuel Utilization Efficiency (AFUE) of the furnace, which can be used to account for performance derating or degradation relative to the rated value.")
@@ -54,7 +54,7 @@ class ProcessFurnaceElectric < OpenStudio::Ruleset::ModelUserScript
     (5..150).step(5) do |kbtu|
       cap_display_names << kbtu.to_s
     end
-    furnacecap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
+    furnacecap = OpenStudio::Measure::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
     furnacecap.setDisplayName("Heating Capacity")
     furnacecap.setDescription("The output heating capacity of the furnace.")
     furnacecap.setUnits("kBtu/hr")
@@ -62,7 +62,7 @@ class ProcessFurnaceElectric < OpenStudio::Ruleset::ModelUserScript
     args << furnacecap
 
     #make an argument for entering furnace max supply temp
-    maxtemp = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("max_temp",true)
+    maxtemp = OpenStudio::Measure::OSArgument::makeDoubleArgument("max_temp",true)
     maxtemp.setDisplayName("Max Supply Temp")
     maxtemp.setUnits("F")
     maxtemp.setDescription("Maximum supply air temperature.")
@@ -70,7 +70,7 @@ class ProcessFurnaceElectric < OpenStudio::Ruleset::ModelUserScript
     args << maxtemp
 
     #make an argument for entering furnace installed supply fan power
-    fanpower = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("fan_power_installed",true)
+    fanpower = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power_installed",true)
     fanpower.setDisplayName("Installed Supply Fan Power")
     fanpower.setUnits("W/cfm")
     fanpower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.")

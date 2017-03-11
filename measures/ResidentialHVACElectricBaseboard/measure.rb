@@ -13,7 +13,7 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 #start the measure
-class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
+class ProcessElectricBaseboard < OpenStudio::Measure::ModelMeasure
   
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
@@ -31,10 +31,10 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
   
   #define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make an argument for entering baseboard efficiency
-    baseboardeff = OpenStudio::Ruleset::OSArgument::makeDoubleArgument("efficiency",true)
+    baseboardeff = OpenStudio::Measure::OSArgument::makeDoubleArgument("efficiency",true)
     baseboardeff.setDisplayName("Efficiency")
     baseboardeff.setUnits("Btu/Btu")
     baseboardeff.setDescription("The efficiency of the electric baseboard.")
@@ -47,7 +47,7 @@ class ProcessElectricBaseboard < OpenStudio::Ruleset::ModelUserScript
     (5..150).step(5) do |kbtu|
       cap_display_names << kbtu.to_s
     end
-    baseboardcap = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
+    baseboardcap = OpenStudio::Measure::OSArgument::makeChoiceArgument("capacity", cap_display_names, true)
     baseboardcap.setDisplayName("Heating Capacity")
     baseboardcap.setDescription("The output heating capacity of the electric baseboard.")
     baseboardcap.setUnits("kBtu/hr")
