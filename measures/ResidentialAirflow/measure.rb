@@ -672,19 +672,19 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     model.getThermalZones.each do |thermal_zone|
       if thermal_zone.name.to_s.start_with? Constants.GarageZone
         building.garage_zone = thermal_zone
-        building.garage = Garage.new(Geometry.get_height_of_spaces(building.garage_zone.spaces), OpenStudio::convert(building.garage_zone.floorArea,"m^2","ft^2").get, Geometry.get_height_of_spaces(building.garage_zone.spaces) * OpenStudio::convert(building.garage_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
+        building.garage = Garage.new(Geometry.get_height_of_spaces(building.garage_zone.spaces), OpenStudio::convert(building.garage_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif thermal_zone.name.to_s.start_with? Constants.UnfinishedBasementZone
         building.unfinished_basement_zone = thermal_zone
-        building.unfinished_basement = UnfinBasement.new(ufbsmtACH, Geometry.get_height_of_spaces(building.unfinished_basement_zone.spaces), OpenStudio::convert(building.unfinished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_height_of_spaces(building.unfinished_basement_zone.spaces) * OpenStudio::convert(building.unfinished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
+        building.unfinished_basement = UnfinBasement.new(ufbsmtACH, Geometry.get_height_of_spaces(building.unfinished_basement_zone.spaces), OpenStudio::convert(building.unfinished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif thermal_zone.name.to_s.start_with? Constants.CrawlZone
         building.crawlspace_zone = thermal_zone
-        building.crawlspace = Crawl.new(crawlACH, Geometry.get_height_of_spaces(building.crawlspace_zone.spaces), OpenStudio::convert(building.crawlspace_zone.floorArea,"m^2","ft^2").get, Geometry.get_height_of_spaces(building.crawlspace_zone.spaces) * OpenStudio::convert(building.crawlspace_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
+        building.crawlspace = Crawl.new(crawlACH, Geometry.get_height_of_spaces(building.crawlspace_zone.spaces), OpenStudio::convert(building.crawlspace_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif thermal_zone.name.to_s.start_with? Constants.PierBeamZone
         building.pierbeam_zone = thermal_zone
-        building.pierbeam = PierBeam.new(pierbeamACH, Geometry.get_height_of_spaces(building.pierbeam_zone.spaces), OpenStudio::convert(building.pierbeam_zone.floorArea,"m^2","ft^2").get, Geometry.get_height_of_spaces(building.pierbeam_zone.spaces) * OpenStudio::convert(building.pierbeam_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
+        building.pierbeam = PierBeam.new(pierbeamACH, Geometry.get_height_of_spaces(building.pierbeam_zone.spaces), OpenStudio::convert(building.pierbeam_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif thermal_zone.name.to_s.start_with? Constants.UnfinishedAtticZone
         building.unfinished_attic_zone = thermal_zone
-        building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_height_of_spaces(building.unfinished_attic_zone.spaces), OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_height_of_spaces(building.unfinished_attic_zone.spaces) * OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
+        building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_height_of_spaces(building.unfinished_attic_zone.spaces), OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       end
     end
 
@@ -854,10 +854,10 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       Geometry.get_thermal_zones_from_spaces(building_unit.spaces).each do |thermal_zone|
         if thermal_zone.name.to_s.start_with? Constants.LivingZone or not /#{Constants.URBANoptFinishedZoneIdentifier} [1-9]\d*/.match(thermal_zone.name.to_s).nil?
           unit.living_zone = thermal_zone
-          unit.living = LivingSpace.new(Geometry.get_height_of_spaces(unit.living_zone.spaces), OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_height_of_spaces(unit.living_zone.spaces) / building.stories * OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
+          unit.living = LivingSpace.new(Geometry.get_height_of_spaces(unit.living_zone.spaces), OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
         elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone or thermal_zone.name.to_s.start_with? "#{Constants.URBANoptFinishedZoneIdentifier} 0"
           unit.finished_basement_zone = thermal_zone
-          unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_height_of_spaces(unit.finished_basement_zone.spaces), OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_height_of_spaces(unit.finished_basement_zone.spaces) * OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_z_origin_for_zone(thermal_zone))
+          unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_height_of_spaces(unit.finished_basement_zone.spaces), OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
         end
       end
 
@@ -1797,10 +1797,10 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
       building_unit.setFeature(Constants.SizingInfoDuctsReturnSurfaceArea, ducts.return_duct_surface_area)
       building_unit.setFeature(Constants.SizingInfoDuctsLocationZone, ducts.duct_location_name)
       building_unit.setFeature(Constants.SizingInfoDuctsLocationFrac, ducts.DuctLocationFracLeakage)
+      building_unit.setFeature(Constants.SizingInfoZoneInfiltrationELA(unit.living_zone), unit.living.ELA)
+      building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(unit.living_zone), unit.living.inf_flow)
       unless unit.finished_basement_zone.nil?
-        unit.finished_basement_zone.spaces.each do |space|
-          building_unit.setFeature(Constants.SizingInfoSpaceHasInfiltration(space), (unit.finished_basement.ACH > 0))
-        end
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(unit.finished_basement_zone), unit.finished_basement.inf_flow)
       end
       
     end # end unit loop
@@ -1808,24 +1808,16 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     # Store info for HVAC Sizing measure
     units.each do |building_unit|
       unless building.crawlspace_zone.nil?
-        building.crawlspace_zone.spaces.each do |space|
-          building_unit.setFeature(Constants.SizingInfoSpaceHasInfiltration(space), (building.crawlspace.ACH > 0))
-        end
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.crawlspace_zone), building.crawlspace.inf_flow)
       end
       unless building.pierbeam_zone.nil?
-        building.pierbeam_zone.spaces.each do |space|
-          building_unit.setFeature(Constants.SizingInfoSpaceHasInfiltration(space), (building.pierbeam.ACH > 0))
-        end
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.pierbeam_zone), building.pierbeam.inf_flow)
       end
       unless building.unfinished_basement_zone.nil?
-        building.unfinished_basement_zone.spaces.each do |space|
-          building_unit.setFeature(Constants.SizingInfoSpaceHasInfiltration(space), (building.unfinished_basement.ACH > 0))
-        end
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.unfinished_basement_zone), building.unfinished_basement.inf_flow)
       end
       unless building.unfinished_attic_zone.nil?
-        building.unfinished_attic_zone.spaces.each do |space|
-          building_unit.setFeature(Constants.SizingInfoSpaceIsVented(space), (building.unfinished_attic.SLA > 0))
-        end
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.unfinished_attic_zone), building.unfinished_attic.inf_flow)
       end
     end
 
@@ -2137,7 +2129,7 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
     end
 
     spaces.each do |space|
-    
+      
       if space.volume == 0
         next
       end
@@ -2149,6 +2141,8 @@ class ResidentialAirflow < OpenStudio::Ruleset::ModelUserScript
         space.f_w_SG = wind_speed.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
         space.C_s_SG = space.f_s_SG ** 2.0 * Constants.g * space.height / (infil.assumed_inside_temp + 460.0)
         space.C_w_SG = space.f_w_SG ** 2.0
+        space.ELA = space.SLA * space.area # ft^2
+      elsif space.inf_method == Constants.InfMethodASHRAE
         space.ELA = space.SLA * space.area # ft^2
       end
 

@@ -949,6 +949,12 @@ class Constants
     end
     return "#{property}#{s_obj}"
   end
+  def self.SizingInfoBasementWallInsulationHeight(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoBasementWallRvalue(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
   def self.SizingInfoDuctsLocationFrac
     return self.SizingInfo(__method__.to_s)
   end
@@ -963,18 +969,6 @@ class Constants
   end
   def self.SizingInfoDuctsReturnSurfaceArea
     return self.SizingInfo(__method__.to_s)
-  end
-  def self.SizingInfoSpaceCeilingInsulated(space)
-    return self.SizingInfo(__method__.to_s, space)
-  end
-  def self.SizingInfoSpaceHasInfiltration(space)
-    return self.SizingInfo(__method__.to_s, space)
-  end
-  def self.SizingInfoSpaceIsVented(space)
-    return self.SizingInfo(__method__.to_s, space)
-  end
-  def self.SizingInfoSpaceWallsInsulated(space)
-    return self.SizingInfo(__method__.to_s, space)
   end
   def self.SizingInfoDuctsSupplyLoss
     return self.SizingInfo(__method__.to_s)
@@ -1036,6 +1030,15 @@ class Constants
   def self.SizingInfoSIPWallInsThickness(surface)
     return self.SizingInfo(__method__.to_s, surface)
   end
+  def self.SizingInfoSlabRvalue(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoSpaceCeilingInsulated(space)
+    return self.SizingInfo(__method__.to_s, space)
+  end
+  def self.SizingInfoSpaceWallsInsulated(space)
+    return self.SizingInfo(__method__.to_s, space)
+  end
   def self.SizingInfoWallType(surface)
     return self.SizingInfo(__method__.to_s, surface)
   end
@@ -1047,6 +1050,12 @@ class Constants
   end
   def self.SizingInfoWoodStudWallCavityRvalue(surface)
     return self.SizingInfo(__method__.to_s, surface)
+  end
+  def self.SizingInfoZoneInfiltrationCFM(zone)
+    return self.SizingInfo(__method__.to_s, zone)
+  end
+  def self.SizingInfoZoneInfiltrationELA(zone)
+    return self.SizingInfo(__method__.to_s, zone)
   end
   def self.SlabFoundationType
     return 'slab'

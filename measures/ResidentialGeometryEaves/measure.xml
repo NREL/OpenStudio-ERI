@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>0bd5b88e-3a50-4671-8280-5204f310e02b</version_id>
-  <version_modified>20170310T183614Z</version_modified>
+  <version_id>c38dc7ac-560d-4acc-9ce9-8a471dc284c0</version_id>
+  <version_modified>20170311T001842Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -96,12 +96,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>04A5DC6D</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0E779DFB</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_FR_Denver_AspectRatioHalf.osm</filename>
@@ -206,10 +200,16 @@
       <checksum>B51B01FA</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07204EC3</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>04ACB78D</checksum>
+      <checksum>53D20E39</checksum>
     </file>
   </files>
 </measure>

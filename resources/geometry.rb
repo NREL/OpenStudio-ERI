@@ -254,6 +254,22 @@ class Geometry
         end
         return floor_area
     end
+    
+    def self.get_volume_from_spaces(spaces, apply_multipliers=false, runner=nil)
+      volume = 0
+      spaces.each do |space|
+        mult = 1.0
+        if apply_multipliers
+            mult = space.multiplier.to_f
+        end
+        volume += OpenStudio.convert(space.volume * mult,"m^3","ft^3").get
+      end
+      if volume == 0 and not runner.nil?
+          runner.registerError("Could not find any volume.")
+          return nil
+      end
+      return volume    
+    end
 
     def self.get_finished_floor_area_from_spaces(spaces, apply_multipliers=false, runner=nil)
         floor_area = 0
@@ -297,7 +313,7 @@ class Geometry
         if apply_multipliers
             mult = space.multiplier.to_f
         end
-        volume += OpenStudio.convert(space.floorArea * self.space_height(space) * mult,"m^2","ft^2").get
+        volume += OpenStudio.convert(space.volume * mult,"m^3","ft^3").get
       end
       if volume == 0 and not runner.nil?
           runner.registerError("Could not find any above-grade finished volume.")
@@ -747,7 +763,6 @@ class Geometry
                     edges << new_combi_edge
                 end
                 
-                puts new_combi_edges.size
                 break if new_combi_edges.size == 0 # no new combinations found
             end
         end
@@ -1053,13 +1068,13 @@ class Geometry
         return interzonal_walls
     end
     
-    def self.get_spaces_interzonal_floors(spaces)
+    def self.get_spaces_interzonal_floors_and_ceilings(spaces)
         interzonal_floors = []
         spaces.each do |space|
             next if not Geometry.space_is_finished(space)
             space.surfaces.each do |surface|
                 next if interzonal_floors.include?(surface)
-                next if surface.surfaceType.downcase != "floor"
+                next if surface.surfaceType.downcase != "floor" and surface.surfaceType.downcase != "roofceiling"
                 next if not surface.adjacentSurface.is_initialized
                 next if Geometry.space_is_finished(surface.adjacentSurface.get.space.get) == Geometry.space_is_finished(space)
                 interzonal_floors << surface

@@ -12,6 +12,7 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/weather"
+require "#{File.dirname(__FILE__)}/resources/schedules"
 
 #start the measure
 class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
@@ -142,10 +143,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     # FIXME FIXME FIXME: Temporary assignments
     @hpSizeForMaxLoad = false # Auto size the heat pump heating capacity based on the heating design temperature (if the heating capacity is larger than the cooling capacity)
     @spaceConditionedMult = 1.0
-    @basement_wall_ins_height = 8.0
-    @basement_wall_rigid_r = 10.0
-    @space_ela = 0.6876
-    @zone_Water_Remove_Cap_Ft_DB_RH_coefficients = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843] # FIXME
     # FIXME FIXME FIXME: Temporary assignments
     
     northAxis = model.getBuilding.northAxis
@@ -283,7 +280,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             temps['cool'] = finished_cool_design_temp
             temps['dehum'] = finished_dehum_design_temp
             
-        elsif Geometry.get_garage_spaces(model.getSpaces, model).include?(space)
+        elsif space.name.to_s.start_with?(Constants.GarageSpace)
             # Garage
             temps['heat'] = weather.design.HeatingDrybulb + 13
             temps['dehum'] = weather.design.DehumidDrybulb + 7
@@ -296,9 +293,9 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 next if surface.outsideBoundaryCondition.downcase != "surface"
                 adjacent_space = surface.adjacentSurface.get.space.get
                 if Geometry.space_is_finished(adjacent_space)
-                    garage_area_under_finished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get # FIXME: * Math::cos(surface.tilt.deg2rad)
+                    garage_area_under_finished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get # FIXME: Why does sizing.py have "* Math::cos(surface.tilt.deg2rad)"
                 else
-                    garage_area_under_unfinished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get # FIXME: * Math::cos(surface.tilt.deg2rad)
+                    garage_area_under_unfinished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get # FIXME: Why does sizing.py have "* Math::cos(surface.tilt.deg2rad)"
                 end
             end
             
@@ -320,52 +317,43 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                                  (12 * garage_area_under_unfinished / garage_area))
             end
             
-        elsif Geometry.get_unfinished_basement_spaces(model.getSpaces).include?(space) or Geometry.get_crawl_spaces(model.getSpaces).include?(space)
-            # Unfinished basement, Crawlspace
-            temps = calculate_space_design_temps(runner, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
-            return nil if temps.nil?
-            
-        elsif Geometry.get_pier_beam_spaces(model.getSpaces).include?(space)
-            # Pier & beam
-            temps['heat'] = weather.design.HeatingDrybulb
-            temps['cool'] = weather.design.CoolingDrybulb
-            temps['dehum'] = weather.design.DehumidDrybulb
-            
-        elsif Geometry.get_unfinished_attic_spaces(model.getSpaces, model).include?(space)
+        elsif space.name.to_s.start_with?(Constants.UnfinishedAtticSpace)
         
-            is_vented = get_unit_feature(runner, unit, Constants.SizingInfoSpaceIsVented(space), 'boolean')
-            return nil if is_vented.nil?
+            infiltration_cfm = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double')
+            return nil if infiltration_cfm.nil?
             
             # Get area-weighted average roofing material absorptance
             attic_floor_r = 0.0
             attic_roof_r = 0.0
-            total_area = 0.0
+            total_floor_area = 0.0
+            total_roof_area = 0.0
             space.surfaces.each do |surface|
                 surf_area = OpenStudio::convert(surface.netArea,"m^2","ft^2").get
                 uvalue = get_surface_uvalue(runner, surface, surface.surfaceType)
                 return nil if uvalue.nil?
                 if surface.surfaceType.downcase == "floor"
                     attic_floor_r += (surf_area / uvalue)
+                    total_floor_area += surf_area
                 elsif surface.surfaceType.downcase == "roofceiling"
                     attic_roof_r += (surf_area / uvalue)
+                    total_roof_area += surf_area
                 end
-                total_area += surf_area
             end
-            attic_floor_r = attic_floor_r / total_area
-            attic_roof_r = attic_roof_r / total_area
-        
+            attic_floor_r = attic_floor_r / total_floor_area
+            attic_roof_r = attic_roof_r / total_roof_area
+            
             # Unfinished attic
             if attic_floor_r < attic_roof_r
             
                 # Attic is considered to be encapsulated. MJ8 says to use an attic 
                 # temperature of 95F, however alternative approaches are permissible
                 
-                if is_vented
+                if infiltration_cfm > 0
                     temps['heat'] = weather.design.HeatingDrybulb
                     temps['cool'] = weather.design.CoolingDrybulb + 40 # This is the number from a California study with dark shingle roof and similar ventilation.
                     temps['dehum'] = weather.design.DehumidDrybulb
-                else # not is_vented
-                    temps = calculate_space_design_temps(runner, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
+                else # infiltration_cfm = 0
+                    temps = calculate_space_design_temps(runner, model.getBuildingUnits, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
                     temps['cool'] = nil # FIXME: (ua_max_cool_design_temp - ua_percent_ua_from_ceiling * (ua_max_cool_design_temp - ua_min_cool_design_temp))
                     return nil if temps.nil?
                 end
@@ -380,7 +368,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                 tot_roof_area = 0
                 temps['cool'] = 0
                 
-                Geometry.get_spaces_above_grade_exterior_roofs([space]).each do |roof|
+                space.surfaces.each do |surface|
+                    next if surface.surfaceType.downcase != "roofceiling"
                     tot_roof_area += surface.netArea
 
                     roof_color = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofColor(surface), 'string')
@@ -391,15 +380,15 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                     if has_radiant_barrier.nil?
                         has_radiant_barrier = false
                     end
-                
-                    if is_vented
+                    
+                    if infiltration_cfm > 0
                         if not has_radiant_barrier
-                            temps['cool'] = 150 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]
+                            temps['cool'] += (150 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]) * surface.netArea
                         else
-                            temps['cool'] = 130 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]
+                            temps['cool'] += (130 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]) * surface.netArea
                         end
                         
-                    else # not is_vented
+                    else # infiltration_cfm = 0
                 
                         if not has_radiant_barrier
                             if [Constants.RoofMaterialAsphaltShingles, Constants.RoofMaterialTarGravel].include?(roof_material)
@@ -481,9 +470,19 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             
             end
             
+        elsif space.name.to_s.start_with?(Constants.PierBeamSpace)
+            # Pier & beam
+            temps['heat'] = weather.design.HeatingDrybulb
+            temps['cool'] = weather.design.CoolingDrybulb
+            temps['dehum'] = weather.design.DehumidDrybulb
+            
+        elsif space.name.to_s.start_with?(Constants.UnfinishedBasementSpace) or space.name.to_s.start_with?(Constants.CrawlSpace)
+            # Unfinished basement, Crawlspace
+            temps = calculate_space_design_temps(runner, model.getBuildingUnits, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
+            return nil if temps.nil?
+            
         else
-            runner.registerError("Unexpected space '#{space.name.to_s}' in get_space_design_temps.")
-            return nil
+            next
             
         end
         
@@ -506,14 +505,14 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         zone_loads = processLoadDoors(runner, mj8, thermal_zone, zone_loads, weather)
         zone_loads = processLoadWalls(runner, mj8, unit, thermal_zone, zone_loads, weather, northAxis)
         zone_loads = processLoadRoofs(runner, mj8, unit, thermal_zone, zone_loads, weather)
-        zone_loads = processLoadFloors(runner, mj8, thermal_zone, zone_loads, weather)
+        zone_loads = processLoadFloors(runner, mj8, unit, thermal_zone, zone_loads, weather)
         zone_loads = processInfiltrationVentilation(runner, mj8, unit, thermal_zone, zone_loads, weather, unit_shelter_class, building_num_stories)
         return nil if zone_loads.nil?
         zones_loads[thermal_zone] = zone_loads
     end
     
     # Varying loads (ensure coincidence of loads during the day)
-    # FIXME: Currently handles internal gains but not window loads
+    # TODO: Currently handles internal gains but not window loads (same as BEopt).
     zones_sens = {}
     zones_lat = {}
     thermal_zones.each do |thermal_zone|
@@ -948,12 +947,14 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         
     # Foundation walls
     Geometry.get_spaces_below_grade_exterior_walls(thermal_zone.spaces).each do |wall|
-        wall_uvalue = get_surface_uvalue(runner, wall, wall.surfaceType)
-        return nil if wall_uvalue.nil?
+        wall_rvalue = wall_ins_height = get_unit_feature(runner, unit, Constants.SizingInfoBasementWallRvalue(wall), 'double')
+        return nil if wall_rvalue.nil?
+        wall_ins_height = get_unit_feature(runner, unit, Constants.SizingInfoBasementWallInsulationHeight(wall), 'double')
+        return nil if wall_ins_height.nil?
         
         k_soil = OpenStudio::convert(BaseMaterial.Soil.k_in,"in","ft").get
-        ins_wall_uvalue = wall_uvalue # FIXME
-        unins_wall_uvalue = 1.0 / ((1.0 / wall_uvalue) - @basement_wall_rigid_r) # FIXME
+        ins_wall_uvalue = 1.0 / wall_rvalue
+        unins_wall_uvalue = 1.0 / (Material.Concrete8in.rvalue + Material.AirFilmVertical.rvalue)
         above_grade_height = Geometry.space_height(wall.space.get) - Geometry.surface_height(wall)
         
         # Calculated based on Manual J 8th Ed. procedure in section A12-4 (15% decrease due to soil thermal storage)
@@ -963,7 +964,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             r_soil = (Math::PI * d / 2.0) / k_soil
             if d <= above_grade_height
                 r_wall = 1.0 / ins_wall_uvalue + AirFilms.OutsideR
-            elsif d <= @basement_wall_ins_height
+            elsif d <= wall_ins_height
                 r_wall = 1.0 / ins_wall_uvalue
             else
                 r_wall = 1.0 / unins_wall_uvalue
@@ -1055,7 +1056,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return zone_loads
   end
   
-  def processLoadFloors(runner, mj8, thermal_zone, zone_loads, weather)
+  def processLoadFloors(runner, mj8, unit, thermal_zone, zone_loads, weather)
     '''
     Heating, Cooling, and Dehumidification Loads: Floors
     '''
@@ -1076,7 +1077,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Interzonal Floors
-    Geometry.get_spaces_interzonal_floors(thermal_zone.spaces).each do |floor|
+    Geometry.get_spaces_interzonal_floors_and_ceilings(thermal_zone.spaces).each do |floor|
         floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
         return nil if floor_uvalue.nil?
         adjacent_space = floor.adjacentSurface.get.space.get
@@ -1099,8 +1100,13 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
     # Ground Floors (Slab)
     Geometry.get_spaces_above_grade_ground_floors(thermal_zone.spaces).each do |floor|
-        floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
-        return nil if floor_uvalue.nil?
+        #TODO: Revert this some day.
+        #Get stored u-value since the surface u-value is fictional
+        #floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
+        #return nil if floor_uvalue.nil?
+        floor_rvalue = get_unit_feature(runner, unit, Constants.SizingInfoSlabRvalue(floor), 'double')
+        return nil if floor_rvalue.nil?
+        floor_uvalue = 1.0/floor_rvalue
         zone_loads.Heat_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.heat_setpoint - weather.data.GroundMonthlyTemps[0])
     end
 
@@ -1113,6 +1119,15 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     '''
     
     return nil if mj8.nil? or zone_loads.nil?
+    
+    if Geometry.zone_is_below_grade(thermal_zone)
+        zone_loads.Heat_Infil =  0 # TODO: Calculate using actual basement infiltration?
+        zone_loads.Cool_Infil_Sens = 0
+        zone_loads.Cool_Infil_Lat = 0
+        zone_loads.Dehumid_Infil_Sens = 0
+        zone_loads.Dehumid_Infil_Lat = 0
+        return zone_loads
+    end
     
     dehumDesignWindSpeed = [weather.design.CoolingWindspeed, weather.design.HeatingWindspeed].max
     ft2in = OpenStudio::convert(1.0, "ft", "in").get
@@ -1139,9 +1154,12 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
         return nil
     end
     
-    icfm_Cooling = @space_ela * ft2in ** 2 * (c_s * mj8.ctd.abs + c_w * (weather.design.CoolingWindspeed / mph2m_s) ** 2) ** 0.5
-    icfm_Heating = @space_ela * ft2in ** 2 * (c_s * mj8.htd.abs + c_w * (weather.design.HeatingWindspeed / mph2m_s) ** 2) ** 0.5
-    icfm_Dehumid = @space_ela * ft2in ** 2 * (c_s * mj8.dtd.abs + c_w * (dehumDesignWindSpeed / mph2m_s) ** 2) ** 0.5
+    ela = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationELA(thermal_zone), 'double', true)
+    return nil if ela.nil?
+    
+    icfm_Cooling = ela * ft2in ** 2 * (c_s * mj8.ctd.abs + c_w * (weather.design.CoolingWindspeed / mph2m_s) ** 2) ** 0.5
+    icfm_Heating = ela * ft2in ** 2 * (c_s * mj8.htd.abs + c_w * (weather.design.HeatingWindspeed / mph2m_s) ** 2) ** 0.5
+    icfm_Dehumid = ela * ft2in ** 2 * (c_s * mj8.dtd.abs + c_w * (dehumDesignWindSpeed / mph2m_s) ** 2) ** 0.5
 
     q_unb, q_bal_Sens, q_bal_Lat, ventMultiplier = get_ventilation_rates(runner, unit)
     return nil if q_unb.nil? or q_bal_Sens.nil? or q_bal_Lat.nil? or ventMultiplier.nil?
@@ -1161,14 +1179,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
     zone_loads.Dehumid_Infil_Sens = 1.1 * mj8.acf * cfm_Dehumid_Load_Sens * mj8.dtd
     zone_loads.Dehumid_Infil_Lat = 0.68 * mj8.acf * cfm_Dehumid_Load_Lat * (mj8.dehum_design_grains - mj8.grains_indoor_dehumid)
-    
-    if Geometry.zone_is_below_grade(thermal_zone)
-        zone_loads.Heat_Infil =  0 # FIXME: Calculate using actual basement infiltration?
-        zone_loads.Cool_Infil_Sens = 0
-        zone_loads.Cool_Infil_Lat = 0
-        zone_loads.Dehumid_Infil_Sens = 0
-        zone_loads.Dehumid_Infil_Lat = 0
-    end
     
     return zone_loads
   end
@@ -1264,7 +1274,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             sched_values = [sched.value]*24
         elsif sched.is_a?(OpenStudio::Model::ScheduleFixedInterval)
             # Override with smoothed schedules
-            # FIXME: Is there a better approach here?
+            # TODO: Is there a better approach here?
             if gain.name.to_s.start_with?(Constants.ObjectNameShower)
                 sched_values = [0.011, 0.005, 0.003, 0.005, 0.014, 0.052, 0.118, 0.117, 0.095, 0.074, 0.060, 0.047, 0.034, 0.029, 0.026, 0.025, 0.030, 0.039, 0.042, 0.042, 0.042, 0.041, 0.029, 0.021]
                 max_mult = 1.05 * 1.04
@@ -1332,6 +1342,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     
     # TODO: Ideally this would require an iterative procedure. A possible enhancement for BEopt2.
     
+    # TODO ASKJON: Ask about where max(0,foo) should be used below
     unit_init = UnitInitialValues.new
     unit_init.Heat_Load = 0
     unit_init.Cool_Load_Sens = 0
@@ -1340,8 +1351,6 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     unit_init.Dehumid_Load_Lat = 0
     zones_loads.keys.each do |thermal_zone|
         zone_loads = zones_loads[thermal_zone]
-        
-        # FIXME ASKJON: Ask about where max(0,foo) should be used below
         
         # Heating
         unit_init.Heat_Load += [zone_loads.Heat_Windows + zone_loads.Heat_Doors +
@@ -1353,7 +1362,7 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                                     zone_loads.Cool_Walls + zone_loads.Cool_Floors +
                                     zone_loads.Cool_Roofs + zone_loads.Cool_Infil_Sens +
                                     zone_loads.Cool_IntGains_Sens
-        unit_init.Cool_Load_Lat += [zone_loads.Cool_Infil_Lat + zone_loads.Cool_IntGains_Lat, 0].max
+        unit_init.Cool_Load_Lat += zone_loads.Cool_Infil_Lat + zone_loads.Cool_IntGains_Lat
         
         # Dehumidification
         unit_init.Dehumid_Load_Sens += zone_loads.Dehumid_Windows + zone_loads.Dehumid_Doors + 
@@ -1362,6 +1371,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                                        zone_loads.Dehumid_IntGains_Sens
         unit_init.Dehumid_Load_Lat += zone_loads.Dehumid_Infil_Lat + zone_loads.Dehumid_IntGains_Lat
     end
+    
+    unit_init.Cool_Load_Lat = [unit_init.Cool_Load_Lat, 0].max
     
     unit_init.Cool_Load_Tot = unit_init.Cool_Load_Sens + unit_init.Cool_Load_Lat
     shr = [unit_init.Cool_Load_Sens / unit_init.Cool_Load_Tot, 1.0].min
@@ -1414,28 +1425,28 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
 
             walls_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceWallsInsulated(ducts.LocationSpace), 'boolean')
             ceiling_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceCeilingInsulated(ducts.LocationSpace), 'boolean')
-            has_infiltration = get_unit_feature(runner, unit, Constants.SizingInfoSpaceHasInfiltration(ducts.LocationSpace), 'boolean')
-            return nil if walls_insulated.nil? or ceiling_insulated.nil? or has_infiltration.nil?
+            infiltration_cfm = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationCFM(ducts.LocationSpace.thermalZone.get), 'double')
+            return nil if walls_insulated.nil? or ceiling_insulated.nil? or infiltration_cfm.nil?
             
             if not ceiling_insulated
                 if not walls_insulated
-                    if not has_infiltration
+                    if infiltration_cfm == 0
                         unit_final.dse_Fregain = 0.55     # Uninsulated ceiling, uninsulated walls, no infiltration                            
-                    else # has_infiltration
+                    else # infiltration_cfm > 0
                         unit_final.dse_Fregain = 0.51     # Uninsulated ceiling, uninsulated walls, with infiltration
                     end
                 else # walls_insulated
-                    if not has_infiltration
+                    if infiltration_cfm == 0
                         unit_final.dse_Fregain = 0.78    # Uninsulated ceiling, insulated walls, no infiltration
-                    else # has_infiltration
+                    else # infiltration_cfm > 0
                         unit_final.dse_Fregain = 0.74    # Uninsulated ceiling, insulated walls, with infiltration                        
                     end
                 end
             else # ceiling_insulated
                 if walls_insulated
-                    if not has_infiltration
+                    if infiltration_cfm == 0
                         unit_final.dse_Fregain = 0.32     # Insulated ceiling, insulated walls, no infiltration
-                    else # has_infiltration
+                    else # infiltration_cfm > 0
                         unit_final.dse_Fregain = 0.27     # Insulated ceiling, insulated walls, with infiltration                            
                     end
                 else # not walls_insulated
@@ -1447,16 +1458,16 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
             
             walls_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceWallsInsulated(ducts.LocationSpace), 'boolean')
             ceiling_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceCeilingInsulated(ducts.LocationSpace), 'boolean')
-            has_infiltration = get_unit_feature(runner, unit, Constants.SizingInfoSpaceHasInfiltration(ducts.LocationSpace), 'boolean')
-            return nil if walls_insulated.nil? or ceiling_insulated.nil? or has_infiltration.nil?
+            infiltration_cfm = get_unit_feature(runner, unit, Constants.SizingInfoZoneInfiltrationCFM(ducts.LocationSpace.thermalZone.get), 'double')
+            return nil if walls_insulated.nil? or ceiling_insulated.nil? or infiltration_cfm.nil?
             
-            if has_infiltration
+            if infiltration_cfm > 0
                 if ceiling_insulated
                     unit_final.dse_Fregain = 0.12    # Insulated ceiling and uninsulated walls
                 else
                     unit_final.dse_Fregain = 0.50    # Uninsulated ceiling and uninsulated walls
                 end
-            else # has_infiltration
+            else # infiltration_cfm == 0
                 if not ceiling_insulated and not walls_insulated
                     unit_final.dse_Fregain = 0.60    # Uninsulated ceiling and uninsulated walls
                 elsif ceiling_insulated and not walls_insulated
@@ -2467,7 +2478,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
                                Liquid.H2O_l.rho * OpenStudio::convert(1,"ft^3","L").get * OpenStudio::convert(1,"day","hr").get].max
 
     # Determine the rated water removal rate using the performance curve
-    dehumid_CurveValue = MathTools.biquadratic(OpenStudio::convert(mj8.cool_setpoint,"F","C").get, mj8.RH_indoor_dehumid * 100, @zone_Water_Remove_Cap_Ft_DB_RH_coefficients)
+    zone_Water_Remove_Cap_Ft_DB_RH_coefficients = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843] # FIXME
+    dehumid_CurveValue = MathTools.biquadratic(OpenStudio::convert(mj8.cool_setpoint,"F","C").get, mj8.RH_indoor_dehumid * 100, zone_Water_Remove_Cap_Ft_DB_RH_coefficients)
     unit_final.Dehumid_WaterRemoval = dehumid_WaterRemoval / dehumid_CurveValue
   
     return unit_final
@@ -2476,7 +2488,8 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
   def get_shelter_class(model, unit)
 
     neighbor_offset_ft = Geometry.get_closest_neighbor_distance(model)
-    unit_height_ft = Geometry.get_height_of_spaces(unit.spaces)
+    
+    unit_height_ft = Geometry.get_height_of_spaces(Geometry.get_finished_spaces(unit.spaces))
     exposed_wall_ratio = Geometry.calculate_above_grade_exterior_wall_area(unit.spaces) / 
                          Geometry.calculate_above_grade_wall_area(unit.spaces)
 
@@ -3254,9 +3267,9 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     return t_solair
   end
   
-  def calculate_space_design_temps(runner, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
+  def calculate_space_design_temps(runner, units, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
     if Geometry.space_is_finished(space)
-        runner.registerError("Method not appropriate for finished space: '#{space.name.to_s}'.")
+        runner.registerError("Method should not be called for a finished space: '#{space.name.to_s}'.")
         return nil
     end
   
@@ -3275,7 +3288,10 @@ class ProcessHVACSizing < OpenStudio::Ruleset::ModelUserScript
     end
     
     # Infiltration UA
-    space_UAs['infil'] = 0.0 # FIXME
+    infiltration_cfm = get_model_feature(runner, units, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double')
+    return nil if infiltration_cfm.nil?
+    outside_air_density = UnitConversion.atm2Btu_ft3(weather.header.LocalPressure) / (Gas.Air.r * (weather.data.AnnualAvgDrybulb + 460.0))
+    space_UAs['infil'] = infiltration_cfm * outside_air_density * Gas.Air.cp * OpenStudio::convert(1.0,"hr","min").get
     
     # Total UA
     total_UA = 0.0

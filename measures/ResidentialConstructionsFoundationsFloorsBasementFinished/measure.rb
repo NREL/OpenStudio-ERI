@@ -334,6 +334,15 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Rulese
             unit.setFeature(Constants.SizingInfoSpaceCeilingInsulated(space), false)
         end
     end
+    if not wall_surfaces.empty?
+        wall_surfaces.each do |surface|
+            units.each do |unit|
+                next if not unit.spaces.include?(surface.space.get)
+                unit.setFeature(Constants.SizingInfoBasementWallInsulationHeight(surface), fbsmtWallInsHeight)
+                unit.setFeature(Constants.SizingInfoBasementWallRvalue(surface), overall_wall_Rvalue)
+            end
+        end
+    end
 
     # Remove any constructions/materials that aren't used
     HelperMethods.remove_unused_constructions_and_materials(model, runner)
