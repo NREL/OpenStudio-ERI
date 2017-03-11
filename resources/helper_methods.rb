@@ -350,7 +350,7 @@ def get_argument_map(model, measure, provided_args, lookup_file, measure_name, r
     validate_measure_args(measure_args, provided_args, lookup_file, measure_name, runner)
     
     # Convert to argument map needed by OS
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(measure_args)
+    argument_map = OpenStudio::Ruleset.convertOSArgumentVectorToMap(measure_args)
     measure_args.each do |arg|
         temp_arg_var = arg.clone
         if provided_args[arg.name]
@@ -365,7 +365,7 @@ def run_measure(model, measure, argument_map, runner)
     begin
 
       # run the measure
-      runner_child = OpenStudio::Measure::OSRunner.new
+      runner_child = OpenStudio::Ruleset::OSRunner.new
       if model.instance_of? OpenStudio::Workspace
         runner_child.setLastOpenStudioModel(runner.lastOpenStudioModel.get)
       end
