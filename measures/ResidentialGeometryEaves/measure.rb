@@ -1549,6 +1549,10 @@ class CreateResidentialEaves < OpenStudio::Measure::ModelMeasure
       runner.registerAsNotApplicable("No surfaces found for adding eaves.")
       return true
     end
+    
+    shading_surface_group.shadingSurfaces.each do |shading_surface|
+      runner.registerInfo("Added #{shading_surface.name}")
+    end
    
     return true
 

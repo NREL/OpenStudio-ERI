@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>0ef04e70-7385-44e8-984f-4f81ddc4a025</version_id>
-  <version_modified>20170311T210603Z</version_modified>
+  <version_id>ed3d81be-cfbf-45e2-9be2-f3c0f43c47d9</version_id>
+  <version_modified>20170313T160436Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
@@ -141,12 +141,6 @@
       <checksum>38632BB3</checksum>
     </file>
     <file>
-      <filename>_load_tests.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>04798DAD</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -271,12 +265,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>4BCD1F38</checksum>
-    </file>
-    <file>
-      <filename>_hvac_tests.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1A5399D4</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading.osm</filename>
