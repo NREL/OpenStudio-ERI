@@ -87,7 +87,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     measures = {}
     Dir.foreach(measures_dir) do |measure_subdir|
       next if !measure_subdir.include? 'Residential'
-      next if !measure_subdir.include? 'ResidentialLocation' # TODO: Remove
+      next if !["ResidentialLocation", "ResidentialGeometrySingleFamilyDetached", "ResidentialGeometryNumBedsAndBaths", "ResidentialConstructionsFoundationsFloorsSlab", "ResidentialConstructionsWallsExteriorWoodStud", "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", "ResidentialConstructionsUninsulatedSurfaces", "ResidentialHVACFurnaceFuel", "ResidentialHVACHeatingSetpoints"].include? measure_subdir # TODO: Remove
       full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
       check_file_exists(full_measure_path, runner)      
       measure_instance = get_measure_instance(full_measure_path)
@@ -98,7 +98,11 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     doc = REXML::Document.new(File.read(hpxml_file))
     zip = REXML::XPath.first(doc, '//HPXML/Building/Site/Address/ZipCode').text
     
-    measures = measures.select {|k, v| k == "ResidentialLocation"} # TODO: Remove
+    select_measures = {} # TODO: Remove
+    ["ResidentialLocation", "ResidentialGeometrySingleFamilyDetached", "ResidentialGeometryNumBedsAndBaths", "ResidentialConstructionsFoundationsFloorsSlab", "ResidentialConstructionsWallsExteriorWoodStud", "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", "ResidentialConstructionsUninsulatedSurfaces", "ResidentialHVACFurnaceFuel", "ResidentialHVACHeatingSetpoints"].each do |k|
+      select_measures[k] = measures[k] 
+    end
+    measures = select_measures
     
     # Call each measure for sample to build up model
     measures.keys.each do |measure_subdir|
@@ -126,11 +130,11 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
         type = arg.type.valueName
         case type
         when "Boolean"
-          args_hash[arg.name] = arg.defaultValueAsBool
+          args_hash[arg.name] = arg.defaultValueAsBool.to_s
         when "Double"
-          args_hash[arg.name] = arg.defaultValueAsDouble
+          args_hash[arg.name] = arg.defaultValueAsDouble.to_s
         when "Integer"
-          args_hash[arg.name] = arg.defaultValueAsInteger
+          args_hash[arg.name] = arg.defaultValueAsInteger.to_s
         when "String"
           args_hash[arg.name] = arg.defaultValueAsString
         when "Choice"

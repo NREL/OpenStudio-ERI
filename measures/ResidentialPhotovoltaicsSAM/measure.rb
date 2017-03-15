@@ -236,7 +236,7 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Measure::ModelMeasure
     
     curve_cubic = micro_turbine.electricalEfficiencyFunctionofTemperatureCurve.to_CurveCubic.get
     curve_cubic.setName("null input curve cubic 1")
-    curve_cubic.setCoefficient1Constant(1)
+    curve_cubic.setCoefficient1Constant(10000000000000000000000000000)
     curve_cubic.setCoefficient2x(0)
     curve_cubic.setCoefficient3xPOW2(0)
     curve_cubic.setCoefficient4xPOW3(0)
@@ -245,7 +245,7 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Measure::ModelMeasure
     
     curve_cubic = micro_turbine.electricalEfficiencyFunctionofPartLoadRatioCurve.to_CurveCubic.get
     curve_cubic.setName("null input curve cubic 2")
-    curve_cubic.setCoefficient1Constant(1)
+    curve_cubic.setCoefficient1Constant(10000000000000000000000000000)
     curve_cubic.setCoefficient2x(0)
     curve_cubic.setCoefficient3xPOW2(0)
     curve_cubic.setCoefficient4xPOW3(0)

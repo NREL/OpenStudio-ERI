@@ -39,13 +39,13 @@ class HPXMLBuildModelTest < MiniTest::Test
     assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["measures_dir"]))}' does not exist.")      
   end
   
-  def test_location
+  def test_minimal_single_family_detached
     args_hash = {}
     args_hash["measures_dir"] = ".."
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ClimateZones"=>1, "Site"=>1, "YearDescription"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1}
     expected_values = {}
-    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)       
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 62)
   end
 
   private
@@ -118,14 +118,14 @@ class HPXMLBuildModelTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
-    assert(result.info.size == num_infos)
+    assert(result.info.size == num_infos)    
     assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model
     final_objects = get_objects(model)
     
     # get new and deleted objects
-    obj_type_exclusions = []
+    obj_type_exclusions = ["ClimateZones", "Site", "YearDescription", "ScheduleDay", "ScheduleRuleset", "ScheduleRule", "ScheduleTypeLimits", "ScheduleConstant", "ZoneHVACEquipmentList", "SizingSystem", "SizingZone", "Node", "Building", "PortList", "CurveExponent", "CurveCubic"]
     all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
     all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
     
