@@ -96,7 +96,31 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
     # TODO: Parse hpxml and update measure arguments
     doc = REXML::Document.new(File.read(hpxml_file))
-    zip = REXML::XPath.first(doc, '//HPXML/Building/Site/Address/ZipCode').text
+    
+    event_types = []
+    doc.elements.each('*/*/ProjectStatus/EventType') do |el|
+      next unless el.text == "audit" # TODO: consider all event types?
+      event_types << el.text
+    end
+    
+    # ResidentialLocation
+    city_municipality = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/CityMunicipality/text()")
+    state_code = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/StateCode/text()")
+    zip_code = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/ZipCode/text()")
+    
+    lat, lng = get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
+    if lat.nil? and lng.nil?
+      return false
+    end
+    
+    weather_file_name = get_epw_from_lat_lng(runner, resources_dir, lat, lng)
+    if weather_file_name.nil?
+      return false
+    end
+    
+    measures["ResidentialLocation"]["weather_file_name"] = weather_file_name
+    
+    # Residential...
     
     select_measures = {} # TODO: Remove
     ["ResidentialLocation", "ResidentialGeometrySingleFamilyDetached", "ResidentialGeometryNumBedsAndBaths", "ResidentialConstructionsFoundationsFloorsSlab", "ResidentialConstructionsWallsExteriorWoodStud", "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", "ResidentialConstructionsUninsulatedSurfaces", "ResidentialHVACFurnaceFuel", "ResidentialHVACHeatingSetpoints"].each do |k|
@@ -145,7 +169,55 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       end
     end
     return args_hash
-  end  
+  end
+  
+  def get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
+    postalcodes = CSV.read(File.expand_path(File.join(resources_dir, "postalcodes.csv")))
+    postalcodes.each do |row|
+      if not zip_code[0].empty?
+        if zip_code[0] == row[0]
+          return row[4], row[5]
+        end
+      elsif not city_municipality[0].empty? and not state_code[0].empty?
+        if city_municipality[0].downcase == row[1].downcase and state_code[0].downcase == row[2].downcase
+          return row[4], row[5]
+        end
+      else
+        runner.registerError("Could not find lat, lng from address.")
+        return nil
+      end
+    end
+  end
+  
+  def get_epw_from_lat_lng(runner, resources_dir, lat, lng)
+    lat_lng_table = CSV.read(File.expand_path(File.join(resources_dir, "lat_long_table.csv")))
+    meters = []
+    lat_lng_table.each do |row|
+      meters << haversine(lat.to_f, lng.to_f, row[1].to_f, row[2].to_f)
+    end
+    row = lat_lng_table[meters.each_with_index.min[1]]
+    return "USA_CO_Denver_Intl_AP_725650_TMY3.epw" # TODO: Remove
+    return row[0]  
+  end
+  
+  def haversine(lat1, long1, lat2, long2)
+    dtor = Math::PI/180
+    r = 6378.14*1000
+
+    rlat1 = lat1 * dtor 
+    rlong1 = long1 * dtor 
+    rlat2 = lat2 * dtor 
+    rlong2 = long2 * dtor 
+
+    dlon = rlong1 - rlong2
+    dlat = rlat1 - rlat2
+
+    a = Math::sin(dlat/2) ** 2 + Math::cos(rlat1) * Math::cos(rlat2) * Math::sin(dlon/2) ** 2
+    c = 2 * Math::atan2(Math::sqrt(a), Math::sqrt(1-a))
+    d = r * c
+
+    return d
+  end
   
 end
 
