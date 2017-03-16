@@ -7,28 +7,26 @@ require 'fileutils'
 
 class HPXMLBuildModelTest < MiniTest::Test
 
-  def test_invalid_hpxml_directory
+  def test_invalid_hpxml_file_path
     args_hash = {}
-    args_hash["hpxml_directory"] = "./resuorces"
-    args_hash["hpxml_file_name"] = "audit.xml"
+    args_hash["hpxml_file_path"] = "./resources/audit.txt"
     args_hash["measures_dir"] = ".."
     result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["hpxml_directory"], args_hash["hpxml_file_name"]))}' does not exist or is not an .xml file.")      
+    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["hpxml_file_path"]))}' does not exist or is not an .xml file.")      
   end
 
-  def test_invalid_hpxml_file_name
+  def test_invalid_weather_file_path
     args_hash = {}
-    args_hash["hpxml_directory"] = "./resources"
-    args_hash["hpxml_file_name"] = "audit.txt"
+    args_hash["weather_file_path"] = "./resources/USA_CO_Denver_Intl_AP_725650_TMY3.txt"
     args_hash["measures_dir"] = ".."
     result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["hpxml_directory"], args_hash["hpxml_file_name"]))}' does not exist or is not an .xml file.")      
-  end
-
+    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_file_path"]))}' does not exist or is not an .epw file.")      
+  end  
+  
   def test_invalid_measures_path
     args_hash = {}
     args_hash["measures_dir"] = "../../mesaures"
@@ -39,14 +37,24 @@ class HPXMLBuildModelTest < MiniTest::Test
     assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["measures_dir"]))}' does not exist.")      
   end
   
-  def test_minimal_single_family_detached
+  def test_minimal_single_family_detached_no_weather
     args_hash = {}
     args_hash["measures_dir"] = ".."
     expected_num_del_objects = {}
     expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1}
     expected_values = {}
-    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 62)
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 63)
   end
+  
+  def test_minimal_single_family_detached_specified_weather
+    args_hash = {}
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1}
+    expected_values = {}
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 63)
+  end  
 
   private
   

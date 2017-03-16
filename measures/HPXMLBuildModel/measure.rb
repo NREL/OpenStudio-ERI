@@ -26,21 +26,20 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_directory", true)
-    arg.setDisplayName("HPXML Directory")
-    arg.setDescription("Absolute (or relative) directory to HPXML files.")
-    arg.setDefaultValue("./resources")
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_file_path", true)
+    arg.setDisplayName("HPXML File Path")
+    arg.setDescription("Absolute (or relative) path of the HPXML file.")
+    arg.setDefaultValue("./resources/audit.xml")
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_file_name", true)
-    arg.setDisplayName("HPXML File Name")
-    arg.setDescription("Name of the HPXML file.")
-    arg.setDefaultValue("audit.xml")
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_file_path", false)
+    arg.setDisplayName("EPW File Path")
+    arg.setDescription("Absolute (or relative) path of the EPW weather file to assign. The corresponding DDY file must also be in the same directory.")
     args << arg
 
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("measures_dir", true)
     arg.setDisplayName("Residential Measures Directory")
-    arg.setDescription("Absolute (or relative) directory to residential measures.")
+    arg.setDescription("Absolute directory to residential measures.")
     args << arg
     
     return args
@@ -55,17 +54,27 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    hpxml_directory = runner.getStringArgumentValue("hpxml_directory", user_arguments)
-    hpxml_file_name = runner.getStringArgumentValue("hpxml_file_name", user_arguments)
+    hpxml_file_path = runner.getStringArgumentValue("hpxml_file_path", user_arguments)
+    weather_file_path = runner.getOptionalStringArgumentValue("weather_file_path", user_arguments)
+    weather_file_path.is_initialized ? weather_file_path = weather_file_path.get : weather_file_path = nil
     measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
 
-    unless (Pathname.new hpxml_directory).absolute?
-      hpxml_directory = File.expand_path(File.join(File.dirname(__FILE__), hpxml_directory))
-    end
-    hpxml_file = File.join(hpxml_directory, hpxml_file_name)    
-    unless File.exists?(hpxml_file) and hpxml_file_name.downcase.end_with? ".xml"
-      runner.registerError("'#{hpxml_file}' does not exist or is not an .xml file.")
+    unless (Pathname.new hpxml_file_path).absolute?
+      hpxml_file_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_file_path))
+    end 
+    unless File.exists?(hpxml_file_path) and hpxml_file_path.downcase.end_with? ".xml"
+      runner.registerError("'#{hpxml_file_path}' does not exist or is not an .xml file.")
       return false
+    end
+    
+    unless weather_file_path.nil?
+      unless (Pathname.new weather_file_path).absolute?
+        weather_file_path = File.expand_path(File.join(File.dirname(__FILE__), weather_file_path))
+      end
+      unless File.exists?(weather_file_path) and weather_file_path.downcase.end_with? ".epw"
+        runner.registerError("'#{weather_file_path}' does not exist or is not an .epw file.")
+        return false
+      end
     end
     
     unless (Pathname.new measures_dir).absolute?
@@ -95,7 +104,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     end
     
     # TODO: Parse hpxml and update measure arguments
-    doc = REXML::Document.new(File.read(hpxml_file))
+    doc = REXML::Document.new(File.read(hpxml_file_path))
     
     event_types = []
     doc.elements.each('*/*/ProjectStatus/EventType') do |el|
@@ -104,27 +113,36 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     end
     
     # ResidentialLocation
-    city_municipality = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/CityMunicipality/text()")
-    state_code = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/StateCode/text()")
-    zip_code = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/ZipCode/text()")
+    if weather_file_path.nil?
     
-    lat, lng = get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
-    if lat.nil? and lng.nil?
-      return false
+      city_municipality = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/CityMunicipality/text()")
+      state_code = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/StateCode/text()")
+      zip_code = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/ZipCode/text()")
+      
+      lat, lng = get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
+      if lat.nil? and lng.nil?
+        return false
+      end
+      
+      weather_file_path = File.join(measures["ResidentialLocation"]["weather_directory"], get_epw_from_lat_lng(runner, resources_dir, lat, lng))
+      if weather_file_path.nil?
+        return false
+      end
+      runner.registerInfo("Found #{File.expand_path(File.join(measures_dir, "ResidentialLocation", weather_file_path))} based on lat, lng.")
+      
+    else      
+      runner.registerInfo("Found user-specified #{weather_file_path}.")
     end
+
+    measures["ResidentialLocation"]["weather_directory"] = File.dirname(weather_file_path)
+    measures["ResidentialLocation"]["weather_file_name"] = File.basename(weather_file_path)
     
-    weather_file_name = get_epw_from_lat_lng(runner, resources_dir, lat, lng)
-    if weather_file_name.nil?
-      return false
-    end
-    
-    measures["ResidentialLocation"]["weather_file_name"] = weather_file_name
-    
-    # Residential...
+    # Residentialxx...
+    # Residentialyy...
     
     select_measures = {} # TODO: Remove
     ["ResidentialLocation", "ResidentialGeometrySingleFamilyDetached", "ResidentialGeometryNumBedsAndBaths", "ResidentialConstructionsFoundationsFloorsSlab", "ResidentialConstructionsWallsExteriorWoodStud", "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", "ResidentialConstructionsUninsulatedSurfaces", "ResidentialHVACFurnaceFuel", "ResidentialHVACHeatingSetpoints"].each do |k|
-      select_measures[k] = measures[k] 
+      select_measures[k] = measures[k]
     end
     measures = select_measures
     
