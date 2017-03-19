@@ -660,7 +660,7 @@ class CreateResidentialSingleFamilyAttachedGeometry < OpenStudio::Measure::Model
       # set foundation walls to ground
       spaces = model.getSpaces
       spaces.each do |space|
-        if space.name.to_s.start_with? Constants.CrawlSpace or space.name.to_s.start_with? Constants.UnfinishedBasementSpace or space.name.to_s.start_with? Constants.FinishedBasementSpace
+        if Geometry.is_crawl(space) or Geometry.is_unfinished_basement(space) or Geometry.is_finished_basement(space)
           surfaces = space.surfaces
           surfaces.each do |surface|
             next if surface.surfaceType.downcase != "wall"

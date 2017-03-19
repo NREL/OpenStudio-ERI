@@ -786,23 +786,51 @@ class Geometry
         return false
     end
     
+    def self.is_living(space_or_zone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.LivingSpace) or space_or_zone.name.to_s.start_with?(Constants.LivingZone)
+    end
+    
+    def self.is_pier_beam(space_or_zone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.PierBeamSpace) or space_or_zone.name.to_s.start_with?(Constants.PierBeamZone)
+    end
+    
+    def self.is_crawl(space_or_zone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.CrawlSpace) or space_or_zone.name.to_s.start_with?(Constants.CrawlZone)
+    end
+    
+    def self.is_finished_basement(space_or_zone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.FinishedBasementSpace) or space_or_zone.name.to_s.start_with?(Constants.FinishedBasementZone)
+    end
+    
+    def self.is_unfinished_basement(space_or_zone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.UnfinishedBasementSpace) or space_or_zone.name.to_s.start_with?(Constants.UnfinishedBasementZone)
+    end
+    
+    def self.is_unfinished_attic(space_or_zone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.UnfinishedAtticSpace) or space_or_zone.name.to_s.start_with?(Constants.UnfinishedAtticZone)
+    end
+    
+    def self.is_finished_attic(space_or_zone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.FinishedAtticSpace) or space_or_zone.name.to_s.start_with?(Constants.FinishedAtticZone)
+    end
+    
+    def self.is_garage(space_or_zone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.GarageSpace) or space_or_zone.name.to_s.start_with?(Constants.GarageZone)
+    end
+    
     def self.get_crawl_spaces(spaces)
         crawl_spaces = []
         spaces.each do |space|
-            next if self.space_is_above_grade(space)
-            next if self.space_is_finished(space)
-            next if self.space_height(space) >= Constants.MinimumBasementHeight
+            next if not self.is_crawl(space)
             crawl_spaces << space
         end
         return crawl_spaces
     end
-    
+        
     def self.get_pier_beam_spaces(spaces)
         pb_spaces = []
         spaces.each do |space|
-            next if self.space_is_below_grade(space)
-            next if self.space_is_finished(space)
-            next if self.space_height(space) >= Constants.MinimumBasementHeight
+            next if not self.is_pier_beam(space)
             pb_spaces << space
         end
         return pb_spaces
@@ -820,9 +848,7 @@ class Geometry
     def self.get_finished_basement_spaces(spaces)
         finished_basement_spaces = []
         spaces.each do |space|
-            next if self.space_is_unfinished(space)
-            next if self.space_is_above_grade(space)
-            next if self.space_height(space) < Constants.MinimumBasementHeight
+            next if not self.is_finished_basement(space)
             finished_basement_spaces << space
         end
         return finished_basement_spaces
@@ -831,43 +857,35 @@ class Geometry
     def self.get_unfinished_basement_spaces(spaces)
         unfinished_basement_spaces = []
         spaces.each do |space|
-            next if self.space_is_finished(space)
-            next if self.space_is_above_grade(space)
-            next if self.space_height(space) < Constants.MinimumBasementHeight
+            next if not self.is_unfinished_basement(space)
             unfinished_basement_spaces << space
         end
         return unfinished_basement_spaces
     end
    
+    
     def self.get_unfinished_attic_spaces(spaces, model)
         unfinished_attic_spaces = []
         spaces.each do |space|
-            next if self.space_is_finished(space)
-            next if not self.space_has_roof(space)
-            next if not self.space_below_is_finished(space, model)
+            next if not self.is_unfinished_attic(space)
             unfinished_attic_spaces << space
         end
         return unfinished_attic_spaces
     end
-    
+        
     def self.get_finished_attic_spaces(spaces, model)
         finished_attic_spaces = []
         spaces.each do |space|
-            next if self.space_is_unfinished(space)
-            next if not self.space_has_roof(space)
-            next if not self.space_below_is_finished(space, model)
+            next if not self.is_finished_attic(space)
             finished_attic_spaces << space
         end
         return finished_attic_spaces
     end
-    
-    def self.get_garage_spaces(spaces, model) #unfinished, above grade spaces without a finished space below
+        
+    def self.get_garage_spaces(spaces, model)
         garage_spaces = []
         spaces.each do |space|
-            next if self.space_is_finished(space)
-            next if self.space_is_below_grade(space)
-            next if self.space_below_is_finished(space, model)
-            next if self.space_has_roof(space)
+            next if not self.is_garage(space)
             garage_spaces << space
         end
         return garage_spaces

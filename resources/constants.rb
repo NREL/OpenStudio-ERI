@@ -1057,6 +1057,9 @@ class Constants
   def self.SizingInfoZoneInfiltrationELA(zone)
     return self.SizingInfo(__method__.to_s, zone)
   end
+  def self.SizingInfoZoneIsVented(zone)
+    return self.SizingInfo(__method__.to_s, zone)
+  end
   def self.SlabFoundationType
     return 'slab'
   end

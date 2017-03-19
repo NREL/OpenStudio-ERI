@@ -66,8 +66,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     # Model info for HVAC
     def initialize
     end
-    attr_accessor(:HasCooling, :HasHeating, :FixedCoolingCapacity, :FixedHeatingCapacity,
-                  :HasForcedAir, :HasCentralAirConditioner, :HasRoomAirConditioner,
+    attr_accessor(:HasCooling, :HasHeating, :HasForcedAirCooling, :HasForcedAirHeating,
+                  :FixedCoolingCapacity, :FixedHeatingCapacity, :FixedSuppHeatingCapacity,
+                  :HasCentralAirConditioner, :HasRoomAirConditioner,
                   :HasFurnace, :HasBoiler, :HasElecBaseboard,
                   :HasAirSourceHeatPump, :HasMiniSplitHeatPump, :HasGroundSourceHeatPump,
                   :NumSpeedsCooling, :NumSpeedsHeating, :CoolingCFMs, :HeatingCFMs, 
@@ -82,10 +83,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     # Model info for ducts
     def initial
     end
-    attr_accessor(:Has, :NotInLiving, :SystemEfficiency, :NormLeakageToOutside,
-                  :SupplySurfaceArea, :ReturnSurfaceArea, :LocationFrac,
+    attr_accessor(:Has, :NotInLiving, :SupplySurfaceArea, :ReturnSurfaceArea, 
                   :SupplyLoss, :ReturnLoss, :SupplyRvalue, :ReturnRvalue,
-                  :Location, :LocationSpace)
+                  :Location, :LocationSpace, :LocationFrac)
   end
   
   #define the name that a user will see, this method may be deprecated as
@@ -188,17 +188,18 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         # Calculate loads for each conditioned thermal zone in the unit
         zones_loads = processZoneLoads(runner, mj8, unit, unit_thermal_zones, weather, northAxis, nbeds, unit_ffa, modelYear, model.alwaysOnDiscreteSchedule, unit_shelter_class, building_num_stories)
         return false if zones_loads.nil?
-        display_zone_loads(runner, unit_num, zones_loads)
         
         # Aggregate zone loads into initial unit loads
         unit_init = processIntermediateTotalLoads(runner, mj8, zones_loads, weather, hvac)
         return false if unit_init.nil?
-        display_unit_initial_results(runner, unit_num, unit_init)
 
         # Process unit duct loads and equipment
-        unit_final = processUnitLoadsAndEquipment(runner, mj8, unit, unit_init, weather, hvac, ducts, minCoolingCapacity, shr_biquadratic_coefficients)
+        unit_init, unit_final = processUnitLoadsAndEquipment(runner, mj8, unit, zones_loads, unit_init, weather, hvac, ducts, minCoolingCapacity, shr_biquadratic_coefficients, units)
         return false if unit_final.nil?
         
+        # Display info
+        display_zone_loads(runner, unit_num, zones_loads)
+        display_unit_initial_results(runner, unit_num, unit_init)
         display_unit_final_results(runner, unit_num, unit_final)
                 
     end # unit
@@ -282,7 +283,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             temps['cool'] = finished_cool_design_temp
             temps['dehum'] = finished_dehum_design_temp
             
-        elsif space.name.to_s.start_with?(Constants.GarageSpace)
+        elsif Geometry.is_garage(space)
             # Garage
             temps['heat'] = weather.design.HeatingDrybulb + 13
             temps['dehum'] = weather.design.DehumidDrybulb + 7
@@ -319,10 +320,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                                  (12 * garage_area_under_unfinished / garage_area))
             end
             
-        elsif space.name.to_s.start_with?(Constants.UnfinishedAtticSpace)
+        elsif Geometry.is_unfinished_attic(space)
         
-            infiltration_cfm = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double', false)
-            infiltration_cfm = 0 if infiltration_cfm.nil?
+            is_vented = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneIsVented(space.thermalZone.get), 'boolean', true)
+            return nil if is_vented.nil?
             
             # Get area-weighted average roofing material absorptance
             attic_floor_r = 0.0
@@ -350,14 +351,14 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 # Attic is considered to be encapsulated. MJ8 says to use an attic 
                 # temperature of 95F, however alternative approaches are permissible
                 
-                if infiltration_cfm > 0
+                if is_vented
                     temps['heat'] = weather.design.HeatingDrybulb
                     temps['cool'] = weather.design.CoolingDrybulb + 40 # This is the number from a California study with dark shingle roof and similar ventilation.
                     temps['dehum'] = weather.design.DehumidDrybulb
-                else # infiltration_cfm = 0
+                else # not is_vented
                     temps = calculate_space_design_temps(runner, model.getBuildingUnits, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
-                    temps['cool'] = nil # FIXME: (ua_max_cool_design_temp - ua_percent_ua_from_ceiling * (ua_max_cool_design_temp - ua_min_cool_design_temp))
                     return nil if temps.nil?
+                    temps['cool'] = nil # FIXME: (ua_max_cool_design_temp - ua_percent_ua_from_ceiling * (ua_max_cool_design_temp - ua_min_cool_design_temp))
                 end
                 
             else
@@ -381,14 +382,14 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                     has_radiant_barrier = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofHasRadiantBarrier(surface), 'boolean', false)
                     has_radiant_barrier = false if has_radiant_barrier.nil?
                     
-                    if infiltration_cfm > 0
+                    if not is_vented
                         if not has_radiant_barrier
                             temps['cool'] += (150 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]) * surface.netArea
                         else
                             temps['cool'] += (130 + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]) * surface.netArea
                         end
                         
-                    else # infiltration_cfm = 0
+                    else # is_vented
                 
                         if not has_radiant_barrier
                             if [Constants.RoofMaterialAsphaltShingles, Constants.RoofMaterialTarGravel].include?(roof_material)
@@ -470,13 +471,13 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
             end
             
-        elsif space.name.to_s.start_with?(Constants.PierBeamSpace)
+        elsif Geometry.is_pier_beam(space)
             # Pier & beam
             temps['heat'] = weather.design.HeatingDrybulb
             temps['cool'] = weather.design.CoolingDrybulb
             temps['dehum'] = weather.design.DehumidDrybulb
             
-        elsif space.name.to_s.start_with?(Constants.UnfinishedBasementSpace) or space.name.to_s.start_with?(Constants.CrawlSpace)
+        elsif Geometry.is_unfinished_basement(space) or Geometry.is_crawl(space)
             # Unfinished basement, Crawlspace
             temps = calculate_space_design_temps(runner, model.getBuildingUnits, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
             return nil if temps.nil?
@@ -1339,7 +1340,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     return nil if mj8.nil? or zones_loads.nil?
     
-    # TODO: Ideally this would require an iterative procedure. A possible enhancement for BEopt2.
+    # TODO: Ideally this would require an iterative procedure.
     
     # TODO ASKJON: Ask about where max(0,foo) should be used below
     unit_init = UnitInitialValues.new
@@ -1397,24 +1398,28 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     end
     
     unit_init.Cool_Airflow = unit_init.Cool_Load_Sens / (1.1 * mj8.acf * (mj8.cool_setpoint - unit_init.LAT))
-    unit_init.Heat_Airflow = calc_heat_cfm(unit_init.Heat_Load, mj8.acf, mj8.heat_setpoint, hvac.HtgSupplyAirTemp)
+    if hvac.HasForcedAirHeating
+        unit_init.Heat_Airflow = calc_heat_cfm(unit_init.Heat_Load, mj8.acf, mj8.heat_setpoint, hvac.HtgSupplyAirTemp)
+    else
+        unit_init.Heat_Airflow = 0
+    end
     
     return unit_init
   end
   
-  def processUnitLoadsAndEquipment(runner, mj8, unit, unit_init, weather, hvac, ducts, minCoolingCapacity, shr_biquadratic_coefficients)
+  def processUnitLoadsAndEquipment(runner, mj8, unit, zones_loads, unit_init, weather, hvac, ducts, minCoolingCapacity, shr_biquadratic_coefficients, units)
+    # TODO: Combine processDuctLoads_Cool_Dehum with processDuctLoads_Heating? Some duplicate code
     unit_final = UnitFinalValues.new
     unit_final = processDuctRegainFactors(runner, unit, unit_final, ducts)
     unit_final = processDuctLoads_Heating(runner, mj8, unit_final, weather, hvac, unit_init.Heat_Load, ducts)
-    # TODO: Combine processDuctLoads_Cool_Dehum with processDuctLoads_Heating? Some duplicate code
-    unit_final = processDuctLoads_Cool_Dehum(runner, mj8, unit_init, unit_final, weather, hvac, ducts)
+    unit_init, unit_final = processDuctLoads_Cool_Dehum(runner, mj8, unit, zones_loads, unit_init, unit_final, weather, hvac, ducts, units)
     unit_final = processCoolingEquipmentAdjustments(runner, mj8, unit_init, unit_final, weather, hvac, minCoolingCapacity, shr_biquadratic_coefficients)
     unit_final = processFixedEquipment(runner, unit_final, hvac)
     unit_final = processFinalize(runner, mj8, unit_final, weather, hvac, minCoolingCapacity)
     unit_final = processSlaveZoneFlowRatios(runner, unit_final)
     unit_final = processEfficientCapacityDerate(runner, hvac, unit_final)
     unit_final = processDehumidifierSizing(runner, mj8, unit_final, weather, unit_init.Dehumid_Load_Lat, hvac, minCoolingCapacity, shr_biquadratic_coefficients)
-    return unit_final
+    return unit_init, unit_final
   end
   
   def processDuctRegainFactors(runner, unit, unit_final, ducts)
@@ -1423,10 +1428,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     unit_final.dse_Fregain = nil
     
     # Distribution system efficiency (DSE) calculations based on ASHRAE Standard 152
-    if (ducts.Has and ducts.NotInLiving) or not ducts.SystemEfficiency.nil?
+    if ducts.Has and ducts.NotInLiving
         # dse_Fregain values comes from MJ8 pg 204 and Walker (1998) "Technical background for default 
         # values used for forced air systems in proposed ASHRAE Std. 152"
-        if ducts.LocationSpace.name.to_s.start_with?(Constants.UnfinishedBasementSpace) or ducts.LocationSpace.name.to_s.start_with?(Constants.FinishedBasementSpace)
+        if Geometry.is_unfinished_basement(ducts.LocationSpace) or Geometry.is_finished_basement(ducts.LocationSpace)
 
             walls_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceWallsInsulated(ducts.LocationSpace), 'boolean')
             ceiling_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceCeilingInsulated(ducts.LocationSpace), 'boolean')
@@ -1461,7 +1466,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 end
             end
             
-        elsif ducts.LocationSpace.name.to_s.start_with?(Constants.CrawlSpace) or ducts.LocationSpace.name.to_s.start_with?(Constants.PierBeamSpace)
+        elsif Geometry.is_crawl(ducts.LocationSpace) or Geometry.is_pier_beam(ducts.LocationSpace)
             
             walls_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceWallsInsulated(ducts.LocationSpace), 'boolean')
             ceiling_insulated = get_unit_feature(runner, unit, Constants.SizingInfoSpaceCeilingInsulated(ducts.LocationSpace), 'boolean')
@@ -1488,18 +1493,14 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 end
             end
             
-        elsif ducts.LocationSpace.name.to_s.start_with?(Constants.UnfinishedAtticSpace)
+        elsif Geometry.is_unfinished_attic(ducts.LocationSpace)
             unit_final.dse_Fregain = 0.10          # This would likely be higher for unvented attics with roof insulation
             
-        elsif ducts.LocationSpace.name.to_s.start_with?(Constants.GarageSpace)
+        elsif Geometry.is_garage(ducts.LocationSpace)
             unit_final.dse_Fregain = 0.05
             
-        elsif ducts.LocationSpace.name.to_s.start_with?(Constants.LivingSpace) or ducts.LocationSpace.name.to_s.start_with?(Constants.FinishedAtticSpace)
+        elsif Geometry.is_living(ducts.LocationSpace) or Geometry.is_finished_attic(ducts.LocationSpace)
             unit_final.dse_Fregain = 1.0
-            
-        elsif not ducts.SystemEfficiency.nil?
-            #Regain is already incorporated into the DSE
-            unit_final.dse_Fregain = 0.0
             
         else
             runner.registerError("Unexpected duct location: #{ducts.LocationSpace.name.to_s}")        
@@ -1514,7 +1515,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return nil if mj8.nil? or unit_final.nil?
     
     # Distribution system efficiency (DSE) calculations based on ASHRAE Standard 152
-    if ducts.Has and ducts.NotInLiving and hvac.HasForcedAir
+    if ducts.Has and ducts.NotInLiving and hvac.HasForcedAirHeating
         if Geometry.space_is_finished(ducts.LocationSpace)
             # Ducts in finished spaces shouldn't affect the total heating capacity
             unit_final.Heat_Load = heatingLoad
@@ -1532,15 +1533,15 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return unit_final
   end
                                      
-  def processDuctLoads_Cool_Dehum(runner, mj8, unit_init, unit_final, weather, hvac, ducts)
+  def processDuctLoads_Cool_Dehum(runner, mj8, unit, zones_loads, unit_init, unit_final, weather, hvac, ducts, units)
     '''
     Duct Loads
     '''
     
-    return nil if mj8.nil? or unit_init.nil? or unit_final.nil?
+    return nil if mj8.nil? or zones_loads.nil? or unit_init.nil? or unit_final.nil?
     
     # Distribution system efficiency (DSE) calculations based on ASHRAE Standard 152
-    if ducts.Has and ducts.NotInLiving and hvac.HasForcedAir and unit_init.Cool_Load_Sens > 0
+    if ducts.Has and ducts.NotInLiving and hvac.HasForcedAirCooling and unit_init.Cool_Load_Sens > 0
         
         dse_Tamb_cooling = mj8.cool_design_temps[ducts.LocationSpace]
         dse_Tamb_dehumid = mj8.dehum_design_temps[ducts.LocationSpace]
@@ -1553,27 +1554,11 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         dse_Ar = ducts.ReturnSurfaceArea
     
         iterate_Tattic = false
-        if ducts.LocationSpace.name.to_s.start_with?(Constants.UnfinishedAtticSpace)
+        if Geometry.is_unfinished_attic(ducts.LocationSpace)
             iterate_Tattic = true
             
-            # FIXME
-            # if (space_int.spacetype == Constants.UnfinishedAtticSpace and
-                  # space_ext.spacetype == Constants.SpaceOutside):
-                # # Need to sum the gable UA for attic temperature iteration
-                # mj8.gable_ua += (wall.surface_type.Uvalue * wall.net_area) 
-                    
-            ## Calculate constant variables used in iteration:
-            ## Multiply by fraction of attic apportioned to this unit (unit.unfin_attic_floor_area_frac).
-            #uA_atticfloor = (sim.getSurfaceType(Constants.SurfaceTypeFinInsUnfinUAFloor).Uvalue *
-            #                     unit.unfin_attic_floor_area)
-            #uA_roof = ((sim.getSurfaceType(Constants.SurfaceTypeUnfinInsExtRoof).Uvalue *
-            #                geometry.roofs.ua_roof_area * unit.unfin_attic_floor_area_frac) + 
-            #                mj8.gable_ua * unit.unfin_attic_floor_area_frac)
-            #    mdotCp_atticvent = (sim._getSpace(Constants.UnfinishedAtticSpace).inf_flow * # cfm
-            #                        sim.outside_air_density *
-            #                        sim.mat.air.inside_air_sh *
-            #                        units.hr2min(1) *
-            #                        unit.unfin_attic_floor_area_frac)
+            attic_UAs = get_space_ua_values(runner, units, ducts.LocationSpace, weather)
+            return nil if attic_UAs.nil?
             
             # Get area-weighted average roofing material absorptance
             roofAbsorptance = 0.0
@@ -1593,7 +1578,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
              
             # Calculate starting attic temp (ignoring duct losses)
             unit_final.Cool_Load_Ducts_Sens = 0
-            t_attic_iter = calculate_t_attic_iter(uA_roof, mdotCp_atticvent, t_solair, uA_atticfloor, mj8.cool_setpoint, unit_final.Cool_Load_Ducts_Sens)
+            t_attic_iter = calculate_t_attic_iter(runner, attic_UAs, t_solair, mj8.cool_setpoint, unit_final.Cool_Load_Ducts_Sens)
+            return nil if t_attic_iter.nil?
             dse_Tamb_cooling = t_attic_iter
         end
         
@@ -1619,7 +1605,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
 
             unit_final.Cool_Load_Ducts_Sens = unit_final.Cool_Load_Sens - unit_init.Cool_Load_Sens
             unit_final.Cool_Load_Ducts_Tot = coolingLoad_Tot_Next - unit_init.Cool_Load_Tot
-            unit_final.Cool_Load_Ducts_Lat = unit_final.Cool_Load_Ducts_Tot - unit_final.Cool_Load_Ducts_Sens
 
             dse_DEcorr_cooling, dse_dTe_cooling, unit_final.Cool_Load_Ducts_Sens = calc_dse_cooling(ducts, mj8.acf, mj8.enthalpy_indoor_cooling, unit_init.LAT, unit_init.Cool_Airflow, unit_final.Cool_Load_Sens, dse_Tamb_cooling, dse_As, dse_Ar, mj8.cool_setpoint, unit_final.dse_Fregain, unit_final.Cool_Load_Tot, dse_h_Return_Cooling)
             dse_precorrect = 1 - (unit_final.Cool_Load_Ducts_Sens / unit_final.Cool_Load_Sens)
@@ -1631,10 +1616,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                     break if delta_attic.abs <= 0.001
                     
                     t_attic_old = t_attic_iter
-                    t_attic_iter = calculate_t_attic_iter(uA_roof, mdotCp_atticvent, t_solair, uA_atticfloor, mj8.cool_setpoint, unit_final.Cool_Load_Ducts_Sens)
+                    t_attic_iter = calculate_t_attic_iter(runner, attic_UAs, t_solair, mj8.cool_setpoint, unit_final.Cool_Load_Ducts_Sens)
+                    return nil if t_attic_iter.nil?
                     
-                    # FIXME
-                    #sim._getSpace(Constants.UnfinishedAtticSpace).cool_design_temp_mj8 = t_attic_iter
+                    mj8.cool_design_temps[ducts.LocationSpace] = t_attic_iter
                     
                     # Calculate the change since the last iteration
                     delta_attic = (t_attic_iter - t_attic_old) / t_attic_old                  
@@ -1649,14 +1634,17 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 end
                 
                 dse_Tamb_cooling = t_attic_iter
-                mj8 = processLoadFloors(runner, mj8, thermal_zone, zone_loads, weather)
-                mj8 = processIntermediateTotalLoads(runner, mj8, FIXME, weather, hvac.HtgSupplyAirTemp, hvac)
-                
+                Geometry.get_thermal_zones_from_spaces(unit.spaces).each do |thermal_zone|
+                    next if not Geometry.zone_is_finished(thermal_zone)
+                    zones_loads[thermal_zone] = processLoadFloors(runner, mj8, unit, thermal_zone, zones_loads[thermal_zone], weather)
+                end
+                unit_init = processIntermediateTotalLoads(runner, mj8, zones_loads, weather, hvac)
+        
                 # Calculate the increase in total cooling load due to ducts (conservatively to prevent overshoot)
                 coolingLoad_Tot_Next = unit_init.Cool_Load_Tot + coolingLoad_Tot_Prev * (1 - dse_precorrect)
                 
                 # Calculate unmet zone load:
-                delta = unit_init.Cool_Load_Tot - (unit_final.Cool_Load_Tot*dse_precorrect)
+                delta = unit_init.Cool_Load_Tot - (unit_final.Cool_Load_Tot * dse_precorrect)
             else
                 coolingLoad_Tot_Next = unit_init.Cool_Load_Tot / dse_DEcorr_cooling    
                         
@@ -1699,9 +1687,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
 
         # Limit the DE to a reasonable value to prevent negative values and huge equipment
         dse_DEcorr_dehumid = [dse_DEcorr_dehumid, 0.25].max
-        if not ducts.SystemEfficiency.nil?
-            dse_DEcorr_dehumid = ducts.SystemEfficiency
-        end
         
         # Calculate the increase in sensible dehumidification load due to ducts
         unit_final.Dehumid_Load_Sens = unit_init.Dehumid_Load_Sens / dse_DEcorr_dehumid
@@ -1715,7 +1700,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         unit_final.Cool_Load_Tot = unit_final.Cool_Load_Sens + unit_final.Cool_Load_Lat
         
         unit_final.Cool_Load_Ducts_Sens = 0
-        unit_final.Cool_Load_Ducts_Lat = 0
         unit_final.Cool_Load_Ducts_Tot = 0
             
         unit_final.Dehumid_Load_Sens = unit_init.Dehumid_Load_Sens
@@ -1725,7 +1709,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         unit_final.Cool_Airflow = unit_final.Cool_Load_Sens / (1.1 * mj8.acf * (mj8.cool_setpoint - unit_init.LAT))
     end
     
-    return unit_final
+    unit_final.Cool_Load_Ducts_Lat = unit_final.Cool_Load_Ducts_Tot - unit_final.Cool_Load_Ducts_Sens
+    
+    return unit_init, unit_final
   end
   
   def processCoolingEquipmentAdjustments(runner, mj8, unit_init, unit_final, weather, hvac, minCoolingCapacity, shr_biquadratic_coefficients)
@@ -1962,8 +1948,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     if not hvac.FixedCoolingCapacity.nil?
         unit_final.Cool_Capacity = OpenStudio::convert(hvac.FixedCoolingCapacity,"ton","Btu/h").get / @spaceConditionedMult
     end
-    # FIXME ASKJON: Better handle heat pump heating vs supplemental heating?
-    if not hvac.FixedHeatingCapacity.nil?
+    if not hvac.FixedSuppHeatingCapacity.nil?
+        unit_final.Heat_Load = OpenStudio::convert(hvac.FixedSuppHeatingCapacity,"ton","Btu/h").get # (supplemental capacity, so don't divide by @spaceConditionedMult)
+    elsif not hvac.FixedHeatingCapacity.nil?
         unit_final.Heat_Load = OpenStudio::convert(hvac.FixedHeatingCapacity,"ton","Btu/h").get # (supplemental capacity, so don't divide by @spaceConditionedMult)
     end
   
@@ -1985,7 +1972,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
 
     elsif hvac.HasAirSourceHeatPump
         
-        if not hvac.FixedHeatingCapacity.nil? or not hvac.FixedCoolingCapacity.nil?
+        if not hvac.FixedSuppHeatingCapacity.nil? or not hvac.FixedCoolingCapacity.nil?
             unit_final.Heat_Capacity = unit_final.Heat_Load
         else
             unit_final = processHeatPumpAdjustment(runner, mj8, unit_final, weather, hvac)
@@ -2478,12 +2465,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
             
     # Determine the average total latent load (there's duct latent load only when the AC is running)
-    dehumidLoad_Lat = [0, dehumid_Load_Lat + unit_final.Dehumid_Load_Ducts_Lat * dehumid_AC_RTF].max
+    unit_final.Dehumid_Load_Ducts_Lat = [0, dehumid_Load_Lat + unit_final.Dehumid_Load_Ducts_Lat * dehumid_AC_RTF].max
 
     air_h_fg = 1075.6  # Btu/lbm
 
     # Calculate the required water removal (in L/day) at 75 deg-F DB, 50% RH indoor conditions
-    dehumid_WaterRemoval = [0, (dehumidLoad_Lat - dehumid_AC_RTF * dehumid_AC_LatCap) / air_h_fg /
+    dehumid_WaterRemoval = [0, (dehumid_Load_Lat - dehumid_AC_RTF * dehumid_AC_LatCap) / air_h_fg /
                                Liquid.H2O_l.rho * OpenStudio::convert(1,"ft^3","L").get * OpenStudio::convert(1,"day","hr").get].max
 
     # Determine the rated water removal rate using the performance curve
@@ -2766,10 +2753,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     dse_DEcorr = [dse_DEcorr, 0.25].max
     dse_DEcorr = [dse_DEcorr, 1.00].min
     
-    if not ducts.SystemEfficiency.nil?
-        dse_DEcorr = ducts.SystemEfficiency
-    end
-    
     return dse_DEcorr
   end
   
@@ -2789,11 +2772,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     ducts = DuctsInfo.new
     
     ducts.Has = false
-    if hvac.HasForcedAir and not hvac.HasMiniSplitHeatPump
+    if (hvac.HasForcedAirHeating or hvac.HasForcedAirCooling) and not hvac.HasMiniSplitHeatPump
         ducts.Has = true
-        ducts.NotInLiving = true # FIXME
-        ducts.SystemEfficiency = nil # FIXME
-        ducts.NormLeakageToOutside = nil # FIXME
+        ducts.NotInLiving = false # init
         
         ducts.SupplySurfaceArea = get_unit_feature(runner, unit, Constants.SizingInfoDuctsSupplySurfaceArea, 'double')
         ducts.ReturnSurfaceArea = get_unit_feature(runner, unit, Constants.SizingInfoDuctsReturnSurfaceArea, 'double')
@@ -2823,6 +2804,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             runner.registerError("Could not determine duct location.")
             return nil
         end
+        if not Geometry.is_living(ducts.LocationSpace)
+            ducts.NotInLiving = true
+        end
     end
     
     return ducts
@@ -2832,7 +2816,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
   
     # Init
     hvac = HVACInfo.new
-    hvac.HasForcedAir = false
+    hvac.HasForcedAirHeating = false
+    hvac.HasForcedAirCooling = false
     hvac.HasCooling = false
     hvac.HasHeating = false
     hvac.HasCentralAirConditioner = false
@@ -2854,6 +2839,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     hvac.CapacityRatioHeating = nil
     hvac.FixedCoolingCapacity = nil
     hvac.FixedHeatingCapacity = nil
+    hvac.FixedSuppHeatingCapacity = nil
     hvac.HeatingCapacityOffset = nil
     hvac.OverSizeLimit = 1.15
     hvac.CoolingCFMs = nil
@@ -2925,10 +2911,13 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         
         clg_coil = nil
         if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-            hvac.HasForcedAir = true
+            hvac.HasForcedAirCooling = true
             clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get)
         elsif clg_equip.to_ZoneHVACComponent.is_initialized
             clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil)
+            if clg_equip.is_a?(OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
+                hvac.HasForcedAirCooling = true
+            end
         else
             runner.registerError("Unexpected cooling equipment: #{clg_equip.name}.")
             return nil
@@ -2955,9 +2944,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             if clg_coil.ratedTotalCoolingCapacity.is_initialized
                 hvac.FixedCoolingCapacity = OpenStudio::convert(clg_coil.ratedTotalCoolingCapacity.get,"W","ton").get
             end
-            capacityDerateFactorEER = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorEER, 'string')
-            return nil if capacityDerateFactorEER.nil?
-            hvac.CapacityDerateFactorEER = capacityDerateFactorEER.split(",").map(&:to_f)
+            
+            if not hvac.HasRoomAirConditioner
+                capacityDerateFactorEER = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorEER, 'string')
+                return nil if capacityDerateFactorEER.nil?
+                hvac.CapacityDerateFactorEER = capacityDerateFactorEER.split(",").map(&:to_f)
+            end
 
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed
             hvac.NumSpeedsCooling = clg_coil.stages.size
@@ -3063,17 +3055,20 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         htg_equip = htg_equips[0]
         
         htg_coil = nil
+        supp_htg_coil = nil
         if htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-            hvac.HasForcedAir = true
+            hvac.HasForcedAirHeating = true
             htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
-            if not htg_equip.maximumSupplyAirTemperature.is_initialized
-                runner.registerError("Maximum supply air temperature not set for #{htg_equip.name}.")
-                return nil
+            if htg_equip.supplementalHeatingCoil.is_initialized
+                supp_htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
             end
             
         elsif htg_equip.to_ZoneHVACComponent.is_initialized
             if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
                 htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil)
+            end
+            if htg_equip.is_a?(OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
+                hvac.HasForcedAirHeating = true
             end
             
         else
@@ -3172,6 +3167,18 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             return nil
             
         end
+        
+        # Supplemental heating coil
+        if supp_htg_coil.is_a? OpenStudio::Model::CoilHeatingElectric
+            if supp_htg_coil.nominalCapacity.is_initialized
+                hvac.FixedSuppHeatingCapacity = OpenStudio::convert(supp_htg_coil.nominalCapacity.get,"W","ton").get
+            end
+        
+        elsif not supp_htg_coil.nil?
+            runner.registerError("Unexpected supplemental heating coil: #{supp_htg_coil.name}.")
+            return nil
+            
+        end
     end
 
     return hvac
@@ -3235,12 +3242,24 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return true_azimuth
   end
   
-  def calculate_t_attic_iter(uA_roof, mdotCp_atticvent, t_solair, uA_atticfloor, cool_setpoint, coolingLoad_Ducts_Sens)
+  def calculate_t_attic_iter(runner, attic_UAs, t_solair, cool_setpoint, coolingLoad_Ducts_Sens)
     # Calculate new value for Tattic based on updated duct losses
-    t_attic_iter = (((uA_roof + mdotCp_atticvent) * t_solair + uA_atticfloor * cool_setpoint - coolingLoad_Ducts_Sens) /
-                    (uA_atticfloor + uA_roof + mdotCp_atticvent))
-    t_attic_iter = min(t_attic_iter, t_solair) # Prevent attic from being hotter than T_solair
-    t_attic_iter = max(t_attic_iter, cool_setpoint) # Prevent attic from being colder than cool_setpoint
+    sum_uat = -coolingLoad_Ducts_Sens
+    attic_UAs.each do |ua_type, ua|
+        if ua_type == 'outdoors' or ua_type == 'infil'
+            sum_uat += ua * t_solair
+        elsif ua_type == 'surface' # adjacent to finished
+            sum_uat += ua * cool_setpoint
+        elsif ua_type == 'total' or ua_type == 'ground'
+            # skip
+        else
+            runner.registerError("Unexpected outside boundary condition: '#{obc}'.")
+            return nil
+        end
+    end
+    t_attic_iter = sum_uat / attic_UAs['total']
+    t_attic_iter = [t_attic_iter, t_solair].min # Prevent attic from being hotter than T_solair
+    t_attic_iter = [t_attic_iter, cool_setpoint].max # Prevent attic from being colder than cool_setpoint
     return t_attic_iter
   end
   
@@ -3254,7 +3273,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     # Use max summer direct normal plus diffuse solar radiation, adjusted for roof pitch
     # (Not calculating max coincident i_b + i_d because that requires knowing roofPitch in advance; will typically coincide with peak i_b though.)
-    i_T = OpenStudio::convert(i_b + i_d * (1 + Math::cos(roofPitch.deg2rad))/2,"W/m^2","Btu/ft^2*h") # total solar radiation incident on surface (Btu/h/ft2)
+    i_T = OpenStudio::convert(i_b + i_d * (1 + Math::cos(roofPitch.deg2rad))/2,"W/m^2","Btu/ft^2*h").get # total solar radiation incident on surface (Btu/h/ft2)
     # Adjust diffuse horizontal for roof pitch using isotropic diffuse model (Liu and Jordan 1963) from Duffie and Beckman eq 2.15.1
     
     h_o = 4 # coefficient of heat transfer for long-wave radiation and convection at outer surface (Btu/h-ft2-F)
@@ -3275,7 +3294,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return t_solair
   end
   
-  def calculate_space_design_temps(runner, units, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
+  def get_space_ua_values(runner, units, space, weather)
     if Geometry.space_is_finished(space)
         runner.registerError("Method should not be called for a finished space: '#{space.name.to_s}'.")
         return nil
@@ -3307,7 +3326,13 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         total_UA += ua
     end
     space_UAs['total'] = total_UA
-    
+    return space_UAs
+  end
+  
+  def calculate_space_design_temps(runner, units, space, temps, weather, finished_heat_design_temp, finished_cool_design_temp, finished_dehum_design_temp)
+    space_UAs = get_space_ua_values(runner, units, space, weather)
+    return nil if space_UAs.nil?
+  
     # Calculate space design temps from UAs
     sum_uat = {'heat'=>0, 'cool'=>0, 'dehum'=>0}
     space_UAs.each do |ua_type, ua|
@@ -3327,6 +3352,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             # skip
         else
             runner.registerError("Unexpected outside boundary condition: '#{obc}'.")
+            return nil
         end
     end
     temps['heat'] = sum_uat['heat'] / space_UAs['total']
@@ -3465,7 +3491,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     end
     if not val.is_initialized
         if register_error
-            runner.registerError("Could not find value for: '#{feature}'.")
+            runner.registerError("Could not find value for '#{feature}' with datatype #{datatype}.")
         end
         return nil
     end
@@ -3491,7 +3517,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                       :Dehumid_IntGains_Sens, :Dehumid_IntGains_Lat,
                      ]
         properties.each do |property|
-            s += "\n#{property.to_s.gsub("_"," ")} = #{loads.send(property).round(0).to_s}" # FIXME: Btu/hr"
+            s += "\n#{property.to_s.gsub("_"," ")} = #{loads.send(property).round(0).to_s} Btu/hr"
         end
         runner.registerInfo("#{s}\n")
     end
@@ -3507,10 +3533,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 :Heat_Airflow, :Cool_Airflow, 
                ]
     loads.each do |load|
-        s += "\n#{load.to_s.gsub("_"," ")} = #{unit_init.send(load).round(0).to_s}" # FIXME: Btu/hr"
+        s += "\n#{load.to_s.gsub("_"," ")} = #{unit_init.send(load).round(0).to_s} Btu/hr"
     end
     airflows.each do |airflow|
-        s += "\n#{airflow.to_s.gsub("_"," ")} = #{unit_init.send(airflow).round(0).to_s}" # FIXME: cfm"
+        s += "\n#{airflow.to_s.gsub("_"," ")} = #{unit_init.send(airflow).round(0).to_s} cfm"
     end
     runner.registerInfo("#{s}\n")
   end
@@ -3534,16 +3560,16 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
               :Dehumid_WaterRemoval,
              ]
     loads.each do |load|
-        s += "\n#{load.to_s.gsub("_"," ")} = #{unit_final.send(load).round(0).to_s}"# FIXME: Btu/hr"
+        s += "\n#{load.to_s.gsub("_"," ")} = #{unit_final.send(load).round(0).to_s} Btu/hr"
     end
     caps.each do |cap|
-        s += "\n#{cap.to_s.gsub("_"," ")} = #{unit_final.send(cap).round(0).to_s}" # FIXME: Btu/hr"
+        s += "\n#{cap.to_s.gsub("_"," ")} = #{unit_final.send(cap).round(0).to_s} Btu/hr"
     end
     airflows.each do |airflow|
-        s += "\n#{airflow.to_s.gsub("_"," ")} = #{unit_final.send(airflow).round(0).to_s}" # FIXME: cfm"
+        s += "\n#{airflow.to_s.gsub("_"," ")} = #{unit_final.send(airflow).round(0).to_s} cfm"
     end
     waters.each do |water|
-        s += "\n#{water.to_s.gsub("_"," ")} = #{unit_final.send(water).round(0).to_s}" # FIXME: L/day"
+        s += "\n#{water.to_s.gsub("_"," ")} = #{unit_final.send(water).round(0).to_s} L/day"
     end
     runner.registerInfo("#{s}\n")
   end

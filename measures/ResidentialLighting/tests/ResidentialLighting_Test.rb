@@ -294,11 +294,11 @@ class ResidentialLightingTest < MiniTest::Test
 
   def test_multifamily_new_construction
     num_units = 8
-    num_ltg_spaces = num_units+1 # plus corridor
+    num_ltg_spaces = num_units
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"Lights"=>num_ltg_spaces, "LightsDefinition"=>num_ltg_spaces, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "ScheduleRuleset"=>1}
-    expected_values = {"Annual_kwh"=>7754.57}
+    expected_values = {"Annual_kwh"=>7622.62}
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_ltg_spaces+1)
   end
   

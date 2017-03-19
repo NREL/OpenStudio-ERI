@@ -224,9 +224,9 @@ class ProcessCeilingFan < OpenStudio::Measure::ModelMeasure
     
       # Determine geometry for spaces and zones that are unit specific
       Geometry.get_thermal_zones_from_spaces(building_unit.spaces).each do |thermal_zone|
-        if thermal_zone.name.to_s.start_with? Constants.LivingZone
+        if Geometry.is_living(thermal_zone)
           unit.living_zone = thermal_zone
-        elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone
+        elsif Geometry.is_finished_basement(thermal_zone)
           unit.finished_basement_zone = thermal_zone
         end
       end

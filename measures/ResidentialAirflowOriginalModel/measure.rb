@@ -994,27 +994,27 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
     pierbeam_thermal_zone = nil
     ufattic_thermal_zone = nil
     model.getThermalZones.each do |thermal_zone|
-      if thermal_zone.name.to_s.start_with? Constants.GarageZone
+      if Geometry.is_garage(thermal_zone)
         garage_thermal_zone = thermal_zone
         garage.height = Geometry.get_height_of_spaces(garage_thermal_zone.spaces)
         garage.area = OpenStudio::convert(garage_thermal_zone.floorArea,"m^2","ft^2").get
         garage.volume = garage.height * garage.area        
-      elsif thermal_zone.name.to_s.start_with? Constants.UnfinishedBasementZone
+      elsif Geometry.is_unfinished_basement(thermal_zone)
         ufbasement_thermal_zone = thermal_zone
         unfinished_basement.height = Geometry.get_height_of_spaces(ufbasement_thermal_zone.spaces)
         unfinished_basement.area = OpenStudio::convert(ufbasement_thermal_zone.floorArea,"m^2","ft^2").get
         unfinished_basement.volume = unfinished_basement.height * unfinished_basement.area        
-      elsif thermal_zone.name.to_s.start_with? Constants.CrawlZone
+      elsif Geometry.is_crawl(thermal_zone)
         crawl_thermal_zone = thermal_zone
         crawlspace.height = Geometry.get_height_of_spaces(crawl_thermal_zone.spaces)
         crawlspace.area = OpenStudio::convert(crawl_thermal_zone.floorArea,"m^2","ft^2").get
         crawlspace.volume = crawlspace.height * crawlspace.area        
-      elsif thermal_zone.name.to_s.start_with? Constants.PierBeamZone
+      elsif Geometry.is_pier_beam(thermal_zone)
         pierbeam_thermal_zone = thermal_zone
         pierbeam.height = Geometry.get_height_of_spaces(pierbeam_thermal_zone.spaces)
         pierbeam.area = OpenStudio::convert(pierbeam_thermal_zone.floorArea,"m^2","ft^2").get
         pierbeam.volume = pierbeam.height * pierbeam.area        
-      elsif thermal_zone.name.to_s.start_with? Constants.UnfinishedAtticZone
+      elsif Geometry.is_unfinished_attic(thermal_zone)
         ufattic_thermal_zone = thermal_zone
         unfinished_attic.height = Geometry.get_height_of_spaces(ufattic_thermal_zone.spaces)
         unfinished_attic.area = OpenStudio::convert(ufattic_thermal_zone.floorArea,"m^2","ft^2").get
@@ -1081,12 +1081,12 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
       living_thermal_zone = nil
       fbasement_thermal_zone = nil
       thermal_zones.each do |thermal_zone|
-        if thermal_zone.name.to_s.start_with? Constants.LivingZone
+        if Geometry.is_living(thermal_zone)
           living_thermal_zone = thermal_zone
           living_space.height = Geometry.get_height_of_spaces(living_thermal_zone.spaces)
           living_space.area = OpenStudio::convert(living_thermal_zone.floorArea,"m^2","ft^2").get
           living_space.volume = living_space.height/geometry.stories.to_f * living_space.area          
-        elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone
+        elsif Geometry.is_finished_basement(thermal_zone)
           fbasement_thermal_zone = thermal_zone
           finished_basement.height = Geometry.get_height_of_spaces(fbasement_thermal_zone.spaces)
           finished_basement.area = OpenStudio::convert(fbasement_thermal_zone.floorArea,"m^2","ft^2").get
@@ -2680,7 +2680,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit_spaces)      
       living_thermal_zone_name = nil
       thermal_zones.each do |thermal_zone|
-        if thermal_zone.name.to_s.start_with? Constants.LivingZone
+        if Geometry.is_living(thermal_zone)
           living_thermal_zone_name = thermal_zone.name.to_s
         end
       end

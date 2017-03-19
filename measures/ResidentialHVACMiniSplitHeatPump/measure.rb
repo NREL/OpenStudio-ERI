@@ -600,7 +600,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
           tout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_outdoor_air_drybulb_temp_output_var)
           tout_sensor.setName("#{obj_name} tout sensor".gsub("|","_"))
           thermal_zones.each do |thermal_zone|
-            if thermal_zone.name.to_s.start_with? Constants.LivingZone
+            if Geometry.is_living(thermal_zone)
               tout_sensor.setKeyName(thermal_zone.name.to_s)
               break
             end

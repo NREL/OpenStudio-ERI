@@ -458,7 +458,13 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     duct_locations << Constants.Auto
     duct_locations << Constants.LivingZone
     duct_locations << Constants.AtticZone
+    duct_locations << Constants.FinishedAtticZone
+    duct_locations << Constants.UnfinishedAtticZone
     duct_locations << Constants.BasementZone
+    duct_locations << Constants.FinishedBasementZone
+    duct_locations << Constants.UnfinishedBasementZone
+    duct_locations << Constants.CrawlZone
+    duct_locations << Constants.PierBeamZone
     duct_locations << Constants.GarageZone
     duct_location = OpenStudio::Measure::OSArgument::makeChoiceArgument("duct_location", duct_locations, true)
     duct_location.setDisplayName("Ducts: Location")
@@ -670,19 +676,19 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     building.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
     building.above_grade_exterior_wall_area = Geometry.calculate_above_grade_exterior_wall_area(model.getSpaces, false)    
     model.getThermalZones.each do |thermal_zone|
-      if thermal_zone.name.to_s.start_with? Constants.GarageZone
+      if Geometry.is_garage(thermal_zone)
         building.garage_zone = thermal_zone
         building.garage = Garage.new(Geometry.get_height_of_spaces(building.garage_zone.spaces), OpenStudio::convert(building.garage_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
-      elsif thermal_zone.name.to_s.start_with? Constants.UnfinishedBasementZone
+      elsif Geometry.is_unfinished_basement(thermal_zone)
         building.unfinished_basement_zone = thermal_zone
         building.unfinished_basement = UnfinBasement.new(ufbsmtACH, Geometry.get_height_of_spaces(building.unfinished_basement_zone.spaces), OpenStudio::convert(building.unfinished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
-      elsif thermal_zone.name.to_s.start_with? Constants.CrawlZone
+      elsif Geometry.is_crawl(thermal_zone)
         building.crawlspace_zone = thermal_zone
         building.crawlspace = Crawl.new(crawlACH, Geometry.get_height_of_spaces(building.crawlspace_zone.spaces), OpenStudio::convert(building.crawlspace_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
-      elsif thermal_zone.name.to_s.start_with? Constants.PierBeamZone
+      elsif Geometry.is_pier_beam(thermal_zone)
         building.pierbeam_zone = thermal_zone
         building.pierbeam = PierBeam.new(pierbeamACH, Geometry.get_height_of_spaces(building.pierbeam_zone.spaces), OpenStudio::convert(building.pierbeam_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
-      elsif thermal_zone.name.to_s.start_with? Constants.UnfinishedAtticZone
+      elsif Geometry.is_unfinished_attic(thermal_zone)
         building.unfinished_attic_zone = thermal_zone
         building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_height_of_spaces(building.unfinished_attic_zone.spaces), OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       end
@@ -852,10 +858,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       # Determine geometry for spaces and zones that are unit specific
       Geometry.get_thermal_zones_from_spaces(building_unit.spaces).each do |thermal_zone|
-        if thermal_zone.name.to_s.start_with? Constants.LivingZone or not /#{Constants.URBANoptFinishedZoneIdentifier} [1-9]\d*/.match(thermal_zone.name.to_s).nil?
+        if Geometry.is_living(thermal_zone) or not /#{Constants.URBANoptFinishedZoneIdentifier} [1-9]\d*/.match(thermal_zone.name.to_s).nil?
           unit.living_zone = thermal_zone
           unit.living = LivingSpace.new(Geometry.get_height_of_spaces(unit.living_zone.spaces), OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
-        elsif thermal_zone.name.to_s.start_with? Constants.FinishedBasementZone or thermal_zone.name.to_s.start_with? "#{Constants.URBANoptFinishedZoneIdentifier} 0"
+        elsif Geometry.is_finished_basement(thermal_zone) or thermal_zone.name.to_s.start_with? "#{Constants.URBANoptFinishedZoneIdentifier} 0"
           unit.finished_basement_zone = thermal_zone
           unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_height_of_spaces(unit.finished_basement_zone.spaces), OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
         end
@@ -1786,21 +1792,21 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
       # Store info for HVAC Sizing measure
       building_unit.setFeature(Constants.SizingInfoMechVentType, mech_vent.MechVentType)
-      building_unit.setFeature(Constants.SizingInfoMechVentTotalEfficiency, mech_vent.MechVentTotalEfficiency)
-      building_unit.setFeature(Constants.SizingInfoMechVentLatentEffectiveness, mech_vent.MechVentLatentEffectiveness)
-      building_unit.setFeature(Constants.SizingInfoMechVentApparentSensibleEffectiveness, mech_vent.MechVentApparentSensibleEffectiveness)
-      building_unit.setFeature(Constants.SizingInfoMechVentWholeHouseRate, mech_vent.whole_house_vent_rate)
-      building_unit.setFeature(Constants.SizingInfoDuctsSupplyRvalue, ducts.supply_duct_r)
-      building_unit.setFeature(Constants.SizingInfoDuctsReturnRvalue, ducts.return_duct_r)
-      building_unit.setFeature(Constants.SizingInfoDuctsSupplyLoss, ducts.supply_duct_loss)
-      building_unit.setFeature(Constants.SizingInfoDuctsReturnLoss, ducts.return_duct_loss)
-      building_unit.setFeature(Constants.SizingInfoDuctsSupplySurfaceArea, ducts.supply_duct_surface_area)
-      building_unit.setFeature(Constants.SizingInfoDuctsReturnSurfaceArea, ducts.return_duct_surface_area)
+      building_unit.setFeature(Constants.SizingInfoMechVentTotalEfficiency, mech_vent.MechVentTotalEfficiency.to_f)
+      building_unit.setFeature(Constants.SizingInfoMechVentLatentEffectiveness, mech_vent.MechVentLatentEffectiveness.to_f)
+      building_unit.setFeature(Constants.SizingInfoMechVentApparentSensibleEffectiveness, mech_vent.MechVentApparentSensibleEffectiveness.to_f)
+      building_unit.setFeature(Constants.SizingInfoMechVentWholeHouseRate, mech_vent.whole_house_vent_rate.to_f)
+      building_unit.setFeature(Constants.SizingInfoDuctsSupplyRvalue, ducts.supply_duct_r.to_f)
+      building_unit.setFeature(Constants.SizingInfoDuctsReturnRvalue, ducts.return_duct_r.to_f)
+      building_unit.setFeature(Constants.SizingInfoDuctsSupplyLoss, ducts.supply_duct_loss.to_f)
+      building_unit.setFeature(Constants.SizingInfoDuctsReturnLoss, ducts.return_duct_loss.to_f)
+      building_unit.setFeature(Constants.SizingInfoDuctsSupplySurfaceArea, ducts.supply_duct_surface_area.to_f)
+      building_unit.setFeature(Constants.SizingInfoDuctsReturnSurfaceArea, ducts.return_duct_surface_area.to_f)
       building_unit.setFeature(Constants.SizingInfoDuctsLocationZone, ducts.duct_location_name)
-      building_unit.setFeature(Constants.SizingInfoDuctsLocationFrac, ducts.DuctLocationFracLeakage)
+      building_unit.setFeature(Constants.SizingInfoDuctsLocationFrac, ducts.DuctLocationFracLeakage.to_f)
       if not unit.living.ELA.nil?
-        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationELA(unit.living_zone), unit.living.ELA)
-        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(unit.living_zone), unit.living.inf_flow)
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationELA(unit.living_zone), unit.living.ELA.to_f)
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(unit.living_zone), unit.living.inf_flow.to_f)
       else
         building_unit.setFeature(Constants.SizingInfoZoneInfiltrationELA(unit.living_zone), 0.0)
         building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(unit.living_zone), 0.0)
@@ -1814,16 +1820,17 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     # Store info for HVAC Sizing measure
     units.each do |building_unit|
       unless building.crawlspace_zone.nil?
-        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.crawlspace_zone), building.crawlspace.inf_flow)
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.crawlspace_zone), building.crawlspace.inf_flow.to_f)
       end
       unless building.pierbeam_zone.nil?
-        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.pierbeam_zone), building.pierbeam.inf_flow)
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.pierbeam_zone), building.pierbeam.inf_flow.to_f)
       end
       unless building.unfinished_basement_zone.nil?
-        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.unfinished_basement_zone), building.unfinished_basement.inf_flow)
+        building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.unfinished_basement_zone), building.unfinished_basement.inf_flow.to_f)
       end
       unless building.unfinished_attic_zone.nil?
         building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.unfinished_attic_zone), building.unfinished_attic.inf_flow)
+        building_unit.setFeature(Constants.SizingInfoZoneIsVented(building.unfinished_attic_zone), (building.unfinished_attic.SLA > 0.001)) # The minimum SLA at which an attic is assumed to be vented
       end
     end
 
@@ -2688,6 +2695,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
   end  
   
   def get_duct_location(runner, duct_location, building, unit)
+    # FIXME: Need to improve this
     duct_location_zone = true
     duct_location_name = "none"
     if duct_location == Constants.Auto
@@ -2724,7 +2732,23 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         duct_location_zone = unit.living_zone
         duct_location_name = unit.living_zone.name.to_s
       end
-    elsif duct_location == Constants.AtticZone
+    elsif duct_location == Constants.FinishedBasementZone
+      if not unit.finished_basement_zone.nil?
+        duct_location_zone = unit.finished_basement_zone
+        duct_location_name = unit.finished_basement_zone.name.to_s
+      else
+        duct_location_zone = unit.living_zone
+        duct_location_name = unit.living_zone.name.to_s
+      end
+    elsif duct_location == Constants.UnfinishedBasementZone
+      if not building.unfinished_basement_zone.nil?
+        duct_location_zone = building.unfinished_basement_zone
+        duct_location_name = building.unfinished_basement_zone.name.to_s
+      else
+        duct_location_zone = unit.living_zone
+        duct_location_name = unit.living_zone.name.to_s
+      end
+    elsif duct_location == Constants.AtticZone or duct_location == Constants.UnfinishedAtticZone
       if not building.unfinished_attic_zone.nil?
         duct_location_zone = building.unfinished_attic_zone
         duct_location_name = building.unfinished_attic_zone.name.to_s
@@ -2732,10 +2756,29 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         duct_location_zone = unit.living_zone
         duct_location_name = unit.living_zone.name.to_s
       end
+    elsif duct_location == Constants.LivingZone or duct_location == Constants.FinishedAtticZone
+      duct_location_zone = unit.living_zone
+      duct_location_name = unit.living_zone.name.to_s
     elsif duct_location == Constants.GarageZone
       if not building.garage_zone.nil?
         duct_location_zone = building.garage_zone
         duct_location_name = building.garage_zone.name.to_s
+      else
+        duct_location_zone = unit.living_zone
+        duct_location_name = unit.living_zone.name.to_s
+      end
+    elsif duct_location == Constants.CrawlZone
+      if not building.crawlspace_zone.nil?
+        duct_location_zone = building.crawlspace_zone
+        duct_location_name = building.crawlspace_zone.name.to_s
+      else
+        duct_location_zone = unit.living_zone
+        duct_location_name = unit.living_zone.name.to_s
+      end
+    elsif duct_location == Constants.PierBeamZone
+      if not building.pierbeam_zone.nil?
+        duct_location_zone = building.pierbeam_zone
+        duct_location_name = building.pierbeam_zone.name.to_s
       else
         duct_location_zone = unit.living_zone
         duct_location_name = unit.living_zone.name.to_s

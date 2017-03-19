@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>12b7c412-1c40-4668-9258-d96d205c3247</version_id>
-  <version_modified>20170316T173615Z</version_modified>
+  <version_id>4910de92-152f-4105-9dbd-551c4db18af1</version_id>
+  <version_modified>20170318T184244Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
@@ -11,27 +11,26 @@
   <modeler_description>E+ RESNET</modeler_description>
   <arguments>
     <argument>
-      <name>hpxml_directory</name>
-      <display_name>HPXML Directory</display_name>
-      <description>Absolute (or relative) directory to HPXML files.</description>
+      <name>hpxml_file_path</name>
+      <display_name>HPXML File Path</display_name>
+      <description>Absolute (or relative) path of the HPXML file.</description>
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>./resources</default_value>
+      <default_value>./resources/audit.xml</default_value>
     </argument>
     <argument>
-      <name>hpxml_file_name</name>
-      <display_name>HPXML File Name</display_name>
-      <description>Name of the HPXML file.</description>
+      <name>weather_file_path</name>
+      <display_name>EPW File Path</display_name>
+      <description>Absolute (or relative) path of the EPW weather file to assign. The corresponding DDY file must also be in the same directory.</description>
       <type>String</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>audit.xml</default_value>
     </argument>
     <argument>
       <name>measures_dir</name>
       <display_name>Residential Measures Directory</display_name>
-      <description>Absolute (or relative) directory to residential measures.</description>
+      <description>Absolute directory to residential measures.</description>
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -78,23 +77,6 @@
       <checksum>809DC08A</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.14.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DA7FFB53</checksum>
-    </file>
-    <file>
-      <filename>hpxml_build_model_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EE786657</checksum>
-    </file>
-    <file>
       <filename>lat_long_table.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
@@ -105,6 +87,23 @@
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
       <checksum>21610198</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>6678220D</checksum>
+    </file>
+    <file>
+      <filename>hpxml_build_model_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3B5360D7</checksum>
     </file>
   </files>
 </measure>

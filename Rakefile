@@ -169,7 +169,7 @@ namespace :test do
       end
     end
 
-    osw_files = Dir.entries(osw_path).select {|entry| entry.end_with?(".osw")}
+    osw_files = Dir.entries(osw_path).select {|entry| entry.end_with?(".osw") and !osw_map[entry].nil?}
     if File.exists?(File.expand_path("../log", __FILE__))
         FileUtils.rm(File.expand_path("../log", __FILE__))
     end
@@ -178,7 +178,6 @@ namespace :test do
 
         # Generate osm from osw
         osw_filename = osw
-        next if osw_map[osw_filename].nil? # No measures to copy osm to
         num_tot += 1
         
         puts "[#{num_tot}/#{osw_map.size}] Regenerating osm from #{osw}..."

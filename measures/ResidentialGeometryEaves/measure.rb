@@ -727,7 +727,7 @@ class CreateResidentialEaves < OpenStudio::Measure::ModelMeasure
         if surface.vertices.length == 4
         
           garage_roof = false
-          if surface.space.get.name.to_s.downcase.include? Constants.GarageSpace
+          if Geometry.is_garage(surface.space.get)
             garage_roof = true
           end        
 
@@ -1562,7 +1562,7 @@ class CreateResidentialEaves < OpenStudio::Measure::ModelMeasure
     roof_decks = []
     gable_walls = []
     surfaces.each do |surface|
-      next if surface.space.get.name.to_s.downcase.include? Constants.GarageSpace or surface.space.get.name.to_s.downcase.include? Constants.CorridorSpace
+      next if Geometry.is_garage(surface.space.get) or surface.space.get.name.to_s.downcase.include? Constants.CorridorSpace
       if surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors"
         roof_decks << surface
       elsif surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors" and surface.vertices.length == 3
@@ -1596,7 +1596,7 @@ class CreateResidentialEaves < OpenStudio::Measure::ModelMeasure
   
   def get_garage_dimensions(surfaces)
     surfaces.each do |surface|
-      next unless surface.space.get.name.to_s.include? Constants.GarageSpace
+      next unless Geometry.is_garage(surface.space.get)
       next unless surface.surfaceType.downcase == "floor"
       pos = "Right"
       if surface.vertices.any? {|vertex| vertex.x.abs < 0.001}
