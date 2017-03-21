@@ -2293,7 +2293,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         return
       end
 
-      # Use summer test condition to determine the latent effectivess since TRE is generally specified under the summer condition
+      # Use summer test condition to determine the latent effectiveness since TRE is generally specified under the summer condition
       if mech_vent.MechVentTotalEfficiency > 0
 
         t_sup_in = 35.0

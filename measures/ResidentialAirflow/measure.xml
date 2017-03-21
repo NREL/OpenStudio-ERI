@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>4cc7128c-c14d-4fd3-96f1-aa7e56f0c95c</version_id>
-  <version_modified>20170321T002018Z</version_modified>
+  <version_id>05199256-8287-438b-8328-d8e985701559</version_id>
+  <version_modified>20170321T215657Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -720,17 +720,6 @@
       <checksum>66C79984</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.1</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>FFDE81FC</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -825,6 +814,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.1</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>BAF4A471</checksum>
     </file>
   </files>
 </measure>
