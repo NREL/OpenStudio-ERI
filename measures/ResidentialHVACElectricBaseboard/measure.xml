@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>58ee5928-5b8e-473d-8833-906fe298c2c6</version_id>
-  <version_modified>20170318T184256Z</version_modified>
+  <version_id>5a96598c-ca60-496f-914e-1968c36f01e9</version_id>
+  <version_modified>20170321T002028Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -205,130 +205,130 @@
       <checksum>77B00FBB</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
-    </file>
-    <file>
       <filename>process_electric_baseboard_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>B2EEA7C9</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC324E2B</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>39FA3BA7</checksum>
+      <checksum>CBDAEC35</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4BB45A6A</checksum>
+      <checksum>6A741FB1</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5808F72B</checksum>
+      <checksum>1DACB396</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9A32161E</checksum>
+      <checksum>F1F2F411</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2064EEFE</checksum>
+      <checksum>E1952E63</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>446BF5AB</checksum>
+      <checksum>CB9A8552</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>54D0D3D6</checksum>
+      <checksum>6F476A7B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C208795C</checksum>
+      <checksum>FC8196EC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0C7523D4</checksum>
+      <checksum>6D193188</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EE8AE93B</checksum>
+      <checksum>B2664348</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3361EFB8</checksum>
+      <checksum>F9E4FD9E</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0F38DDF0</checksum>
+      <checksum>B87AA4F0</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C1120DB9</checksum>
+      <checksum>B4F3A7FC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_MSHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EF7094C3</checksum>
+      <checksum>106D2E92</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>71C44BBD</checksum>
+      <checksum>4C18854D</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EB51EF3E</checksum>
+      <checksum>910B95ED</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>27315F82</checksum>
+      <checksum>32478829</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

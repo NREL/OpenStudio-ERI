@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>f0259bdc-1391-41eb-80eb-efc10bd1bc02</uid>
-  <version_id>5f20a020-49a2-494d-8583-e5dcb9682b80</version_id>
-  <version_modified>20170318T184246Z</version_modified>
+  <version_id>c452d5cd-89de-4147-b687-af5cac5937cd</version_id>
+  <version_modified>20170321T002019Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Set Residential Refrigerator</display_name>
@@ -114,34 +114,34 @@
       <checksum>0290BD27</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>31C7E134</checksum>
+      <checksum>F6C1126D</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F980686F</checksum>
+      <checksum>4BD2ECB8</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>21D804E5</checksum>
+      <checksum>89A5B28D</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

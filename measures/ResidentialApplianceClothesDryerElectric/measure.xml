@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>dc42c0b6-2812-4e9a-8885-7a1314ab32a7</version_id>
-  <version_modified>20170318T184245Z</version_modified>
+  <version_id>793ddb25-9518-49a2-bf3f-2349ab4ec458</version_id>
+  <version_modified>20170321T002018Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>
@@ -144,52 +144,52 @@
       <checksum>6F517A95</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>31C7E134</checksum>
+      <checksum>F6C1126D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E9B1B3FD</checksum>
+      <checksum>8D8787C2</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_GasClothesDryer.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>DF8FEFB1</checksum>
+      <checksum>A52EC552</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_PropaneClothesDryer.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7E6FD598</checksum>
+      <checksum>1AA58EE7</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F980686F</checksum>
+      <checksum>4BD2ECB8</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>21D804E5</checksum>
+      <checksum>89A5B28D</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

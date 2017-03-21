@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>6717b500-7258-4250-a97c-5a5440714654</version_id>
-  <version_modified>20170318T184246Z</version_modified>
+  <version_id>18c14835-8c08-411c-ab9a-324a947ef990</version_id>
+  <version_modified>20170321T002020Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsUnfinishedAttic</class_name>
   <display_name>Set Residential Ceilings/Roofs - Unfinished Attic Constructions</display_name>
@@ -173,16 +173,16 @@
       <checksum>C649CCD3</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>66C79984</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition_thermal_mass</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>a007cd13-00f4-4c76-8c0b-8eb30251c19c</version_id>
-  <version_modified>20170318T184249Z</version_modified>
+  <version_id>40963666-26c3-47e4-85de-2aff928db0c5</version_id>
+  <version_modified>20170321T002022Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWallsPartitionThermalMass</class_name>
   <display_name>Set Residential Walls - Partition Thermal Mass</display_name>
@@ -144,22 +144,22 @@
       <checksum>527B8AC2</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

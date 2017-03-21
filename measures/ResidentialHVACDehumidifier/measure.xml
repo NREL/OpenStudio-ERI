@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>aac78cd2-7f53-40cf-a2be-eebbb19eccad</version_id>
-  <version_modified>20170318T184256Z</version_modified>
+  <version_id>c398670a-c654-426c-a2f3-955044b17a01</version_id>
+  <version_modified>20170321T002028Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
@@ -97,46 +97,46 @@
       <checksum>F3053309</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
-    </file>
-    <file>
       <filename>process_dehumidifier_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>AE286901</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC324E2B</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>17EBB89E</checksum>
+      <checksum>57FAEE0C</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EB51EF3E</checksum>
+      <checksum>910B95ED</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>27315F82</checksum>
+      <checksum>32478829</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

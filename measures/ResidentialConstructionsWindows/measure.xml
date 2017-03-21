@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>af73c82c-787d-44ff-855c-2bb8c2bdb642</version_id>
-  <version_modified>20170318T184249Z</version_modified>
+  <version_id>1b982dbb-cda0-475a-b6de-e1ef44a9ff66</version_id>
+  <version_modified>20170321T002022Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -120,46 +120,46 @@
       <checksum>B0CD597F</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
-    </file>
-    <file>
       <filename>process_constructions_windows_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>32573C47</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC324E2B</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>866485CF</checksum>
+      <checksum>052A7129</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>00560014</checksum>
+      <checksum>612C98ED</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>17EBB89E</checksum>
+      <checksum>57FAEE0C</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

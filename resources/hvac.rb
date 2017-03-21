@@ -156,7 +156,7 @@ class HVAC
         cool_eir_fff.setMaximumCurveOutput(2.0)
 
         stage_data = OpenStudio::Model::CoilCoolingDXMultiSpeedStageData.new(model, cool_cap_ft, cool_cap_fff, cool_eir_ft, cool_eir_fff, cool_plf_fplr, const_biquadratic)
-        if outputCapacity != Constants.SizingAuto
+        if outputCapacity != Constants.SizingAuto and outputCapacity != Constants.SizingAutoMaxLoad
           stage_data.setGrossRatedTotalCoolingCapacity(outputCapacity * OpenStudio::convert(1.0,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[speed])
           stage_data.setRatedAirFlowRate(supply.CFM_TON_Rated[speed] * outputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * supply.Capacity_Ratio_Cooling[speed]) 
         end
@@ -292,7 +292,7 @@ class HVAC
         hp_heat_eir_fff.setMaximumCurveOutput(2.0)
 
         stage_data = OpenStudio::Model::CoilHeatingDXMultiSpeedStageData.new(model, hp_heat_cap_ft, hp_heat_cap_fff, hp_heat_eir_ft, hp_heat_eir_fff, hp_heat_plf_fplr, const_biquadratic)
-        if outputCapacity != Constants.SizingAuto
+        if outputCapacity != Constants.SizingAuto and outputCapacity != Constants.SizingAutoMaxLoad
           stage_data.setGrossRatedHeatingCapacity(outputCapacity * OpenStudio::convert(1.0,"Btu/h","W").get * supply.Capacity_Ratio_Heating[speed])
           stage_data.setRatedAirFlowRate(supply.CFM_TON_Rated_Heat[speed] * outputCapacity * OpenStudio::convert(1.0,"Btu/h","W").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * supply.Capacity_Ratio_Heating[speed]) 
         end   

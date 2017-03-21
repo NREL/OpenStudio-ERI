@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>64ff3c52-9221-4eed-a459-26b942aa73a2</version_id>
-  <version_modified>20170318T184257Z</version_modified>
+  <version_id>e40a0584-c2ce-4f78-9982-dc7f8ec290ef</version_id>
+  <version_modified>20170321T002029Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -103,94 +103,94 @@
       <checksum>0B99EE7B</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
-    </file>
-    <file>
       <filename>process_heating_setpoints_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>066127DD</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC324E2B</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>25C3F9A8</checksum>
+      <checksum>0793AECD</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_ASHP_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E94EEBF7</checksum>
+      <checksum>87D61A7B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Boiler_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6C8FF2E8</checksum>
+      <checksum>A15F2A60</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_ElectricBaseboard_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>67BEBB74</checksum>
+      <checksum>E16D45A6</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_NoHtgSetpoint.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B0398FA5</checksum>
+      <checksum>1499B91F</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8048701C</checksum>
+      <checksum>107079ED</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_GSHPVertBore_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7502EA4B</checksum>
+      <checksum>87853EC1</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_MSHP_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1F6BF5D1</checksum>
+      <checksum>18D4DC04</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_Furnace_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>73B9A42F</checksum>
+      <checksum>444FF8E3</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_Furnace_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BC55E554</checksum>
+      <checksum>8F4D49F0</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

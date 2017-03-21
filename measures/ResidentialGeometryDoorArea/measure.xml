@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>2252aab8-fc24-4137-b347-c5af11d47da6</version_id>
-  <version_modified>20170318T184250Z</version_modified>
+  <version_id>6f5085e3-2c4f-498b-89cd-e2917d562a56</version_id>
+  <version_modified>20170321T002023Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
@@ -67,46 +67,46 @@
       <checksum>C4452FBC</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>31C7E134</checksum>
+      <checksum>F6C1126D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_Southwest.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F64AF6D0</checksum>
+      <checksum>BF5F6AB8</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver_ExteriorCorridor.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F947F60D</checksum>
+      <checksum>F6BE7737</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EB51EF3E</checksum>
+      <checksum>910B95ED</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>27315F82</checksum>
+      <checksum>32478829</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

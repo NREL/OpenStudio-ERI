@@ -257,12 +257,13 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
     #make a string argument for ashp cooling/heating output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
+    cap_display_names << Constants.SizingAutoMaxLoad
     (0.5..10.0).step(0.5) do |tons|
       cap_display_names << tons.to_s
     end
     hpcap = OpenStudio::Measure::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
     hpcap.setDisplayName("Heat Pump Capacity")
-    hpcap.setDescription("The output heating/cooling capacity of the heat pump.")
+    hpcap.setDescription("The output heating/cooling capacity of the heat pump. If using #{Constants.SizingAuto}, the autosizing algorithm will use ACCA Manual S to set the heat pump capacity based on the cooling load. If using #{Constants.SizingAutoMaxLoad}, the autosizing algorithm will override ACCA Manual S and use the maximum of the heating and cooling loads to set the heat pump capacity, based on the heating/cooling capacities under design conditions.")
     hpcap.setUnits("tons")
     hpcap.setDefaultValue(Constants.SizingAuto)
     args << hpcap
@@ -318,7 +319,7 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
     hpCOPCapacityDerateFactor5ton = runner.getDoubleArgumentValue("cop_capacity_derate_5ton",user_arguments)
     hpCOPCapacityDerateFactor = [hpCOPCapacityDerateFactor1ton, hpCOPCapacityDerateFactor2ton, hpCOPCapacityDerateFactor3ton, hpCOPCapacityDerateFactor4ton, hpCOPCapacityDerateFactor5ton]
     hpOutputCapacity = runner.getStringArgumentValue("heat_pump_capacity",user_arguments)
-    unless hpOutputCapacity == Constants.SizingAuto
+    unless hpOutputCapacity == Constants.SizingAuto or hpOutputCapacity == Constants.SizingAutoMaxLoad
       hpOutputCapacity = OpenStudio::convert(hpOutputCapacity.to_f,"ton","Btu/h").get
     end
     supplementalOutputCapacity = runner.getStringArgumentValue("supplemental_capacity",user_arguments)
@@ -525,6 +526,7 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
       unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, hpCapacityRatio.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, hpEERCapacityDerateFactor.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, hpCOPCapacityDerateFactor.join(","))
+      unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (hpOutputCapacity == Constants.SizingAutoMaxLoad))
       
     end # unit
 	

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>7e0692fb-5e41-4810-a8b3-d84b8ccf3f10</version_id>
-  <version_modified>20170318T184305Z</version_modified>
+  <version_id>1d82eda0-2b89-4893-b5e4-2b21704d2498</version_id>
+  <version_modified>20170321T002036Z</version_modified>
   <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -200,46 +200,46 @@
       <checksum>E602A7FF</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
-    </file>
-    <file>
       <filename>residential_photovoltaics_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>8F75698E</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC324E2B</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>17EBB89E</checksum>
+      <checksum>57FAEE0C</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EB51EF3E</checksum>
+      <checksum>910B95ED</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>27315F82</checksum>
+      <checksum>32478829</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

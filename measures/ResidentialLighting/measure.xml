@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>a4205b80-e740-4bc7-a504-02fe702c9b3f</version_id>
-  <version_modified>20170318T184302Z</version_modified>
+  <version_id>e7ad2691-d217-4038-934d-07ab3fc4edc4</version_id>
+  <version_modified>20170321T002034Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -189,52 +189,52 @@
       <checksum>667DF05C</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>ResidentialLighting_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>E69E6ABA</checksum>
+      <checksum>133DF128</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>31C7E134</checksum>
+      <checksum>F6C1126D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_Anchorage.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B547510E</checksum>
+      <checksum>2D661BD1</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8311857F</checksum>
+      <checksum>285C2F30</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EB51EF3E</checksum>
+      <checksum>910B95ED</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>27315F82</checksum>
+      <checksum>32478829</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

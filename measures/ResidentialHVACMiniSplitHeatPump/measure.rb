@@ -172,12 +172,13 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
     #make a string argument for minisplit cooling output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
+    cap_display_names << Constants.SizingAutoMaxLoad
     (0.5..10.0).step(0.5) do |tons|
       cap_display_names << tons.to_s
     end
     miniSplitCoolingOutputCapacity = OpenStudio::Measure::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
     miniSplitCoolingOutputCapacity.setDisplayName("Heat Pump Capacity")
-    miniSplitCoolingOutputCapacity.setDescription("The output heating/cooling capacity of the heat pump.")
+    miniSplitCoolingOutputCapacity.setDescription("The output heating/cooling capacity of the heat pump. If using #{Constants.SizingAuto}, the autosizing algorithm will use ACCA Manual S to set the heat pump capacity based on the cooling load, with up to 1.3x oversizing allowed for variable-speed equipment in colder climates when the heating load exceeds the cooling load. If using #{Constants.SizingAutoMaxLoad}, the autosizing algorithm will override ACCA Manual S and use the maximum of the heating and cooling loads to set the heat pump capacity, based on the heating/cooling capacities under design conditions.")
     miniSplitCoolingOutputCapacity.setUnits("tons")
     miniSplitCoolingOutputCapacity.setDefaultValue(Constants.SizingAuto)
     args << miniSplitCoolingOutputCapacity
@@ -236,7 +237,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
     miniSplitHPPanHeaterPowerPerUnit = runner.getDoubleArgumentValue("pan_heater_power",user_arguments)    
     miniSplitHPSupplyFanPower = runner.getDoubleArgumentValue("fan_power",user_arguments)
     miniSplitCoolingOutputCapacity = runner.getStringArgumentValue("heat_pump_capacity",user_arguments)
-    unless miniSplitCoolingOutputCapacity == Constants.SizingAuto
+    unless miniSplitCoolingOutputCapacity == Constants.SizingAuto or miniSplitCoolingOutputCapacity == Constants.SizingAutoMaxLoad
       miniSplitCoolingOutputCapacity = OpenStudio::convert(miniSplitCoolingOutputCapacity.to_f,"ton","Btu/h").get
       miniSplitHeatingOutputCapacity = miniSplitCoolingOutputCapacity + miniSplitHPHeatingCapacityOffset
     end
@@ -379,7 +380,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
         
         htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
         htg_coil.setName(obj_name + " #{control_zone.name} heating coil")
-        if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+        if miniSplitCoolingOutputCapacity != Constants.SizingAuto and miniSplitCoolingOutputCapacity != Constants.SizingAutoMaxLoad
           htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]] * (1.0 - fbsmt_frac))
           htg_coil.setRatedAirFlowRate(supply.HeatingCFMs[curves.mshp_indices[-1]] * miniSplitHeatingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * (1.0 - fbsmt_frac))
         end        
@@ -390,7 +391,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
         
         clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
         clg_coil.setName(obj_name + " #{control_zone.name} cooling coil")
-        if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+        if miniSplitCoolingOutputCapacity != Constants.SizingAuto and miniSplitCoolingOutputCapacity != Constants.SizingAutoMaxLoad
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]] * (1.0 - fbsmt_frac))
           clg_coil.setRatedAirFlowRate(supply.CoolingCFMs[curves.mshp_indices[-1]]* miniSplitCoolingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * (1.0 - fbsmt_frac))
         end
@@ -403,7 +404,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
         vrf = OpenStudio::Model::AirConditionerVariableRefrigerantFlow.new(model)
         vrf.setName(obj_name + " #{control_zone.name} ac vrf")
         vrf.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+        if miniSplitCoolingOutputCapacity != Constants.SizingAuto and miniSplitCoolingOutputCapacity != Constants.SizingAutoMaxLoad
           vrf.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]] * (1.0 - fbsmt_frac))
           vrf.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]] * (1.0 - fbsmt_frac))
         end
@@ -483,7 +484,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
           
           htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
           htg_coil.setName(obj_name + " #{slave_zone.name} heating coil")
-          if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+          if miniSplitCoolingOutputCapacity != Constants.SizingAuto and miniSplitCoolingOutputCapacity != Constants.SizingAutoMaxLoad
             htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]] * fbsmt_frac)
             htg_coil.setRatedAirFlowRate(supply.HeatingCFMs[curves.mshp_indices[-1]]* miniSplitHeatingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * fbsmt_frac)
           end
@@ -492,7 +493,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
                   
           clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
           clg_coil.setName(obj_name + " #{slave_zone.name} cooling coil")
-          if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+          if miniSplitCoolingOutputCapacity != Constants.SizingAuto and miniSplitCoolingOutputCapacity != Constants.SizingAutoMaxLoad
             clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]] * fbsmt_frac)
             clg_coil.setRatedAirFlowRate(supply.CoolingCFMs[curves.mshp_indices[-1]]* miniSplitCoolingOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * fbsmt_frac)
           end          
@@ -503,7 +504,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
           vrf = OpenStudio::Model::AirConditionerVariableRefrigerantFlow.new(model)
           vrf.setName(obj_name + " #{slave_zone.name} ac vrf")
           vrf.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)          
-          if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+          if miniSplitCoolingOutputCapacity != Constants.SizingAuto and miniSplitCoolingOutputCapacity != Constants.SizingAutoMaxLoad
             vrf.setRatedTotalCoolingCapacity(OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Cooling[curves.mshp_indices[-1]] * fbsmt_frac)
             vrf.setRatedTotalHeatingCapacity(OpenStudio::convert(miniSplitHeatingOutputCapacity,"Btu/h","W").get * supply.Capacity_Ratio_Heating[curves.mshp_indices[-1]] * fbsmt_frac)
           end
@@ -608,7 +609,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
 
           program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
           program.setName(obj_name + " pan heater program")
-          if miniSplitCoolingOutputCapacity != Constants.SizingAuto
+          if miniSplitCoolingOutputCapacity != Constants.SizingAuto and miniSplitCoolingOutputCapacity != Constants.SizingAutoMaxLoad
             num_outdoor_units = (OpenStudio::convert(miniSplitCoolingOutputCapacity,"Btu/h","ton").get / 1.5).ceil # Assume 1.5 tons max per outdoor unit
           else
             num_outdoor_units = 2
@@ -643,6 +644,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
       unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, supply.Capacity_Ratio_Cooling.join(","))
       unit.setFeature(Constants.SizingInfoHVACCoolingCFMs, supply.CoolingCFMs.join(","))
       unit.setFeature(Constants.SizingInfoHVACHeatingCapacityOffset, miniSplitHPHeatingCapacityOffset)
+      unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (miniSplitCoolingOutputCapacity == Constants.SizingAutoMaxLoad))
       
     end # unit
 

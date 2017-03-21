@@ -213,12 +213,13 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
     #make a string argument for ashp cooling/heating output capacity
     cap_display_names = OpenStudio::StringVector.new
     cap_display_names << Constants.SizingAuto
+    cap_display_names << Constants.SizingAutoMaxLoad
     (0.5..10.0).step(0.5) do |tons|
       cap_display_names << tons.to_s
     end
     hpcap = OpenStudio::Measure::OSArgument::makeChoiceArgument("heat_pump_capacity", cap_display_names, true)
     hpcap.setDisplayName("Heat Pump Capacity")
-    hpcap.setDescription("The output heating/cooling capacity of the heat pump.")
+    hpcap.setDescription("The output heating/cooling capacity of the heat pump. If using #{Constants.SizingAuto}, the autosizing algorithm will use ACCA Manual S to set the heat pump capacity based on the cooling load. If using #{Constants.SizingAutoMaxLoad}, the autosizing algorithm will override ACCA Manual S and use the maximum of the heating and cooling loads to set the heat pump capacity, based on the heating/cooling capacities under design conditions.")
     hpcap.setUnits("tons")
     hpcap.setDefaultValue(Constants.SizingAuto)
     args << hpcap
@@ -274,12 +275,16 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
     hpCOPCapacityDerateFactor5ton = runner.getDoubleArgumentValue("cop_capacity_derate_5ton",user_arguments)
     hpCOPCapacityDerateFactor = [hpCOPCapacityDerateFactor1ton, hpCOPCapacityDerateFactor2ton, hpCOPCapacityDerateFactor3ton, hpCOPCapacityDerateFactor4ton, hpCOPCapacityDerateFactor5ton]
     hpOutputCapacity = runner.getStringArgumentValue("heat_pump_capacity",user_arguments)
-    unless hpOutputCapacity == Constants.SizingAuto
+    unless hpOutputCapacity == Constants.SizingAuto or hpOutputCapacity == Constants.SizingAutoMaxLoad
       hpOutputCapacity = OpenStudio::convert(hpOutputCapacity.to_f,"ton","Btu/h").get
     end
     supplementalOutputCapacity = runner.getStringArgumentValue("supplemental_capacity",user_arguments)
     unless supplementalOutputCapacity == Constants.SizingAuto
       supplementalOutputCapacity = OpenStudio::convert(supplementalOutputCapacity.to_f,"kBtu/h","Btu/h").get
+    end
+    
+    if hpOutputCapacity == Constants.SizingAutoMaxLoad
+        runner.registerWarning("Using #{Constants.SizingAutoMaxLoad} is not recommended for single-speed heat pumps. When sized larger than the cooling load, this can lead to humidity concerns due to reduced dehumidification performance by the heat pump.")
     end
     
     supply = Supply.new
@@ -357,7 +362,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         htg_coil = OpenStudio::Model::CoilHeatingDXSingleSpeed.new(model, model.alwaysOnDiscreteSchedule, htg_coil_stage_data[0].heatingCapacityFunctionofTemperatureCurve, htg_coil_stage_data[0].heatingCapacityFunctionofFlowFractionCurve, htg_coil_stage_data[0].energyInputRatioFunctionofTemperatureCurve, htg_coil_stage_data[0].energyInputRatioFunctionofFlowFractionCurve, htg_coil_stage_data[0].partLoadFractionCorrelationCurve)
         htg_coil_stage_data[0].remove
         htg_coil.setName(obj_name + " heating coil")
-        if hpOutputCapacity != Constants.SizingAuto
+        if hpOutputCapacity != Constants.SizingAuto and hpOutputCapacity != Constants.SizingAutoMaxLoad
           htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
           htg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated_Heat[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end
@@ -387,7 +392,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         clg_coil = OpenStudio::Model::CoilCoolingDXSingleSpeed.new(model, model.alwaysOnDiscreteSchedule, clg_coil_stage_data[0].totalCoolingCapacityFunctionofTemperatureCurve, clg_coil_stage_data[0].totalCoolingCapacityFunctionofFlowFractionCurve, clg_coil_stage_data[0].energyInputRatioFunctionofTemperatureCurve, clg_coil_stage_data[0].energyInputRatioFunctionofFlowFractionCurve, clg_coil_stage_data[0].partLoadFractionCorrelationCurve)
         clg_coil_stage_data[0].remove
         clg_coil.setName(obj_name + " cooling coil")
-        if hpOutputCapacity != Constants.SizingAuto
+        if hpOutputCapacity != Constants.SizingAuto and hpOutputCapacity != Constants.SizingAutoMaxLoad
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
           clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end
@@ -477,6 +482,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
       # Store info for HVAC Sizing measure
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, hpEERCapacityDerateFactor.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, hpCOPCapacityDerateFactor.join(","))
+      unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (hpOutputCapacity == Constants.SizingAutoMaxLoad))
     
     end # unit
 	

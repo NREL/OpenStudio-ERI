@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_pump</name>
   <uid>58b3f782-0d34-455c-9101-df36412196f1</uid>
-  <version_id>e195270e-35fa-4396-a808-9fa629f3f020</version_id>
-  <version_modified>20170318T184304Z</version_modified>
+  <version_id>3be0091a-fd33-4203-880c-8c1ed0494c54</version_id>
+  <version_modified>20170321T002035Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotTubPump</class_name>
   <display_name>Set Residential Hot Tub Pump</display_name>
@@ -118,40 +118,40 @@
       <checksum>870B9B35</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>31C7E134</checksum>
+      <checksum>F6C1126D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E9B1B3FD</checksum>
+      <checksum>8D8787C2</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F980686F</checksum>
+      <checksum>4BD2ECB8</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>21D804E5</checksum>
+      <checksum>89A5B28D</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

@@ -942,6 +942,9 @@ class Constants
   def self.SizingAuto
     return 'autosize'
   end
+  def self.SizingAutoMaxLoad
+    return 'autosize for max load'
+  end
   def self.SizingInfo(property, obj=nil)
     s_obj = ''
     if not obj.nil?
@@ -977,6 +980,9 @@ class Constants
     return self.SizingInfo(__method__.to_s)
   end
   def self.SizingInfoDuctsSupplySurfaceArea
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHPSizedForMaxLoad
     return self.SizingInfo(__method__.to_s)
   end
   def self.SizingInfoHVACCapacityDerateFactorCOP

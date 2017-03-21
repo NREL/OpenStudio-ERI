@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_finished_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>d4b0473a-cac0-4e4c-acbd-15c0f3f4e0ee</version_id>
-  <version_modified>20170318T184246Z</version_modified>
+  <version_id>ed45e002-4038-42d6-9c0c-3fc7fa89fb31</version_id>
+  <version_modified>20170321T002019Z</version_modified>
   <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsFinishedRoof</class_name>
   <display_name>Set Residential Ceilings/Roofs - Finished Roof Construction</display_name>
@@ -125,34 +125,34 @@
       <checksum>97029CE6</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9C65245E</checksum>
+      <checksum>00DD948C</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_FA_AllLayersButFinishedRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>461C3B36</checksum>
+      <checksum>EF01AEA2</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AA2A754</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>
