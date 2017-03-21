@@ -1,0 +1,44 @@
+{
+    "measure_paths": [
+        "measures/"
+    ],
+    "seed_file": "seeds/EmptySeedModel.osm",	
+    "steps": [
+		{
+			"measure_dir_name": "ResidentialLocation"
+		},		
+    {
+			"measure_dir_name": "ResidentialGeometrySingleFamilyDetached"
+		},
+    {
+      "measure_dir_name": "ResidentialGeometryNumBedsAndBaths"
+    },
+		{
+			"measure_dir_name": "ResidentialConstructionsFoundationsFloorsSlab"
+		},
+		{
+			"measure_dir_name": "ResidentialConstructionsWallsExteriorWoodStud"
+		},
+		{
+			"measure_dir_name": "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
+		},
+		{
+			"measure_dir_name": "ResidentialConstructionsUninsulatedSurfaces"
+		},    
+		{
+			"measure_dir_name": "ResidentialHVACFurnaceFuel"
+		},
+		{
+			"measure_dir_name": "ResidentialHVACCentralAirConditionerSingleSpeed"
+		},
+		{
+			"measure_dir_name": "ResidentialHVACHeatingSetpoints"
+		},
+		{
+			"measure_dir_name": "ResidentialHVACCoolingSetpoints"
+		},
+		{
+			"measure_dir_name": "UtilityBillCalculations"
+		}
+	]
+}

@@ -130,11 +130,11 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    if !File.directory? "#{File.dirname(__FILE__)}/resources/sam-sdk-2017-1-17"
-      unzip_file = OpenStudio::UnzipFile.new("#{File.dirname(__FILE__)}/resources/sam-sdk-2017-1-17.zip")
-      unzip_file.extractAllFiles(OpenStudio::toPath("#{File.dirname(__FILE__)}/resources"))
+    if !File.directory? "#{File.dirname(__FILE__)}/resources/sam-sdk-2017-1-17-r1"
+      unzip_file = OpenStudio::UnzipFile.new("#{File.dirname(__FILE__)}/resources/sam-sdk-2017-1-17-r1.zip")
+      unzip_file.extractAllFiles(OpenStudio::toPath("#{File.dirname(__FILE__)}/resources/sam-sdk-2017-1-17-r1"))
     end
-    
+
     require "#{File.dirname(__FILE__)}/resources/ssc_api"
     
     size = runner.getDoubleArgumentValue("size",user_arguments)

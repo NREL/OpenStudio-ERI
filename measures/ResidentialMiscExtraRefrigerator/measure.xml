@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_extra_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>ea3299c8-3623-40fe-89ba-8a4c81aed351</version_id>
-  <version_modified>20170321T002034Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>e1726ebf-33d6-4cac-b88f-b2ed4f50f09c</version_id>
+  <version_modified>20170321T190528Z</version_modified>
+  <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialExtraRefrigerator</class_name>
   <display_name>Set Residential Extra Refrigerator</display_name>
   <description>Adds (or replaces) a residential extra refrigerator with the specified efficiency, operation, and schedule. For multifamily buildings, the extra refrigerator can be set for all units of the building.</description>
@@ -97,6 +97,18 @@
       <checksum>38632BB3</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07204EC3</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>53D20E39</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -114,40 +126,28 @@
       <checksum>B861A7B5</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F6C1126D</checksum>
+      <checksum>31C7E134</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_UB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6D14CE3F</checksum>
+      <checksum>49364B45</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>910B95ED</checksum>
+      <checksum>EB51EF3E</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>32478829</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
+      <checksum>27315F82</checksum>
     </file>
   </files>
 </measure>

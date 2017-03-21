@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_sheathing</name>
   <uid>b59d63a5-8d7b-41e2-b290-6d22cdfc0c0c</uid>
-  <version_id>3b554d22-9ae9-4230-8c01-88881cdc0476</version_id>
-  <version_modified>20170321T002021Z</version_modified>
-  <xml_checksum>E9AF3981</xml_checksum>
+  <version_id>7bcfc53e-7a7c-4976-abdb-f09d04ce6382</version_id>
+  <version_modified>20170321T190506Z</version_modified>
+  <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSheathing</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Sheathing</display_name>
   <description>This measure assigns floor sheathing to floors of finished spaces, with the exception of foundation slabs.</description>
@@ -106,6 +106,18 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07204EC3</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>53D20E39</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.0</identifier>
@@ -115,18 +127,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>B3140B73</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

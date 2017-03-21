@@ -114,7 +114,7 @@ DEPENDENCIES
   colored (~> 1.2)
   coveralls
   docker-api
-  ffi (~> 1.9.17)
+  ffi (~> 1.9.18)
   json (~> 1.8)
   minitest (~> 5.9)
   minitest-ci!

@@ -10,14 +10,14 @@ module SscApi
     ssc_path = nil
     if /win/.match(RUBY_PLATFORM) or /mingw/.match(RUBY_PLATFORM)
       if RUBY_PLATFORM.include? "x64"
-        ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/win64/ssc.dll"
+        ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17-r1/win64/ssc.dll"
       else
-        ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/win32/ssc.dll"
+        ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17-r1/win32/ssc.dll"
       end
     elsif /darwin/.match(RUBY_PLATFORM)
-      ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/osx64/ssc.dylib"
+      ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17-r1/osx64/ssc.dylib"
     elsif /linux/.match(RUBY_PLATFORM)
-      ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17/linux64/ssc.so"
+      ssc_path = "#{File.dirname(__FILE__)}/sam-sdk-2017-1-17-r1/linux64/ssc.so"
     end
     
     if ssc_path.nil?

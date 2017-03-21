@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>a0427d92-0cb0-442b-8adc-111196c4cfa7</version_id>
-  <version_modified>20170321T002021Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>54fd3cd3-4652-449d-854e-e3e7c7ba3a10</version_id>
+  <version_modified>20170321T190506Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>
   <description>Adds (or replaces) furniture mass to finished and unfinished spaces.</description>
@@ -94,6 +94,18 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07204EC3</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>53D20E39</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -103,18 +115,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>35A3E97D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
     </file>
   </files>
 </measure>

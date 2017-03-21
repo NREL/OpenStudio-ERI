@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>ffbe6375-decc-42bb-b208-478bc8e2061e</version_id>
-  <version_modified>20170321T002027Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>4dfca049-752a-41d1-9c07-a1b82fbc953e</version_id>
+  <version_modified>20170321T190518Z</version_modified>
+  <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
   <description>Adds (or replaces) residential ceiling fan(s) and schedule in all finished spaces. For multifamily buildings, the ceiling fan(s) can be set for all units of the building.</description>
@@ -165,16 +165,16 @@
       <checksum>38632BB3</checksum>
     </file>
     <file>
-      <filename>process_ceiling_fan_test.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1AFB99DC</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>07204EC3</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>53D20E39</checksum>
     </file>
     <file>
       <version>
@@ -185,37 +185,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D44B3DFD</checksum>
+      <checksum>76FDF8D4</checksum>
+    </file>
+    <file>
+      <filename>process_ceiling_fan_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1AFB99DC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0793AECD</checksum>
+      <checksum>25C3F9A8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>518183FA</checksum>
+      <checksum>D62DC5E6</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F344C63D</checksum>
+      <checksum>697D8D73</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3BE775F2</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
+      <checksum>B1B5A737</checksum>
     </file>
   </files>
 </measure>

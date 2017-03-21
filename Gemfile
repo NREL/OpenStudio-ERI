@@ -28,4 +28,4 @@ end
 
 gem 'docker-api', require: 'docker'
 
-gem 'ffi', '~> 1.9.17'
+gem 'ffi', '~> 1.9.18'

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>7540d6bd-594e-48fd-a5c5-919846ffcc55</version_id>
-  <version_modified>20170321T002023Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>33ebd2da-c047-49b3-be44-bc5293b53088</version_id>
+  <version_modified>20170321T190510Z</version_modified>
+  <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
   <description>Sets the basic geometry for the building.</description>
@@ -247,16 +247,16 @@
   </attributes>
   <files>
     <file>
-      <filename>create_residential_multifamily_geometry_test.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D54FD74A</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>07204EC3</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
+      <checksum>53D20E39</checksum>
     </file>
     <file>
       <version>
@@ -267,19 +267,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BCD14865</checksum>
+      <checksum>323582D8</checksum>
+    </file>
+    <file>
+      <filename>create_residential_multifamily_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D54FD74A</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>910B95ED</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
+      <checksum>EB51EF3E</checksum>
     </file>
   </files>
 </measure>

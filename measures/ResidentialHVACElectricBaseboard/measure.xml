@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>5a96598c-ca60-496f-914e-1968c36f01e9</version_id>
-  <version_modified>20170321T002028Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>2bdb6911-4a37-4f8e-9852-b9075b44afb9</version_id>
+  <version_modified>20170321T190521Z</version_modified>
+  <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
   <description>This measure removes any existing electric baseboards from the building and adds electric baseboards. For multifamily buildings, the electric baseboard can be set for all units of the building.</description>
@@ -194,6 +194,18 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07204EC3</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>53D20E39</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -205,130 +217,118 @@
       <checksum>77B00FBB</checksum>
     </file>
     <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>11A72D9A</checksum>
+    </file>
+    <file>
       <filename>process_electric_baseboard_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>B2EEA7C9</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FC324E2B</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CBDAEC35</checksum>
+      <checksum>39FA3BA7</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6A741FB1</checksum>
+      <checksum>4BB45A6A</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1DACB396</checksum>
+      <checksum>5808F72B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F1F2F411</checksum>
+      <checksum>9A32161E</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E1952E63</checksum>
+      <checksum>2064EEFE</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CB9A8552</checksum>
+      <checksum>446BF5AB</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6F476A7B</checksum>
+      <checksum>54D0D3D6</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>FC8196EC</checksum>
+      <checksum>C208795C</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6D193188</checksum>
+      <checksum>0C7523D4</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B2664348</checksum>
+      <checksum>EE8AE93B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F9E4FD9E</checksum>
+      <checksum>3361EFB8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B87AA4F0</checksum>
+      <checksum>0F38DDF0</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B4F3A7FC</checksum>
+      <checksum>C1120DB9</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_MSHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>106D2E92</checksum>
+      <checksum>EF7094C3</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4C18854D</checksum>
+      <checksum>71C44BBD</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>910B95ED</checksum>
+      <checksum>EB51EF3E</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>32478829</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
+      <checksum>27315F82</checksum>
     </file>
   </files>
 </measure>
