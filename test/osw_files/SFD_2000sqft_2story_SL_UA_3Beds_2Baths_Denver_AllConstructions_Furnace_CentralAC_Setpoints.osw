@@ -1,8 +1,8 @@
 {
     "measure_paths": [
-        "measures/"
+        "../../measures/"
     ],
-    "seed_file": "seeds/EmptySeedModel.osm",	
+    "seed_file": "../../seeds/EmptySeedModel.osm",	
     "steps": [
 		{
 			"measure_dir_name": "ResidentialLocation"
@@ -36,9 +36,6 @@
 		},
 		{
 			"measure_dir_name": "ResidentialHVACCoolingSetpoints"
-		},
-		{
-			"measure_dir_name": "UtilityBillCalculations"
 		}
 	]
 }
