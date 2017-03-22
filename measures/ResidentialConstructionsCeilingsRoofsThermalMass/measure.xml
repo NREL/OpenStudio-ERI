@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_thermal_mass</name>
   <uid>efe35222-f47d-43e9-b096-6bd18bfe1100</uid>
-  <version_id>9f706886-6232-4a28-96f0-705c1608ecd3</version_id>
-  <version_modified>20170321T190504Z</version_modified>
+  <version_id>a225045f-e683-407f-b902-c8ddc9ef894f</version_id>
+  <version_modified>20170322T025107Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsThermalMass</class_name>
   <display_name>Set Residential Ceilings/Roofs - Ceiling Thermal Mass</display_name>
@@ -112,18 +112,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -141,16 +129,28 @@
       <checksum>D31F6CF4</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButCeilingThermalMass.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2DC4903F</checksum>
+      <checksum>72912E35</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
   </files>
 </measure>

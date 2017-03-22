@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>3b110de3-1f13-4ed9-a3a6-c5108d422d83</version_id>
-  <version_modified>20170321T190510Z</version_modified>
+  <version_id>f3d8cc21-ce66-47bb-99cb-4c86f6256a45</version_id>
+  <version_modified>20170322T025110Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -92,18 +92,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -121,46 +109,58 @@
       <checksum>BBA039A3</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>DE27B58F</checksum>
+      <checksum>23A5903F</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BC6DD7D0</checksum>
+      <checksum>B70C0F3B</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AE4F1EC4</checksum>
+      <checksum>39BB1058</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A11CDBF6</checksum>
+      <checksum>E9F3D715</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>17EBB89E</checksum>
+      <checksum>57FAEE0C</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Eaves.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E6161E8A</checksum>
+      <checksum>A837BAC0</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Overhangs.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EC7D1A49</checksum>
+      <checksum>10C52030</checksum>
     </file>
   </files>
 </measure>

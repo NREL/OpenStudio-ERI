@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>5d08109c-73f3-4ac8-84c3-c68c2641b9f6</version_id>
-  <version_modified>20170321T190511Z</version_modified>
+  <version_id>46c014be-f431-4424-9d6e-f38d2d657f71</version_id>
+  <version_modified>20170322T025110Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
@@ -136,18 +136,6 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -165,40 +153,52 @@
       <checksum>14237DE1</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>00560014</checksum>
+      <checksum>612C98ED</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>DE27B58F</checksum>
+      <checksum>23A5903F</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BC6DD7D0</checksum>
+      <checksum>B70C0F3B</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AE4F1EC4</checksum>
+      <checksum>39BB1058</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A11CDBF6</checksum>
+      <checksum>E9F3D715</checksum>
     </file>
   </files>
 </measure>

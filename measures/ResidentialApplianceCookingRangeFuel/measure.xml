@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_fuel</name>
   <uid>68bdcee3-c301-4fe9-a99f-c7d8b5930c89</uid>
-  <version_id>027598a1-35e5-4f73-abc4-352e19e04105</version_id>
-  <version_modified>20170321T190503Z</version_modified>
+  <version_id>1f3bde78-5670-48dd-8bca-09823cbb335c</version_id>
+  <version_modified>20170322T025106Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeFuel</class_name>
   <display_name>Set Residential Fuel Cooking Range</display_name>
@@ -155,18 +155,6 @@
       <checksum>38632BB3</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -184,34 +172,46 @@
       <checksum>77041303</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>31C7E134</checksum>
+      <checksum>F6C1126D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E9B1B3FD</checksum>
+      <checksum>8D8787C2</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_ElecCookingRange.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A40D5F4F</checksum>
+      <checksum>DF966B3B</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F980686F</checksum>
+      <checksum>4BD2ECB8</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>21D804E5</checksum>
+      <checksum>89A5B28D</checksum>
     </file>
   </files>
 </measure>

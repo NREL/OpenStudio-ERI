@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>3e626b7b-69f4-4e5f-952b-b47055804e7e</version_id>
-  <version_modified>20170321T190501Z</version_modified>
+  <version_id>03077228-22f4-4158-bd64-6924a432f7b8</version_id>
+  <version_modified>20170322T025105Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -478,8 +478,32 @@
           <display_name>attic zone</display_name>
         </choice>
         <choice>
+          <value>finished attic zone</value>
+          <display_name>finished attic zone</display_name>
+        </choice>
+        <choice>
+          <value>unfinished attic zone</value>
+          <display_name>unfinished attic zone</display_name>
+        </choice>
+        <choice>
           <value>basement zone</value>
           <display_name>basement zone</display_name>
+        </choice>
+        <choice>
+          <value>finished basement zone</value>
+          <display_name>finished basement zone</display_name>
+        </choice>
+        <choice>
+          <value>unfinished basement zone</value>
+          <display_name>unfinished basement zone</display_name>
+        </choice>
+        <choice>
+          <value>crawl zone</value>
+          <display_name>crawl zone</display_name>
+        </choice>
+        <choice>
+          <value>pier and beam zone</value>
+          <display_name>pier and beam zone</display_name>
         </choice>
         <choice>
           <value>garage zone</value>
@@ -684,112 +708,112 @@
       <checksum>457F689A</checksum>
     </file>
     <file>
+      <filename>residential_airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EA5098FF</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
+      <checksum>66C79984</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
+      <checksum>FC324E2B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRG_FR_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CB6FEA15</checksum>
+      <checksum>56159302</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>25C3F9A8</checksum>
+      <checksum>0793AECD</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_CS_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0EE39FF0</checksum>
+      <checksum>747FECC8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D62DC5E6</checksum>
+      <checksum>518183FA</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_PB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8625339B</checksum>
+      <checksum>872B84C4</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRG_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0A219F59</checksum>
+      <checksum>A8A8F80A</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_ElectricBaseboard.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7B2EF267</checksum>
+      <checksum>B6FB4D23</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8F8B97F9</checksum>
+      <checksum>6013EB08</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_ClothesDryer.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>56E38726</checksum>
+      <checksum>25E42C58</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_Neighbors.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5E1FECFA</checksum>
+      <checksum>6238BA96</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_MSHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>289C3A6C</checksum>
+      <checksum>D11B1DFA</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_UB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>71E7F7E1</checksum>
+      <checksum>5032EFC4</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>697D8D73</checksum>
+      <checksum>F344C63D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B1B5A737</checksum>
-    </file>
-    <file>
-      <filename>residential_airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EA5098FF</checksum>
+      <checksum>3BE775F2</checksum>
     </file>
     <file>
       <version>
@@ -800,7 +824,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>85A24710</checksum>
+      <checksum>BAF4A471</checksum>
     </file>
   </files>
 </measure>

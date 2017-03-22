@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>d1391260-8052-48e2-a350-7d51252a5348</version_id>
-  <version_modified>20170321T190515Z</version_modified>
+  <version_id>6b2bcf66-2195-41d1-945c-7108229f0b17</version_id>
+  <version_modified>20170322T025112Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -1041,18 +1041,6 @@
       <checksum>457F689A</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -1070,34 +1058,46 @@
       <checksum>9E0675E4</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>31C7E134</checksum>
+      <checksum>F6C1126D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E9B1B3FD</checksum>
+      <checksum>8D8787C2</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9C04C15A</checksum>
+      <checksum>443504A3</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_ElecWHTank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F0A65687</checksum>
+      <checksum>DA62613E</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver_ElecWHTank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9A62395C</checksum>
+      <checksum>E454C362</checksum>
     </file>
   </files>
 </measure>

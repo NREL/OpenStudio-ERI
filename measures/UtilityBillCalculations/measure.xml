@@ -2,13 +2,13 @@
   <schema_version>3.0</schema_version>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>b491562b-4a98-4660-a619-97bd258c0b8b</version_id>
-  <version_modified>20170321T191044Z</version_modified>
+  <version_id>3e2bd19c-94e2-464b-94f5-872efb96f504</version_id>
+  <version_modified>20170322T025122Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
-  <description>Exports all available hourly timeseries enduses to csv, and uses it for utility bill calculations.</description>
-  <modeler_description>Exports all available hourly timeseries enduses to csv, and uses it for utility bill calculations.</modeler_description>
+  <description>Exports all available hourly timeseries enduses to csv, and uses them for utility bill calculations.</description>
+  <modeler_description>Exports all available hourly timeseries enduses to csv, and uses them for utility bill calculations.</modeler_description>
   <arguments>
     <argument>
       <name>reporting_frequency</name>
@@ -59,30 +59,6 @@
   </attributes>
   <files>
     <file>
-      <filename>utility_bill_calculations_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2BF71B15</checksum>
-    </file>
-    <file>
-      <filename>example_model.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>39B6E26C</checksum>
-    </file>
-    <file>
-      <filename>USA_CO_Golden-NREL.724666_TMY3.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BDF687C1</checksum>
-    </file>
-    <file>
-      <filename>report.html.in</filename>
-      <filetype>in</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3F69E3FB</checksum>
-    </file>
-    <file>
       <filename>sam-sdk-2017-1-17-r1.zip</filename>
       <filetype>zip</filetype>
       <usage_type>resource</usage_type>
@@ -95,6 +71,18 @@
       <checksum>C9F510A2</checksum>
     </file>
     <file>
+      <filename>ssc_ffi.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C9DD9291</checksum>
+    </file>
+    <file>
+      <filename>utility_bill_calculations_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F53DEE6E</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.0.5</identifier>
@@ -103,13 +91,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5F39CA50</checksum>
+      <checksum>937DA341</checksum>
     </file>
     <file>
-      <filename>ssc_ffi.rb</filename>
-      <filetype>rb</filetype>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_AllConstructions_Furnace_CentralAC_Setpoints.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>91376510</checksum>
+    </file>
+    <file>
+      <filename>report.html.erb</filename>
+      <filetype>erb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C9DD9291</checksum>
+      <checksum>7DC1F0A7</checksum>
+    </file>
+    <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
+      <filetype>ddy</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FB253570</checksum>
+    </file>
+    <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
+      <filetype>epw</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E23378AA</checksum>
     </file>
   </files>
 </measure>

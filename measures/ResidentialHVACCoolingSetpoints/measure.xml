@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>6891f13e-abfa-4fba-af42-29568b6ac232</version_id>
-  <version_modified>20170321T190520Z</version_modified>
+  <version_id>c9c11315-0fea-43dc-9657-91348226153d</version_id>
+  <version_modified>20170322T025115Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -102,18 +102,6 @@
       <checksum>457F689A</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.11.5</identifier>
@@ -125,76 +113,88 @@
       <checksum>6D025BEC</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
-    </file>
-    <file>
       <filename>process_cooling_setpoints_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>7191479C</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC324E2B</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>25C3F9A8</checksum>
+      <checksum>0793AECD</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_ASHP_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E94EEBF7</checksum>
+      <checksum>87D61A7B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8FC43A9C</checksum>
+      <checksum>E17829EE</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_NoClgSetpoint.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1DFBEF8A</checksum>
+      <checksum>E9B22DD3</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_GSHPVertBore_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7502EA4B</checksum>
+      <checksum>87853EC1</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_MSHP_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1F6BF5D1</checksum>
+      <checksum>18D4DC04</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_RoomAC_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2B8755D3</checksum>
+      <checksum>3BDFAB82</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>41CD6DC7</checksum>
+      <checksum>52641EC0</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D6C1F042</checksum>
+      <checksum>00DA8BF9</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
   </files>
 </measure>

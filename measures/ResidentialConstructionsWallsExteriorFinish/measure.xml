@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_finish</name>
   <uid>d7e5d5a3-38bf-40ea-abc9-2d50024a7090</uid>
-  <version_id>a7149f0f-e2b7-4d40-9d14-957675a9049b</version_id>
-  <version_modified>20170321T190507Z</version_modified>
+  <version_id>5c5a7abc-c824-4a5f-8ae6-ccbb4ea7be5b</version_id>
+  <version_modified>20170322T025108Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorFinish</class_name>
   <display_name>Set Residential Walls - Exterior Finish</display_name>
@@ -104,18 +104,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.0</identifier>
@@ -133,28 +121,40 @@
       <checksum>25C009E4</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9C65245E</checksum>
+      <checksum>00DD948C</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_FA_AllLayersButExteriorFinish.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1B6E27A3</checksum>
+      <checksum>1AF94662</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButExteriorFinish.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>51A881A2</checksum>
+      <checksum>8C217E5F</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
   </files>
 </measure>

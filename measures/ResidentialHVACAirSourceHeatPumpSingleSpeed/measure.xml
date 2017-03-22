@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_air_source_heat_pump</name>
   <uid>9f709cf6-cf55-4bb3-8087-7a5c5a98aa7c</uid>
-  <version_id>128c5d01-6b6c-4c18-a401-25b90113f250</version_id>
-  <version_modified>20170321T190517Z</version_modified>
+  <version_id>1581d059-6a6b-4265-9eb8-0115a7bc5fc2</version_id>
+  <version_modified>20170322T025113Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessSingleSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Single-Speed Air Source Heat Pump</display_name>
@@ -229,7 +229,7 @@
     <argument>
       <name>heat_pump_capacity</name>
       <display_name>Heat Pump Capacity</display_name>
-      <description>The output heating/cooling capacity of the heat pump.</description>
+      <description>The output heating/cooling capacity of the heat pump. If using autosize, the autosizing algorithm will use ACCA Manual S to set the heat pump capacity based on the cooling load. If using autosize for max load, the autosizing algorithm will override ACCA Manual S and use the maximum of the heating and cooling loads to set the heat pump capacity, based on the heating/cooling capacities under design conditions.</description>
       <type>Choice</type>
       <units>tons</units>
       <required>true</required>
@@ -239,6 +239,10 @@
         <choice>
           <value>autosize</value>
           <display_name>autosize</display_name>
+        </choice>
+        <choice>
+          <value>autosize for max load</value>
+          <display_name>autosize for max load</display_name>
         </choice>
         <choice>
           <value>0.5</value>
@@ -502,28 +506,28 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
+      <filename>process_single_speed_air_source_heat_pump_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DAB6FFCB</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
+      <checksum>BA0DB780</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
+      <checksum>66C79984</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
-    </file>
-    <file>
-      <filename>process_single_speed_air_source_heat_pump_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DAB6FFCB</checksum>
+      <checksum>FC324E2B</checksum>
     </file>
     <file>
       <version>
@@ -534,115 +538,115 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E01059D8</checksum>
+      <checksum>2DF1D5B5</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>39FA3BA7</checksum>
+      <checksum>CBDAEC35</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4BB45A6A</checksum>
+      <checksum>6A741FB1</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5808F72B</checksum>
+      <checksum>1DACB396</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9A32161E</checksum>
+      <checksum>F1F2F411</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2064EEFE</checksum>
+      <checksum>E1952E63</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>446BF5AB</checksum>
+      <checksum>CB9A8552</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>54D0D3D6</checksum>
+      <checksum>6F476A7B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C208795C</checksum>
+      <checksum>FC8196EC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0C7523D4</checksum>
+      <checksum>6D193188</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EE8AE93B</checksum>
+      <checksum>B2664348</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3361EFB8</checksum>
+      <checksum>F9E4FD9E</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0F38DDF0</checksum>
+      <checksum>B87AA4F0</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C1120DB9</checksum>
+      <checksum>B4F3A7FC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_MSHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EF7094C3</checksum>
+      <checksum>106D2E92</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>71C44BBD</checksum>
+      <checksum>4C18854D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>17EBB89E</checksum>
+      <checksum>57FAEE0C</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EB51EF3E</checksum>
+      <checksum>910B95ED</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>27315F82</checksum>
+      <checksum>32478829</checksum>
     </file>
   </files>
 </measure>

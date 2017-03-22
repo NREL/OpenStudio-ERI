@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_roofing_material</name>
   <uid>3239e82d-5efc-4a17-9223-c7c1cd8c9cf7</uid>
-  <version_id>d89d9318-b7c4-4b4a-98f7-cf0e6bf1dca0</version_id>
-  <version_modified>20170321T190504Z</version_modified>
+  <version_id>b48767fb-4438-427c-aac6-913c56f0ad08</version_id>
+  <version_modified>20170322T025106Z</version_modified>
   <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRoofingMaterial</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roofing Material</display_name>
@@ -141,18 +141,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.0</identifier>
@@ -170,16 +158,28 @@
       <checksum>F3B7096B</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_FA_AllLayersButRoofingMaterial.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7F88DC1D</checksum>
+      <checksum>306F8EA4</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
   </files>
 </measure>

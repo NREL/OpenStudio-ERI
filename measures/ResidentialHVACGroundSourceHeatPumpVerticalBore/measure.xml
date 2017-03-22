@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>22d5e0ef-5f39-458a-b74e-74fe64791989</version_id>
-  <version_modified>20170321T190522Z</version_modified>
+  <version_id>1d8c7d2f-7001-482c-b444-fefc0869f81f</version_id>
+  <version_modified>20170322T025116Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
@@ -566,18 +566,6 @@
       <checksum>457F689A</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -589,124 +577,136 @@
       <checksum>0020005E</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11A72D9A</checksum>
-    </file>
-    <file>
       <filename>process_ground_source_heat_pump_vertical_bore_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>E2F88296</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FC324E2B</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2F31C045</checksum>
+      <checksum>F13D8428</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>39FA3BA7</checksum>
+      <checksum>CBDAEC35</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4BB45A6A</checksum>
+      <checksum>6A741FB1</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5808F72B</checksum>
+      <checksum>1DACB396</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9A32161E</checksum>
+      <checksum>F1F2F411</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2064EEFE</checksum>
+      <checksum>E1952E63</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>446BF5AB</checksum>
+      <checksum>CB9A8552</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>54D0D3D6</checksum>
+      <checksum>6F476A7B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C208795C</checksum>
+      <checksum>FC8196EC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ElectricBaseboard_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0C7523D4</checksum>
+      <checksum>6D193188</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EE8AE93B</checksum>
+      <checksum>B2664348</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace_CentralAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3361EFB8</checksum>
+      <checksum>F9E4FD9E</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Furnace_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0F38DDF0</checksum>
+      <checksum>B87AA4F0</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_GSHPVertBore.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C1120DB9</checksum>
+      <checksum>B4F3A7FC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_MSHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EF7094C3</checksum>
+      <checksum>106D2E92</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_RoomAC.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>71C44BBD</checksum>
+      <checksum>4C18854D</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EB51EF3E</checksum>
+      <checksum>910B95ED</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>27315F82</checksum>
+      <checksum>32478829</checksum>
     </file>
   </files>
 </measure>

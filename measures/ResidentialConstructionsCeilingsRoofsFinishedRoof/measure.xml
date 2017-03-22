@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_finished_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>58b0b67d-f930-4ca2-a131-9f9ff5bb63f9</version_id>
-  <version_modified>20170321T190504Z</version_modified>
+  <version_id>ac0f9bc0-7517-4d5f-8f06-11b27d1ef899</version_id>
+  <version_modified>20170322T025106Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsFinishedRoof</class_name>
   <display_name>Set Residential Ceilings/Roofs - Finished Roof Construction</display_name>
@@ -108,18 +108,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -137,22 +125,34 @@
       <checksum>97029CE6</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9C65245E</checksum>
+      <checksum>00DD948C</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_FA_AllLayersButFinishedRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>461C3B36</checksum>
+      <checksum>EF01AEA2</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
   </files>
 </measure>

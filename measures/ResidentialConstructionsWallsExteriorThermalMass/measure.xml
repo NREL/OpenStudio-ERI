@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_thermal_mass</name>
   <uid>b2da04af-0f9f-4a30-b2a0-cc2dbc20d5aa</uid>
-  <version_id>7d42b5f0-7a4b-4246-bc2b-cf12fb3d314e</version_id>
-  <version_modified>20170321T190508Z</version_modified>
+  <version_id>5898c1dd-1269-4a32-b549-03d1e1fce7ef</version_id>
+  <version_modified>20170322T025109Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorThermalMass</class_name>
   <display_name>Set Residential Walls - Exterior Thermal Mass</display_name>
@@ -112,18 +112,6 @@
       <checksum>BAAF2AEF</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07204EC3</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>53D20E39</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -141,16 +129,28 @@
       <checksum>1EE6AF3B</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>66C79984</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallThermalMass.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BE1DA34D</checksum>
+      <checksum>33D15A84</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98B20560</checksum>
+      <checksum>003729E7</checksum>
     </file>
   </files>
 </measure>
