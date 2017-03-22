@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>3e2bd19c-94e2-464b-94f5-872efb96f504</version_id>
-  <version_modified>20170322T025122Z</version_modified>
+  <version_id>bfc866a9-e599-42cc-9be0-894e744e1963</version_id>
+  <version_modified>20170322T034254Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
@@ -104,18 +104,6 @@
       <filetype>erb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7DC1F0A7</checksum>
-    </file>
-    <file>
-      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FB253570</checksum>
-    </file>
-    <file>
-      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E23378AA</checksum>
     </file>
   </files>
 </measure>
