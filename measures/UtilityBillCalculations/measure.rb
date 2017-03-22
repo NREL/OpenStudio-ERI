@@ -3,6 +3,7 @@
 
 require 'erb'
 require 'csv'
+require 'matrix'
 
 #start the measure
 class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
@@ -74,6 +75,13 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
     reporting_frequency.setDefaultValue("Hourly")
     args << reporting_frequency
     
+    # #make a double argument for azimuth
+    # analysis_period = OpenStudio::Measure::OSArgument::makeDoubleArgument("analysis_period", false)
+    # analysis_period.setDisplayName("Analysis Period")
+    # analysis_period.setUnits("yrs")
+    # analysis_period.setDefaultValue(30)
+    # args << analysis_period    
+    
     return args
   end 
   
@@ -116,22 +124,9 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
 
     require "#{File.dirname(__FILE__)}/resources/ssc_api"
     
-    # utilityrate3
-
-# 1. Create data container
-# 2. Assign values to pvwattsv5 input variables
-# 3. Run pvwattsv5
-# 4. Retrieve system hourly output from data container
-# 5. Assign values to utilityrate input variables
-# 6. Run utilityratev3
-# 7. Retrieve energy values from data container
-# 8. Assign values to cashloan input variables
-# 9. Run cashloan
-# 10. Retrieve net present value from data container
-# 11. Display net present value
-    
     # Assign the user inputs to variables
     reporting_frequency = runner.getStringArgumentValue("reporting_frequency",user_arguments)
+    # analysis_period = runner.getDoubleArgumentValue("analysis_period",user_arguments)
     
     # get the last model and sql file
     model = runner.lastOpenStudioModel
@@ -319,6 +314,46 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
     end
     rows = cols.transpose
     
+    e_with_system = nil
+    e_without_system = nil
+    cols.each do |col|
+      if col[0].include? "Electricity:Facility"
+        e_with_system = col[1..-1]
+      elsif col[0].include? "Fans:Electricity"
+        e_without_system = col[1..-1]
+      end
+    end
+
+    # annualoutput
+    p_data = SscApi.create_data_object    
+    SscApi.set_number(p_data, 'analysis_period', 30)
+    SscApi.set_array(p_data, 'energy_availability', [98])
+    SscApi.set_array(p_data, 'energy_degradation', [0.05])
+    SscApi.set_matrix(p_data, 'energy_curtailment', Matrix.rows([[1] * 24] * 12))
+    SscApi.set_number(p_data, 'system_use_lifetime_output', 0)
+    SscApi.set_array(p_data, 'system_hourly_energy', e_with_system) # kW
+
+    p_mod = SscApi.create_module("annualoutput")
+    # SscApi.set_print(false)
+    SscApi.execute_module(p_mod, p_data)
+    
+    puts "Annual energy: #{SscApi.get_array(p_data, 'annual_energy')}" # kWh
+    
+    # utilityrate2
+    p_data = SscApi.create_data_object
+    SscApi.set_number(p_data, 'analysis_period', 1)
+    SscApi.set_array(p_data, 'degradation', [0.05])
+    SscApi.set_array(p_data, 'hourly_gen', e_with_system) # kWh
+    SscApi.set_array(p_data, 'e_load', e_without_system) # kWh
+    SscApi.set_number(p_data, 'ur_flat_buy_rate', 0.10) # $/kWh
+    
+    p_mod = SscApi.create_module("utilityrate2")
+    # SscApi.set_print(false)
+    SscApi.execute_module(p_mod, p_data)
+    
+    puts "Annual energy charge: $#{SscApi.get_array(p_data, 'annual_energy_value')}"
+    puts "Monthly energy charge: $#{SscApi.get_number(p_data, 'change_ec_jan')}, $#{SscApi.get_number(p_data, 'change_ec_feb')}, $#{SscApi.get_number(p_data, 'change_ec_mar')}, $#{SscApi.get_number(p_data, 'change_ec_apr')}, $#{SscApi.get_number(p_data, 'change_ec_may')}, $#{SscApi.get_number(p_data, 'change_ec_jun')}, $#{SscApi.get_number(p_data, 'change_ec_jul')}, $#{SscApi.get_number(p_data, 'change_ec_aug')}, $#{SscApi.get_number(p_data, 'change_ec_sep')}, $#{SscApi.get_number(p_data, 'change_ec_oct')}, $#{SscApi.get_number(p_data, 'change_ec_nov')}, $#{SscApi.get_number(p_data, 'change_ec_dec')}"
+    
     # Write the rows out to CSV
     csv_path = File.expand_path("./enduse_timeseries.csv")
     CSV.open(csv_path, "wb") do |csv|
@@ -365,7 +400,7 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
     
     # close the sql file
     sql.close()
-
+    
     return true
  
   end
