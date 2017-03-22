@@ -30,6 +30,14 @@ class UtilityBillCalculationsTest < MiniTest::Test
     return "#{File.dirname(__FILE__)}/SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_AllConstructions_Furnace_CentralAC_Setpoints.osm"
   end
 
+  def epw_path_default
+    # make sure we have a weather data location
+    epw = nil
+    epw = OpenStudio::Path.new("#{File.dirname(__FILE__)}/USA_CO_Denver_Intl_AP_725650_TMY3.epw")
+    assert(File.exist?(epw.to_s))
+    return epw.to_s
+  end  
+  
   def run_dir(test_name)
     # always generate test output in specially named 'output' directory so result files are not made part of the measure
     return "#{File.dirname(__FILE__)}/output/#{test_name}"
@@ -52,7 +60,7 @@ class UtilityBillCalculationsTest < MiniTest::Test
   end 
   
   # create test files if they do not exist when the test first runs
-  def setup_test(test_name, idf_output_requests, model_in_path=model_in_path_default)
+  def setup_test(test_name, idf_output_requests, model_in_path=model_in_path_default, epw_path=epw_path_default)
 
     if !File.exist?(run_dir(test_name))
       FileUtils.mkdir_p(run_dir(test_name))
@@ -87,6 +95,7 @@ class UtilityBillCalculationsTest < MiniTest::Test
 
     workflow = OpenStudio::WorkflowJSON.new
     workflow.setSeedFile(File.absolute_path(model_out_path(test_name)))
+    workflow.setWeatherFile(File.absolute_path(epw_path))
     workflow.saveAs(osw_path)
 
     cli_path = OpenStudio.getOpenStudioCLI
