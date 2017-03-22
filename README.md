@@ -13,17 +13,11 @@ Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d
 
 ## Setup
 
-To get started, go through the [OpenStudio Installation Instructions](http://nrel.github.io/OpenStudio-user-documentation/getting_started/getting_started/#installation-instructions), including the "Optional - Install Ruby" section. The "Optional - Setup a Building Component Library (BCL) Account" section is recommended but not required.
-
 A number of measures in this GitHub repository share the same resource files, found in the top-level ```resources``` directory. In order to run the measures, these resources need to be distributed to each measure. This process has been automated via a rake task (a task defined in the rakefile).
 
-To be able to use the rakefile, follow these steps:
+To be able to use the rakefile, download the OpenStudio installer from [openstudio.net](https://www.openstudio.net/) and, at a minimum, install the "Command Line Interface".
 
-1. Run ```gem install bundler```. (If you get an error, you may have to issue the following: ```gem sources -r https://rubygems.org/``` followed by ```gem sources -a http://rubygems.org/```.)
-2. Download DevKit at http://rubyinstaller.org/downloads/. Choose either the 32-bit or 64-bit version for use with Ruby 2.0 or above, depending on which version of Ruby you installed. Run the installer and extract to a directory (e.g., C:\RubyDevKit). Go to this directory and run ```ruby dk.rb init``` followed by ```ruby dk.rb install```
-3. Run ```bundler```
-
-Once setup, you can now run ```rake update_resources``` to update the measures' resource files. You will want to perform this task anytime you do a clone or pull of the repository.
+You can now run ```rake update_resources``` to update the measures' resource files. You will want to perform this task anytime you do a clone or pull of the repository.
 
 You can run ```rake -T``` to see the list of possible rake tasks.
 

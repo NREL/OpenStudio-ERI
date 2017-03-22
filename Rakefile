@@ -313,11 +313,21 @@ task :update_resources do
         end
         resource = File.expand_path("../resources/#{item}", __FILE__)
         next if resources.include?(resource)
-        puts "Extra file #{item} found in #{m}/resources. Do you want to delete it? (y/n)"
-        input = STDIN.gets.strip.downcase
-        next if input != "y"
-        FileUtils.rm(File.expand_path("../measures/#{m}/resources/#{item}", __FILE__))
-        puts "File deleted."
+        item_path = File.expand_path("../measures/#{m}/resources/#{item}", __FILE__)
+        if File.directory?(item_path)
+            puts "Extra dir #{item} found in #{m}/resources. Do you want to delete it? (y/n)"
+            input = STDIN.gets.strip.downcase
+            next if input != "y"
+            puts "deleting #{item_path}"
+            FileUtils.rm_rf(item_path)
+            puts "Dir deleted."
+        else
+            puts "Extra file #{item} found in #{m}/resources. Do you want to delete it? (y/n)"
+            input = STDIN.gets.strip.downcase
+            next if input != "y"
+            FileUtils.rm(item_path)
+            puts "File deleted."
+        end
       end
     end
     
