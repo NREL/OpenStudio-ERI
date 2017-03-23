@@ -41,9 +41,9 @@ class HPXMLBuildModelTest < MiniTest::Test
     args_hash = {}
     args_hash["measures_dir"] = ".."
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2}
     expected_values = {}
-    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 63)
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 64)
   end
   
   def test_minimal_single_family_detached_specified_weather
@@ -51,9 +51,9 @@ class HPXMLBuildModelTest < MiniTest::Test
     args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
     args_hash["measures_dir"] = ".."
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2}
     expected_values = {}
-    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 63)
+    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 64)
   end  
 
   private

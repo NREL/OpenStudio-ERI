@@ -512,13 +512,13 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     duct_ah_return_frac.setDefaultValue(0.267)
     args << duct_ah_return_frac
     
-    #make a string argument for norm leakage to outside
-    duct_norm_leakage_25pa = OpenStudio::Measure::OSArgument::makeStringArgument("duct_norm_leakage_25pa", false)
-    duct_norm_leakage_25pa.setDisplayName("Ducts: Leakage to Outside at 25Pa")
-    duct_norm_leakage_25pa.setUnits("cfm/100 ft^2 Finished Floor")
-    duct_norm_leakage_25pa.setDescription("Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
-    duct_norm_leakage_25pa.setDefaultValue("NA")
-    args << duct_norm_leakage_25pa
+    # #make a string argument for norm leakage to outside
+    # duct_norm_leakage_25pa = OpenStudio::Measure::OSArgument::makeStringArgument("duct_norm_leakage_25pa", false)
+    # duct_norm_leakage_25pa.setDisplayName("Ducts: Leakage to Outside at 25Pa")
+    # duct_norm_leakage_25pa.setUnits("cfm/100 ft^2 Finished Floor")
+    # duct_norm_leakage_25pa.setDescription("Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
+    # duct_norm_leakage_25pa.setDefaultValue("NA")
+    # args << duct_norm_leakage_25pa
     
     #make a string argument for duct location frac    
     duct_location_frac = OpenStudio::Measure::OSArgument::makeStringArgument("duct_location_frac", true)
@@ -560,12 +560,12 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     duct_unconditioned_r.setDefaultValue(0.0)
     args << duct_unconditioned_r
     
-    #make a string argument for distribution system efficiency
-    dist_system_eff = OpenStudio::Measure::OSArgument::makeStringArgument("dist_system_eff", false)
-    dist_system_eff.setDisplayName("Ducts: Distribution System Efficiency")
-    dist_system_eff.setDescription("A system efficiency factor, not included in manufacturer's equipment performance ratings for heating and cooling equipment, that adjusts for the energy losses associated with the delivery of energy from the equipment to the source of the load.")
-    dist_system_eff.setDefaultValue("NA")
-    args << dist_system_eff    
+    # #make a string argument for distribution system efficiency
+    # dist_system_eff = OpenStudio::Measure::OSArgument::makeStringArgument("dist_system_eff", false)
+    # dist_system_eff.setDisplayName("Ducts: Distribution System Efficiency")
+    # dist_system_eff.setDescription("A system efficiency factor, not included in manufacturer's equipment performance ratings for heating and cooling equipment, that adjusts for the energy losses associated with the delivery of energy from the equipment to the source of the load.")
+    # dist_system_eff.setDefaultValue("NA")
+    # args << dist_system_eff    
 
     return args
   end
@@ -627,7 +627,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     ductReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_return_frac",user_arguments)
     ductAHSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_supply_frac",user_arguments)
     ductAHReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_return_frac",user_arguments)
-    ductNormLeakageToOutside = runner.getStringArgumentValue("duct_norm_leakage_25pa",user_arguments)
+    # ductNormLeakageToOutside = runner.getStringArgumentValue("duct_norm_leakage_25pa",user_arguments)
+    ductNormLeakageToOutside = "NA"
     unless ductNormLeakageToOutside == "NA"
       ductNormLeakageToOutside = ductNormLeakageToOutside.to_f
     else
@@ -638,12 +639,13 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     ductSupplySurfaceAreaMultiplier = runner.getDoubleArgumentValue("duct_supply_area_mult",user_arguments)
     ductReturnSurfaceAreaMultiplier = runner.getDoubleArgumentValue("duct_return_area_mult",user_arguments)
     ductUnconditionedRvalue = runner.getDoubleArgumentValue("duct_unconditioned_r",user_arguments)
-    ductSystemEfficiency = runner.getStringArgumentValue("dist_system_eff",user_arguments)
+    # ductSystemEfficiency = runner.getStringArgumentValue("dist_system_eff",user_arguments)
+    ductSystemEfficiency = "NA"
     unless ductSystemEfficiency == "NA"
       ductSystemEfficiency = ductSystemEfficiency.to_f
     else
       ductSystemEfficiency = nil
-    end    
+    end
 
     # Create the class instances
     infil = Infiltration.new(infiltrationLivingSpaceACH50, infiltrationShelterCoefficient, infiltrationGarageACH50)

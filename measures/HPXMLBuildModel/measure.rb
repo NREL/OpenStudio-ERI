@@ -92,11 +92,13 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     # Load helper_methods
     require File.join(File.dirname(helper_methods_file), File.basename(helper_methods_file, File.extname(helper_methods_file)))    
     
+    measures_tested = ["ResidentialLocation", "ResidentialGeometrySingleFamilyDetached", "ResidentialGeometryNumBedsAndBaths", "ResidentialGeometryNumOccupants", "ResidentialConstructionsFoundationsFloorsSlab", "ResidentialConstructionsWallsExteriorWoodStud", "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", "ResidentialConstructionsUninsulatedSurfaces", "ResidentialHVACFurnaceFuel", "ResidentialHVACHeatingSetpoints"] # TODO: Remove
+    
     # Obtain measures and default arguments
     measures = {}
     Dir.foreach(measures_dir) do |measure_subdir|
       next if !measure_subdir.include? 'Residential'
-      next if !["ResidentialLocation", "ResidentialGeometrySingleFamilyDetached", "ResidentialGeometryNumBedsAndBaths", "ResidentialConstructionsFoundationsFloorsSlab", "ResidentialConstructionsWallsExteriorWoodStud", "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", "ResidentialConstructionsUninsulatedSurfaces", "ResidentialHVACFurnaceFuel", "ResidentialHVACHeatingSetpoints"].include? measure_subdir # TODO: Remove
+      next if !measures_tested.include? measure_subdir # TODO: Remove
       full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
       check_file_exists(full_measure_path, runner)      
       measure_instance = get_measure_instance(full_measure_path)
@@ -107,7 +109,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     doc = REXML::Document.new(File.read(hpxml_file_path))
     
     event_types = []
-    doc.elements.each('*/*/ProjectStatus/EventType') do |el|
+    doc.elements.each("*/*/ProjectStatus/EventType") do |el|
       next unless el.text == "audit" # TODO: consider all event types?
       event_types << el.text
     end
@@ -137,11 +139,18 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     measures["ResidentialLocation"]["weather_directory"] = File.dirname(weather_file_path)
     measures["ResidentialLocation"]["weather_file_name"] = File.basename(weather_file_path)
     
+    # ResidentialGeometryNumBedsAndBaths
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bedrooms", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms/text()")
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bathrooms", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms/text()")
+
+    # ResidentialGeometryNumOccupants
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents/text()")
+    
     # Residentialxx...
     # Residentialyy...
     
     select_measures = {} # TODO: Remove
-    ["ResidentialLocation", "ResidentialGeometrySingleFamilyDetached", "ResidentialGeometryNumBedsAndBaths", "ResidentialConstructionsFoundationsFloorsSlab", "ResidentialConstructionsWallsExteriorWoodStud", "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", "ResidentialConstructionsUninsulatedSurfaces", "ResidentialHVACFurnaceFuel", "ResidentialHVACHeatingSetpoints"].each do |k|
+    measures_tested.each do |k|
       select_measures[k] = measures[k]
     end
     measures = select_measures
@@ -162,6 +171,16 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
     return true
 
+  end  
+  
+  def update_measure_args(doc, measures, measure, arg, xpath)
+    new_measure_args = measures[measure]
+    val = doc.elements.each(xpath)
+    unless val.empty?
+      new_measure_args[arg] = val[0].to_s
+    end
+    measures[measure].update(new_measure_args)
+    return measures
   end  
   
   def default_args_hash(model, measure)
@@ -192,17 +211,17 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
   def get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
     postalcodes = CSV.read(File.expand_path(File.join(resources_dir, "postalcodes.csv")))
     postalcodes.each do |row|
-      if not zip_code[0].empty?
+      if not zip_code.empty?
         if zip_code[0] == row[0]
           return row[4], row[5]
         end
-      elsif not city_municipality[0].empty? and not state_code[0].empty?
+      elsif not city_municipality.empty? and not state_code.empty?
         if city_municipality[0].downcase == row[1].downcase and state_code[0].downcase == row[2].downcase
           return row[4], row[5]
         end
       else
         runner.registerError("Could not find lat, lng from address.")
-        return nil
+        return nil, nil
       end
     end
   end
