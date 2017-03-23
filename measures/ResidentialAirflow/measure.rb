@@ -1388,6 +1388,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         zone_hvac.setSupplyAirFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
         zone_hvac.setExhaustAirFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
         zone_hvac.addToThermalZone(unit.living_zone)
+        unit.living_zone.setCoolingPriority(zone_hvac, 1)
+        unit.living_zone.setHeatingPriority(zone_hvac, 1)
 
       end
       

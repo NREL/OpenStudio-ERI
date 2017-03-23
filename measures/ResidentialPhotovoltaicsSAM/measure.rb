@@ -163,14 +163,15 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Measure::ModelMeasure
     obj_name = Constants.ObjectNamePhotovoltaics
     
     highest_roof_pitch = Geometry.get_roof_pitch(model.getSurfaces)
+    roof_tilt = OpenStudio::convert(Math.atan(highest_roof_pitch),"rad","deg").get # tan(x) = opp/adj = highest_roof_pitch
     
     pv_system.size = size
     pv_system.module_type = {Constants.PVModuleTypeStandard=>0, Constants.PVModuleTypePremium=>1, Constants.PVModuleTypeThinFilm=>2}[module_type]
     pv_system.inv_eff = inverter_efficiency * 100.0
     pv_system.losses = system_losses * 100.0
     pv_azimuth.abs = get_abs_azimuth(azimuth_type, azimuth, model.getBuilding.northAxis)
-    pv_tilt.abs = get_abs_tilt(tilt_type, tilt, highest_roof_pitch, @weather.header.Latitude)
-        
+    pv_tilt.abs = get_abs_tilt(tilt_type, tilt, roof_tilt, @weather.header.Latitude)
+                
     p_data = SscApi.create_data_object
     SscApi.set_number(p_data, 'system_capacity', pv_system.size)
     SscApi.set_number(p_data, 'module_type', pv_system.module_type)
@@ -279,10 +280,10 @@ class ResidentialPhotovoltaicsSAM < OpenStudio::Measure::ModelMeasure
     
   end
   
-  def get_abs_tilt(tilt_type, relative_tilt, highest_roof_pitch, latitude)
+  def get_abs_tilt(tilt_type, relative_tilt, roof_tilt, latitude)
   
     if tilt_type == Constants.TiltPitch
-      return relative_tilt + highest_roof_pitch
+      return relative_tilt + roof_tilt
     elsif tilt_type == Constants.TiltLatitude
       return relative_tilt + latitude
     elsif tilt_type == Constants.CoordAbsolute

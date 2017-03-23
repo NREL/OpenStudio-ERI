@@ -14,34 +14,49 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     assert_includes(result.errors.map{ |x| x.logMessage }, "Invalid azimuth entered.")
   end
   
-  def test_azimuth_absolute
+  def test_azimuth_back_roof
     args_hash = {}
-    args_hash["azimuth_type"] = Constants.CoordAbsolute
     args_hash["azimuth"] = 180.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"PanelArea"=>18.93}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-  end  
-  
-  def test_tilt_absolute
-    args_hash = {}
-    args_hash["size"] = 5.0
-    args_hash["tilt_type"] = Constants.CoordAbsolute
-    args_hash["tilt"] = 0.5
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"PanelArea"=>2*18.93}
+    expected_values = {"total_kwhs"=>3707}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
-  def test_tilt_latitude
+  def test_azimuth_absolute_west
     args_hash = {}
-    args_hash["size"] = 5.0
-    args_hash["tilt_type"] = Constants.TiltLatitude
+    args_hash["azimuth_type"] = Constants.CoordAbsolute
+    args_hash["azimuth"] = 270.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"PanelArea"=>2*18.93}
+    expected_values = {"total_kwhs"=>2887}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+
+  def test_tilt_absolute_zero
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.CoordAbsolute
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3069}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+  
+  def test_tilt_latitude_minus_15_deg
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.TiltLatitude
+    args_hash["tilt"] = -15.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2151}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+  
+  def test_tilt_pitch_roof
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2084}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end  
   
@@ -50,7 +65,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {}
+    expected_values = {"total_kwhs"=>2084}
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
@@ -59,7 +74,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {}
+    expected_values = {"total_kwhs"=>3069}
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
@@ -67,14 +82,14 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {}
+    expected_values = {"total_kwhs"=>2084}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
     args_hash["size"] = 5.0
     expected_num_del_objects = {"GeneratorMicroTurbine"=>1, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {}
+    expected_values = {"total_kwhs"=>4173}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-  end  
+  end
   
   private
   
@@ -166,7 +181,10 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
         new_objects.each do |new_object|
             next if not new_object.respond_to?("to_#{obj_type}")
             new_object = new_object.public_send("to_#{obj_type}").get
-      
+            if obj_type == "ScheduleFixedInterval"
+                total_kwhs = OpenStudio::sum(new_object.timeSeries.values) / 1000
+                assert_in_epsilon(expected_values["total_kwhs"], total_kwhs, 0.06)
+            end
         end
     end
     
