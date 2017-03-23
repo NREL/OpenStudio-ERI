@@ -29,60 +29,60 @@ The New Construction workflow illustrates how to build up a complete residential
 
 |Group|Measure|Dependencies*|
 |:---|:---|:---|
-|1. Location|1. Location||
-|2. Geometry|1. Geometry Single-Family Detached (or Single-Family Attached or Multifamily)||
-||2. Number of Beds and Baths||
-||3. Number of Occupants|Beds/Baths|
-||4. Orientation||
-||5. Eaves||
-||6. Door Area||
-||7. Window Areas||
-||8. Overhangs|Window Areas|
-||9. Neighbors||
-|3. Envelope Constructions|1. Ceilings/Roofs - Unfinished Attic Constructions (or Finished Roof)||
-||2. Ceilings/Roofs - Roof Sheathing||
-||3. Ceilings/Roofs - Roofing Material||
-||4. Ceilings/Roofs - Radiant Barrier||
-||5. Ceilings/Roofs - Ceiling Thermal Mass||
-||6. Foundations/Floors - Unfinished Basement Construction (or Finished Basement, Crawlspace, Slab, or Pier & Beam)||
-||7. Foundations/Floors - Interzonal Floor Construction||
-||8. Foundations/Floors - Floor Covering||
-||9. Foundations/Floors - Floor Sheathing||
-||10. Foundations/Floors - Floor Thermal Mass||
-||11. Walls - Wood Stud Construction (or Double Stud, CMU, etc.)||
-||12. Walls - Interzonal Construction||
-||13. Walls - Wall Sheathing||
-||14. Walls - Exterior Finish||
-||15. Walls - Exterior Thermal Mass||
-||16. Walls - Partition Thermal Mass||
-||17. Uninsulated Surfaces||
-||18. Window Construction|Window Areas, Location|
-||19. Door Construction|Door Area|
-||20. Furniture Thermal Mass||
+|1. Location|1. Location| |
+|2. Geometry|1. Geometry Single-Family Detached (or Single-Family Attached or Multifamily)| |
+| |2. Number of Beds and Baths| |
+| |3. Number of Occupants|Beds/Baths|
+| |4. Orientation| |
+| |5. Eaves| |
+| |6. Door Area| |
+| |7. Window Areas| |
+| |8. Overhangs|Window Areas|
+| |9. Neighbors| |
+|3. Envelope Constructions|1. Ceilings/Roofs - Unfinished Attic Constructions (or Finished Roof)| |
+| |2. Ceilings/Roofs - Roof Sheathing| |
+| |3. Ceilings/Roofs - Roofing Material| |
+| |4. Ceilings/Roofs - Radiant Barrier| |
+| |5. Ceilings/Roofs - Ceiling Thermal Mass| |
+| |6. Foundations/Floors - Unfinished Basement Construction (or Finished Basement, Crawlspace, Slab, or Pier & Beam)| |
+| |7. Foundations/Floors - Interzonal Floor Construction| |
+| |8. Foundations/Floors - Floor Covering| |
+| |9. Foundations/Floors - Floor Sheathing| |
+| |10. Foundations/Floors - Floor Thermal Mass| |
+| |11. Walls - Wood Stud Construction (or Double Stud, CMU, etc.)| |
+| |12. Walls - Interzonal Construction| |
+| |13. Walls - Wall Sheathing| |
+| |14. Walls - Exterior Finish| |
+| |15. Walls - Exterior Thermal Mass| |
+| |16. Walls - Partition Thermal Mass| |
+| |17. Uninsulated Surfaces| |
+| |18. Window Construction|Window Areas, Location|
+| |19. Door Construction|Door Area|
+| |20. Furniture Thermal Mass| |
 |4. Domestic Hot Water|1. Water Heater (Electric Tank, Fuel Tankless, etc.)|Beds/Baths|
-||2. Hot Water Fixtures|Water Heater|
-||3. Hot Water Distribution|Hot Water Fixtures, Location|
-|5. HVAC|1. Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)||
-||2. Heating Setpoint|HVAC Equipment, Location|
-||3. Cooling Setpoint|HVAC Equipment, Location|
-||4. Ceiling Fan|Cooling Setpoint, Beds/Baths|
-|6. Major Appliances|1. Refrigerator||
-||2. Clothes Washer|Water Heater, Location|
-||3. Clothes Dryer (Electric or Fuel)|Beds/Baths, Clothes Washer|
-||4. Dishwasher|Water Heater, Location|
-||5. Cooking Range (Electric or Fuel)|Beds/Baths|
+| |2. Hot Water Fixtures|Water Heater|
+| |3. Hot Water Distribution|Hot Water Fixtures, Location|
+|5. HVAC|1. Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)| |
+| |2. Heating Setpoint|HVAC Equipment, Location|
+| |3. Cooling Setpoint|HVAC Equipment, Location|
+| |4. Ceiling Fan|Cooling Setpoint, Beds/Baths|
+|6. Major Appliances|1. Refrigerator| |
+| |2. Clothes Washer|Water Heater, Location|
+| |3. Clothes Dryer (Electric or Fuel)|Beds/Baths, Clothes Washer|
+| |4. Dishwasher|Water Heater, Location|
+| |5. Cooking Range (Electric or Fuel)|Beds/Baths|
 |7. Lighting|1. Lighting|Location|
 |8. Misc Loads|1. Plug Loads|Beds/Baths|
-||2. Extra Refrigerator||
-||3. Freezer||
-||4. Hot Tub Heater (Electric or Gas)|Beds/Baths|
-||5. Hot Tub Pump|Beds/Baths|
-||6. Pool Heater (Electric or Gas)|Beds/Baths|
-||7. Pool Pump|Beds/Baths|
-||8. Well Pump|Beds/Baths|
-||9. Gas Fireplace|Beds/Baths|
-||10. Gas Grill|Beds/Baths|
-||11. Gas Lighting|Beds/Baths|
+| |2. Extra Refrigerator| |
+| |3. Freezer| |
+| |4. Hot Tub Heater (Electric or Gas)|Beds/Baths|
+| |5. Hot Tub Pump|Beds/Baths|
+| |6. Pool Heater (Electric or Gas)|Beds/Baths|
+| |7. Pool Pump|Beds/Baths|
+| |8. Well Pump|Beds/Baths|
+| |9. Gas Fireplace|Beds/Baths|
+| |10. Gas Grill|Beds/Baths|
+| |11. Gas Lighting|Beds/Baths|
 |9. Airflow|1. Airflow|Location, Beds/Baths, HVAC Equipment, Clothes Dryer|
 
 ## Retrofit Workflow for Users
