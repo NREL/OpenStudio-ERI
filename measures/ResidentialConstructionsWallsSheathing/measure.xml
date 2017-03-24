@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>76d9e532-468a-4f26-9bfa-5c57d854cf2f</version_id>
-  <version_modified>20170322T025109Z</version_modified>
+  <version_id>af6534d9-a5c6-4f81-9fcc-65506082a78a</version_id>
+  <version_modified>20170324T154651Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>
@@ -120,7 +120,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>003729E7</checksum>
+      <checksum>262E164D</checksum>
     </file>
   </files>
 </measure>

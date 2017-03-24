@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>46fe7f80-12b7-4127-93a8-dfe8ed0b1fda</version_id>
-  <version_modified>20170322T025114Z</version_modified>
+  <version_id>abf05236-ce7f-42df-aa72-86564672cc88</version_id>
+  <version_modified>20170324T154656Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessSingleSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Single-Speed Central Air Conditioner</display_name>
@@ -407,12 +407,6 @@
       <checksum>4C18854D</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>57FAEE0C</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -423,6 +417,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>32478829</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0F073D12</checksum>
     </file>
   </files>
 </measure>

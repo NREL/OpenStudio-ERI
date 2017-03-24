@@ -1,14 +1,14 @@
 <measure>
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
-  <uid>f6447e7a-bcb0-46f0-a899-6c3999ce0b27</uid>
-  <version_id>21e82fce-d54b-4a12-b270-f94123ee9cfe</version_id>
-  <version_modified>20170322T025121Z</version_modified>
+  <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
+  <version_id>9a622220-c0c7-4b5e-b4a3-f2d32e75293b</version_id>
+  <version_modified>20170324T154704Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
   <description>Adds (or replaces) residential photovoltaics with the specified efficiency, size, orientation, and tilt. For both single-family detached and multifamily buildings, one panel is added (or replaced).</description>
-  <modeler_description>Any photovoltaic panels, generators, inverters, and electric load center distribution objects are removed. A photovoltaic panel, along with generator and inverter are added to the electric load center distribution object.</modeler_description>
+  <modeler_description>Any generators and electric load center distribution objects are removed. An electric load center distribution object is added with a track schedule equal to the hourly output from SAM. A micro turbine generator object is add to the electric load center distribution object. The fuel used to make the electricity is zeroed out.</modeler_description>
   <arguments>
     <argument>
       <name>size</name>
@@ -27,11 +27,19 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>c-si</default_value>
+      <default_value>standard</default_value>
       <choices>
         <choice>
-          <value>c-si</value>
-          <display_name>c-si</display_name>
+          <value>standard</value>
+          <display_name>standard</display_name>
+        </choice>
+        <choice>
+          <value>premium</value>
+          <display_name>premium</display_name>
+        </choice>
+        <choice>
+          <value>thin film</value>
+          <display_name>thin film</display_name>
         </choice>
       </choices>
     </argument>
@@ -147,28 +155,16 @@
   </attributes>
   <files>
     <file>
-      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
-      <filetype>ddy</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FB253570</checksum>
-    </file>
-    <file>
-      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E23378AA</checksum>
-    </file>
-    <file>
-      <filename>Modules.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F7F10234</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3C131B97</checksum>
+    </file>
+    <file>
+      <filename>ssc_api.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C9F510A2</checksum>
     </file>
     <file>
       <filename>unit_conversions.rb</filename>
@@ -189,27 +185,10 @@
       <checksum>457F689A</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>E602A7FF</checksum>
-    </file>
-    <file>
-      <filename>residential_photovoltaics_test.rb</filename>
-      <filetype>rb</filetype>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
+      <filetype>epw</filetype>
       <usage_type>test</usage_type>
-      <checksum>8F75698E</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
+      <checksum>E23378AA</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -224,22 +203,51 @@
       <checksum>FC324E2B</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BA0DB780</checksum>
+    </file>
+    <file>
+      <filename>ssc_ffi.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C9DD9291</checksum>
+    </file>
+    <file>
+      <filename>sam-sdk-2017-1-17-r1.zip</filename>
+      <filetype>zip</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>06534B25</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>96F59696</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>57FAEE0C</checksum>
+      <checksum>0F073D12</checksum>
     </file>
     <file>
-      <filename>MF_8units_1story_SL_Denver.osm</filename>
-      <filetype>osm</filetype>
+      <filename>residential_photovoltaics_test.rb</filename>
+      <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>910B95ED</checksum>
+      <checksum>CFDAFE78</checksum>
     </file>
     <file>
-      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
+      <filename>USA_AK_Anchorage.Intl.AP.702730_TMY3.epw</filename>
+      <filetype>epw</filetype>
       <usage_type>test</usage_type>
-      <checksum>32478829</checksum>
+      <checksum>01DBB4A1</checksum>
     </file>
   </files>
 </measure>

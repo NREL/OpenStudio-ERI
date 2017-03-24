@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_roofing_material</name>
   <uid>3239e82d-5efc-4a17-9223-c7c1cd8c9cf7</uid>
-  <version_id>b48767fb-4438-427c-aac6-913c56f0ad08</version_id>
-  <version_modified>20170322T025106Z</version_modified>
+  <version_id>57c86908-f6fc-427b-b2cd-3b5068db1196</version_id>
+  <version_modified>20170324T154649Z</version_modified>
   <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRoofingMaterial</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roofing Material</display_name>
@@ -179,7 +179,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>003729E7</checksum>
+      <checksum>262E164D</checksum>
     </file>
   </files>
 </measure>

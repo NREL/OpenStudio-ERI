@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>9b56f22a-5561-4f29-8e55-8fa7f271e3c7</version_id>
-  <version_modified>20170322T025108Z</version_modified>
+  <version_id>7246a450-e1c7-405c-b431-49f6a6e97ee7</version_id>
+  <version_modified>20170324T154651Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
@@ -258,7 +258,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>003729E7</checksum>
+      <checksum>262E164D</checksum>
     </file>
   </files>
 </measure>

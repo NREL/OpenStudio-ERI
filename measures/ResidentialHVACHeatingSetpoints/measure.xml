@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>9658e136-74f4-4c7f-9f8f-fad36d76a8b6</version_id>
-  <version_modified>20170322T025116Z</version_modified>
+  <version_id>830f27b0-eeee-4ac1-ab4c-b73139d96a6b</version_id>
+  <version_modified>20170324T154658Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -190,7 +190,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>003729E7</checksum>
+      <checksum>262E164D</checksum>
     </file>
   </files>
 </measure>

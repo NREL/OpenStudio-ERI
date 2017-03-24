@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>f3d8cc21-ce66-47bb-99cb-4c86f6256a45</version_id>
-  <version_modified>20170322T025110Z</version_modified>
+  <version_id>e2785ffd-19b7-421d-8558-696c5c311ffc</version_id>
+  <version_modified>20170324T154652Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -145,12 +145,6 @@
       <checksum>E9F3D715</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>57FAEE0C</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Eaves.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -161,6 +155,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>10C52030</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0F073D12</checksum>
     </file>
   </files>
 </measure>

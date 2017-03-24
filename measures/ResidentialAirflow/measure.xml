@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>03077228-22f4-4158-bd64-6924a432f7b8</version_id>
-  <version_modified>20170322T025105Z</version_modified>
+  <version_id>24cb6321-877c-4d17-b033-3fe0207e4cc5</version_id>
+  <version_modified>20170324T145117Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -562,16 +562,6 @@
       <default_value>0.267</default_value>
     </argument>
     <argument>
-      <name>duct_norm_leakage_25pa</name>
-      <display_name>Ducts: Leakage to Outside at 25Pa</display_name>
-      <description>Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.</description>
-      <type>String</type>
-      <units>cfm/100 ft^2 Finished Floor</units>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>NA</default_value>
-    </argument>
-    <argument>
       <name>duct_location_frac</name>
       <display_name>Ducts: Location Fraction</display_name>
       <description>Fraction of supply ducts in the space specified by Duct Location; the remainder of supply ducts will be located in above-grade conditioned space.</description>
@@ -620,15 +610,6 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
-    </argument>
-    <argument>
-      <name>dist_system_eff</name>
-      <display_name>Ducts: Distribution System Efficiency</display_name>
-      <description>A system efficiency factor, not included in manufacturer's equipment performance ratings for heating and cooling equipment, that adjusts for the energy losses associated with the delivery of energy from the equipment to the source of the load.</description>
-      <type>String</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-      <default_value>NA</default_value>
     </argument>
   </arguments>
   <outputs/>
@@ -706,12 +687,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>457F689A</checksum>
-    </file>
-    <file>
-      <filename>residential_airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EA5098FF</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -816,6 +791,12 @@
       <checksum>3BE775F2</checksum>
     </file>
     <file>
+      <filename>residential_airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4799FC17</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.1</identifier>
@@ -824,7 +805,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BAF4A471</checksum>
+      <checksum>63B9596D</checksum>
     </file>
   </files>
 </measure>

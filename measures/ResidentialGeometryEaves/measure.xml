@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>c7e210aa-8022-40d9-aa2e-97439bc71ea4</version_id>
-  <version_modified>20170322T025110Z</version_modified>
+  <version_id>187cdb64-16b4-49d1-82c8-2f56b69b4952</version_id>
+  <version_modified>20170324T154652Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -135,12 +135,6 @@
       <checksum>AB0BE816</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>003729E7</checksum>
-    </file>
-    <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -210,6 +204,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>B6F3AE01</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>262E164D</checksum>
     </file>
   </files>
 </measure>

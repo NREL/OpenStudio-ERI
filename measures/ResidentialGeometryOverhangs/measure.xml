@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>46c014be-f431-4424-9d6e-f38d2d657f71</version_id>
-  <version_modified>20170322T025110Z</version_modified>
+  <version_id>1e428b04-5cc5-4043-bb0c-75a08300db1b</version_id>
+  <version_modified>20170324T154652Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
@@ -171,12 +171,6 @@
       <checksum>612C98ED</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>003729E7</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -199,6 +193,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>E9F3D715</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>262E164D</checksum>
     </file>
   </files>
 </measure>
