@@ -5,7 +5,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ResidentialPhotovoltaicsTest < MiniTest::Test
+class ResidentialPhotovoltaicsSAMTest < MiniTest::Test
 
   def test_error_invalid_azimuth
     args_hash = {}
