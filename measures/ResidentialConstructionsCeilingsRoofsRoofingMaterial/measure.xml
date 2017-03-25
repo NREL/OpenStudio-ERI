@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_roofing_material</name>
   <uid>3239e82d-5efc-4a17-9223-c7c1cd8c9cf7</uid>
-  <version_id>57c86908-f6fc-427b-b2cd-3b5068db1196</version_id>
-  <version_modified>20170324T154649Z</version_modified>
+  <version_id>ea301941-cca6-4316-87aa-f88a9d9485cd</version_id>
+  <version_modified>20170325T134907Z</version_modified>
   <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRoofingMaterial</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roofing Material</display_name>
@@ -158,12 +158,6 @@
       <checksum>F3B7096B</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -180,6 +174,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>262E164D</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3A58A247</checksum>
     </file>
   </files>
 </measure>

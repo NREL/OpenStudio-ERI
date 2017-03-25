@@ -57,20 +57,6 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasur
     acSHRRated.setDefaultValue(0.73)
     args << acSHRRated 
     
-    #make a double argument for central ac capacity ratio
-    acCapacityRatio = OpenStudio::Measure::OSArgument::makeDoubleArgument("capacity_ratio", true)
-    acCapacityRatio.setDisplayName("Capacity Ratio")
-    acCapacityRatio.setDescription("Capacity divided by rated capacity.")
-    acCapacityRatio.setDefaultValue(1.0)
-    args << acCapacityRatio
-    
-    #make a double argument for central ac fan speed ratio
-    acFanspeedRatio = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_speed_ratio", true)
-    acFanspeedRatio.setDisplayName("Fan Speed Ratio")
-    acFanspeedRatio.setDescription("Fan speed divided by fan speed at the compressor speed for which Capacity Ratio = 1.0.")
-    acFanspeedRatio.setDefaultValue(1.0)
-    args << acFanspeedRatio
-    
     #make a double argument for central ac rated supply fan power
     acSupplyFanPowerRated = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power_rated", true)
     acSupplyFanPowerRated.setDisplayName("Rated Supply Fan Power")
@@ -166,8 +152,6 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasur
     acCoolingInstalledSEER = runner.getDoubleArgumentValue("seer",user_arguments)
     acCoolingEER = [runner.getDoubleArgumentValue("eer",user_arguments)]
     acSHRRated = [runner.getDoubleArgumentValue("shr",user_arguments)]
-    acCapacityRatio = [runner.getDoubleArgumentValue("capacity_ratio",user_arguments)]
-    acFanspeedRatio = [runner.getDoubleArgumentValue("fan_speed_ratio",user_arguments)]
     acSupplyFanPowerRated = runner.getDoubleArgumentValue("fan_power_rated",user_arguments)
     acSupplyFanPowerInstalled = runner.getDoubleArgumentValue("fan_power_installed",user_arguments)
     acCrankcase = runner.getDoubleArgumentValue("crankcase_capacity",user_arguments)
@@ -197,6 +181,9 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasur
 
     # Flow rate through AC units - hardcoded assumption of 400 cfm/ton
     supply.cfm_ton = 400 # cfm / ton
+    
+    acCapacityRatio = [1.0]
+    acFanspeedRatio = [1.0]
 
     supply.HPCoolingOversizingFactor = 1 # Default to a value of 1 (currently only used for MSHPs)
     supply.SpaceConditionedMult = 1 # Default used for central equipment    
@@ -338,6 +325,7 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasur
       
       # Store info for HVAC Sizing measure
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, acEERCapacityDerateFactor.join(","))
+      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, supply.CFM_TON_Rated.join(","))
       
     end # unit
 	

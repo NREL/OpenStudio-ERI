@@ -129,53 +129,53 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 959,
-                        'HeatingLoad' => 41587,
-                        'HeatingDuctLoad' => 0,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 14782,
-                        'CoolingLoad_Ducts_Lat' => -1761,
-                        'CoolingLoad_Ducts_Sens' => 3199,
-                        'DehumidLoad_Sens' => -1829,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 17764,
-                        'Cool_SensCap' => 11440,
-                        'Heat_Capacity' => 17764,
-                        'SuppHeat_Capacity' => 41587,
-                        'Cool_AirFlowRate' => 738,
-                        'Heat_AirFlowRate' => 560,
-                        'Fan_AirFlowRate' => 738,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 959,
+						'HeatingLoad' => 41587,
+						'HeatingDuctLoad' => 5818,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 14782,
+						'CoolingLoad_Ducts_Lat' => -1761,
+						'CoolingLoad_Ducts_Sens' => 3199,
+						'DehumidLoad_Sens' => -1829,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 17764,
+						'Cool_SensCap' => 11440,
+						'Heat_Capacity' => 17764,
+						'SuppHeat_Capacity' => 41587,
+						'Cool_AirFlowRate' => 738,
+						'Heat_AirFlowRate' => 560,
+						'Fan_AirFlowRate' => 738,
+						'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_2story_FB_GRG_FA_ASHP_DuctsInFB.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -1196,53 +1196,64 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 94511,
-                        'HeatingDuctLoad' => 52923,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 32173,
-                        'Cool_SensCap' => 20720,
-                        'Heat_Capacity' => 32173,
-                        'SuppHeat_Capacity' => 94511,
-                        'Cool_AirFlowRate' => 1337,
-                        'Heat_AirFlowRate' => 1014,
-                        'Fan_AirFlowRate' => 1337,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 94511,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 32173,
+						'Cool_SensCap' => 20720,
+						'Heat_Capacity' => 32173,
+						'SuppHeat_Capacity' => 94511,
+						'Cool_AirFlowRate' => 1337,
+						'Heat_AirFlowRate' => 1014,
+						'Fan_AirFlowRate' => 1337,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.631409756356,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.631409756356,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Heating Operation {m3/s}' => 0.478945768651,
+						'Coil:Heating:DX:SingleSpeed_Rated Total Heating Capacity {W}' => 9430.05384169,
+						'Coil:Heating:DX:SingleSpeed_Rated Air Flow Rate {m3/s}' => 0.478945768651,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 27701.2991485,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Total Cooling Capacity {W}' => 9430.05384169,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Air Flow Rate {m3/s}' => 0.498801054019,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.63141447583,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.602431857529,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0289778988267,
                       }
     _test_measure("SFD_HVACSizing_Equip_ASHP1_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -1252,53 +1263,64 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 94511,
-                        'HeatingDuctLoad' => 52923,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 32173,
-                        'Cool_SensCap' => 20720,
-                        'Heat_Capacity' => 32173,
-                        'SuppHeat_Capacity' => 94511,
-                        'Cool_AirFlowRate' => 1337,
-                        'Heat_AirFlowRate' => 1014,
-                        'Fan_AirFlowRate' => 1337,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 94511,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 32173,
+						'Cool_SensCap' => 20720,
+						'Heat_Capacity' => 32173,
+						'SuppHeat_Capacity' => 94511,
+						'Cool_AirFlowRate' => 1337,
+						'Heat_AirFlowRate' => 1014,
+						'Fan_AirFlowRate' => 1337,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.631409756356,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.631409756356,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Heating Operation {m3/s}' => 0.478945768651,
+						'Coil:Heating:DX:SingleSpeed_Rated Total Heating Capacity {W}' => 9430.05384169,
+						'Coil:Heating:DX:SingleSpeed_Rated Air Flow Rate {m3/s}' => 0.478945768651,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 27701.2991485,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Total Cooling Capacity {W}' => 9430.05384169,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Air Flow Rate {m3/s}' => 0.498801054019,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.63141447583,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.602431857529,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0289778988267,
                       }
     _test_measure("SFD_HVACSizing_Equip_ASHP1_Autosize_MinTemp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -1308,53 +1330,64 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 94511,
-                        'HeatingDuctLoad' => 52923,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 106098,
-                        'Cool_SensCap' => 20720,
-                        'Heat_Capacity' => 106098,
-                        'SuppHeat_Capacity' => 94511,
-                        'Cool_AirFlowRate' => 4411,
-                        'Heat_AirFlowRate' => 3346,
-                        'Fan_AirFlowRate' => 4411,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 94511,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 106098,
+						'Cool_SensCap' => 20720,
+						'Heat_Capacity' => 106098,
+						'SuppHeat_Capacity' => 94511,
+						'Cool_AirFlowRate' => 4411,
+						'Heat_AirFlowRate' => 3346,
+						'Fan_AirFlowRate' => 4411,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 2.08220790292,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Cooling Operation {m3/s}' => 2.08220790292,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Heating Operation {m3/s}' => 1.57942549116,
+						'Coil:Heating:DX:SingleSpeed_Rated Total Heating Capacity {W}' => 31097.6072772,
+						'Coil:Heating:DX:SingleSpeed_Rated Air Flow Rate {m3/s}' => 1.57942549116,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 27701.2991485,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Total Cooling Capacity {W}' => 31097.6072772,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Air Flow Rate {m3/s}' => 1.64490251569,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 2.0822126224,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 1.98664712113,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0955607817897,
                       }
     _test_measure("SFD_HVACSizing_Equip_ASHP1_AutosizeForMaxLoad_MinTemp.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -1364,53 +1397,64 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 50000,
-                        'HeatingDuctLoad' => 52923,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 60000,
-                        'Cool_SensCap' => 20720,
-                        'Heat_Capacity' => 50000,
-                        'SuppHeat_Capacity' => 50000,
-                        'Cool_AirFlowRate' => 1163,
-                        'Heat_AirFlowRate' => 1577,
-                        'Fan_AirFlowRate' => 1577,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 50000,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 60000,
+						'Cool_SensCap' => 20720,
+						'Heat_Capacity' => 50000,
+						'SuppHeat_Capacity' => 50000,
+						'Cool_AirFlowRate' => 1163,
+						'Heat_AirFlowRate' => 1577,
+						'Fan_AirFlowRate' => 1577,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.744317090593,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.549051962049,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Heating Operation {m3/s}' => 0.744317090593,
+						'Coil:Heating:DX:SingleSpeed_Rated Total Heating Capacity {W}' => 14655.0,
+						'Coil:Heating:DX:SingleSpeed_Rated Air Flow Rate {m3/s}' => 0.744317090593,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 14655.0,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Total Cooling Capacity {W}' => 17586.0,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Air Flow Rate {m3/s}' => 0.93020840424,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.744321810068,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.679747518362,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0645695722313,
                       }
     _test_measure("SFD_HVACSizing_Equip_ASHP1_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -1420,111 +1464,315 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 94511,
-                        'HeatingDuctLoad' => 52923,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 33858,
-                        'Cool_SensCap' => 20505,
-                        'Heat_Capacity' => 33858,
-                        'SuppHeat_Capacity' => 94511,
-                        'Cool_AirFlowRate' => 1407,
-                        'Heat_AirFlowRate' => 1067,
-                        'Fan_AirFlowRate' => 1407,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 94511,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 33858,
+						'Cool_SensCap' => 20505,
+						'Heat_Capacity' => 33858,
+						'SuppHeat_Capacity' => 94511,
+						'Cool_AirFlowRate' => 1407,
+						'Heat_AirFlowRate' => 1067,
+						'Fan_AirFlowRate' => 1407,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.66448027127,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.433466555629,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.504030878639,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.571453033292,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.66448027127,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Total Heating Capacity {W}' => 7145.25070868,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.375198319104,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Total Heating Capacity {W}' => 9923.95931761,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.46899789888,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 27701.2991485,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Total Cooling Capacity {W}' => 7145.25070868,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.394062101715,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Total Cooling Capacity {W}' => 9923.95931761,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.45821174618,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.664484990744,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.633984635307,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0304956359628,
                       }
     _test_measure("SFD_HVACSizing_Equip_ASHP2_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
+  
+  def test_equip_ASHP_two_speed_fixedsize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 50000,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 60000,
+						'Cool_SensCap' => 20505,
+						'Heat_Capacity' => 50000,
+						'SuppHeat_Capacity' => 50000,
+						'Cool_AirFlowRate' => 1173,
+						'Heat_AirFlowRate' => 1577,
+						'Fan_AirFlowRate' => 1577,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.744317090593,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.64011269791,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.744317090593,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.476210861077,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.553733559391,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Total Heating Capacity {W}' => 10551.6,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.55406629456,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Total Heating Capacity {W}' => 14655.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.6925828682,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 14655.0,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Total Cooling Capacity {W}' => 12661.92,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.698307590647,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Total Cooling Capacity {W}' => 17586.0,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.81198557052,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.744321810068,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.679747518362,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0645695722313,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_ASHP2_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end   
   
   def test_equip_ASHP_variable_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 94511,
-                        'HeatingDuctLoad' => 52923,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 35655,
-                        'Cool_SensCap' => 19306,
-                        'Heat_Capacity' => 35655,
-                        'SuppHeat_Capacity' => 94511,
-                        'Cool_AirFlowRate' => 1482,
-                        'Heat_AirFlowRate' => 1124,
-                        'Fan_AirFlowRate' => 1482,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 94511,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 35655,
+						'Cool_SensCap' => 19306,
+						'Heat_Capacity' => 35655,
+						'SuppHeat_Capacity' => 94511,
+						'Cool_AirFlowRate' => 1482,
+						'Heat_AirFlowRate' => 1124,
+						'Fan_AirFlowRate' => 1482,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.881686763127,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.371549659952,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.477706705652,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 3 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.530785228503,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 4 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.668789387913,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.489825979515,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.629776259376,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 3 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.699751399307,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed N Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.881686763127,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Total Heating Capacity {W}' => 5120.85807888,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.308095352578,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Total Heating Capacity {W}' => 7001.98961806,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.383037465367,
+						'Coil:Heating:DX:MultiSpeed_Speed 3 Rated Total Heating Capacity {W}' => 10450.7307732,
+						'Coil:Heating:DX:MultiSpeed_Speed 3 Rated Air Flow Rate {m3/s}' => 0.416345071051,
+						'Coil:Heating:DX:MultiSpeed_Speed 4 Rated Total Heating Capacity {W}' => 12540.8769279,
+						'Coil:Heating:DX:MultiSpeed_Speed 4 Rated Air Flow Rate {m3/s}' => 0.507940986682,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 27701.2991485,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Total Cooling Capacity {W}' => 5120.85807888,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.309994076815,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Total Cooling Capacity {W}' => 7001.98961806,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.398563813048,
+						'Coil:Cooling:DX:MultiSpeed_Speed 3 Rated Total Cooling Capacity {W}' => 10450.7307732,
+						'Coil:Cooling:DX:MultiSpeed_Speed 3 Rated Air Flow Rate {m3/s}' => 0.442848681165,
+						'Coil:Cooling:DX:MultiSpeed_Speed 4 Rated Total Cooling Capacity {W}' => 12540.8769279,
+						'Coil:Cooling:DX:MultiSpeed_Speed 4 Rated Air Flow Rate {m3/s}' => 0.557989338268,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.881692709665,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.667637031341,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0321143679661,
                       }
     _test_measure("SFD_HVACSizing_Equip_ASHPV_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+  
+  def test_equip_ASHP_variable_speed_fixedsize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 50000,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 60000,
+						'Cool_SensCap' => 19306,
+						'Heat_Capacity' => 50000,
+						'SuppHeat_Capacity' => 50000,
+						'Cool_AirFlowRate' => 1140,
+						'Heat_AirFlowRate' => 1577,
+						'Fan_AirFlowRate' => 1577,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.937839534148,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.521021963415,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.669885381534,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 3 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.744317090593,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 4 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.937839534148,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.376789215012,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.484443276443,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 3 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.538270307159,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed N Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.678220587021,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Total Heating Capacity {W}' => 7180.95,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.432040351053,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Total Heating Capacity {W}' => 9818.85,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.537131247255,
+						'Coil:Heating:DX:MultiSpeed_Speed 3 Rated Total Heating Capacity {W}' => 14655.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 3 Rated Air Flow Rate {m3/s}' => 0.583838312233,
+						'Coil:Heating:DX:MultiSpeed_Speed 4 Rated Total Heating Capacity {W}' => 17586.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 4 Rated Air Flow Rate {m3/s}' => 0.712282740925,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 14655.0,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Total Cooling Capacity {W}' => 8617.14,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.521643505432,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Total Cooling Capacity {W}' => 11782.62,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.670684506984,
+						'Coil:Cooling:DX:MultiSpeed_Speed 3 Rated Total Cooling Capacity {W}' => 17586.0,
+						'Coil:Cooling:DX:MultiSpeed_Speed 3 Rated Air Flow Rate {m3/s}' => 0.74520500776,
+						'Coil:Cooling:DX:MultiSpeed_Speed 4 Rated Total Cooling Capacity {W}' => 21103.2,
+						'Coil:Cooling:DX:MultiSpeed_Speed 4 Rated Air Flow Rate {m3/s}' => 0.938958309778,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.937845480685,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.679747518362,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0645695722313,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_ASHPV_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_electric_baseboard_autosize
@@ -1532,167 +1780,115 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 0,
-                        'Cool Airflow' => 866,
-                        'HeatingLoad' => 41587,
-                        'HeatingDuctLoad' => 0,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 13344,
-                        'CoolingLoad_Ducts_Lat' => 0,
-                        'CoolingLoad_Ducts_Sens' => 0,
-                        'DehumidLoad_Sens' => -1682,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 0,
-                        'Cool_SensCap' => 0,
-                        'Heat_Capacity' => 41587,
-                        'SuppHeat_Capacity' => 0,
-                        'Cool_AirFlowRate' => 0,
-                        'Heat_AirFlowRate' => 0,
-                        'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 0,
+						'Cool Airflow' => 866,
+						'HeatingLoad' => 41587,
+						'HeatingDuctLoad' => 0,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 13344,
+						'CoolingLoad_Ducts_Lat' => 0,
+						'CoolingLoad_Ducts_Sens' => 0,
+						'DehumidLoad_Sens' => -1682,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 0,
+						'Cool_SensCap' => 0,
+						'Heat_Capacity' => 41587,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 0,
+						'Heat_AirFlowRate' => 0,
+						'Fan_AirFlowRate' => 0,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'ZoneHVAC:Baseboard:Convective:Electric_Living_Heating Design Capacity {W}' => 12189.3551749,
+						'ZoneHVAC:Baseboard:Convective:Electric_Basement_Heating Design Capacity {W}' => 12189.3551749,
                       }
     _test_measure("SFD_HVACSizing_Equip_BB_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
-  
-  def test_equip_electric_furnace_and_ac_two_speed_autosize
+
+  def test_equip_electric_baseboard_fixedsize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 918,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 92501,
-                        'HeatingDuctLoad' => 50913,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 27997,
-                        'Cool_SensCap' => 20543,
-                        'Heat_Capacity' => 92501,
-                        'SuppHeat_Capacity' => 0,
-                        'Cool_AirFlowRate' => 1164,
-                        'Heat_AirFlowRate' => 2042,
-                        'Fan_AirFlowRate' => 2042,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 0,
+						'Cool Airflow' => 866,
+						'HeatingLoad' => 100000,
+						'HeatingDuctLoad' => 0,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 13344,
+						'CoolingLoad_Ducts_Lat' => 0,
+						'CoolingLoad_Ducts_Sens' => 0,
+						'DehumidLoad_Sens' => -1682,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 0,
+						'Cool_SensCap' => 0,
+						'Heat_Capacity' => 100000,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 0,
+						'Heat_AirFlowRate' => 0,
+						'Fan_AirFlowRate' => 0,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'ZoneHVAC:Baseboard:Convective:Electric_Living_Heating Design Capacity {W}' => 29310.0,
+						'ZoneHVAC:Baseboard:Convective:Electric_Basement_Heating Design Capacity {W}' => 29310.0,
                       }
-    _test_measure("SFD_HVACSizing_Equip_EF_AC2_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
-  end  
-  
-  def test_equip_electric_furnace_and_ac_variable_speed_autosize
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 918,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 92501,
-                        'HeatingDuctLoad' => 50913,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 28360,
-                        'Cool_SensCap' => 19962,
-                        'Heat_Capacity' => 92501,
-                        'SuppHeat_Capacity' => 0,
-                        'Cool_AirFlowRate' => 1179,
-                        'Heat_AirFlowRate' => 2042,
-                        'Fan_AirFlowRate' => 2042,
-                        'Dehumid_WaterRemoval_Auto' => 0,
-                      }
-    _test_measure("SFD_HVACSizing_Equip_EF_ACV_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+    _test_measure("SFD_HVACSizing_Equip_BB_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_gas_furnace_and_ac_one_speed_autosize
@@ -1700,53 +1896,62 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 918,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 92501,
-                        'HeatingDuctLoad' => 50913,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 27883,
-                        'Cool_SensCap' => 20645,
-                        'Heat_Capacity' => 92501,
-                        'SuppHeat_Capacity' => 0,
-                        'Cool_AirFlowRate' => 1159,
-                        'Heat_AirFlowRate' => 2042,
-                        'Fan_AirFlowRate' => 2042,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 918,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 92501,
+						'HeatingDuctLoad' => 50913,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 27883,
+						'Cool_SensCap' => 20645,
+						'Heat_Capacity' => 92501,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 1159,
+						'Heat_AirFlowRate' => 2042,
+						'Fan_AirFlowRate' => 2042,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.963903000253,
+						'AirLoopHVAC:UnitaryHeatCool_Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.547225600243,
+						'AirLoopHVAC:UnitaryHeatCool_Supply Air Flow Rate During Heating Operation {m3/s}' => 0.963903000253,
+						'Coil:Heating:Fuel_Nominal Capacity {W}' => 27112.097878,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Total Cooling Capacity {W}' => 8172.77025244,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Air Flow Rate {m3/s}' => 0.423414437383,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.963907719728,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.918704299692,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0451987005619,
                       }
     _test_measure("SFD_HVACSizing_Equip_GF_AC1_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -1756,111 +1961,398 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 918,
-                        'Cool Airflow' => 1738,
-                        'HeatingLoad' => 100000,
-                        'HeatingDuctLoad' => 50913,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 26771,
-                        'CoolingLoad_Ducts_Lat' => -609,
-                        'CoolingLoad_Ducts_Sens' => 14036,
-                        'DehumidLoad_Sens' => -2314,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 60000,
-                        'Cool_SensCap' => 20645,
-                        'Heat_Capacity' => 100000,
-                        'SuppHeat_Capacity' => 0,
-                        'Cool_AirFlowRate' => 1159,
-                        'Heat_AirFlowRate' => 2207,
-                        'Fan_AirFlowRate' => 2207,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 918,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 100000,
+						'HeatingDuctLoad' => 50913,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 60000,
+						'Cool_SensCap' => 20645,
+						'Heat_Capacity' => 100000,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 1159,
+						'Heat_AirFlowRate' => 2207,
+						'Fan_AirFlowRate' => 2207,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 1.04204392683,
+						'AirLoopHVAC:UnitaryHeatCool_Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.547225600243,
+						'AirLoopHVAC:UnitaryHeatCool_Supply Air Flow Rate During Heating Operation {m3/s}' => 1.04204392683,
+						'Coil:Heating:Fuel_Nominal Capacity {W}' => 29310.0,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Total Cooling Capacity {W}' => 17586.0,
+						'Coil:Cooling:DX:SingleSpeed_Rated High Speed Air Flow Rate {m3/s}' => 0.91109453292,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 1.0420486463,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.996845226269,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0451987005619,
                       }
     _test_measure("SFD_HVACSizing_Equip_GF_AC1_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
+
+  def test_equip_electric_furnace_and_ac_two_speed_autosize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 918,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 92501,
+						'HeatingDuctLoad' => 50913,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 27997,
+						'Cool_SensCap' => 20543,
+						'Heat_Capacity' => 92501,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 1164,
+						'Heat_AirFlowRate' => 2042,
+						'Fan_AirFlowRate' => 2042,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 0.963903000253,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.963903000253,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.963903000253,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.472529488808,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.549452893963,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 27112.097878,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Total Heating Capacity {W}' => 27112.097878,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 1.3556048939,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Total Heating Capacity {W}' => 27112.097878,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 1.3556048939,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Total Cooling Capacity {W}' => 5908.34498738,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.336357664177,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Total Cooling Capacity {W}' => 8206.0347047,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.391113562997,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.963907719728,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.918704299692,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0451987005619,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_EF_AC2_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+  
+  def test_equip_electric_furnace_and_ac_two_speed_fixedsize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 918,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 100000,
+						'HeatingDuctLoad' => 50913,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 60000,
+						'Cool_SensCap' => 20543,
+						'Heat_Capacity' => 100000,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 1164,
+						'Heat_AirFlowRate' => 2207,
+						'Fan_AirFlowRate' => 2207,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 1.04204392683,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Heating Operation {m3/s}' => 1.04204392683,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Heating Operation {m3/s}' => 1.04204392683,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.472529488808,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.549452893963,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 29310.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Total Heating Capacity {W}' => 29310.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 1.4655,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Total Heating Capacity {W}' => 29310.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 1.4655,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Total Cooling Capacity {W}' => 12661.92,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.720833641958,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Total Cooling Capacity {W}' => 17586.0,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.83817865344,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 1.0420486463,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.996845226269,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0451987005619,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_EF_AC2_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+  
+  def test_equip_gas_furnace_and_ac_variable_speed_autosize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 918,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 92501,
+						'HeatingDuctLoad' => 50913,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 28360,
+						'Cool_SensCap' => 19962,
+						'Heat_Capacity' => 92501,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 1179,
+						'Heat_AirFlowRate' => 2042,
+						'Fan_AirFlowRate' => 2042,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 1.1470445703,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.963903000253,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.963903000253,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 3 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.963903000253,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 4 Supply Air Flow Rate During Heating Operation {m3/s}' => 0.963903000253,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.283851561451,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.467520218861,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 3 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.55657168912,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed N Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.662320310053,
+						'Coil:Heating:Fuel_Nominal Capacity {W}' => 27112.097878,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Total Heating Capacity {W}' => 27112.097878,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 1.3556048939,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Total Heating Capacity {W}' => 27112.097878,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 1.3556048939,
+						'Coil:Heating:DX:MultiSpeed_Speed 3 Rated Total Heating Capacity {W}' => 27112.097878,
+						'Coil:Heating:DX:MultiSpeed_Speed 3 Rated Air Flow Rate {m3/s}' => 1.3556048939,
+						'Coil:Heating:DX:MultiSpeed_Speed 4 Rated Total Heating Capacity {W}' => 27112.097878,
+						'Coil:Heating:DX:MultiSpeed_Speed 4 Rated Air Flow Rate {m3/s}' => 1.3556048939,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Total Cooling Capacity {W}' => 2992.44720127,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.179639926065,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Total Cooling Capacity {W}' => 5319.90613558,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.295877525283,
+						'Coil:Cooling:DX:MultiSpeed_Speed 3 Rated Total Cooling Capacity {W}' => 8312.35333685,
+						'Coil:Cooling:DX:MultiSpeed_Speed 3 Rated Air Flow Rate {m3/s}' => 0.352235149146,
+						'Coil:Cooling:DX:MultiSpeed_Speed 4 Rated Total Cooling Capacity {W}' => 9642.32987074,
+						'Coil:Cooling:DX:MultiSpeed_Speed 4 Rated Air Flow Rate {m3/s}' => 0.419159827484,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 1.14705018648,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.918704299692,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0451987005619,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_GF_ACV_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+  
+  def test_equip_gas_furnace_and_ac_variable_speed_fixedsize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 918,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 100000,
+						'HeatingDuctLoad' => 50913,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 60000,
+						'Cool_SensCap' => 19962,
+						'Heat_Capacity' => 100000,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 1179,
+						'Heat_AirFlowRate' => 2207,
+						'Fan_AirFlowRate' => 2207,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 1.24003227293,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Heating Operation {m3/s}' => 1.04204392683,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Heating Operation {m3/s}' => 1.04204392683,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 3 Supply Air Flow Rate During Heating Operation {m3/s}' => 1.04204392683,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 4 Supply Air Flow Rate During Heating Operation {m3/s}' => 1.04204392683,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 1 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.283851561451,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 2 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.467520218861,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed 3 Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.55657168912,
+						'AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed N Supply Air Flow Rate During Cooling Operation {m3/s}' => 0.662320310053,
+						'Coil:Heating:Fuel_Nominal Capacity {W}' => 29310.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Total Heating Capacity {W}' => 29310.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 1.4655,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Total Heating Capacity {W}' => 29310.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 1.4655,
+						'Coil:Heating:DX:MultiSpeed_Speed 3 Rated Total Heating Capacity {W}' => 29310.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 3 Rated Air Flow Rate {m3/s}' => 1.4655,
+						'Coil:Heating:DX:MultiSpeed_Speed 4 Rated Total Heating Capacity {W}' => 29310.0,
+						'Coil:Heating:DX:MultiSpeed_Speed 4 Rated Air Flow Rate {m3/s}' => 1.4655,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Total Cooling Capacity {W}' => 6330.96,
+						'Coil:Cooling:DX:MultiSpeed_Speed 1 Rated Air Flow Rate {m3/s}' => 0.380054553958,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Total Cooling Capacity {W}' => 11255.04,
+						'Coil:Cooling:DX:MultiSpeed_Speed 2 Rated Air Flow Rate {m3/s}' => 0.625972206518,
+						'Coil:Cooling:DX:MultiSpeed_Speed 3 Rated Total Cooling Capacity {W}' => 17586.0,
+						'Coil:Cooling:DX:MultiSpeed_Speed 3 Rated Air Flow Rate {m3/s}' => 0.74520500776,
+						'Coil:Cooling:DX:MultiSpeed_Speed 4 Rated Total Cooling Capacity {W}' => 20399.76,
+						'Coil:Cooling:DX:MultiSpeed_Speed 4 Rated Air Flow Rate {m3/s}' => 0.886793959234,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 1.2400378891,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 0.996845226269,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0451987005619,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_GF_ACV_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end 
   
   def test_equip_gas_furnace_and_room_air_conditioner_autosize
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 918,
-                        'Cool Airflow' => 866,
-                        'HeatingLoad' => 92501,
-                        'HeatingDuctLoad' => 50913,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 13344,
-                        'CoolingLoad_Ducts_Lat' => 0,
-                        'CoolingLoad_Ducts_Sens' => 0,
-                        'DehumidLoad_Sens' => -1682,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 14172,
-                        'Cool_SensCap' => 9212,
-                        'Heat_Capacity' => 92501,
-                        'SuppHeat_Capacity' => 0,
-                        'Cool_AirFlowRate' => 413,
-                        'Heat_AirFlowRate' => 2042,
-                        'Fan_AirFlowRate' => 2042,
-                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Equip_GF_RAC_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+  
+  def test_equip_gas_furnace_and_room_air_conditioner_fixedsize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+                      }
+    _test_measure("SFD_HVACSizing_Equip_GF_RAC_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_mshp_autosize
@@ -1868,55 +2360,82 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 866,
-                        'HeatingLoad' => 41587,
-                        'HeatingDuctLoad' => 0,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 13344,
-                        'CoolingLoad_Ducts_Lat' => 0,
-                        'CoolingLoad_Ducts_Sens' => 0,
-                        'DehumidLoad_Sens' => -1682,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 17226,
-                        'Cool_SensCap' => 8999,
-                        'Heat_Capacity' => 19526,
-                        'SuppHeat_Capacity' => 0,
-                        'Cool_AirFlowRate' => 610,
-                        'Heat_AirFlowRate' => 650,
-                        'Fan_AirFlowRate' => 650,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 866,
+						'HeatingLoad' => 41587,
+						'HeatingDuctLoad' => 0,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 13344,
+						'CoolingLoad_Ducts_Lat' => 0,
+						'CoolingLoad_Ducts_Sens' => 0,
+						'DehumidLoad_Sens' => -1682,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 17226,
+						'Cool_SensCap' => 9284,
+						'Heat_Capacity' => 19526,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 610,
+						'Heat_AirFlowRate' => 650,
+						'Fan_AirFlowRate' => 650,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirConditioner:VariableRefrigerantFlow_Living_Gross Rated Total Cooling Capacity {W}' => 5426.92256703,
+						'AirConditioner:VariableRefrigerantFlow_Living_Gross Rated Total Heating Capacity {W}' => 6151.50626286,
+						'AirConditioner:VariableRefrigerantFlow_Basement_Gross Rated Total Cooling Capacity {W}' => 631.924185075,
+						'AirConditioner:VariableRefrigerantFlow_Basement_Gross Rated Total Heating Capacity {W}' => 716.29648924,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Living_Gross Rated Total Heating Capacity {W}' => 6151.50626286,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Living_Rated Air Flow Rate {m3/s}' => 0.2751419342,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Basement_Gross Rated Total Heating Capacity {W}' => 716.29648924,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Basement_Rated Air Flow Rate {m3/s}' => 0.0320382022042,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Living_Gross Rated Total Cooling Capacity {W}' => 5426.92256703,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Living_Rated Air Flow Rate {m3/s}' => 0.257903881959,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Basement_Gross Rated Total Cooling Capacity {W}' => 631.924185075,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Basement_Rated Air Flow Rate {m3/s}' => 0.0300309610873,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.275146161444,
+						'Fan:OnOff_Basement_Maximum Flow Rate {m3/s}' => 0.0320386944349,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Living_Cooling Supply Air Flow Rate {m3/s}' => 0.257903881959,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Living_Heating Supply Air Flow Rate {m3/s}' => 0.2751419342,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Basement_Cooling Supply Air Flow Rate {m3/s}' => 0.0300309610873,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Basement_Heating Supply Air Flow Rate {m3/s}' => 0.0320382022042,
                       }
     _test_measure("SFD_HVACSizing_Equip_MSHP_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+  
+  def test_equip_mshp_fixedsize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+                      }
+    _test_measure("SFD_HVACSizing_Equip_MSHP_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
   def test_equip_mshp_autosize_for_max_load
@@ -1924,53 +2443,71 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 866,
-                        'HeatingLoad' => 41587,
-                        'HeatingDuctLoad' => 0,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 13344,
-                        'CoolingLoad_Ducts_Lat' => 0,
-                        'CoolingLoad_Ducts_Sens' => 0,
-                        'DehumidLoad_Sens' => -1682,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 58984,
-                        'Cool_SensCap' => 8999,
-                        'Heat_Capacity' => 61284,
-                        'SuppHeat_Capacity' => 0,
-                        'Cool_AirFlowRate' => 2089,
-                        'Heat_AirFlowRate' => 2042,
-                        'Fan_AirFlowRate' => 2089,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 866,
+						'HeatingLoad' => 41587,
+						'HeatingDuctLoad' => 0,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 13344,
+						'CoolingLoad_Ducts_Lat' => 0,
+						'CoolingLoad_Ducts_Sens' => 0,
+						'DehumidLoad_Sens' => -1682,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 74305,
+						'Cool_SensCap' => 9284,
+						'Heat_Capacity' => 76605,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 2631,
+						'Heat_AirFlowRate' => 2553,
+						'Fan_AirFlowRate' => 2631,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'AirConditioner:VariableRefrigerantFlow_Living_Gross Rated Total Cooling Capacity {W}' => 23409.038619,
+						'AirConditioner:VariableRefrigerantFlow_Living_Gross Rated Total Heating Capacity {W}' => 24133.6223148,
+						'AirConditioner:VariableRefrigerantFlow_Basement_Gross Rated Total Cooling Capacity {W}' => 2725.80591854,
+						'AirConditioner:VariableRefrigerantFlow_Basement_Gross Rated Total Heating Capacity {W}' => 2810.17822271,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Living_Gross Rated Total Heating Capacity {W}' => 24133.6223148,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Living_Rated Air Flow Rate {m3/s}' => 1.07943830977,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Basement_Gross Rated Total Heating Capacity {W}' => 2810.17822271,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Basement_Rated Air Flow Rate {m3/s}' => 0.125692446468,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Living_Gross Rated Total Cooling Capacity {W}' => 23409.038619,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Living_Rated Air Flow Rate {m3/s}' => 1.11246878101,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Basement_Gross Rated Total Cooling Capacity {W}' => 2725.80591854,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Basement_Rated Air Flow Rate {m3/s}' => 0.129538595618,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 1.11247300825,
+						'Fan:OnOff_Basement_Maximum Flow Rate {m3/s}' => 0.129539087848,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Living_Cooling Supply Air Flow Rate {m3/s}' => 1.11246878101,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Living_Heating Supply Air Flow Rate {m3/s}' => 1.07943830977,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Basement_Cooling Supply Air Flow Rate {m3/s}' => 0.129538595618,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Basement_Heating Supply Air Flow Rate {m3/s}' => 0.125692446468,
                       }
     _test_measure("SFD_HVACSizing_Equip_MSHP_AutosizeForMaxLoad.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -1980,53 +2517,73 @@ class ProcessHVACSizingTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-                        'DehumidLoad_Inf_Sens' => -1567,
-                        'DehumidLoad_Inf_Lat' => -1161,
-                        'DehumidLoad_Int_Sens' => 2303,
-                        'DehumidLoad_Int_Lat' => 1065,
-                        'Heat Windows' => 8623,
-                        'Heat Doors' => 252,
-                        'Heat Walls' => 12768,
-                        'Heat Roofs' => 2242,
-                        'Heat Floors' => 2049,
-                        'Heat Infil' => 15650,
-                        'Dehumid Windows' => -1053,
-                        'Dehumid Doors' => -30,
-                        'Dehumid Walls' => -1069,
-                        'Dehumid Roofs' => -273,
-                        'Dehumid Floors' => 9,
-                        'Cool Windows' => 5778,
-                        'Cool Doors' => 91,
-                        'Cool Walls' => 1777,
-                        'Cool Roofs' => 591,
-                        'Cool Floors' => 230,
-                        'Cool Infil Sens' => 1963,
-                        'Cool Infil Lat' => -3226,
-                        'Cool IntGains Sens' => 2912,
-                        'Cool IntGains Lat' => 1062,
-                        'Heat Load' => 41587,
-                        'Cool Load Sens' => 13344,
-                        'Cool Load Lat' => 0,
-                        'Dehumid Load Sens' => -1682,
-                        'Dehumid Load Lat' => -95,
-                        'Heat Airflow' => 1311,
-                        'Cool Airflow' => 866,
-                        'HeatingLoad' => 41587,
-                        'HeatingDuctLoad' => 0,
-                        'CoolingLoad_Lat' => 0,
-                        'CoolingLoad_Sens' => 13344,
-                        'CoolingLoad_Ducts_Lat' => 0,
-                        'CoolingLoad_Ducts_Sens' => 0,
-                        'DehumidLoad_Sens' => -1682,
-                        'DehumidLoad_Ducts_Lat' => 0,
-                        'Cool_Capacity' => 17226,
-                        'Cool_SensCap' => 8999,
-                        'Heat_Capacity' => 19526,
-                        'SuppHeat_Capacity' => 41587,
-                        'Cool_AirFlowRate' => 610,
-                        'Heat_AirFlowRate' => 650,
-                        'Fan_AirFlowRate' => 650,
-                        'Dehumid_WaterRemoval_Auto' => 0,
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 866,
+						'HeatingLoad' => 41587,
+						'HeatingDuctLoad' => 0,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 13344,
+						'CoolingLoad_Ducts_Lat' => 0,
+						'CoolingLoad_Ducts_Sens' => 0,
+						'DehumidLoad_Sens' => -1682,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 17226,
+						'Cool_SensCap' => 9284,
+						'Heat_Capacity' => 19526,
+						'SuppHeat_Capacity' => 41587,
+						'Cool_AirFlowRate' => 610,
+						'Heat_AirFlowRate' => 650,
+						'Fan_AirFlowRate' => 650,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'ZoneHVAC:Baseboard:Convective:Electric_Living_Heating Design Capacity {W}' => 12189.3551749,
+						'ZoneHVAC:Baseboard:Convective:Electric_Basement_Heating Design Capacity {W}' => 12189.3551749,
+						'AirConditioner:VariableRefrigerantFlow_Living_Gross Rated Total Cooling Capacity {W}' => 5426.92256703,
+						'AirConditioner:VariableRefrigerantFlow_Living_Gross Rated Total Heating Capacity {W}' => 6151.50626286,
+						'AirConditioner:VariableRefrigerantFlow_Basement_Gross Rated Total Cooling Capacity {W}' => 631.924185075,
+						'AirConditioner:VariableRefrigerantFlow_Basement_Gross Rated Total Heating Capacity {W}' => 716.29648924,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Living_Gross Rated Total Heating Capacity {W}' => 6151.50626286,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Living_Rated Air Flow Rate {m3/s}' => 0.2751419342,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Basement_Gross Rated Total Heating Capacity {W}' => 716.29648924,
+						'Coil:Heating:DX:VariableRefrigerantFlow_Basement_Rated Air Flow Rate {m3/s}' => 0.0320382022042,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Living_Gross Rated Total Cooling Capacity {W}' => 5426.92256703,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Living_Rated Air Flow Rate {m3/s}' => 0.257903881959,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Basement_Gross Rated Total Cooling Capacity {W}' => 631.924185075,
+						'Coil:Cooling:DX:VariableRefrigerantFlow_Basement_Rated Air Flow Rate {m3/s}' => 0.0300309610873,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 0.275146161444,
+						'Fan:OnOff_Basement_Maximum Flow Rate {m3/s}' => 0.0320386944349,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Living_Cooling Supply Air Flow Rate {m3/s}' => 0.257903881959,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Living_Heating Supply Air Flow Rate {m3/s}' => 0.2751419342,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Basement_Cooling Supply Air Flow Rate {m3/s}' => 0.0300309610873,
+						'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Basement_Heating Supply Air Flow Rate {m3/s}' => 0.0320382022042,
                       }
     _test_measure("SFD_HVACSizing_Equip_MSHP_BB_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -2100,7 +2657,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
     
-    #show_output(result)
+    show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
@@ -2125,8 +2682,15 @@ class ProcessHVACSizingTest < MiniTest::Test
         end
     end
     
+    # TODO: Tighten these tolerances eventually
+    airflow_tolerance = 100 # cfm
+    load_component_tolerance = 250 # Btu/hr
+    load_total_tolerance = 2000 # Btu/hr
+    
+    # Compare intermediate values to result.info values
     map = beopt_to_os_mapping()
     expected_values.each do |beopt_key, beopt_val|
+        next if map[beopt_key].nil?
         os_header = map[beopt_key][0]
         os_key = map[beopt_key][1]
         os_val = 0.0
@@ -2141,34 +2705,315 @@ class ProcessHVACSizingTest < MiniTest::Test
             end
         end
         if not os_val_found
-            puts "Could not find corresponding OS value."
-            exit
+            puts "WARNING: Could not find corresponding OS value."
+            next
         end
         
         if apply_volume_adj
             if ['Heat Infil','Cool Infil Sens','Cool Infil Lat'].include?(beopt_key)
                 os_above_grade_finished_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces)
-                os_val = (os_val * volume_adj_factor(os_above_grade_finished_volume)).round(1)
+                os_val = os_val * volume_adj_factor(os_above_grade_finished_volume)
             end
         end
         
-        #puts "#{os_header}: #{os_key}: #{beopt_val} (BEopt) vs. #{os_val} (OS)"
+        puts "#{os_header}: #{os_key}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
         
-        # TODO: Tighten these tolerances eventually
         if os_key.downcase.include?("airflow")
-            assert_in_delta(beopt_val, os_val, 100) # cfm
+            assert_in_delta(beopt_val, os_val, airflow_tolerance)
         elsif os_header.downcase.include?("results")
-            # Aggregate results
-            assert_in_delta(beopt_val, os_val, 2000) # Btu/hr
+            assert_in_delta(beopt_val, os_val, load_total_tolerance)
         else
-            # Individual components
-            assert_in_delta(beopt_val, os_val, 250) # Btu/hr
+            assert_in_delta(beopt_val, os_val, load_component_tolerance)
         end
     end
     
-    # TODO: Check model object values
+    # Check model object values
+    flowrate_units = "{m3/s}"
+    capacity_units = "{W}"
+    expected_values.each do |beopt_key, beopt_val|
+        next if !map[beopt_key].nil?
+        os_val = nil
+        
+        is_flowrate = false
+        is_capacity = false
+        if beopt_key.include?(flowrate_units)
+            is_flowrate = true
+        elsif beopt_key.include?(capacity_units)
+            is_capacity = true
+        else
+            puts "WARNING: Unhandled key type: #{beopt_key}."
+            next
+        end
+        
+        if beopt_key == 'AirLoopHVAC_Design Supply Air Flow rate {m3/s}'
+            ensure_num_objects(model.getAirLoopHVACs, beopt_key)
+            os_val = model.getAirLoopHVACs[0].designSupplyAirFlowRate.get
+            
+        elsif (beopt_key == 'AirLoopHVAC:UnitaryHeatCool_Supply Air Flow Rate During Cooling Operation {m3/s}' or
+               beopt_key == 'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Cooling Operation {m3/s}')
+            ensure_num_objects(model.getAirLoopHVACUnitarySystems, beopt_key)
+            os_val = model.getAirLoopHVACUnitarySystems[0].supplyAirFlowRateDuringCoolingOperation.get
+            
+        elsif beopt_key.start_with?('AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed') and beopt_key.end_with?('Supply Air Flow Rate During Cooling Operation {m3/s}')
+            # FIXME: ASKJON
+            next
+            
+        elsif (beopt_key == 'AirLoopHVAC:UnitaryHeatCool_Supply Air Flow Rate During Heating Operation {m3/s}' or 
+               beopt_key == 'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Heating Operation {m3/s}' or 
+               beopt_key == 'AirLoopHVAC:UnitaryHeatOnly_Airflow')
+            ensure_num_objects(model.getAirLoopHVACUnitarySystems, beopt_key)
+            os_val = model.getAirLoopHVACUnitarySystems[0].supplyAirFlowRateDuringHeatingOperation.get
+            
+        elsif beopt_key.start_with?('AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed') and beopt_key.end_with?('Supply Air Flow Rate During Heating Operation {m3/s}')
+            # FIXME: ASKJON
+            next
+            
+        elsif beopt_key == 'Coil:Heating:Fuel_Nominal Capacity {W}'
+            ensure_num_objects(model.getCoilHeatingGass, beopt_key)
+            os_val = model.getCoilHeatingGass[0].nominalCapacity.get
+            
+        elsif beopt_key == 'Coil:Heating:Electric_Nominal Capacity {W}'
+            ensure_num_objects(model.getCoilHeatingElectrics, beopt_key)
+            os_val = model.getCoilHeatingElectrics[0].nominalCapacity.get
+            
+        elsif beopt_key == 'Coil:Heating:DX:SingleSpeed_Rated Total Heating Capacity {W}'
+            ensure_num_objects(model.getCoilHeatingDXSingleSpeeds, beopt_key)
+            os_val = model.getCoilHeatingDXSingleSpeeds[0].ratedTotalHeatingCapacity.get
+            
+        elsif beopt_key.start_with?('Coil:Heating:DX:MultiSpeed_Speed') and beopt_key.end_with?('Rated Total Heating Capacity {W}')
+            if model.getCoilHeatingDXMultiSpeeds.size > 0
+                ensure_num_objects(model.getCoilHeatingDXMultiSpeeds, beopt_key)
+                speed = beopt_key.split(" ")[1].to_i
+                os_val = model.getCoilHeatingDXMultiSpeeds[0].stages[speed-1].grossRatedHeatingCapacity.get
+            elsif model.getCoilHeatingElectrics.size > 0
+                # Electric furnace with multi-speed AC modeled as HP in BEopt
+                ensure_num_objects(model.getCoilHeatingElectrics, beopt_key)
+                os_val = model.getCoilHeatingElectrics[0].nominalCapacity.get
+            elsif model.getCoilHeatingGass.size > 0
+                # Gas furnace with multi-speed AC modeled as HP in BEopt
+                ensure_num_objects(model.getCoilHeatingGass, beopt_key)
+                os_val = model.getCoilHeatingGass[0].nominalCapacity.get
+            end
+            
+        elsif beopt_key == 'Coil:Heating:DX:SingleSpeed_Rated Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilHeatingDXSingleSpeeds, beopt_key)
+            os_val = model.getCoilHeatingDXSingleSpeeds[0].ratedAirFlowRate.get
+            
+        elsif beopt_key.start_with?('Coil:Heating:DX:MultiSpeed_Speed') and beopt_key.end_with?('Rated Air Flow Rate {m3/s}')
+            if model.getCoilHeatingDXMultiSpeeds.size > 0
+                ensure_num_objects(model.getCoilHeatingDXMultiSpeeds, beopt_key)
+                speed = beopt_key.split(" ")[1].to_i
+                os_val = model.getCoilHeatingDXMultiSpeeds[0].stages[speed-1].ratedAirFlowRate.get
+            elsif model.getCoilHeatingElectrics.size > 0
+                # Electric furnace with multi-speed AC modeled as HP in BEopt
+                ensure_num_objects(model.getCoilHeatingElectrics, beopt_key)
+                next # no airflow property
+            elsif model.getCoilHeatingGass.size > 0
+                # Gas furnace with multi-speed AC modeled as HP in BEopt
+                ensure_num_objects(model.getCoilHeatingGass, beopt_key)
+                next # no airflow property
+            end
+            
+        elsif beopt_key == 'Coil:Cooling:DX:SingleSpeed_Rated High Speed Total Cooling Capacity {W}'
+            ensure_num_objects(model.getCoilCoolingDXSingleSpeeds, beopt_key)
+            os_val = model.getCoilCoolingDXSingleSpeeds[0].ratedTotalCoolingCapacity.get
+            
+        elsif beopt_key.start_with?('Coil:Cooling:DX:MultiSpeed_Speed') and beopt_key.end_with?('Rated Total Cooling Capacity {W}')
+            ensure_num_objects(model.getCoilCoolingDXMultiSpeeds, beopt_key)
+            speed = beopt_key.split(" ")[1].to_i
+            os_val = model.getCoilCoolingDXMultiSpeeds[0].stages[speed-1].grossRatedTotalCoolingCapacity.get
+            
+        elsif beopt_key == 'Coil:Cooling:DX:SingleSpeed_Rated High Speed Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilCoolingDXSingleSpeeds, beopt_key)
+            os_val = model.getCoilCoolingDXSingleSpeeds[0].ratedAirFlowRate.get
+            
+        elsif beopt_key.start_with?('Coil:Cooling:DX:MultiSpeed_Speed') and beopt_key.end_with?('Rated Air Flow Rate {m3/s}')
+            ensure_num_objects(model.getCoilCoolingDXMultiSpeeds, beopt_key)
+            speed = beopt_key.split(" ")[1].to_i
+            os_val = model.getCoilCoolingDXMultiSpeeds[0].stages[speed-1].ratedAirFlowRate.get
+            
+        elsif beopt_key == 'ZoneHVAC:Baseboard:Convective:Electric_Living_Heating Design Capacity {W}'
+            ensure_num_objects(model.getZoneHVACBaseboardConvectiveElectrics, beopt_key, 2)
+            model.getZoneHVACBaseboardConvectiveElectrics.each do |bb|
+                next if bb.name.to_s.downcase.include?('basement')
+                os_val = bb.nominalCapacity.get
+            end
+        
+        elsif beopt_key == 'ZoneHVAC:Baseboard:Convective:Electric_Basement_Heating Design Capacity {W}'
+            ensure_num_objects(model.getZoneHVACBaseboardConvectiveElectrics, beopt_key, 2)
+            model.getZoneHVACBaseboardConvectiveElectrics.each do |bb|
+                next if !bb.name.to_s.downcase.include?('basement')
+                os_val = bb.nominalCapacity.get
+            end
+            
+        elsif beopt_key == 'ZoneHVAC:WindowAirConditioner_Airflow'
+            ensure_num_objects(model.getZoneHVACPackagedTerminalAirConditioners, beopt_key)
+            os_val = model.getZoneHVACPackagedTerminalAirConditioners[0].supplyAirFlowRateDuringCoolingOperation.get
+            
+        elsif beopt_key == 'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}'
+            ensure_num_objects(model.getAirTerminalSingleDuctUncontrolleds, beopt_key, 2)
+            model.getAirTerminalSingleDuctUncontrolleds.each do |term|
+                next if term.name.to_s.downcase.include?('basement')
+                os_val = term.maximumAirFlowRate.get
+            end
+            
+        elsif beopt_key == 'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}'
+            ensure_num_objects(model.getAirTerminalSingleDuctUncontrolleds, beopt_key, 2)
+            model.getAirTerminalSingleDuctUncontrolleds.each do |term|
+                next if !term.name.to_s.downcase.include?('basement')
+                os_val = term.maximumAirFlowRate.get
+            end
+            
+        elsif beopt_key == 'Fan:OnOff_Living_Maximum Flow Rate {m3/s}'
+            model.getFanOnOffs.each do |fan|
+                next if fan.name.to_s.downcase.include?('basement')
+                os_val = fan.maximumFlowRate.get
+            end
+            
+        elsif beopt_key == 'Fan:OnOff_Basement_Maximum Flow Rate {m3/s}'
+            model.getFanOnOffs.each do |fan|
+                next if !fan.name.to_s.downcase.include?('basement')
+                os_val = fan.maximumFlowRate.get
+            end
+            
+        elsif beopt_key == 'AirConditioner:VariableRefrigerantFlow_Living_Gross Rated Total Cooling Capacity {W}'
+            ensure_num_objects(model.getAirConditionerVariableRefrigerantFlows, beopt_key, 2)
+            model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
+                next if vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedTotalCoolingCapacity.get
+            end
+            
+        elsif beopt_key == 'AirConditioner:VariableRefrigerantFlow_Living_Gross Rated Total Heating Capacity {W}'
+            ensure_num_objects(model.getAirConditionerVariableRefrigerantFlows, beopt_key, 2)
+            model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
+                next if vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedTotalHeatingCapacity.get
+            end
+            
+        elsif beopt_key == 'AirConditioner:VariableRefrigerantFlow_Basement_Gross Rated Total Cooling Capacity {W}'
+            ensure_num_objects(model.getAirConditionerVariableRefrigerantFlows, beopt_key, 2)
+            model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
+                next if !vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedTotalCoolingCapacity.get
+            end
+            
+        elsif beopt_key == 'AirConditioner:VariableRefrigerantFlow_Basement_Gross Rated Total Heating Capacity {W}'
+            ensure_num_objects(model.getAirConditionerVariableRefrigerantFlows, beopt_key, 2)
+            model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
+                next if !vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedTotalHeatingCapacity.get
+            end
+            
+        elsif beopt_key == 'Coil:Heating:DX:VariableRefrigerantFlow_Living_Gross Rated Total Heating Capacity {W}'
+            ensure_num_objects(model.getCoilHeatingDXVariableRefrigerantFlows, beopt_key, 2)
+            model.getCoilHeatingDXVariableRefrigerantFlows.each do |vrf|
+                next if vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedTotalHeatingCapacity.get
+            end
+            
+        elsif beopt_key == 'Coil:Cooling:DX:VariableRefrigerantFlow_Living_Gross Rated Total Cooling Capacity {W}'
+            ensure_num_objects(model.getCoilCoolingDXVariableRefrigerantFlows, beopt_key, 2)
+            model.getCoilCoolingDXVariableRefrigerantFlows.each do |vrf|
+                next if vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedTotalCoolingCapacity.get
+            end
+            
+        elsif beopt_key == 'Coil:Heating:DX:VariableRefrigerantFlow_Basement_Gross Rated Total Heating Capacity {W}'
+            ensure_num_objects(model.getCoilHeatingDXVariableRefrigerantFlows, beopt_key, 2)
+            model.getCoilHeatingDXVariableRefrigerantFlows.each do |vrf|
+                next if !vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedTotalHeatingCapacity.get
+            end
+            
+        elsif beopt_key == 'Coil:Cooling:DX:VariableRefrigerantFlow_Basement_Gross Rated Total Cooling Capacity {W}'
+            ensure_num_objects(model.getCoilCoolingDXVariableRefrigerantFlows, beopt_key, 2)
+            model.getCoilCoolingDXVariableRefrigerantFlows.each do |vrf|
+                next if !vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedTotalCoolingCapacity.get
+            end
+            
+        elsif beopt_key == 'Coil:Heating:DX:VariableRefrigerantFlow_Living_Rated Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilHeatingDXVariableRefrigerantFlows, beopt_key, 2)
+            model.getCoilHeatingDXVariableRefrigerantFlows.each do |vrf|
+                next if vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedAirFlowRate.get
+            end
+            
+        elsif beopt_key == 'Coil:Cooling:DX:VariableRefrigerantFlow_Living_Rated Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilCoolingDXVariableRefrigerantFlows, beopt_key, 2)
+            model.getCoilCoolingDXVariableRefrigerantFlows.each do |vrf|
+                next if vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedAirFlowRate.get
+            end
+            
+        elsif beopt_key == 'Coil:Heating:DX:VariableRefrigerantFlow_Basement_Rated Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilHeatingDXVariableRefrigerantFlows, beopt_key, 2)
+            model.getCoilHeatingDXVariableRefrigerantFlows.each do |vrf|
+                next if !vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedAirFlowRate.get
+            end
+            
+        elsif beopt_key == 'Coil:Cooling:DX:VariableRefrigerantFlow_Basement_Rated Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilCoolingDXVariableRefrigerantFlows, beopt_key, 2)
+            model.getCoilCoolingDXVariableRefrigerantFlows.each do |vrf|
+                next if !vrf.name.to_s.downcase.include?('basement')
+                os_val = vrf.ratedAirFlowRate.get
+            end
+            
+        elsif beopt_key == 'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Living_Cooling Supply Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getZoneHVACTerminalUnitVariableRefrigerantFlows, beopt_key, 2)
+            model.getZoneHVACTerminalUnitVariableRefrigerantFlows.each do |term|
+                next if term.name.to_s.downcase.include?('basement')
+                os_val = term.supplyAirFlowRateDuringCoolingOperation.get
+            end
+            
+        elsif beopt_key == 'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Living_Heating Supply Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getZoneHVACTerminalUnitVariableRefrigerantFlows, beopt_key, 2)
+            model.getZoneHVACTerminalUnitVariableRefrigerantFlows.each do |term|
+                next if term.name.to_s.downcase.include?('basement')
+                os_val = term.supplyAirFlowRateDuringHeatingOperation.get
+            end
+            
+        elsif beopt_key == 'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Basement_Cooling Supply Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getZoneHVACTerminalUnitVariableRefrigerantFlows, beopt_key, 2)
+            model.getZoneHVACTerminalUnitVariableRefrigerantFlows.each do |term|
+                next if !term.name.to_s.downcase.include?('basement')
+                os_val = term.supplyAirFlowRateDuringCoolingOperation.get
+            end
+            
+        elsif beopt_key == 'ZoneHVAC:TerminalUnit:VariableRefrigerantFlow_Basement_Heating Supply Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getZoneHVACTerminalUnitVariableRefrigerantFlows, beopt_key, 2)
+            model.getZoneHVACTerminalUnitVariableRefrigerantFlows.each do |term|
+                next if !term.name.to_s.downcase.include?('basement')
+                os_val = term.supplyAirFlowRateDuringHeatingOperation.get
+            end
+            
+        else
+            puts "WARNING: Unhandled key: #{beopt_key}."
+            next
+            
+        end
+        if is_flowrate
+            os_val = OpenStudio.convert(os_val,"m^3/s","cfm").get
+            beopt_val = OpenStudio.convert(beopt_val,"m^3/s","cfm").get
+            puts "#{beopt_key.gsub(flowrate_units,'').strip}: #{beopt_val.round(3)} (BEopt) vs. #{os_val.round(3)} (OS)"
+            assert_in_delta(beopt_val, os_val, airflow_tolerance)
+        elsif is_capacity
+            os_val = OpenStudio.convert(os_val,"W","Btu/h").get
+            beopt_val = OpenStudio.convert(beopt_val,"W","Btu/h").get
+            puts "#{beopt_key.gsub(capacity_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+            assert_in_delta(beopt_val, os_val, load_total_tolerance)
+        end
+    end
     
     return model
+  end
+  
+  def ensure_num_objects(objects, beopt_key, num=1)
+    num_objects = objects.size
+    if num_objects != num
+        assert_equal(num_objects, num)
+    end
   end
 
 end

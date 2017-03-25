@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>791b4cfe-1355-486f-b052-e36c798ee809</version_id>
-  <version_modified>20170324T193757Z</version_modified>
+  <version_id>dc54801c-f4e7-476d-a830-e3ccb0a5876c</version_id>
+  <version_modified>20170325T134923Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -197,18 +197,6 @@
       <checksum>66C79984</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FC324E2B</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BA0DB780</checksum>
-    </file>
-    <file>
       <filename>ssc_ffi.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -236,12 +224,6 @@
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
       <checksum>01DBB4A1</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BC82D56D</checksum>
     </file>
     <file>
       <filename>residential_photovoltaics_test.rb</filename>
@@ -278,6 +260,24 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>86045314</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>36C5F678</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>041A8AB9</checksum>
     </file>
   </files>
 </measure>

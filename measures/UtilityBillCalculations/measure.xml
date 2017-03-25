@@ -2,14 +2,33 @@
   <schema_version>3.0</schema_version>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>04ba3391-f051-49ce-8344-db04fa368e34</version_id>
-  <version_modified>20170324T195019Z</version_modified>
+  <version_id>1795afe6-c126-4318-9b50-55db9eae586c</version_id>
+  <version_modified>20170325T134924Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
   <description>Calls SAM SDK.</description>
   <modeler_description>Calls SAM SDK.</modeler_description>
-  <arguments/>
+  <arguments>
+    <argument>
+      <name>run_dir</name>
+      <display_name>Run Directory</display_name>
+      <description>Relative path of the run directory.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>..</default_value>
+    </argument>
+    <argument>
+      <name>analysis_period</name>
+      <display_name>Analysis Period</display_name>
+      <type>Double</type>
+      <units>yrs</units>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>1</default_value>
+    </argument>
+  </arguments>
   <outputs/>
   <provenances/>
   <tags>
@@ -42,12 +61,6 @@
       <checksum>C9DD9291</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_AllConstructions_Furnace_CentralAC_Setpoints.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>91376510</checksum>
-    </file>
-    <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
@@ -57,13 +70,7 @@
       <filename>utility_bill_calculations_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>53EF743D</checksum>
-    </file>
-    <file>
-      <filename>eplusout.sql</filename>
-      <filetype>sql</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4C5AC981</checksum>
+      <checksum>E9E84CB3</checksum>
     </file>
     <file>
       <version>
@@ -74,7 +81,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D9413747</checksum>
+      <checksum>36B02B9B</checksum>
+    </file>
+    <file>
+      <filename>enduse_timeseries.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4529B921</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>041A8AB9</checksum>
     </file>
   </files>
 </measure>

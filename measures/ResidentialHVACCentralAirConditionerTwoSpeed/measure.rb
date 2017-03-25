@@ -367,6 +367,7 @@ class ProcessTwoSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasure
       unit.setFeature(Constants.SizingInfoHVACFanspeedRatioCooling, acFanspeedRatio.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, acCapacityRatio.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, acEERCapacityDerateFactor.join(","))
+      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, supply.CFM_TON_Rated.join(","))
       
     end # unit
 	

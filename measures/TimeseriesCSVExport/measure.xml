@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>timeseries_csv_export</name>
   <uid>2a3442c1-944d-4e91-9e11-11e0cf368c64</uid>
-  <version_id>331093eb-3b63-41c1-b985-7c2dd2f2cb1d</version_id>
-  <version_modified>20170324T195311Z</version_modified>
+  <version_id>c8666e4b-bedd-4488-adce-ff6c4d351fff</version_id>
+  <version_modified>20170325T134923Z</version_modified>
   <xml_checksum>15BF4E57</xml_checksum>
   <class_name>TimeseriesCSVExport</class_name>
   <display_name>Timeseries CSV Export</display_name>
@@ -67,7 +67,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6DE538EF</checksum>
+      <checksum>77BDA8D6</checksum>
     </file>
   </files>
 </measure>

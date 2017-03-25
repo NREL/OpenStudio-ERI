@@ -79,27 +79,6 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
     ashpSHRRated.setDefaultValue(0.73)
     args << ashpSHRRated
 
-    #make a double argument for ashp capacity ratio
-    ashpCapacityRatio = OpenStudio::Measure::OSArgument::makeDoubleArgument("capacity_ratio", true)
-    ashpCapacityRatio.setDisplayName("Capacity Ratio")
-    ashpCapacityRatio.setDescription("Capacity divided by rated capacity.")
-    ashpCapacityRatio.setDefaultValue(1.0)
-    args << ashpCapacityRatio
-
-    #make a double argument for ashp fan speed ratio cooling
-    ashpFanspeedRatioCooling = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_speed_ratio_cooling", true)
-    ashpFanspeedRatioCooling.setDisplayName("Fan Speed Ratio Cooling")
-    ashpFanspeedRatioCooling.setDescription("Cooling fan speed divided by fan speed at the compressor speed for which Capacity Ratio = 1.0.")
-    ashpFanspeedRatioCooling.setDefaultValue(1.0)
-    args << ashpFanspeedRatioCooling
-    
-    #make a double argument for ashp fan speed ratio heating
-    ashpFanspeedRatioHeating = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_speed_ratio_heating", true)
-    ashpFanspeedRatioHeating.setDisplayName("Fan Speed Ratio Heating")
-    ashpFanspeedRatioHeating.setDescription("Heating fan speed divided by fan speed at the compressor speed for which Capacity Ratio = 1.0.")
-    ashpFanspeedRatioHeating.setDefaultValue(1.0)
-    args << ashpFanspeedRatioHeating    
-
     #make a double argument for ashp rated supply fan power
     ashpSupplyFanPowerRated = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power_rated", true)
     ashpSupplyFanPowerRated.setDisplayName("Rated Supply Fan Power")
@@ -254,9 +233,6 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
     hpCoolingEER = [runner.getDoubleArgumentValue("eer",user_arguments)]
     hpHeatingCOP = [runner.getDoubleArgumentValue("cop",user_arguments)]
     hpSHRRated = [runner.getDoubleArgumentValue("shr",user_arguments)]
-    hpCapacityRatio = [runner.getDoubleArgumentValue("capacity_ratio",user_arguments)]
-    hpFanspeedRatioCooling = [runner.getDoubleArgumentValue("fan_speed_ratio_cooling",user_arguments)]
-    hpFanspeedRatioHeating = [runner.getDoubleArgumentValue("fan_speed_ratio_heating",user_arguments)]
     hpSupplyFanPowerRated = runner.getDoubleArgumentValue("fan_power_rated",user_arguments)
     hpSupplyFanPowerInstalled = runner.getDoubleArgumentValue("fan_power_installed",user_arguments)
     hpMinT = runner.getDoubleArgumentValue("min_temp",user_arguments)
@@ -305,6 +281,10 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
 
     # Flow rate through AC units - hardcoded assumption of 400 cfm/ton
     supply.cfm_ton = 400 # cfm / ton
+    
+    hpCapacityRatio = [1.0]
+    hpFanspeedRatioCooling = [1.0]
+    hpFanspeedRatioHeating = [1.0]
 
     supply.HPCoolingOversizingFactor = 1 # Default to a value of 1 (currently only used for MSHPs)
     supply.SpaceConditionedMult = 1 # Default used for central equipment    
@@ -483,6 +463,8 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, hpEERCapacityDerateFactor.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, hpCOPCapacityDerateFactor.join(","))
       unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (hpOutputCapacity == Constants.SizingAutoMaxLoad))
+      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating, supply.CFM_TON_Rated_Heat.join(","))
+      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, supply.CFM_TON_Rated.join(","))
     
     end # unit
 	

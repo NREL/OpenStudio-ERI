@@ -12,7 +12,7 @@ class ProcessRoomAirConditioner < OpenStudio::Measure::ModelMeasure
   class Supply
     def initialize
     end
-    attr_accessor(:shr_Rated, :coolingCFMs, :min_flow_ratio, :fanspeed_ratio, :cfm_TON_Rated)
+    attr_accessor(:shr_Rated, :coolingCFMs, :min_flow_ratio, :fanspeed_ratio, :CFM_TON_Rated)
   end
   
   class Curves
@@ -106,7 +106,7 @@ class ProcessRoomAirConditioner < OpenStudio::Measure::ModelMeasure
     curves.cool_CAP_FFLOW_SPEC_coefficients = [0.887, 0.1128, 0]
     curves.cool_EIR_FFLOW_SPEC_coefficients = [1.763, -0.6081, 0]
     curves.cool_PLF_FPLR = [0.78, 0.22, 0]
-    supply.cfm_TON_Rated = [312]    # medium speed
+    supply.CFM_TON_Rated = [312]    # medium speed
 
     # To avoid BEopt errors
     supply.min_flow_ratio = 1
@@ -197,7 +197,7 @@ class ProcessRoomAirConditioner < OpenStudio::Measure::ModelMeasure
         clg_coil.setName(obj_name + " cooling coil")
         if acOutputCapacity != Constants.SizingAuto
           clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(acOutputCapacity,"Btu/h","W").get)
-          clg_coil.setRatedAirFlowRate(supply.cfm_TON_Rated[0] * acOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
+          clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * acOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
         end
         clg_coil.setRatedSensibleHeatRatio(supply.shr_Rated)
         clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(OpenStudio::convert(roomaceer, "Btu/h", "W").get))
@@ -234,6 +234,7 @@ class ProcessRoomAirConditioner < OpenStudio::Measure::ModelMeasure
       
       # Store info for HVAC Sizing measure
       unit.setFeature(Constants.SizingInfoHVACCoolingCFMs, supply.coolingCFMs.join(","))
+      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, supply.CFM_TON_Rated.join(","))
       
     end # unit
     

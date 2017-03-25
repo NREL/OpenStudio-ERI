@@ -59,7 +59,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                   :Dehumid_Load_Sens, :Dehumid_Load_Ducts_Lat, 
                   :Heat_Load, :Heat_Load_Ducts, 
                   :Heat_Capacity, :Heat_Capacity_Supp, :Heat_Airflow,
-                  :Fan_Airflow, :dse_Fregain, :Dehumid_WaterRemoval, :TotalCap_CurveValue)
+                  :Fan_Airflow, :dse_Fregain, :Dehumid_WaterRemoval, :TotalCap_CurveValue,
+                  :Zone_FlowRatios)
   end
   
   class HVACInfo
@@ -194,8 +195,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         display_unit_initial_results(runner, unit_num, unit_init)
         display_unit_final_results(runner, unit_num, unit_final)
         
-        # Set equipment values
-        setEquipmentSizes(runner, hvac, clg_equips, htg_equips, unit_final)
+        # Set object values
+        if not setObjectValues(runner, model, unit, hvac, clg_equips, htg_equips, unit_final)
+            return false
+        end
                 
     end # unit
     
@@ -351,6 +354,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     elsif Geometry.is_garage(space)
         # Garage
         # Calculate the cooling design temperature for the garage
+        # FIXME: Need to update this
         garage_area_under_finished = 0.0
         garage_area_under_unfinished = 0.0
         space.surfaces.each do |surface|
@@ -358,14 +362,14 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             next if surface.outsideBoundaryCondition.downcase != "surface"
             adjacent_space = surface.adjacentSurface.get.space.get
             if Geometry.space_is_finished(adjacent_space)
-                garage_area_under_finished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get # FIXME: Why does sizing.py have "* Math::cos(surface.tilt.deg2rad)"
+                garage_area_under_finished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get
             else
-                garage_area_under_unfinished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get # FIXME: Why does sizing.py have "* Math::cos(surface.tilt.deg2rad)"
+                garage_area_under_unfinished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get
             end
         end
         
         garage_area = garage_area_under_finished + garage_area_under_unfinished
-
+        
         # Calculate the garage cooling design temperature based on Table 4C
         # Linearly interpolate between having living space over the garage and not having living space above the garage
         if mj8.daily_range_num == 0
@@ -1469,7 +1473,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     end
     
     if hvac.HtgSupplyAirTemp.nil?
-        # FIXME ASKJON: Is this correct?
+        # FIXME: This is correct. But remove Furnace heating supply temp variable?
         if hvac.HasFurnace
             hvac.HtgSupplyAirTemp = 120 # F
         else
@@ -1496,7 +1500,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     unit_final = processCoolingEquipmentAdjustments(runner, mj8, unit_init, unit_final, weather, hvac)
     unit_final = processFixedEquipment(runner, unit_final, hvac)
     unit_final = processFinalize(runner, mj8, unit, unit_final, weather, hvac, ducts, nbeds, unit_ffa, unit_shelter_class)
-    unit_final = processSlaveZoneFlowRatios(runner, unit_final)
+    unit_final = processSlaveZoneFlowRatios(runner, zones_loads, ducts, unit_final)
     unit_final = processEfficientCapacityDerate(runner, hvac, unit_final)
     unit_final = processDehumidifierSizing(runner, mj8, unit_final, weather, unit_init.Dehumid_Load_Lat, hvac)
     return unit_init, unit_final
@@ -1596,13 +1600,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     # Distribution system efficiency (DSE) calculations based on ASHRAE Standard 152
     if ducts.Has and ducts.NotInLiving and hvac.HasForcedAirHeating
+        dse_Tamb_heating = mj8.heat_design_temps[ducts.LocationSpace]
+        unit_final.Heat_Load_Ducts = calc_heat_duct_load(ducts, mj8.acf, mj8.heat_setpoint, unit_final.dse_Fregain, heatingLoad, hvac.HtgSupplyAirTemp, dse_Tamb_heating)
         if Geometry.space_is_finished(ducts.LocationSpace)
             # Ducts in finished spaces shouldn't affect the total heating capacity
             unit_final.Heat_Load = heatingLoad
-            unit_final.Heat_Load_Ducts = 0
         else
-            dse_Tamb_heating = mj8.heat_design_temps[ducts.LocationSpace]
-            unit_final.Heat_Load_Ducts = calc_heat_duct_load(ducts, mj8.acf, mj8.heat_setpoint, unit_final.dse_Fregain, heatingLoad, hvac.HtgSupplyAirTemp, dse_Tamb_heating)
             unit_final.Heat_Load = heatingLoad + unit_final.Heat_Load_Ducts
         end
     else
@@ -2024,9 +2027,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         unit_final.Cool_Capacity = OpenStudio::convert(hvac.FixedCoolingCapacity,"ton","Btu/h").get / @spaceConditionedMult
     end
     if not hvac.FixedSuppHeatingCapacity.nil?
-        unit_final.Heat_Load = OpenStudio::convert(hvac.FixedSuppHeatingCapacity,"ton","Btu/h").get # (supplemental capacity, so don't divide by @spaceConditionedMult)
+        unit_final.Heat_Load = OpenStudio::convert(hvac.FixedSuppHeatingCapacity,"ton","Btu/h").get
     elsif not hvac.FixedHeatingCapacity.nil?
-        unit_final.Heat_Load = OpenStudio::convert(hvac.FixedHeatingCapacity,"ton","Btu/h").get # (supplemental capacity, so don't divide by @spaceConditionedMult)
+        unit_final.Heat_Load = OpenStudio::convert(hvac.FixedHeatingCapacity,"ton","Btu/h").get
     end
   
     return unit_final
@@ -2334,31 +2337,49 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return unit_final
   end
   
-  def processSlaveZoneFlowRatios(runner, unit_final)
+  def processSlaveZoneFlowRatios(runner, zones_loads, ducts, unit_final)
     '''
     Flow Ratios for Slave Zones
     '''
     
     return nil if unit_final.nil?
     
-    # FIXME
-    # if simpy.hasSpaceType(geometry, Constants.FinishedBasementSpace, unit):
-        
-        # if unit.basement_airflow_ratio is not None:
-            # unit.supply.FBsmt_FlowRatio = unit.basement_airflow_ratio
-            
-        # else:
-            # # Divide up flow rate to Living and Finished Bsmt based on MJ8 loads
-            
-            # # mj8.Heat_LoadingLoad_FBsmt = mj8.Heat_LoadingLoad * (mj8.Heat_LoadingLoad_FBsmt + mj8.Heat_LoadingLoad_Inf_FBsmt) / mj8.Heat_LoadingLoad_Inter
-            # mj8.Heat_LoadingLoad_FBsmt = mj8.Heat_LoadingLoad_FBsmt + mj8.Heat_LoadingLoad_Inf_FBsmt - mj8.DuctLoad_FinBasement
-            
-            # # Use a minimum flow ratio of 1%. Low flow ratios can be calculated for buildings with inefficient above grade construction
-            # # or poor ductwork in the finished basement.  
-            # unit.supply.FBsmt_FlowRatio = max(mj8.Heat_LoadingLoad_FBsmt / mj8.Heat_LoadingLoad, 0.01)
-
-    # else:
-        # unit.supply.FBsmt_FlowRatio = 0.0
+    zone_heat_loads = {}
+    zones_loads.each do |thermal_zone, zone_loads|
+        zone_heat_loads[thermal_zone] = [zone_loads.Heat_Windows + zone_loads.Heat_Doors +
+                                         zone_loads.Heat_Walls + zone_loads.Heat_Floors + 
+                                         zone_loads.Heat_Roofs, 0].max + zone_loads.Heat_Infil
+        if !ducts.LocationSpace.nil? and thermal_zone.spaces.include?(ducts.LocationSpace)
+            zone_heat_loads[thermal_zone] -= unit_final.Heat_Load_Ducts
+        end
+    end
+    
+    # Divide up flow rate to thermal zones based on MJ8 loads
+    unit_final.Zone_FlowRatios = {}
+    total = 0.0
+    zones_loads.each do |thermal_zone, zone_loads|
+        next if Geometry.is_living(thermal_zone)
+        unit_final.Zone_FlowRatios[thermal_zone] = zone_heat_loads[thermal_zone] / unit_final.Heat_Load
+        # Use a minimum flow ratio of 1%. (Low flow ratios can be calculated, e.g., for buildings 
+        # with inefficient above grade construction or poor ductwork in the finished basement.)
+        unit_final.Zone_FlowRatios[thermal_zone] = [unit_final.Zone_FlowRatios[thermal_zone], 0.01].max
+        total += unit_final.Zone_FlowRatios[thermal_zone]
+    end
+    
+    zones_loads.each do |thermal_zone, zone_loads|
+        next if not Geometry.is_living(thermal_zone)
+        unit_final.Zone_FlowRatios[thermal_zone] = 1.0 - total
+        total += unit_final.Zone_FlowRatios[thermal_zone]
+    end
+    
+    if (total - 1.0).abs > 0.001
+        s = ""
+        unit_final.Zone_FlowRatios.each do |zone, flow_ratio|
+            s += " #{zone.name.to_s}: #{flow_ratio.round(3).to_s},"
+        end
+        runner.registerError("Zone flow ratios do not add up to one:#{s.chomp(',')}")
+        return nil
+    end
 
     return unit_final
   end
@@ -2517,7 +2538,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             if hvac.HasRoomAirConditioner     # Assume constant SHR for now.
                 sensibleCap_CurveValue = hvac.SHRRated[0]
             else
-                # FIXME: For GSHP, there are two different temperatures, which deviates from all other uses of this curve fit
                 sensibleCap_CurveValue = process_curve_fit(unit_final.Cool_Airflow, dehumid_AC_TotCap, enteringTemp)
             end
             
@@ -2629,16 +2649,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         apparentSensibleEffectiveness = get_unit_feature(runner, unit, Constants.SizingInfoMechVentApparentSensibleEffectiveness, 'double')
         latentEffectiveness = get_unit_feature(runner, unit, Constants.SizingInfoMechVentLatentEffectiveness, 'double')
         return nil if totalEfficiency.nil? or latentEffectiveness.nil? or apparentSensibleEffectiveness.nil?
-        # FIXME: See sizing.py
         q_bal_Sens = mechVentWholeHouseRate * (1 - apparentSensibleEffectiveness)
         q_bal_Lat = mechVentWholeHouseRate * (1 - latentEffectiveness)
-        #if totalEfficiency == 0
-        #    q_bal_Sens = mechVentWholeHouseRate * (1 - apparentSensibleEffectiveness)
-        #    q_bal_Lat = mechVentWholeHouseRate * (1 - latentEffectiveness)
-        #else
-        #    q_bal_Sens = mechVentWholeHouseRate * (1 - totalEfficiency)
-        #    q_bal_Lat = q_bal_Sens
-        #end
     elsif mechVentType == Constants.VentTypeNone
         # nop
     else
@@ -2804,7 +2816,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                Gas.Air.cp * (dse_Bs - 1) * (leavingAirTemp - dse_Tamb))
     
     # Calculate the sensible heat transfer from surroundings
-    # FIXME: Move elsewhere?
     coolingLoad_Ducts_Sens = (1 - [dse_DE,0].max) * load_Inter_Sens
     
     return dse_DE, coolingLoad_Ducts_Sens
@@ -2933,7 +2944,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     control_slave_zones_hash = HVAC.get_control_and_slave_zones(unit_thermal_zones)
     
     if control_slave_zones_hash.keys.size > 1
-        runner.registerError("Cannot currently handle multiple HVAC equipment in a unit.")
+        runner.registerError("Cannot handle multiple HVAC equipment in a unit.")
         return nil
     end
     
@@ -3011,6 +3022,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         if clg_coil.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed
             hvac.NumSpeedsCooling = 1
             hvac.CapacityRatioCooling = [1.0]
+            hvac.FanspeedRatioCooling = [1.0]
             
             if hvac.HasRoomAirConditioner
                 coolingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACCoolingCFMs, 'string')
@@ -3053,15 +3065,16 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 
             curves = []
             hvac.SHRRated = []
-            clg_coil.stages.each do |stage|
+            clg_coil.stages.each_with_index do |stage, speed|
                 curves << stage.totalCoolingCapacityFunctionofTemperatureCurve
                 if not stage.grossRatedSensibleHeatRatio.is_initialized
                     runner.registerError("SHR not set for #{clg_coil.name}.")
                     return nil
                 end
                 hvac.SHRRated << stage.grossRatedSensibleHeatRatio.get
-                if stage.grossRatedTotalCoolingCapacity.is_initialized
-                    hvac.FixedCoolingCapacity = OpenStudio::convert(stage.grossRatedTotalCoolingCapacity.get,"W","ton").get # FIXME: Using last stage
+                if (hvac.CapacityRatioCooling[speed] - 1.0).abs < 0.001
+                    next if !stage.grossRatedTotalCoolingCapacity.is_initialized
+                    hvac.FixedCoolingCapacity = OpenStudio::convert(stage.grossRatedTotalCoolingCapacity.get,"W","ton").get
                 end
             end
             hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
@@ -3070,11 +3083,15 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             hvac.CapacityDerateFactorEER = capacityDerateFactorEER.split(",").map(&:to_f)
             
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow
-            hvac.NumSpeedsCooling = Constants.Num_Speeds_MSHP # FIXME: Can we obtain from the object?
-            
             capacityRatioCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityRatioCooling, 'string')
             return nil if capacityRatioCooling.nil?
             hvac.CapacityRatioCooling = capacityRatioCooling.split(",").map(&:to_f)
+            
+            hvac.NumSpeedsCooling = hvac.CapacityRatioCooling.size
+            
+            fanspeed_ratio = get_unit_feature(runner, unit, Constants.SizingInfoHVACFanspeedRatioCooling, 'string')
+            return nil if fanspeed_ratio.nil?
+            hvac.FanspeedRatioCooling = fanspeed_ratio.split(",").map(&:to_f)
             
             hvac.OverSizeLimit = 1.3
             vrf = get_vrf_from_terminal_unit(model, clg_equip)
@@ -3202,10 +3219,11 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             end
             hvac.MinOutdoorTemp = OpenStudio::convert(htg_coil.minimumOutdoorDryBulbTemperatureforCompressorOperation,"C","F").get
             curves = []
-            htg_coil.stages.each do |stage|
+            htg_coil.stages.each_with_index do |stage, speed|
                 curves << stage.heatingCapacityFunctionofTemperatureCurve
-                if stage.grossRatedHeatingCapacity.is_initialized
-                    hvac.FixedHeatingCapacity = OpenStudio::convert(stage.grossRatedHeatingCapacity.get,"W","ton").get # FIXME: Using last stage
+                if (hvac.CapacityRatioHeating[speed] - 1.0).abs < 0.001
+                    next if !stage.grossRatedHeatingCapacity.is_initialized
+                    hvac.FixedHeatingCapacity = OpenStudio::convert(stage.grossRatedHeatingCapacity.get,"W","ton").get
                 end
             end
             hvac.HEAT_CAP_FT_SPEC_coefficients = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating)
@@ -3214,11 +3232,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             hvac.CapacityDerateFactorCOP = capacityDerateFactorCOP.split(",").map(&:to_f)
             
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow
-            hvac.NumSpeedsHeating = Constants.Num_Speeds_MSHP # FIXME: Can we obtain from the object?
-            hvac.CapacityRatioHeating = []
-            for i in 1..hvac.NumSpeedsHeating
-                hvac.CapacityRatioHeating << 0.3 + 0.133333333 * (i-1) # FIXME
-            end
+            capacityRatioHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityRatioHeating, 'string')
+            return nil if capacityRatioHeating.nil?
+            hvac.CapacityRatioHeating = capacityRatioHeating.split(",").map(&:to_f)
+            
+            hvac.NumSpeedsHeating = hvac.CapacityRatioHeating.size
+
             hvac.MinOutdoorTemp = OpenStudio::convert(vrf.minimumOutdoorTemperatureinHeatingMode,"C","F").get
             vrf = get_vrf_from_terminal_unit(model, htg_equip)
             curves = [vrf.heatingCapacityRatioModifierFunctionofLowTemperatureCurve.get]
@@ -3252,8 +3271,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
         end
         
-        # Supplemental heating coil
-        if supp_htg_coil.is_a? OpenStudio::Model::CoilHeatingElectric
+        # Supplemental heating
+        if htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
+            if htg_equip.nominalCapacity.is_initialized
+                hvac.FixedSuppHeatingCapacity = OpenStudio::convert(htg_equip.nominalCapacity.get,"W","ton").get
+            end
+        elsif supp_htg_coil.is_a? OpenStudio::Model::CoilHeatingElectric
             if supp_htg_coil.nominalCapacity.is_initialized
                 hvac.FixedSuppHeatingCapacity = OpenStudio::convert(supp_htg_coil.nominalCapacity.get,"W","ton").get
             end
@@ -3566,16 +3589,26 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return val.get
   end
   
-  def setEquipmentSizes(runner, hvac, clg_equips, htg_equips, unit_final)
-    # Replaces autosized properties in the model
-    # TODO: Combine some of this code with the get_hvac_for_unit method
+  def setObjectValues(runner, model, unit, hvac, clg_equips, htg_equips, unit_final)
+    # Updates object properties in the model
     
     mshp_indices = [1,3,5,9] # FIXME
-    fbsmt_frac = 0.0 # FIXME
-            
-    clg_equips.each do |clg_equip|
+    
+    ratedCFMperTonHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonHeating, 'string', false)
+    ratedCFMperTonCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonCooling, 'string', false)
+    if not ratedCFMperTonHeating.nil?
+        ratedCFMperTonHeating = ratedCFMperTonHeating.split(",").map(&:to_f)
+    end
+    if not ratedCFMperTonCooling.nil?
+        ratedCFMperTonCooling = ratedCFMperTonCooling.split(",").map(&:to_f)
+    end
+    
+    # Cooling coils
+    clg_equip = nil
+    if clg_equips.size == 1
+        clg_equip = clg_equips[0]
         
-        # Cooling coil
+        # Get coils
         clg_coil = nil
         if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
             clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get)
@@ -3585,38 +3618,41 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
         else
             runner.registerError("Unexpected cooling equipment: #{clg_equip.name}.")
-            return nil
+            return false
             
         end
         
         # Set cooling values
         if clg_coil.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed
+            if ratedCFMperTonCooling.nil?
+                runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling}' with datatype 'string'.")
+                return false
+            end
             clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","W").get)
-            clg_coil.setRatedAirFlowRate(OpenStudio::convert(unit_final.Cool_Airflow,"cfm","m^3/s").get)
+            clg_coil.setRatedAirFlowRate(ratedCFMperTonCooling[0] * unit_final.Cool_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
             
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed
+            if ratedCFMperTonCooling.nil?
+                runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling}' with datatype 'string'.")
+                return false
+            end
             clg_coil.stages.each_with_index do |stage, speed|
                 stage.setGrossRatedTotalCoolingCapacity(OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","W").get * hvac.CapacityRatioCooling[speed])
-                stage.setRatedAirFlowRate(OpenStudio::convert(unit_final.Cool_Airflow,"cfm","m^3/s").get * hvac.CapacityRatioCooling[speed]) 
+                stage.setRatedAirFlowRate(ratedCFMperTonCooling[speed] * unit_final.Cool_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * hvac.CapacityRatioCooling[speed]) 
             end
             
-        elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow
-            clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","W").get * hvac.CapacityRatioCooling[mshp_indices[-1]] * (1.0 - fbsmt_frac))
-            clg_coil.setRatedAirFlowRate(OpenStudio::convert(unit_final.Cool_Airflow,"cfm","m^3/s").get * (1.0 - fbsmt_frac))
-        
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit
             # FIXME
         
-        else
-            runner.registerError("Unexpected cooling coil: #{clg_coil.name}.")
-            return nil
-            
         end
     end
     
-    htg_equips.each do |htg_equip|
+    # Heating coils
+    htg_equip = nil
+    if htg_equips.size == 1
+        htg_equip = htg_equips[0]
         
-        # Heating and supplemental heating coils
+        # Get coils
         htg_coil = nil
         supp_htg_coil = nil
         if htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
@@ -3629,10 +3665,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
                 htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil)
             end
-            
-        else
-            runner.registerError("Unexpected heating equipment: #{htg_equip.name}.")
-            return nil
             
         end
         
@@ -3647,39 +3679,147 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             # FIXME
         
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
+            if ratedCFMperTonHeating.nil?
+                runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating}' with datatype 'string'.")
+                return false
+            end
             htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get)
-            htg_coil.setRatedAirFlowRate(OpenStudio::convert(unit_final.Heat_Airflow,"cfm","m^3/s").get)
+            htg_coil.setRatedAirFlowRate(ratedCFMperTonHeating[0] * unit_final.Heat_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
             
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
+            if ratedCFMperTonHeating.nil?
+                runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating}' with datatype 'string'.")
+                return false
+            end
             htg_coil.stages.each_with_index do |stage, speed|
                 stage.setGrossRatedHeatingCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get * hvac.CapacityRatioHeating[speed])
-                stage.setRatedAirFlowRate(OpenStudio::convert(unit_final.Heat_Airflow,"cfm","m^3/s").get * hvac.CapacityRatioHeating[speed]) 
+                stage.setRatedAirFlowRate(ratedCFMperTonHeating[speed] * unit_final.Heat_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * hvac.CapacityRatioHeating[speed]) 
             end
             
-        elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow
-            htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get * hvac.CapacityRatioHeating[mshp_indices[-1]] * (1.0 - fbsmt_frac))
-            htg_coil.setRatedAirFlowRate(OpenStudio::convert(unit_final.Heat_Airflow,"cfm","m^3/s").get * (1.0 - fbsmt_frac))
-        
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit
             # FIXME
         
-        elsif not htg_coil.nil?
-            runner.registerError("Unexpected heating coil: #{htg_coil.name}.")
-            return nil
-            
         end
         
         # Set supplemental heating values
         if supp_htg_coil.is_a? OpenStudio::Model::CoilHeatingElectric
             supp_htg_coil.setNominalCapacity(OpenStudio::convert(unit_final.Heat_Capacity_Supp,"Btu/h","W").get)
             
-        elsif not supp_htg_coil.nil?
-            runner.registerError("Unexpected supplemental heating coil: #{supp_htg_coil.name}.")
-            return nil
-            
         end
 
     end
+    
+    # Air Loop HVAC
+    airLoopHVAC = nil
+    airLoopHVACUnitarySystem = nil
+    if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
+        airLoopHVAC = clg_equip.airLoopHVAC.get
+        airLoopHVACUnitarySystem = clg_equip
+        
+    elsif htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
+        airLoopHVAC = htg_equip.airLoopHVAC.get
+        airLoopHVACUnitarySystem = htg_equip
+        
+    end
+    if not airLoopHVACUnitarySystem.nil?
+        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringCoolingOperation(OpenStudio.convert(unit_final.Cool_Airflow,"cfm","m^3/s").get)
+        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringHeatingOperation(OpenStudio.convert(unit_final.Heat_Airflow,"cfm","m^3/s").get)
+        fanonoff = airLoopHVACUnitarySystem.supplyFan.get.to_FanOnOff.get
+        fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * OpenStudio.convert(unit_final.Fan_Airflow + 0.01,"cfm","m^3/s").get)
+    end
+    if not airLoopHVAC.nil?
+        airLoopHVAC.setDesignSupplyAirFlowRate(hvac.FanspeedRatioCooling.max * OpenStudio.convert(unit_final.Fan_Airflow,"cfm","m^3/s").get)
+    end
+    
+    thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+    control_and_slave_zones = HVAC.get_control_and_slave_zones(thermal_zones)
+    
+    # Air Terminals
+    control_and_slave_zones.each do |control_zone, slave_zones|
+        next if not control_zone.airLoopHVACTerminal.is_initialized
+        aterm = control_zone.airLoopHVACTerminal.get.to_AirTerminalSingleDuctUncontrolled.get
+        aterm.setMaximumAirFlowRate(OpenStudio.convert(unit_final.Fan_Airflow,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[control_zone])
+        
+        slave_zones.each do |slave_zone|
+            next if not slave_zone.airLoopHVACTerminal.is_initialized
+            aterm = slave_zone.airLoopHVACTerminal.get.to_AirTerminalSingleDuctUncontrolled.get
+            aterm.setMaximumAirFlowRate(OpenStudio.convert(unit_final.Fan_Airflow,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[slave_zone])
+        end
+    end
+    
+    # Zone HVAC Window AC
+    if clg_equip.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner
+        clg_equip.setSupplyAirFlowRateDuringCoolingOperation(OpenStudio.convert(unit_final.Cool_Airflow,"cfm","m^3/s").get)
+        clg_equip.setSupplyAirFlowRateDuringHeatingOperation(0.0)
+        clg_equip.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0.0)
+        clg_equip.setOutdoorAirFlowRateDuringCoolingOperation(0.0)
+        clg_equip.setOutdoorAirFlowRateDuringHeatingOperation(0.0)
+        clg_equip.setOutdoorAirFlowRateWhenNoCoolingorHeatingisNeeded(0.0)
+    end
+    
+    # VRFs
+    found_vrf = false
+    model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
+        thermal_zones.each do |thermal_zone|
+            vrf.terminals.each do |terminal|
+                next if thermal_zone != terminal.thermalZone.get
+                
+                found_vrf = true
+
+                htg_cap = OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get * hvac.CapacityRatioHeating[mshp_indices[-1]] * unit_final.Zone_FlowRatios[thermal_zone]
+                clg_cap = OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","W").get * hvac.CapacityRatioCooling[mshp_indices[-1]] * unit_final.Zone_FlowRatios[thermal_zone]
+                htg_airflow = hvac.HeatingCFMs[mshp_indices[-1]] * unit_final.Heat_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[thermal_zone]
+                clg_airflow = hvac.CoolingCFMs[mshp_indices[-1]] * unit_final.Cool_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[thermal_zone]
+                fan_airflow = hvac.FanspeedRatioCooling.max * OpenStudio.convert(unit_final.Fan_Airflow + 0.01,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[thermal_zone]
+                
+                # VRF
+                vrf.setRatedTotalHeatingCapacity(htg_cap)
+                vrf.setRatedTotalCoolingCapacity(clg_cap)
+                
+                # Terminal
+                terminal.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow)
+                terminal.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow)
+                terminal.setSupplyAirFlowRateWhenNoCoolingisNeeded(0.0)
+                terminal.setSupplyAirFlowRateWhenNoHeatingisNeeded(0.0)
+                terminal.setOutdoorAirFlowRateDuringCoolingOperation(0.0)
+                terminal.setOutdoorAirFlowRateDuringHeatingOperation(0.0)
+                terminal.setOutdoorAirFlowRateWhenNoCoolingorHeatingisNeeded(0.0)
+                
+                # Coils
+                terminal.heatingCoil.setRatedTotalHeatingCapacity(htg_cap)
+                terminal.coolingCoil.setRatedTotalCoolingCapacity(clg_cap)
+                terminal.heatingCoil.setRatedAirFlowRate(htg_airflow)
+                terminal.coolingCoil.setRatedAirFlowRate(clg_airflow)
+                
+                # Fan
+                fanonoff = terminal.supplyAirFan.to_FanOnOff.get
+                fanonoff.setMaximumFlowRate(fan_airflow)
+            end
+        end
+    end
+    
+    # Zone HVAC electric baseboard
+    baseboards = []
+    control_and_slave_zones.each do |control_zone, slave_zones|
+        HVAC.existing_heating_equipment(model, runner, control_zone).each do |htg_equip|
+            next if !htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
+            baseboards << htg_equip
+        end
+        slave_zones.each do |slave_zone|
+            HVAC.existing_heating_equipment(model, runner, slave_zone).each do |htg_equip|
+                 next if !htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
+                 baseboards << htg_equip
+            end
+        end
+    end
+    baseboards.each do |baseboard|
+        if found_vrf
+            baseboard.setNominalCapacity(OpenStudio::convert(unit_final.Heat_Capacity_Supp,"Btu/h","W").get)
+        else
+            baseboard.setNominalCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get)
+        end
+    end
+    
   end
   
   def display_zone_loads(runner, unit_num, zone_loads)

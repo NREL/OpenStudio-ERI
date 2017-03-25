@@ -994,6 +994,9 @@ class Constants
   def self.SizingInfoHVACCapacityRatioCooling
     return self.SizingInfo(__method__.to_s)
   end
+  def self.SizingInfoHVACCapacityRatioHeating
+    return self.SizingInfo(__method__.to_s)
+  end
   def self.SizingInfoHVACCoolingCFMs
     return self.SizingInfo(__method__.to_s)
   end
@@ -1001,6 +1004,12 @@ class Constants
     return self.SizingInfo(__method__.to_s)
   end
   def self.SizingInfoHVACHeatingCapacityOffset
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHVACRatedCFMperTonHeating
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoHVACRatedCFMperTonCooling
     return self.SizingInfo(__method__.to_s)
   end
   def self.SizingInfoMechVentType
