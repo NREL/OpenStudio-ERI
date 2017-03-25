@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>98f0b3a1-fbe2-4026-9251-02491d5a40e5</version_id>
-  <version_modified>20170322T025114Z</version_modified>
+  <version_id>97bf2da5-4c86-46f3-88c9-4f4b5a0aadd2</version_id>
+  <version_modified>20170324T193745Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
@@ -447,13 +447,13 @@
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>910B95ED</checksum>
+      <checksum>BFCA157D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>32478829</checksum>
+      <checksum>8F2B366B</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>6242dce7-6819-4739-84c8-f7c199a176b1</version_id>
-  <version_modified>20170322T025111Z</version_modified>
+  <version_id>a3e1ca71-4d89-47a7-8702-0b42b9c629d2</version_id>
+  <version_modified>20170324T193740Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
@@ -308,7 +308,7 @@
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>32478829</checksum>
+      <checksum>8F2B366B</checksum>
     </file>
   </files>
 </measure>

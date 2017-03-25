@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>6c8aea45-ea07-4f2b-b905-d58535589677</version_id>
-  <version_modified>20170322T025120Z</version_modified>
+  <version_id>c43c3d4e-5bed-497b-a06f-3910921403f5</version_id>
+  <version_modified>20170324T193756Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
@@ -141,13 +141,13 @@
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>910B95ED</checksum>
+      <checksum>BFCA157D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>32478829</checksum>
+      <checksum>8F2B366B</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>70c2c000-c398-4d55-880d-5453b4b432ce</version_id>
-  <version_modified>20170322T025114Z</version_modified>
+  <version_id>e0f689ec-c5fd-44d9-88b1-07c42ef0284a</version_id>
+  <version_modified>20170324T193745Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
@@ -424,13 +424,13 @@
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>910B95ED</checksum>
+      <checksum>BFCA157D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>32478829</checksum>
+      <checksum>8F2B366B</checksum>
     </file>
   </files>
 </measure>

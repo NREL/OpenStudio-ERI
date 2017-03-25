@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>e2785ffd-19b7-421d-8558-696c5c311ffc</version_id>
-  <version_modified>20170324T154652Z</version_modified>
+  <version_id>431d2000-d5da-4aa9-85fc-3cbc8cadaf77</version_id>
+  <version_modified>20170324T193740Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -160,7 +160,7 @@
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0F073D12</checksum>
+      <checksum>BC82D56D</checksum>
     </file>
   </files>
 </measure>

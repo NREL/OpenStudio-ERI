@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_orientation</name>
   <uid>4bf5a7c5-bce4-404a-bc7b-72dc02b379f8</uid>
-  <version_id>653e5a5f-2454-475b-8503-7d9efe8779e0</version_id>
-  <version_modified>20170324T154652Z</version_modified>
+  <version_id>3a2ac276-531e-4dea-8b27-604363af3d4b</version_id>
+  <version_modified>20170324T193740Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialOrientation</class_name>
   <display_name>Set Residential Orientation</display_name>
@@ -94,7 +94,7 @@
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0F073D12</checksum>
+      <checksum>BC82D56D</checksum>
     </file>
   </files>
 </measure>

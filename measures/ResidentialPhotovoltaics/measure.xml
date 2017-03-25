@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>9a622220-c0c7-4b5e-b4a3-f2d32e75293b</version_id>
-  <version_modified>20170324T154704Z</version_modified>
+  <version_id>791b4cfe-1355-486f-b052-e36c798ee809</version_id>
+  <version_modified>20170324T193757Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -232,22 +232,52 @@
       <checksum>96F59696</checksum>
     </file>
     <file>
+      <filename>USA_AK_Anchorage.Intl.AP.702730_TMY3.epw</filename>
+      <filetype>epw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>01DBB4A1</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0F073D12</checksum>
+      <checksum>BC82D56D</checksum>
     </file>
     <file>
       <filename>residential_photovoltaics_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>CFDAFE78</checksum>
+      <checksum>4301A4E7</checksum>
     </file>
     <file>
-      <filename>USA_AK_Anchorage.Intl.AP.702730_TMY3.epw</filename>
-      <filetype>epw</filetype>
+      <filename>MF_8units_1story_SL_Anchorage.osm</filename>
+      <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>01DBB4A1</checksum>
+      <checksum>269EDACF</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BFCA157D</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Anchorage.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AC1E71F0</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8F2B366B</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Anchorage.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>86045314</checksum>
     </file>
   </files>
 </measure>

@@ -7,35 +7,19 @@ require 'fileutils'
 
 class UtilityBillCalculationsTest < MiniTest::Test
   
-  def test_create_timeseries_csv
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"OutputMeter"=>90}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_AllConstructions_Furnace_CentralAC_Setpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 90, 84)  
-  end
-  
   def test_parse_timeseries_csv
     args_hash = {}
+    args_hash["run_dir"] = "."
     expected_num_del_objects = {}
-    expected_num_new_objects = {"OutputMeter"=>90}
+    expected_num_new_objects = {}
     expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_AllConstructions_Furnace_CentralAC_Setpoints.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 90, 84, false, false)  
-  end  
-
-  def test_number_of_arguments
-    # create an instance of the measure
-    measure = UtilityBillCalculations.new
-
-    # get arguments and test that they are what we are expecting
-    arguments = measure.arguments()
-    assert_equal(1, arguments.size)
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 12)  
   end
   
   private
 
   def model_in_path_default
-    return "#{File.dirname(__FILE__)}/SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_AllConstructions_Furnace_CentralAC_Setpoints.osm"
+    return "#{File.dirname(__FILE__)}/SFD_2000sqft_2story_SL_UA_Denver.osm"
   end
 
   def epw_path_default
@@ -48,27 +32,19 @@ class UtilityBillCalculationsTest < MiniTest::Test
   
   def run_dir(test_name)
     # always generate test output in specially named 'output' directory so result files are not made part of the measure
-    return "#{File.dirname(__FILE__)}/output/#{test_name}"
+    return "#{File.dirname(__FILE__)}/output/#{test_name}/run"
   end
 
   def model_out_path(test_name)
-    return "#{run_dir(test_name)}/SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_AllConstructions_Furnace_CentralAC_Setpoints.osm"
-  end
-
-  def sql_path(test_name)
-    return "#{run_dir(test_name)}/run/eplusout.sql"
+    return "#{run_dir(test_name)}/SFD_2000sqft_2story_SL_UA_Denver.osm"
   end
 
   def timeseries_path(test_name)
     return "#{run_dir(test_name)}/enduse_timeseries.csv"
   end
   
-  def report_path(test_name)
-    return "#{run_dir(test_name)}/report.html"
-  end 
-  
   # create test files if they do not exist when the test first runs
-  def setup_test(test_name, idf_output_requests, run, model_in_path=model_in_path_default, epw_path=epw_path_default)
+  def setup_test(test_name, idf_output_requests, model_in_path=model_in_path_default, epw_path=epw_path_default)
 
     if !File.exist?(run_dir(test_name))
       FileUtils.mkdir_p(run_dir(test_name))
@@ -98,7 +74,7 @@ class UtilityBillCalculationsTest < MiniTest::Test
     model.addObjects(request_model.objects)
     model.save(model_out_path(test_name), true)
 
-    osw_path = File.join(run_dir(test_name), 'in.osw')
+    osw_path = File.join(run_dir(test_name), "in.osw")
     osw_path = File.absolute_path(osw_path)
 
     workflow = OpenStudio::WorkflowJSON.new
@@ -106,23 +82,16 @@ class UtilityBillCalculationsTest < MiniTest::Test
     workflow.setWeatherFile(File.absolute_path(epw_path))
     workflow.saveAs(osw_path)
 
-    if run
-      cli_path = OpenStudio.getOpenStudioCLI
-      cmd = "\"#{cli_path}\" run -w \"#{osw_path}\""
-      puts cmd    
-      system(cmd)
-    else # fake an energyplus simulation
-      if !File.exist?("#{run_dir(test_name)}/run")
-        FileUtils.mkdir_p("#{run_dir(test_name)}/run")
-      end
-      FileUtils.cp("#{File.dirname(__FILE__)}/eplusout.sql", "#{run_dir(test_name)}/run")
+    if !File.exist?("#{run_dir(test_name)}")
+      FileUtils.mkdir_p("#{run_dir(test_name)}")
     end
+    FileUtils.cp("#{File.dirname(__FILE__)}/enduse_timeseries.csv", "#{run_dir(test_name)}")
     
     return model
     
   end
 
-  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, test_name, num_infos=0, num_warnings=0, debug=false, run=true)
+  def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, test_name, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
     measure = UtilityBillCalculations.new
 
@@ -154,23 +123,17 @@ class UtilityBillCalculationsTest < MiniTest::Test
 
     # get the energyplus output requests, this will be done automatically by OS App and PAT
     idf_output_requests = measure.energyPlusOutputRequests(runner, argument_map)
-    assert(idf_output_requests.size == num_infos)
+    assert(idf_output_requests.size == 0)
 
     # mimic the process of running this measure in OS App or PAT. Optionally set custom model_in_path and custom epw_path.
-    model = setup_test(test_name, idf_output_requests, run)
+    model = setup_test(test_name, idf_output_requests)
 
     assert(File.exist?(model_out_path(test_name)))
-    assert(File.exist?(sql_path(test_name)))
 
     # set up runner, this will happen automatically when measure is run in PAT or OpenStudio
     runner.setLastOpenStudioModelPath(OpenStudio::Path.new(model_out_path(test_name)))
-    runner.setLastEnergyPlusSqlFilePath(OpenStudio::Path.new(sql_path(test_name)))
 
-    # delete the output if it exists
-    if File.exist?(timeseries_path(test_name))
-      FileUtils.rm(timeseries_path(test_name))
-    end
-    assert(!File.exist?(timeseries_path(test_name)))
+    assert(File.exist?(timeseries_path(test_name)))
 
     # temporarily change directory to the run directory and run the measure
     start_dir = Dir.pwd

@@ -39,7 +39,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
 
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("measures_dir", true)
     arg.setDisplayName("Residential Measures Directory")
-    arg.setDescription("Absolute directory to residential measures.")
+    arg.setDescription("Absolute path of the residential measures.")
     args << arg
     
     return args
