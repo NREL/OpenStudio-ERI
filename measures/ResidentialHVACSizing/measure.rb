@@ -273,27 +273,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         mj8.cool_design_temps[space] = processDesignTempCooling(runner, mj8, weather, space)
         mj8.heat_design_temps[space] = processDesignTempHeating(runner, mj8, weather, space, weather.design.HeatingDrybulb)
         mj8.dehum_design_temps[space] = processDesignTempDehumid(runner, mj8, weather, space)
+        return nil if mj8.cool_design_temps[space].nil? or mj8.heat_design_temps[space].nil? or mj8.dehum_design_temps[space].nil?
     end
-            
+    
     return mj8
   end
   
-  def get_space_r_value(runner, space, surfaceType)
-    # Get area-weighted average roofing material absorptance
-    surface_r = 0.0
-    total_area = 0.0
-    space.surfaces.each do |surface|
-        next if surface.surfaceType.downcase != surfaceType
-        surf_area = OpenStudio::convert(surface.netArea,"m^2","ft^2").get
-        uvalue = get_surface_uvalue(runner, surface, surface.surfaceType)
-        return nil if uvalue.nil?
-        surface_r += (surf_area / uvalue)
-        total_area += surf_area
-    end
-    surface_r = surface_r / total_area
-    return surface_r
-  end
-
   def processDesignTempHeating(runner, mj8, weather, space, design_db)
   
     if Geometry.space_is_finished(space)
@@ -309,8 +294,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         is_vented = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneIsVented(space.thermalZone.get), 'boolean', true)
         return nil if is_vented.nil?
         
-        attic_floor_r = get_space_r_value(runner, space, "floor")
-        attic_roof_r = get_space_r_value(runner, space, "roofceiling")
+        attic_floor_r = Construction.get_space_r_value(runner, space, "floor")
+        attic_roof_r = Construction.get_space_r_value(runner, space, "roofceiling")
         
         # Unfinished attic
         if attic_floor_r < attic_roof_r
@@ -334,7 +319,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         # Pier & beam
         heat_temp = design_db
         
-    elsif Geometry.is_unfinished_basement(space) or Geometry.is_crawl(space)
+    else
         # Unfinished basement, Crawlspace
         heat_temp = calculate_space_design_temps(runner, space, weather, @finished_heat_design_temp, design_db, weather.data.GroundMonthlyTemps.min)
         
@@ -391,8 +376,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         is_vented = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneIsVented(space.thermalZone.get), 'boolean', true)
         return nil if is_vented.nil?
         
-        attic_floor_r = get_space_r_value(runner, space, "floor")
-        attic_roof_r = get_space_r_value(runner, space, "roofceiling")
+        attic_floor_r = Construction.get_space_r_value(runner, space, "floor")
+        attic_roof_r = Construction.get_space_r_value(runner, space, "roofceiling")
         
         # Unfinished attic
         if attic_floor_r < attic_roof_r
@@ -403,8 +388,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             if is_vented
                 cool_temp = weather.design.CoolingDrybulb + 40 # This is the number from a California study with dark shingle roof and similar ventilation.
             else # not is_vented
-                cool_temp = calculate_space_design_temps(runner, space, weather, @finished_cool_design_temp, weather.design.CoolingDrybulb, weather.data.GroundMonthlyTemps.max)
-                # FIXME: (ua_max_cool_design_temp - ua_percent_ua_from_ceiling * (ua_max_cool_design_temp - ua_min_cool_design_temp))
+                cool_temp = calculate_space_design_temps(runner, space, weather, @finished_cool_design_temp, weather.design.CoolingDrybulb, weather.data.GroundMonthlyTemps.max, true)
             end
             
         else
@@ -518,7 +502,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         # Pier & beam
         cool_temp = weather.design.CoolingDrybulb
         
-    elsif Geometry.is_unfinished_basement(space) or Geometry.is_crawl(space)
+    else
         # Unfinished basement, Crawlspace
         cool_temp = calculate_space_design_temps(runner, space, weather, @finished_cool_design_temp, weather.design.CoolingDrybulb, weather.data.GroundMonthlyTemps.max)
         
@@ -543,8 +527,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         is_vented = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneIsVented(space.thermalZone.get), 'boolean', true)
         return nil if is_vented.nil?
         
-        attic_floor_r = get_space_r_value(runner, space, "floor")
-        attic_roof_r = get_space_r_value(runner, space, "roofceiling")
+        attic_floor_r = Construction.get_space_r_value(runner, space, "floor")
+        attic_roof_r = Construction.get_space_r_value(runner, space, "roofceiling")
         
         # Unfinished attic
         if attic_floor_r < attic_roof_r
@@ -568,7 +552,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         # Pier & beam
         dehum_temp = weather.design.DehumidDrybulb
         
-    elsif Geometry.is_unfinished_basement(space) or Geometry.is_crawl(space)
+    else
         # Unfinished basement, Crawlspace
         dehum_temp = calculate_space_design_temps(runner, space, weather, @finished_dehum_design_temp, weather.design.DehumidDrybulb, weather.data.GroundMonthlyTemps.min)
         
@@ -2260,8 +2244,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
             # Calculate the cooling design temperature for the unfinished attic based on Figure A12-14
             if Geometry.is_unfinished_attic(space)
-                attic_floor_r = get_space_r_value(runner, space, "floor")
-                attic_roof_r = get_space_r_value(runner, space, "roofceiling")
+                attic_floor_r = Construction.get_space_r_value(runner, space, "floor")
+                attic_roof_r = Construction.get_space_r_value(runner, space, "roofceiling")
                 if attic_floor_r > attic_roof_r
                     mj8.heat_design_temps[space] = heat_db
                 end
@@ -2671,7 +2655,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             runner.registerError("Construction not assigned to '#{surface.name.to_s}'.")
             return nil
         end
-        construction = surface.construction.get
         return OpenStudio::convert(surface.uFactor.get,"W/m^2*K","Btu/ft^2*h*R").get
      end
   end
@@ -3426,8 +3409,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     end
     
     # Infiltration UA
-    infiltration_cfm = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double', false)
-    infiltration_cfm = 0 if infiltration_cfm.nil?
+    if not space.buildingUnit.is_initialized
+        infiltration_cfm = 0
+    else
+        infiltration_cfm = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get), 'double', false)
+        infiltration_cfm = 0 if infiltration_cfm.nil?
+    end
     outside_air_density = UnitConversion.atm2Btu_ft3(weather.header.LocalPressure) / (Gas.Air.r * (weather.data.AnnualAvgDrybulb + 460.0))
     space_UAs['infil'] = infiltration_cfm * outside_air_density * Gas.Air.cp * OpenStudio::convert(1.0,"hr","min").get
     
@@ -3440,27 +3427,68 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return space_UAs
   end
   
-  def calculate_space_design_temps(runner, space, weather, finished_design_temp, design_db, ground_db)
+  def calculate_space_design_temps(runner, space, weather, finished_design_temp, design_db, ground_db, is_cooling_for_unvented_attic_roof_insulation=false)
     space_UAs = get_space_ua_values(runner, space, weather)
     return nil if space_UAs.nil?
     
-    # Calculate space design temps from UAs
-    sum_uat = 0
-    space_UAs.each do |ua_type, ua|
-        if ua_type == 'ground'
-            sum_uat += ua * ground_db
-        elsif ua_type == 'outdoors' or ua_type == 'infil'
-            sum_uat += ua * design_db
-        elsif ua_type == 'surface' # adjacent to finished
-            sum_uat += ua * finished_design_temp
-        elsif ua_type == 'total'
-            # skip
-        else
-            runner.registerError("Unexpected outside boundary condition: '#{obc}'.")
-            return nil
+    # Calculate space design temp from space UAs
+    design_temp = nil
+    if not is_cooling_for_unvented_attic_roof_insulation
+    
+        sum_uat = 0
+        space_UAs.each do |ua_type, ua|
+            if ua_type == 'ground'
+                sum_uat += ua * ground_db
+            elsif ua_type == 'outdoors' or ua_type == 'infil'
+                sum_uat += ua * design_db
+            elsif ua_type == 'surface' # adjacent to finished
+                sum_uat += ua * finished_design_temp
+            elsif ua_type == 'total'
+                # skip
+            else
+                runner.registerError("Unexpected space ua type: '#{ua_type}'.")
+                return nil
+            end
         end
+        design_temp = sum_uat / space_UAs['total']
+        
+    else
+    
+        # Special case due to effect of solar
+    
+        # This number comes from the number from the Vented Attic
+        # assumption, but assuming an unvented attic will be hotter
+        # during the summer when insulation is at the ceiling level
+        max_temp_rise = 50
+        # Estimate from running a few cases in E+ and DOE2 since the
+        # attic will always be a little warmer than the living space
+        # when the roof is insulated
+        min_temp_rise = 5
+        
+        max_cooling_temp = @finished_cool_design_temp + max_temp_rise
+        min_cooling_temp = @finished_cool_design_temp + min_temp_rise
+        
+        ua_finished = 0
+        ua_outside = 0
+        space_UAs.each do |ua_type, ua|
+            if ua_type == 'outdoors' or ua_type == 'infil'
+                ua_outside += ua
+            elsif ua_type == 'surface' # adjacent to finished
+                ua_finished += ua
+            elsif ua_type == 'total' or ua_type == 'ground'
+                # skip
+            else
+                runner.registerError("Unexpected space ua type: '#{ua_type}'.")
+                return nil
+            end
+        end
+        percent_ua_finished = ua_finished / (ua_finished + ua_outside)
+        design_temp = max_cooling_temp - percent_ua_finished * (max_cooling_temp - min_cooling_temp)
+        
     end
-    return sum_uat / space_UAs['total']
+    
+    return design_temp
+    
   end
   
   def get_wallgroup(runner, unit, wall)

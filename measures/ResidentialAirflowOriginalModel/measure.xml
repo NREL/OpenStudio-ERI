@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_airflow_original_model</name>
   <uid>5a7ae205-bdc2-4daf-b29e-b6f0a59366a6</uid>
-  <version_id>24a8f244-e764-448d-9593-5241b2632e9b</version_id>
-  <version_modified>20170325T134906Z</version_modified>
+  <version_id>8d6b2508-578f-4710-bb81-7fab46966402</version_id>
+  <version_modified>20170327T165618Z</version_modified>
   <xml_checksum>2AC0F979</xml_checksum>
   <class_name>ProcessAirflowOriginalModel</class_name>
   <display_name>Set Residential Airflow - Original Model</display_name>
@@ -647,12 +647,6 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BAAF2AEF</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -764,6 +758,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>36C5F678</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8ED8B330</checksum>
     </file>
   </files>
 </measure>

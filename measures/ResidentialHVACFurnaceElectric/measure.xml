@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>b9a6d974-6f1d-41f2-a0c1-be2c63252a78</version_id>
-  <version_modified>20170325T134916Z</version_modified>
+  <version_id>84f83d81-c1df-4808-b793-bd33e05b5cad</version_id>
+  <version_modified>20170327T165625Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
@@ -214,12 +214,6 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BAAF2AEF</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -361,6 +355,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>041A8AB9</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8ED8B330</checksum>
     </file>
   </files>
 </measure>

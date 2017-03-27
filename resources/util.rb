@@ -846,6 +846,22 @@ class Construction
         return materials
     end
     
+    def self.get_space_r_value(runner, space, surfaceType)
+        # Get area-weighted space r-value
+        surface_r = 0.0
+        total_area = 0.0
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != surfaceType
+            surf_area = OpenStudio::convert(surface.netArea,"m^2","ft^2").get
+            return nil if not surface.construction.is_initialized
+            uvalue = OpenStudio::convert(surface.uFactor.get,"W/m^2*K","Btu/ft^2*h*R").get
+            surface_r += (surf_area / uvalue)
+            total_area += surf_area
+        end
+        surface_r = surface_r / total_area
+        return surface_r
+    end
+    
     private
     
         def print_construction_creation(runner, surface)

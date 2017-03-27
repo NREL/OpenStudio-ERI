@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>6c3a8081-c490-4a22-adb4-e394bbf2ba1b</version_id>
-  <version_modified>20170325T134921Z</version_modified>
+  <version_id>33b24032-33f1-406a-aee3-6befc16837fc</version_id>
+  <version_modified>20170327T174700Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
@@ -43,12 +43,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DCB12FCF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BAAF2AEF</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
@@ -199,23 +193,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>A21BC14F</checksum>
-    </file>
-    <file>
-      <filename>residential_hvac_sizing_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>229B8D86</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.11.5</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>34F81E13</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHP1_AutosizeForMaxLoad_MinTemp.osm</filename>
@@ -398,16 +375,45 @@
       <checksum>D0952EF0</checksum>
     </file>
     <file>
-      <filename>_hvac_tests2.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D6801911</checksum>
-    </file>
-    <file>
       <filename>_load_tests.BEopt</filename>
       <filetype>BEopt</filetype>
       <usage_type>test</usage_type>
       <checksum>1685AD23</checksum>
+    </file>
+    <file>
+      <filename>_hvac_tests2.BEopt</filename>
+      <filetype>BEopt</filetype>
+      <usage_type>test</usage_type>
+      <checksum>064DBC34</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.11.5</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B61C3817</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8ED8B330</checksum>
+    </file>
+    <file>
+      <filename>residential_hvac_sizing_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>047EF622</checksum>
+    </file>
+    <file>
+      <filename>_load_tests2.BEopt</filename>
+      <filetype>BEopt</filetype>
+      <usage_type>test</usage_type>
+      <checksum>54CA8038</checksum>
     </file>
   </files>
 </measure>

@@ -2,6 +2,7 @@
 # http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 
 #start the measure
@@ -14,11 +15,11 @@ class ProcessConstructionsWallsExteriorGeneric < OpenStudio::Measure::ModelMeasu
   end
   
   def description
-    return "This measure assigns a generic layered construction to above-grade exterior walls adjacent to finished space."
+    return "This measure assigns a generic layered construction to above-grade exterior walls adjacent to finished space or attic walls under insulated roofs."
   end
   
   def modeler_description
-    return "Calculates and assigns material layer properties of generic constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures."
+    return "Calculates and assigns material layer properties of wood stud constructions for 1) above-grade walls between finished space and outside, and 2) above-grade walls between attics under insulated roofs and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures."
   end  
   
   #define the arguments that the user will input
@@ -181,23 +182,31 @@ class ProcessConstructionsWallsExteriorGeneric < OpenStudio::Measure::ModelMeasu
       return false
     end
     
-    # Above-grade wall between finished space and outdoors
-    surfaces = []
+    finished_surfaces = []
+    unfinished_surfaces = []
     model.getSpaces.each do |space|
-        next if Geometry.space_is_unfinished(space)
-        next if Geometry.space_is_below_grade(space)
-        space.surfaces.each do |surface|
-            if surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors"
-                surfaces << surface
+        # Wall between finished space and outdoors
+        if Geometry.space_is_finished(space) and Geometry.space_is_above_grade(space)
+            space.surfaces.each do |surface|
+                next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+                finished_surfaces << surface
+            end
+        # Attic wall under an insulated roof
+        elsif Geometry.is_unfinished_attic(space)
+            attic_roof_r = Construction.get_space_r_value(runner, space, "roofceiling")
+            next if attic_roof_r.nil? or attic_roof_r <= 5 # assume uninsulated if <= R-5 assembly
+            space.surfaces.each do |surface|
+                next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+                unfinished_surfaces << surface
             end
         end
     end
     
     # Continue if no applicable surfaces
-    if surfaces.empty?
+    if finished_surfaces.empty? and unfinished_surfaces.empty?
       runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
-    end 
+    end     
     
     # Get inputs
     thick_in1 = runner.getDoubleArgumentValue("thick_in_1",user_arguments)
@@ -340,30 +349,59 @@ class ProcessConstructionsWallsExteriorGeneric < OpenStudio::Measure::ModelMeasu
         mat5 = Material.new(name="Layer5", thick_in=thick_in5.get, mat_base=nil, k_in=cond5.get, rho=dens5.get, cp=specheat5.get)
     end
 
-    # Define construction
-    wall = Construction.new([1])
-    wall.add_layer(Material.AirFilmVertical, false)
-    wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    wall.add_layer(mat1, true)
-    if not mat2.nil?
-        wall.add_layer(mat2, true)
-    end
-    if not mat3.nil?
-        wall.add_layer(mat3, true)
-    end
-    if not mat4.nil?
-        wall.add_layer(mat4, true)
-    end
-    if not mat5.nil?
-        wall.add_layer(mat5, true)
-    end
-    wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    wall.add_layer(Material.AirFilmOutside, false)
+    if not finished_surfaces.empty?
+        # Define construction
+        fin_wall = Construction.new([1])
+        fin_wall.add_layer(Material.AirFilmVertical, false)
+        fin_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+        fin_wall.add_layer(mat1, true)
+        if not mat2.nil?
+            fin_wall.add_layer(mat2, true)
+        end
+        if not mat3.nil?
+            fin_wall.add_layer(mat3, true)
+        end
+        if not mat4.nil?
+            fin_wall.add_layer(mat4, true)
+        end
+        if not mat5.nil?
+            fin_wall.add_layer(mat5, true)
+        end
+        fin_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+        fin_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+        fin_wall.add_layer(Material.AirFilmOutside, false)
 
-    # Create and assign construction to surfaces
-    if not wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
-        return false
+        # Create and assign construction to surfaces
+        if not fin_wall.create_and_assign_constructions(finished_surfaces, runner, model, name="ExtInsFinWall")
+            return false
+        end
+    end
+    
+    if not unfinished_surfaces.empty?
+        # Define construction
+        unfin_wall = Construction.new([1])
+        unfin_wall.add_layer(Material.AirFilmVertical, false)
+        unfin_wall.add_layer(mat1, true)
+        if not mat2.nil?
+            unfin_wall.add_layer(mat2, true)
+        end
+        if not mat3.nil?
+            unfin_wall.add_layer(mat3, true)
+        end
+        if not mat4.nil?
+            unfin_wall.add_layer(mat4, true)
+        end
+        if not mat5.nil?
+            unfin_wall.add_layer(mat5, true)
+        end
+        unfin_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+        unfin_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+        unfin_wall.add_layer(Material.AirFilmOutside, false)
+
+        # Create and assign construction to surfaces
+        if not unfin_wall.create_and_assign_constructions(unfinished_surfaces, runner, model, name="ExtInsFinWall")
+            return false
+        end
     end
     
     # Store info for HVAC Sizing measure
@@ -371,7 +409,7 @@ class ProcessConstructionsWallsExteriorGeneric < OpenStudio::Measure::ModelMeasu
     if units.nil?
         return false
     end
-    surfaces.each do |surface|
+    (finished_surfaces + unfinished_surfaces).each do |surface|
         units.each do |unit|
             next if not unit.spaces.include?(surface.space.get)
             unit.setFeature(Constants.SizingInfoWallType(surface), "Generic")

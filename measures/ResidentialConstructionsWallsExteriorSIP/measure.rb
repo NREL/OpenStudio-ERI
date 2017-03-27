@@ -15,12 +15,12 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Measure::ModelMeasure
 
   # human readable description
   def description
-    return "This measure assigns a SIP construction to above-grade exterior walls adjacent to finished space."
+    return "This measure assigns a SIP construction to above-grade exterior walls adjacent to finished space or attic walls under insulated roofs."
   end
 
   # human readable description of modeling approach
   def modeler_description
-    return "Calculates and assigns material layer properties of SIP constructions for above-grade walls between finished space and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures."
+    return "Calculates and assigns material layer properties of wood stud constructions for 1) above-grade walls between finished space and outside, and 2) above-grade walls between attics under insulated roofs and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures."
   end
 
   # define the arguments that the user will input
@@ -82,20 +82,28 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    # Wall between finished space and outdoors
-    surfaces = []
+    finished_surfaces = []
+    unfinished_surfaces = []
     model.getSpaces.each do |space|
-        next if Geometry.space_is_unfinished(space)
-        next if Geometry.space_is_below_grade(space)
-        space.surfaces.each do |surface|
-            if surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "outdoors"
-                surfaces << surface
+        # Wall between finished space and outdoors
+        if Geometry.space_is_finished(space) and Geometry.space_is_above_grade(space)
+            space.surfaces.each do |surface|
+                next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+                finished_surfaces << surface
+            end
+        # Attic wall under an insulated roof
+        elsif Geometry.is_unfinished_attic(space)
+            attic_roof_r = Construction.get_space_r_value(runner, space, "roofceiling")
+            next if attic_roof_r.nil? or attic_roof_r <= 5 # assume uninsulated if <= R-5 assembly
+            space.surfaces.each do |surface|
+                next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+                unfinished_surfaces << surface
             end
         end
     end
     
     # Continue if no applicable surfaces
-    if surfaces.empty?
+    if finished_surfaces.empty? and unfinished_surfaces.empty?
       runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
     end     
@@ -148,21 +156,41 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Measure::ModelMeasure
     cavity_frac = 1.0 - (spline_frac + sipFramingFactor)
     path_fracs = [sipFramingFactor, spline_frac, cavity_frac]
 
-    # Define construction
-    sip_wall = Construction.new(path_fracs)
-    sip_wall.add_layer(Material.AirFilmVertical, false)
-    sip_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
-    sip_wall.add_layer(mat_int_sheath, true, "IntSheathing")
-    sip_wall.add_layer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerInner")
-    sip_wall.add_layer([mat_framing_middle, mat_ins_middle, mat_ins_middle], true, "WallIns")
-    sip_wall.add_layer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerOuter")
-    sip_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
-    sip_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
-    sip_wall.add_layer(Material.AirFilmOutside, false)
+    if not finished_surfaces.empty?
+        # Define construction
+        fin_sip_wall = Construction.new(path_fracs)
+        fin_sip_wall.add_layer(Material.AirFilmVertical, false)
+        fin_sip_wall.add_layer(Material.DefaultWallMass, false) # thermal mass added in separate measure
+        fin_sip_wall.add_layer(mat_int_sheath, true, "IntSheathing")
+        fin_sip_wall.add_layer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerInner")
+        fin_sip_wall.add_layer([mat_framing_middle, mat_ins_middle, mat_ins_middle], true, "WallIns")
+        fin_sip_wall.add_layer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerOuter")
+        fin_sip_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+        fin_sip_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+        fin_sip_wall.add_layer(Material.AirFilmOutside, false)
 
-    # Create and assign construction to surfaces
-    if not sip_wall.create_and_assign_constructions(surfaces, runner, model, name="ExtInsFinWall")
-        return false
+        # Create and assign construction to surfaces
+        if not fin_sip_wall.create_and_assign_constructions(finished_surfaces, runner, model, name="ExtInsFinWall")
+            return false
+        end
+    end
+    
+    if not unfinished_surfaces.empty?
+        # Define construction
+        unfin_sip_wall = Construction.new(path_fracs)
+        unfin_sip_wall.add_layer(Material.AirFilmVertical, false)
+        unfin_sip_wall.add_layer(mat_int_sheath, true, "IntSheathing")
+        unfin_sip_wall.add_layer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerInner")
+        unfin_sip_wall.add_layer([mat_framing_middle, mat_ins_middle, mat_ins_middle], true, "WallIns")
+        unfin_sip_wall.add_layer([mat_framing_inner_outer, mat_spline, mat_ins_inner_outer], true, "SplineLayerOuter")
+        unfin_sip_wall.add_layer(Material.DefaultWallSheathing, false) # OSB added in separate measure
+        unfin_sip_wall.add_layer(Material.DefaultExteriorFinish, false) # exterior finish added in separate measure
+        unfin_sip_wall.add_layer(Material.AirFilmOutside, false)
+
+        # Create and assign construction to surfaces
+        if not unfin_sip_wall.create_and_assign_constructions(unfinished_surfaces, runner, model, name="ExtInsFinWall")
+            return false
+        end
     end
     
     # Store info for HVAC Sizing measure
@@ -170,7 +198,7 @@ class ProcessConstructionsWallsExteriorSIP < OpenStudio::Measure::ModelMeasure
     if units.nil?
         return false
     end
-    surfaces.each do |surface|
+    (finished_surfaces + unfinished_surfaces).each do |surface|
         units.each do |unit|
             next if not unit.spaces.include?(surface.space.get)
             unit.setFeature(Constants.SizingInfoWallType(surface), "SIP")

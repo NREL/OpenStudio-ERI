@@ -52,18 +52,6 @@
 			"measure_dir_name": "ResidentialGeometryOverhangs"
 		},
         {
-			"measure_dir_name": "ResidentialConstructionsWallsExteriorWoodStud"
-		},
-        {
-			"measure_dir_name": "ResidentialConstructionsWallsSheathing"
-		},
-        {
-			"measure_dir_name": "ResidentialConstructionsWallsInterzonal"
-		},
-        {
-			"measure_dir_name": "ResidentialConstructionsWallsExteriorFinish"
-		},
-        {
 			"measure_dir_name": "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
 		},
         {
@@ -84,6 +72,18 @@
         {
             "measure_dir_name": "ResidentialConstructionsFoundationsFloorsSheathing"
         },
+        {
+			"measure_dir_name": "ResidentialConstructionsWallsExteriorWoodStud"
+		},
+        {
+			"measure_dir_name": "ResidentialConstructionsWallsSheathing"
+		},
+        {
+			"measure_dir_name": "ResidentialConstructionsWallsInterzonal"
+		},
+        {
+			"measure_dir_name": "ResidentialConstructionsWallsExteriorFinish"
+		},
         {
 			"measure_dir_name": "ResidentialConstructionsUninsulatedSurfaces"
 		},

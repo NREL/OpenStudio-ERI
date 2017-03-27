@@ -686,6 +686,64 @@ class ProcessHVACSizingTest < MiniTest::Test
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Vented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
+  
+=begin
+  def test_loads_1story_slab_unfinished_attic_unvented_roof_ins
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -689,
+						'DehumidLoad_Inf_Lat' => -510,
+						'DehumidLoad_Int_Sens' => 2053,
+						'DehumidLoad_Int_Lat' => 1060,
+						'Heat Windows' => 4030,
+						'Heat Doors' => 252,
+						'Heat Walls' => 4086,
+						'Heat Roofs' => 0,
+						'Heat Floors' => 5124,
+						'Heat Infil' => 6048,
+						'Dehumid Windows' => -492,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -499,
+						'Dehumid Roofs' => 0,
+						'Dehumid Floors' => 308,
+						'Cool Windows' => 2445,
+						'Cool Doors' => 91,
+						'Cool Walls' => 649,
+						'Cool Roofs' => 0,
+						'Cool Floors' => 3431,
+						'Cool Infil Sens' => 817,
+						'Cool Infil Lat' => -1343,
+						'Cool IntGains Sens' => 2547,
+						'Cool IntGains Lat' => 1053,
+						'Heat Load' => 19542,
+						'Cool Load Sens' => 9982,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => 650,
+						'Dehumid Load Lat' => 549,
+						'Heat Airflow' => 0,
+						'Cool Airflow' => 648,
+						'HeatingLoad' => 19542,
+						'HeatingDuctLoad' => 0,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 9982,
+						'CoolingLoad_Ducts_Lat' => 0,
+						'CoolingLoad_Ducts_Sens' => 0,
+						'DehumidLoad_Sens' => 650,
+						'DehumidLoad_Ducts_Lat' => 549,
+						'Cool_Capacity' => 0,
+						'Cool_SensCap' => 0,
+						'Heat_Capacity' => 0,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 0,
+						'Heat_AirFlowRate' => 0,
+						'Fan_AirFlowRate' => 0,
+						'Dehumid_WaterRemoval_Auto' => 6,
+                      }
+    _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_InsRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
+  end
+=end
 
   def test_loads_1story_slab_unfinished_attic_unvented_no_overhangs_no_interior_shading_no_mech_vent
     args_hash = {}
@@ -2657,7 +2715,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
     
-    show_output(result)
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
@@ -2705,7 +2763,7 @@ class ProcessHVACSizingTest < MiniTest::Test
             end
         end
         if not os_val_found
-            puts "WARNING: Could not find corresponding OS value."
+            puts "WARNING: Could not find corresponding OS value for #{beopt_key}."
             next
         end
         
