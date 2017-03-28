@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>05021d51-c7e8-49bf-b994-b22db4a88d66</version_id>
-  <version_modified>20170327T165626Z</version_modified>
+  <version_id>654413d8-445f-4eca-9baa-ac9f75bdaba0</version_id>
+  <version_modified>20170328T123742Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
@@ -577,12 +577,6 @@
       <checksum>E2F88296</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -703,10 +697,16 @@
       <checksum>36C5F678</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>365B1E4C</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8ED8B330</checksum>
+      <checksum>37983CE6</checksum>
     </file>
   </files>
 </measure>

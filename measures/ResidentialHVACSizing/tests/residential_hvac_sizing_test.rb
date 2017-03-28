@@ -687,13 +687,11 @@ class ProcessHVACSizingTest < MiniTest::Test
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Vented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
   
-=begin
   def test_loads_1story_slab_unfinished_attic_unvented_roof_ins
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {
-						'DehumidLoad_Inf_Sens' => -689,
 						'DehumidLoad_Inf_Lat' => -510,
 						'DehumidLoad_Int_Sens' => 2053,
 						'DehumidLoad_Int_Lat' => 1060,
@@ -701,36 +699,36 @@ class ProcessHVACSizingTest < MiniTest::Test
 						'Heat Doors' => 252,
 						'Heat Walls' => 4086,
 						'Heat Roofs' => 0,
-						'Heat Floors' => 5124,
+						'Heat Floors' => 5200,
 						'Heat Infil' => 6048,
 						'Dehumid Windows' => -492,
 						'Dehumid Doors' => -30,
 						'Dehumid Walls' => -499,
 						'Dehumid Roofs' => 0,
-						'Dehumid Floors' => 308,
+						'Dehumid Floors' => 317,
 						'Cool Windows' => 2445,
 						'Cool Doors' => 91,
 						'Cool Walls' => 649,
 						'Cool Roofs' => 0,
-						'Cool Floors' => 3431,
+						'Cool Floors' => 4000,
 						'Cool Infil Sens' => 817,
 						'Cool Infil Lat' => -1343,
 						'Cool IntGains Sens' => 2547,
 						'Cool IntGains Lat' => 1053,
-						'Heat Load' => 19542,
-						'Cool Load Sens' => 9982,
+						'Heat Load' => 19618,
+						'Cool Load Sens' => 10551,
 						'Cool Load Lat' => 0,
-						'Dehumid Load Sens' => 650,
+						'Dehumid Load Sens' => 659,
 						'Dehumid Load Lat' => 549,
 						'Heat Airflow' => 0,
-						'Cool Airflow' => 648,
-						'HeatingLoad' => 19542,
+						'Cool Airflow' => 685,
+						'HeatingLoad' => 19618,
 						'HeatingDuctLoad' => 0,
 						'CoolingLoad_Lat' => 0,
-						'CoolingLoad_Sens' => 9982,
+						'CoolingLoad_Sens' => 10551,
 						'CoolingLoad_Ducts_Lat' => 0,
 						'CoolingLoad_Ducts_Sens' => 0,
-						'DehumidLoad_Sens' => 650,
+						'DehumidLoad_Sens' => 659,
 						'DehumidLoad_Ducts_Lat' => 549,
 						'Cool_Capacity' => 0,
 						'Cool_SensCap' => 0,
@@ -743,7 +741,6 @@ class ProcessHVACSizingTest < MiniTest::Test
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_InsRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
-=end
 
   def test_loads_1story_slab_unfinished_attic_unvented_no_overhangs_no_interior_shading_no_mech_vent
     args_hash = {}
@@ -2774,7 +2771,7 @@ class ProcessHVACSizingTest < MiniTest::Test
             end
         end
         
-        puts "#{os_header}: #{os_key}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+        #puts "#{os_header}: #{os_key}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
         
         if os_key.downcase.include?("airflow")
             assert_in_delta(beopt_val, os_val, airflow_tolerance)
@@ -3054,12 +3051,12 @@ class ProcessHVACSizingTest < MiniTest::Test
         if is_flowrate
             os_val = OpenStudio.convert(os_val,"m^3/s","cfm").get
             beopt_val = OpenStudio.convert(beopt_val,"m^3/s","cfm").get
-            puts "#{beopt_key.gsub(flowrate_units,'').strip}: #{beopt_val.round(3)} (BEopt) vs. #{os_val.round(3)} (OS)"
+            #puts "#{beopt_key.gsub(flowrate_units,'').strip}: #{beopt_val.round(3)} (BEopt) vs. #{os_val.round(3)} (OS)"
             assert_in_delta(beopt_val, os_val, airflow_tolerance)
         elsif is_capacity
             os_val = OpenStudio.convert(os_val,"W","Btu/h").get
             beopt_val = OpenStudio.convert(beopt_val,"W","Btu/h").get
-            puts "#{beopt_key.gsub(capacity_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+            #puts "#{beopt_key.gsub(capacity_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
             assert_in_delta(beopt_val, os_val, load_total_tolerance)
         end
     end

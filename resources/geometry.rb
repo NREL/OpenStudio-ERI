@@ -1074,12 +1074,10 @@ class Geometry
     def self.get_spaces_interzonal_walls(spaces)
         interzonal_walls = []
         spaces.each do |space|
-            next if not Geometry.space_is_finished(space)
             space.surfaces.each do |surface|
                 next if interzonal_walls.include?(surface)
                 next if surface.surfaceType.downcase != "wall"
-                next if not surface.adjacentSurface.is_initialized
-                next if Geometry.space_is_finished(surface.adjacentSurface.get.space.get) == Geometry.space_is_finished(space)
+                next if not self.is_interzonal_surface(surface)
                 interzonal_walls << surface
             end
         end
@@ -1089,12 +1087,10 @@ class Geometry
     def self.get_spaces_interzonal_floors_and_ceilings(spaces)
         interzonal_floors = []
         spaces.each do |space|
-            next if not Geometry.space_is_finished(space)
             space.surfaces.each do |surface|
                 next if interzonal_floors.include?(surface)
                 next if surface.surfaceType.downcase != "floor" and surface.surfaceType.downcase != "roofceiling"
-                next if not surface.adjacentSurface.is_initialized
-                next if Geometry.space_is_finished(surface.adjacentSurface.get.space.get) == Geometry.space_is_finished(space)
+                next if not self.is_interzonal_surface(surface)
                 interzonal_floors << surface
             end
         end

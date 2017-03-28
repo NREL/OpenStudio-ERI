@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_air_source_heat_pump</name>
   <uid>8d15f4f7-8bbb-4b2e-b6d0-aa861f22b697</uid>
-  <version_id>7066ba35-398a-409b-9f3b-695eb5d298b4</version_id>
-  <version_modified>20170327T165624Z</version_modified>
+  <version_id>3a8e5301-9549-4acc-9bcc-b90738150049</version_id>
+  <version_modified>20170328T123740Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVariableSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Variable-Speed Air Source Heat Pump</display_name>
@@ -684,12 +684,6 @@
       <checksum>70B07964</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -821,10 +815,16 @@
       <checksum>041A8AB9</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>365B1E4C</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8ED8B330</checksum>
+      <checksum>37983CE6</checksum>
     </file>
   </files>
 </measure>

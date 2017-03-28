@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>6250bfe0-4b5b-4bff-9400-93031d5fc498</version_id>
-  <version_modified>20170327T165630Z</version_modified>
+  <version_id>b39bfc9f-0837-4b4a-8ecb-d5ea11b31b1e</version_id>
+  <version_modified>20170328T123748Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -185,12 +185,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
       <filename>ssc_ffi.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -274,10 +268,16 @@
       <checksum>041A8AB9</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>365B1E4C</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8ED8B330</checksum>
+      <checksum>37983CE6</checksum>
     </file>
   </files>
 </measure>

@@ -747,7 +747,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             next if not window.subSurfaceType.downcase.include?("window")
             
             # U-value
-            u_window = get_surface_uvalue(runner, window, window.subSurfaceType)
+            u_window = Construction.get_surface_uvalue(runner, window, window.subSurfaceType)
             return nil if u_window.nil?
             zone_loads.Heat_Windows += u_window * OpenStudio::convert(window.grossArea,"m^2","ft^2").get * htd
             zone_loads.Dehumid_Windows += u_window * OpenStudio::convert(window.grossArea,"m^2","ft^2").get * mj8.dtd
@@ -933,7 +933,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     Geometry.get_spaces_above_grade_exterior_walls(thermal_zone.spaces).each do |wall|
         wall.subSurfaces.each do |door|
             next if not door.subSurfaceType.downcase.include?("door")
-            door_uvalue = get_surface_uvalue(runner, door, door.subSurfaceType)
+            door_uvalue = Construction.get_surface_uvalue(runner, door, door.subSurfaceType)
             return nil if door_uvalue.nil?
             zone_loads.Heat_Doors += door_uvalue * OpenStudio::convert(door.grossArea,"m^2","ft^2").get * htd
             zone_loads.Cool_Doors += door_uvalue * OpenStudio::convert(door.grossArea,"m^2","ft^2").get * cltd_Door
@@ -998,7 +998,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             cltd_Wall = [cltd_Wall + cltd_corr, 0].max       # Assume zero cooling load for negative CLTD's
         end
 
-        wall_uvalue = get_surface_uvalue(runner, wall, wall.surfaceType)
+        wall_uvalue = Construction.get_surface_uvalue(runner, wall, wall.surfaceType)
         return nil if wall_uvalue.nil?
         zone_loads.Cool_Walls += wall_uvalue * OpenStudio::convert(wall.netArea,"m^2","ft^2").get * cltd_Wall
         zone_loads.Heat_Walls += wall_uvalue * OpenStudio::convert(wall.netArea,"m^2","ft^2").get * htd
@@ -1007,7 +1007,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
 
     # Interzonal Walls
     Geometry.get_spaces_interzonal_walls(thermal_zone.spaces).each do |wall|
-        wall_uvalue = get_surface_uvalue(runner, wall, wall.surfaceType)
+        wall_uvalue = Construction.get_surface_uvalue(runner, wall, wall.surfaceType)
         return nil if wall_uvalue.nil?
         adjacent_space = wall.adjacentSurface.get.space.get
         zone_loads.Cool_Walls += wall_uvalue * OpenStudio::convert(wall.netArea,"m^2","ft^2").get * (mj8.cool_design_temps[adjacent_space] - mj8.cool_setpoint)
@@ -1114,7 +1114,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         # Adjust base CLTD for different CTD or DR
         cltd_FinishedRoof = cltd_FinishedRoof + (weather.design.CoolingDrybulb - 95) + mj8.daily_range_temp_adjust[mj8.daily_range_num]
 
-        roof_uvalue = get_surface_uvalue(runner, roof, roof.surfaceType)
+        roof_uvalue = Construction.get_surface_uvalue(runner, roof, roof.surfaceType)
         return nil if roof_uvalue.nil?
         zone_loads.Cool_Roofs += roof_uvalue * OpenStudio::convert(roof.netArea,"m^2","ft^2").get * cltd_FinishedRoof
         zone_loads.Heat_Roofs += roof_uvalue * OpenStudio::convert(roof.netArea,"m^2","ft^2").get * htd
@@ -1137,7 +1137,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     # Exterior Floors
     Geometry.get_spaces_above_grade_exterior_floors(thermal_zone.spaces).each do |floor|
-        floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
+        floor_uvalue = Construction.get_surface_uvalue(runner, floor, floor.surfaceType)
         return nil if floor_uvalue.nil?
         zone_loads.Cool_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.ctd - 5 + mj8.daily_range_temp_adjust[mj8.daily_range_num])
         zone_loads.Heat_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * htd
@@ -1146,7 +1146,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     # Interzonal Floors
     Geometry.get_spaces_interzonal_floors_and_ceilings(thermal_zone.spaces).each do |floor|
-        floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
+        floor_uvalue = Construction.get_surface_uvalue(runner, floor, floor.surfaceType)
         return nil if floor_uvalue.nil?
         adjacent_space = floor.adjacentSurface.get.space.get
         zone_loads.Cool_Floors += floor_uvalue * OpenStudio::convert(floor.netArea,"m^2","ft^2").get * (mj8.cool_design_temps[adjacent_space] - mj8.cool_setpoint)
@@ -1168,9 +1168,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     # Ground Floors (Slab)
     Geometry.get_spaces_above_grade_ground_floors(thermal_zone.spaces).each do |floor|
-        #TODO: Revert this some day.
         #Get stored u-value since the surface u-value is fictional
-        #floor_uvalue = get_surface_uvalue(runner, floor, floor.surfaceType)
+        #TODO: Revert this some day.
+        #floor_uvalue = Construction.get_surface_uvalue(runner, floor, floor.surfaceType)
         #return nil if floor_uvalue.nil?
         floor_rvalue = get_unit_feature(runner, unit, Constants.SizingInfoSlabRvalue(floor), 'double')
         return nil if floor_rvalue.nil?
@@ -2645,41 +2645,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return [q_unb, q_bal_Sens, q_bal_Lat, ventMultiplier]
   end
   
-  def get_surface_uvalue(runner, surface, surface_type)
-    if surface_type.downcase.include?("window")
-        simple_glazing = get_window_simple_glazing(runner, surface)
-        return nil if simple_glazing.nil?
-        return OpenStudio::convert(simple_glazing.uFactor,"W/m^2*K","Btu/ft^2*h*R").get
-     else
-        if not surface.construction.is_initialized
-            runner.registerError("Construction not assigned to '#{surface.name.to_s}'.")
-            return nil
-        end
-        return OpenStudio::convert(surface.uFactor.get,"W/m^2*K","Btu/ft^2*h*R").get
-     end
-  end
-  
-  def get_window_simple_glazing(runner, surface)
-    if not surface.construction.is_initialized
-        runner.registerError("Construction not assigned to '#{surface.name.to_s}'.")
-        return nil
-    end
-    construction = surface.construction.get
-    if not construction.to_LayeredConstruction.is_initialized
-        runner.registerError("Expected LayeredConstruction for '#{surface.name.to_s}'.")
-        return nil
-    end
-    window_layered_construction = construction.to_LayeredConstruction.get
-    if not window_layered_construction.getLayer(0).to_SimpleGlazing.is_initialized
-        runner.registerError("Expected SimpleGlazing for '#{surface.name.to_s}'.")
-        return nil
-    end
-    simple_glazing = window_layered_construction.getLayer(0).to_SimpleGlazing.get
-    return simple_glazing
-  end
-  
   def get_window_shgc(runner, surface)
-    simple_glazing = get_window_simple_glazing(runner, surface)
+    simple_glazing = Construction.get_window_simple_glazing(runner, surface)
     return nil if simple_glazing.nil?
     
     shgc_with_IntGains_shade_heat = simple_glazing.solarHeatGainCoefficient
@@ -3398,7 +3365,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     # Surface UAs
     space.surfaces.each do |surface|
-        uvalue = get_surface_uvalue(runner, surface, surface.surfaceType)
+        uvalue = Construction.get_surface_uvalue(runner, surface, surface.surfaceType)
         return nil if uvalue.nil?
         
         # Exclude surfaces adjacent to unfinished space

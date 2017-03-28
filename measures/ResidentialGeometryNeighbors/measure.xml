@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>344ce5e0-3bcf-49c6-bcb1-d52aa7488e2d</version_id>
-  <version_modified>20170325T134911Z</version_modified>
+  <version_id>5835e7c3-a773-4355-8e42-8f58326cb07c</version_id>
+  <version_modified>20170328T122144Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -109,12 +109,6 @@
       <checksum>BBA039A3</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -161,6 +155,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>041A8AB9</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>365B1E4C</checksum>
     </file>
   </files>
 </measure>

@@ -44,6 +44,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Measure::ModelMeasur
         next if Geometry.space_is_finished(space)
         next if Geometry.space_is_below_grade(space)
         space.surfaces.each do |surface|
+            next if surface.construction.is_initialized
             next if surface.surfaceType.downcase != "wall"
             next if surface.outsideBoundaryCondition.downcase != "outdoors"
             ext_wall_surfaces << surface
@@ -55,6 +56,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Measure::ModelMeasur
     model.getSpaces.each do |space|
         next if Geometry.space_is_unfinished(space)
         space.surfaces.each do |surface|
+            next if surface.construction.is_initialized
             next if surface.surfaceType.downcase != "wall"
             next if not surface.adjacentSurface.is_initialized
             next if not surface.adjacentSurface.get.space.is_initialized
@@ -69,6 +71,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Measure::ModelMeasur
     model.getSpaces.each do |space|
         next if Geometry.space_is_finished(space)
         space.surfaces.each do |surface|
+            next if surface.construction.is_initialized
             next if surface.surfaceType.downcase != "wall"
             next if not surface.adjacentSurface.is_initialized
             next if not surface.adjacentSurface.get.space.is_initialized
@@ -83,6 +86,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Measure::ModelMeasur
     model.getSpaces.each do |space|
         next if Geometry.space_is_unfinished(space)
         space.surfaces.each do |surface|
+            next if surface.construction.is_initialized
             next if surface.surfaceType.downcase != "floor"
             next if not surface.adjacentSurface.is_initialized
             next if not surface.adjacentSurface.get.space.is_initialized
@@ -98,6 +102,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Measure::ModelMeasur
     model.getSpaces.each do |space|
         next if Geometry.space_is_finished(space)
         space.surfaces.each do |surface|
+            next if surface.construction.is_initialized
             next if surface.surfaceType.downcase != "floor"
             next if not surface.adjacentSurface.is_initialized
             next if not surface.adjacentSurface.get.space.is_initialized
@@ -114,6 +119,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Measure::ModelMeasur
         next if Geometry.space_is_finished(space)
         next if Geometry.space_is_below_grade(space)
         space.surfaces.each do |surface|
+            next if surface.construction.is_initialized
             next if surface.surfaceType.downcase != "floor"
             next if surface.outsideBoundaryCondition.downcase != "ground"
             # Floors between above-grade unfinished space and ground
@@ -126,6 +132,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Measure::ModelMeasur
     roof_surfaces = []
     roof_spaces.each do |space|
         space.surfaces.each do |surface|
+            next if surface.construction.is_initialized
             next if surface.surfaceType.downcase != "roofceiling"
             next if surface.outsideBoundaryCondition.downcase != "outdoors"
             roof_surfaces << surface
@@ -135,6 +142,7 @@ class ProcessConstructionsUninsulatedSurfaces < OpenStudio::Measure::ModelMeasur
     # Adiabatic surfaces (assign construction for mass effects)
     model.getSpaces.each do |space|
         space.surfaces.each do |surface|
+            next if surface.construction.is_initialized
             next if surface.outsideBoundaryCondition.downcase != "adiabatic"
             if surface.surfaceType.downcase == "wall"
                 if Geometry.space_is_finished(space)

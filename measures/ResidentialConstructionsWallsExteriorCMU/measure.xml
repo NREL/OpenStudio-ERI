@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>fa222833-6728-49ef-862d-283459772d5d</version_id>
-  <version_modified>20170327T174652Z</version_modified>
+  <version_id>191f9ec7-c5ef-4604-b5a5-30641df8dad3</version_id>
+  <version_modified>20170328T123736Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
@@ -116,12 +116,6 @@
       <checksum>DECBEBBC</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66C79984</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -140,12 +134,6 @@
       <checksum>3A58A247</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8ED8B330</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -155,6 +143,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>61AC6B01</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>365B1E4C</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
     </file>
   </files>
 </measure>
