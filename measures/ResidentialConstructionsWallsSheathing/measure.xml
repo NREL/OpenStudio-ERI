@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>36b35a42-5090-473a-9c65-feb04678cbdf</version_id>
-  <version_modified>20170328T123737Z</version_modified>
+  <version_id>4a73a7a9-022e-42e4-a236-41fd2d655081</version_id>
+  <version_modified>20170328T154020Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>
@@ -70,30 +70,6 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DB3BCEC7</checksum>
-    </file>
-    <file>
-      <filename>WallSheathing_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C2ADC788</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallSheathing.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7A88DB7D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>262E164D</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -121,6 +97,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FA1401E3</checksum>
+    </file>
+    <file>
+      <filename>WallSheathing_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0E7051A6</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallSheathing_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FD689D91</checksum>
     </file>
   </files>
 </measure>

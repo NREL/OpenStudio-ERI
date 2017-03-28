@@ -92,7 +92,17 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     # Load helper_methods
     require File.join(File.dirname(helper_methods_file), File.basename(helper_methods_file, File.extname(helper_methods_file)))    
     
-    measures_tested = ["ResidentialLocation", "ResidentialGeometrySingleFamilyDetached", "ResidentialGeometryNumBedsAndBaths", "ResidentialGeometryNumOccupants", "ResidentialConstructionsFoundationsFloorsSlab", "ResidentialConstructionsWallsExteriorWoodStud", "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", "ResidentialConstructionsUninsulatedSurfaces", "ResidentialHVACFurnaceFuel", "ResidentialHVACHeatingSetpoints"] # TODO: Remove
+    # Need to ensure this has the same order as https://github.com/NREL/OpenStudio-Beopt#new-construction-workflow-for-users
+    measures_tested = ["ResidentialLocation", 
+                       "ResidentialGeometrySingleFamilyDetached", 
+                       "ResidentialGeometryNumBedsAndBaths", 
+                       "ResidentialGeometryNumOccupants", 
+                       "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", 
+                       "ResidentialConstructionsFoundationsFloorsSlab", 
+                       "ResidentialConstructionsWallsExteriorWoodStud", 
+                       "ResidentialConstructionsUninsulatedSurfaces", 
+                       "ResidentialHVACFurnaceFuel", 
+                       "ResidentialHVACHeatingSetpoints"] # TODO: Remove
     
     # Obtain measures and default arguments
     measures = {}

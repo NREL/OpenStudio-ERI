@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>a66e5dd2-1430-42e4-97b7-550c0dcc988f</version_id>
-  <version_modified>20170328T123737Z</version_modified>
+  <version_id>9dc95e9a-2d6c-47b4-83c2-402a20d10af1</version_id>
+  <version_modified>20170328T150739Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorWoodStud</class_name>
   <display_name>Set Residential Walls - Wood Stud Construction</display_name>
@@ -102,30 +102,6 @@
   </attributes>
   <files>
     <file>
-      <filename>2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DB3BCEC7</checksum>
-    </file>
-    <file>
-      <filename>WoodStud_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3180B9E3</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D82C6B8D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>262E164D</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -153,6 +129,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>WoodStud_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3FAFFCF3</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D6D79CB8</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FA1401E3</checksum>
     </file>
   </files>
 </measure>

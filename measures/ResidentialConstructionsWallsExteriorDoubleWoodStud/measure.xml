@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_double_wood_stud</name>
   <uid>d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651</uid>
-  <version_id>e23272f5-230f-48fb-84b1-b8eb53d93cf5</version_id>
-  <version_modified>20170328T123736Z</version_modified>
+  <version_id>4838ebb2-c8a4-4de0-857c-f02fc78335f2</version_id>
+  <version_modified>20170328T150739Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorDoubleWoodStud</class_name>
   <display_name>Set Residential Walls - Double Wood Stud Construction</display_name>
@@ -122,24 +122,6 @@
   </attributes>
   <files>
     <file>
-      <filename>DoubleWoodStud_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FC4754BD</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D82C6B8D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>262E164D</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -167,6 +149,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>DoubleWoodStud_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>281CCADF</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D6D79CB8</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FA1401E3</checksum>
     </file>
   </files>
 </measure>

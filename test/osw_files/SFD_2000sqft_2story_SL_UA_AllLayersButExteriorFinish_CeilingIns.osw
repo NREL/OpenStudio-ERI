@@ -12,14 +12,20 @@
                 "attic_type": "unfinished attic"
             }
         },
+		{
+			"measure_dir_name": "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
+		},
         {
-			"measure_dir_name": "ResidentialConstructionsWallsExteriorFinish"
+			"measure_dir_name": "ResidentialConstructionsWallsExteriorWoodStud"
         },
         {
 			"measure_dir_name": "ResidentialConstructionsWallsSheathing"
         },
         {
 			"measure_dir_name": "ResidentialConstructionsWallsExteriorThermalMass"
+        },
+        {
+			"measure_dir_name": "ResidentialConstructionsUninsulatedSurfaces"
 		}
 	]
 }

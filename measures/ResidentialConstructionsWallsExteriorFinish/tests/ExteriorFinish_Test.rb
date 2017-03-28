@@ -8,11 +8,11 @@ require 'fileutils'
 class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
 
   def osm_geo_unfinished_attic
-    return "SFD_2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_SL_UA_CeilingIns.osm"
   end
   
   def osm_geo_unfinished_attic_layers
-    return "SFD_2000sqft_2story_SL_UA_AllLayersButExteriorFinish.osm"
+    return "SFD_2000sqft_2story_SL_UA_AllLayersButExteriorFinish_CeilingIns.osm"
   end
 
   def osm_geo_finished_attic

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>d752919f-30bc-4ffd-b4e7-e88f34a7f1a2</version_id>
-  <version_modified>20170328T123737Z</version_modified>
+  <version_id>6d4d690f-24af-4142-bbdf-22af46bd5ac4</version_id>
+  <version_modified>20170328T150739Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
@@ -103,24 +103,6 @@
   </attributes>
   <files>
     <file>
-      <filename>SIP_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8E3F1234</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D82C6B8D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>262E164D</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -148,6 +130,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>SIP_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>38CF702C</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D6D79CB8</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FA1401E3</checksum>
     </file>
   </files>
 </measure>

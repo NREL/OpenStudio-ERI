@@ -8,11 +8,11 @@ require 'fileutils'
 class ProcessConstructionsWallsSheathingTest < MiniTest::Test
 
   def osm_geo
-    return "SFD_2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_SL_UA_CeilingIns.osm"
   end
   
   def osm_geo_layers
-    return "SFD_2000sqft_2story_SL_UA_AllLayersButWallSheathing.osm"
+    return "SFD_2000sqft_2story_SL_UA_AllLayersButWallSheathing_CeilingIns.osm"
   end
 
   def test_add_plywood
@@ -53,12 +53,12 @@ class ProcessConstructionsWallsSheathingTest < MiniTest::Test
     args_hash["rigid_r"] = 10
     args_hash["rigid_thick_in"] = 2
     expected_num_del_objects = {"Construction"=>1}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0508, "LayerConductivity"=>0.02885, "LayerDensity"=>32.04, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>1}
+    expected_num_new_objects = {"Material"=>2, "Construction"=>1}
+    expected_values = {"LayerThickness"=>0.0127+0.0508, "LayerConductivity"=>0.1154577+0.02885, "LayerDensity"=>512.64+32.04, "LayerSpecificHeat"=>1214.23+1214.23, "LayerIndex"=>1+2}
     model = _test_measure(osm_geo_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["osb_thick_in"] = 0
     args_hash["rigid_thick_in"] = 0
-    expected_num_del_objects = {"Material"=>1, "Construction"=>1}
+    expected_num_del_objects = {"Material"=>2, "Construction"=>1}
     expected_num_new_objects = {"Construction"=>1}
     expected_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerIndex"=>0}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_thermal_mass</name>
   <uid>b2da04af-0f9f-4a30-b2a0-cc2dbc20d5aa</uid>
-  <version_id>de0cc364-1970-4e2c-a440-94688dca3a2d</version_id>
-  <version_modified>20170328T123737Z</version_modified>
+  <version_id>5b2dbe70-29c1-4daf-b6eb-8e40dc31e7fc</version_id>
+  <version_modified>20170328T150739Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorThermalMass</class_name>
   <display_name>Set Residential Walls - Exterior Thermal Mass</display_name>
@@ -117,24 +117,6 @@
       <checksum>7D8B7441</checksum>
     </file>
     <file>
-      <filename>WallsExteriorThermalMass_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1EE6AF3B</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallThermalMass.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>33D15A84</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>262E164D</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -151,6 +133,24 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>WallsExteriorThermalMass_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>82DE8350</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallThermalMass_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3CC447EA</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FA1401E3</checksum>
     </file>
   </files>
 </measure>

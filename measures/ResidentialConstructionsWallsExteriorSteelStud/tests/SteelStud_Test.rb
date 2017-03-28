@@ -8,11 +8,11 @@ require 'fileutils'
 class ProcessConstructionsWallsExteriorSteelStudTest < MiniTest::Test
 
   def osm_geo
-    return "SFD_2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_SL_UA_CeilingIns.osm"
   end
   
   def osm_geo_layers
-    return "SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation.osm"
+    return "SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm"
   end
 
   def test_add_uninsulated_2x4
