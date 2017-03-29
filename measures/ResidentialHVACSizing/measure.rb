@@ -76,7 +76,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                   :COOL_CAP_FT_SPEC_coefficients, :HEAT_CAP_FT_SPEC_coefficients,
                   :HtgSupplyAirTemp, :SHRRated, :CapacityRatioCooling, :CapacityRatioHeating, 
                   :MinOutdoorTemp, :HeatingCapacityOffset, :OverSizeLimit, :HPSizedForMaxLoad,
-                  :FanspeedRatioCooling, :CapacityDerateFactorEER, :CapacityDerateFactorCOP)
+                  :FanspeedRatioCooling, :CapacityDerateFactorEER, :CapacityDerateFactorCOP,
+                  :BoilerDesignTemp)
 
   end
   
@@ -2886,6 +2887,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     hvac.FanspeedRatioCooling = nil
     hvac.CapacityDerateFactorEER = nil
     hvac.CapacityDerateFactorCOP = nil
+    hvac.BoilerDesignTemp = nil
     
     clg_equips = []
     htg_equips = []
@@ -3152,6 +3154,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             if htg_coil.heatingDesignCapacity.is_initialized
                 hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.heatingDesignCapacity.get,"W","ton").get
             end
+            hvac.BoilerDesignTemp = OpenStudio::convert(model.getBoilerHotWaters[0].designWaterOutletTemperature.get,"C","F").get
             
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
             hvac.NumSpeedsHeating = 1
@@ -3677,9 +3680,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingGas
             htg_coil.setNominalCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get)
         
-        elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterBaseboard
-            # FIXME
-        
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
             if ratedCFMperTonHeating.nil?
                 runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating}' with datatype 'string'.")
@@ -3825,6 +3825,50 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             baseboard.setNominalCapacity(OpenStudio::convert(unit_final.Heat_Capacity_Supp,"Btu/h","W").get)
         else
             baseboard.setNominalCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get)
+        end
+    end
+    
+    # Zone HVAC hot water baseboard & boiler
+    hw_baseboards = []
+    has_hw_baseboards = false
+    control_and_slave_zones.each do |control_zone, slave_zones|
+        HVAC.existing_heating_equipment(model, runner, control_zone).each do |htg_equip|
+            next if !htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveWater)
+            hw_baseboards << htg_equip
+        end
+        slave_zones.each do |slave_zone|
+            HVAC.existing_heating_equipment(model, runner, slave_zone).each do |htg_equip|
+                 next if !htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveWater)
+                 hw_baseboards << htg_equip
+            end
+        end
+    end
+    hw_baseboards.each do |hw_baseboard|
+        bb_UA = OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get / (OpenStudio::convert(hvac.BoilerDesignTemp - 10.0 - 95.0,"R","K").get) * 3.0
+        bb_max_flow = OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get / OpenStudio::convert(20.0,"R","K").get / 4.186 / 998.2 / 1000.0 * 2.0    
+        coilHeatingWaterBaseboard = hw_baseboard.heatingCoil.to_CoilHeatingWaterBaseboard.get
+        coilHeatingWaterBaseboard.setUFactorTimesAreaValue(bb_UA)
+        coilHeatingWaterBaseboard.setMaximumWaterFlowRate(bb_max_flow)
+        coilHeatingWaterBaseboard.setHeatingDesignCapacityMethod("autosize")
+        has_hw_baseboards = true
+    end
+    if has_hw_baseboards
+        model.getPlantLoops.each do |pl|
+            found_boiler = false
+            pl.components.each do |plc|
+                next if not plc.to_BoilerHotWater.is_initialized
+                
+                # Boiler
+                plc.to_BoilerHotWater.get.setNominalCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get)
+                found_boiler = true
+            end
+            if found_boiler
+                # Pump
+                pl.supplyComponents.each do |plc|
+                    next if not plc.to_PumpConstantSpeed.is_initialized
+                    plc.to_PumpConstantSpeed.get.setRatedFlowRate(OpenStudio::convert(unit_final.Heat_Capacity/20.0/500.0,"gal/min","m^3/s").get)
+                end
+            end
         end
     end
     

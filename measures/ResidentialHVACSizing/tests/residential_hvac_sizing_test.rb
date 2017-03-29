@@ -1946,6 +1946,130 @@ class ProcessHVACSizingTest < MiniTest::Test
     _test_measure("SFD_HVACSizing_Equip_BB_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
+  def test_equip_electric_boiler_autosize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 0,
+						'Cool Airflow' => 866,
+						'HeatingLoad' => 41587,
+						'HeatingDuctLoad' => 0,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 13344,
+						'CoolingLoad_Ducts_Lat' => 0,
+						'CoolingLoad_Ducts_Sens' => 0,
+						'DehumidLoad_Sens' => -1682,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 0,
+						'Cool_SensCap' => 0,
+						'Heat_Capacity' => 41587,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 0,
+						'Heat_AirFlowRate' => 0,
+						'Fan_AirFlowRate' => 0,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'Pump:ConstantSpeed_Design Flow Rate {m3/s}' => 0.000262377620982,
+						'Boiler:HotWater_Nomimal Capacity {W}' => 12189.3551749,
+						'ZoneHVAC:Baseboard:Convective:Water_Living_U-Factor Times Area Value {W/K}' => 877.633572593,
+						'ZoneHVAC:Baseboard:Convective:Water_Living_Maximum Water Flow rate {m3/s}' => 0.000525093264264,
+						'ZoneHVAC:Baseboard:Convective:Water_Basement_U-Factor Times Area Value {W/K}' => 877.633572593,
+						'ZoneHVAC:Baseboard:Convective:Water_Basement_Maximum Water Flow rate {m3/s}' => 0.000525093264264,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_ElecBoiler_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+
+  def test_equip_electric_boiler_fixedsize
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 0,
+						'Cool Airflow' => 866,
+						'HeatingLoad' => 100000,
+						'HeatingDuctLoad' => 0,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 13344,
+						'CoolingLoad_Ducts_Lat' => 0,
+						'CoolingLoad_Ducts_Sens' => 0,
+						'DehumidLoad_Sens' => -1682,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 0,
+						'Cool_SensCap' => 0,
+						'Heat_Capacity' => 100000,
+						'SuppHeat_Capacity' => 0,
+						'Cool_AirFlowRate' => 0,
+						'Heat_AirFlowRate' => 0,
+						'Fan_AirFlowRate' => 0,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'Pump:ConstantSpeed_Design Flow Rate {m3/s}' => 0.00063090196,
+						'Boiler:HotWater_Nomimal Capacity {W}' => 29310.0,
+						'ZoneHVAC:Baseboard:Convective:Water_Living_U-Factor Times Area Value {W/K}' => 2110.32,
+						'ZoneHVAC:Baseboard:Convective:Water_Living_Maximum Water Flow rate {m3/s}' => 0.00126261671391,
+						'ZoneHVAC:Baseboard:Convective:Water_Basement_U-Factor Times Area Value {W/K}' => 2110.32,
+						'ZoneHVAC:Baseboard:Convective:Water_Basement_Maximum Water Flow rate {m3/s}' => 0.00126261671391,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_ElecBoiler_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+
   def test_equip_gas_furnace_and_ac_one_speed_autosize
     args_hash = {}
     expected_num_del_objects = {}
@@ -3085,7 +3209,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
     
-    #show_output(result)
+    show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
@@ -3110,12 +3234,13 @@ class ProcessHVACSizingTest < MiniTest::Test
         end
     end
     
-    # TODO: Tighten these tolerances eventually
+    # TODO: Tighten these tolerances eventually?
     airflow_tolerance = 75 # cfm
     load_component_tolerance = 250 # Btu/hr
     load_total_tolerance = 2000 # Btu/hr
     water_removal_tolerance = 3 # L/day
     energy_factor_tolerance = 0.1 # L/kWh
+    ua_tolerance = 20 # W/K
     
     # Compare intermediate values to result.info values
     map = beopt_to_os_mapping()
@@ -3146,7 +3271,7 @@ class ProcessHVACSizingTest < MiniTest::Test
             end
         end
         
-        #puts "#{os_header}: #{os_key}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+        puts "#{os_header}: #{os_key}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
         
         if os_key.downcase.include?("water")
             assert_in_delta(beopt_val, os_val, water_removal_tolerance)
@@ -3164,6 +3289,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     capacity_units = "{W}"
     water_removal_units = "{L/day}"
     energy_factor_units = "{L/kWh}"
+    ua_units = "{W/K}"
     expected_values.each do |beopt_key, beopt_val|
         next if !map[beopt_key].nil?
         os_val = nil
@@ -3172,6 +3298,7 @@ class ProcessHVACSizingTest < MiniTest::Test
         is_capacity = false
         is_water_removal = false
         is_energy_factor = false
+        is_ua = false
         if beopt_key.include?(flowrate_units)
             is_flowrate = true
         elsif beopt_key.include?(capacity_units)
@@ -3180,6 +3307,8 @@ class ProcessHVACSizingTest < MiniTest::Test
             is_water_removal = true
         elsif beopt_key.include?(energy_factor_units)
             is_energy_factor = true
+        elsif beopt_key.include?(ua_units)
+            is_ua = true
         else
             puts "WARNING: Unhandled key type: #{beopt_key}."
             next
@@ -3450,6 +3579,42 @@ class ProcessHVACSizingTest < MiniTest::Test
             ensure_num_objects(model.getZoneHVACDehumidifierDXs, beopt_key, 1)
             os_val = model.getZoneHVACDehumidifierDXs[0].ratedAirFlowRate
             
+        elsif beopt_key == 'Pump:ConstantSpeed_Design Flow Rate {m3/s}'
+            ensure_num_objects(model.getPumpConstantSpeeds, beopt_key, 1)
+            os_val = model.getPumpConstantSpeeds[0].ratedFlowRate.get
+        
+        elsif beopt_key == 'Boiler:HotWater_Nomimal Capacity {W}'
+            ensure_num_objects(model.getBoilerHotWaters, beopt_key, 1)
+            os_val = model.getBoilerHotWaters[0].nominalCapacity.get
+        
+        elsif beopt_key == 'ZoneHVAC:Baseboard:Convective:Water_Living_U-Factor Times Area Value {W/K}'
+            ensure_num_objects(model.getZoneHVACBaseboardConvectiveWaters, beopt_key, 2)
+            model.getZoneHVACBaseboardConvectiveWaters.each do |bb|
+                next if bb.name.to_s.downcase.include?('basement')
+                os_val = bb.heatingCoil.to_CoilHeatingWaterBaseboard.get.uFactorTimesAreaValue.get
+            end
+        
+        elsif beopt_key == 'ZoneHVAC:Baseboard:Convective:Water_Living_Maximum Water Flow rate {m3/s}'
+            ensure_num_objects(model.getZoneHVACBaseboardConvectiveWaters, beopt_key, 2)
+            model.getZoneHVACBaseboardConvectiveWaters.each do |bb|
+                next if bb.name.to_s.downcase.include?('basement')
+                os_val = bb.heatingCoil.to_CoilHeatingWaterBaseboard.get.maximumWaterFlowRate.get
+            end
+        
+        elsif beopt_key == 'ZoneHVAC:Baseboard:Convective:Water_Basement_U-Factor Times Area Value {W/K}'
+            ensure_num_objects(model.getZoneHVACBaseboardConvectiveWaters, beopt_key, 2)
+            model.getZoneHVACBaseboardConvectiveWaters.each do |bb|
+                next if !bb.name.to_s.downcase.include?('basement')
+                os_val = bb.heatingCoil.to_CoilHeatingWaterBaseboard.get.uFactorTimesAreaValue.get
+            end
+        
+        elsif beopt_key == 'ZoneHVAC:Baseboard:Convective:Water_Basement_Maximum Water Flow rate {m3/s}'
+            ensure_num_objects(model.getZoneHVACBaseboardConvectiveWaters, beopt_key, 2)
+            model.getZoneHVACBaseboardConvectiveWaters.each do |bb|
+                next if !bb.name.to_s.downcase.include?('basement')
+                os_val = bb.heatingCoil.to_CoilHeatingWaterBaseboard.get.maximumWaterFlowRate.get
+            end
+            
         else
             puts "WARNING: Unhandled key: #{beopt_key}."
             next
@@ -3458,19 +3623,22 @@ class ProcessHVACSizingTest < MiniTest::Test
         if is_flowrate
             os_val = OpenStudio.convert(os_val,"m^3/s","cfm").get
             beopt_val = OpenStudio.convert(beopt_val,"m^3/s","cfm").get
-            #puts "#{beopt_key.gsub(flowrate_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
+            puts "#{beopt_key.gsub(flowrate_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
             assert_in_delta(beopt_val, os_val, airflow_tolerance)
         elsif is_capacity
             os_val = OpenStudio.convert(os_val,"W","Btu/h").get
             beopt_val = OpenStudio.convert(beopt_val,"W","Btu/h").get
-            #puts "#{beopt_key.gsub(capacity_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+            puts "#{beopt_key.gsub(capacity_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
             assert_in_delta(beopt_val, os_val, load_total_tolerance)
         elsif is_water_removal
-            #puts "#{beopt_key.gsub(water_removal_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
+            puts "#{beopt_key.gsub(water_removal_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
             assert_in_delta(beopt_val, os_val, water_removal_tolerance)
         elsif is_energy_factor
-            #puts "#{beopt_key.gsub(energy_factor_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
+            puts "#{beopt_key.gsub(energy_factor_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
             assert_in_delta(beopt_val, os_val, energy_factor_tolerance)
+        elsif is_ua
+            puts "#{beopt_key.gsub(ua_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+            assert_in_delta(beopt_val, os_val, ua_tolerance)
         end
     end
     
