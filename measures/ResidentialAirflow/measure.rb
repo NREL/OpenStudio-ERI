@@ -256,21 +256,21 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     has_hvac_flue = OpenStudio::Measure::OSArgument::makeBoolArgument("has_hvac_flue", false)
     has_hvac_flue.setDisplayName("Air Leakage: Has Open HVAC Flue")
     has_hvac_flue.setDescription("Specifies whether the building has an open flue associated with the HVAC system.")
-    has_hvac_flue.setDefaultValue(true)
+    has_hvac_flue.setDefaultValue(false)
     args << has_hvac_flue    
 
     #make a double argument for open water heater flue
     has_water_heater_flue = OpenStudio::Measure::OSArgument::makeBoolArgument("has_water_heater_flue", false)
     has_water_heater_flue.setDisplayName("Air Leakage: Has Open Water Heater Flue")
     has_water_heater_flue.setDescription("Specifies whether the building has an open flue associated with the water heater.")
-    has_water_heater_flue.setDefaultValue(true)
+    has_water_heater_flue.setDefaultValue(false)
     args << has_water_heater_flue    
 
     #make a double argument for open fireplace chimney
     has_fireplace_chimney = OpenStudio::Measure::OSArgument::makeBoolArgument("has_fireplace_chimney", false)
     has_fireplace_chimney.setDisplayName("Air Leakage: Has Open HVAC Flue")
     has_fireplace_chimney.setDescription("Specifies whether the building has an open chimney associated with a fireplace.")
-    has_fireplace_chimney.setDefaultValue(true)
+    has_fireplace_chimney.setDefaultValue(false)
     args << has_fireplace_chimney    
 
     #make a choice arguments for terrain type
@@ -668,15 +668,21 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     end
     
     # Determine geometry for spaces and zones that aren't unit specific 
-    building.building_height = Geometry.get_height_of_spaces(model.getSpaces)
+    spaces = []
+    model.getSpaces.each do |space|
+      next if Geometry.space_is_below_grade(space)
+      spaces << space
+    end
+    building.building_height = Geometry.get_height_of_spaces(spaces)
     unless model.getBuilding.standardsNumberOfAboveGroundStories.is_initialized
       runner.registerError("Cannot determine the number of above grade stories.")
       return false
     end
+
     building.stories = model.getBuilding.standardsNumberOfAboveGroundStories.get
     building.num_units = units.size
     building.above_grade_volume = Geometry.get_above_grade_finished_volume_from_spaces(model.getSpaces, true)
-    building.above_grade_exterior_wall_area = Geometry.calculate_above_grade_exterior_wall_area(model.getSpaces, false)    
+    building.above_grade_exterior_wall_area = Geometry.calculate_above_grade_exterior_wall_area(model.getSpaces, false)
     model.getThermalZones.each do |thermal_zone|
       if Geometry.is_garage(thermal_zone)
         building.garage_zone = thermal_zone
@@ -1227,7 +1233,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       equip.setEndUseSubcategory("VentFans")
       
       bath_exhaust_fan_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(equip, "ElectricEquipment", "Electric Power Level")
-      bath_exhaust_fan_actuator.setName("#{equip.name} act".gsub("|","_"))      
+      bath_exhaust_fan_actuator.setName("#{equip.name} act".gsub("|","_"))
       
       # Global Variables
       
@@ -1250,9 +1256,9 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         if unit.living.SLA > 0
           infil_program.addLine("Set Tdiff = #{tin_sensor.name} - #{tout_sensor.name}")
           infil_program.addLine("Set DeltaT = @Abs Tdiff")
-          infil_program.addLine("Set c = #{((OpenStudio::convert(infil.C_i,"cfm","m^3/s").get / (249.1 ** infil.n_i))).round(3)}")
-          infil_program.addLine("Set Cs = #{(infil.stack_coef * (UnitConversion.inH2O_R2Pa_K(1.0) ** infil.n_i)).round(3)}")
-          infil_program.addLine("Set Cw = #{(infil.wind_coef * (UnitConversion.inH2O_mph2Pas2_m2(1.0) ** infil.n_i)).round(3)}")
+          infil_program.addLine("Set c = #{((OpenStudio::convert(infil.C_i,"cfm","m^3/s").get / (UnitConversion.inH2O2Pa(1.0) ** infil.n_i))).round(4)}")
+          infil_program.addLine("Set Cs = #{(infil.stack_coef * (UnitConversion.inH2O_R2Pa_K(1.0) ** infil.n_i)).round(4)}")
+          infil_program.addLine("Set Cw = #{(infil.wind_coef * (UnitConversion.inH2O_mph2Pas2_m2(1.0) ** infil.n_i)).round(4)}")
           infil_program.addLine("Set n = #{infil.n_i}")
           infil_program.addLine("Set sft = (f_t*#{(((wind_speed.S_wo * (1.0 - infil.Y_i)) + (infil.S_wflue * (1.5 * infil.Y_i))))})")
           infil_program.addLine("Set Qn = (((c*Cs*(DeltaT^n))^2)+(((c*Cw)*((sft*#{vwind_sensor.name})^(2*n)))^2))^0.5")
@@ -2089,7 +2095,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           if has_flue
             # Eq. 13
             infil.X_c = infil.R_i + (2.0 * (1.0 - infil.R_i - infil.Y_i)) / (infil.n_i + 1.0) - 2.0 * infil.Y_i * (infil.Z_f - 1.0) ** infil.n_i
-            # Additive flue function, Eq. 12
+            # Additive flue function, Eq. 12            
             infil.F_i = infil.n_i * infil.Y_i * (infil.Z_f - 1.0) ** ((3.0 * infil.n_i - 1.0) / 3.0) * (1.0 - (3.0 * (infil.X_c - infil.X_i) ** 2.0 * infil.R_i ** (1 - infil.n_i)) / (2.0 * (infil.Z_f + 1.0)))
           else
             # Critical value of ceiling-floor leakage difference where the
@@ -2150,7 +2156,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       if space.volume == 0
         next
       end
-      
+            
       space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
 
       if space.inf_method == Constants.InfMethodSG

@@ -544,7 +544,7 @@ class Geometry
     def self.get_z_origin_for_zone(zone)
       z_origins = []
       zone.spaces.each do |space|
-        z_origins << space.zOrigin
+        z_origins << OpenStudio.convert(space.zOrigin,"m","ft").get
       end
       return z_origins.min
     end
@@ -595,11 +595,12 @@ class Geometry
                 next if surface.surfaceType.downcase != "wall"
                 next if surface.outsideBoundaryCondition.downcase != "outdoors"
                 next if surface.isGroundSurface
+                next unless self.space_is_finished(surface.space.get)
                 wall_area += OpenStudio.convert(surface.grossArea * mult, "m^2", "ft^2").get
             end
         end
         return wall_area
-    end    
+    end
     
     def self.calculate_avg_roof_pitch(spaces)
         sum_tilt = 0

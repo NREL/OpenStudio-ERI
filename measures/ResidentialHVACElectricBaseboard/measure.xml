@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>8a1337a0-f890-4edf-a407-346e8c674f33</version_id>
-  <version_modified>20170329T000725Z</version_modified>
+  <version_id>1bd8e183-0860-4c18-97e2-dad23e72c485</version_id>
+  <version_modified>20170329T025841Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -188,6 +188,17 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>77B00FBB</checksum>
+    </file>
+    <file>
       <filename>process_electric_baseboard_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -302,10 +313,10 @@
       <checksum>3A58A247</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>365B1E4C</checksum>
+      <checksum>36C5F678</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -314,21 +325,10 @@
       <checksum>37983CE6</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DBC507D7</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>DD07CF70</checksum>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

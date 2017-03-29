@@ -9,9 +9,8 @@
 			"arguments": {
                 "foundation_type": "slab",
                 "garage_width": 12,
-                "garage_protrusion": 0,
-                "attic_type": "unfinished attic",
-                "roof_type": "flat"
+                "garage_protrusion": 0.5,
+                "attic_type": "finished attic"
             }
         },
         {
