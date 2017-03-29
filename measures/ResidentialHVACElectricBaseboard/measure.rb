@@ -96,7 +96,7 @@ class ProcessElectricBaseboard < OpenStudio::Measure::ModelMeasure
         htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
         htg_coil.setName(obj_name + " #{control_zone.name} convective electric")
         if baseboardOutputCapacity != Constants.SizingAuto
-            htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
+            htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get) # Used by HVACSizing measure
         end
         htg_coil.setEfficiency(baseboardEfficiency)
 
@@ -111,7 +111,7 @@ class ProcessElectricBaseboard < OpenStudio::Measure::ModelMeasure
           htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
           htg_coil.setName(obj_name + " #{slave_zone.name} convective electric")
           if baseboardOutputCapacity != Constants.SizingAuto
-              htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get)
+              htg_coil.setNominalCapacity(OpenStudio::convert(baseboardOutputCapacity,"Btu/h","W").get) # Used by HVACSizing measure
           end
           htg_coil.setEfficiency(baseboardEfficiency)
 

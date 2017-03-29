@@ -343,8 +343,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         htg_coil_stage_data[0].remove
         htg_coil.setName(obj_name + " heating coil")
         if hpOutputCapacity != Constants.SizingAuto and hpOutputCapacity != Constants.SizingAutoMaxLoad
-          htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
-          htg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated_Heat[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
+          htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get) # Used by HVACSizing measure
         end
         htg_coil.setRatedCOP(1.0 / supply.HeatingEIR[0])
         htg_coil.setRatedSupplyFanPowerPerVolumeFlowRate(supply.fan_power_rated / OpenStudio::convert(1.0,"cfm","m^3/s").get)
@@ -360,7 +359,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         supp_htg_coil.setName(obj_name + " supp heater")
         supp_htg_coil.setEfficiency(1)
         if supplementalOutputCapacity != Constants.SizingAuto
-          supp_htg_coil.setNominalCapacity(OpenStudio::convert(supplementalOutputCapacity,"Btu/h","W").get)
+          supp_htg_coil.setNominalCapacity(OpenStudio::convert(supplementalOutputCapacity,"Btu/h","W").get) # Used by HVACSizing measure
         end
         
         # _processCurvesDXCooling
@@ -373,8 +372,7 @@ class ProcessSingleSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         clg_coil_stage_data[0].remove
         clg_coil.setName(obj_name + " cooling coil")
         if hpOutputCapacity != Constants.SizingAuto and hpOutputCapacity != Constants.SizingAutoMaxLoad
-          clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get)
-          clg_coil.setRatedAirFlowRate(supply.CFM_TON_Rated[0] * hpOutputCapacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
+          clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(hpOutputCapacity,"Btu/h","W").get) # Used by HVACSizing measure
         end
         clg_coil.setRatedSensibleHeatRatio(supply.SHR_Rated[0])
         clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(1.0 / supply.CoolingEIR[0]))

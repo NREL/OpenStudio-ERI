@@ -21,7 +21,7 @@ class ProcessVariableSpeedAirSourceHeatPumpTest < MiniTest::Test
     args_hash["supplemental_capacity"] = "20"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXMultiSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXMultiSpeed"=>1, "CoilCoolingDXMultiSpeedStageData"=>4, "CoilHeatingDXMultiSpeedStageData"=>4}
-    expected_values = {"CoolingCOP"=>[5.65, 5.44, 4.57, 4.13], "HeatingCOP"=>[5.13, 4.83, 4.08, 4.11], "CoolingNominalCapacity"=>[5169.77, 7068.87, 10550.55, 12660.67], "HeatingNominalCapacity"=>[5169.77, 7068.87, 10550.55, 12660.67], "MaximumSupplyAirTemperature"=>76.66}
+    expected_values = {"CoolingCOP"=>[5.65, 5.44, 4.57, 4.13], "HeatingCOP"=>[5.13, 4.83, 4.08, 4.11], "CoolingNominalCapacity"=>[OpenStudio::convert(3.0,"ton","W").get]*4, "HeatingNominalCapacity"=>[OpenStudio::convert(3.0,"ton","W").get]*4, "MaximumSupplyAirTemperature"=>76.66}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)    
   end
   

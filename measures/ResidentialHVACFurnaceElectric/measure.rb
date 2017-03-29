@@ -160,7 +160,7 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
         htg_coil.setName(obj_name + " heating coil")
         htg_coil.setEfficiency(1.0 / hir)
         if furnaceOutputCapacity != Constants.SizingAuto
-          htg_coil.setNominalCapacity(OpenStudio::convert(furnaceOutputCapacity,"Btu/h","W").get)
+          htg_coil.setNominalCapacity(OpenStudio::convert(furnaceOutputCapacity,"Btu/h","W").get) # Used by HVACSizing measure
         end
         
         # _processSystemFan

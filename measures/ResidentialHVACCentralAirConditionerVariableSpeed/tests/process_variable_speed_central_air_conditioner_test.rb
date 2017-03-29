@@ -20,7 +20,7 @@ class ProcessVariableSpeedCentralAirConditionerTest < MiniTest::Test
     args_hash["capacity"] = "3.0"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXMultiSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilCoolingDXMultiSpeedStageData"=>4}
-    expected_values = {"COP"=>[6.29, 5.97, 5.33, 4.67], "NominalCapacity"=>[3798.2, 6752.36, 10550.55, 12238.65], "MaximumSupplyAirTemperature"=>48.88}
+    expected_values = {"COP"=>[6.29, 5.97, 5.33, 4.67], "NominalCapacity"=>[OpenStudio::convert(3.0,"ton","W").get]*4, "MaximumSupplyAirTemperature"=>48.88}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 4)
   end
   
